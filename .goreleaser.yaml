@@ -1,0 +1,52 @@
+project_name: cs
+
+builds:
+  - id: cs
+    main: ./cmd/api
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: cs
+    ldflags: "-s -w"
+
+archives:
+  - format: zip
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      - .env-example.txt
+      - static
+      - locales
+
+    replacements:
+      windows: windows
+      darwin: macos
+
+changelog:
+  use: github
+
+release:
+  github:
+    draft: false
+    prerelease: true
+
+dockers:
+  - image_templates:
+      - realdatadriven/cs:latest
+      - realdatadriven/cs:{{ .Tag }}
+    dockerfile: ./Dockerfile
+    goos: linux
+    goarch: amd64
+    build_flag_templates:
+      - --platform=linux/amd64
+    use: buildx
+    skip_push: true  # set to true if you want to test builds locally first
+    build_args:
+      VERSION: "{{ .Tag }}"
