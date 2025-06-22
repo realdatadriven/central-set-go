@@ -1,0 +1,238 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc g++ unixodbc unixodbc-dev
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+      - name: Build Linux Binaries
+        run: |
+          mkdir -p dist
+          CGO_ENABLED=1 go build -o dist/cs-linux-amd64 ./cmd/api
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binary
+          path: dist/*linux*
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Go environment
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      # Step 4: Install MinGW for Cross-Compilation
+      - name: Install MinGW
+        run: |
+          choco install mingw -y
+          Write-Host "MinGW installed for cross-compilation"
+
+      # Step 5: Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
+          echo "CC=x86_64-w64-mingw32-gcc" >> $env:GITHUB_ENV
+
+      # Step 7: Build the Application
+      - name: Build Windows Binary
+        run: |
+          mkdir dist
+          go build -o dist/cs-windows-amd64.exe ./cmd/api
+          echo "GOARCH=arm64" >> $env:GITHUB_ENV
+          go build -o dist/cs-windows-arm64.exe ./cmd/api
+      #go build -tags=duckdb_use_lib -o dist/cs-windows-amd64.exe ./cmd/api
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binary
+          path: dist/*windows*  
+
+  build-windows-linking:
+    runs-on: windows-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Go environment
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      # Step 3: Download DuckDB Precompiled Library
+      - name: Download DuckDB Library
+        run: |
+          $version = "v1.2.48"
+          $duckdb_url = "https://github.com/duckdb/duckdb/releases/download/$version/libduckdb-windows-amd64.zip"
+          $destinationPath = "$(Get-Location)\duckdb"
+          Invoke-WebRequest -Uri $duckdb_url -OutFile "duckdb.zip"
+          Expand-Archive -Path "duckdb.zip" -DestinationPath $destinationPath
+          Write-Host "DuckDB library extracted to $destinationPath"
+          $duckdb_url = "https://github.com/duckdb/duckdb/releases/download/$version/libduckdb-windows-arm64.zip"
+          $destinationPath = "$(Get-Location)\duckdbarm64"
+          Invoke-WebRequest -Uri $duckdb_url -OutFile "duckdb.zip"
+          Expand-Archive -Path "duckdb.zip" -DestinationPath $destinationPath
+          Write-Host "DuckDB library extracted to $destinationPath"
+
+      # Step 4: Install MinGW for Cross-Compilation
+      - name: Install MinGW
+        run: |
+          choco install mingw -y
+          Write-Host "MinGW installed for cross-compilation"
+
+      # Step 5: Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
+          echo "CC=x86_64-w64-mingw32-gcc" >> $env:GITHUB_ENV
+          echo "CGO_CFLAGS=-I$(Get-Location)\duckdb\" >> $env:GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$(Get-Location)\duckdb\ -lduckdb" >> $env:GITHUB_ENV
+
+      # Step 6: Verify DuckDB Library
+      - name: Verify DuckDB Library
+        run: |
+          $libPath = "$(Get-Location)\duckdb\"
+          if (!(Test-Path "$libPath\duckdb.lib")) {
+            Write-Error "duckdb.lib not found in $libPath"
+          }
+          Write-Host "duckdb.lib found in $libPath"
+
+      # Step 7: Build the Application
+      - name: Build Windows Binary
+        run: |
+          mkdir dist
+          go build -o dist/cs-windows-linking-amd64.exe ./cmd/api
+          echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
+          echo "CC=x86_64-w64-mingw32-gcc" >> $env:GITHUB_ENV
+          echo "CGO_CFLAGS=-I$(Get-Location)\duckdbarm64\" >> $env:GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$(Get-Location)\duckdbarm64\ -lduckdb" >> $env:GITHUB_ENV
+          echo "GOARCH=arm64" >> $env:GITHUB_ENV
+          go build -o dist/cs-windows-linking-arm64.exe ./cmd/api
+      #go build -tags=duckdb_use_lib -o dist/cs-windows-amd64.exe ./cmd/api
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binary-linking
+          path: dist/*windows*
+
+  build-darwin:
+    runs-on: macos-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Go
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      # Step 3: Install UnixODBC
+      - name: Install UnixODBC
+        run: |
+          brew install unixodbc
+          brew --prefix unixodbc
+
+      # Step 4: Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          ODBC_PREFIX=$(brew --prefix unixodbc)
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
+          echo "CGO_CFLAGS=-I$ODBC_PREFIX/include" >> $GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$ODBC_PREFIX/lib -lodbc" >> $GITHUB_ENV
+
+      # Step 5: Build the Application
+      - name: Build MacOS Binary
+        run: |
+          mkdir dist
+          go build -o dist/cs-macos-amd64 ./cmd/api
+          GOARCH=arm64 go build -o dist/cs-macos-arm64 ./cmd/api
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binary
+          path: dist/*macos*
+    
+  release:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows, build-windows-linking, build-darwin]
+    steps:
+      - name: Download Windows Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-binary
+          path: dist
+      - name: Download Windows Binary linking
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-binary-linking
+          path: dist
+      - name: Download MacOS Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-binary
+          path: dist
+      - name: Download Linux Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-binary
+          path: dist
+      - name: Changelog
+        uses: scottbrenner/generate-changelog-action@master
+        id: Changelog
+        env:
+          REPO: ${{ github.repository }}
+      - name: Zip Binaries
+        run: |
+          zip -j dist/cs-linux-amd64.zip dist/cs-linux-amd64
+          zip -j dist/cs-macos-amd64.zip dist/cs-macos-amd64
+          zip -j dist/cs-windows-amd64.zip dist/cs-windows-amd64.exe
+          zip -j dist/cs-windows-linking-amd64.zip dist/cs-windows-linking-amd64.exe
+          zip -j dist/cs-macos-arm64.zip dist/cs-macos-arm64
+          zip -j dist/cs-windows-arm64.zip dist/cs-windows-arm64.exe
+          zip -j dist/cs-windows-linking-arm64.zip dist/cs-windows-linking-arm64.exe
+      #zip -j dist/cs-linux-arm64.zip dist/cs-linux-arm64
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: true
+          files: |
+            dist/cs-linux-amd64.zip
+            dist/cs-macos-amd64.zip
+            dist/cs-windows-amd64.zip
+            dist/cs-windows-linking-amd64.zip
+            dist/cs-macos-arm64.zip
+            dist/cs-windows-arm64.zip
+            dist/cs-windows-linking-arm64.zip
+      #      dist/cs-linux-arm64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

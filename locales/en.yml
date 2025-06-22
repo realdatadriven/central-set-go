@@ -1,0 +1,80 @@
+file-success: File {{.File}} uploaded successfully!
+no-controller: No controller specied!
+no-action: No action specied!
+controller-not-found: Controller {{.ctrl}} does not exist yet, or it hasn't be mappd!
+action-not-found: Action {{.actn}} does not exist yet, or it hasn't be mappd!
+unexpected-error: Unexpected error {{.err}}
+no-data-recivied: No data recieved!
+no-user-recivied: No user recieved!
+no-pass-recivied: No password recieved!
+user-pass-incorrect: User or password incorrect!
+user-conflict: User conflict!
+login-success: Login successfully!
+new_pass_is_required: New Password is required!
+new_pass_old_pass: New Password must be diferent from old password,
+new_pass_again_match: New Password and Confirm New Password must match,
+password_min_length: Password must have at least 8 characters!,
+pass_must_have_upper: Password must have at least 1 upercase character!,
+pass_must_have_number: Password must have at least 1 number!,
+pass_must_have_special: Password must have at least 1 especial character!
+alter-pass-success: Password altered successfully!
+user-deactivated: 'User {{.user}} has been deactivated, please contact the admin!'
+user-excluded: 'User {{.user}} has been removed, please contact the admin!'
+invalid-token: "The access token isn't valid (Err: {{.err}})!"
+success-token: Token validated / verified successfully!
+success: Operation executed successfully!
+field-required: 'The field "{{.field}}" is required!'
+validation-errors: 'There was {{.n}} error(s) in fields validations, please check your form!'
+no-table: No table recived
+no-data: No data recived
+no-class: No object specied!
+no-method: No method specied!
+class-not-found: Object {{.ctrl}} does not exist yet, or it hasn't be mappd!
+method-not-found: Method {{.actn}} does not exist yet, or it hasn't be mappd!,
+extention-not-suported: 'Extention {{.ext}} is not suported!'
+no_table_metadata: 'No table metadata!'
+no_table_name: 'No table name!'
+no_table_comment: 'No table comment!'
+no_fields: 'No fields / columns!'
+table_must_have_2_or_more_fields: 'A table must have at least an id and description field!'
+change_core_tables_not_allowed: 'Changing core tables is not allowed using this interface!'
+no-table-access: No access to the table "{{.table}}", please contact the admin!
+no-table-action-access: No permission to "{{.action}}" in the table "{{.table}}", please contact the admin!
+access-problem: Problem checking the permissions, please contact the admin!
+row-level-access: The table "{{.table}}" requires row level access, and you don't have "{{.action}}" permissions of none of its records, please contact the admin!
+fk-row-level-access: The table "{{.table}}" requires row level access, and the table "{{.table_org}}" has fields that refers to it, and you don't have "{{.action}}" permissions of none of "{{.table}}" records, please contact the admin!
+row-level-access-row-id: The table "{{.table}}" requires row level access, and you don't have "{{.action}}" permission on the record row-id = {{.row_id}}, please contact the admin!
+fk-row-level-access-row-id: The table "{{.table}}" requires row level access, and the table "{{.table_org}}" has fields that refers to it, and you don't have "{{.action}}" permissions of none of "{{.table}}" on the record row-id = {{.row_id}}, please contact the admin!
+file-not-founded: File "{{.fname}}" was not founded!
+type-not-suported-yet: Type of extraction "{{._type}}" does not exists or it is not suported yet!
+extract-failed: Extration failed, no file or config available!
+no-rows-returned: No rows returned!
+date-ref-form-diff-file: The date submited from the form "{{.dt_form}}" is different from the field "{{.dt_field}}" ({{.dt_file}})!
+date-valid-req-ref-field-1-date: This type of validation requires the date field "{{.dt_field}}" to be a single date ({{.dt_file}})!
+data-date-ref-exists: The table {{.table}} already has data {{.dt_field}} = {{.dt_form}}, please check your config to avoid duplications!
+run-query-string-not-allowed: This type of query is not allowed, please contact the admin!
+invalid-query: The query is invalid {{.query}}!
+query-not-allowed: The query has some keyword / comamnd marked as not allowed {{.match}}!
+no-query-string: Nenhum texto query recebido!
+output-failed: Transform | Output failed {{.name}}!
+output-fields-failed: Error getting the output fields / parameters, check the configuration or the permissions to the output "{{.name}}" ("{{.msg}}")!
+output-no-fields: No fields / config returned for the output "{{.name}}" ("{{.msg}}")!
+output-type-not-suported: Output type suported in "{{.name}}"!
+reconc-detail-failed: Error trying to get the details, check the config or permissions, "{{.name}}" ("{{.msg}}")!
+reconc-no-detail: No details / config returned, "{{.name}}" ("{{.msg}}")!
+input-not-active: The input "{{.name}}" is not active!
+output-not-active: The output "{{.name}}" is not active!
+reconc-not-active: The reconc "{{.name}}" is not active!
+export-not-active: The export "{{.name}}" is not active!
+notify-not-active: The notify "{{.name}}" is not active!
+err-file-proc-no-results: Error processing the file, no rows returned!
+error-getin-map: Error getting the map ({{.name}})!
+duckdb-extention-faild: Duckdb extention ({{.extention}}) failed ({{.err}})!
+duckdb-pragma-conf-faild: Duckdb pragma / conf ({{.pconf}}) failed ({{.err}})!
+duckdb-valid-faild: Duckdb validation query ({{.sql}}) failed ({{.err}})!
+duckdb-atach-faild: Duckdb attach file ({{.sql}}) failed ({{.err}})!
+duckdb-import-faild: Duckdb query ({{.sql}}) failed ({{.err}})!
+dt-file-no-match-dt-form: The date in file name "{{.file_ref}}" doesn't match the date "{{.date_ref}}" submited!
+duckdb-register-filesystem-faild: Duckdb fileSystem ({{.fs}}) failed ({{.err}})!
+no-odbc-conn-str: No ODBC Connection string founded, please check the configuration!
+no-odbc-query: No ODBC Query string founded, please check the configuration!

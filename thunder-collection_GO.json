@@ -1,0 +1,439 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "GO",
+    "collectionId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+    "dateExported": "2024-10-19T13:58:32.787Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "454b07bd-a09c-4c03-a324-1a78ce942a2d",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "login",
+            "url": "http://127.0.0.1:4444/dyn_api/login/login",
+            "method": "POST",
+            "sortNum": 5000,
+            "created": "2024-08-29T16:46:32.228Z",
+            "modified": "2024-09-01T19:57:39.232Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": \"1234\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "91ddc6db-f274-4e0f-868c-d6e784179136",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "apps",
+            "url": "http://127.0.0.1:4444/dyn_api/admin/apps",
+            "method": "POST",
+            "sortNum": 6250,
+            "created": "2024-08-29T16:46:32.230Z",
+            "modified": "2024-09-04T11:28:52.191Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA2MzE3MDguMjA5Njc2NywibmJmIjoxNzI1NDQ3NzA4LjIwOTY3NjcsImlhdCI6MTcyNTQ0NzcwOC4yMDk2NzY3fQ.itMwbI_CwA5FTHaGHBRH5ewucQJ_bpGdNr1MfNDc4hA"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "690c1c31-2735-4701-b877-5f73aeefeedc",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "tables",
+            "url": "http://127.0.0.1:4444/dyn_api/admin/tables",
+            "method": "POST",
+            "sortNum": 6562.5,
+            "created": "2024-08-29T16:46:32.238Z",
+            "modified": "2024-09-14T19:04:10.798Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA2MzE3MDguMjA5Njc2NywibmJmIjoxNzI1NDQ3NzA4LjIwOTY3NjcsImlhdCI6MTcyNTQ0NzcwOC4yMDk2NzY3fQ.itMwbI_CwA5FTHaGHBRH5ewucQJ_bpGdNr1MfNDc4hA"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"db--\": {\n      \"drivername\": \"sqlite\",\n      \"dsn\": \"ADM\"\n    },\n    \"data\": {\n        \"table\": \"app\",\n        \"table--.\": [\"lang\", \"app\"]\n    },\n    \"app\": {\n        \"app_id\": 1,\n        \"app\": \"ADMIN\",\n        \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "5612a4f0-b7ab-4ecd-bb4a-9f2c9cb89f0f",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "menus",
+            "url": "http://127.0.0.1:4444/dyn_api/admin/menu",
+            "method": "POST",
+            "sortNum": 6875,
+            "created": "2024-08-29T16:46:32.231Z",
+            "modified": "2024-09-14T21:04:46.617Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA2MzE3MDguMjA5Njc2NywibmJmIjoxNzI1NDQ3NzA4LjIwOTY3NjcsImlhdCI6MTcyNTQ0NzcwOC4yMDk2NzY3fQ.itMwbI_CwA5FTHaGHBRH5ewucQJ_bpGdNr1MfNDc4hA"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "8b5b7357-3ef2-4393-8a56-4e34074a69da",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "crud.read",
+            "url": "http://127.0.0.1:4444/dyn_api/crud/read",
+            "method": "POST",
+            "sortNum": 7187.5,
+            "created": "2024-08-29T16:46:32.232Z",
+            "modified": "2024-09-20T14:11:29.462Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"distinct--\": true,\n        \"join--\": \"none|all\",\n        \"table\": \"menu\",\n        \"limit\": 11,\n        \"offset\": 0,\n        \"fields--\": [\"user_log_id\", \"user_id\", \"action\"],\n        \"filters--\": [\n            {\"field\":\"lang_id\", \"cond\": \"=\", \"value\": 3},\n            {\"field\":\"menu_id\", \"cond\": \"=\", \"value\": 3}\n            \n        ],\n        \"order_by\": [\n            {\"field\":\"lang_id2\", \"order\": \"DESC\"}\n        ],\n        \"pattern--\": \"brasil\"\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"version\": \"1.0.0\",\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "f7ef1af7-22b1-46a2-91c2-8c30e76247ca",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "crud.create",
+            "url": "http://127.0.0.1:4444/dyn_api/crud/create",
+            "method": "POST",
+            "sortNum": 7343.8,
+            "created": "2024-08-29T16:46:32.233Z",
+            "modified": "2024-09-21T16:45:56.555Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"table\": \"lang\",\n        \"data\": {\n          \"lang\": \"es4\",\n          \"lang_desc\": \"Português\"\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "36db66ab-1fe8-4b4c-bc4c-72a2400a5d38",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "crud.update",
+            "url": "http://127.0.0.1:4444/dyn_api/crud/update",
+            "method": "POST",
+            "sortNum": 7382.9,
+            "created": "2024-08-29T16:46:32.234Z",
+            "modified": "2024-09-22T07:40:15.184Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"table\": \"lang\",\n        \"data\": {\n          \"lang_id\": 3,\n          \"lang\": \"pt_BR\",\n          \"lang_desc\": \"Português Brasil\",\n          \"created_at\": \"2022-07-22T10:32:00.791024\",\n          \"updated_at\": \"2022-07-22T10:33:22.185972\"\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "d1d80612-4de5-4021-be46-675b810c3214",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "crud.delete",
+            "url": "http://127.0.0.1:4444/dyn_api/crud/delete",
+            "method": "POST",
+            "sortNum": 7421.9,
+            "created": "2024-08-29T16:46:32.235Z",
+            "modified": "2024-09-22T07:40:33.175Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"table\": \"lang\",\n        \"data\": {\n          \"lang_id\": 3,\n          \"exclude\": true,\n          \"permanently--\": true\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "5b92a3b7-7c11-49e9-a92f-443ac38f8388",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "crud.query",
+            "url": "http://127.0.0.1:4444/dyn_api/crud/query",
+            "method": "POST",
+            "sortNum": 7460.9,
+            "created": "2024-09-22T07:39:02.451Z",
+            "modified": "2024-10-01T14:07:59.061Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"db\": \"DB.duckdb\",\n        \"limit\": 10,\n        \"offset\": 0,\n        \"query\": \"select * from \\\"APOCR\\\"\"\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "20b49ca9-1022-4dd5-b736-a8b0470c1201",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "alter_pass",
+            "url": "http://127.0.0.1:8080/api/",
+            "method": "POST",
+            "sortNum": 7500,
+            "created": "2024-08-29T16:46:32.236Z",
+            "modified": "2024-08-29T16:46:32.236Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InJvb3QiLCJmaXJzdF9uYW1lIjoiU3VwZXIiLCJsYXN0X25hbWUiOiJBZG1pbiIsImVtYWlsIjoicm9vdEBkb21haW4uY29tIiwicGhvbmUiOm51bGwsInBhc3N3b3JkIjoiJDJiJDEyJHdmdmFQTFVPWWhmblpTZUpsSFJMNXV4NWVRMlR2TTFEcVNTS004UncwUHFCUXZZRGRUMFltIiwicm9sZV9pZCI6MSwibGFuZ19pZCI6MSwidGltZXpvbmUiOm51bGwsImF0dGFjaF9wcm9maWxlX3BpYyI6bnVsbCwiYWN0aXZlIjp0cnVlLCJjcmVhdGVkX2F0IjoiMjAyMS0xMi0yNlQxODo0MTozMi4yMDkyNDMiLCJ1cGRhdGVkX2F0IjoiMjAyMS0xMi0yNlQxODo0MTozMi4yMDkyNDMiLCJleGNsdWRlZCI6ZmFsc2UsImV4cCI6MTY0MjMzNjcxMywiaWF0IjoxNjQxNjQ1NTEzLCJuYmYiOjE2NDE2NDU1MTN9.bw4c5A5lM7HluWPrtXiz4Sx6a1NJ5x50nHaG26fz_Do"
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"controller\": \"login\",\n    \"action\": \"alter_pass\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": 12344654,\n        \"new_password\": 1234\n    }\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "0b2067bc-a03d-4960-809b-54c9d41af5f9",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "chk_token",
+            "url": "http://127.0.0.1:4444/dyn_api/login/chk_token",
+            "method": "POST",
+            "sortNum": 8750,
+            "created": "2024-08-29T16:46:32.237Z",
+            "modified": "2024-09-01T20:36:26.569Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer --eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "6d32e924-d346-4333-88cb-8bf4e63caa94",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "uploads",
+            "url": "http://127.0.0.1:4444/upload",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-08-29T16:46:32.239Z",
+            "modified": "2024-10-17T19:58:49.375Z",
+            "headers": [
+                {
+                    "name": "enctype",
+                    "value": "multipart/form-data"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMTAtMDJUMDk6MTk6NDYuMDYyMjU3WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkcHRQbzMxNXFVUVlnZEVGWXNULnZhdS9DakFuLzJaTzlEMEtFU0ozTDN3TWJvMWZ3d1lmVXVcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0xMC0wMlQwOToxOTo0Ni4wNjIyNTdaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzQzNzkwNDkuODkwNTgwNCwibmJmIjoxNzI5MTk1MDQ5Ljg5MDU4MDQsImlhdCI6MTcyOTE5NTA0OS44OTA1ODA0fQ.eX9OOwUwrFW5NFI3tIu871Q_xKis3wok4eP3WjUPGTQ"
+                }
+            ],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "lang",
+                        "value": "pt"
+                    },
+                    {
+                        "name": "tmp",
+                        "value": "true"
+                    },
+                    {
+                        "name": "path",
+                        "value": "xxxx"
+                    }
+                ],
+                "files": []
+            }
+        },
+        {
+            "_id": "9dd69f4d-e9bc-4c6f-950c-a23ad1c87d1f",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "etl.extract.file+attchdb",
+            "url": "http://127.0.0.1:4444/dyn_api/etl/extract",
+            "method": "POST",
+            "sortNum": 27421.9,
+            "created": "2024-09-22T13:13:36.005Z",
+            "modified": "2024-09-28T19:16:20.866Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"data\": {\n          \"date_ref\": \"2024-09-17\",\n          \"date_ref_\": [\"2024-08-29\"],\n          \"file_\": \"Treasury_Projection_BI.20240829.xlsx\",\n           \"file__\":\"8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv\",\n           \"database\": \"sqlite_test.duckdb\",\n           \"name\": \"test\",\n           \"save_only_temp\": false,\n           \"destination_table\": \"BALANCETE\",\n           \"check_ref_date\": false,\n           \"ref_date_field\": \"file_ref\",\n           \"etl_rbase_input_conf\": {\n             \"type_\": \"file-duckdb\",\n             \"type\": \"duckdb\",\n             \"duckdb\": {\n               \"pragmas_config_sql_start\": [\n                  \"ATTACH 'database/db.duckdb' AS db\"\n                ],\n               \"pragmas_config_sql_end\": [\n                  \"DETACH DB\"\n                ],\n               \"valid_\": [\n                  {\"sql\": \"SELECT * FROM \\\"<table>\\\" WHERE BCDTRP={YYYYMMDD}  LIMIT 10\", \"rule\": \"throw_if_not_empty\", \"msg\": \"The table (<table>) already has the data from the date YYYY/MM/DD\"},\n                  {\"sql\": \"SELECT * FROM '<file>' WHERE BCDTRP={YYYYMMDD} LIMIT 10\", \"rule\": \"throw_if_empty\", \"msg\": \"The file (<file>) has no data from the date \\\"YYYY/MM/DD\\\"\"}\n                 ],\n               \"sql\": \"INSERT INTO main.\\\"<table>\\\" BY NAME SELECT * \\nFROM DB.\\\"<table>\\\" WHERE \\\"BCDTRP\\\" = YYYYMMDD\",\n               \"_sql\": \"INSERT INTO \\\"<table>\\\" BY NAME (SELECT * \\nFROM '<file>')\",\n               \"sql__\": \"INSERT INTO \\\"sqlite_test\\\".\\\"<table>\\\" BY NAME (SELECT * FROM '<file>')\",\n               \"sql_\": \"CREATE OR REPLACE TABLE \\\"<table>\\\" AS SELECT * FROM '<file>'\"\n             }\n           }\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "683543a6-560d-436d-a74d-9c5de9901e53",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "etl.extract.odbc",
+            "url": "http://127.0.0.1:4444/dyn_api/etl/extract",
+            "method": "POST",
+            "sortNum": 37421.9,
+            "created": "2024-09-28T18:10:45.512Z",
+            "modified": "2024-10-01T16:04:59.245Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"data\": {\n      \"date_ref\": \"2024-09-30\",\n      \"date_ref_\": [\"2024-08-29\"],\n      \"database\": \"sqlite_test.duckdb\",\n      \"save_only_temp\": true,\n      \"destination_table\": \"BALANCETE\",\n      \"check_ref_date\": false,\n      \"ref_date_field\": \"BCDTRP\",\n      \"etl_rbase_input_conf\": {\n        \"type\": \"odbc-csv-duckdb\",\n        \"params\": {\n          \"odbc_conn\": \"Driver={iSeries Access ODBC Driver};System=172.21.11.1;Uid=@ENV.USERNAME;Pwd=@ENV.BNK_PASS\"\n        },\n        \"query\": \"SELECT CAST(\\\"BCCCB\\\" AS INT) AS \\\"BCCCB\\\",\\\"BCDCCB\\\",\\\"BCCADC\\\",\\\"BCCACC\\\",\\\"CTBCSAC\\\",\\\"BCCADP\\\",\\\"BCCACP\\\",\\\"CTBCSAP\\\",\\\"BCMOED\\\",\\\"BCDTRP\\\" FROM \\\"PROUSR0005\\\".\\\"$$AAMMDDBI\\\" \",\n        \"duckdb\": {\n          \"extentions\": [],\n          \"valid\": [\n            {\n              \"sql\": \"SELECT DISTINCT \\\"BCDTRP\\\" FROM READ_CSV('<filename>', HEADER = TRUE) WHERE \\\"BCDTRP\\\" = '{YYYYMMDD}' LIMIT 10\",\n              \"rule\": \"throw_if_empty\",\n              \"msg\": \"A data na origem (<table>) é diferente de DD/MM/YYYY!\"\n            },\n            {\n              \"sql\": \"SELECT \\\"BCDTRP\\\" FROM \\\"<table>\\\" WHERE \\\"BCDTRP\\\" = '{YYYYMMDD}' LIMIT 10\",\n              \"rule\": \"throw_if_not_empty\",\n              \"msg\": \"A data DD/MM/YYYY já existe na tabela \\\"<table>\\\", certifique que é o pretendido ou limpe o destino primeiro!\"\n            }\n          ],\n          \"sql\": \"INSERT INTO \\\"<table>\\\" BY NAME SELECT * FROM READ_CSV('<filename>', HEADER = TRUE)\"\n        }\n      }\n    }\n  },\n  \"app\": {\n    \"app_id\": 1,\n    \"app\": \"ADMIN\",\n    \"app_desc\": \"Admin\",\n    \"version\": \"1.0.0\",\n    \"email\": null,\n    \"db\": \"ADMIN\"\n  }\n}\n",
+                "form": []
+            }
+        },
+        {
+            "_id": "ca28874f-95e9-464f-8cfa-61c9f3097ace",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "etl.n_rows",
+            "url": "http://127.0.0.1:4444/dyn_api/etl/n_rows",
+            "method": "POST",
+            "sortNum": 47421.9,
+            "created": "2024-10-01T16:05:23.143Z",
+            "modified": "2024-10-01T16:56:57.686Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"data\": {\n          \"date_ref\": \"2024-09-30\",\n          \"date_ref_\": [\"2024-08-29\"],\n          \"file_\": \"Treasury_Projection_BI.20240829.xlsx\",\n           \"file__\":\"8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv\",\n           \"database\": \"sqlite_test.duckdb\",\n           \"name\": \"test\",\n           \"save_only_temp\": false,\n           \"destination_table\": \"BALANCETE\",\n           \"check_ref_date\": true,\n           \"ref_date_field\": \"BCDTRP\",\n           \"date_format_org\": \"AAAAMMDD\",\n           \"etl_rbase_input_conf\": {\n             \"type_\": \"file-duckdb\",\n             \"type\": \"duckdb\",\n             \"duckdb\": {\n               \"pragmas_config_sql_start\": [\n                  \"ATTACH \"\n                ],\n               \"pragmas_config_sql_end\": [\n                  \"DETACH DB\"\n                ],\n               \"valid_\": [\n                  {\"sql\": \"SELECT * FROM \\\"<table>\\\" WHERE BCDTRP={YYYYMMDD}  LIMIT 10\", \"rule\": \"throw_if_not_empty\", \"msg\": \"The table (<table>) already has the data from the date YYYY/MM/DD\"},\n                  {\"sql\": \"SELECT * FROM '<file>' WHERE BCDTRP={YYYYMMDD} LIMIT 10\", \"rule\": \"throw_if_empty\", \"msg\": \"The file (<file>) has no data from the date \\\"YYYY/MM/DD\\\"\"}\n                 ],\n               \"sql\": \"INSERT INTO main.\\\"<table>\\\" BY NAME SELECT * \\nFROM DB.\\\"<table>\\\" WHERE \\\"BCDTRP\\\" = YYYYMMDD\",\n               \"_sql\": \"INSERT INTO \\\"<table>\\\" BY NAME (SELECT * \\nFROM '<file>')\",\n               \"sql__\": \"INSERT INTO \\\"sqlite_test\\\".\\\"<table>\\\" BY NAME (SELECT * FROM '<file>')\",\n               \"sql_\": \"CREATE OR REPLACE TABLE \\\"<table>\\\" AS SELECT * FROM '<file>'\"\n             }\n           }\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "efb948b2-3983-4565-bee2-9bc3dde397dc",
+            "colId": "5f01078d-4871-4a92-98dc-61396a721d3f",
+            "containerId": "",
+            "name": "etl.delete",
+            "url": "http://127.0.0.1:4444/dyn_api/etl/delete",
+            "method": "POST",
+            "sortNum": 57421.9,
+            "created": "2024-10-01T20:20:59.358Z",
+            "modified": "2024-10-01T20:21:22.345Z",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA0MDI5NjUuODQwMjQzOCwibmJmIjoxNzI1MjE4OTY1Ljg0MDI0MzgsImlhdCI6MTcyNTIxODk2NS44NDAyNDM4fQ.k_9I_4h_ZCwWUz19C-akaWs8q3TIXNjJjzBPPE13SLs"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"data\": {\n          \"date_ref\": \"2024-09-30\",\n          \"date_ref_\": [\"2024-08-29\"],\n          \"file_\": \"Treasury_Projection_BI.20240829.xlsx\",\n           \"file__\":\"8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv\",\n           \"database\": \"sqlite_test.duckdb\",\n           \"name\": \"test\",\n           \"save_only_temp\": false,\n           \"destination_table\": \"BALANCETE\",\n           \"check_ref_date\": true,\n           \"ref_date_field\": \"BCDTRP\",\n           \"date_format_org\": \"AAAAMMDD\",\n           \"etl_rbase_input_conf\": {\n             \"type_\": \"file-duckdb\",\n             \"type\": \"duckdb\",\n             \"duckdb\": {\n               \"pragmas_config_sql_start\": [\n                  \"ATTACH '' AS DB\"\n                ],\n               \"pragmas_config_sql_end\": [\n                  \"DETACH DB\"\n                ],\n               \"valid_\": [\n                  {\"sql\": \"SELECT * FROM \\\"<table>\\\" WHERE BCDTRP={YYYYMMDD}  LIMIT 10\", \"rule\": \"throw_if_not_empty\", \"msg\": \"The table (<table>) already has the data from the date YYYY/MM/DD\"},\n                  {\"sql\": \"SELECT * FROM '<file>' WHERE BCDTRP={YYYYMMDD} LIMIT 10\", \"rule\": \"throw_if_empty\", \"msg\": \"The file (<file>) has no data from the date \\\"YYYY/MM/DD\\\"\"}\n                 ],\n               \"sql\": \"INSERT INTO main.\\\"<table>\\\" BY NAME SELECT * \\nFROM DB.\\\"<table>\\\" WHERE \\\"BCDTRP\\\" = YYYYMMDD\",\n               \"_sql\": \"INSERT INTO \\\"<table>\\\" BY NAME (SELECT * \\nFROM '<file>')\",\n               \"sql__\": \"INSERT INTO \\\"sqlite_test\\\".\\\"<table>\\\" BY NAME (SELECT * FROM '<file>')\",\n               \"sql_\": \"CREATE OR REPLACE TABLE \\\"<table>\\\" AS SELECT * FROM '<file>'\"\n             }\n           }\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "form": []
+            }
+        }
+    ],
+    "ref": "CbdTxYiwIzit85B3wX0T8Sj50DKyWOCqr-AFQRGbisUVcTPEPV_EvcHKIOTCXl5xlSnWpU1dgisOJ6LzTLwnyQ"
+}

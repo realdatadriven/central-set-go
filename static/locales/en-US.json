@@ -1,0 +1,12 @@
+{
+    "login": {
+        "signin": "Sign in",
+        "user": "User",
+        "pass": "Password",
+        "remember_me": "Remember me",
+        "forgot_pass": "Forgot password?",
+        "sign-_u": "Don't have an account? Sign Up",
+        "token_expired": "Your session has expired!",
+        "change_user": "Change User"
+    }
+}

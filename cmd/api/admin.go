@@ -1,0 +1,1009 @@
+package main
+
+import (
+	"fmt"
+	"path/filepath"
+	"strings"
+	"time"
+
+	"github.com/realdatadriven/etlx"
+
+	"github.com/jmoiron/sqlx"
+)
+
+func (app *application) apps(params map[string]interface{}) map[string]interface{} {
+	//fmt.Println("APPS:", params)
+	user_id := int(params["user"].(map[string]interface{})["user_id"].(float64))
+	role_id := int(params["user"].(map[string]interface{})["role_id"].(float64))
+	//fmt.Println(user_id, role_id)
+	query := `SELECT DISTINCT user_role.role_id
+	FROM user_role
+	JOIN role ON user_role.role_id = role.role_id
+	WHERE user_role.user_id = $1
+		AND user_role.excluded = FALSE
+		AND role.excluded = FALSE`
+	var queryParams []interface{}
+	queryParams = append(queryParams, user_id)
+	result, _, err := app.db.QueryMultiRows(query, queryParams...)
+	if err != nil {
+		//fmt.Println(1, query, fmt.Sprintf("%s", err))
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	roles := []interface{}{}
+	roles = append(roles, role_id)
+	for _, row := range *result {
+		roles = append(roles, int(row["role_id"].(float64)))
+	}
+	query = `SELECT *
+	FROM app
+	WHERE app.excluded = FALSE`
+	// fmt.Println("ROLES: ", roles)
+	queryParams = []interface{}{}
+	if !app.contains(roles, 1) {
+		query = `SELECT app.*
+		FROM app
+		JOIN role_app ON role_app.app_id = app.app_id
+		WHERE role_app.role_id IN ($1)
+			AND role_app.access = TRUE
+			AND role_app.excluded = FALSE
+			AND app.excluded = FALSE`
+		//fmt.Println(app.joinSlice(roles, ","))
+		queryParams = append(queryParams, app.joinSlice(roles, ","))
+	}
+	result, _, err = app.db.QueryMultiRows(query, queryParams...)
+	if err != nil {
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	msg, _ := app.i18n.T("success", map[string]interface{}{})
+	return map[string]interface{}{
+		"success": true,
+		"msg":     msg,
+		"data":    *result,
+	}
+}
+
+func (app *application) menu(params map[string]interface{}) map[string]interface{} {
+	//fmt.Println(params)
+	user_id := int(params["user"].(map[string]interface{})["user_id"].(float64))
+	role_id := int(params["user"].(map[string]interface{})["role_id"].(float64))
+	var app_id int
+	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
+		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	}
+	//fmt.Println(user_id, role_id)
+	query := `SELECT DISTINCT user_role.role_id
+	FROM user_role
+	JOIN role ON user_role.role_id = role.role_id
+	WHERE user_role.user_id = $1
+		AND user_role.excluded = FALSE
+		AND role.excluded = FALSE`
+	var queryParams []interface{}
+	queryParams = append(queryParams, user_id)
+	result, _, err := app.db.QueryMultiRows(query, queryParams...)
+	if err != nil {
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	roles := []interface{}{}
+	roles = append(roles, role_id)
+	for _, row := range *result {
+		roles = append(roles, int(row["role_id"].(float64)))
+	}
+	// MENU
+	query = `SELECT *
+	FROM menu
+	WHERE app_id = $1
+		AND excluded = FALSE
+		AND active = TRUE
+	ORDER BY menu_order ASC, menu_id ASC`
+	//fmt.Println("ROLES: ", roles)
+	queryParams = []interface{}{app_id}
+	if !app.contains(roles, 1) {
+		query = `SELECT DISTINCT menu.*
+		FROM menu
+		JOIN role_app_menu ON (
+			role_app_menu.menu_id = menu.menu_id 
+			AND role_app_menu.app_id = menu.app_id
+		)
+		WHERE menu.app_id = $1
+			AND role_app_menu.role_id IN ($2)
+			AND role_app_menu.access = TRUE
+			AND role_app_menu.excluded = FALSE
+			AND menu.excluded = FALSE
+			AND menu.active = TRUE
+			AND (role_app_menu.menu_id, role_app_menu.app_id, role_app_menu.updated_at) IN (
+				SELECT menu_id, app_id, MAX(updated_at)
+				FROM role_app_menu
+				WHERE access = True
+					AND role_id IN ($2)
+					AND excluded = FALSE
+				GROUP BY menu_id, app_id
+			)
+		ORDER BY menu.menu_order ASC, menu.menu_id ASC`
+		//fmt.Println(app.joinSlice(roles, ","))
+		queryParams = append(queryParams, app.joinSlice(roles, ","))
+	}
+	_menu, _, err := app.db.QueryMultiRows(query, queryParams...)
+	if err != nil {
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	// MENU TABLES
+	query = `SELECT *
+	FROM menu_table
+	WHERE app_id = $1
+		AND excluded = FALSE
+	ORDER BY menu_table_id ASC`
+	queryParams = []interface{}{app_id}
+	if !app.contains(roles, 1) {
+		query = `SELECT menu_table.*
+		FROM menu_table
+		JOIN role_app_menu_table ON (
+			role_app_menu_table.menu_id = menu_table.menu_id 
+			role_app_menu_table.table_id = menu_table.table_id 
+			AND role_app_menu_table.app_id = menu_table.app_id
+		)
+		WHERE menu_table.app_id = $1
+			AND role_app_menu_table.role_id IN ($2)
+			AND (
+				role_app_menu_table.read = TRUE
+				OR role_app_menu_table.create = TRUE
+			)
+			AND role_app_menu_table.excluded = FALSE
+			AND menu_table.excluded = FALSE
+			AND (role_app_menu_table.table_id, role_app_menu_table.menu_id, role_app_menu_table.app_id, role_app_menu_table.updated_at) IN (
+				SELECT table_id, menu_id, app_id, MAX(updated_at)
+				FROM role_app_menu_table
+				WHERE access = True
+					AND role_id IN ($2)
+					AND excluded = FALSE
+				GROUP BY table_id, menu_id, app_id
+			)
+		ORDER BY menu_table_id ASC`
+		queryParams = append(queryParams, app.joinSlice(roles, ","))
+	}
+	_menu_table, _, err := app.db.QueryMultiRows(query, queryParams...)
+	if err != nil {
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	// TABLES
+	_tables := app.tables(params, []interface{}{})
+	_table_by_id := map[int64]interface{}{}
+	if _, ok := _tables["table_by_id"]; ok {
+		_table_by_id = _tables["table_by_id"].(map[int64]interface{})
+		//fmt.Println(_table_by_id)
+	}
+	if _, ok := _tables["data"]; ok {
+		_tables = _tables["data"].(map[string]interface{})
+	}
+	// MENUS
+	menus := []map[string]interface{}{}
+	for _, mn := range *_menu {
+		_aux := mn
+		_aux["children"] = []map[string]interface{}{}
+		for _, mnt := range *_menu_table {
+			if _, ok := mnt["menu_id"].(interface{}); !ok {
+			} else if _, ok := mn["menu_id"].(interface{}); !ok {
+			} else if int(mnt["menu_id"].(int64)) == int(mn["menu_id"].(int64)) {
+				_mnt := mnt
+				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(map[string]interface{}))
+				if _, ok := _table_by_id[mnt["table_id"].(int64)].(map[string]interface{}); ok {
+					_mnt["table"] = _table_by_id[mnt["table_id"].(int64)].(map[string]interface{})["table"].(string)
+					//fmt.Println(2, _table_by_id[mnt["table_id"].(int64)].(map[string]interface{}))
+				}
+				_mnt["menu"] = mn["menu"]
+				_aux["children"] = append(_aux["children"].([]map[string]interface{}), _mnt)
+			}
+		}
+		menus = append(menus, _aux)
+	}
+	msg, _ := app.i18n.T("success", map[string]interface{}{})
+	return map[string]interface{}{
+		"success": true,
+		"msg":     msg,
+		"data": map[string]interface{}{
+			"menu":   menus,
+			"tables": _tables,
+		},
+	}
+}
+
+func (app *application) tables(params map[string]interface{}, tables []interface{}) map[string]interface{} {
+	//fmt.Println(params)
+	var user_id int
+	if _, ok := params["user"].(map[string]interface{})["user_id"]; ok {
+		user_id = int(params["user"].(map[string]interface{})["user_id"].(float64))
+	}
+	var app_id int
+	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
+		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	}
+	// DATABASE
+	_extra_conf := map[string]interface{}{
+		"driverName": app.config.db.driverName,
+		"dsn":        app.config.db.dsn,
+	}
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	//fmt.Println(lang)
+	var newDB etlx.DBInterface
+	newDB, driver, _database, err := app.db.FromParams(params, _extra_conf)
+	//fmt.Println("FromParams DB:", driver, _database)
+	if err != nil {
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	if driver == "duckdb" {
+		_db_ext := filepath.Ext(_database)
+		// fmt.Println(_database, _db_ext)
+		if _db_ext != "" {
+			_db_ext = ""
+		}
+		newDB, err = etlx.NewDuckDB(fmt.Sprintf(`database/%s%s`, _database, _db_ext))
+		if err != nil {
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		defer newDB.Close()
+	}
+	allTables := false
+	if app.IsEmpty(tables) {
+		tables = []interface{}{}
+		if !app.IsEmpty(params["data"].(map[string]interface{})["table"]) {
+			value := params["data"].(map[string]interface{})["table"]
+			switch value.(type) {
+			case nil:
+				// pass
+			case string:
+				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+			case []interface{}:
+				_tables := params["data"].(map[string]interface{})["table"].([]interface{})
+				for t := 0; t < len(_tables); t++ {
+					tables = append(tables, _tables[t])
+				}
+			case map[interface{}]interface{}:
+				// pass
+			default:
+				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+			}
+		} else if !app.IsEmpty(params["data"].(map[string]interface{})["tables"]) {
+			value := params["data"].(map[string]interface{})["tables"]
+			switch value.(type) {
+			case string:
+				tables = append(tables, params["data"].(map[string]interface{})["tables"].(string))
+			case []interface{}:
+				_tables := params["data"].(map[string]interface{})["tables"].([]interface{})
+				for t := 0; t < len(_tables); t++ {
+					tables = append(tables, _tables[t])
+				}
+			default:
+				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+			}
+		}
+		if app.IsEmpty(tables) {
+			// fmt.Println("GET ALL TABLES!")
+			result, _, err := newDB.AllTables(params, _extra_conf)
+			if err != nil {
+				return map[string]interface{}{
+					"success": false,
+					"msg":     fmt.Sprintf("%s", err),
+				}
+			}
+			for _, row := range *result {
+				//fmt.Println(row)
+				if _, ok := row["name"]; !ok {
+				} else if _, ok := row["name"].(string); ok {
+					tables = append(tables, string(row["name"].(string)))
+				} else if _, ok := row["name"].([]byte); ok {
+					tables = append(tables, string(row["name"].([]byte)))
+				}
+			}
+			allTables = true
+		}
+	}
+	data := map[string]interface{}{}
+	table_by_id := map[int64]interface{}{}
+	if app.IsEmpty(tables) {
+		msg, _ := app.i18n.T("no-table", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+			"tables":  tables,
+		}
+	} else {
+		// GET THE TABLES DATA IN table
+		query := `SELECT * FROM "table" WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
+		queryParams := []interface{}{_database}
+		if allTables {
+			query = `SELECT * FROM "table" WHERE db = ? AND excluded = FALSE`
+		} else {
+			queryParams = append(queryParams, tables)
+		}
+		//queryParams = append(queryParams, app.joinSlice(tables, "','"))
+		query, args, err := sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
+		//fmt.Println(query, args, queryParams)
+		_table, _, err := app.db.QueryMultiRows(query, args...)
+		if err != nil {
+			fmt.Println("TABLES:", query, args, err)
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		// fmt.Println(_table)
+		if allTables {
+			tables_in_table := []interface{}{}
+			for _, row := range *_table {
+				tables_in_table = append(tables_in_table, row["table"].(string))
+			}
+			// fmt.Println(tables_in_table)
+			results := []map[string]interface{}{}
+			for _, table := range tables {
+				if !app.contains(tables_in_table, table) {
+					//fmt.Println("ADD TABLE:", table)
+					results = append(results, map[string]interface{}{
+						"table":        table,
+						"table_desc":   table,
+						"db":           _database,
+						"requires_rla": false,
+						"user_id":      user_id,
+						"created_at":   time.Now(),
+						"updated_at":   time.Now(),
+						"excluded":     false,
+					})
+				}
+			}
+			if len(results) > 0 {
+				//fmt.Println(results[0])
+				var keys []interface{}
+				//var prms []interface{}
+				i := 0
+				for key := range results[0] {
+					i++
+					keys = append(keys, key)
+					//prms = append(prms, fmt.Sprintf("$%d", i))
+				}
+				// CHECK IF DUCKDB USE SOME OTHER WAY
+				cols := app.joinSlice(keys, `", "`)
+				vals := app.joinSlice(keys, `, :`)
+				/*if driver == "duckdb" {
+					vals = app.joinSlice(prms, `,`)
+				} else {
+					//vals = fmt.Sprintf(":%s", vals)
+					vals = app.joinSlice(prms, `,`)
+				}*/
+				query := fmt.Sprintf(`INSERT INTO "table" ("%s") VALUES (:%s)`, cols, vals)
+				/*_, err := app.db.ExecuteNamedQuery(query, results)
+				if err != nil {
+					fmt.Println("Error inserting table:", err)
+				}*/
+				//fmt.Println(query)
+				for _, row := range results {
+					_, err := app.db.ExecuteNamedQuery(query, row)
+					/*values := []interface{}{}
+					for _, value := range row {
+						values = append(values, value)
+					}
+					println(values)
+					_, err := newDB.ExecuteQuery(query, values...)*/
+					if err != nil {
+						fmt.Println("Error inserting table:", err)
+					}
+				}
+			}
+		}
+		// table comments / translations translate_table
+		query = `SELECT * FROM translate_table WHERE db = ? AND lang = ? AND "table" IN (?) AND excluded = FALSE`
+		queryParams = []interface{}{_database, lang}
+		if allTables {
+			query = `SELECT * FROM translate_table WHERE db = ? AND lang = ? AND excluded = FALSE`
+		} else {
+			queryParams = append(queryParams, tables)
+		}
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
+		results, _, err := app.db.QueryMultiRows(query, args...)
+		if err != nil {
+			fmt.Println("TABLES TRANSL:", query, err)
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		translate_table := map[string]interface{}{}
+		for _, row := range *results {
+			translate_table[row["table"].(string)] = row
+		}
+		//fmt.Println(translate_table)
+		// fields comments / translations translate_table_field
+		query = `SELECT * FROM translate_table_field WHERE db = ? AND lang = ? AND "table" IN (?) AND excluded = FALSE`
+		queryParams = []interface{}{_database, lang}
+		if allTables {
+			query = `SELECT * FROM translate_table_field WHERE db = ? AND lang = ? AND excluded = FALSE`
+		} else {
+			queryParams = append(queryParams, tables)
+		}
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
+		results, _, err = app.db.QueryMultiRows(query, args...)
+		if err != nil {
+			fmt.Println("TARNSL FIELDS:", query, err)
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		translate_table_field := map[string]interface{}{}
+		for _, row := range *results {
+			if _, ok := translate_table_field[row["table"].(string)]; !ok {
+				translate_table_field[row["table"].(string)] = map[string]interface{}{}
+			}
+			/*if _, ok := translate_table_field[row["table"].(string)].(map[string]interface{})["fields"]; !ok {
+				translate_table_field[row["table"].(string)].(map[string]interface{})["fields"] = map[string]interface{}{}
+			}
+			translate_table_field[row["table"].(string)].(map[string]interface{})["fields"].(map[string]interface{})[row["field"].(string)] = row*/
+			translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)] = row
+		}
+		// fmt.Println(translate_table_field)
+		// GET THE TABLES DATA IN table_schema
+		query = `SELECT * FROM table_schema WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
+		queryParams = []interface{}{_database}
+		if allTables {
+			query = `SELECT * FROM table_schema WHERE db = ? AND excluded = FALSE`
+		} else {
+			queryParams = append(queryParams, tables)
+		}
+		//queryParams = append(queryParams, app.joinSlice(tables, "','"))
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
+		//fmt.Println(query, args, queryParams)
+		table_schema := map[string]interface{}{}
+		_table_schema, _, err := app.db.QueryMultiRows(query, args...)
+		if err != nil {
+			fmt.Println("TABLE SCHEMA:", query, err)
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		//fmt.Println(*_table_schema)
+		// POPULATE table_schema WITH THOSE WHO ARE NOT IN table_schema
+		if allTables {
+			tables_not_in_schema := []interface{}{}
+			tables_in_schema := []interface{}{}
+			for _, row := range *_table_schema {
+				tables_in_schema = append(tables_in_schema, row["table"].(string))
+			}
+			//fmt.Println("tables_in_schema:", tables_in_schema)
+			for _, table := range tables {
+				if !app.contains(tables_in_schema, table) {
+					tables_not_in_schema = append(tables_not_in_schema, table)
+					//fmt.Printf("Index: %d, Name: %s\n", _, table)
+					// PUT IT
+					res, _, err := newDB.TableSchema(params, table.(string), _database, _extra_conf)
+					if err != nil {
+						fmt.Printf("%s\n", err)
+					}
+					if len(*res) > 0 {
+						results := *res
+						//fmt.Println(results[0])
+						var keys []interface{}
+						// Iterate over the map and collect the keys
+						for key := range results[0] {
+							keys = append(keys, key)
+						}
+						cols := app.joinSlice(keys, `", "`)
+						vals := app.joinSlice(keys, `, :`)
+						// Loop through the slice of maps and insert each record
+						_ins_query := fmt.Sprintf(`INSERT INTO table_schema ("%s") VALUES (:%s)`, cols, vals)
+						//fmt.Println(query)
+						for _, row := range results {
+							_, err := app.db.ExecuteNamedQuery(_ins_query, row)
+							if err != nil {
+								fmt.Println("Error inserting table_schema:", err)
+							}
+						}
+					}
+				}
+			}
+			if len(tables_not_in_schema) > 0 {
+				_table_schema, _, err = app.db.QueryMultiRows(query, args...)
+				if err != nil {
+					fmt.Println("TABLE SCHEMA CREATED:", query, err)
+					return map[string]interface{}{
+						"success": false,
+						"msg":     fmt.Sprintf("%s", err),
+					}
+				}
+			}
+			//fmt.Println("tables_not_in_schema:", tables_not_in_schema)
+		}
+		table_fields := map[string]interface{}{}
+		for _, row := range *_table_schema {
+			if _, ok := table_schema[row["table"].(string)]; !ok {
+				table_schema[row["table"].(string)] = map[string]interface{}{}
+			}
+			if _, ok := table_fields[row["table"].(string)]; !ok {
+				table_fields[row["table"].(string)] = []interface{}{}
+			}
+			_row := row
+			/*if _, ok := table_schema[row["table"].(string)].(map[string]interface{})["fields"]; !ok {
+				table_schema[row["table"].(string)].(map[string]interface{})["fields"] = map[string]interface{}{}
+			}
+			table_schema[row["table"].(string)].(map[string]interface{})["fields"].(map[string]interface{})[row["field"].(string)] = row*/
+			comment := _row["comment"]
+			if _, ok := translate_table_field[row["table"].(string)]; !ok {
+			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)]; !ok {
+			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)].(map[string]interface{})["field_transl_desc"]; ok {
+				comment = translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)].(map[string]interface{})["field_transl_desc"]
+			}
+			_row["comment"] = comment
+			_row["name"] = _row["field"]
+			if _, ok := _row["fk"]; !ok {
+			} else if app.contains([]interface{}{1, true, "true", "True", "TRUE", "T", "1"}, _row["fk"]) {
+				referred_columns_desc := ""
+				if _, ok := table_fields[row["referred_table"].(string)].([]interface{}); ok {
+					referred_columns_desc = table_fields[row["referred_table"].(string)].([]interface{})[1].(string)
+				}
+				_row["ref"] = map[string]interface{}{
+					"referred_table":        _row["referred_table"],
+					"referred_column":       _row["referred_column"],
+					"referred_columns_desc": referred_columns_desc,
+				}
+			}
+			table_schema[row["table"].(string)].(map[string]interface{})[row["field"].(string)] = _row
+			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]interface{}), row["field"])
+		}
+		// table form customizations custom_form
+		query = `SELECT * 
+		FROM custom_form
+		WHERE db = ?
+			AND (user_id = ? OR user_id = 1)
+			AND app_id = ?
+			AND "table" IN (?) 
+			AND excluded = FALSE
+		ORDER BY user_id DESC, custom_form_id DESC`
+		queryParams = []interface{}{_database, user_id, app_id}
+		if allTables {
+			query = `SELECT * 
+			FROM custom_form
+			WHERE db = ?
+				AND (user_id = ? OR user_id = 1)
+				AND app_id = ?
+				AND excluded = FALSE
+			ORDER BY user_id DESC, custom_form_id DESC`
+		} else {
+			queryParams = append(queryParams, tables)
+		}
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
+		results, _, err = app.db.QueryMultiRows(query, args...)
+		// fmt.Println("custom_form:", queryParams, results)
+		if err != nil {
+			fmt.Println("custom_form:", query, err)
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		custom_form := map[string]interface{}{}
+		for _, row := range *results {
+			// fmt.Println("custom_form:", row["table"].(string))
+			custom_form[row["table"].(string)] = row
+		}
+		// table table customizations custom_table
+		query = `SELECT * 
+		FROM custom_table
+		WHERE db = ?
+			AND (user_id = ? OR user_id = 1)
+			AND app_id = ?
+			AND "table" IN (?) 
+			AND excluded = FALSE
+		ORDER BY user_id DESC, custom_table_id DESC`
+		queryParams = []interface{}{_database, user_id, app_id}
+		if allTables {
+			query = `SELECT * 
+			FROM custom_table
+			WHERE db = ?
+				AND (user_id = ? OR user_id = 1)
+				AND app_id = ?
+				AND excluded = FALSE
+			ORDER BY user_id DESC, custom_table_id DESC`
+		} else {
+			queryParams = append(queryParams, tables)
+		}
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
+		results, _, err = app.db.QueryMultiRows(query, args...)
+		if err != nil {
+			fmt.Println("custom_table:", query, err)
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		custom_table := map[string]interface{}{}
+		for _, row := range *results {
+			custom_table[row["table"].(string)] = row
+		}
+		// return
+		for _, row := range *_table {
+			comment := row["table_desc"]
+			if _, ok := translate_table[row["table"].(string)]; ok {
+				comment = translate_table[row["table"].(string)].(map[string]interface{})["table_transl_desc"]
+			}
+			var pk string
+			if _, ok := table_schema[row["table"].(string)]; ok {
+				for key, value := range table_schema[row["table"].(string)].(map[string]interface{}) {
+					if properties, ok := value.(map[string]interface{}); ok {
+						// Check if the "pk" field exists and is true
+						if _pk, found := properties["pk"]; found && _pk == true {
+							pk = key
+							break
+						}
+					}
+				}
+			}
+			table_by_id[row["table_id"].(int64)] = row
+			data[row["table"].(string)] = map[string]interface{}{
+				"table_id":              row["table_id"],
+				"table":                 row["table"],
+				"comment":               comment,
+				"database":              row["db"],
+				"_table":                row,
+				"fields":                table_schema[row["table"].(string)],
+				"custom_table":          custom_table[row["table"].(string)],
+				"custom_form":           custom_form[row["table"].(string)],
+				"translate_table":       translate_table[row["table"].(string)],
+				"translate_table_field": translate_table_field[row["table"].(string)],
+				"pk":                    pk,
+				"fields_order":          table_fields[row["table"].(string)],
+			}
+		}
+	}
+	msg, _ := app.i18n.T("success", map[string]interface{}{})
+	return map[string]interface{}{
+		"success":     true,
+		"msg":         msg,
+		"data":        data,
+		"table_by_id": table_by_id,
+	}
+}
+
+// Generates CREATE TABLE SQL statements with comments, adapting to SQL dialects
+func generateCreateTableSQL(driver, tableName, tableComment string, fields []map[string]interface{}) string {
+	var schema strings.Builder
+	schema.WriteString(fmt.Sprintf("CREATE TABLE %s (\n", tableName))
+
+	// Collect foreign keys and comments
+	var foreignKeys []string
+	var columnComments []string
+
+	// Generate column definitions based on the driver
+	for _, field := range fields {
+		name := field["name"].(string)
+		columnType := getColumnType(driver, field)
+
+		// Primary key, autoincrement, nullable, and unique adjustments
+		primaryKey := getPrimaryKey(driver, field)
+		autoincrement := getAutoIncrement(driver, field)
+		nullable := getNullable(driver, field)
+		unique := getUnique(driver, field)
+
+		// Handle default values
+		defaultValue := getDefaultValue(driver, field)
+
+		// Handle foreign keys
+		if fk, ok := field["foreign_key"].(string); ok {
+			foreignKeys = append(foreignKeys, fmt.Sprintf("FOREIGN KEY (%s) REFERENCES %s", name, fk))
+		}
+
+		// Collect comments for columns
+		if cmt, ok := field["comment"].(string); ok {
+			columnComments = append(columnComments, getColumnComment(driver, tableName, name, cmt))
+		}
+
+		// Build the column definition string
+		columnDef := fmt.Sprintf("    %s %s%s%s%s%s%s", name, columnType, primaryKey, autoincrement, nullable, unique, defaultValue)
+		schema.WriteString(columnDef + ",\n")
+	}
+
+	// Add foreign key constraints
+	for _, fk := range foreignKeys {
+		schema.WriteString("    " + fk + ",\n")
+	}
+
+	// Trim the trailing comma and add closing parenthesis
+	schemaStr := strings.TrimRight(schema.String(), ",\n") + "\n);\n"
+
+	// Add table comment and column comments if supported by the driver
+	if driver == "postgres" || driver == "mysql" {
+		if tableComment != "" {
+			schemaStr += getTableComment(driver, tableName, tableComment)
+		}
+		for _, colComment := range columnComments {
+			schemaStr += colComment + "\n"
+		}
+	}
+
+	return schemaStr
+}
+
+// Returns the appropriate SQL column type based on driver and field type
+func getColumnType(driver string, field map[string]interface{}) string {
+	columnType := field["type"].(string)
+	if nchar, ok := field["nchar"].(int); ok {
+		columnType += fmt.Sprintf("(%d)", nchar)
+	}
+
+	// Map SQL types per dialect
+	switch driver {
+	case "postgres":
+		if columnType == "INTEGER" && field["autoincrement"] == true {
+			return "SERIAL"
+		}
+	case "mysql":
+		if columnType == "INTEGER" && field["autoincrement"] == true {
+			return "INT AUTO_INCREMENT"
+		}
+	case "sqlserver":
+		if columnType == "INTEGER" && field["autoincrement"] == true {
+			return "INT IDENTITY(1,1)"
+		}
+	}
+	return columnType
+}
+
+// Primary key syntax adjustments
+func getPrimaryKey(driver string, field map[string]interface{}) string {
+	if pk, ok := field["primary_key"].(bool); ok && pk {
+		if driver == "mysql" || driver == "sqlserver" {
+			return " PRIMARY KEY"
+		}
+	}
+	return ""
+}
+
+// Autoincrement syntax adjustments per driver
+func getAutoIncrement(driver string, field map[string]interface{}) string {
+	if field["autoincrement"] == true {
+		if driver == "sqlite3" {
+			return " AUTOINCREMENT"
+		}
+	}
+	return ""
+}
+
+// Nullable syntax adjustments per driver
+func getNullable(driver string, field map[string]interface{}) string {
+	if nullable, ok := field["nullable"].(bool); ok && !nullable {
+		return " NOT NULL"
+	}
+	return ""
+}
+
+// Unique constraint syntax adjustments
+func getUnique(driver string, field map[string]interface{}) string {
+	if unique, ok := field["unique"].(bool); ok && unique {
+		return " UNIQUE"
+	}
+	return ""
+}
+
+// Default value handling based on driver
+func getDefaultValue(driver string, field map[string]interface{}) string {
+	if defaultVal, ok := field["default"]; ok {
+		switch v := defaultVal.(type) {
+		case bool:
+			return fmt.Sprintf(" DEFAULT %t", v)
+		case string:
+			return fmt.Sprintf(" DEFAULT '%s'", v)
+		case int, float64:
+			return fmt.Sprintf(" DEFAULT %v", v)
+		}
+	}
+	return ""
+}
+
+// Generate column comment if supported by the driver
+func getColumnComment(driver, tableName, columnName, comment string) string {
+	switch driver {
+	case "postgres", "mysql":
+		return fmt.Sprintf("COMMENT ON COLUMN %s.%s IS '%s';", tableName, columnName, comment)
+	}
+	return ""
+}
+
+// Generate table comment if supported by the driver
+func getTableComment(driver, tableName, comment string) string {
+	switch driver {
+	case "postgres", "mysql":
+		return fmt.Sprintf("COMMENT ON TABLE %s IS '%s';\n", tableName, comment)
+	}
+	return ""
+}
+
+func (app *application) save_table_schema(params map[string]interface{}) map[string]interface{} {
+	//fmt.Println(params)
+	//user_id := int(params["user"].(map[string]interface{})["user_id"].(float64))
+	//role_id := int(params["user"].(map[string]interface{})["role_id"].(float64))
+	//var app_id int
+	//if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
+	//	app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	//}
+	// DATABASE
+	_extra_conf := map[string]interface{}{
+		"driverName": app.config.db.driverName,
+		"dsn":        app.config.db.dsn,
+	}
+	//fmt.Println(lang)
+	var newDB etlx.DBInterface
+	newDB, driver, _database, err := app.db.FromParams(params, _extra_conf)
+	//fmt.Println("FromParams DB:", driver, _database)
+	if err != nil {
+		return map[string]interface{}{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	if driver == "duckdb" {
+		_db_ext := filepath.Ext(_database)
+		// fmt.Println(_database, _db_ext)
+		if _db_ext != "" {
+			_db_ext = ""
+		}
+		newDB, err = etlx.NewDuckDB(fmt.Sprintf(`database/%s%s`, _database, _db_ext))
+		if err != nil {
+			return map[string]interface{}{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		defer newDB.Close()
+	}
+	_data := map[string]interface{}{}
+	if _, ok := params["data"]; !ok {
+		msg, _ := app.i18n.T("no_data", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	} else if _, ok := params["data"].(map[string]interface{}); ok {
+		_data = params["data"].(map[string]interface{})
+	}
+	table_metadata := map[string]interface{}{}
+	if _, ok := _data["table_metadata"]; !ok {
+		msg, _ := app.i18n.T("no_table_metadata", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	} else if _, ok := _data["table_metadata"].(map[string]interface{}); !ok {
+		msg, _ := app.i18n.T("no_table_metadata", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	table_metadata = _data["table_metadata"].(map[string]interface{})
+	name := ""
+	if _, ok := table_metadata["name"]; !ok {
+		msg, _ := app.i18n.T("no_table_name", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	} else if _, ok := table_metadata["name"].(string); !ok {
+		msg, _ := app.i18n.T("no_table_name", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	name = table_metadata["name"].(string)
+	comment := ""
+	if _, ok := table_metadata["comment"]; !ok {
+		msg, _ := app.i18n.T("no_table_comment", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	} else if _, ok := table_metadata["comment"].(string); !ok {
+		msg, _ := app.i18n.T("no_table_comment", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	comment = table_metadata["comment"].(string)
+	fields := []map[string]interface{}{}
+	if _, ok := table_metadata["fields"]; !ok {
+		msg, _ := app.i18n.T("no_fields", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	} else if _, ok := table_metadata["fields"].([]map[string]interface{}); !ok {
+		msg, _ := app.i18n.T("no_fields", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	fields = table_metadata["fields"].([]map[string]interface{})
+	if len(fields) < 2 {
+		msg, _ := app.i18n.T("table_must_have_2_or_more_fields", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	core_tables := app.sliceStrs2SliceInterfaces(strings.Split(app.config.core_tables, ","))
+	if app.contains(core_tables, name) {
+		msg, _ := app.i18n.T("change_core_tables_not_allowed", map[string]interface{}{})
+		return map[string]interface{}{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	/*table_id := interface{}(nil)
+	if _, ok := table_metadata["table_id"]; ok {
+		table_id = table_metadata["table_id"]
+	}
+	table_org_name := ""
+	if _, ok := table_metadata["table_org_name"]; ok {
+		table_org_name = table_metadata["table_org_name"].(string)
+	} else {
+		table_org_name = name
+	}*/
+	schema := generateCreateTableSQL(newDB.GetDriverName(), name, comment, fields)
+	fmt.Println(schema)
+	/*/ Map for SQLAlchemy types to SQL types
+	var saTypesToSQL = map[string]string{
+		"Integer":  "INTEGER",
+		"String":   "VARCHAR",
+		"Text":     "TEXT",
+		"Date":     "DATE",
+		"DateTime": "DATETIME",
+		"Time":     "TIME",
+		"Float":    "DECIMAL",
+		"Boolean":  "BOOLEAN",
+	}*/
+	msg, _ := app.i18n.T("sql-generated-to-be validated", map[string]interface{}{})
+	return map[string]interface{}{
+		"success": false,
+		"msg":     msg,
+	}
+}

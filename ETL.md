@@ -1,0 +1,229 @@
+# ETL
+
+The [`httpfs`](https://duckdb.org/docs/extensions/httpfs/s3api, "httpfs") extension supports reading/writing/globbing files on object storage servers using the S3 API. S3 offers a standard API to read and write to remote files (while regular http servers, predating S3, do not offer a common write API). DuckDB conforms to the S3 API, that is now common among industry storage providers.
+The preferred way to configure and authenticate to S3 endpoints is to use secrets. Multiple secret providers are available
+
+```yaml metadata
+name: S3_EXTRACT
+description: "Example extrating from S3 to a local sqlite3 file"
+connection: "duckdb:"
+active: true
+```
+
+## VERSION
+
+```yaml metadata
+name: VERSION
+description: "DDB Version"
+table: VERSION
+load_conn: "duckdb:"
+load_before_sql: "ATTACH 'database/S3_EXTRACT.db' AS DB (TYPE SQLITE)"
+load_sql: 'CREATE OR REPLACE TABLE DB."<table>" AS SELECT version() AS "VERSION";'
+load_after_sql: "DETACH DB;"
+rows_sql: 'SELECT COUNT(*) AS "nrows" FROM DB."<table>"'
+active: true
+```
+
+## train_services
+
+```yaml metadata
+name: train_services
+description: "train_services"
+table: train_services
+load_conn: "duckdb:"
+load_before_sql:
+  - load_extentions
+  - attach_db
+load_sql: load_query
+load_after_sql: detach_db
+drop_sql: drop_sql
+clean_sql: clean_sql
+rows_sql: nrows
+active: false
+```
+
+```sql
+-- load_extentions
+INSTALL sqlite;
+LOAD sqlite;
+INSTALL httpfs;
+LOAD httpfs;
+```
+
+```sql
+-- attach_db
+ATTACH 'database/S3_EXTRACT.db' AS "DB" (TYPE SQLITE)
+```
+
+```sql
+-- detach_db
+DETACH "DB";
+```
+
+```sql
+-- load_query
+CREATE OR REPLACE TABLE "DB"."<table>" AS
+FROM 's3://duckdb-blobs/train_services.parquet';
+```
+
+```sql
+-- drop_sql
+DROP TABLE IF EXISTS "DB"."<table>";
+```
+
+```sql
+-- clean_sql
+DELETE FROM "DB"."<table>";
+```
+
+```sql
+-- nrows
+SELECT COUNT(*) AS "nrows" FROM "DB"."<table>"
+```
+
+## S3_EXTRACT
+
+```yaml metadata
+name: S3_EXTRACT
+description: "Example extrating from S3 to a local sqlite3 file"
+table: S3_EXTRACT
+load_conn: "duckdb:"
+load_before_sql:
+  - load_extentions
+  - attach_db
+  - create_S3_token
+load_sql: load_query
+load_after_sql: detach_db
+drop_sql: drop_sql
+clean_sql: clean_sql
+rows_sql: nrows
+active: false
+```
+
+```sql
+-- load_extentions
+INSTALL httpfs;
+LOAD httpfs;
+```
+
+```sql
+-- attach_db
+ATTACH 'database/S3_EXTRACT.db' AS "DB" (TYPE SQLITE)
+```
+
+Example with a [Minio](https://min.io/) local instance
+
+```sql
+-- create_S3_token
+CREATE SECRET S3_token (
+   TYPE S3,
+   KEY_ID '@S3_KEY_ID',
+   SECRET '@S3_SECRET',
+   ENDPOINT '127.0.0.1:3000',
+   URL_STYLE 'path'
+);
+```
+
+```sql
+-- detach_db
+DETACH "DB";
+```
+
+```sql
+-- load_query
+CREATE OR REPLACE TABLE "DB"."<table>" AS
+SELECT * 
+FROM 's3://uploads/flights.csv';
+```
+
+```sql
+-- drop_sql
+DROP TABLE IF EXISTS "DB"."<table>";
+```
+
+```sql
+-- clean_sql
+DELETE FROM "DB"."<table>";
+```
+
+```sql
+-- nrows
+SELECT COUNT(*) AS "nrows" FROM "DB"."<table>"
+```
+
+# LOGS
+
+```yaml metadata
+name: LOGS
+description: "Example saving logs"
+table: etlx_logs
+connection: "duckdb:"
+before_sql:
+  - load_extentions
+  - attach_db
+  - 'USE DB;'
+save_log_sql: load_logs
+save_on_err_patt: '(?i)table.+does.+not.+exist|does.+not.+have.+column.+with.+name'
+save_on_err_sql:
+  - create_logs
+  - get_dyn_queries[create_columns_missing]
+  - load_logs
+after_sql:
+  - 'USE memory;'
+  - detach_db
+tmp_dir: database
+active: true
+```
+
+```sql
+-- load_extentions
+INSTALL Sqlite;
+LOAD Sqlite;
+INSTALL json;
+LOAD json;
+```
+
+```sql
+-- attach_db
+ATTACH 'database/S3_EXTRACT.db' AS "DB" (TYPE SQLITE)
+```
+
+```sql
+-- detach_db
+DETACH "DB";
+```
+
+```sql
+-- load_logs
+INSERT INTO "DB"."<table>" BY NAME
+SELECT * 
+FROM read_json('<fname>');
+```
+
+```sql
+-- create_logs
+CREATE TABLE IF NOT EXISTS "DB"."<table>" AS
+SELECT * 
+FROM read_json('<fname>');
+```
+
+```sql
+-- create_columns_missing
+WITH source_columns AS (
+    SELECT column_name, column_type 
+    FROM (DESCRIBE SELECT * FROM read_json('<fname>'))
+),
+destination_columns AS (
+    SELECT column_name, data_type as column_type
+    FROM duckdb_columns 
+    WHERE table_name = '<table>'
+),
+missing_columns AS (
+    SELECT s.column_name, s.column_type
+    FROM source_columns s
+    LEFT JOIN destination_columns d ON s.column_name = d.column_name
+    WHERE d.column_name IS NULL
+)
+SELECT 'ALTER TABLE "DB"."<table>" ADD COLUMN "' || column_name || '" ' || column_type || ';' AS query
+FROM missing_columns;
+```

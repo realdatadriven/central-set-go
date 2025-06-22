@@ -1,0 +1,12 @@
+{{define "subject"}}Runtime error for {{.BaseURL}}{{end}}
+
+{{define "plainBody"}}
+Error message: {{.Message}}
+
+Request method: {{.RequestMethod}}
+Request URL: {{.RequestURL}}
+
+Stack trace: 
+
+{{.Trace}}
+{{end}}

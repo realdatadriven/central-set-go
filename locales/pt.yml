@@ -1,0 +1,77 @@
+file-success: Ficheiro {{.File}} uploaded com successo!
+no-controller: Controller não especificado!
+no-action: Action não especificado!
+controller-not-found: Controller {{.ctrl}} não exist ainda, ou ainda não foi mapeado!
+action-not-found: Action {{.actn}} não exist ainda, ou ainda não foi mapeado!
+unexpected-error: Erro inesperado {{.err}}
+no-data-recivied: Nenhum dado recebido!
+no-user-recivied: Nenhum user recebido!
+no-pass-recivied: Nenhum password recebido!
+user-pass-incorrect: User ou password incorrectos!
+user-conflict: Conflito de utilizador!
+login-success: Login efetuado com successo!
+new_pass_is_required: New Password is required!
+new_pass_old_pass: New Password must be diferent from old password
+new_pass_again_match: New Password and Confirm New Password must match
+password_min_length: Password deve ter minimo de 8 caracteres!
+pass_must_have_upper: 'Password deve ter pelo menus 1 caracter maiscula ex. A,B,C,...!'
+pass_must_have_number: 'Password deve ter pelo menus 1 caracter numerico ex. 1,2,3,...!'
+pass_must_have_special: 'Password deve ter pelo menus 1 caracter especial ex. !,#,$,%,&,...!'
+alter-pass-success: Password alterado com successo!
+user-deactivated: 'User {{.user}} foi desativado, favor contactar o admin!'
+user-excluded: 'User {{.user}} foi removido, favor contactar o admin!'
+invalid-token: "O token não é valido (Err: {{.err}})!"
+success: Operação executada com successo!
+field-required: 'O campo "{{.field}}" é de preenchimento obrigatório!'
+validation-errors: 'Ocorreram {{.n}} erro(s) na validação dos campos, favor confirir o preenchimento do formulário!'
+no-table: Nenhuma tabela recebida
+no-data: Nenhum dado recebido
+no-class: Objecto não especificado!
+no-method: Metodo não especificado!
+class-not-found: Objecto {{.ctrl}} não existe ainda, ou ainda não foi mapeado!
+method-not-found: Objecto {{.actn}} não existe ainda, ou ainda não foi mapeado!
+extention-not-suported: 'Extenção {{.ext}} não é suportada!'
+no_table_metadata: 'Sem metadados!'
+no_table_name: 'Sem nome da tabela!'
+no_table_comment: 'Sem comentário!'
+no_fields: 'Sem campos / colunas!'
+table_must_have_2_or_more_fields: 'A tabela deve ter pelo menos 2 campos, id e descrição!'
+change_core_tables_not_allowed: 'Alteração das tabelas core, não é permitida atrvéz desta interface!'
+no-table-access: Sem acesso a tabela "{{.table}}", favor contatar o admin!
+no-table-action-access: Sem premissão "{{.action}}" na tabela tabela "{{.table}}", favor contatar o admin!
+access-problem: Problemas na verificação de permissões, favor contatar o admin!
+row-level-access: The table "{{.table}}" requires row level access, and you don't have "{{.action}}" permissions of none of its records, please contact the admin!
+fk-row-level-access: The table "{{.table}}" requires row level access, and the table "{{.table_org}}" has fields that refers to it, and you don't have "{{.action}}" permissions of none of its records, please contact the admin!
+row-level-access-row-id: The table "{{.table}}" requires row level access, and you don't have "{{.action}}" permission on the record row-id = {{.row_id}}, please contact the admin!
+fk-row-level-access-row-id: The table "{{.table}}" requires row level access, and the table "{{.table_org}}" has fields that refers to it, and you don't have "{{.action}}" permissions of none of "{{.table}}" on the record row-id = {{.row_id}}, please contact the admin!
+file-not-founded: Ficheiro "{{.fname}}" não encontrado!
+type-not-suported-yet: Tipo extração "{{._type}}" não existe ou não é suportado ainda!
+extract-failed: Extração falhou, nenhum ficheiro ou configuração encontrada!
+no-rows-returned: Sem registos!
+date-ref-form-diff-file: The date submited from the form "{{.dt_form}}" is different from the field "{{.dt_field}}" ({{.dt_file}})!
+date-valid-req-ref-field-1-date: This type of validation requires the date field "{{.dt_field}}" to be a single date ({{.dt_file}})!
+data-date-ref-exists: The table {{.table}} already has data {{.dt_field}} = {{.dt_form}}, please check your config to avoid duplications!
+run-query-string-not-allowed: This type of query is not allowed, please contact the admin!
+invalid-query: The query is not valid {{.query}}!
+query-not-allowed: The query has some keyword / comamnd marked as not allowed {{.match}}!
+no-query-string: No query string was received!
+output-failed: Transformação falhou {{.name}}!
+output-fields-failed: Erro ao tentar trazer os campos, verifique a parametrização ou a permissão a configuração do output "{{.name}}" ("{{.msg}}")!
+output-no-fields: Nenhum campo / configuração retornado pelo output "{{.name}}" ("{{.msg}}")!
+output-type-not-suported: Tipo de output não suportado no "{{.name}}"!
+reconc-detail-failed: Erro ao tentar trazer os detalhes, verifique a parametrização ou a permissão a configuração "{{.name}}" ("{{.msg}}")!
+reconc-no-detail: Nenhum detalhe / configuração retornado, "{{.name}}" ("{{.msg}}")!
+input-not-active: O input "{{.name}}" não está ativo!
+output-not-active: O output "{{.name}}" não está ativo!
+reconc-not-active: O reconc "{{.name}}" não está ativo!
+export-not-active: O export "{{.name}}" não está ativo!
+notify-not-active: O notify "{{.name}}" não está ativo!
+err-file-proc-no-results: Erro ao processar o ficheiro, não foi retornado nenhum registo!
+error-getin-map: Erro ao tentar obter o mapa ({{.name}})!
+duckdb-extention-faild: Duckdb extention ({{.extention}}) falhou ({{.err}})!
+duckdb-pragma-conf-faild: Duckdb pragma / conf ({{.pconf}}) falhou ({{.err}})!
+duckdb-valid-faild: Duckdb query de validação ({{.sql}}) falhou ({{.err}})!
+duckdb-atach-faild: Duckdb attach file ({{.sql}}) falhou ({{.err}})!
+duckdb-import-faild: Duckdb query ({{.sql}}) falhou ({{.err}})!
+dt-file-no-match-dt-form: A data do nome do ficheiro "{{.file_ref}}" não é o mesmo que a data "{{.date_ref}}" submitida!
+duckdb-register-filesystem-faild: Duckdb fileSystem ({{.fs}}) falhou ({{.err}})!
