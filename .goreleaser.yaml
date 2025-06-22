@@ -22,31 +22,34 @@ archives:
       - LICENSE
       - README.md
       - .env-example.txt
-      - static
-      - locales
-
+      - static/**
+      - locales/**
     replacements:
+      amd64: amd64
+      arm64: arm64
       windows: windows
       darwin: macos
+
+release:
+  github:
+    # These are now inside `release.github`
+    name_template: "{{ .Tag }}"
+    prerelease: true
+    draft: false
 
 changelog:
   use: github
 
-release:
-  github:
-    draft: false
-    prerelease: true
-
-dockers:
-  - image_templates:
-      - realdatadriven/cs:latest
-      - realdatadriven/cs:{{ .Tag }}
-    dockerfile: ./Dockerfile
-    goos: linux
-    goarch: amd64
-    build_flag_templates:
-      - --platform=linux/amd64
-    use: buildx
-    skip_push: true  # set to true if you want to test builds locally first
-    build_args:
-      VERSION: "{{ .Tag }}"
+#dockers:
+#  - image_templates:
+#      - realdatadriven/cs:latest
+#      - realdatadriven/cs:{{ .Tag }}
+#    dockerfile: ./Dockerfile
+#    goos: linux
+#    goarch: amd64
+#    build_flag_templates:
+#      - --platform=linux/amd64
+#    use: buildx
+#    skip_push: true  # set to true if you want to test builds locally first
+#    build_args:
+#      VERSION: "{{ .Tag }}"
