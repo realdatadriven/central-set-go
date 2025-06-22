@@ -121,7 +121,7 @@ The endpoint returns a JWT token that must be included in the Authorization head
 ```json
 {
     "success": true,
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjQtMDgtMjlUMTU6MzY6NTkuMzE4NjE4WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkV1JJWlUudkNYcDR5WG02ZzRFL3FBZWQ1UXB2WTlTVUYyQ2szdWZtUGZjQTguR1l2UHlUMmlcIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNC0wOC0yOVQxNTozNjo1OS4zMTg2MThaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3MzA2MzE3MDguMjA5Njc2NywibmJmIjoxNzI1NDQ3NzA4LjIwOTY3NjcsImlhdCI6MTcyNTQ0NzcwOC4yMDk2NzY3fQ.itMwbI_CwA5FTHaGHBRH5ewucQJ_bpGdNr1MfNDc4hA",
+    "token": "<JWT_TOKEN>",
     "user": {
         "user_id": 1,
         "username": "root",
@@ -303,10 +303,10 @@ Authorization: Bearer <JWT_TOKEN>
 
 **Request Parameters:**
 - `lang`: Language code for response messages
-- `db--.drivername`: Database driver type (sqlite, postgresql, mysql)
-- `db--.dsn`: Database connection string or identifier
+- `db.drivername`: Database driver type (sqlite, postgresql, mysql)
+- `db.dsn`: Database connection string or identifier
 - `data.table`: Target table name for operations
-- `data.table--.`: Array of related tables or fields to include
+- `data.table`: Array of related tables or fields to include
 - `app`: Application context information
 
 **Response:**
@@ -417,15 +417,15 @@ Authorization: Bearer <JWT_TOKEN>
 
 **Request Parameters:**
 - `lang`: Language code for response messages
-- `data.distinct--`: Boolean flag to return only distinct records
-- `data.join--`: Join strategy ("none", "all", or specific join configuration)
+- `data.distinct`: Boolean flag to return only distinct records
+- `data.join`: Join strategy ("none", "all", or specific join configuration)
 - `data.table`: Target table name for the query
 - `data.limit`: Maximum number of records to return (pagination)
 - `data.offset`: Number of records to skip (pagination)
-- `data.fields--`: Array of specific fields to return (if not specified, returns all fields)
-- `data.filters--`: Array of filter conditions with field, condition, and value
+- `data.fields`: Array of specific fields to return (if not specified, returns all fields)
+- `data.filters`: Array of filter conditions with field, condition, and value
 - `data.order_by`: Array of sorting specifications with field and order direction
-- `data.pattern--`: Text pattern for full-text search across applicable fields
+- `data.pattern`: Text pattern for full-text search across applicable fields
 - `app`: Application context information
 
 **Filter Conditions:**
@@ -530,7 +530,7 @@ Returns the created record with any auto-generated fields (such as IDs and times
         "created_at": "2024-10-19T14:30:00.000Z",
         "updated_at": "2024-10-19T14:30:00.000Z"
     },
-    "message": "Record created successfully"
+    "msg": "Record created successfully"
 }
 ```
 
@@ -598,7 +598,7 @@ Returns the updated record with current field values and updated timestamps. The
         "created_at": "2022-07-22T10:32:00.791024",
         "updated_at": "2024-10-19T14:35:00.000Z"
     },
-    "message": "Record updated successfully"
+    "msg": "Record updated successfully"
 }
 ```
 
@@ -657,7 +657,7 @@ Confirms the deletion operation and provides information about the affected reco
 ```json
 {
     "success": true,
-    "message": "Record deleted successfully",
+    "msg": "Record deleted successfully",
     "deleted_record": {
         "lang_id": 3,
         "excluded": true,
@@ -686,7 +686,7 @@ Authorization: Bearer <JWT_TOKEN>
         "db": "DB.duckdb",
         "limit": 10,
         "offset": 0,
-        "query": "select * from \"APOCR\""
+        "query": "select * from \"table\""
     },
     "app": {
         "app_id": 1,
@@ -806,7 +806,7 @@ Returns file upload confirmation with file metadata, storage location, and proce
     "success": true,
     "file": {
         "file_id": "8a158fac-f01b-4ad0-a87b-0d7551f034d1",
-        "original_name": "Treasury_Projection_BI.20240829.xlsx",
+        "original_name": "File_Name.20240829.xlsx",
         "stored_name": "8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv",
         "file_size": 1048576,
         "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -814,7 +814,7 @@ Returns file upload confirmation with file metadata, storage location, and proce
         "temporary": true,
         "path": "/uploads/temp/"
     },
-    "message": "File uploaded successfully"
+    "msg": "File uploaded successfully"
 }
 ```
 
@@ -851,12 +851,12 @@ Authorization: Bearer <JWT_TOKEN>
         "data": {
             "date_ref": "2024-09-17",
             "date_ref_": ["2024-08-29"],
-            "file_": "Treasury_Projection_BI.20240829.xlsx",
+            "file_": "file_name.20240829.xlsx",
             "file__": "8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv",
             "database": "sqlite_test.duckdb",
             "name": "test",
             "save_only_temp": false,
-            "destination_table": "BALANCETE",
+            "destination_table": "table_name",
             "check_ref_date": false,
             "ref_date_field": "file_ref",
             "etl_rbase_input_conf": {
@@ -871,17 +871,17 @@ Authorization: Bearer <JWT_TOKEN>
                     ],
                     "valid_": [
                         {
-                            "sql": "SELECT * FROM \"<table>\" WHERE BCDTRP={YYYYMMDD} LIMIT 10",
+                            "sql": "SELECT * FROM \"<table>\" WHERE date_field={YYYYMMDD} LIMIT 10",
                             "rule": "throw_if_not_empty",
                             "msg": "The table (<table>) already has the data from the date YYYY/MM/DD"
                         },
                         {
-                            "sql": "SELECT * FROM '<file>' WHERE BCDTRP={YYYYMMDD} LIMIT 10",
+                            "sql": "SELECT * FROM '<file>' WHERE date_field={YYYYMMDD} LIMIT 10",
                             "rule": "throw_if_empty",
                             "msg": "The file (<file>) has no data from the date \"YYYY/MM/DD\""
                         }
                     ],
-                    "sql": "INSERT INTO main.\"<table>\" BY NAME SELECT * FROM DB.\"<table>\" WHERE \"BCDTRP\" = YYYYMMDD"
+                    "sql": "INSERT INTO main.\"<table>\" BY NAME SELECT * FROM DB.\"<table>\" WHERE \"date_field\" = YYYYMMDD"
                 }
             }
         }
@@ -929,20 +929,18 @@ The ETL configuration supports various processing types:
             "date_ref": "2024-09-30",
             "database": "sqlite_test.duckdb",
             "save_only_temp": true,
-            "destination_table": "BALANCETE",
+            "destination_table": "table_name",
             "check_ref_date": false,
-            "ref_date_field": "BCDTRP",
+            "ref_date_field": "date_field",
             "etl_rbase_input_conf": {
                 "type": "odbc-csv-duckdb",
-                "params": {
-                    "odbc_conn": "Driver={iSeries Access ODBC Driver};System=172.21.11.1;Uid=@ENV.USERNAME;Pwd=@ENV.BNK_PASS"
-                },
-                "query": "SELECT CAST(\"BCCCB\" AS INT) AS \"BCCCB\",\"BCDCCB\",\"BCCADC\",\"BCCACC\",\"CTBCSAC\",\"BCCADP\",\"BCCACP\",\"CTBCSAP\",\"BCMOED\",\"BCDTRP\" FROM \"PROUSR0005\".\"$$AAMMDDBI\"",
+                "params": {"odbc_conn": "Driver={...ODBC Driver};System=host;Uid=@USERNAME;Pwd=@PASSWORD" },
+                "query": "SELECT * FROM **",
                 "duckdb": {
                     "extentions": [],
                     "valid": [
                         {
-                            "sql": "SELECT DISTINCT \"BCDTRP\" FROM READ_CSV('<filename>', HEADER = TRUE) WHERE \"BCDTRP\" = '{YYYYMMDD}' LIMIT 10",
+                            "sql": "SELECT DISTINCT \"date_field\" FROM READ_CSV('<filename>', HEADER = TRUE) WHERE \"date_field\" = '{YYYYMMDD}' LIMIT 10",
                             "rule": "throw_if_empty",
                             "msg": "A data na origem (<table>) é diferente de DD/MM/YYYY!"
                         }
@@ -976,25 +974,7 @@ Returns extraction status, processed record counts, validation results, and any 
 ```json
 {
     "success": true,
-    "extraction": {
-        "records_processed": 1500,
-        "records_inserted": 1500,
-        "records_rejected": 0,
-        "processing_time": "00:02:15",
-        "validation_results": [
-            {
-                "rule": "throw_if_empty",
-                "status": "passed",
-                "message": "Data validation successful"
-            }
-        ]
-    },
-    "destination": {
-        "database": "sqlite_test.duckdb",
-        "table": "BALANCETE",
-        "total_records": 15000
-    },
-    "message": "ETL extraction completed successfully"
+    "msg": "ETL extraction completed successfully"
 }
 ```
 
@@ -1010,7 +990,7 @@ Successful API responses include a `success: true` field and relevant data. The 
 {
     "success": true,
     "data": { /* endpoint-specific data */ },
-    "message": "Operation completed successfully",
+    "msg": "Operation completed successfully",
     "metadata": { /* additional information */ }
 }
 ```
@@ -1024,11 +1004,11 @@ Error responses include detailed error information with HTTP status codes and de
     "success": false,
     "error": {
         "code": "VALIDATION_ERROR",
-        "message": "Invalid input data",
+        "msg": "Invalid input data",
         "details": [
             {
                 "field": "username",
-                "message": "Username is required"
+                "msg": "Username is required"
             }
         ]
     }
@@ -1139,7 +1119,7 @@ This command downloads and installs all required dependencies as specified in th
 Once dependencies are installed, you can start the application in development mode:
 
 ```bash
-go run main.go
+go run ./cmd/api
 ```
 
 This command compiles and runs the application with default settings suitable for development and testing. The application will start on the default port (typically 4444) and create necessary database tables if they don't already exist. During the first startup, the application performs initial setup including creating the admin user account and default application configuration.
@@ -1147,7 +1127,7 @@ This command compiles and runs the application with default settings suitable fo
 For production deployments, compile the application to a binary executable:
 
 ```bash
-go build -o central-set-go main.go
+go build -o central-set-go ./cmd/api
 ./central-set-go
 ```
 
@@ -1316,7 +1296,7 @@ For traditional server deployments, compile the application and deploy the binar
 
 **Compilation for Production:**
 ```bash
-CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o central-set-go main.go
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o central-set-go ./cmd/api
 ```
 
 **Systemd Service Configuration:**
