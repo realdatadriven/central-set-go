@@ -26,22 +26,17 @@ archives:
       - .env-example.txt
       - static/**
       - locales/**
-    replacements:
-      amd64: amd64
-      arm64: arm64
-      windows: windows
-      darwin: macos
+    wrap_in_directory: true
 
 release:
+  prerelease: true
+  draft: false
   github:
-    # These are now inside `release.github`
-    name_template: "{{ .Tag }}"
-    prerelease: true
-    draft: false
+    owner: "{{ .RepoOwner }}"
+    name: "{{ .RepoName }}"
 
 changelog:
   use: github
-
 #dockers:
 #  - image_templates:
 #      - realdatadriven/cs:latest
