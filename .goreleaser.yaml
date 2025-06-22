@@ -31,9 +31,7 @@ archives:
 release:
   prerelease: true
   draft: false
-  github:
-    owner: "{{ .RepoOwner }}"
-    name: "{{ .RepoName }}"
+  github: {}
 
 changelog:
   use: github
