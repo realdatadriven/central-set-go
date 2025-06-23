@@ -27,7 +27,6 @@ jobs:
           mkdir -p dist/cs-linux-amd64/database
           cp ./LICENSE dist/cs-linux-amd64
           cp ./README.md dist/cs-linux-amd64
-          cp ./.env-example.txt dist/cs-linux-amd64
           cp -r ./static dist/cs-linux-amd64
           cp -r ./locales dist/cs-linux-amd64
 
