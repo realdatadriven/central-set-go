@@ -4,38 +4,57 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build-darwin:
+    runs-on: macos-latest
     steps:
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential gcc g++ unixodbc unixodbc-dev
-
+      # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
         
       - name: Prepare Dist Folder
         run: |
           mkdir -p dist
-          mkdir -p dist/cs-linux-amd64
-          mkdir -p dist/cs-linux-amd64/database
-          cp ./LICENSE dist/cs-linux-amd64
-          cp ./README.md dist/cs-linux-amd64
-          cp -r ./static dist/cs-linux-amd64
-          cp -r ./locales dist/cs-linux-amd64
+          mkdir -p dist/cs-macos-amd64
+          mkdir -p dist/cs-macos-amd64/database
+          cp ./LICENSE dist/cs-macos-amd64
+          cp ./README.md dist/cs-macos-amd64
+          cp -r ./static dist/cs-macos-amd64
+          cp -r ./locales dist/cs-macos-amd64
+          mkdir -p dist/cs-macos-arm64
+          mkdir -p dist/cs-macos-arm64/database
+          cp ./LICENSE dist/cs-macos-arm64
+          cp ./README.md dist/cs-macos-arm64
+          cp -r ./static dist/cs-macos-arm64
+          cp -r ./locales dist/cs-macos-arm64
 
+      # Step 2: Setup Go
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.24'
 
-      - name: Build Linux Binaries
+      # Step 3: Install UnixODBC
+      - name: Install UnixODBC
         run: |
-          CGO_ENABLED=1 go build -o dist/cs-linux-amd64/cs-linux-amd64 ./cmd/api
+          brew install unixodbc
+          brew --prefix unixodbc
 
+      # Step 4: Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          ODBC_PREFIX=$(brew --prefix unixodbc)
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
+          echo "CGO_CFLAGS=-I$ODBC_PREFIX/include" >> $GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$ODBC_PREFIX/lib -lodbc" >> $GITHUB_ENV
+
+      # Step 5: Build the Application
+      - name: Build MacOS Binary
+        run: |
+          go build -o dist/cs-macos-amd64/cs-macos-amd64 ./cmd/api
+          GOARCH=arm64 go build -o dist/cs-macos-arm64/cs-macos-arm64 ./cmd/api
+        
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-binary
+          name: macos-binary
           path: dist/**
