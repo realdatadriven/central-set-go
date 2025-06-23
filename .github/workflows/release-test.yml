@@ -11,26 +11,30 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential gcc g++ unixodbc unixodbc-dev
+
       - name: Checkout Code
         uses: actions/checkout@v3
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.24'
-      - name: Build Linux Binaries
-        run: |
-          mkdir -p dist
-          CGO_ENABLED=1 go build -o dist/cs-linux-amd64 ./cmd/api
+        
       - name: Prepare Dist Folder
         run: |
-          mkdir -p dist/cs-linux-amd64-package
-          mkdir -p dist/database
-          mv dist/cs-linux-amd64 dist/cs-linux-amd64-package
-          cp LICENSE dist/cs-linux-amd64-package
-          cp README.md dist/cs-linux-amd64-package
-          cp .env-example.txt dist/cs-linux-amd64-package
-          cp -r static dist/cs-linux-amd64-package
-          cp -r locales dist/cs-linux-amd64-package
+          mkdir -p dist
+          mkdir -p dist/cs-linux-amd64
+          mkdir -p dist/cs-linux-amd64/database
+          cp ./LICENSE dist/cs-linux-amd64
+          cp ./README.md dist/cs-linux-amd64
+          cp ./.env-example.txt dist/cs-linux-amd64
+          cp -r ./static dist/cs-linux-amd64
+          cp -r ./locales dist/cs-linux-amd64
+
+      - name: Build Linux Binaries
+        run: |
+          CGO_ENABLED=1 go build -o dist/cs-linux-amd64/cs-linux-amd64 ./cmd/api
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
