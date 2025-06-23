@@ -269,12 +269,12 @@ jobs:
       - name: Zip Binaries
         run: |
           zip -r dist/cs-linux-amd64.zip dist/cs-linux-amd64
-          zip -j dist/cs-macos-amd64.zip dist/cs-macos-amd64
-          zip -j dist/cs-windows-amd64.zip dist/cs-windows-amd64.exe
-          zip -j dist/cs-windows-linking-amd64.zip dist/cs-windows-linking-amd64.exe
-          zip -j dist/cs-macos-arm64.zip dist/cs-macos-arm64
-          zip -j dist/cs-windows-arm64.zip dist/cs-windows-arm64.exe
-          zip -j dist/cs-windows-linking-arm64.zip dist/cs-windows-linking-arm64.exe
+          zip -r dist/cs-macos-amd64.zip dist/cs-macos-amd64
+          zip -r dist/cs-windows-amd64.zip dist/cs-windows-amd64.exe
+          zip -r dist/cs-windows-linking-amd64.zip dist/cs-windows-linking-amd64.exe
+          zip -r dist/cs-macos-arm64.zip dist/cs-macos-arm64
+          zip -r dist/cs-windows-arm64.zip dist/cs-windows-arm64.exe
+          zip -r dist/cs-windows-linking-arm64.zip dist/cs-windows-linking-arm64.exe
       #zip -j dist/cs-linux-arm64.zip dist/cs-linux-arm64
       - name: Create Release
         uses: softprops/action-gh-release@v1
