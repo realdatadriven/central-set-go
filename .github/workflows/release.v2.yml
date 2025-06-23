@@ -1,4 +1,4 @@
-name: GoReleaser Build and Release
+name: GoReleaser Cross Platform
 
 on:
   push:
@@ -6,26 +6,50 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  release-linux:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+          args: release --clean --id=linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
+  release-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
         with:
-          go-version: '1.24'
+          fetch-depth: 0
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+          args: release --clean --id=windows
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+  release-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
         with:
-          distribution: goreleaser
-          version: '~> v2'
-          args: release --clean
+          fetch-depth: 0
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+          args: release --clean --id=macos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

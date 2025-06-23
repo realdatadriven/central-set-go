@@ -3,19 +3,30 @@ version: 2
 project_name: cs
 
 builds:
-  - id: cs
+  - id: linux
     main: ./cmd/api
-    env:
-      - CGO_ENABLED=1
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-#      - arm64
+    goos: [linux]
+    goarch: [amd64]
+    env: [CGO_ENABLED=1]
     binary: cs
     ldflags: "-s -w"
+
+  - id: windows
+    main: ./cmd/api
+    goos: [windows]
+    goarch: [amd64]
+    env: [CGO_ENABLED=1]
+    binary: cs
+    ldflags: "-s -w"
+
+  - id: macos
+    main: ./cmd/api
+    goos: [darwin]
+    goarch: [amd64, arm64]
+    binary: cs
+    ldflags: "-s -w"
+    skip: "{{ ne .Env.GOOS `darwin` }}"
+    # ⬆ Skip unless running on a macOS runner
 
 archives:
   - format: zip
@@ -35,6 +46,7 @@ release:
 
 changelog:
   use: github
+
 #dockers:
 #  - image_templates:
 #      - realdatadriven/cs:latest
