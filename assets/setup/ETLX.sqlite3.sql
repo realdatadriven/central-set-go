@@ -1,4 +1,5 @@
 BEGIN TRANSACTION;
+PRAGMA foreign_keys = OFF;
 DROP TABLE IF EXISTS "dashboard_comment";
 CREATE TABLE IF NOT EXISTS "dashboard_comment" (
 	"dashboard_comment_id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -708,4 +709,5 @@ FROM "DB"."etlx_logs"
 WHERE "ref" = ''{YYYY-MM-DD}''
 ```
 ',1,1,3,'2025-03-18T18:51:29.465995658-01:00','2025-03-29 20:46:44.157247059-01:00',0);
+PRAGMA foreign_keys = ON;
 COMMIT;

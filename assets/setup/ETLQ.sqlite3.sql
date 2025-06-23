@@ -1,4 +1,5 @@
 BEGIN TRANSACTION;
+PRAGMA foreign_keys = OFF;
 DROP TABLE IF EXISTS "etl_rb_exp_dtail";
 CREATE TABLE IF NOT EXISTS "etl_rb_exp_dtail" (
 	"etl_rb_exp_dtail_id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -380,4 +381,5 @@ INSERT INTO "input_type" ("input_type_id","input_type","created_at","updated_at"
  (2,'Main','2025-02-27 11:45:28.906263','2025-02-27 11:45:28.906263',0);
 INSERT INTO "periodicity" ("periodicity_id","periodicity","created_at","updated_at","excluded") VALUES (1,'Daily','2025-02-27 11:45:28.906263','2025-02-27 11:45:28.906263',0),
  (2,'Monthly','2025-02-27 11:45:28.906263','2025-02-27 11:45:28.906263',0);
+ PRAGMA foreign_keys = ON;
 COMMIT;
