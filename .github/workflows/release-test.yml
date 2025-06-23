@@ -47,7 +47,6 @@ jobs:
       # Step 7: Build the Application
       - name: Build Windows Binary
         run: |
-          mkdir dist
           go build -o dist/cs-windows-amd64/cs-windows-amd64.exe ./cmd/api
           echo "GOARCH=arm64" >> $env:GITHUB_ENV
           go build -o dist/cs-windows-arm64/cs-windows-arm64.exe ./cmd/api
