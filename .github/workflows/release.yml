@@ -1,7 +1,9 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build-linux:
@@ -100,6 +102,22 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
+    
+      - name: Prepare Dist Folder
+        run: |
+          mkdir -p dist
+          mkdir -p dist/cs-windows-linking-amd64
+          mkdir -p dist/cs-windows-linking-amd64/database
+          cp ./LICENSE dist/cs-windows-linking-amd64
+          cp ./README.md dist/cs-windows-linking-amd64
+          cp -r ./static dist/cs-windows-linking-amd64
+          cp -r ./locales dist/cs-windows-linking-amd64
+          mkdir -p dist/cs-windows-linking-arm64
+          mkdir -p dist/cs-windows-linking-arm64/database
+          cp ./LICENSE dist/cs-windows-linking-arm64
+          cp ./README.md dist/cs-windows-linking-arm64
+          cp -r ./static dist/cs-windows-linking-arm64
+          cp -r ./locales dist/cs-windows-linking-arm64
 
       # Step 2: Set up Go environment
       - name: Setup Go
@@ -148,21 +166,20 @@ jobs:
       # Step 7: Build the Application
       - name: Build Windows Binary
         run: |
-          mkdir dist
-          go build -o dist/cs-windows-linking-amd64.exe ./cmd/api
+          go build -o dist/cs-windows-linking-amd64/cs-windows-linking-amd64.exe ./cmd/api
           echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
           echo "CC=x86_64-w64-mingw32-gcc" >> $env:GITHUB_ENV
           echo "CGO_CFLAGS=-I$(Get-Location)\duckdbarm64\" >> $env:GITHUB_ENV
           echo "CGO_LDFLAGS=-L$(Get-Location)\duckdbarm64\ -lduckdb" >> $env:GITHUB_ENV
           echo "GOARCH=arm64" >> $env:GITHUB_ENV
-          go build -o dist/cs-windows-linking-arm64.exe ./cmd/api
-      #go build -tags=duckdb_use_lib -o dist/cs-windows-amd64.exe ./cmd/api
+          go build -o dist/cs-windows-linking-arm64/cs-windows-linking-arm64.exe ./cmd/api
+      #go build -tags=duckdb_use_lib -o dist/cs-windows-linking-amd64.exe ./cmd/api
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-binary-linking
-          path: dist/*windows*
+          path: dist/**
 
   build-darwin:
     runs-on: macos-latest
