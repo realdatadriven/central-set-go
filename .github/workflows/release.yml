@@ -156,6 +156,22 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
+        
+      - name: Prepare Dist Folder
+        run: |
+          mkdir -p dist
+          mkdir -p dist/cs-macos-amd64
+          mkdir -p dist/cs-macos-amd64/database
+          cp ./LICENSE dist/cs-macos-amd64
+          cp ./README.md dist/cs-macos-amd64
+          cp -r ./static dist/cs-macos-amd64
+          cp -r ./locales dist/cs-macos-amd64
+          mkdir -p dist/cs-macos-arm64
+          mkdir -p dist/cs-macos-arm64/database
+          cp ./LICENSE dist/cs-macos-arm64
+          cp ./README.md dist/cs-macos-arm64
+          cp -r ./static dist/cs-macos-arm64
+          cp -r ./locales dist/cs-macos-arm64
 
       # Step 2: Setup Go
       - name: Setup Go
@@ -180,16 +196,15 @@ jobs:
       # Step 5: Build the Application
       - name: Build MacOS Binary
         run: |
-          mkdir dist
-          go build -o dist/cs-macos-amd64 ./cmd/api
-          GOARCH=arm64 go build -o dist/cs-macos-arm64 ./cmd/api
+          go build -o dist/cs-macos-amd64/cs-macos-amd64 ./cmd/api
+          GOARCH=arm64 go build -o dist/cs-macos-arm64/cs-macos-arm64 ./cmd/api
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-binary
-          path: dist/*macos*
-    
+          path: dist/**
+
   release:
     permissions: write-all
     runs-on: ubuntu-latest
