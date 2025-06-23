@@ -174,8 +174,8 @@ func run(logger *slog.Logger) error {
 		i18n:   i18n,
 		//admin:  admin{},
 	}
-	err = db.Ping()
-	if *initdb && err != nil {
+	// err = db.Ping()
+	if *initdb /*&& err != nil*/ {
 		fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
 		err := app.setupDB(fname, *embedded)
 		if err != nil {
