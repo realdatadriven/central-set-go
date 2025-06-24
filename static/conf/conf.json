@@ -32,5 +32,6 @@
     "limit": 10,
     "subform_limit": 5,
     "chk_token_interval": 60000,
-    "core_tables": ["lang", "role", "user", "user_role", "app", "menu", "table", "menu_table", "role_app", "role_app_menu", "role_app_menu_table", "user_log", "custom_table", "custom_form", "column_level_access", "row_level_access", "translate_table", "translate_table_field"]
+    "core_tables": ["lang", "role", "user", "user_role", "app", "menu", "table", "menu_table", "role_app", "role_app_menu", "role_app_menu_table", "user_log", "custom_table", "custom_form", "column_level_access", "row_level_access", "translate_table", "translate_table_field"],
+    "disable_navbar": true
 }

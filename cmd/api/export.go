@@ -130,7 +130,7 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 	match := regexp.MustCompile(patt).Match([]byte(strings.ReplaceAll(_sql, "\n", " ")))
 	if !match {
 		if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT GDAL, DRIVER 'xlsx')`, _sql)
+			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT xlsx, HEADER true)`, _sql)
 		} else {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>'`, _sql)
 		}
@@ -171,8 +171,8 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 		_duck_conf["extensions"] = []interface{}{}
 	}
 	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "spatial") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "spatial")
+		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
 		}
 	}
 	app.duckdb_start(db, _duck_conf, _driver, "")
@@ -274,7 +274,7 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 	match := regexp.MustCompile(patt).Match([]byte(strings.ReplaceAll(_sql, "\n", " ")))
 	if !match {
 		if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT GDAL, DRIVER 'xlsx')`, _sql)
+			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT ([]interface{}), "excel"), DRIVER 'xlsx')`, _sql)
 		} else {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>'`, _sql)
 		}
@@ -315,8 +315,8 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 		_duck_conf["extensions"] = []interface{}{}
 	}
 	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "spatial") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "spatial")
+		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
 		}
 	}
 	app.duckdb_start(db, _duck_conf, _driver, _database)
@@ -422,8 +422,8 @@ func (app *application) dump_file_2_object(params map[string]interface{}) map[st
 		_duck_conf["extensions"] = []interface{}{}
 	}
 	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "spatial") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "spatial")
+		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
 		}
 	}
 	app.duckdb_start(db, _duck_conf, _driver, "")

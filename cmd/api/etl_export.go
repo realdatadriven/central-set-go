@@ -200,7 +200,12 @@ func (app *application) _run_export(date_ref time.Time, _export map[string]inter
 	//tmp := "tmp"
 	ext := filepath.Ext(file)
 	if app.contains([]interface{}{".xls", ".xlsx", ".XLS", ".XLSX"}, ext) {
-		_, err := db.ExecuteQuery(`LOAD Spatial`)
+		_, err := db.ExecuteQuery(`INSTALL Excel`)
+		if err != nil {
+			_err_msg := fmt.Sprintf(`Err: %s`, err)
+			fmt.Println(_err_msg)
+		}
+		_, err = db.ExecuteQuery(`LOAD Excel`)
 		if err != nil {
 			_err_msg := fmt.Sprintf(`Err: %s`, err)
 			fmt.Println(_err_msg)

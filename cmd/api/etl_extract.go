@@ -379,8 +379,8 @@ func (app *application) _extract(params map[string]interface{}, file string, _in
 		_duck_conf["extensions"] = []interface{}{}
 	}
 	if fileExt == ".xlsx" {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "spatial") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "spatial")
+		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
 		}
 	}
 	if app.contains([]interface{}{"sqlite", "sqlite3"}, _driver) {
