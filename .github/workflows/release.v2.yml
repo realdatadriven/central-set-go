@@ -1,9 +1,7 @@
 name: GoReleaser Cross Platform
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   release-linux:
