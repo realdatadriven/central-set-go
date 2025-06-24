@@ -281,7 +281,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           draft: false
-          prerelease: true
+          prerelease: false
           files: |
             dist/cs-linux-amd64.zip
             dist/cs-macos-amd64.zip
