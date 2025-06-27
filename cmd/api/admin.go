@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -221,6 +223,87 @@ func (app *application) menu(params map[string]interface{}) map[string]interface
 	}
 }
 
+func (app *application) ParseConnection(conn string) (string, string, error) {
+	parts := strings.SplitN(conn, ":", 2)
+	if len(parts) != 2 {
+		return "", "", fmt.Errorf("invalid connection string format")
+	}
+	dl := etlx.NewDuckLakeParser().Parse(conn)
+	if dl.IsDuckLake {
+		return "ducklake", conn, nil
+	}
+	return parts[0], parts[1], nil
+}
+
+func (app *application) GetDBNameFromParams(params map[string]any) (string, string, error) {
+	var _database interface{}
+	if !app.IsEmpty(params["db"]) {
+		_database = params["db"]
+	} else if !app.IsEmpty(params["data"].(map[string]any)["db"]) {
+		_database = params["data"].(map[string]any)["db"]
+	} else if !app.IsEmpty(params["data"].(map[string]any)["database"]) {
+		_database = params["data"].(map[string]any)["database"]
+	} else if !app.IsEmpty(params["app"].(map[string]any)["db"]) {
+		_database = params["app"].(map[string]any)["db"]
+	} else if !app.IsEmpty(params["app"].(map[string]any)["db"]) {
+		_database = params["app"].(map[string]any)["db"]
+	}
+	//_not_embed_dbs := []interface{}{"postgres", "postgresql", "pg", "pgql", "mysql"}
+	_embed_dbs := []interface{}{"sqlite", "sqlite3", "duckdb", "ducklake"}
+	_embed_dbs_ext := []interface{}{".db", ".duckdb", ".ddb", ".sqlite", ".ducklake"}
+	//fmt.Println(_database, params["app"])
+	switch _type := _database.(type) {
+	case nil:
+		return app.config.db.dsn, "", nil
+	case string:
+		_dsn := _database.(string)
+		_driver, dsn, err := app.ParseConnection(_dsn)
+		if err != nil {
+			dsn = _dsn
+			_driver = app.config.db.driverName
+		}
+		dirName := filepath.Dir(dsn)
+		fileName := filepath.Base(dsn)
+		fileExt := filepath.Ext(dsn)
+		if app.contains([]interface{}{".duckdb", ".ddb"}, fileExt) {
+			_driver = "duckdb"
+		}
+		if app.contains(_embed_dbs, _driver) || app.contains(_embed_dbs_ext, fileExt) {
+			embed_dbs_dir := "database"
+			if os.Getenv("DB_EMBEDED_DIR") != "" {
+				embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
+			}
+			//fmt.Println("dirName: ", dirName, "fileName: ", fileName, "fileExt: ", fileExt)
+			if filepath.Base(dsn) == fileName || dirName == "" {
+				dsn = fmt.Sprintf("%s:%s/%s", _driver, embed_dbs_dir, fileName)
+			}
+			if fileExt == "" {
+				_embed_dbs = []interface{}{"sqlite", "sqlite3"}
+				if _driver == "duckdb" {
+					dsn = fmt.Sprintf("%s:%s/%s.duckdb", _driver, embed_dbs_dir, fileName)
+				} else if app.contains(_embed_dbs, _driver) {
+					dsn = fmt.Sprintf("%s:%s/%s.db", _driver, embed_dbs_dir, fileName)
+				}
+			}
+		} else {
+			new_dsn, err := etlx.ReplaceDBName(app.config.db.dsn, dsn)
+			if err != nil {
+				fmt.Println("Errr getting the DSN for ", dsn)
+			}
+			dsn = fmt.Sprintf("%s:%s", _driver, new_dsn)
+			if !strings.HasPrefix(new_dsn, fmt.Sprintf("%s:", _driver)) {
+				dsn = new_dsn
+			}
+		}
+		return dsn, _database.(string), nil
+	case []interface{}:
+		fmt.Println("IS []interface{}:", _database, _type)
+		return "", "", errors.New("database conf is of type []interface{}")
+	default:
+		return _database.(string), _database.(string), nil
+	}
+}
+
 func (app *application) tables(params map[string]interface{}, tables []interface{}) map[string]interface{} {
 	//fmt.Println(params)
 	var user_id int
@@ -240,31 +323,15 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
 	}
-	//fmt.Println(lang)
-	var newDB etlx.DBInterface
-	newDB, driver, _database, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams DB:", driver, _database)
+	dsn, _database, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
 		return map[string]interface{}{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	if driver == "duckdb" {
-		_db_ext := filepath.Ext(_database)
-		// fmt.Println(_database, _db_ext)
-		if _db_ext != "" {
-			_db_ext = ""
-		}
-		newDB, err = etlx.NewDuckDB(fmt.Sprintf(`database/%s%s`, _database, _db_ext))
-		if err != nil {
-			return map[string]interface{}{
-				"success": false,
-				"msg":     fmt.Sprintf("%s", err),
-			}
-		}
-		defer newDB.Close()
-	}
+	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
 		tables = []interface{}{}
@@ -767,7 +834,6 @@ func getColumnType(driver string, field map[string]interface{}) string {
 	if nchar, ok := field["nchar"].(int); ok {
 		columnType += fmt.Sprintf("(%d)", nchar)
 	}
-
 	// Map SQL types per dialect
 	switch driver {
 	case "postgres":
@@ -778,7 +844,7 @@ func getColumnType(driver string, field map[string]interface{}) string {
 		if columnType == "INTEGER" && field["autoincrement"] == true {
 			return "INT AUTO_INCREMENT"
 		}
-	case "sqlserver":
+	case "sqlserver", "mssql":
 		if columnType == "INTEGER" && field["autoincrement"] == true {
 			return "INT IDENTITY(1,1)"
 		}
@@ -789,7 +855,7 @@ func getColumnType(driver string, field map[string]interface{}) string {
 // Primary key syntax adjustments
 func getPrimaryKey(driver string, field map[string]interface{}) string {
 	if pk, ok := field["primary_key"].(bool); ok && pk {
-		if driver == "mysql" || driver == "sqlserver" {
+		if driver == "mysql" || driver == "sqlserver" || driver == "mssql" {
 			return " PRIMARY KEY"
 		}
 	}
@@ -864,35 +930,16 @@ func (app *application) save_table_schema(params map[string]interface{}) map[str
 	//	app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
 	//}
 	// DATABASE
-	_extra_conf := map[string]interface{}{
-		"driverName": app.config.db.driverName,
-		"dsn":        app.config.db.dsn,
-	}
 	//fmt.Println(lang)
-	var newDB etlx.DBInterface
-	newDB, driver, _database, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams DB:", driver, _database)
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
 		return map[string]interface{}{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	if driver == "duckdb" {
-		_db_ext := filepath.Ext(_database)
-		// fmt.Println(_database, _db_ext)
-		if _db_ext != "" {
-			_db_ext = ""
-		}
-		newDB, err = etlx.NewDuckDB(fmt.Sprintf(`database/%s%s`, _database, _db_ext))
-		if err != nil {
-			return map[string]interface{}{
-				"success": false,
-				"msg":     fmt.Sprintf("%s", err),
-			}
-		}
-		defer newDB.Close()
-	}
+	defer newDB.Close()
 	_data := map[string]interface{}{}
 	if _, ok := params["data"]; !ok {
 		msg, _ := app.i18n.T("no_data", map[string]interface{}{})

@@ -385,7 +385,7 @@ func (app *application) dump_file_2_object(params map[string]interface{}) map[st
 	}
 	_sql := fmt.Sprintf(`SELECT * FROM '%s'`, _path)
 	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, ext) {
-		_sql = fmt.Sprintf(`SELECT * FROM ST_READ('%s')`, _path)
+		_sql = fmt.Sprintf(`SELECT * FROM READ_XLSX('%s', HEADER = TRUE)`, _path)
 	}
 	//fmt.Println(_path, _sql)
 	// DB

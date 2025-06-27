@@ -268,6 +268,9 @@ func (app *application) query(params map[string]interface{}) map[string]interfac
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
+	if newDB != nil {
+		defer newDB.Close()
+	}
 	if driver == "duckdb" {
 		_db_ext := filepath.Ext(_database)
 		// fmt.Println(_database, _db_ext)
