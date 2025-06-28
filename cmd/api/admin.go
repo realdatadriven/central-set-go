@@ -3,8 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,10 +15,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (app *application) apps(params map[string]interface{}) map[string]interface{} {
+func (app *application) apps(params map[string]any) map[string]any {
 	//fmt.Println("APPS:", params)
-	user_id := int(params["user"].(map[string]interface{})["user_id"].(float64))
-	role_id := int(params["user"].(map[string]interface{})["role_id"].(float64))
+	user_id := int(params["user"].(map[string]any)["user_id"].(float64))
+	role_id := int(params["user"].(map[string]any)["role_id"].(float64))
 	//fmt.Println(user_id, role_id)
 	query := `SELECT DISTINCT user_role.role_id
 	FROM user_role
@@ -29,7 +31,7 @@ func (app *application) apps(params map[string]interface{}) map[string]interface
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
 		//fmt.Println(1, query, fmt.Sprintf("%s", err))
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -57,26 +59,26 @@ func (app *application) apps(params map[string]interface{}) map[string]interface
 	}
 	result, _, err = app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    *result,
 	}
 }
 
-func (app *application) menu(params map[string]interface{}) map[string]interface{} {
+func (app *application) menu(params map[string]any) map[string]any {
 	//fmt.Println(params)
-	user_id := int(params["user"].(map[string]interface{})["user_id"].(float64))
-	role_id := int(params["user"].(map[string]interface{})["role_id"].(float64))
+	user_id := int(params["user"].(map[string]any)["user_id"].(float64))
+	role_id := int(params["user"].(map[string]any)["role_id"].(float64))
 	var app_id int
-	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	}
 	//fmt.Println(user_id, role_id)
 	query := `SELECT DISTINCT user_role.role_id
@@ -89,7 +91,7 @@ func (app *application) menu(params map[string]interface{}) map[string]interface
 	queryParams = append(queryParams, user_id)
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -135,7 +137,7 @@ func (app *application) menu(params map[string]interface{}) map[string]interface
 	}
 	_menu, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -176,7 +178,7 @@ func (app *application) menu(params map[string]interface{}) map[string]interface
 	}
 	_menu_table, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -189,34 +191,34 @@ func (app *application) menu(params map[string]interface{}) map[string]interface
 		//fmt.Println(_table_by_id)
 	}
 	if _, ok := _tables["data"]; ok {
-		_tables = _tables["data"].(map[string]interface{})
+		_tables = _tables["data"].(map[string]any)
 	}
 	// MENUS
-	menus := []map[string]interface{}{}
+	menus := []map[string]any{}
 	for _, mn := range *_menu {
 		_aux := mn
-		_aux["children"] = []map[string]interface{}{}
+		_aux["children"] = []map[string]any{}
 		for _, mnt := range *_menu_table {
 			if _, ok := mnt["menu_id"].(interface{}); !ok {
 			} else if _, ok := mn["menu_id"].(interface{}); !ok {
 			} else if int(mnt["menu_id"].(int64)) == int(mn["menu_id"].(int64)) {
 				_mnt := mnt
-				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(map[string]interface{}))
-				if _, ok := _table_by_id[mnt["table_id"].(int64)].(map[string]interface{}); ok {
-					_mnt["table"] = _table_by_id[mnt["table_id"].(int64)].(map[string]interface{})["table"].(string)
-					//fmt.Println(2, _table_by_id[mnt["table_id"].(int64)].(map[string]interface{}))
+				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(map[string]any))
+				if _, ok := _table_by_id[mnt["table_id"].(int64)].(map[string]any); ok {
+					_mnt["table"] = _table_by_id[mnt["table_id"].(int64)].(map[string]any)["table"].(string)
+					//fmt.Println(2, _table_by_id[mnt["table_id"].(int64)].(map[string]any))
 				}
 				_mnt["menu"] = mn["menu"]
-				_aux["children"] = append(_aux["children"].([]map[string]interface{}), _mnt)
+				_aux["children"] = append(_aux["children"].([]map[string]any), _mnt)
 			}
 		}
 		menus = append(menus, _aux)
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"menu":   menus,
 			"tables": _tables,
 		},
@@ -233,6 +235,31 @@ func (app *application) ParseConnection(conn string) (string, string, error) {
 		return "ducklake", conn, nil
 	}
 	return parts[0], parts[1], nil
+}
+
+// ExtractDBName extracts the database name (dbname) from various connection string formats.
+func (app *application) ExtractURLDBName(dsn string) (string, error) {
+	// First, try parsing as a URL (handles URL-style connection strings)
+	if strings.Contains(dsn, "://") {
+		u, err := url.Parse(dsn)
+		if err != nil {
+			return "", fmt.Errorf("invalid URL format: %w", err)
+		}
+		// In URL-style DSNs, the path usually starts with "/", so trim it
+		dbname := strings.TrimPrefix(u.Path, "/")
+		if dbname != "" {
+			return dbname, nil
+		}
+	}
+
+	// Fallback: try parsing key-value style (e.g. user=... dbname=... port=...)
+	re := regexp.MustCompile(`(?i)\bdbname\s*=\s*([^\s]+)`)
+	match := re.FindStringSubmatch(dsn)
+	if len(match) >= 2 {
+		return match[1], nil
+	}
+
+	return "", fmt.Errorf("could not find dbname in dsn")
 }
 
 func (app *application) GetDBNameFromParams(params map[string]any) (string, string, error) {
@@ -258,15 +285,20 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	case string:
 		_dsn := _database.(string)
 		_driver, dsn, err := app.ParseConnection(_dsn)
-		if err != nil {
-			dsn = _dsn
-			_driver = app.config.db.driverName
-		}
 		dirName := filepath.Dir(dsn)
 		fileName := filepath.Base(dsn)
 		fileExt := filepath.Ext(dsn)
-		if app.contains([]interface{}{".duckdb", ".ddb"}, fileExt) {
-			_driver = "duckdb"
+		if err != nil {
+			dsn = _dsn
+		}
+		if _driver == "" {
+			if app.contains([]interface{}{".duckdb", ".ddb"}, fileExt) {
+				_driver = "duckdb"
+			} else if app.contains([]interface{}{".db", ".sqlite"}, fileExt) {
+				_driver = "sqlite3"
+			} else {
+				_driver = app.config.db.driverName
+			}
 		}
 		if app.contains(_embed_dbs, _driver) || app.contains(_embed_dbs_ext, fileExt) {
 			embed_dbs_dir := "database"
@@ -291,8 +323,12 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 				fmt.Println("Errr getting the DSN for ", dsn)
 			}
 			dsn = fmt.Sprintf("%s:%s", _driver, new_dsn)
-			if !strings.HasPrefix(new_dsn, fmt.Sprintf("%s:", _driver)) {
+			if strings.HasPrefix(new_dsn, fmt.Sprintf("%s:", _driver)) {
 				dsn = new_dsn
+			}
+			dbname, err := app.ExtractURLDBName(dsn)
+			if err == nil {
+				_database = dbname
 			}
 		}
 		return dsn, _database.(string), nil
@@ -304,18 +340,18 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	}
 }
 
-func (app *application) tables(params map[string]interface{}, tables []interface{}) map[string]interface{} {
+func (app *application) tables(params map[string]any, tables []interface{}) map[string]any {
 	//fmt.Println(params)
 	var user_id int
-	if _, ok := params["user"].(map[string]interface{})["user_id"]; ok {
-		user_id = int(params["user"].(map[string]interface{})["user_id"].(float64))
+	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
+		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
 	}
 	var app_id int
-	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	}
 	// DATABASE
-	_extra_conf := map[string]interface{}{
+	_extra_conf := map[string]any{
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
 	}
@@ -326,7 +362,7 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 	dsn, _database, _ := app.GetDBNameFromParams(params)
 	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -335,42 +371,42 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 	allTables := false
 	if app.IsEmpty(tables) {
 		tables = []interface{}{}
-		if !app.IsEmpty(params["data"].(map[string]interface{})["table"]) {
-			value := params["data"].(map[string]interface{})["table"]
+		if !app.IsEmpty(params["data"].(map[string]any)["table"]) {
+			value := params["data"].(map[string]any)["table"]
 			switch value.(type) {
 			case nil:
 				// pass
 			case string:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			case []interface{}:
-				_tables := params["data"].(map[string]interface{})["table"].([]interface{})
+				_tables := params["data"].(map[string]any)["table"].([]interface{})
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
 			case map[interface{}]interface{}:
 				// pass
 			default:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
-		} else if !app.IsEmpty(params["data"].(map[string]interface{})["tables"]) {
-			value := params["data"].(map[string]interface{})["tables"]
+		} else if !app.IsEmpty(params["data"].(map[string]any)["tables"]) {
+			value := params["data"].(map[string]any)["tables"]
 			switch value.(type) {
 			case string:
-				tables = append(tables, params["data"].(map[string]interface{})["tables"].(string))
+				tables = append(tables, params["data"].(map[string]any)["tables"].(string))
 			case []interface{}:
-				_tables := params["data"].(map[string]interface{})["tables"].([]interface{})
+				_tables := params["data"].(map[string]any)["tables"].([]interface{})
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
 			default:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
 		}
 		if app.IsEmpty(tables) {
 			// fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)
 			if err != nil {
-				return map[string]interface{}{
+				return map[string]any{
 					"success": false,
 					"msg":     fmt.Sprintf("%s", err),
 				}
@@ -387,11 +423,11 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 			allTables = true
 		}
 	}
-	data := map[string]interface{}{}
+	data := map[string]any{}
 	table_by_id := map[int64]interface{}{}
 	if app.IsEmpty(tables) {
-		msg, _ := app.i18n.T("no-table", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-table", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 			"tables":  tables,
@@ -414,7 +450,7 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 		_table, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TABLES:", query, args, err)
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
@@ -426,11 +462,11 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 				tables_in_table = append(tables_in_table, row["table"].(string))
 			}
 			// fmt.Println(tables_in_table)
-			results := []map[string]interface{}{}
+			results := []map[string]any{}
 			for _, table := range tables {
 				if !app.contains(tables_in_table, table) {
 					//fmt.Println("ADD TABLE:", table)
-					results = append(results, map[string]interface{}{
+					results = append(results, map[string]any{
 						"table":        table,
 						"table_desc":   table,
 						"db":           _database,
@@ -496,12 +532,12 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 		results, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TABLES TRANSL:", query, err)
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		translate_table := map[string]interface{}{}
+		translate_table := map[string]any{}
 		for _, row := range *results {
 			translate_table[row["table"].(string)] = row
 		}
@@ -521,21 +557,21 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 		results, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TARNSL FIELDS:", query, err)
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		translate_table_field := map[string]interface{}{}
+		translate_table_field := map[string]any{}
 		for _, row := range *results {
 			if _, ok := translate_table_field[row["table"].(string)]; !ok {
-				translate_table_field[row["table"].(string)] = map[string]interface{}{}
+				translate_table_field[row["table"].(string)] = map[string]any{}
 			}
-			/*if _, ok := translate_table_field[row["table"].(string)].(map[string]interface{})["fields"]; !ok {
-				translate_table_field[row["table"].(string)].(map[string]interface{})["fields"] = map[string]interface{}{}
+			/*if _, ok := translate_table_field[row["table"].(string)].(map[string]any)["fields"]; !ok {
+				translate_table_field[row["table"].(string)].(map[string]any)["fields"] = map[string]any{}
 			}
-			translate_table_field[row["table"].(string)].(map[string]interface{})["fields"].(map[string]interface{})[row["field"].(string)] = row*/
-			translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)] = row
+			translate_table_field[row["table"].(string)].(map[string]any)["fields"].(map[string]any)[row["field"].(string)] = row*/
+			translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)] = row
 		}
 		// fmt.Println(translate_table_field)
 		// GET THE TABLES DATA IN table_schema
@@ -552,11 +588,11 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 			println("Error geting the table query:", err)
 		}
 		//fmt.Println(query, args, queryParams)
-		table_schema := map[string]interface{}{}
+		table_schema := map[string]any{}
 		_table_schema, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TABLE SCHEMA:", query, err)
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
@@ -605,7 +641,7 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 				_table_schema, _, err = app.db.QueryMultiRows(query, args...)
 				if err != nil {
 					fmt.Println("TABLE SCHEMA CREATED:", query, err)
-					return map[string]interface{}{
+					return map[string]any{
 						"success": false,
 						"msg":     fmt.Sprintf("%s", err),
 					}
@@ -613,24 +649,24 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 			}
 			//fmt.Println("tables_not_in_schema:", tables_not_in_schema)
 		}
-		table_fields := map[string]interface{}{}
+		table_fields := map[string]any{}
 		for _, row := range *_table_schema {
 			if _, ok := table_schema[row["table"].(string)]; !ok {
-				table_schema[row["table"].(string)] = map[string]interface{}{}
+				table_schema[row["table"].(string)] = map[string]any{}
 			}
 			if _, ok := table_fields[row["table"].(string)]; !ok {
 				table_fields[row["table"].(string)] = []interface{}{}
 			}
 			_row := row
-			/*if _, ok := table_schema[row["table"].(string)].(map[string]interface{})["fields"]; !ok {
-				table_schema[row["table"].(string)].(map[string]interface{})["fields"] = map[string]interface{}{}
+			/*if _, ok := table_schema[row["table"].(string)].(map[string]any)["fields"]; !ok {
+				table_schema[row["table"].(string)].(map[string]any)["fields"] = map[string]any{}
 			}
-			table_schema[row["table"].(string)].(map[string]interface{})["fields"].(map[string]interface{})[row["field"].(string)] = row*/
+			table_schema[row["table"].(string)].(map[string]any)["fields"].(map[string]any)[row["field"].(string)] = row*/
 			comment := _row["comment"]
 			if _, ok := translate_table_field[row["table"].(string)]; !ok {
-			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)]; !ok {
-			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)].(map[string]interface{})["field_transl_desc"]; ok {
-				comment = translate_table_field[row["table"].(string)].(map[string]interface{})[row["field"].(string)].(map[string]interface{})["field_transl_desc"]
+			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)]; !ok {
+			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)].(map[string]any)["field_transl_desc"]; ok {
+				comment = translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)].(map[string]any)["field_transl_desc"]
 			}
 			_row["comment"] = comment
 			_row["name"] = _row["field"]
@@ -640,13 +676,13 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 				if _, ok := table_fields[row["referred_table"].(string)].([]interface{}); ok {
 					referred_columns_desc = table_fields[row["referred_table"].(string)].([]interface{})[1].(string)
 				}
-				_row["ref"] = map[string]interface{}{
+				_row["ref"] = map[string]any{
 					"referred_table":        _row["referred_table"],
 					"referred_column":       _row["referred_column"],
 					"referred_columns_desc": referred_columns_desc,
 				}
 			}
-			table_schema[row["table"].(string)].(map[string]interface{})[row["field"].(string)] = _row
+			table_schema[row["table"].(string)].(map[string]any)[row["field"].(string)] = _row
 			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]interface{}), row["field"])
 		}
 		// table form customizations custom_form
@@ -678,12 +714,12 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 		// fmt.Println("custom_form:", queryParams, results)
 		if err != nil {
 			fmt.Println("custom_form:", query, err)
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		custom_form := map[string]interface{}{}
+		custom_form := map[string]any{}
 		for _, row := range *results {
 			// fmt.Println("custom_form:", row["table"].(string))
 			custom_form[row["table"].(string)] = row
@@ -716,12 +752,12 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 		results, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("custom_table:", query, err)
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		custom_table := map[string]interface{}{}
+		custom_table := map[string]any{}
 		for _, row := range *results {
 			custom_table[row["table"].(string)] = row
 		}
@@ -729,12 +765,12 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 		for _, row := range *_table {
 			comment := row["table_desc"]
 			if _, ok := translate_table[row["table"].(string)]; ok {
-				comment = translate_table[row["table"].(string)].(map[string]interface{})["table_transl_desc"]
+				comment = translate_table[row["table"].(string)].(map[string]any)["table_transl_desc"]
 			}
 			var pk string
 			if _, ok := table_schema[row["table"].(string)]; ok {
-				for key, value := range table_schema[row["table"].(string)].(map[string]interface{}) {
-					if properties, ok := value.(map[string]interface{}); ok {
+				for key, value := range table_schema[row["table"].(string)].(map[string]any) {
+					if properties, ok := value.(map[string]any); ok {
 						// Check if the "pk" field exists and is true
 						if _pk, found := properties["pk"]; found && _pk == true {
 							pk = key
@@ -744,7 +780,7 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 				}
 			}
 			table_by_id[row["table_id"].(int64)] = row
-			data[row["table"].(string)] = map[string]interface{}{
+			data[row["table"].(string)] = map[string]any{
 				"table_id":              row["table_id"],
 				"table":                 row["table"],
 				"comment":               comment,
@@ -760,8 +796,8 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 			}
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success":     true,
 		"msg":         msg,
 		"data":        data,
@@ -770,7 +806,7 @@ func (app *application) tables(params map[string]interface{}, tables []interface
 }
 
 // Generates CREATE TABLE SQL statements with comments, adapting to SQL dialects
-func generateCreateTableSQL(driver, tableName, tableComment string, fields []map[string]interface{}) string {
+func generateCreateTableSQL(driver, tableName, tableComment string, fields []map[string]any) string {
 	var schema strings.Builder
 	schema.WriteString(fmt.Sprintf("CREATE TABLE %s (\n", tableName))
 
@@ -829,7 +865,7 @@ func generateCreateTableSQL(driver, tableName, tableComment string, fields []map
 }
 
 // Returns the appropriate SQL column type based on driver and field type
-func getColumnType(driver string, field map[string]interface{}) string {
+func getColumnType(driver string, field map[string]any) string {
 	columnType := field["type"].(string)
 	if nchar, ok := field["nchar"].(int); ok {
 		columnType += fmt.Sprintf("(%d)", nchar)
@@ -838,7 +874,7 @@ func getColumnType(driver string, field map[string]interface{}) string {
 	switch driver {
 	case "postgres":
 		if columnType == "INTEGER" && field["autoincrement"] == true {
-			return "SERIAL"
+			return "SERIAL "
 		}
 	case "mysql":
 		if columnType == "INTEGER" && field["autoincrement"] == true {
@@ -853,7 +889,7 @@ func getColumnType(driver string, field map[string]interface{}) string {
 }
 
 // Primary key syntax adjustments
-func getPrimaryKey(driver string, field map[string]interface{}) string {
+func getPrimaryKey(driver string, field map[string]any) string {
 	if pk, ok := field["primary_key"].(bool); ok && pk {
 		if driver == "mysql" || driver == "sqlserver" || driver == "mssql" {
 			return " PRIMARY KEY"
@@ -863,7 +899,7 @@ func getPrimaryKey(driver string, field map[string]interface{}) string {
 }
 
 // Autoincrement syntax adjustments per driver
-func getAutoIncrement(driver string, field map[string]interface{}) string {
+func getAutoIncrement(driver string, field map[string]any) string {
 	if field["autoincrement"] == true {
 		if driver == "sqlite3" {
 			return " AUTOINCREMENT"
@@ -873,7 +909,7 @@ func getAutoIncrement(driver string, field map[string]interface{}) string {
 }
 
 // Nullable syntax adjustments per driver
-func getNullable(driver string, field map[string]interface{}) string {
+func getNullable(driver string, field map[string]any) string {
 	if nullable, ok := field["nullable"].(bool); ok && !nullable {
 		return " NOT NULL"
 	}
@@ -881,7 +917,7 @@ func getNullable(driver string, field map[string]interface{}) string {
 }
 
 // Unique constraint syntax adjustments
-func getUnique(driver string, field map[string]interface{}) string {
+func getUnique(driver string, field map[string]any) string {
 	if unique, ok := field["unique"].(bool); ok && unique {
 		return " UNIQUE"
 	}
@@ -889,7 +925,7 @@ func getUnique(driver string, field map[string]interface{}) string {
 }
 
 // Default value handling based on driver
-func getDefaultValue(driver string, field map[string]interface{}) string {
+func getDefaultValue(driver string, field map[string]any) string {
 	if defaultVal, ok := field["default"]; ok {
 		switch v := defaultVal.(type) {
 		case bool:
@@ -921,60 +957,60 @@ func getTableComment(driver, tableName, comment string) string {
 	return ""
 }
 
-func (app *application) save_table_schema(params map[string]interface{}) map[string]interface{} {
+func (app *application) save_table_schema(params map[string]any) map[string]any {
 	//fmt.Println(params)
-	//user_id := int(params["user"].(map[string]interface{})["user_id"].(float64))
-	//role_id := int(params["user"].(map[string]interface{})["role_id"].(float64))
+	//user_id := int(params["user"].(map[string]any)["user_id"].(float64))
+	//role_id := int(params["user"].(map[string]any)["role_id"].(float64))
 	//var app_id int
-	//if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-	//	app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	//if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+	//	app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	//}
 	// DATABASE
 	//fmt.Println(lang)
 	dsn, _, _ := app.GetDBNameFromParams(params)
 	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
 	defer newDB.Close()
-	_data := map[string]interface{}{}
+	_data := map[string]any{}
 	if _, ok := params["data"]; !ok {
-		msg, _ := app.i18n.T("no_data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_data", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
-	} else if _, ok := params["data"].(map[string]interface{}); ok {
-		_data = params["data"].(map[string]interface{})
+	} else if _, ok := params["data"].(map[string]any); ok {
+		_data = params["data"].(map[string]any)
 	}
-	table_metadata := map[string]interface{}{}
+	table_metadata := map[string]any{}
 	if _, ok := _data["table_metadata"]; !ok {
-		msg, _ := app.i18n.T("no_table_metadata", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_table_metadata", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
-	} else if _, ok := _data["table_metadata"].(map[string]interface{}); !ok {
-		msg, _ := app.i18n.T("no_table_metadata", map[string]interface{}{})
-		return map[string]interface{}{
+	} else if _, ok := _data["table_metadata"].(map[string]any); !ok {
+		msg, _ := app.i18n.T("no_table_metadata", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
 	}
-	table_metadata = _data["table_metadata"].(map[string]interface{})
+	table_metadata = _data["table_metadata"].(map[string]any)
 	name := ""
 	if _, ok := table_metadata["name"]; !ok {
-		msg, _ := app.i18n.T("no_table_name", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_table_name", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
 	} else if _, ok := table_metadata["name"].(string); !ok {
-		msg, _ := app.i18n.T("no_table_name", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_table_name", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
@@ -982,45 +1018,45 @@ func (app *application) save_table_schema(params map[string]interface{}) map[str
 	name = table_metadata["name"].(string)
 	comment := ""
 	if _, ok := table_metadata["comment"]; !ok {
-		msg, _ := app.i18n.T("no_table_comment", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_table_comment", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
 	} else if _, ok := table_metadata["comment"].(string); !ok {
-		msg, _ := app.i18n.T("no_table_comment", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_table_comment", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
 	}
 	comment = table_metadata["comment"].(string)
-	fields := []map[string]interface{}{}
+	fields := []map[string]any{}
 	if _, ok := table_metadata["fields"]; !ok {
-		msg, _ := app.i18n.T("no_fields", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no_fields", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
-	} else if _, ok := table_metadata["fields"].([]map[string]interface{}); !ok {
-		msg, _ := app.i18n.T("no_fields", map[string]interface{}{})
-		return map[string]interface{}{
+	} else if _, ok := table_metadata["fields"].([]map[string]any); !ok {
+		msg, _ := app.i18n.T("no_fields", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
 	}
-	fields = table_metadata["fields"].([]map[string]interface{})
+	fields = table_metadata["fields"].([]map[string]any)
 	if len(fields) < 2 {
-		msg, _ := app.i18n.T("table_must_have_2_or_more_fields", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("table_must_have_2_or_more_fields", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
 	}
 	core_tables := app.sliceStrs2SliceInterfaces(strings.Split(app.config.core_tables, ","))
 	if app.contains(core_tables, name) {
-		msg, _ := app.i18n.T("change_core_tables_not_allowed", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("change_core_tables_not_allowed", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 		}
@@ -1048,8 +1084,8 @@ func (app *application) save_table_schema(params map[string]interface{}) map[str
 		"Float":    "DECIMAL",
 		"Boolean":  "BOOLEAN",
 	}*/
-	msg, _ := app.i18n.T("sql-generated-to-be validated", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("sql-generated-to-be validated", map[string]any{})
+	return map[string]any{
 		"success": false,
 		"msg":     msg,
 	}
