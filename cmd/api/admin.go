@@ -26,7 +26,7 @@ func (app *application) apps(params map[string]any) map[string]any {
 	WHERE user_role.user_id = $1
 		AND user_role.excluded = FALSE
 		AND role.excluded = FALSE`
-	var queryParams []interface{}
+	var queryParams []any
 	queryParams = append(queryParams, user_id)
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
@@ -36,7 +36,7 @@ func (app *application) apps(params map[string]any) map[string]any {
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	roles := []interface{}{}
+	roles := []any{}
 	roles = append(roles, role_id)
 	for _, row := range *result {
 		roles = append(roles, int(row["role_id"].(float64)))
@@ -45,7 +45,7 @@ func (app *application) apps(params map[string]any) map[string]any {
 	FROM app
 	WHERE app.excluded = FALSE`
 	// fmt.Println("ROLES: ", roles)
-	queryParams = []interface{}{}
+	queryParams = []any{}
 	if !app.contains(roles, 1) {
 		query = `SELECT app.*
 		FROM app
@@ -87,7 +87,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	WHERE user_role.user_id = $1
 		AND user_role.excluded = FALSE
 		AND role.excluded = FALSE`
-	var queryParams []interface{}
+	var queryParams []any
 	queryParams = append(queryParams, user_id)
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
@@ -96,7 +96,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	roles := []interface{}{}
+	roles := []any{}
 	roles = append(roles, role_id)
 	for _, row := range *result {
 		roles = append(roles, int(row["role_id"].(float64)))
@@ -109,7 +109,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 		AND active = TRUE
 	ORDER BY menu_order ASC, menu_id ASC`
 	//fmt.Println("ROLES: ", roles)
-	queryParams = []interface{}{app_id}
+	queryParams = []any{app_id}
 	if !app.contains(roles, 1) {
 		query = `SELECT DISTINCT menu.*
 		FROM menu
@@ -148,7 +148,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	WHERE app_id = $1
 		AND excluded = FALSE
 	ORDER BY menu_table_id ASC`
-	queryParams = []interface{}{app_id}
+	queryParams = []any{app_id}
 	if !app.contains(roles, 1) {
 		query = `SELECT menu_table.*
 		FROM menu_table
@@ -184,10 +184,10 @@ func (app *application) menu(params map[string]any) map[string]any {
 		}
 	}
 	// TABLES
-	_tables := app.tables(params, []interface{}{})
-	_table_by_id := map[int64]interface{}{}
+	_tables := app.tables(params, []any{})
+	_table_by_id := map[int64]any{}
 	if _, ok := _tables["table_by_id"]; ok {
-		_table_by_id = _tables["table_by_id"].(map[int64]interface{})
+		_table_by_id = _tables["table_by_id"].(map[int64]any)
 		//fmt.Println(_table_by_id)
 	}
 	if _, ok := _tables["data"]; ok {
@@ -199,8 +199,8 @@ func (app *application) menu(params map[string]any) map[string]any {
 		_aux := mn
 		_aux["children"] = []map[string]any{}
 		for _, mnt := range *_menu_table {
-			if _, ok := mnt["menu_id"].(interface{}); !ok {
-			} else if _, ok := mn["menu_id"].(interface{}); !ok {
+			if _, ok := mnt["menu_id"].(any); !ok {
+			} else if _, ok := mn["menu_id"].(any); !ok {
 			} else if int(mnt["menu_id"].(int64)) == int(mn["menu_id"].(int64)) {
 				_mnt := mnt
 				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(map[string]any))
@@ -263,7 +263,7 @@ func (app *application) ExtractURLDBName(dsn string) (string, error) {
 }
 
 func (app *application) GetDBNameFromParams(params map[string]any) (string, string, error) {
-	var _database interface{}
+	var _database any
 	if !app.IsEmpty(params["db"]) {
 		_database = params["db"]
 	} else if !app.IsEmpty(params["data"].(map[string]any)["db"]) {
@@ -275,17 +275,20 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	} else if !app.IsEmpty(params["app"].(map[string]any)["db"]) {
 		_database = params["app"].(map[string]any)["db"]
 	}
-	//_not_embed_dbs := []interface{}{"postgres", "postgresql", "pg", "pgql", "mysql"}
-	_embed_dbs := []interface{}{"sqlite", "sqlite3", "duckdb", "ducklake"}
-	_embed_dbs_ext := []interface{}{".db", ".duckdb", ".ddb", ".sqlite", ".ducklake"}
-	fmt.Println(_database)
+	//_not_embed_dbs := []any{"postgres", "postgresql", "pg", "pgql", "mysql"}
+	_embed_dbs := []any{"sqlite", "sqlite3", "duckdb", "ducklake"}
+	_embed_dbs_ext := []any{".db", ".duckdb", ".ddb", ".sqlite", ".ducklake"}
+	//fmt.Println(1, _database)
 	switch _type := _database.(type) {
 	case nil:
 		return app.config.db.dsn, "", nil
 	case string:
 		_dsn := _database.(string)
 		_driver, dsn, err := app.ParseConnection(_dsn)
-		fmt.Println(_dsn, _driver, dsn)
+		if _driver == "ducklake" {
+			return dsn, _dsn, nil
+		}
+		//fmt.Println(_dsn, _driver, dsn)
 		dirName := filepath.Dir(dsn)
 		fileName := filepath.Base(dsn)
 		fileExt := filepath.Ext(dsn)
@@ -293,9 +296,9 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 			dsn = _dsn
 		}
 		if _driver == "" {
-			if app.contains([]interface{}{".duckdb", ".ddb"}, fileExt) {
+			if app.contains([]any{".duckdb", ".ddb"}, fileExt) {
 				_driver = "duckdb"
-			} else if app.contains([]interface{}{".db", ".sqlite"}, fileExt) {
+			} else if app.contains([]any{".db", ".sqlite"}, fileExt) {
 				_driver = "sqlite3"
 			} else {
 				_driver = app.config.db.driverName
@@ -306,12 +309,12 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 			if os.Getenv("DB_EMBEDED_DIR") != "" {
 				embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
 			}
-			fmt.Println("dirName: ", dirName, "fileName: ", fileName, "fileExt: ", fileExt)
+			//fmt.Println("dirName: ", dirName, "fileName: ", fileName, "fileExt: ", fileExt)
 			if filepath.Base(dsn) == fileName || dirName == "" {
 				dsn = fmt.Sprintf("%s:%s/%s", _driver, embed_dbs_dir, fileName)
 			}
 			if fileExt == "" {
-				_embed_dbs = []interface{}{"sqlite", "sqlite3"}
+				_embed_dbs = []any{"sqlite", "sqlite3"}
 				if _driver == "duckdb" {
 					dsn = fmt.Sprintf("%s:%s/%s.duckdb", _driver, embed_dbs_dir, fileName)
 				} else if app.contains(_embed_dbs, _driver) {
@@ -333,15 +336,15 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 			}
 		}
 		return dsn, _database.(string), nil
-	case []interface{}:
-		fmt.Println("IS []interface{}:", _database, _type)
-		return "", "", errors.New("database conf is of type []interface{}")
+	case []any:
+		fmt.Println("IS []any:", _database, _type)
+		return "", "", errors.New("database conf is of type []any")
 	default:
 		return _database.(string), _database.(string), nil
 	}
 }
 
-func (app *application) tables(params map[string]any, tables []interface{}) map[string]any {
+func (app *application) tables(params map[string]any, tables []any) map[string]any {
 	//fmt.Println(params)
 	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
@@ -371,7 +374,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
-		tables = []interface{}{}
+		tables = []any{}
 		if !app.IsEmpty(params["data"].(map[string]any)["table"]) {
 			value := params["data"].(map[string]any)["table"]
 			switch value.(type) {
@@ -379,12 +382,12 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 				// pass
 			case string:
 				tables = append(tables, params["data"].(map[string]any)["table"].(string))
-			case []interface{}:
-				_tables := params["data"].(map[string]any)["table"].([]interface{})
+			case []any:
+				_tables := params["data"].(map[string]any)["table"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
-			case map[interface{}]interface{}:
+			case map[any]any:
 				// pass
 			default:
 				tables = append(tables, params["data"].(map[string]any)["table"].(string))
@@ -394,8 +397,8 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			switch value.(type) {
 			case string:
 				tables = append(tables, params["data"].(map[string]any)["tables"].(string))
-			case []interface{}:
-				_tables := params["data"].(map[string]any)["tables"].([]interface{})
+			case []any:
+				_tables := params["data"].(map[string]any)["tables"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
@@ -424,9 +427,9 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			allTables = true
 		}
 	}
-	fmt.Println(dsn, _database, tables)
+	//fmt.Println(dsn, _database, tables, allTables)
 	data := map[string]any{}
-	table_by_id := map[int64]interface{}{}
+	table_by_id := map[int64]any{}
 	if app.IsEmpty(tables) {
 		msg, _ := app.i18n.T("no-table", map[string]any{})
 		return map[string]any{
@@ -437,7 +440,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 	} else {
 		// GET THE TABLES DATA IN table
 		query := `SELECT * FROM "table" WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
-		queryParams := []interface{}{_database}
+		queryParams := []any{_database}
 		if allTables {
 			query = `SELECT * FROM "table" WHERE db = ? AND excluded = FALSE`
 		} else {
@@ -446,12 +449,12 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 		//queryParams = append(queryParams, app.joinSlice(tables, "','"))
 		query, args, err := sqlx.In(query, queryParams...)
 		if err != nil {
-			println("Error geting the table query:", err)
+			println("Error geting the table query: ", err)
 		}
 		//fmt.Println(query, args, queryParams)
 		_table, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
-			fmt.Println("TABLES:", query, args, err)
+			fmt.Println("TABLES: ", query, args, err)
 			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
@@ -459,7 +462,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 		}
 		// fmt.Println(_table)
 		if allTables {
-			tables_in_table := []interface{}{}
+			tables_in_table := []any{}
 			for _, row := range *_table {
 				tables_in_table = append(tables_in_table, row["table"].(string))
 			}
@@ -482,8 +485,8 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			}
 			if len(results) > 0 {
 				//fmt.Println(results[0])
-				var keys []interface{}
-				//var prms []interface{}
+				var keys []any
+				//var prms []any
 				i := 0
 				for key := range results[0] {
 					i++
@@ -507,7 +510,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 				//fmt.Println(query)
 				for _, row := range results {
 					_, err := app.db.ExecuteNamedQuery(query, row)
-					/*values := []interface{}{}
+					/*values := []any{}
 					for _, value := range row {
 						values = append(values, value)
 					}
@@ -521,7 +524,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 		}
 		// table comments / translations translate_table
 		query = `SELECT * FROM translate_table WHERE db = ? AND lang = ? AND "table" IN (?) AND excluded = FALSE`
-		queryParams = []interface{}{_database, lang}
+		queryParams = []any{_database, lang}
 		if allTables {
 			query = `SELECT * FROM translate_table WHERE db = ? AND lang = ? AND excluded = FALSE`
 		} else {
@@ -546,7 +549,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 		//fmt.Println(translate_table)
 		// fields comments / translations translate_table_field
 		query = `SELECT * FROM translate_table_field WHERE db = ? AND lang = ? AND "table" IN (?) AND excluded = FALSE`
-		queryParams = []interface{}{_database, lang}
+		queryParams = []any{_database, lang}
 		if allTables {
 			query = `SELECT * FROM translate_table_field WHERE db = ? AND lang = ? AND excluded = FALSE`
 		} else {
@@ -578,7 +581,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 		// fmt.Println(translate_table_field)
 		// GET THE TABLES DATA IN table_schema
 		query = `SELECT * FROM table_schema WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
-		queryParams = []interface{}{_database}
+		queryParams = []any{_database}
 		if allTables {
 			query = `SELECT * FROM table_schema WHERE db = ? AND excluded = FALSE`
 		} else {
@@ -602,8 +605,8 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 		//fmt.Println(*_table_schema)
 		// POPULATE table_schema WITH THOSE WHO ARE NOT IN table_schema
 		if allTables {
-			tables_not_in_schema := []interface{}{}
-			tables_in_schema := []interface{}{}
+			tables_not_in_schema := []any{}
+			tables_in_schema := []any{}
 			for _, row := range *_table_schema {
 				tables_in_schema = append(tables_in_schema, row["table"].(string))
 			}
@@ -616,24 +619,25 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 					res, _, err := newDB.TableSchema(params, table.(string), _database, _extra_conf)
 					if err != nil {
 						fmt.Printf("%s\n", err)
-					}
-					if len(*res) > 0 {
-						results := *res
-						//fmt.Println(results[0])
-						var keys []interface{}
-						// Iterate over the map and collect the keys
-						for key := range results[0] {
-							keys = append(keys, key)
-						}
-						cols := app.joinSlice(keys, `", "`)
-						vals := app.joinSlice(keys, `, :`)
-						// Loop through the slice of maps and insert each record
-						_ins_query := fmt.Sprintf(`INSERT INTO table_schema ("%s") VALUES (:%s)`, cols, vals)
-						//fmt.Println(query)
-						for _, row := range results {
-							_, err := app.db.ExecuteNamedQuery(_ins_query, row)
-							if err != nil {
-								fmt.Println("Error inserting table_schema:", err)
+					} else {
+						if len(*res) > 0 {
+							results := *res
+							//fmt.Println(results[0])
+							var keys []any
+							// Iterate over the map and collect the keys
+							for key := range results[0] {
+								keys = append(keys, key)
+							}
+							cols := app.joinSlice(keys, `", "`)
+							vals := app.joinSlice(keys, `, :`)
+							// Loop through the slice of maps and insert each record
+							_ins_query := fmt.Sprintf(`INSERT INTO table_schema ("%s") VALUES (:%s)`, cols, vals)
+							//fmt.Println(query)
+							for _, row := range results {
+								_, err := app.db.ExecuteNamedQuery(_ins_query, row)
+								if err != nil {
+									fmt.Println("Error inserting table_schema:", err)
+								}
 							}
 						}
 					}
@@ -657,7 +661,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 				table_schema[row["table"].(string)] = map[string]any{}
 			}
 			if _, ok := table_fields[row["table"].(string)]; !ok {
-				table_fields[row["table"].(string)] = []interface{}{}
+				table_fields[row["table"].(string)] = []any{}
 			}
 			_row := row
 			/*if _, ok := table_schema[row["table"].(string)].(map[string]any)["fields"]; !ok {
@@ -673,10 +677,10 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			_row["comment"] = comment
 			_row["name"] = _row["field"]
 			if _, ok := _row["fk"]; !ok {
-			} else if app.contains([]interface{}{1, true, "true", "True", "TRUE", "T", "1"}, _row["fk"]) {
+			} else if app.contains([]any{1, true, "true", "True", "TRUE", "T", "1"}, _row["fk"]) {
 				referred_columns_desc := ""
-				if _, ok := table_fields[row["referred_table"].(string)].([]interface{}); ok {
-					referred_columns_desc = table_fields[row["referred_table"].(string)].([]interface{})[1].(string)
+				if _, ok := table_fields[row["referred_table"].(string)].([]any); ok {
+					referred_columns_desc = table_fields[row["referred_table"].(string)].([]any)[1].(string)
 				}
 				_row["ref"] = map[string]any{
 					"referred_table":        _row["referred_table"],
@@ -685,7 +689,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 				}
 			}
 			table_schema[row["table"].(string)].(map[string]any)[row["field"].(string)] = _row
-			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]interface{}), row["field"])
+			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]any), row["field"])
 		}
 		// table form customizations custom_form
 		query = `SELECT * 
@@ -696,7 +700,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			AND "table" IN (?) 
 			AND excluded = FALSE
 		ORDER BY user_id DESC, custom_form_id DESC`
-		queryParams = []interface{}{_database, user_id, app_id}
+		queryParams = []any{_database, user_id, app_id}
 		if allTables {
 			query = `SELECT * 
 			FROM custom_form
@@ -735,7 +739,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			AND "table" IN (?) 
 			AND excluded = FALSE
 		ORDER BY user_id DESC, custom_table_id DESC`
-		queryParams = []interface{}{_database, user_id, app_id}
+		queryParams = []any{_database, user_id, app_id}
 		if allTables {
 			query = `SELECT * 
 			FROM custom_table
@@ -1063,7 +1067,7 @@ func (app *application) save_table_schema(params map[string]any) map[string]any 
 			"msg":     msg,
 		}
 	}
-	/*table_id := interface{}(nil)
+	/*table_id := any(nil)
 	if _, ok := table_metadata["table_id"]; ok {
 		table_id = table_metadata["table_id"]
 	}
