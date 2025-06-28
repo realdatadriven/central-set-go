@@ -11,7 +11,7 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) CrudCreateUpdte(params map[string]interface{}, table string, db *etlx.DB) map[string]interface{} {
+func (app *application) CrudCreateUpdte(params map[string]interface{}, table string, db etlx.DBInterface) map[string]interface{} {
 	/*var user_id int
 	if _, ok := params["user"].(map[string]interface{})["user_id"]; ok {
 		user_id = int(params["user"].(map[string]interface{})["user_id"].(float64))
@@ -221,7 +221,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 	cols := app.joinSlice(keys, `", "`)
 	vals := app.joinSlice(keys, `, :`)
 	_pg_returning := ""
-	if db.DriverName() == "postgres" && pk != "" {
+	if db.GetDriverName() == "postgres" && pk != "" {
 		_pg_returning = fmt.Sprintf(` RETURNING "%s"`, pk)
 	}
 	query := fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)%s`, table, cols, vals, _pg_returning)
@@ -247,7 +247,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 		}
 	}
 	id := 0
-	if db.DriverName() == "postgres" && strings.HasPrefix(query, "INSERT") {
+	if db.GetDriverName() == "postgres" && strings.HasPrefix(query, "INSERT") {
 		_id, err := db.ExecuteQueryPGInsertWithLastInsertId(query, _data)
 		//fmt.Println("ExecuteQueryPGInsertWithLastInsertId", id, query)
 		if err != nil {
