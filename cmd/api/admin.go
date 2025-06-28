@@ -227,8 +227,8 @@ func (app *application) menu(params map[string]any) map[string]any {
 
 func (app *application) ParseConnection(conn string) (string, string, error) {
 	parts := strings.SplitN(conn, ":", 2)
-	if len(parts) != 2 {
-		return "", "", fmt.Errorf("invalid connection string format")
+	if len(parts) < 2 {
+		return "", conn, nil
 	}
 	dl := etlx.NewDuckLakeParser().Parse(conn)
 	if dl.IsDuckLake {
@@ -278,13 +278,14 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	//_not_embed_dbs := []interface{}{"postgres", "postgresql", "pg", "pgql", "mysql"}
 	_embed_dbs := []interface{}{"sqlite", "sqlite3", "duckdb", "ducklake"}
 	_embed_dbs_ext := []interface{}{".db", ".duckdb", ".ddb", ".sqlite", ".ducklake"}
-	//fmt.Println(_database, params["app"])
+	fmt.Println(_database)
 	switch _type := _database.(type) {
 	case nil:
 		return app.config.db.dsn, "", nil
 	case string:
 		_dsn := _database.(string)
 		_driver, dsn, err := app.ParseConnection(_dsn)
+		fmt.Println(_dsn, _driver, dsn)
 		dirName := filepath.Dir(dsn)
 		fileName := filepath.Base(dsn)
 		fileExt := filepath.Ext(dsn)
@@ -305,7 +306,7 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 			if os.Getenv("DB_EMBEDED_DIR") != "" {
 				embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
 			}
-			//fmt.Println("dirName: ", dirName, "fileName: ", fileName, "fileExt: ", fileExt)
+			fmt.Println("dirName: ", dirName, "fileName: ", fileName, "fileExt: ", fileExt)
 			if filepath.Base(dsn) == fileName || dirName == "" {
 				dsn = fmt.Sprintf("%s:%s/%s", _driver, embed_dbs_dir, fileName)
 			}
@@ -423,6 +424,7 @@ func (app *application) tables(params map[string]any, tables []interface{}) map[
 			allTables = true
 		}
 	}
+	fmt.Println(dsn, _database, tables)
 	data := map[string]any{}
 	table_by_id := map[int64]interface{}{}
 	if app.IsEmpty(tables) {
