@@ -28,3 +28,4 @@ build
 *.csv
 tmp
 database/*.json
+*.parquet
