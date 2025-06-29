@@ -146,6 +146,7 @@ func run(logger *slog.Logger) error {
 	}
 	//db, err := database.New(cfg.db.driverName, cfg.db.dsn, cfg.db.automigrate)
 	db, err := etlx.New(cfg.db.driverName, cfg.db.dsn)
+	//db, err := etlx.GetDB(cfg.db.driverName)
 	if err != nil {
 		return err
 	}
@@ -177,7 +178,7 @@ func run(logger *slog.Logger) error {
 	// err = db.Ping()
 	if *initdb /*&& err != nil*/ {
 		fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
-		err := app.setupDB(fname, *embedded)
+		err := app.setupDB(fname, *dbname, *embedded)
 		if err != nil {
 			return fmt.Errorf(`error setingup the DB: %v`, err)
 		}

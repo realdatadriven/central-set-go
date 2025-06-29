@@ -1,0 +1,3 @@
+find /nix/store -name libodbc.so.2
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/nix/store/c5vpbrb9iiq9jynnx57f0h114qar1dkw-unixODBC-2.3.12/lib/
