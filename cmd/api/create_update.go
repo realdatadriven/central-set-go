@@ -11,40 +11,40 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) CrudCreateUpdte(params map[string]interface{}, table string, db etlx.DBInterface) map[string]interface{} {
+func (app *application) CrudCreateUpdte(params map[string]any, table string, db etlx.DBInterface) map[string]any {
 	/*var user_id int
-	if _, ok := params["user"].(map[string]interface{})["user_id"]; ok {
-		user_id = int(params["user"].(map[string]interface{})["user_id"].(float64))
+	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
+		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
 	}*/
 	var role_id int
-	if _, ok := params["user"].(map[string]interface{})["role_id"]; ok {
-		role_id = int(params["user"].(map[string]interface{})["role_id"].(float64))
+	if _, ok := params["user"].(map[string]any)["role_id"]; ok {
+		role_id = int(params["user"].(map[string]any)["role_id"].(float64))
 	}
 	/*var app_id int
-	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	}*/
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
 	}
 	//fmt.Println(user_id, role_id, app_id)
-	_schema := map[string]interface{}{}
+	_schema := map[string]any{}
 	if _, ok := params["schema"]; ok {
-		_schema = params["schema"].(map[string]interface{})
+		_schema = params["schema"].(map[string]any)
 	}
-	_permissions := map[string]interface{}{}
+	_permissions := map[string]any{}
 	if _, ok := params["permissions"]; ok {
-		_permissions = params["permissions"].(map[string]interface{})
+		_permissions = params["permissions"].(map[string]any)
 	}
 	pk := ""
 	if _, ok := _schema["pk"]; ok {
 		pk = _schema["pk"].(string)
 	}
 	crud_aciton := "create"
-	_data := map[string]interface{}{}
-	if _, ok := params["data"].(map[string]interface{})["data"]; ok {
-		_data = params["data"].(map[string]interface{})["data"].(map[string]interface{})
+	_data := map[string]any{}
+	if _, ok := params["data"].(map[string]any)["data"]; ok {
+		_data = params["data"].(map[string]any)["data"].(map[string]any)
 	}
 	if _, ok := _data[pk]; ok {
 		_to_delete := false
@@ -61,7 +61,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 			crud_aciton = "delete"
 		} else {
 			query := fmt.Sprintf(`SELECT "%s" FROM "%s" WHERE "%s" = ?`, pk, table, pk)
-			queryParams := []interface{}{_data[pk]}
+			queryParams := []any{_data[pk]}
 			_pk_exists, _, err := db.QuerySingleRow(query, queryParams...)
 			if err != nil {
 				fmt.Println(0, query, err)
@@ -73,22 +73,22 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 			}
 		}
 	}
-	roles := []interface{}{role_id}
+	roles := []any{role_id}
 	if !app.contains(roles, 1) {
 		if _, ok := _permissions["read"]; !ok {
-			msg, _ := app.i18n.T("no-table-access", map[string]interface{}{
+			msg, _ := app.i18n.T("no-table-access", map[string]any{
 				"table": table,
 			})
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     msg,
 			}
-		} else if !app.contains([]interface{}{true, 1}, _permissions["read"]) {
-			msg, _ := app.i18n.T("no-table-action-access", map[string]interface{}{
+		} else if !app.contains([]any{true, 1}, _permissions["read"]) {
+			msg, _ := app.i18n.T("no-table-action-access", map[string]any{
 				"table":  table,
 				"action": strings.ToUpper(crud_aciton),
 			})
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     msg,
 			}
@@ -100,41 +100,41 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 		_row_level_tables = params["row_level_tables"].([]string)
 	}*/
 	// FIELDS
-	if _, ok := _schema["fields"].(map[string]interface{}); ok {
-		for field, field_data := range _schema["fields"].(map[string]interface{}) {
-			_type := field_data.(map[string]interface{})["type"].(string)
+	if _, ok := _schema["fields"].(map[string]any); ok {
+		for field, field_data := range _schema["fields"].(map[string]any) {
+			_type := field_data.(map[string]any)["type"].(string)
 			_nullable := true
-			if null, ok := field_data.(map[string]interface{})["nullable"]; ok {
-				if app.contains([]interface{}{0, false, "0", "false", "False", "FALSE"}, null) {
+			if null, ok := field_data.(map[string]any)["nullable"]; ok {
+				if app.contains([]any{0, false, "0", "false", "False", "FALSE"}, null) {
 					_nullable = false
 				}
 			}
 			_type = strings.ToLower(_type)
 			_value := _data[field]
-			if app.contains([]interface{}{"datetime", "date"}, _type) {
+			if app.contains([]any{"datetime", "date"}, _type) {
 				// TREAT DATE AND TIME TYPES
 			}
-			enable_user := []interface{}{}
+			enable_user := []any{}
 			for _, t := range strings.Split(app.config.enable_user, ",") {
 				enable_user = append(enable_user, t)
 			}
-			if app.contains([]interface{}{"created_at", "updated_at"}, field) {
+			if app.contains([]any{"created_at", "updated_at"}, field) {
 				if _, ok := _data[pk]; ok && field == "created_at" && crud_aciton != "create" {
 				} else {
 					_data[field] = time.Now()
 				}
-			} else if app.contains([]interface{}{"excluded"}, field) {
+			} else if app.contains([]any{"excluded"}, field) {
 				if _, ok := _data[pk]; ok {
 				} else {
 					_data[field] = false
 				}
-			} else if app.contains([]interface{}{"password", "pass"}, field) {
+			} else if app.contains([]any{"password", "pass"}, field) {
 				if _, ok := _data[field]; !ok {
 					continue
 				} else if _, ok := _data[pk]; !ok || crud_aciton == "create" {
 					hashedPassword, err := password.Hash(_data[field].(string))
 					if err != nil {
-						return map[string]interface{}{
+						return map[string]any{
 							"success": true,
 							"msg":     "Error hashing password!",
 						}
@@ -143,46 +143,46 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 				} else if len(_data[field].(string)) < 20 {
 					hashedPassword, err := password.Hash(_data[field].(string))
 					if err != nil {
-						return map[string]interface{}{
+						return map[string]any{
 							"success": true,
 							"msg":     "Error hashing password!",
 						}
 					}
 					_data[field] = hashedPassword
 				}
-			} else if app.contains([]interface{}{"app", "app_id"}, field) && !app.contains([]interface{}{"app", "role_app", "role_app_menu", "role_app_menu_table"}, table) {
+			} else if app.contains([]any{"app", "app_id"}, field) && !app.contains([]any{"app", "role_app", "role_app_menu", "role_app_menu_table"}, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
-					_data[field] = params["app"].(map[string]interface{})[field]
+					_data[field] = params["app"].(map[string]any)[field]
 				}
-			} else if app.contains([]interface{}{"user", "user_id"}, field) && !app.contains([]interface{}{"user", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
+			} else if app.contains([]any{"user", "user_id"}, field) && !app.contains([]any{"user", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
-					_data[field] = params["user"].(map[string]interface{})[field]
+					_data[field] = params["user"].(map[string]any)[field]
 				}
 			} else if !_nullable && field != pk && crud_aciton != "delete" {
 				if !app.IsEmpty(_data[field]) {
 				} else if field == "lang" {
 					_data[field] = lang
-				} else if app.contains([]interface{}{"db", "database"}, field) {
-					_data[field] = params["app"].(map[string]interface{})["db"]
+				} else if app.contains([]any{"db", "database"}, field) {
+					_data[field] = params["app"].(map[string]any)["db"]
 				} else {
-					msg, _ := app.i18n.T("field-required", map[string]interface{}{"field": field})
+					msg, _ := app.i18n.T("field-required", map[string]any{"field": field})
 					_errs = append(_errs, msg)
 				}
 			} else {
 				switch _value.(type) {
-				case map[string]interface{}:
+				case map[string]any:
 					_json, err := json.Marshal(_value)
 					if err != nil {
 						fmt.Println(field, "unable to convert to JSON!", err)
 					}
 					_data[field] = _json
-				case []map[string]interface{}:
+				case []map[string]any:
 					_json, err := json.Marshal(_value)
 					if err != nil {
 						fmt.Println(field, "unable to convert to JSON!", err)
 					}
 					_data[field] = _json
-				case []interface{}:
+				case []any:
 					_json, err := json.Marshal(_value)
 					if err != nil {
 						fmt.Println(field, "unable to convert to JSON!", err)
@@ -196,8 +196,8 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 		}
 	}
 	if len(_errs) > 0 {
-		msg, _ := app.i18n.T("validation-errors", map[string]interface{}{"n": len(_errs)})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("validation-errors", map[string]any{"n": len(_errs)})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 			"errors":  _errs,
@@ -207,14 +207,14 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 	// REMOVE FIELDS THAT IS NOT IN THE TABLE SCHEMA
 	_aux_data := _data
 	for key := range _aux_data {
-		if _, ok := _schema["fields"].(map[string]interface{}); ok {
-			if _, ok := _schema["fields"].(map[string]interface{})[key]; !ok {
+		if _, ok := _schema["fields"].(map[string]any); ok {
+			if _, ok := _schema["fields"].(map[string]any)[key]; !ok {
 				delete(_data, key)
 			}
 		}
 	}
 	// CREATE | UPDATE | DELETE
-	var keys []interface{}
+	var keys []any
 	for key := range _data {
 		keys = append(keys, key)
 	}
@@ -226,7 +226,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 	}
 	query := fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)%s`, table, cols, vals, _pg_returning)
 	if crud_aciton != "create" {
-		keys = []interface{}{}
+		keys = []any{}
 		for key := range _data {
 			keys = append(keys, fmt.Sprintf(`"%s" = :%s`, key, key))
 		}
@@ -235,11 +235,11 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 		if crud_aciton == "delete" {
 			permanently := false
 			if _, ok := _aux_data["permanently"]; ok {
-				if app.contains([]interface{}{true, 1, "true", "True", "TRUE"}, _aux_data["permanently"]) {
+				if app.contains([]any{true, 1, "true", "True", "TRUE"}, _aux_data["permanently"]) {
 					permanently = true
 				}
 			}
-			if _, ok := _schema["fields"].(map[string]interface{})["excluded"]; ok && !permanently {
+			if _, ok := _schema["fields"].(map[string]any)["excluded"]; ok && !permanently {
 				query = fmt.Sprintf(`UPDATE "%s" SET "excluded" = TRUE WHERE "%s" = :%s`, table, pk, pk)
 			} else {
 				query = fmt.Sprintf(`DELETE FROM "%s" WHERE "%s" = :%s`, table, pk, pk)
@@ -260,7 +260,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 				}
 				_id, err = db.ExecuteQueryPGInsertWithLastInsertId(query, _data)
 				if err != nil {
-					return map[string]interface{}{
+					return map[string]any{
 						"success": false,
 						"table":   table,
 						"pk":      pk,
@@ -268,7 +268,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 					}
 				}
 			} else {
-				return map[string]interface{}{
+				return map[string]any{
 					"success": false,
 					"table":   table,
 					"pk":      pk,
@@ -281,7 +281,7 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 		_id, err := db.ExecuteNamedQuery(query, _data)
 		// fmt.Println(query)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"table":   table,
 				"pk":      pk,
@@ -292,8 +292,8 @@ func (app *application) CrudCreateUpdte(params map[string]interface{}, table str
 		}
 		id = _id
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success":              true,
 		"msg":                  msg,
 		"pk":                   pk,

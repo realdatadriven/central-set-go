@@ -13,7 +13,7 @@ import (
 func (app *application) setupDB(filename string, dbname string, embedded bool) error {
 	var content []byte
 	var err error
-	fmt.Printf(`database/%s`, filename)
+	//fmt.Printf(`database/%s`, filename)
 	content, err = os.ReadFile(fmt.Sprintf(`database/%s`, filename))
 	// Read the file content
 	if embedded && err != nil {

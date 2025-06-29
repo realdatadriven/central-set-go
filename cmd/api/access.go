@@ -7,20 +7,20 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) table_access(params map[string]interface{}, tables []interface{}) map[string]interface{} {
+func (app *application) table_access(params map[string]any, tables []any) map[string]any {
 	var user_id int
-	if _, ok := params["user"].(map[string]interface{})["user_id"]; ok {
-		user_id = int(params["user"].(map[string]interface{})["user_id"].(float64))
+	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
+		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
 	}
 	var role_id int
-	if _, ok := params["app"].(map[string]interface{})["role_id"]; ok {
-		role_id = int(params["app"].(map[string]interface{})["role_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["role_id"]; ok {
+		role_id = int(params["app"].(map[string]any)["role_id"].(float64))
 	}
 	var app_id int
-	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	}
-	_extra_conf := map[string]interface{}{
+	_extra_conf := map[string]any{
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
 	}
@@ -35,43 +35,43 @@ func (app *application) table_access(params map[string]interface{}, tables []int
 	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
-		tables = []interface{}{}
-		if !app.IsEmpty(params["data"].(map[string]interface{})["table"]) {
-			value := params["data"].(map[string]interface{})["table"]
+		tables = []any{}
+		if !app.IsEmpty(params["data"].(map[string]any)["table"]) {
+			value := params["data"].(map[string]any)["table"]
 			switch value.(type) {
 			case nil:
 				// pass
 			case string:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
-			case []interface{}:
-				_tables := params["data"].(map[string]interface{})["table"].([]interface{})
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
+			case []any:
+				_tables := params["data"].(map[string]any)["table"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
-			case map[interface{}]interface{}:
+			case map[any]any:
 				// pass
 			default:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
-		} else if !app.IsEmpty(params["data"].(map[string]interface{})["tables"]) {
-			value := params["data"].(map[string]interface{})["tables"]
+		} else if !app.IsEmpty(params["data"].(map[string]any)["tables"]) {
+			value := params["data"].(map[string]any)["tables"]
 			switch value.(type) {
 			case string:
-				tables = append(tables, params["data"].(map[string]interface{})["tables"].(string))
-			case []interface{}:
-				_tables := params["data"].(map[string]interface{})["tables"].([]interface{})
+				tables = append(tables, params["data"].(map[string]any)["tables"].(string))
+			case []any:
+				_tables := params["data"].(map[string]any)["tables"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
 			default:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
 		}
 		if app.IsEmpty(tables) {
 			// fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)
 			if err != nil {
-				return map[string]interface{}{
+				return map[string]any{
 					"success": false,
 					"msg":     fmt.Sprintf("%s", err),
 				}
@@ -82,10 +82,10 @@ func (app *application) table_access(params map[string]interface{}, tables []int
 			allTables = true
 		}
 	}
-	data := map[string]interface{}{}
+	data := map[string]any{}
 	if app.IsEmpty(tables) {
-		msg, _ := app.i18n.T("no-table", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-table", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 			"tables":  tables,
@@ -98,21 +98,21 @@ func (app *application) table_access(params map[string]interface{}, tables []int
 		WHERE user_role.user_id = $1
 			AND user_role.excluded = FALSE
 			AND role.excluded = FALSE`
-		var queryParams []interface{}
+		var queryParams []any
 		queryParams = append(queryParams, user_id)
 		result, _, err := app.db.QueryMultiRows(query, queryParams...)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		roles := []interface{}{}
+		roles := []any{}
 		roles = append(roles, role_id)
 		for _, row := range *result {
 			roles = append(roles, int(row["role_id"].(float64)))
 		}
-		queryParams = []interface{}{app_id}
+		queryParams = []any{app_id}
 		queryParams = append(queryParams, roles)
 		query = `SELECT role_app_menu_table.*, "table"."table"
 		FROM role_app_menu_table
@@ -139,7 +139,7 @@ func (app *application) table_access(params map[string]interface{}, tables []int
 		}
 		result, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
@@ -148,28 +148,28 @@ func (app *application) table_access(params map[string]interface{}, tables []int
 			data[row["table"].(string)] = row
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    data,
 	}
 }
 
-func (app *application) row_level_access(params map[string]interface{}, tables []interface{}, row_id []interface{}) map[string]interface{} {
+func (app *application) row_level_access(params map[string]any, tables []any, row_id []any) map[string]any {
 	var user_id int
-	if _, ok := params["user"].(map[string]interface{})["user_id"]; ok {
-		user_id = int(params["user"].(map[string]interface{})["user_id"].(float64))
+	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
+		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
 	}
 	var role_id int
-	if _, ok := params["app"].(map[string]interface{})["role_id"]; ok {
-		role_id = int(params["app"].(map[string]interface{})["role_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["role_id"]; ok {
+		role_id = int(params["app"].(map[string]any)["role_id"].(float64))
 	}
 	var app_id int
-	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	}
-	_extra_conf := map[string]interface{}{
+	_extra_conf := map[string]any{
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
 	}
@@ -184,43 +184,43 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
-		tables = []interface{}{}
-		if !app.IsEmpty(params["data"].(map[string]interface{})["table"]) {
-			value := params["data"].(map[string]interface{})["table"]
+		tables = []any{}
+		if !app.IsEmpty(params["data"].(map[string]any)["table"]) {
+			value := params["data"].(map[string]any)["table"]
 			switch value.(type) {
 			case nil:
 				// pass
 			case string:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
-			case []interface{}:
-				_tables := params["data"].(map[string]interface{})["table"].([]interface{})
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
+			case []any:
+				_tables := params["data"].(map[string]any)["table"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
-			case map[interface{}]interface{}:
+			case map[any]any:
 				// pass
 			default:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
-		} else if !app.IsEmpty(params["data"].(map[string]interface{})["tables"]) {
-			value := params["data"].(map[string]interface{})["tables"]
+		} else if !app.IsEmpty(params["data"].(map[string]any)["tables"]) {
+			value := params["data"].(map[string]any)["tables"]
 			switch value.(type) {
 			case string:
-				tables = append(tables, params["data"].(map[string]interface{})["tables"].(string))
-			case []interface{}:
-				_tables := params["data"].(map[string]interface{})["tables"].([]interface{})
+				tables = append(tables, params["data"].(map[string]any)["tables"].(string))
+			case []any:
+				_tables := params["data"].(map[string]any)["tables"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
 			default:
-				tables = append(tables, params["data"].(map[string]interface{})["table"].(string))
+				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
 		}
 		if app.IsEmpty(tables) {
 			// fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)
 			if err != nil {
-				return map[string]interface{}{
+				return map[string]any{
 					"success": false,
 					"msg":     fmt.Sprintf("%s", err),
 				}
@@ -232,29 +232,29 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 			allTables = true
 		}
 	}
-	data := map[string]interface{}{}
+	data := map[string]any{}
 	if app.IsEmpty(tables) {
-		msg, _ := app.i18n.T("no-table", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-table", map[string]any{})
+		return map[string]any{
 			"success": false,
 			"msg":     msg,
 			"tables":  tables,
 		}
 	} else {
 		if app.IsEmpty(role_id) {
-			row_id = []interface{}{}
-			if !app.IsEmpty(params["data"].(map[string]interface{})["row_id"]) {
-				value := params["data"].(map[string]interface{})["row_id"]
+			row_id = []any{}
+			if !app.IsEmpty(params["data"].(map[string]any)["row_id"]) {
+				value := params["data"].(map[string]any)["row_id"]
 				switch value.(type) {
 				case string:
-					row_id = append(row_id, params["data"].(map[string]interface{})["row_id"].(string))
-				case []interface{}:
-					_row_ids := params["data"].(map[string]interface{})["row_id"].([]interface{})
+					row_id = append(row_id, params["data"].(map[string]any)["row_id"].(string))
+				case []any:
+					_row_ids := params["data"].(map[string]any)["row_id"].([]any)
 					for t := 0; t < len(_row_ids); t++ {
 						row_id = append(row_id, _row_ids[t])
 					}
 				default:
-					tables = append(tables, params["data"].(map[string]interface{})["row_id"].(string))
+					tables = append(tables, params["data"].(map[string]any)["row_id"].(string))
 				}
 			}
 		}
@@ -265,21 +265,21 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 		WHERE user_role.user_id = $1
 			AND user_role.excluded = FALSE
 			AND role.excluded = FALSE`
-		var queryParams []interface{}
+		var queryParams []any
 		queryParams = append(queryParams, user_id)
 		result, _, err := app.db.QueryMultiRows(query, queryParams...)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		roles := []interface{}{}
+		roles := []any{}
 		roles = append(roles, role_id)
 		for _, row := range *result {
 			roles = append(roles, int(row["role_id"].(float64)))
 		}
-		queryParams = []interface{}{app_id}
+		queryParams = []any{app_id}
 		queryParams = append(queryParams, roles)
 		_get_table_lists := ""
 		if allTables {
@@ -313,21 +313,21 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 		}
 		result, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
 		for _, row := range *result {
 			if _, ok := data[row["table"].(string)]; !ok {
-				data[row["table"].(string)] = []map[string]interface{}{}
+				data[row["table"].(string)] = []map[string]any{}
 			}
 			_aux := row
 			_aux["org"] = "role_row_level_access"
-			data[row["table"].(string)] = append(data[row["table"].(string)].([]map[string]interface{}), _aux)
+			data[row["table"].(string)] = append(data[row["table"].(string)].([]map[string]any), _aux)
 		}
 		// row_level_access
-		queryParams = []interface{}{app_id, user_id}
+		queryParams = []any{app_id, user_id}
 		if allTables {
 			queryParams = append(queryParams, tables)
 		}
@@ -356,21 +356,21 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 		}
 		result, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
 		for _, row := range *result {
 			if _, ok := data[row["table"].(string)]; !ok {
-				data[row["table"].(string)] = []map[string]interface{}{}
+				data[row["table"].(string)] = []map[string]any{}
 			}
 			_aux := row
 			_aux["org"] = "row_level_access"
 			if !app.IsEmpty(data[row["table"].(string)]) {
 				_aux2 := app.filter(
-					data[row["table"].(string)].([]map[string]interface{}),
-					func(r map[string]interface{}) bool {
+					data[row["table"].(string)].([]map[string]any),
+					func(r map[string]any) bool {
 						_r_id := r["row_id"] == _aux["row_id"]
 						_tbl := r["table"] == _aux["table"]
 						_app_id := r["app_id"] == _aux["app_id"]
@@ -380,24 +380,24 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 				)
 				fmt.Println(_aux2)
 			}
-			data[row["table"].(string)] = append(data[row["table"].(string)].([]map[string]interface{}), _aux)
+			data[row["table"].(string)] = append(data[row["table"].(string)].([]map[string]any), _aux)
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    data,
 	}
 }
 
-func (app *application) row_level_tables(params map[string]interface{}) map[string]interface{} {
+func (app *application) row_level_tables(params map[string]any) map[string]any {
 	var app_id int
-	if _, ok := params["app"].(map[string]interface{})["app_id"]; ok {
-		app_id = int(params["app"].(map[string]interface{})["app_id"].(float64))
+	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
+		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
 	}
 	tables := []string{}
-	queryParams := []interface{}{app_id}
+	queryParams := []any{app_id}
 	query := `SELECT "table"."table"
 	FROM menu_table
 	JOIN "table" ON "table".table_id = menu_table.table_id
@@ -414,7 +414,7 @@ func (app *application) row_level_tables(params map[string]interface{}) map[stri
 		AND "table".excluded = FALSE`
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -422,8 +422,8 @@ func (app *application) row_level_tables(params map[string]interface{}) map[stri
 	for _, row := range *result {
 		tables = append(tables, row["table"].(string))
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"tables":  tables,
