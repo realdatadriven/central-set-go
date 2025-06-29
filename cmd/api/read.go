@@ -9,7 +9,7 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) CrudRead(params map[string]any, table string, db *etlx.DB) map[string]any {
+func (app *application) CrudRead(params map[string]any, table string, db etlx.DBInterface) map[string]any {
 	/*var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
 		user_id = int(params["user"].(map[string]any)["user_id"].(float64))

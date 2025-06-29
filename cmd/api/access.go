@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/realdatadriven/etlx"
 )
 
 func (app *application) table_access(params map[string]interface{}, tables []interface{}) map[string]interface{} {
@@ -23,17 +24,15 @@ func (app *application) table_access(params map[string]interface{}, tables []int
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
 	}
-	newDB, _, _, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams:", _driver, _database)
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	if newDB != nil {
-		defer newDB.Close()
-	}
+	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
 		tables = []interface{}{}
@@ -174,17 +173,15 @@ func (app *application) row_level_access(params map[string]interface{}, tables [
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
 	}
-	newDB, _, _, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams:", _driver, _database)
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	if newDB != nil {
-		defer newDB.Close()
-	}
+	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
 		tables = []interface{}{}

@@ -26,6 +26,7 @@ build
 **/*.rar
 *.gz
 *.csv
+*.parquet
 tmp
 database/*.json
 *.parquet

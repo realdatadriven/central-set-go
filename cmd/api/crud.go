@@ -2,28 +2,21 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/realdatadriven/etlx"
 )
 
 func (app *application) read(params map[string]interface{}) map[string]interface{} {
 	// DATABASE
-	_extra_conf := map[string]interface{}{
-		"driverName": app.config.db.driverName,
-		"dsn":        app.config.db.dsn,
-	}
-	newDB, _, _, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams:", _driver, _database)
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	if newDB != nil {
-		defer newDB.Close()
-	}
+	defer newDB.Close()
 	tables := []interface{}{}
 	if !app.IsEmpty(params["data"].(map[string]interface{})["table"]) {
 		value := params["data"].(map[string]interface{})["table"]
@@ -121,18 +114,15 @@ func (app *application) read(params map[string]interface{}) map[string]interface
 
 func (app *application) create_update(params map[string]interface{}) map[string]interface{} {
 	// DATABASE
-	_extra_conf := map[string]interface{}{
-		"driverName": app.config.db.driverName,
-		"dsn":        app.config.db.dsn,
-	}
-	newDB, _, _, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams:", _driver, _database)
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
+	defer newDB.Close()
 	if newDB != nil {
 		defer newDB.Close()
 	}
@@ -255,34 +245,15 @@ func (app *application) create_update(params map[string]interface{}) map[string]
 
 func (app *application) query(params map[string]interface{}) map[string]interface{} {
 	// DATABASE
-	_extra_conf := map[string]interface{}{
-		"driverName": app.config.db.driverName,
-		"dsn":        app.config.db.dsn,
-	}
-	var newDB etlx.DBInterface
-	newDB, driver, _database, err := app.db.FromParams(params, _extra_conf)
-	//fmt.Println("FromParams DB:", driver, _database)
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	if driver == "duckdb" {
-		_db_ext := filepath.Ext(_database)
-		// fmt.Println(_database, _db_ext)
-		if _db_ext != "" {
-			_db_ext = ""
-		}
-		newDB, err = etlx.NewDuckDB(fmt.Sprintf(`database/%s%s`, _database, _db_ext))
-		if err != nil {
-			return map[string]interface{}{
-				"success": false,
-				"msg":     fmt.Sprintf("%s", err),
-			}
-		}
-		defer newDB.Close()
-	}
+	defer newDB.Close()
 	_data := map[string]interface{}{}
 	if _, ok := params["data"]; ok {
 		_data = params["data"].(map[string]interface{})
