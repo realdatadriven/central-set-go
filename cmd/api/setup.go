@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/realdatadriven/central-set-go/assets"
+	"github.com/realdatadriven/etlx"
 )
 
 // Read SQL file and execute each query delimited by semicolon
@@ -24,13 +25,19 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 	// Convert the content to a string and split by semicolon to get individual queries
 	queries := strings.Split(string(content), ";")
 	// Loop over each query, trimming and executing
+	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": dbname})
+	newDB, err := etlx.GetDB(dsn)
+	if err != nil {
+		return fmt.Errorf("geting the connection to %s: %w", dbname, err)
+	}
+	defer newDB.Close()
 	for _, query := range queries {
 		trimmedQuery := strings.TrimSpace(query)
 		if trimmedQuery == "" {
 			continue // Skip empty queries
 		}
 		// Execute the query
-		err := app.executeSQLQuery(trimmedQuery, dbname)
+		err := app.executeSQLQuery(trimmedQuery, newDB)
 		if err != nil {
 			return fmt.Errorf("failed to execute query: %w", err)
 		}
@@ -39,8 +46,8 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 }
 
 // Execute a single SQL query
-func (app *application) executeSQLQuery(query string, dbname string) error {
-	_, err := app.db.ExecuteQuery(query)
+func (app *application) executeSQLQuery(query string, db etlx.DBInterface) error {
+	_, err := db.ExecuteQuery(query)
 	if err != nil {
 		println(query)
 		return fmt.Errorf("execution failed: %w", err)

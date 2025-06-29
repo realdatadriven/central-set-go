@@ -28,45 +28,45 @@ func (app *application) generateRandomString(length int) string {
 	return string(result)
 }
 
-func (app *application) export_read(params map[string]interface{}) map[string]interface{} {
+func (app *application) export_read(params map[string]any) map[string]any {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-data", map[string]any{})
+		return map[string]any{
 			"success": true,
 			"msg":     msg,
 		}
 	}
-	_data := map[string]interface{}{}
+	_data := map[string]any{}
 	if _, ok := params["data"]; ok {
-		_data = params["data"].(map[string]interface{})
+		_data = params["data"].(map[string]any)
 	}
-	_conf := map[string]interface{}{}
+	_conf := map[string]any{}
 	if _, ok := _data["_conf"]; ok {
-		_conf = _data["_conf"].(map[string]interface{})
+		_conf = _data["_conf"].(map[string]any)
 	}
 	if _, ok := _conf["records"]; !ok {
 	} else if _, ok := _conf["records"].(string); !ok {
 	} else if _conf["records"].(string) == "all_records" {
-		params["data"].(map[string]interface{})["limit"] = interface{}(-1.0)
+		params["data"].(map[string]any)["limit"] = any(-1.0)
 	}
-	_read_data := []map[string]interface{}{}
+	_read_data := []map[string]any{}
 	_aux_read_data := app.read(params)
 	if _, ok := _aux_read_data["success"]; !ok {
 		return _aux_read_data
 	} else if _aux_read_data["success"].(bool) {
-		_read_data = _aux_read_data["data"].([]map[string]interface{})
+		_read_data = _aux_read_data["data"].([]map[string]any)
 	}
 	_csv_file := fmt.Sprintf(`%s/%s.csv`, os.TempDir(), app.generateRandomString(40))
 	cols := []string{}
 	if _, ok := _aux_read_data["cols"]; ok {
-		cols = app.sliceInterfaces2SliceStrs(_aux_read_data["cols"].([]interface{}))
+		cols = app.sliceInterfaces2SliceStrs(_aux_read_data["cols"].([]any))
 	}
 	if _, ok := _conf["display_fields"]; !ok {
 	} else if _, ok := _conf["display_fields"].(string); !ok {
 	} else if _conf["display_fields"].(string) == "interface_fields" {
 		if _, ok := _data["_fields"]; !ok {
-		} else if _, ok := _data["_fields"].([]interface{}); ok {
-			_cols := app.filterInterface(_data["_fields"].([]interface{}), func(r map[string]interface{}) bool {
+		} else if _, ok := _data["_fields"].([]any); ok {
+			_cols := app.filterInterface(_data["_fields"].([]any), func(r map[string]any) bool {
 				return r["display"].(bool)
 			})
 			if len(_cols) > 0 {
@@ -129,7 +129,7 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 	patt := `COPY.+?\(.+\).+TO+.\'.+\'`
 	match := regexp.MustCompile(patt).Match([]byte(strings.ReplaceAll(_sql, "\n", " ")))
 	if !match {
-		if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
+		if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT xlsx, HEADER true)`, _sql)
 		} else {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>'`, _sql)
@@ -143,7 +143,7 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 		_database = _data["database"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -151,7 +151,7 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 		_database = _data["db"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -159,20 +159,20 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 	//fmt.Println(_path, _database, _sql)
 	db, err := etlx.NewDuckDB("")
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("DDB Conn: %s", err),
 		}
 	}
 	defer db.Close()
 	// ATTACH DBS TO THE DUCKDB IN MEM CONN
-	_duck_conf := map[string]interface{}{}
+	_duck_conf := map[string]any{}
 	if _, ok := _duck_conf["extensions"]; !ok {
-		_duck_conf["extensions"] = []interface{}{}
+		_duck_conf["extensions"] = []any{}
 	}
-	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
+	if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
+		if !app.contains(_duck_conf["extensions"].([]any), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]any), "excel")
 		}
 	}
 	app.duckdb_start(db, _duck_conf, _driver, "")
@@ -182,7 +182,7 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 	if err != nil {
 		fmt.Println("CREATING AUX:", err, _sql_aux)
 		app.duckdb_end(db, _duck_conf, _driver, _database, "")
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("Err: %s", err),
 		}
@@ -191,35 +191,35 @@ func (app *application) export_read(params map[string]interface{}) map[string]in
 	if err != nil {
 		fmt.Println("EXPORT:", err, _sql)
 		app.duckdb_end(db, _duck_conf, _driver, _database, "")
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("Err: %s", err),
 		}
 	}
 	app.duckdb_end(db, _duck_conf, _driver, "", "")
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"fname":   fmt.Sprintf(`tmp/%s`, filepath.Base(_path)),
 	}
 }
 
-func (app *application) export_query(params map[string]interface{}) map[string]interface{} {
+func (app *application) export_query(params map[string]any) map[string]any {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-data", map[string]any{})
+		return map[string]any{
 			"success": true,
 			"msg":     msg,
 		}
 	}
-	_data := map[string]interface{}{}
+	_data := map[string]any{}
 	if _, ok := params["data"]; ok {
-		_data = params["data"].(map[string]interface{})
+		_data = params["data"].(map[string]any)
 	}
-	_conf := map[string]interface{}{}
+	_conf := map[string]any{}
 	if _, ok := _data["_conf"]; ok {
-		_conf = _data["_conf"].(map[string]interface{})
+		_conf = _data["_conf"].(map[string]any)
 	}
 	fname := "export"
 	if _, ok := _conf["name"]; ok {
@@ -273,8 +273,8 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 	patt := `COPY.+?\(.+\).+TO+.\'.+\'`
 	match := regexp.MustCompile(patt).Match([]byte(strings.ReplaceAll(_sql, "\n", " ")))
 	if !match {
-		if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT ([]interface{}), "excel"), DRIVER 'xlsx')`, _sql)
+		if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
+			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT ([]any), "excel"), DRIVER 'xlsx')`, _sql)
 		} else {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>'`, _sql)
 		}
@@ -287,7 +287,7 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 		_database = _data["database"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -295,7 +295,7 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 		_database = _data["db"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -303,20 +303,20 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 	//fmt.Println(_path, _database, _sql)
 	db, err := etlx.NewDuckDB("")
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("DDB Conn: %s", err),
 		}
 	}
 	defer db.Close()
 	// ATTACH DBS TO THE DUCKDB IN MEM CONN
-	_duck_conf := map[string]interface{}{}
+	_duck_conf := map[string]any{}
 	if _, ok := _duck_conf["extensions"]; !ok {
-		_duck_conf["extensions"] = []interface{}{}
+		_duck_conf["extensions"] = []any{}
 	}
-	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
+	if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
+		if !app.contains(_duck_conf["extensions"].([]any), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]any), "excel")
 		}
 	}
 	app.duckdb_start(db, _duck_conf, _driver, _database)
@@ -324,31 +324,31 @@ func (app *application) export_query(params map[string]interface{}) map[string]i
 	if err != nil {
 		fmt.Println("EXPORT:", err, _sql)
 		app.duckdb_end(db, _duck_conf, _driver, _database, "")
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("Err Importing: %s", err),
 		}
 	}
 	app.duckdb_end(db, _duck_conf, _driver, _database, "")
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"fname":   fmt.Sprintf(`tmp/%s`, filepath.Base(_path)),
 	}
 }
 
-func (app *application) dump_file_2_object(params map[string]interface{}) map[string]interface{} {
+func (app *application) dump_file_2_object(params map[string]any) map[string]any {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-data", map[string]any{})
+		return map[string]any{
 			"success": true,
 			"msg":     msg,
 		}
 	}
-	_data := map[string]interface{}{}
+	_data := map[string]any{}
 	if _, ok := params["data"]; ok {
-		_data = params["data"].(map[string]interface{})
+		_data = params["data"].(map[string]any)
 	}
 	//fmt.Println(_csv_file)
 	fname := "export"
@@ -384,7 +384,7 @@ func (app *application) dump_file_2_object(params map[string]interface{}) map[st
 		_path = fmt.Sprintf(`%s/%s`, os.TempDir(), fname)
 	}
 	_sql := fmt.Sprintf(`SELECT * FROM '%s'`, _path)
-	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, ext) {
+	if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, ext) {
 		_sql = fmt.Sprintf(`SELECT * FROM READ_XLSX('%s', HEADER = TRUE)`, _path)
 	}
 	//fmt.Println(_path, _sql)
@@ -395,7 +395,7 @@ func (app *application) dump_file_2_object(params map[string]interface{}) map[st
 		_database = _data["database"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -403,57 +403,57 @@ func (app *application) dump_file_2_object(params map[string]interface{}) map[st
 		_database = _data["db"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
 	}
 	db, err := etlx.NewDuckDB("")
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("DDB Conn: %s", err),
 		}
 	}
 	defer db.Close()
 	// ATTACH DBS TO THE DUCKDB IN MEM CONN
-	_duck_conf := map[string]interface{}{}
+	_duck_conf := map[string]any{}
 	if _, ok := _duck_conf["extensions"]; !ok {
-		_duck_conf["extensions"] = []interface{}{}
+		_duck_conf["extensions"] = []any{}
 	}
-	if app.contains([]interface{}{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-		if !app.contains(_duck_conf["extensions"].([]interface{}), "excel") {
-			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]interface{}), "excel")
+	if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
+		if !app.contains(_duck_conf["extensions"].([]any), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]any), "excel")
 		}
 	}
 	app.duckdb_start(db, _duck_conf, _driver, "")
-	data, _, err := db.QueryMultiRows(_sql, []interface{}{}...)
+	data, _, err := db.QueryMultiRows(_sql, []any{}...)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("Err: %s", err),
 		}
 	}
 	app.duckdb_end(db, _duck_conf, _driver, "", "")
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    *data,
 	}
 }
 
-func (app *application) dump_2_html(params map[string]interface{}) map[string]interface{} {
+func (app *application) dump_2_html(params map[string]any) map[string]any {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-data", map[string]any{})
+		return map[string]any{
 			"success": true,
 			"msg":     msg,
 		}
 	}
-	_data := map[string]interface{}{}
+	_data := map[string]any{}
 	if _, ok := params["data"]; ok {
-		_data = params["data"].(map[string]interface{})
+		_data = params["data"].(map[string]any)
 	}
 	tmpl := ""
 	if _, ok := _data["html"]; ok {
@@ -464,7 +464,7 @@ func (app *application) dump_2_html(params map[string]interface{}) map[string]in
 	// Parse the template
 	t, err := template.New("webpage").Parse(tmpl)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": true,
 			"msg":     fmt.Sprintf("Error parsing template: %v", err),
 		}
@@ -472,22 +472,22 @@ func (app *application) dump_2_html(params map[string]interface{}) map[string]in
 	// Execute the template to a string
 	var result bytes.Buffer
 	if err := t.Execute(&result, _data); err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": true,
 			"msg":     fmt.Sprintf("Error executing template: %v", err),
 		}
 	}
 	// Output the processed template as a string
 	output := result.String()
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"html":    output,
 	}
 }
 
-func GenerateExcelExport(header map[string]interface{}, details []map[string]interface{}, db *sql.DB) (string, error) {
+func GenerateExcelExport(header map[string]any, details []map[string]any, db *sql.DB) (string, error) {
 	templateFile, ok := header["attach_file_template"].(string)
 	if !ok || templateFile == "" {
 		return "", fmt.Errorf("attach_file_template missing or invalid")
@@ -547,8 +547,8 @@ func GenerateExcelExport(header map[string]interface{}, details []map[string]int
 		// Write data rows
 		rowIdx := 2
 		for rows.Next() {
-			values := make([]interface{}, len(columns))
-			pointers := make([]interface{}, len(values))
+			values := make([]any, len(columns))
+			pointers := make([]any, len(values))
 			for i := range pointers {
 				pointers[i] = &values[i]
 			}
