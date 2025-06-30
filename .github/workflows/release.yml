@@ -35,6 +35,7 @@ jobs:
 
       - name: Build Linux Binaries
         run: |
+          go mod tidy
           CGO_ENABLED=1 go build -o dist/central-set-linux-amd64/central-set-linux-amd64 ./cmd/api
 
       - name: Upload Artifacts
@@ -82,6 +83,7 @@ jobs:
       # Step 5: Set Environment Variables
       - name: Set Environment Variables
         run: |
+          go mod tidy
           echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
           echo "CC=x86_64-w64-mingw32-gcc" >> $env:GITHUB_ENV
 
@@ -171,6 +173,7 @@ jobs:
       # Step 7: Build the Application
       - name: Build Windows Binary
         run: |
+          go mod tidy
           go build -o dist/central-set-windows-linking-amd64/central-set-windows-linking-amd64.exe ./cmd/api
           echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
           echo "CC=x86_64-w64-mingw32-gcc" >> $env:GITHUB_ENV
@@ -234,6 +237,7 @@ jobs:
       # Step 5: Build the Application
       - name: Build MacOS Binary
         run: |
+          go mod tidy
           go build -o dist/central-set-macos-amd64/central-set-macos-amd64 ./cmd/api
           GOARCH=arm64 go build -o dist/central-set-macos-arm64/central-set-macos-arm64 ./cmd/api
         
