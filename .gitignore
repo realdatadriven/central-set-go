@@ -30,3 +30,4 @@ build
 tmp
 database/*.json
 *.parquet
+.venv
