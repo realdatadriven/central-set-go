@@ -183,6 +183,7 @@ func run(logger *slog.Logger) error {
 			return fmt.Errorf(`error setingup the DB: %v`, err)
 		}
 	}
+	app.CronJobs()
 	return app.serveHTTP()
 }
 

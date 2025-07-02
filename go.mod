@@ -29,7 +29,7 @@ require (
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver/v3 v3.3.1 // indirect
+	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/apache/arrow-go/v18 v18.3.1 // indirect
 	github.com/duckdb/duckdb-go-bindings v0.1.16 // indirect
@@ -54,13 +54,14 @@ require (
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/marcboeker/go-duckdb/arrowmapping v0.0.9 // indirect
 	github.com/marcboeker/go-duckdb/mapping v0.0.10 // indirect
-	github.com/microsoft/go-mssqldb v1.9.1 // indirect
+	github.com/microsoft/go-mssqldb v1.9.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/pkg/sftp v1.13.9 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/cast v1.9.2 // indirect
