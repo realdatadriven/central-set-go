@@ -154,6 +154,7 @@ func (app *application) create_update(params map[string]any) map[string]any {
 	default:
 		_ = ""
 	}
+	//fmt.Println("TABLES:", tables)
 	_schemas := app.tables(params, tables)
 	if !_schemas["success"].(bool) {
 		return _schemas

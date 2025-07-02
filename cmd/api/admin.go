@@ -281,7 +281,13 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	//fmt.Println(1, _database)
 	switch _type := _database.(type) {
 	case nil:
-		return app.config.db.dsn, "", nil
+		_db := ""
+		fileName := filepath.Base(app.config.db.dsn)
+		fileExt := filepath.Ext(app.config.db.dsn)
+		if app.fileExists(app.config.db.dsn) || (fileName != "" && fileName != "." && fileExt != "") {
+			_db = fileName[:len(fileName)-len(fileExt)]
+		}
+		return app.config.db.dsn, _db, nil
 	case string:
 		_dsn := _database.(string)
 		_driver, dsn, err := app.ParseConnection(_dsn)
@@ -320,6 +326,11 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 				} else if app.contains(_embed_dbs, _driver) {
 					dsn = fmt.Sprintf("%s:%s/%s.db", _driver, embed_dbs_dir, fileName)
 				}
+			}
+			fileName = filepath.Base(_database.(string))
+			fileExt = filepath.Ext(_database.(string))
+			if app.fileExists(_database.(string)) || (fileName != "" && fileName != "." && fileExt != "") {
+				_database = fileName[:len(fileName)-len(fileExt)]
 			}
 		} else {
 			new_dsn, err := etlx.ReplaceDBName(app.config.db.dsn, dsn)
@@ -441,6 +452,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		// GET THE TABLES DATA IN table
 		query := `SELECT * FROM "table" WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
 		queryParams := []any{_database}
+		// fmt.Println("DATABASE:", _database)
 		if allTables {
 			query = `SELECT * FROM "table" WHERE db = ? AND excluded = FALSE`
 		} else {
@@ -460,13 +472,13 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		// fmt.Println(_table)
+		fmt.Println(_table)
 		if allTables {
 			tables_in_table := []any{}
 			for _, row := range *_table {
 				tables_in_table = append(tables_in_table, row["table"].(string))
 			}
-			// fmt.Println(tables_in_table)
+			fmt.Println(tables_in_table)
 			results := []map[string]any{}
 			for _, table := range tables {
 				if !app.contains(tables_in_table, table) {

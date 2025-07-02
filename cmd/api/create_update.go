@@ -37,6 +37,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 	if _, ok := params["permissions"]; ok {
 		_permissions = params["permissions"].(map[string]any)
 	}
+	//fmt.Println("PK", _schema["pk"])
 	pk := ""
 	if _, ok := _schema["pk"]; ok {
 		pk = _schema["pk"].(string)
@@ -246,6 +247,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 			}
 		}
 	}
+	//fmt.Println(crud_aciton, pk, query)
 	id := 0
 	if db.GetDriverName() == "postgres" && strings.HasPrefix(query, "INSERT") {
 		_id, err := db.ExecuteQueryPGInsertWithLastInsertId(query, _data)
