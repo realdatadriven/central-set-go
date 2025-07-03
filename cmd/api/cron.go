@@ -1,11 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/realdatadriven/etlx"
 	"github.com/robfig/cron/v3"
 )
+
+func (app *application) GetInsertNamedQueryFromMap(table string, data map[string]any) string {
+	var keys []any
+	for key := range data {
+		keys = append(keys, key)
+	}
+	cols := app.joinSlice(keys, `", "`)
+	vals := app.joinSlice(keys, `, :`)
+	return fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)`, table, cols, vals)
+}
 
 func (app *application) CronJobs() error {
 	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
@@ -22,19 +35,52 @@ func (app *application) CronJobs() error {
 	// Start cron
 	c := cron.New()
 	for _, job := range *jobs {
+		fmt.Printf("%T, %v", job, job)
 		_, err := c.AddFunc(job["cron"].(string), func() {
-			/*resp, err := http.Get("http://localhost:8080" + j.Endpoint)
+			data := job
+			data["start_at"] = time.Now()
+			endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, job["api"].(string))
+			fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
+			resp, err := http.Get(endpoint)
 			if err != nil {
-				log.Printf("Job %s failed: %v\n", j.Name, err)
+				// log.Printf("Job %s failed: %v\n", j.Name, err)
 				return
 			}
 			defer resp.Body.Close()
-			fmt.Printf("Job %s ran: %s\n", job["cron_desc"].(string), resp.Status)*/
-			fmt.Println("Running cron jobe", job)
+			data["end_at"] = time.Now()
+			var res_json map[string]any
+			// Parse JSON into map
+			err = json.NewDecoder(resp.Body).Decode(&res_json)
+			if err != nil {
+				data["cron_msg"] = fmt.Sprintf("Error decoding %s response (%v): %v", endpoint, resp.Status, err)
+				data["success"] = false
+			} else {
+				data["cron_msg"] = res_json["msg"]
+				data["success"] = res_json["success"]
+			}
+			data["created_at"] = time.Now()
+			data["updated_at"] = time.Now()
+			data["excluded"] = false
+			fmt.Printf("cron job %s finished %v", endpoint, data["start_at"])
+			_, err = db.ExecuteNamedQuery(app.GetInsertNamedQueryFromMap("cron_log", data), data)
+			if err != nil {
+				fmt.Printf("Error saving the cron job log: %v\n", err)
+			}
 		})
 		if err != nil {
-			//return fmt.Errorf("error geting the cron jobs: %w", err)
-			fmt.Printf("failed to schedule job %s: %v\n", job["cron_desc"].(string), err)
+			fmt.Printf("Error adding the cron %s: %v\n", job["cron_desc"], err)
+			data := job
+			data["start_at"] = time.Now()
+			data["end_at"] = time.Now()
+			data["cron_msg"] = fmt.Sprintf("Error adding the cron: %v", err)
+			data["success"] = false
+			data["created_at"] = time.Now()
+			data["updated_at"] = time.Now()
+			data["excluded"] = false
+			_, err = db.ExecuteNamedQuery(app.GetInsertNamedQueryFromMap("cron_log", data), data)
+			if err != nil {
+				fmt.Printf("Error saving the cron job log: %v\n", err)
+			}
 		}
 	}
 	c.Start()
