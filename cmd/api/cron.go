@@ -10,14 +10,26 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-func (app *application) GetInsertNamedQueryFromMap(table string, data map[string]any) string {
+func (app *application) AdminInsertData(table string, data map[string]any) error {
 	var keys []any
 	for key := range data {
 		keys = append(keys, key)
 	}
 	cols := app.joinSlice(keys, `", "`)
 	vals := app.joinSlice(keys, `, :`)
-	return fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)`, table, cols, vals)
+	sql := fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)`, table, cols, vals)
+	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return err
+	} else {
+		defer db.Close()
+		_, err = db.ExecuteNamedQuery(sql, data)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (app *application) CronJobs() error {
@@ -35,9 +47,11 @@ func (app *application) CronJobs() error {
 	// Start cron
 	c := cron.New()
 	for _, job := range *jobs {
-		fmt.Printf("%T, %v", job, job)
+		fmt.Printf("1: %T, %v\n", job, job)
 		_, err := c.AddFunc(job["cron"].(string), func() {
+			fmt.Printf("2: %T, %v\n", job, job)
 			data := job
+			delete(data, "active")
 			data["start_at"] = time.Now()
 			endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, job["api"].(string))
 			fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
@@ -52,6 +66,7 @@ func (app *application) CronJobs() error {
 			// Parse JSON into map
 			err = json.NewDecoder(resp.Body).Decode(&res_json)
 			if err != nil {
+				fmt.Printf("%v", resp.Body)
 				data["cron_msg"] = fmt.Sprintf("Error decoding %s response (%v): %v", endpoint, resp.Status, err)
 				data["success"] = false
 			} else {
@@ -62,7 +77,7 @@ func (app *application) CronJobs() error {
 			data["updated_at"] = time.Now()
 			data["excluded"] = false
 			fmt.Printf("cron job %s finished %v", endpoint, data["start_at"])
-			_, err = db.ExecuteNamedQuery(app.GetInsertNamedQueryFromMap("cron_log", data), data)
+			err = app.AdminInsertData("cron_log", data)
 			if err != nil {
 				fmt.Printf("Error saving the cron job log: %v\n", err)
 			}
@@ -70,6 +85,7 @@ func (app *application) CronJobs() error {
 		if err != nil {
 			fmt.Printf("Error adding the cron %s: %v\n", job["cron_desc"], err)
 			data := job
+			delete(data, "active")
 			data["start_at"] = time.Now()
 			data["end_at"] = time.Now()
 			data["cron_msg"] = fmt.Sprintf("Error adding the cron: %v", err)
@@ -77,7 +93,7 @@ func (app *application) CronJobs() error {
 			data["created_at"] = time.Now()
 			data["updated_at"] = time.Now()
 			data["excluded"] = false
-			_, err = db.ExecuteNamedQuery(app.GetInsertNamedQueryFromMap("cron_log", data), data)
+			err = app.AdminInsertData("cron_log", data)
 			if err != nil {
 				fmt.Printf("Error saving the cron job log: %v\n", err)
 			}
