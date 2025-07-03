@@ -47,9 +47,9 @@ func (app *application) CronJobs() error {
 	// Start cron
 	c := cron.New()
 	for _, job := range *jobs {
-		fmt.Printf("1: %T, %v\n", job, job)
+		//fmt.Printf("1: %T, %v\n", job, job)
 		_, err := c.AddFunc(job["cron"].(string), func() {
-			fmt.Printf("2: %T, %v\n", job, job)
+			//fmt.Printf("2: %T, %v\n", job, job)
 			data := job
 			delete(data, "active")
 			data["start_at"] = time.Now()
