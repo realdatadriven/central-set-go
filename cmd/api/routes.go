@@ -63,6 +63,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /dyn_api/login/login", app.login)
 	mux.HandleFunc("POST /upload", app.uploadHandler)
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
+	mux.HandleFunc("GET /dyn_api/{ctrl}/{act}", app.dyn_api)
 
 	//mux.Handler("GET /protected", app.requireAuthenticatedUser(http.HandleFunc(app.protected)))
 
