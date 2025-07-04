@@ -76,23 +76,15 @@ func (app *application) CronJobs() error {
 			data["start_at"] = time.Now()
 			endpoint := fmt.Sprintf(`%s/dyn_api/%s`, app.config.baseURL, job["api"].(string))
 			fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
-			/*_jwt := app.AdminInsertData(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
-			req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
-			if err != nil {
-				log.Fatal(err)
-			}
+			_jwt, _ := app.AdminGetJWT(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
+			fmt.Println("JWT:", _jwt)
+			req, _ := http.NewRequest("GET", endpoint, nil) // bytes.NewBuffer(jsonBody)
 			// Set headers
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", _jwt))
-			req.Header.Set("Content-Type", "application/json")
-
+			//req.Header.Set("Content-Type", "application/json")
 			// Make the request
 			client := &http.Client{}
 			resp, err := client.Do(req)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer resp.Body.Close()*/
-			resp, err := http.Get(endpoint)
 			data["end_at"] = time.Now()
 			if err != nil {
 				data["cron_msg"] = fmt.Sprintf("Error making %s request (%v): %v", endpoint, resp.Status, err)
