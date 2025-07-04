@@ -118,6 +118,21 @@ func (app *application) CronJobs() error {
 				if err != nil {
 					fmt.Printf("Error saving the cron job log: %v\n", err)
 				}
+			} else if len(data) == 0 {
+				data = job
+				delete(data, "active")
+				data["start_at"] = time.Now()
+				data["end_at"] = time.Now()
+				data["cron_msg"] = fmt.Sprintf("Error geting update version of %s->%s", job["cron"], job["api"])
+				data["success"] = false
+				data["created_at"] = time.Now()
+				data["updated_at"] = time.Now()
+				data["excluded"] = false
+				fmt.Printf("Error geting update version of %s: %v\n", job["api"], err)
+				err = app.AdminInsertData("cron_log", data)
+				if err != nil {
+					fmt.Printf("Error saving the cron job log: %v\n", err)
+				}
 			} else {
 				delete(data, "active")
 				data["start_at"] = time.Now()
