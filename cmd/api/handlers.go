@@ -152,7 +152,7 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 func (app *application) fileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	if err != nil {
-		fmt.Println(os.IsNotExist(err), err)
+		//fmt.Println(os.IsNotExist(err), err)
 		return !os.IsNotExist(err)
 	}
 	return true

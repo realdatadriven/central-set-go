@@ -251,7 +251,6 @@ func (app *application) ExtractURLDBName(dsn string) (string, error) {
 			return dbname, nil
 		}
 	}
-
 	// Fallback: try parsing key-value style (e.g. user=... dbname=... port=...)
 	re := regexp.MustCompile(`(?i)\bdbname\s*=\s*([^\s]+)`)
 	match := re.FindStringSubmatch(dsn)
@@ -472,7 +471,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		fmt.Println(_table)
+		//fmt.Println(_table)
 		if allTables {
 			tables_in_table := []any{}
 			for _, row := range *_table {
@@ -769,7 +768,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		}
 		results, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
-			fmt.Println("custom_table:", query, err)
+			//fmt.Println("custom_table:", query, err)
 			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
