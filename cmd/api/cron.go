@@ -106,6 +106,8 @@ func (app *application) CronJobs() error {
 			if err != nil {
 				data = job
 				delete(data, "active")
+				data["start_at"] = time.Now()
+				data["end_at"] = time.Now()
 				data["cron_msg"] = fmt.Sprintf("Error geting update version of %s->%s: %v", job["cron"], job["api"], err)
 				data["success"] = false
 				data["created_at"] = time.Now()
@@ -117,6 +119,7 @@ func (app *application) CronJobs() error {
 					fmt.Printf("Error saving the cron job log: %v\n", err)
 				}
 			} else {
+				delete(data, "active")
 				data["start_at"] = time.Now()
 				endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, data["api"].(string))
 				fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
