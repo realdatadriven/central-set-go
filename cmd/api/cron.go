@@ -53,6 +53,36 @@ func (app *application) AdminInsertData(table string, data map[string]any) error
 	return nil
 }
 
+func (app *application) AdminGetRowByID(sql string, id any) (map[string]any, error) {
+	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return nil, err
+	} else {
+		defer db.Close()
+		res, _, err := db.QuerySingleRow(sql, []any{id}...)
+		if err != nil {
+			return nil, err
+		}
+		return *res, nil
+	}
+}
+
+func (app *application) AdminGetRowByFilter(sql string, params []any) (map[string]any, error) {
+	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return nil, err
+	} else {
+		defer db.Close()
+		res, _, err := db.QuerySingleRow(sql, params...)
+		if err != nil {
+			return nil, err
+		}
+		return *res, nil
+	}
+}
+
 func (app *application) CronJobs() error {
 	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
@@ -71,54 +101,70 @@ func (app *application) CronJobs() error {
 		//fmt.Printf("1: %T, %v\n", job, job)
 		_, err := c.AddFunc(job["cron"].(string), func() {
 			//fmt.Printf("2: %T, %v\n", job, job)
-			data := job
-			delete(data, "active")
-			data["start_at"] = time.Now()
-			endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, job["api"].(string))
-			fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
-			_jwt, _ := app.AdminGetJWT(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
-			fmt.Println("JWT:", _jwt)
-			req, _ := http.NewRequest("GET", endpoint, nil) // bytes.NewBuffer(jsonBody)
-			// Set headers
-			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", _jwt))
-			//req.Header.Set("Content-Type", "application/json")
-			// Make the request
-			client := &http.Client{}
-			resp, err := client.Do(req)
-			data["end_at"] = time.Now()
+			sql := `select * from "cron" where "cron_id" = ? and "cron" = ? and "active" = true and "excluded" = false`
+			data, err := app.AdminGetRowByFilter(sql, []any{job["cron_id"], job["cron"]})
 			if err != nil {
-				data["cron_msg"] = fmt.Sprintf("Error making %s request (%v): %v", endpoint, resp.Status, err)
+				data = job
+				delete(data, "active")
+				data["cron_msg"] = fmt.Sprintf("Error geting update version of %s->%s: %v", job["cron"], job["api"], err)
 				data["success"] = false
 				data["created_at"] = time.Now()
 				data["updated_at"] = time.Now()
 				data["excluded"] = false
-				fmt.Printf("cron job %s finished %v", endpoint, data["end_at"])
+				fmt.Printf("Error geting update version of %s: %v\n", job["api"], err)
 				err = app.AdminInsertData("cron_log", data)
 				if err != nil {
 					fmt.Printf("Error saving the cron job log: %v\n", err)
 				}
 			} else {
-				defer resp.Body.Close()
-				var res_json map[string]any
-				// Parse JSON into map
-				err = json.NewDecoder(resp.Body).Decode(&res_json)
+				data["start_at"] = time.Now()
+				endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, data["api"].(string))
+				fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
+				_jwt, _ := app.AdminGetJWT(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
+				fmt.Println("JWT:", _jwt)
+				req, _ := http.NewRequest("GET", endpoint, nil) // bytes.NewBuffer(jsonBody)
+				// Set headers
+				req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", _jwt))
+				//req.Header.Set("Content-Type", "application/json")
+				// Make the request
+				client := &http.Client{}
+				resp, err := client.Do(req)
+				data["end_at"] = time.Now()
 				if err != nil {
-					fmt.Printf("%v", resp.Body)
-					data["cron_msg"] = fmt.Sprintf("Error decoding %s response (%v): %v", endpoint, resp.Status, err)
+					data["cron_msg"] = fmt.Sprintf("Error making %s request (%v): %v", endpoint, resp.Status, err)
 					data["success"] = false
+					data["created_at"] = time.Now()
+					data["updated_at"] = time.Now()
+					data["excluded"] = false
+					fmt.Printf("cron job %s finished %v", endpoint, data["end_at"])
+					err = app.AdminInsertData("cron_log", data)
+					if err != nil {
+						fmt.Printf("Error saving the cron job log: %v\n", err)
+					}
 				} else {
-					data["cron_msg"] = res_json["msg"]
-					data["success"] = res_json["success"]
-				}
-				data["created_at"] = time.Now()
-				data["updated_at"] = time.Now()
-				data["excluded"] = false
-				fmt.Printf("cron job %s finished %v", endpoint, data["end_at"])
-				err = app.AdminInsertData("cron_log", data)
-				if err != nil {
-					fmt.Printf("Error saving the cron job log: %v\n", err)
+					defer resp.Body.Close()
+					var res_json map[string]any
+					// Parse JSON into map
+					err = json.NewDecoder(resp.Body).Decode(&res_json)
+					if err != nil {
+						fmt.Printf("%v", resp.Body)
+						data["cron_msg"] = fmt.Sprintf("Error decoding %s response (%v): %v", endpoint, resp.Status, err)
+						data["success"] = false
+					} else {
+						data["cron_msg"] = res_json["msg"]
+						data["success"] = res_json["success"]
+					}
+					data["created_at"] = time.Now()
+					data["updated_at"] = time.Now()
+					data["excluded"] = false
+					fmt.Printf("cron job %s finished %v", endpoint, data["end_at"])
+					err = app.AdminInsertData("cron_log", data)
+					if err != nil {
+						fmt.Printf("Error saving the cron job log: %v\n", err)
+					}
 				}
 			}
+
 		})
 		if err != nil {
 			fmt.Printf("Error adding the cron %s: %v\n", job["cron_desc"], err)

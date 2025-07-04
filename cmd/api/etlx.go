@@ -126,6 +126,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 			dateRef = append(dateRef, _dt)
 		}
 	default:
+		dateRef = append(dateRef, time.Now().AddDate(0, 0, -1))
 		fmt.Println("Unable to parse date ref: ", _type, _dateRef)
 	}
 	// EXTRA CONFIG
@@ -586,7 +587,10 @@ func (app *application) etlxRunByName(params map[string]any) map[string]any {
 	} else if !etlx_get_conf["success"].(bool) {
 		return etlx_get_conf
 	} else if len(etlx_get_conf["data"].([]map[string]any)) == 0 {
-		return etlx_get_conf
+		return map[string]any{
+			"success": false,
+			"msg":     fmt.Sprintf("ETL %s does not exists", name),
+		}
 	}
 	params["data"].(map[string]any)["conf"] = etlx_get_conf["data"].([]map[string]any)[0]["etlx_conf"]
 	res := app.etlxParseRun(params)
