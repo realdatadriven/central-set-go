@@ -19,11 +19,11 @@ import (
 	// "github.com/google/uuid"
 )
 
-func (app *application) _export(params map[string]interface{}, _item map[string]interface{}, _conf map[string]interface{}, _etlrb map[string]interface{}, _conf_etlrb map[string]interface{}, db_conf map[string]interface{}, _step map[string]interface{}) map[string]interface{} {
+func (app *application) _export(params map[string]any, _item map[string]any, _conf map[string]any, _etlrb map[string]any, _conf_etlrb map[string]any, db_conf map[string]any, _step map[string]any) map[string]any {
 	// IN MEMORY DUCKDB CONN
 	db, err := etlx.NewDuckDB("")
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("DDB Conn: %s", err),
 		}
@@ -39,7 +39,7 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 		_database = _item["database"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -47,7 +47,7 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 		_database = _etlrb["database"].(string)
 		if _database != "" {
 			_ext := filepath.Ext(_database)
-			if app.contains([]interface{}{".duckdb", ".ddb"}, _ext) {
+			if app.contains([]any{".duckdb", ".ddb"}, _ext) {
 				_driver = "duckdb"
 			}
 		}
@@ -55,17 +55,17 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 		_database = db_conf["dsn"].(string)
 	}
 	// ATTACH DBS TO THE DUCKDB IN MEM CONN
-	_duck_conf := map[string]interface{}{}
+	_duck_conf := map[string]any{}
 	if _, ok := _conf["duckdb"]; ok {
-		_duck_conf = _conf["duckdb"].(map[string]interface{})
+		_duck_conf = _conf["duckdb"].(map[string]any)
 	}
 	if _, ok := _duck_conf["extensions"]; !ok {
-		_duck_conf["extensions"] = []interface{}{}
+		_duck_conf["extensions"] = []any{}
 	}
 	//fmt.Println("extensions:", _duck_conf["extensions"])
 	app.duckdb_start(db, _duck_conf, _driver, _database)
 	// DATE REF
-	var _date_ref interface{}
+	var _date_ref any
 	if _, ok := _item["date_ref"]; ok {
 		_date_ref = _item["date_ref"]
 	} else if _, ok := _step["dates_refs"]; ok {
@@ -76,8 +76,8 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 	case string:
 		_dt, _ := time.Parse("2006-01-02", _date_ref.(string))
 		date_ref = append(date_ref, _dt)
-	case []interface{}:
-		for _, _dt := range _date_ref.([]interface{}) {
+	case []any:
+		for _, _dt := range _date_ref.([]any) {
 			_dt, _ := time.Parse("2006-01-02", _dt.(string))
 			date_ref = append(date_ref, _dt)
 		}
@@ -91,39 +91,39 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 	} else {
 		_fields_table = "etl_rb_exp_dtail"
 	}
-	etl_rbase_export_id := interface{}(-1)
+	etl_rbase_export_id := any(-1)
 	if _, ok := _item["etl_rbase_export_id"]; ok {
 		etl_rbase_export_id = _item["etl_rbase_export_id"]
 	}
-	params["data"].(map[string]interface{})["table"] = _fields_table
-	params["data"].(map[string]interface{})["limit"] = interface{}(-1.0)
-	params["data"].(map[string]interface{})["offset"] = interface{}(0.0)
-	params["data"].(map[string]interface{})["filters"] = []interface{}{}
-	params["data"].(map[string]interface{})["filters"] = append(
-		params["data"].(map[string]interface{})["filters"].([]interface{}),
-		map[string]interface{}{
+	params["data"].(map[string]any)["table"] = _fields_table
+	params["data"].(map[string]any)["limit"] = any(-1.0)
+	params["data"].(map[string]any)["offset"] = any(0.0)
+	params["data"].(map[string]any)["filters"] = []any{}
+	params["data"].(map[string]any)["filters"] = append(
+		params["data"].(map[string]any)["filters"].([]any),
+		map[string]any{
 			"field": "etl_rbase_export_id",
 			"cond":  "=",
 			"value": etl_rbase_export_id,
 		},
 	)
-	params["data"].(map[string]interface{})["order_by"] = []interface{}{}
-	params["data"].(map[string]interface{})["order_by"] = append(
-		params["data"].(map[string]interface{})["order_by"].([]interface{}),
-		map[string]interface{}{
+	params["data"].(map[string]any)["order_by"] = []any{}
+	params["data"].(map[string]any)["order_by"] = append(
+		params["data"].(map[string]any)["order_by"].([]any),
+		map[string]any{
 			"field": "etl_rb_exp_dtail_id",
 			"order": "ASC",
 		},
 	)
-	_export_details := []map[string]interface{}{}
+	_export_details := []map[string]any{}
 	_aux_export_details := app.read(params)
 	if _, ok := _aux_export_details["success"]; !ok {
 		return _aux_export_details
 	} else if _aux_export_details["success"].(bool) {
-		_export_details = _aux_export_details["data"].([]map[string]interface{})
+		_export_details = _aux_export_details["data"].([]map[string]any)
 	}
-	_exps := []map[string]interface{}{}
-	_logs_exports := []map[string]interface{}{}
+	_exps := []map[string]any{}
+	_logs_exports := []map[string]any{}
 	for _, _dt := range date_ref {
 		//fmt.Println(_dt)
 		/*for _, _detail := range _export_details {
@@ -148,7 +148,7 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 			_has_err = true
 			continue
 		}
-		_logs_exports = append(_logs_exports, _exp["aux"].(map[string]interface{}))
+		_logs_exports = append(_logs_exports, _exp["aux"].(map[string]any))
 	}
 	if len(_logs_exports) > 0 {
 		// APPEND LOGS OF EXPORTS
@@ -159,22 +159,22 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 		if err != nil {
 			fmt.Println(err)
 		}
-		_input := map[string]interface{}{
+		_input := map[string]any{
 			"file":              filepath.Base(_csv_file),
 			"etl_rbase_input":   "logs_exports",
 			"database":          _item["database"],
 			"save_only_temp":    true,
 			"destination_table": "logs_exports",
-			/*"etl_rbase_input_conf": map[string]interface{}{
+			/*"etl_rbase_input_conf": map[string]any{
 				"type": "file-duckdb",
-				"duckdb": map[string]interface{}{
+				"duckdb": map[string]any{
 					"sql":  "INSERT INTO \"<table>\" BY NAME SELECT * FROM '<file>'",
 				},
 			},*/
 		}
-		_conf = map[string]interface{}{
+		_conf = map[string]any{
 			"type": "file-duckdb",
-			"duckdb": map[string]interface{}{
+			"duckdb": map[string]any{
 				"sql": "INSERT INTO \"<table>\" BY NAME SELECT * FROM '<file>'",
 			},
 		}
@@ -187,19 +187,19 @@ func (app *application) _export(params map[string]interface{}, _item map[string]
 	}
 	// DETACH DBS TO THE DUCKDB IN MEM CONN
 	app.duckdb_end(db, _duck_conf, _driver, _database, "")
-	//data := map[string]interface{}{}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	//data := map[string]any{}
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    _exps,
 	}
 }
 
-func (app *application) _run_export(date_ref time.Time, _export map[string]interface{}, _conf map[string]interface{}, _etlrb map[string]interface{}, _conf_etlrb map[string]interface{}, _export_details []map[string]interface{}, file string, template string, db *etlx.DuckDB) map[string]interface{} {
+func (app *application) _run_export(date_ref time.Time, _export map[string]any, _conf map[string]any, _etlrb map[string]any, _conf_etlrb map[string]any, _export_details []map[string]any, file string, template string, db *etlx.DuckDB) map[string]any {
 	//tmp := "tmp"
 	ext := filepath.Ext(file)
-	if app.contains([]interface{}{".xls", ".xlsx", ".XLS", ".XLSX"}, ext) {
+	if app.contains([]any{".xls", ".xlsx", ".XLS", ".XLSX"}, ext) {
 		_, err := db.ExecuteQuery(`INSTALL Excel`)
 		if err != nil {
 			_err_msg := fmt.Sprintf(`Err: %s`, err)
@@ -211,16 +211,16 @@ func (app *application) _run_export(date_ref time.Time, _export map[string]inter
 			fmt.Println(_err_msg)
 		}
 	}
-	_exps := []map[string]interface{}{}
+	_exps := []map[string]any{}
 	for _, _detail := range _export_details {
 		//fmt.Println(date_ref, _detail)
-		_dtail_conf := map[string]interface{}{}
-		if _, ok := _detail["etl_rb_exp_dtail_conf"].(map[string]interface{}); ok {
-			_dtail_conf = _detail["etl_rb_exp_dtail_conf"].(map[string]interface{})
-		} else if _, ok := _detail["conf"].(map[string]interface{}); ok {
-			_dtail_conf = _detail["conf"].(map[string]interface{})
-		} else if _, ok := _detail["_conf"].(map[string]interface{}); ok {
-			_dtail_conf = _detail["_conf"].(map[string]interface{})
+		_dtail_conf := map[string]any{}
+		if _, ok := _detail["etl_rb_exp_dtail_conf"].(map[string]any); ok {
+			_dtail_conf = _detail["etl_rb_exp_dtail_conf"].(map[string]any)
+		} else if _, ok := _detail["conf"].(map[string]any); ok {
+			_dtail_conf = _detail["conf"].(map[string]any)
+		} else if _, ok := _detail["_conf"].(map[string]any); ok {
+			_dtail_conf = _detail["_conf"].(map[string]any)
 		}
 		_sql := ""
 		if _, ok := _detail["sql_export_query"]; ok {
@@ -238,13 +238,13 @@ func (app *application) _run_export(date_ref time.Time, _export map[string]inter
 		}
 		details_to_tmp := false
 		if _, ok := _dtail_conf["details_to_tmp"]; ok {
-			if app.contains([]interface{}{true, 1, "True", "TRUE", "T", "1"}, _dtail_conf["details_to_tmp"]) {
+			if app.contains([]any{true, 1, "True", "TRUE", "T", "1"}, _dtail_conf["details_to_tmp"]) {
 				details_to_tmp = true
 			}
 		}
 		each_details_on_its_own_file := false
 		if _, ok := _etlrb["each_details_on_its_own_file"]; ok {
-			if app.contains([]interface{}{true, 1, "True", "TRUE", "T", "1"}, _etlrb["each_details_on_its_own_file"]) {
+			if app.contains([]any{true, 1, "True", "TRUE", "T", "1"}, _etlrb["each_details_on_its_own_file"]) {
 				each_details_on_its_own_file = true
 			}
 		}
@@ -263,19 +263,19 @@ func (app *application) _run_export(date_ref time.Time, _export map[string]inter
 		//fmt.Println(_sql)
 		_, err := db.ExecuteQuery(_sql)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf(`Err: %s`, err),
 			}
 		}
-		_aux := map[string]interface{}{
+		_aux := map[string]any{
 			"name":  _detail["etl_rb_exp_dtail"],
 			"ref":   app.setQueryDate("{YYYY-MM-DD}", date_ref),
 			"stamp": time.Now(),
 			"file":  filepath.Base(_export_full_path),
 		}
-		msg, _ := app.i18n.T("success", map[string]interface{}{})
-		_exps = append(_exps, map[string]interface{}{
+		msg, _ := app.i18n.T("success", map[string]any{})
+		_exps = append(_exps, map[string]any{
 			"success": true,
 			"msg":     msg,
 			"fname":   _export_full_path,
@@ -288,22 +288,22 @@ func (app *application) _run_export(date_ref time.Time, _export map[string]inter
 			basename := app.setQueryDate(template[:len(template)-len(ext)], date_ref)
 			zped_path := fmt.Sprintf(`%s/tmp/%s.zip`, app.config.upload_path, basename)
 			files := []string{zped_path}
-			_auxs := []map[string]interface{}{}
+			_auxs := []map[string]any{}
 			for _, exp := range _exps {
 				files = append(files, exp["fname"].(string))
 				if _, ok := exp["aux"]; ok {
-					_auxs = append(_auxs, exp["aux"].(map[string]interface{}))
+					_auxs = append(_auxs, exp["aux"].(map[string]any))
 				}
 			}
 			err := app.createZipFile(zped_path, files)
 			if err != nil {
-				return map[string]interface{}{
+				return map[string]any{
 					"success": false,
 					"msg":     fmt.Sprintf(`Err Zipping: %s`, err),
 				}
 			}
-			msg, _ := app.i18n.T("success", map[string]interface{}{})
-			return map[string]interface{}{
+			msg, _ := app.i18n.T("success", map[string]any{})
+			return map[string]any{
 				"success": true,
 				"msg":     msg,
 				"fname":   fmt.Sprintf(`tmp/%s.zip`, basename),
@@ -315,8 +315,8 @@ func (app *application) _run_export(date_ref time.Time, _export map[string]inter
 			return _aux2
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		//"n_rows":  n_rows,
@@ -379,7 +379,7 @@ func convertToUTF8(isoStr string) (string, error) {
 	return string(utf8Bytes), nil
 }
 
-func hasDecimalPlace(v interface{}) (bool, error) {
+func hasDecimalPlace(v any) (bool, error) {
 	// Try to cast v to float64
 	floatVal, ok := v.(float64)
 	if !ok {
@@ -393,7 +393,7 @@ func hasDecimalPlace(v interface{}) (bool, error) {
 	return false, nil
 }
 
-func (app *application) SliceToCSV(data []map[string]interface{}, cols []string, csv_path string) (bool, error) {
+func (app *application) SliceToCSV(data []map[string]any, cols []string, csv_path string) (bool, error) {
 	csvFile, err := os.Create(csv_path)
 	if err != nil {
 		return false, fmt.Errorf("error creating CSV file: %w", err)

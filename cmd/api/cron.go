@@ -74,7 +74,7 @@ func (app *application) CronJobs() error {
 			data := job
 			delete(data, "active")
 			data["start_at"] = time.Now()
-			endpoint := fmt.Sprintf(`%s/dyn_api/%s`, app.config.baseURL, job["api"].(string))
+			endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, job["api"].(string))
 			fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
 			_jwt, _ := app.AdminGetJWT(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
 			fmt.Println("JWT:", _jwt)

@@ -327,7 +327,10 @@
         "hide_cond": "Condição se esconder",
         "link": "Link",
         "crud.refresh":"Atualizar",
-        "crud.run_all":"Executar Tudu"
+        "crud.run_all":"Executar Tudu",
+        "callApi": "Call API",
+        "api": "API",
+        "tooltip": "Tooltip"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",

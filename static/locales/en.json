@@ -334,7 +334,10 @@
         "timer": "Duration",
         "msg": "Message",
         "success": "Success",
-        "disabled": "Disabled"
+        "disabled": "Disabled",
+        "callApi": "Call API",
+        "api": "API",
+        "tooltip": "Tooltip"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",

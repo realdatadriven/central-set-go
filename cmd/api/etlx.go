@@ -9,10 +9,10 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) etlxMdParse(params map[string]interface{}) map[string]interface{} {
+func (app *application) etlxMdParse(params map[string]any) map[string]any {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-data", map[string]any{})
+		return map[string]any{
 			"success": true,
 			"msg":     msg,
 		}
@@ -21,21 +21,21 @@ func (app *application) etlxMdParse(params map[string]interface{}) map[string]in
 	etlxlib := &etlx.ETLX{Config: config}
 	_data, ok := params["data"].(map[string]any)
 	if !ok {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
 	_conf, ok := _data["conf"].(string)
 	if !ok {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     "Please validate the configutration, should be mardown string!",
 		}
 	}
 	err := etlxlib.ConfigFromMDText(_conf)
 	if err != nil {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%v", err),
 		}
@@ -43,7 +43,7 @@ func (app *application) etlxMdParse(params map[string]interface{}) map[string]in
 	if _, ok := etlxlib.Config["REQUIRES"]; ok {
 		_logs, err := etlxlib.LoadREQUIRES(nil)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("REQUIRES ERR: %v", err),
 				"logs":    _logs,
@@ -54,8 +54,8 @@ func (app *application) etlxMdParse(params map[string]interface{}) map[string]in
 	if os.Getenv("ETLX_DEBUG_QUERY") == "true" {
 		etlxlib.PrintConfigAsJSON(etlxlib.Config)
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    etlxlib.Config,
@@ -74,17 +74,17 @@ func anyToStrings(input []any) []string {
 	return result
 }
 
-func (app *application) etlxRun(params map[string]interface{}) map[string]interface{} {
+func (app *application) etlxRun(params map[string]any) map[string]any {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]interface{}{})
-		return map[string]interface{}{
+		msg, _ := app.i18n.T("no-data", map[string]any{})
+		return map[string]any{
 			"success": true,
 			"msg":     msg,
 		}
 	}
 	_data, ok := params["data"].(map[string]any)
 	if !ok {
-		return map[string]interface{}{
+		return map[string]any{
 			"success": false,
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
@@ -95,14 +95,14 @@ func (app *application) etlxRun(params map[string]interface{}) map[string]interf
 	if !ok {
 		_conf, ok := _data["conf"].(string)
 		if !ok {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     "Please validate the configutration, should be mardown string!",
 			}
 		}
 		err := etlxlib.ConfigFromMDText(_conf)
 		if err != nil {
-			return map[string]interface{}{
+			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%v", err),
 			}
@@ -111,7 +111,7 @@ func (app *application) etlxRun(params map[string]interface{}) map[string]interf
 		etlxlib.Config = config
 	}
 	// DATE REF
-	var _dateRef interface{}
+	var _dateRef any
 	if _, ok := _data["date_ref"]; ok {
 		_dateRef = _data["date_ref"]
 	}
@@ -120,8 +120,8 @@ func (app *application) etlxRun(params map[string]interface{}) map[string]interf
 	case string:
 		_dt, _ := time.Parse("2006-01-02", _dateRef.(string))
 		dateRef = append(dateRef, _dt)
-	case []interface{}:
-		for _, _dt := range _dateRef.([]interface{}) {
+	case []any:
+		for _, _dt := range _dateRef.([]any) {
 			_dt, _ := time.Parse("2006-01-02", _dt.(string))
 			dateRef = append(dateRef, _dt)
 		}
@@ -533,8 +533,8 @@ func (app *application) etlxRun(params map[string]interface{}) map[string]interf
 			}
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]interface{}{})
-	return map[string]interface{}{
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
 		"success": true,
 		"msg":     msg,
 		"logs":    logs,
@@ -542,8 +542,54 @@ func (app *application) etlxRun(params map[string]interface{}) map[string]interf
 	}
 }
 
-func (app *application) etlxParseRun(params map[string]interface{}) map[string]interface{} {
+func (app *application) etlxParseRun(params map[string]any) map[string]any {
 	res := app.etlxMdParse(params)
+	if res["success"].(bool) {
+		params["data"].(map[string]any)["conf"] = res["data"]
+		return app.etlxRun(params)
+	}
+	return res
+}
+
+func (app *application) etlxRunByName(params map[string]any) map[string]any {
+	name, ok := params["name"].(string)
+	if !ok {
+		name, _ = params["data"].(map[string]any)["name"].(string)
+	}
+	table := "etlx"
+	database := "ETLX"
+	_aux_params := params
+	_aux_params["data"].(map[string]any)["table"] = table
+	_aux_params["data"].(map[string]any)["db"] = database
+	_aux_params["data"].(map[string]any)["limit"] = any(1.0)
+	_aux_params["data"].(map[string]any)["offset"] = any(0.0)
+	_aux_params["data"].(map[string]any)["filters"] = []any{}
+	_aux_params["data"].(map[string]any)["filters"] = append(
+		_aux_params["data"].(map[string]any)["filters"].([]any),
+		map[string]any{
+			"field": "etl",
+			"cond":  "=",
+			"value": name,
+		},
+	)
+	_aux_params["data"].(map[string]any)["order_by"] = []any{}
+	_aux_params["data"].(map[string]any)["order_by"] = append(
+		_aux_params["data"].(map[string]any)["order_by"].([]any),
+		map[string]any{
+			"field": "etlx_id",
+			"order": "desc",
+		},
+	)
+	etlx_get_conf := app.read(_aux_params)
+	if _, ok := etlx_get_conf["success"]; !ok {
+		return etlx_get_conf
+	} else if !etlx_get_conf["success"].(bool) {
+		return etlx_get_conf
+	} else if len(etlx_get_conf["data"].([]map[string]any)) == 0 {
+		return etlx_get_conf
+	}
+	params["data"].(map[string]any)["conf"] = etlx_get_conf["data"].([]map[string]any)[0]["etlx_conf"]
+	res := app.etlxParseRun(params)
 	if res["success"].(bool) {
 		params["data"].(map[string]any)["conf"] = res["data"]
 		return app.etlxRun(params)
