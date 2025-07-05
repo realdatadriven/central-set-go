@@ -347,7 +347,7 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 		}
 		return dsn, _database.(string), nil
 	case []any:
-		//fmt.Println("IS []any:", _database, _type)
+		fmt.Println("IS []any:", _database, _type)
 		return "", "", errors.New("database conf is of type []any")
 	default:
 		return _database.(string), _database.(string), nil
