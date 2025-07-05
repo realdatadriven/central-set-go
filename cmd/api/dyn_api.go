@@ -15,11 +15,45 @@ import (
 	"github.com/pascaldekloe/jwt"
 )
 
+func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
+	params := map[string]any{}
+	request.DecodeJSON(w, r, &params)
+	name := r.PathValue("name")
+	// fmt.Println(name)
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	if _, ok := params["data"]; !ok {
+		params["data"] = map[string]any{}
+	}
+	if _, ok := params["app"]; !ok {
+		params["app"] = map[string]any{}
+	}
+	err := app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := app.verifyToken(r)
+	params["user"] = *(contextGetAuthenticatedUser(r))
+	var data map[string]any
+	if !token["success"].(bool) {
+		data = token
+	} else {
+		params["data"] = map[string]any{"name": name}
+		data = app.Buckup(params)
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
 func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Request) {
 	params := map[string]any{}
 	request.DecodeJSON(w, r, &params)
 	name := r.PathValue("name")
-	fmt.Println(name)
+	// fmt.Println(name)
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
@@ -271,6 +305,12 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				data = token
 			} else {
 				data = app.etlxParseRun(params)
+			}
+		} else if app.contains([]any{"run_by_name", "run_name", "name"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.etlxRunByName(params)
 			}
 		} else {
 			data = map[string]any{

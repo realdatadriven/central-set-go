@@ -95,7 +95,6 @@ func (app *application) CronJobs() error {
 	if err != nil {
 		return fmt.Errorf("error geting the cron jobs: %w", err)
 	}
-	// Start cron
 	c := cron.New()
 	for _, job := range *jobs {
 		//fmt.Printf("1: %T, %v\n", job, job)

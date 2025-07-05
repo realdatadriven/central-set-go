@@ -247,7 +247,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 			}
 		}
 	}
-	//fmt.Println(crud_aciton, pk, query)
+	//fmt.Println(crud_aciton, pk, _data[pk], query)
 	id := 0
 	if db.GetDriverName() == "postgres" && strings.HasPrefix(query, "INSERT") {
 		_id, err := db.ExecuteQueryPGInsertWithLastInsertId(query, _data)
@@ -283,6 +283,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		_id, err := db.ExecuteNamedQuery(query, _data)
 		// fmt.Println(query)
 		if err != nil {
+			fmt.Println(crud_aciton, pk, _data[pk], query, err)
 			return map[string]any{
 				"success": false,
 				"table":   table,

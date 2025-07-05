@@ -558,7 +558,21 @@ func (app *application) etlxRunByName(params map[string]any) map[string]any {
 		name, _ = params["data"].(map[string]any)["name"].(string)
 	}
 	table := "etlx"
+	if _, ok := params["table"].(string); ok {
+		table, _ = params["table"].(string)
+	} else if _, ok := params["data"].(map[string]any)["table"].(string); ok {
+		table, _ = params["data"].(map[string]any)["table"].(string)
+	}
 	database := "ETLX"
+	if _, ok := params["db"].(string); ok {
+		database, _ = params["db"].(string)
+	} else if _, ok := params["data"].(map[string]any)["db"].(string); ok {
+		database, _ = params["data"].(map[string]any)["db"].(string)
+	} else if _, ok := params["database"].(string); ok {
+		database, _ = params["database"].(string)
+	} else if _, ok := params["data"].(map[string]any)["database"].(string); ok {
+		database, _ = params["data"].(map[string]any)["database"].(string)
+	}
 	_aux_params := params
 	_aux_params["data"].(map[string]any)["table"] = table
 	_aux_params["data"].(map[string]any)["db"] = database
