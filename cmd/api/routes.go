@@ -65,15 +65,11 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
 	// RUN ENDPOINTS
 	mux.HandleFunc("GET /etlx/run/{name}", app.run_etlx_run_by_name)
-	mux.HandleFunc("GET /buckup/{name}", app.run_etlx_run_by_name)
-
-	//mux.Handler("GET /protected", app.requireAuthenticatedUser(http.HandleFunc(app.protected)))
-
-	//mux.Handler("GET /basic-auth-protected", app.requireBasicAuthentication(http.HandleFunc(app.protected)))
+	mux.HandleFunc("GET /buckup/{name}", app.run_backup)
 
 	// Register the WebSocket endpoint
 	manager := app.NewConnectionManager()
-	//mux.HandleFunc("/ws", app.websocketEndpoint(manager))
-	http.HandleFunc("/ws", app.websocketEndpoint(manager))
+	mux.HandleFunc("/ws", app.websocketEndpoint(manager))
+	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	return app.compress(app.cors(app.logAccess(app.recoverPanic(app.authenticate(mux)))))
 }

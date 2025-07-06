@@ -66,9 +66,7 @@ func (app *application) websocketEndpoint(manager *ConnectionManager) http.Handl
 			return
 		}
 		defer manager.Disconnect(conn)
-
 		manager.Connect(conn)
-
 		for {
 			var data map[string]interface{}
 			err := conn.ReadJSON(&data)

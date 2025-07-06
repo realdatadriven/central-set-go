@@ -281,7 +281,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		id = _id
 	} else {
 		_id, err := db.ExecuteNamedQuery(query, _data)
-		// fmt.Println(query)
+		//fmt.Println(query)
 		if err != nil {
 			fmt.Println(crud_aciton, pk, _data[pk], query, err)
 			return map[string]any{
