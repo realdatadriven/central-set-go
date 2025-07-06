@@ -138,7 +138,7 @@ func (app *application) CronJobs() error {
 				endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, data["api"].(string))
 				fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
 				_jwt, _ := app.AdminGetJWT(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
-				fmt.Println("JWT:", _jwt)
+				//fmt.Println("JWT:", _jwt)
 				req, _ := http.NewRequest("GET", endpoint, nil) // bytes.NewBuffer(jsonBody)
 				// Set headers
 				req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", _jwt))
@@ -164,7 +164,7 @@ func (app *application) CronJobs() error {
 					// Parse JSON into map
 					err = json.NewDecoder(resp.Body).Decode(&res_json)
 					if err != nil {
-						fmt.Printf("%v", resp.Body)
+						fmt.Printf("Err Body: %v\n", resp.Body)
 						data["cron_msg"] = fmt.Sprintf("Error decoding %s response (%v): %v", endpoint, resp.Status, err)
 						data["success"] = false
 					} else {
@@ -177,6 +177,7 @@ func (app *application) CronJobs() error {
 					fmt.Printf("cron job %s finished %v", endpoint, data["end_at"])
 					err = app.AdminInsertData("cron_log", data)
 					if err != nil {
+						fmt.Printf("Body: %v -> %v\n", res_json, data)
 						fmt.Printf("Error saving the cron job log: %v\n", err)
 					}
 				}

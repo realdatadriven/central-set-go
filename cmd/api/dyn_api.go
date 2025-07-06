@@ -19,7 +19,7 @@ func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
 	params := map[string]any{}
 	request.DecodeJSON(w, r, &params)
 	name := r.PathValue("name")
-	// fmt.Println(name)
+	fmt.Println("run_backup:", name)
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)

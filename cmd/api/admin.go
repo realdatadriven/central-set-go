@@ -477,7 +477,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			for _, row := range *_table {
 				tables_in_table = append(tables_in_table, row["table"].(string))
 			}
-			fmt.Println(tables_in_table)
+			// fmt.Println(tables_in_table)
 			results := []map[string]any{}
 			for _, table := range tables {
 				if !app.contains(tables_in_table, table) {
