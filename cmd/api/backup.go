@@ -36,6 +36,7 @@ func (app *application) ScanRowToMap(rows *sql.Rows) (Dict, error) {
 
 func (app *application) Buckup(params Dict) Dict {
 	dsn, admin_db, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
+	_, adm_dsn, _ := app.ParseConnection(dsn)
 	// fmt.Println(dsn)
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
@@ -100,18 +101,17 @@ func (app *application) Buckup(params Dict) Dict {
 			_type = ""
 		}
 		if _app["db"].(string) != admin_db {
-			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, dsn2, admin_db, _type)
+			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, adm_dsn, admin_db, _type)
 			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 			memDB.ExecuteQuery(attach)
 			for _, adm_tbl := range admin_db_tables {
-				if adm_tbl != "" {
+				if adm_tbl == "" {
 					continue
 				}
 				sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
-				fmt.Println(sql)
-				result, _, err := db.QueryMultiRows(sql, []any{dbname}...)
+				result, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 				if err != nil {
-					fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], adm_tbl, err)
+					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
 				}
 				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into %s."%s" (":columns") values`, admin_db, adm_tbl), *result)
 				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
