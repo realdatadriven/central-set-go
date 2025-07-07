@@ -5,8 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 )
 
@@ -33,7 +35,7 @@ func (app *application) ScanRowToMap(rows *sql.Rows) (Dict, error) {
 }
 
 func (app *application) Buckup(params Dict) Dict {
-	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
+	dsn, admin_db, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	// fmt.Println(dsn)
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
@@ -61,13 +63,20 @@ func (app *application) Buckup(params Dict) Dict {
 	if os.Getenv("DB_EMBEDED_DIR") != "" {
 		embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
 	}
+	admin_db_tables := strings.Split(env.GetString("EXPORT_ADMIN_DB_TABLES", ""), ",")
 	etlx_obj := &etlx.ETLX{Config: Dict{}}
 	//fmt.Println("APPS:", *apps)
 	memDB, _ := etlx.GetDB("duckdb:")
 	defer memDB.Close()
 	for _, _app := range *apps {
 		fmt.Printf("Backup Start: %s -> %v\n", _app["app"], time.Now())
-		memDB.ExecuteQuery(`CREATE OR REPLACE TABLE "queries" ("query" TEXT NULL)`)
+		memDB.ExecuteQuery(`CREATE SEQUENCE query_id_seq START 1`)
+		sql := `CREATE OR REPLACE TABLE "queries" (
+			"id" BIGINT PRIMARY KEY DEFAULT nextval('query_id_seq'),
+			"query" TEXT NULL,
+    		"created_at" TIMESTAMP DEFAULT current_timestamp
+		)`
+		memDB.ExecuteQuery(sql)
 		err := app.InsertData(memDB, "memory.queries", Dict{"query": "BEGIN TRANSACTION;"})
 		if err != nil {
 			fmt.Printf("Error executing query %s: %s!", _app["app"], err)
@@ -76,7 +85,7 @@ func (app *application) Buckup(params Dict) Dict {
 				"msg":     fmt.Sprintf("Error executing query %s: %s!", _app["app"], err),
 			}
 		}
-		dsn, dbname, _ := app.GetDBNameFromParams(Dict{"db": _app["app"]})
+		dsn, dbname, _ := app.GetDBNameFromParams(Dict{"db": _app["db"]})
 		_, dsn2, _ := app.ParseConnection(dsn)
 		_type := ""
 		if db.GetDriverName() == "sqlite3" || db.GetDriverName() == "sqlite" {
@@ -90,10 +99,30 @@ func (app *application) Buckup(params Dict) Dict {
 		} else if db.GetDriverName() == "duckdb" {
 			_type = ""
 		}
-		attach := fmt.Sprintf(`attach '%s' as %s %s`, dsn2, dbname, _type)
+		if _app["db"].(string) != admin_db {
+			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, dsn2, admin_db, _type)
+			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
+			memDB.ExecuteQuery(attach)
+			for _, adm_tbl := range admin_db_tables {
+				if adm_tbl != "" {
+					continue
+				}
+				sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
+				fmt.Println(sql)
+				result, _, err := db.QueryMultiRows(sql, []any{dbname}...)
+				if err != nil {
+					fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], adm_tbl, err)
+				}
+				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into %s."%s" (":columns") values`, admin_db, adm_tbl), *result)
+				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+			}
+			app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, admin_db)})
+			memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, admin_db))
+		}
+		attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, dsn2, dbname, _type)
 		memDB.ExecuteQuery(attach)
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, dbname))
-		sql = `SELECT * FROM duckdb_tables() where database_name = ?`
+		sql = `select * from duckdb_tables() where database_name = ?`
 		tables, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 		if err != nil {
 			fmt.Printf("Error getting the table %s: %s!", _app["app"], err)
@@ -107,10 +136,15 @@ func (app *application) Buckup(params Dict) Dict {
 				continue
 			}
 			app.InsertData(memDB, "memory.queries", Dict{"query": table["sql"]})
-			sql = fmt.Sprintf(`SELECT * FROM "%s"`, table["table_name"])
+			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
+			db_filter := []any{}
+			if _app["db"].(string) == admin_db && app.contains(app.sliceStrs2SliceInterfaces(admin_db_tables), table["table_name"]) {
+				sql = fmt.Sprintf(`select * from "%s" where "db" = ?`, table["table_name"])
+				db_filter = []any{admin_db}
+			}
 			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3600)*time.Second)
 			defer cancel()
-			rows, err := memDB.QueryRows(ctx, sql, []any{}...)
+			rows, err := memDB.QueryRows(ctx, sql, db_filter...)
 			if err != nil {
 				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
 				return Dict{
