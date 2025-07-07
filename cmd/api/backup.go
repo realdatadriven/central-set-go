@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"os"
 	"time"
@@ -9,6 +11,26 @@ import (
 )
 
 type Dict = map[string]any
+
+func (app *application) ScanRowToMap(rows *sql.Rows) (Dict, error) {
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get columns: %w", err)
+	}
+	values := make([]interface{}, len(columns))
+	valuePointers := make([]interface{}, len(columns))
+	for i := range values {
+		valuePointers[i] = &values[i]
+	}
+	if err := rows.Scan(valuePointers...); err != nil {
+		return nil, fmt.Errorf("failed to scan row: %w", err)
+	}
+	rowMap := make(Dict)
+	for i, colName := range columns {
+		rowMap[colName] = values[i]
+	}
+	return rowMap, nil
+}
 
 func (app *application) Buckup(params Dict) Dict {
 	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
@@ -39,6 +61,7 @@ func (app *application) Buckup(params Dict) Dict {
 	if os.Getenv("DB_EMBEDED_DIR") != "" {
 		embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
 	}
+	etlx_obj := &etlx.ETLX{Config: Dict{}}
 	//fmt.Println("APPS:", *apps)
 	memDB, _ := etlx.GetDB("duckdb:")
 	defer memDB.Close()
@@ -68,17 +91,15 @@ func (app *application) Buckup(params Dict) Dict {
 			_type = ""
 		}
 		attach := fmt.Sprintf(`attach '%s' as %s %s`, dsn2, dbname, _type)
-		//fmt.Println(1, attach)
 		memDB.ExecuteQuery(attach)
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, dbname))
-		// EXPORT TABLE SQL
 		sql = `SELECT * FROM duckdb_tables() where database_name = ?`
 		tables, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 		if err != nil {
 			fmt.Printf("Error getting the table %s: %s!", _app["app"], err)
 			return Dict{
 				"success": false,
-				"msg":     fmt.Sprintf("Error getting the table %s: %s!", _app["app"], err),
+				"msg":     fmt.Sprintf("Error getting the tables from %s: %s!", _app["app"], err),
 			}
 		}
 		for _, table := range *tables {
@@ -86,7 +107,42 @@ func (app *application) Buckup(params Dict) Dict {
 				continue
 			}
 			app.InsertData(memDB, "memory.queries", Dict{"query": table["sql"]})
-			// TABLE DATA adapt from etlx db2db
+			sql = fmt.Sprintf(`SELECT * FROM "%s"`, table["table_name"])
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3600)*time.Second)
+			defer cancel()
+			rows, err := memDB.QueryRows(ctx, sql, []any{}...)
+			if err != nil {
+				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err),
+				}
+			}
+			defer rows.Close()
+			chunk_size := 500
+			i := 0
+			var result []Dict
+			for rows.Next() {
+				i += 1
+				row, _ := app.ScanRowToMap(rows)
+				result = append(result, row)
+				if i >= chunk_size {
+					i = 0
+					sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result)
+					app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+					result = []Dict{} //result[:0]
+				}
+			}
+			if err := rows.Err(); err != nil {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err),
+				}
+			}
+			if len(result) > 0 {
+				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result)
+				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+			}
 		}
 		app.InsertData(memDB, "memory.queries", Dict{"query": "COMMIT;"})
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, "memory"))
