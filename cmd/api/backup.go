@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,6 +14,18 @@ import (
 )
 
 type Dict = map[string]any
+
+func AddForeignKeyToCreateStmt(createStmt, fkString string) string {
+	// Trim semicolon if exists
+	createStmt = strings.TrimSuffix(createStmt, ";")
+	// Prepare regex to match the last closing parenthesis before the semicolon
+	re := regexp.MustCompile(`(?i)(?s)(\))\s*$`) // matches last ')'
+	if !re.MatchString(createStmt) {
+		return createStmt // fallback: no match
+	}
+	// Insert FK string before the last ')', with a comma
+	return re.ReplaceAllString(createStmt, ",\n    "+fkString+"\n)")
+}
 
 func (app *application) ScanRowToMap(rows *sql.Rows) (Dict, error) {
 	columns, err := rows.Columns()
@@ -87,6 +100,15 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 		}
 		dsn, dbname, _ := app.GetDBNameFromParams(Dict{"db": _app["db"]})
+		appDBCon, err := etlx.GetDB(dsn)
+		if err != nil {
+			fmt.Printf("Error getting the app DB %s: %s!", _app["app"], err)
+			return Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("Error getting the app DB %s: %s!", _app["app"], err),
+			}
+		}
+		defer appDBCon.Close()
 		_, dsn2, _ := app.ParseConnection(dsn)
 		_type := ""
 		if db.GetDriverName() == "sqlite3" || db.GetDriverName() == "sqlite" {
@@ -132,10 +154,32 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 		}
 		for _, table := range *tables {
-			if table["table_name"] == "sqlite_sequence" {
+			if table["table_name"] == "sqlite_sequence" || table["table_name"] == "sqlite_stat" {
 				continue
 			}
-			app.InsertData(memDB, "memory.queries", Dict{"query": table["sql"]})
+			sql = table["sql"].(string)
+			extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
+			schema, _, err := appDBCon.TableSchema(params, table["table_name"].(string), _app["db"].(string), extra_conf)
+			if err != nil {
+				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err),
+				}
+			}
+			fks := []string{}
+			for _, col := range *schema {
+				if col["fk"].(bool) {
+					//fmt.Println(col)
+					fks = append(fks, fmt.Sprintf(`FOREIGN KEY("%s") REFERENCES "%s"("%s")`, col["field"], col["referred_table"], col["referred_column"]))
+				} else if col["pk"].(bool) {
+
+				}
+			}
+			if len(fks) > 0 {
+				sql = AddForeignKeyToCreateStmt(sql, app.joinSlice(app.sliceStrs2SliceInterfaces(fks), ","))
+			}
+			app.InsertData(memDB, "memory.queries", Dict{"query": sql})
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
 			db_filter := []any{}
 			if _app["db"].(string) == admin_db && app.contains(app.sliceStrs2SliceInterfaces(admin_db_tables), table["table_name"]) {

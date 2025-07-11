@@ -13,24 +13,25 @@ import (
 func (app *application) setupDB(filename string, dbname string, embedded bool) error {
 	var content []byte
 	var err error
-	//fmt.Printf(`database/%s`, filename)
+	fmt.Printf(`database/%s`, filename)
 	content, err = os.ReadFile(fmt.Sprintf(`database/%s`, filename))
-	// Read the file content
 	if embedded && err != nil {
 		content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`setup/%s`, filename))
 	}
 	if err != nil {
 		return fmt.Errorf("failed to read file: %w", err)
 	}
-	// Convert the content to a string and split by semicolon to get individual queries
 	queries := strings.Split(string(content), ";")
-	// Loop over each query, trimming and executing
 	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": dbname})
 	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
 		return fmt.Errorf("geting the connection to %s: %w", dbname, err)
 	}
 	defer newDB.Close()
+	/*_, err = newDB.ExecuteQuery(string(content))
+	if err != nil {
+		return fmt.Errorf("execution failed: %w", err)
+	}*/
 	for _, query := range queries {
 		trimmedQuery := strings.TrimSpace(query)
 		if trimmedQuery == "" {
@@ -47,6 +48,9 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 
 // Execute a single SQL query
 func (app *application) executeSQLQuery(query string, db etlx.DBInterface) error {
+	if strings.HasPrefix(query, "PRAGMA") {
+		println(query)
+	}
 	_, err := db.ExecuteQuery(query)
 	if err != nil {
 		println(query)

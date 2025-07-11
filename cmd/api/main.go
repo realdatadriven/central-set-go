@@ -180,7 +180,7 @@ func run(logger *slog.Logger) error {
 		fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
 		err := app.setupDB(fname, *dbname, *embedded)
 		if err != nil {
-			return fmt.Errorf(`error setingup the DB: %v`, err)
+			return fmt.Errorf("error setingup the DB: %v\n", err)
 		}
 	}
 	app.CronJobs()

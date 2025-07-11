@@ -825,7 +825,8 @@ CREATE TABLE IF NOT EXISTS "user_role" (
 	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
 	FOREIGN KEY("user_id") REFERENCES "user"("user_id")
 );
-INSERT INTO "app" ("app_id","app","app_desc","version","email","db","attach_logo","config","user_id","created_at","updated_at","excluded") VALUES (1,'ADMIN','Admin','1.0.0',NULL,'ADMIN',NULL,'{}',1,'2024-10-02 09:19:46.062257','2024-10-02 09:19:46.062257',0),
+
+/*INSERT INTO "app" ("app_id","app","app_desc","version","email","db","attach_logo","config","user_id","created_at","updated_at","excluded") VALUES (1,'ADMIN','Admin','1.0.0',NULL,'ADMIN',NULL,'{}',1,'2024-10-02 09:19:46.062257','2024-10-02 09:19:46.062257',0),
  (2,'ETLQ','Base, ETL, Data Quality, Reconciliação','0.0.1','cccc@domain.com','ETLQ',NULL,NULL,1,'2024-10-02 09:24:08.088587','2024-10-19 17:47:09.561112',0),
  (3,'ETLX','ETLX UI in CS','1.0.0',NULL,'ETLX',NULL,NULL,1,'2025-03-05 15:29:12.313089','2025-03-05 15:29:12.313089',0),
  (4,'SAAS','CS SASS Backend','1.0.0',NULL,'SAAS',NULL,NULL,1,'2025-03-30 20:56:24.685592','2025-03-30 20:56:24.685592',0);
@@ -3561,5 +3562,6 @@ INSERT INTO "user_log" ("user_log_id","user_id","action","req_ip","req_at","req_
  (967,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-06-22 09:29:26.291836286-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,3,NULL,NULL,NULL,0),
  (968,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-06-22 09:29:30.074277409-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,3,NULL,NULL,NULL,0),
  (969,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-06-22 09:29:32.538037242-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,3,NULL,NULL,NULL,0);
+*/
 PRAGMA foreign_keys = ON;
 COMMIT;
