@@ -11,7 +11,7 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-func (app *application) AdminGetJWT(user map[string]any) (string, error) {
+func (app *application) AdminGetJWT(user Dict) (string, error) {
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {
@@ -31,8 +31,8 @@ func (app *application) AdminGetJWT(user map[string]any) (string, error) {
 	return string(jwtBytes), nil
 }
 
-func (app *application) AdminInsertData(table string, data map[string]any) error {
-	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+func (app *application) AdminInsertData(table string, data Dict) error {
+	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
 		return err
@@ -53,8 +53,8 @@ func (app *application) AdminInsertData(table string, data map[string]any) error
 	return nil
 }
 
-func (app *application) AdminGetRowByID(sql string, id any) (map[string]any, error) {
-	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+func (app *application) AdminGetRowByID(sql string, id any) (Dict, error) {
+	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
 		return nil, err
@@ -68,8 +68,8 @@ func (app *application) AdminGetRowByID(sql string, id any) (map[string]any, err
 	}
 }
 
-func (app *application) AdminGetRowByFilter(sql string, params []any) (map[string]any, error) {
-	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+func (app *application) AdminGetRowByFilter(sql string, params []any) (Dict, error) {
+	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
 		return nil, err
@@ -89,10 +89,9 @@ func (app *application) CronRunEndPoint(data Dict) (Dict, error) {
 		api, _ = data["endpoint"].(string)
 	}
 	endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, api)
-	fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
 	_jwt, ok := data["token"].(string)
 	if !ok {
-		_jwt, _ = app.AdminGetJWT(map[string]any{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
+		_jwt, _ = app.AdminGetJWT(Dict{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
 	}
 	req, _ := http.NewRequest("GET", endpoint, nil) // bytes.NewBuffer(jsonBody)
 	// Set headers
@@ -105,17 +104,18 @@ func (app *application) CronRunEndPoint(data Dict) (Dict, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	var res_json map[string]any
+	var res_json Dict
 	// Parse JSON into map
 	err = json.NewDecoder(resp.Body).Decode(&res_json)
 	if err != nil {
 		return nil, err
 	}
+	//fmt.Println(1, res_json)
 	return res_json, nil
 }
 
 func (app *application) CronJobs() error {
-	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": app.config.db.dsn})
+	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
 		return fmt.Errorf("error geting the db connection: %w", err)
@@ -167,6 +167,7 @@ func (app *application) CronJobs() error {
 				delete(data, "active")
 				data["start_at"] = time.Now()
 				endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, data["api"].(string))
+				fmt.Println("Running cron job:", data["cron_desc"], endpoint, data["start_at"])
 				res_json, err := app.CronRunEndPoint(data)
 				if err != nil {
 					data["cron_msg"] = fmt.Sprintf("Error making %s request: %v", endpoint, err)

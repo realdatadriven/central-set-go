@@ -9,33 +9,33 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) etlxMdParse(params map[string]any) map[string]any {
+func (app *application) etlxMdParse(params Dict) Dict {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{
 			"success": true,
 			"msg":     msg,
 		}
 	}
-	config := make(map[string]any)
+	config := make(Dict)
 	etlxlib := &etlx.ETLX{Config: config}
-	_data, ok := params["data"].(map[string]any)
+	_data, ok := params["data"].(Dict)
 	if !ok {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
 	_conf, ok := _data["conf"].(string)
 	if !ok {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     "Please validate the configutration, should be mardown string!",
 		}
 	}
 	err := etlxlib.ConfigFromMDText(_conf)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%v", err),
 		}
@@ -43,7 +43,7 @@ func (app *application) etlxMdParse(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["REQUIRES"]; ok {
 		_logs, err := etlxlib.LoadREQUIRES(nil)
 		if err != nil {
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("REQUIRES ERR: %v", err),
 				"logs":    _logs,
@@ -54,8 +54,8 @@ func (app *application) etlxMdParse(params map[string]any) map[string]any {
 	if os.Getenv("ETLX_DEBUG_QUERY") == "true" {
 		etlxlib.PrintConfigAsJSON(etlxlib.Config)
 	}
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success": true,
 		"msg":     msg,
 		"data":    etlxlib.Config,
@@ -74,35 +74,35 @@ func anyToStrings(input []any) []string {
 	return result
 }
 
-func (app *application) etlxRun(params map[string]any) map[string]any {
+func (app *application) etlxRun(params Dict) Dict {
 	if app.IsEmpty(params["data"]) {
-		msg, _ := app.i18n.T("no-data", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{
 			"success": true,
 			"msg":     msg,
 		}
 	}
-	_data, ok := params["data"].(map[string]any)
+	_data, ok := params["data"].(Dict)
 	if !ok {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
-	config := make(map[string]any)
+	config := make(Dict)
 	etlxlib := &etlx.ETLX{Config: config}
-	config, ok = _data["conf"].(map[string]any)
+	config, ok = _data["conf"].(Dict)
 	if !ok {
 		_conf, ok := _data["conf"].(string)
 		if !ok {
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     "Please validate the configutration, should be mardown string!",
 			}
 		}
 		err := etlxlib.ConfigFromMDText(_conf)
 		if err != nil {
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%v", err),
 			}
@@ -130,9 +130,9 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 		fmt.Println("Unable to parse date ref: ", _type, _dateRef)
 	}
 	// EXTRA CONFIG
-	extraConf := map[string]any{}
+	extraConf := Dict{}
 	if ok {
-		extraConf = map[string]any{
+		extraConf = Dict{
 			"clean": false,
 			"drop":  false,
 			"rows":  false,
@@ -172,13 +172,13 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 		}
 	}
 	//fmt.Println("extraConf:", extraConf)
-	logs := []map[string]any{}
-	data := map[string]any{}
+	logs := []Dict{}
+	data := Dict{}
 	// RUN ETL
 	if _, ok := etlxlib.Config["ETL"]; ok {
 		_logs, err := etlxlib.RunETL(dateRef, nil, extraConf)
 		if err != nil {
-			data["ETL"] = map[string]any{
+			data["ETL"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%v", err),
 			}
@@ -191,7 +191,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["ETL"] = map[string]any{
+			data["ETL"] = Dict{
 				"success": true,
 				"logs":    _logs,
 			}
@@ -201,7 +201,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["DATA_QUALITY"]; ok {
 		_logs, err := etlxlib.RunDATA_QUALITY(dateRef, nil, extraConf)
 		if err != nil {
-			data["DATA_QUALITY"] = map[string]any{
+			data["DATA_QUALITY"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("DATA_QUALITY ERR: %v!", err),
 			}
@@ -214,7 +214,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["DATA_QUALITY"] = map[string]any{
+			data["DATA_QUALITY"] = Dict{
 				"success": true,
 				"logs":    _logs,
 			}
@@ -224,7 +224,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["EXPORTS"]; ok {
 		_logs, err := etlxlib.RunEXPORTS(dateRef, nil, extraConf)
 		if err != nil {
-			data["EXPORTS"] = map[string]any{
+			data["EXPORTS"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("EXPORTS ERR: %v!", err),
 			}
@@ -237,7 +237,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["EXPORTS"] = map[string]any{
+			data["EXPORTS"] = Dict{
 				"success": true,
 				"logs":    _logs,
 			}
@@ -247,7 +247,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["MULTI_QUERIES"]; ok {
 		_logs, _data, err := etlxlib.RunMULTI_QUERIES(dateRef, nil, extraConf)
 		if err != nil {
-			data["MULTI_QUERIES"] = map[string]any{
+			data["MULTI_QUERIES"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("MULTI_QUERIES ERR: %v!", err),
 			}
@@ -260,7 +260,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["MULTI_QUERIES"] = map[string]any{
+			data["MULTI_QUERIES"] = Dict{
 				"success": true,
 				"data":    _data,
 				"logs":    _logs,
@@ -271,7 +271,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["SCRIPTS"]; ok {
 		_logs, err := etlxlib.RunSCRIPTS(dateRef, nil, extraConf)
 		if err != nil {
-			data["SCRIPTS"] = map[string]any{
+			data["SCRIPTS"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("SCRIPTS ERR: %v!", err),
 			}
@@ -284,7 +284,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["SCRIPTS"] = map[string]any{
+			data["SCRIPTS"] = Dict{
 				"success": true,
 				"logs":    _logs,
 			}
@@ -294,7 +294,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["ACTIONS"]; ok {
 		_logs, err := etlxlib.RunACTIONS(dateRef, nil, extraConf)
 		if err != nil {
-			data["ACTIONS"] = map[string]any{
+			data["ACTIONS"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("ACTIONS ERR: %v!", err),
 			}
@@ -307,7 +307,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["ACTIONS"] = map[string]any{
+			data["ACTIONS"] = Dict{
 				"success": true,
 				"logs":    _logs,
 			}
@@ -317,7 +317,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["LOGS"]; ok {
 		_logs, err := etlxlib.RunLOGS(dateRef, nil, logs)
 		if err != nil {
-			data["LOGS"] = map[string]any{
+			data["LOGS"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("LOGS ERR: %v!", err),
 			}
@@ -335,7 +335,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	if _, ok := etlxlib.Config["NOTIFY"]; ok {
 		_logs, err := etlxlib.RunNOTIFY(dateRef, nil, extraConf)
 		if err != nil {
-			data["NOTIFY"] = map[string]any{
+			data["NOTIFY"] = Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("NOTIFY ERR: %v!", err),
 			}
@@ -348,7 +348,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 				}
 			}
 			logs = append(logs, _logs...)
-			data["NOTIFY"] = map[string]any{
+			data["NOTIFY"] = Dict{
 				"success": true,
 				"logs":    _logs,
 			}
@@ -375,11 +375,11 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 		//fmt.Print("LEVEL 1 H:", __order)
 		for _, key := range __order {
 			if !app.contains(_keys, any(key)) {
-				_key_conf, ok := etlxlib.Config[key].(map[string]any)
+				_key_conf, ok := etlxlib.Config[key].(Dict)
 				if !ok {
 					continue
 				}
-				_key_conf_metadata, ok := _key_conf["metadata"].(map[string]any)
+				_key_conf_metadata, ok := _key_conf["metadata"].(Dict)
 				if !ok {
 					continue
 				}
@@ -399,7 +399,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -417,7 +417,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -435,7 +435,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -453,7 +453,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -484,7 +484,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -502,7 +502,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -520,7 +520,7 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 									}
 								}
 								logs = append(logs, _logs...)
-								data[key] = map[string]any{
+								data[key] = Dict{
 									"success": true,
 									"runs_as": runs_as,
 									"logs":    _logs,
@@ -534,8 +534,8 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 			}
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success": true,
 		"msg":     msg,
 		"logs":    logs,
@@ -543,73 +543,74 @@ func (app *application) etlxRun(params map[string]any) map[string]any {
 	}
 }
 
-func (app *application) etlxParseRun(params map[string]any) map[string]any {
+func (app *application) etlxParseRun(params Dict) Dict {
 	res := app.etlxMdParse(params)
 	if res["success"].(bool) {
-		params["data"].(map[string]any)["conf"] = res["data"]
+		params["data"].(Dict)["conf"] = res["data"]
 		return app.etlxRun(params)
 	}
 	return res
 }
 
-func (app *application) etlxRunByName(params map[string]any) map[string]any {
+func (app *application) etlxRunByName(params Dict) Dict {
 	name, ok := params["name"].(string)
 	if !ok {
-		name, _ = params["data"].(map[string]any)["name"].(string)
+		name, _ = params["data"].(Dict)["name"].(string)
 	}
 	table := "etlx"
 	if _, ok := params["table"].(string); ok {
 		table, _ = params["table"].(string)
-	} else if _, ok := params["data"].(map[string]any)["table"].(string); ok {
-		table, _ = params["data"].(map[string]any)["table"].(string)
+	} else if _, ok := params["data"].(Dict)["table"].(string); ok {
+		table, _ = params["data"].(Dict)["table"].(string)
 	}
 	database := "ETLX"
 	if _, ok := params["db"].(string); ok {
 		database, _ = params["db"].(string)
-	} else if _, ok := params["data"].(map[string]any)["db"].(string); ok {
-		database, _ = params["data"].(map[string]any)["db"].(string)
+	} else if _, ok := params["data"].(Dict)["db"].(string); ok {
+		database, _ = params["data"].(Dict)["db"].(string)
 	} else if _, ok := params["database"].(string); ok {
 		database, _ = params["database"].(string)
-	} else if _, ok := params["data"].(map[string]any)["database"].(string); ok {
-		database, _ = params["data"].(map[string]any)["database"].(string)
+	} else if _, ok := params["data"].(Dict)["database"].(string); ok {
+		database, _ = params["data"].(Dict)["database"].(string)
 	}
 	_aux_params := params
-	_aux_params["data"].(map[string]any)["table"] = table
-	_aux_params["data"].(map[string]any)["db"] = database
-	_aux_params["data"].(map[string]any)["limit"] = any(1.0)
-	_aux_params["data"].(map[string]any)["offset"] = any(0.0)
-	_aux_params["data"].(map[string]any)["filters"] = []any{}
-	_aux_params["data"].(map[string]any)["filters"] = append(
-		_aux_params["data"].(map[string]any)["filters"].([]any),
-		map[string]any{
+	_aux_params["data"].(Dict)["table"] = table
+	_aux_params["data"].(Dict)["db"] = database
+	_aux_params["data"].(Dict)["limit"] = any(1.0)
+	_aux_params["data"].(Dict)["offset"] = any(0.0)
+	_aux_params["data"].(Dict)["filters"] = []any{}
+	_aux_params["data"].(Dict)["filters"] = append(
+		_aux_params["data"].(Dict)["filters"].([]any),
+		Dict{
 			"field": "etl",
 			"cond":  "=",
 			"value": name,
 		},
 	)
-	_aux_params["data"].(map[string]any)["order_by"] = []any{}
-	_aux_params["data"].(map[string]any)["order_by"] = append(
-		_aux_params["data"].(map[string]any)["order_by"].([]any),
-		map[string]any{
+	_aux_params["data"].(Dict)["order_by"] = []any{}
+	_aux_params["data"].(Dict)["order_by"] = append(
+		_aux_params["data"].(Dict)["order_by"].([]any),
+		Dict{
 			"field": "etlx_id",
 			"order": "desc",
 		},
 	)
 	etlx_get_conf := app.read(_aux_params)
+	//fmt.Println(len(etlx_get_conf["data"].([]Dict)), etlx_get_conf["data"])
 	if _, ok := etlx_get_conf["success"]; !ok {
 		return etlx_get_conf
 	} else if !etlx_get_conf["success"].(bool) {
 		return etlx_get_conf
-	} else if len(etlx_get_conf["data"].([]map[string]any)) == 0 {
-		return map[string]any{
+	} else if len(etlx_get_conf["data"].([]Dict)) == 0 {
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("ETL %s does not exists", name),
 		}
 	}
-	params["data"].(map[string]any)["conf"] = etlx_get_conf["data"].([]map[string]any)[0]["etlx_conf"]
+	params["data"].(Dict)["conf"] = etlx_get_conf["data"].([]Dict)[0]["etlx_conf"]
 	res := app.etlxParseRun(params)
 	if res["success"].(bool) {
-		params["data"].(map[string]any)["conf"] = res["data"]
+		params["data"].(Dict)["conf"] = res["data"]
 		return app.etlxRun(params)
 	}
 	return res

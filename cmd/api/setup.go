@@ -22,7 +22,7 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		return fmt.Errorf("failed to read file: %w", err)
 	}
 	queries := strings.Split(string(content), ";")
-	dsn, _, _ := app.GetDBNameFromParams(map[string]any{"db": dbname})
+	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": dbname})
 	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
 		return fmt.Errorf("geting the connection to %s: %w", dbname, err)
@@ -41,6 +41,24 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		err := app.executeSQLQuery(trimmedQuery, newDB)
 		if err != nil {
 			return fmt.Errorf("failed to execute query: %w", err)
+		}
+	}
+	csapp := fmt.Sprintf(`database/%s.%s.csapp`, dbname, app.config.db.driverName)
+	if app.fileExists(csapp) {
+		ddb, _ := etlx.GetDB("duckdb:")
+		defer ddb.Close()
+		sql := fmt.Sprintf(`select * from read_parquet('%s')`, csapp)
+		fmt.Println(sql)
+		res, _, err := ddb.QueryMultiRows(sql)
+		if err != nil {
+			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
+		}
+		for _, d := range *res {
+			fmt.Println(d["query"].(string))
+			_, err := ddb.ExecuteQuery(d["query"].(string))
+			if err != nil {
+				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
+			}
 		}
 	}
 	return nil

@@ -53,7 +53,7 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
 	name := r.PathValue("name")
-	// fmt.Println(name)
+	fmt.Println("run_etlx_run_by_name: ", name)
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
@@ -76,6 +76,7 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 	} else {
 		params["data"] = Dict{"name": name}
 		data = app.etlxRunByName(params)
+		//fmt.Println(data)
 	}
 	err = response.JSON(w, http.StatusOK, data)
 	if err != nil {
@@ -306,7 +307,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			} else {
 				data = app.etlxParseRun(params)
 			}
-		} else if app.contains([]any{"run_by_name", "run_name", "name"}, act) {
+		} else if app.contains([]any{"run_by_name", "run_name", "name", "by_name", "byName", "byname"}, act) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
@@ -330,12 +331,18 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				}
 				_jwt, _ := app.getToken(r)
 				_data["token"] = _jwt
-				_, err := app.CronRunEndPoint(_data)
+				res, err := app.CronRunEndPoint(_data)
 				if err != nil {
 					data = Dict{"success": false, "msg": fmt.Sprintf("Error %s", err)}
 				} else {
-					msg, _ := app.i18n.T("success", Dict{})
-					data = Dict{"success": true, "msg": msg}
+					_, ok1 := res["success"].(bool)
+					_, ok2 := res["msg"].(string)
+					if ok1 && ok2 {
+						data = res
+					} else {
+						msg, _ := app.i18n.T("success", Dict{})
+						data = Dict{"success": true, "msg": msg}
+					}
 				}
 			}
 		} else {
@@ -438,10 +445,10 @@ func (app *application) getToken(r *http.Request) (string, error) {
 			return headerParts[1], nil
 
 		} else {
-			return "", fmt.Errorf("token is invalid!")
+			return "", fmt.Errorf("token is invalid")
 		}
 	}
-	return "", fmt.Errorf("No token received!")
+	return "", fmt.Errorf("No token received")
 }
 func (app *application) verifyToken(r *http.Request) Dict {
 	authorizationHeader := r.Header.Get("Authorization")

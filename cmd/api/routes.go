@@ -65,6 +65,9 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
 	// RUN ENDPOINTS
 	mux.HandleFunc("GET /etlx/run/{name}", app.run_etlx_run_by_name)
+	mux.HandleFunc("GET /etlx/name/{name}", app.run_etlx_run_by_name)
+	mux.HandleFunc("GET /etlx/by_name/{name}", app.run_etlx_run_by_name)
+	mux.HandleFunc("GET /etlx/run_by_name/{name}", app.run_etlx_run_by_name)
 	mux.HandleFunc("GET /buckup", app.run_backup)
 	mux.HandleFunc("GET /buckup/{name}", app.run_backup)
 

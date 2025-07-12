@@ -145,7 +145,9 @@ func (app *application) Buckup(params Dict) Dict {
 		}
 		attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, dsn2, dbname, _type)
 		memDB.ExecuteQuery(attach)
+		app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, dbname))
+		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, dbname)})
 		sql = `select * from duckdb_tables() where database_name = ?`
 		tables, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 		if err != nil {
@@ -226,7 +228,9 @@ func (app *application) Buckup(params Dict) Dict {
 		}
 		app.InsertData(memDB, "memory.queries", Dict{"query": "COMMIT;"})
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, "memory"))
+		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, "memory")})
 		memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, dbname))
+		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, dbname)})
 		_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapp' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
 		_, err = memDB.ExecuteQuery(_sql)
 		if err != nil {
