@@ -323,7 +323,11 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
-				_data, _ := params["data"].(Dict)
+				_aux, ok := params["data"].(Dict)
+				_data := Dict{}
+				if ok {
+					_data = _aux["data"].(Dict)
+				}
 				_jwt, _ := app.getToken(r)
 				_data["token"] = _jwt
 				_, err := app.CronRunEndPoint(_data)
