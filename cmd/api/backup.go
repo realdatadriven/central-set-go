@@ -74,7 +74,9 @@ func (app *application) Buckup(params Dict) Dict {
 		}
 	}
 	embed_dbs_dir := "database"
-	if os.Getenv("DB_EMBEDED_DIR") != "" {
+	if _, ok := params["path"].(string); ok {
+		embed_dbs_dir = params["path"].(string)
+	} else if os.Getenv("DB_EMBEDED_DIR") != "" {
 		embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
 	}
 	admin_db_tables := strings.Split(env.GetString("EXPORT_ADMIN_DB_TABLES", ""), ",")
@@ -84,11 +86,11 @@ func (app *application) Buckup(params Dict) Dict {
 	defer memDB.Close()
 	for _, _app := range *apps {
 		fmt.Printf("Backup Start: %s -> %v\n", _app["app"], time.Now())
-		memDB.ExecuteQuery(`CREATE SEQUENCE query_id_seq START 1`)
-		sql := `CREATE OR REPLACE TABLE "queries" (
-			"id" BIGINT PRIMARY KEY DEFAULT nextval('query_id_seq'),
-			"query" TEXT NULL,
-    		"created_at" TIMESTAMP DEFAULT current_timestamp
+		memDB.ExecuteQuery(`create sequence query_id_seq start 1`)
+		sql := `create or replace table "queries" (
+			"id" bigint primary key default nextval('query_id_seq'),
+			"query" text null,
+    		"created_at" timestamp default current_timestamp
 		)`
 		memDB.ExecuteQuery(sql)
 		err := app.InsertData(memDB, "memory.queries", Dict{"query": "BEGIN TRANSACTION;"})
@@ -157,7 +159,7 @@ func (app *application) Buckup(params Dict) Dict {
 			if table["table_name"] == "sqlite_sequence" || table["table_name"] == "sqlite_stat" {
 				continue
 			}
-			sql = table["sql"].(string)
+			/*sql = table["sql"].(string)
 			extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
 			schema, _, err := appDBCon.TableSchema(params, table["table_name"].(string), _app["db"].(string), extra_conf)
 			if err != nil {
@@ -179,7 +181,7 @@ func (app *application) Buckup(params Dict) Dict {
 			if len(fks) > 0 {
 				sql = AddForeignKeyToCreateStmt(sql, app.joinSlice(app.sliceStrs2SliceInterfaces(fks), ","))
 			}
-			app.InsertData(memDB, "memory.queries", Dict{"query": sql})
+			app.InsertData(memDB, "memory.queries", Dict{"query": sql})*/
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
 			db_filter := []any{}
 			if _app["db"].(string) == admin_db && app.contains(app.sliceStrs2SliceInterfaces(admin_db_tables), table["table_name"]) {
