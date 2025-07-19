@@ -74,6 +74,12 @@ func (app *application) routes() http.Handler {
 	// Register the WebSocket endpoint
 	manager := app.NewConnectionManager()
 	mux.HandleFunc("/ws", app.websocketEndpoint(manager))
+
+	// Server-Sent Events (SSE)
+	broker := NewBroker()
+	http.HandleFunc("/events", broker.SSEHandler)
+	http.HandleFunc("/notify", broker.NotifyHandler) // example use
+
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	return app.compress(app.cors(app.logAccess(app.recoverPanic(app.authenticate(mux)))))
 }
