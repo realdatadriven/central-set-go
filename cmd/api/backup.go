@@ -93,6 +93,18 @@ func (app *application) Buckup(params Dict) Dict {
     		"created_at" timestamp default current_timestamp
 		)`
 		memDB.ExecuteQuery(sql)
+		sql = `create or replace table "adm_query" (
+			"id" bigint primary key default nextval('query_id_seq'),
+			"query" text null,
+    		"created_at" timestamp default current_timestamp
+		)`
+		memDB.ExecuteQuery(sql)
+		sql = `create or replace table "app_query" (
+			"id" bigint primary key default nextval('query_id_seq'),
+			"query" text null,
+    		"created_at" timestamp default current_timestamp
+		)`
+		memDB.ExecuteQuery(sql)
 		err := app.InsertData(memDB, "memory.queries", Dict{"query": "BEGIN TRANSACTION;"})
 		if err != nil {
 			fmt.Printf("Error executing query %s: %s!", _app["app"], err)
@@ -139,6 +151,7 @@ func (app *application) Buckup(params Dict) Dict {
 				}
 				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into %s."%s" (":columns") values`, admin_db, adm_tbl), *result)
 				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+				app.InsertData(memDB, "memory.adm_query", Dict{"query": sqls})
 			}
 			app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, admin_db)})
 			memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, admin_db))
@@ -161,8 +174,8 @@ func (app *application) Buckup(params Dict) Dict {
 			if table["table_name"] == "sqlite_sequence" || table["table_name"] == "sqlite_stat" {
 				continue
 			}
-			/*sql = table["sql"].(string)
-			extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
+			sql = table["sql"].(string)
+			/*extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
 			schema, _, err := appDBCon.TableSchema(params, table["table_name"].(string), _app["db"].(string), extra_conf)
 			if err != nil {
 				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
@@ -182,8 +195,8 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 			if len(fks) > 0 {
 				sql = AddForeignKeyToCreateStmt(sql, app.joinSlice(app.sliceStrs2SliceInterfaces(fks), ","))
-			}
-			app.InsertData(memDB, "memory.queries", Dict{"query": sql})*/
+			}*/
+			app.InsertData(memDB, "memory.queries", Dict{"query": sql})
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
 			db_filter := []any{}
 			if _app["db"].(string) == admin_db && app.contains(app.sliceStrs2SliceInterfaces(admin_db_tables), table["table_name"]) {
@@ -212,6 +225,7 @@ func (app *application) Buckup(params Dict) Dict {
 					i = 0
 					sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result)
 					app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+					app.InsertData(memDB, "memory.app_query", Dict{"query": sqls})
 					result = []Dict{} //result[:0]
 				}
 			}
@@ -224,6 +238,7 @@ func (app *application) Buckup(params Dict) Dict {
 			if len(result) > 0 {
 				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result)
 				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+				app.InsertData(memDB, "memory.app_query", Dict{"query": sqls})
 			}
 		}
 		app.InsertData(memDB, "memory.queries", Dict{"query": "COMMIT;"})
