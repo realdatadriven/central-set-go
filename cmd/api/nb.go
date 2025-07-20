@@ -28,11 +28,12 @@ func (app *application) nbRunCells(params Dict) Dict {
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
-	cells, ok := _data["cells"].([]Dict)
+	fmt.Println(_data)
+	cells, ok := _data["cells"].([]any)
 	if !ok {
 		return Dict{
 			"success": false,
-			"msg":     "No notebook cell identified!",
+			"msg":     "No notebook cells identified!",
 		}
 	}
 	// DATE REF
@@ -67,7 +68,8 @@ func (app *application) nbRunCells(params Dict) Dict {
 	data := Dict{}
 	msg, _ := app.i18n.T("success", Dict{})
 	start_gbl := time.Now()
-	for _, cell := range cells {
+	for _, _cell := range cells {
+		cell := _cell.(Dict)
 		_sql := cell["code"].(string)
 		_sql = etlxlib.ReplaceEnvVariable(_sql)
 		_sql = etlxlib.ReplaceQueryStringDate(_sql, dateRef)

@@ -53,7 +53,7 @@ func (app *application) run_notebook(w http.ResponseWriter, r *http.Request) {
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
 	name := r.PathValue("name")
-	fmt.Println("run_backup:", name)
+	fmt.Println("run_notebook:", name)
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
@@ -353,7 +353,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
-	case "nd":
+	case "nb", "notebook", "noteb", "nbook":
 		if app.contains([]any{"run_cell", "cell", "c", "run_cells", "cells", "cs"}, act) {
 			if !token["success"].(bool) {
 				data = token
