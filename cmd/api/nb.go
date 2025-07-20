@@ -28,7 +28,7 @@ func (app *application) nbRunCells(params Dict) Dict {
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
-	fmt.Println(_data)
+	// fmt.Println(_data)
 	cells, ok := _data["cells"].([]any)
 	if !ok {
 		return Dict{
@@ -116,6 +116,9 @@ func (app *application) nbRunCells(params Dict) Dict {
 					_sql = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, _sql, limit, offset)
 				}
 			}
+			re := regexp.MustCompile(`;+$`)
+			_sql := re.ReplaceAllString(_sql, "")
+			//fmt.Println(_sql)
 			results, cols, _, err := ddbInstance.QueryMultiRowsWithCols(_sql, []any{}...)
 			if err != nil {
 				data[_id] = Dict{
