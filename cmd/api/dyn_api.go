@@ -49,6 +49,40 @@ func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) run_notebook(w http.ResponseWriter, r *http.Request) {
+	params := Dict{}
+	request.DecodeJSON(w, r, &params)
+	name := r.PathValue("name")
+	fmt.Println("run_backup:", name)
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	if _, ok := params["data"]; !ok {
+		params["data"] = Dict{}
+	}
+	if _, ok := params["app"]; !ok {
+		params["app"] = Dict{}
+	}
+	err := app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := app.verifyToken(r)
+	params["user"] = *(contextGetAuthenticatedUser(r))
+	var data Dict
+	if !token["success"].(bool) {
+		data = token
+	} else {
+		params["data"] = Dict{"name": name}
+		data = app.nbRun(params)
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
 func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Request) {
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
@@ -312,6 +346,25 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				data = token
 			} else {
 				data = app.etlxRunByName(params)
+			}
+		} else {
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
+	case "nd":
+		if app.contains([]any{"run_cell", "cell", "c", "run_cells", "cells", "cs"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.nbRunCells(params)
+			}
+		} else if app.contains([]any{"run_by_name", "run_name", "name", "by_name", "byName", "byname"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.nbRunByName(params)
 			}
 		} else {
 			data = Dict{

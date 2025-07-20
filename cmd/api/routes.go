@@ -70,6 +70,10 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /etlx/run_by_name/{name}", app.run_etlx_run_by_name)
 	mux.HandleFunc("GET /buckup", app.run_backup)
 	mux.HandleFunc("GET /buckup/{name}", app.run_backup)
+	mux.HandleFunc("GET /nb", app.run_notebook)
+	mux.HandleFunc("GET /nb/{name}", app.run_notebook)
+	mux.HandleFunc("GET /notebook", app.run_notebook)
+	mux.HandleFunc("GET /notebook/{name}", app.run_notebook)
 
 	// Register the WebSocket endpoint
 	manager := app.NewConnectionManager()

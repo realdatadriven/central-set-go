@@ -2,15 +2,10 @@ root = "."
 testdata_dir = "testdata"
 tmp_dir = "tmp"
 
-# set CGO_ENABLED=1
-# set CGO_LDFLAGS="-L/.../libduckdb"
-# where /.../libduckdb is the libduckdb-os-amd64.zip from https://github.com/duckdb/duckdb/releases
-#go build -tags=duckdb_use_lib -o ./tmp/main.exe ./cmd/api
-
 [build]
   args_bin = []
   bin = "tmp/main.exe"
-  cmd = "go build -o ./tmp/main.exe ./cmd/api"
+  cmd = "go build -o ./tmp/main.exe main.go"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "database", "static"]
   exclude_file = []
