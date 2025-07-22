@@ -2,7 +2,7 @@ module github.com/realdatadriven/central-set-go
 
 go 1.24
 
-toolchain go1.24.1
+toolchain go1.24.4
 
 require (
 	github.com/alexbrainman/odbc v0.0.0-20250601004241-49e6b2bc0cf0 // indirect

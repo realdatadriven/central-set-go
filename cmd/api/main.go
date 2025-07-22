@@ -110,7 +110,6 @@ func run(logger *slog.Logger) error {
 	cfg.cookie.secretKey = env.GetString("COOKIE_SECRET_KEY", "f2rkbev2yxhk5viz77ok4rxfip6npjpm")
 	cfg.db.driverName = env.GetString("DB_DRIVER_NAME", "sqlite3")
 	cfg.db.dsn = env.GetString("DB_DSN", "database/admin.db")
-	//fmt.Printf("DB_DRIVER_NAME: %s DB_DRIVER_NAME: %s\n", cfg.db.dsn, cfg.db.driverName)
 	cfg.db.automigrate = env.GetBool("DB_AUTOMIGRATE", true)
 	cfg.jwt.secretKey = env.GetString("JWT_SECRET_KEY", "mhaitpm4v3mesosefepyupo6qzpbvidc")
 	cfg.jwt.tokenExpireHours = env.GetInt("TOKEN_EXPIRE_HOURS", 24)
@@ -134,8 +133,8 @@ func run(logger *slog.Logger) error {
 	cfg.s3ForcePathStyle = env.GetBool("S3_FORCE_PATH_STYLE", true)
 	cfg.s3DisableSSL = env.GetBool("S3_DISABLE_SSL", false)
 	cfg.s3SkipSSLVerify = env.GetBool("S3_SKIP_SSL_VERIFY", false)
-	showVersion := flag.Bool("version", false, "display version and exit")
 	//cli flags
+	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize the main db")
 	dbname := flag.String("dbname", "ADMIN", "initialize the main db")
 	embedded := flag.Bool("embedded", true, "use the embedded db")

@@ -403,7 +403,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			"msg":     fmt.Sprintf("%s", err),
 			"sql":     query,
 		}
-	} else if *data == nil || len(*data) == 0 {
+	} else if /* *data == nil || */ len(*data) == 0 {
 	} else {
 		results = *data
 	}
