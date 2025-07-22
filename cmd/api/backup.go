@@ -138,19 +138,23 @@ func (app *application) Buckup(params Dict) Dict {
 		}
 		if _app["db"].(string) != admin_db {
 			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, adm_dsn, admin_db, _type)
-			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 			memDB.ExecuteQuery(attach)
+			//fmt.Println(attach)
+			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 			for _, adm_tbl := range admin_db_tables {
 				if adm_tbl == "" {
 					continue
 				}
 				sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
+				//fmt.Println(sql)
 				result, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 				if err != nil {
 					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
+					continue
 				}
 				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into %s."%s" (":columns") values`, admin_db, adm_tbl), *result)
 				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+				sqls, _ = etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, adm_tbl), *result)
 				app.InsertData(memDB, "memory.adm_query", Dict{"query": sqls})
 			}
 			app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, admin_db)})
@@ -246,7 +250,7 @@ func (app *application) Buckup(params Dict) Dict {
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, "memory")})
 		memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, dbname))
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, dbname)})
-		_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapp' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
+		/*_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapp' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
 		_, err = memDB.ExecuteQuery(_sql)
 		if err != nil {
 			fmt.Printf("Error exporting the app %s: %s!", _app["app"], err)
@@ -254,7 +258,11 @@ func (app *application) Buckup(params Dict) Dict {
 				"success": false,
 				"msg":     fmt.Sprintf("Error exporting the app %s: %s!", _app["app"], err),
 			}
-		}
+		}*/
+		attch := fmt.Sprintf(`ATTACH '%s/%s.%s.csapp'`, embed_dbs_dir, _app["app"], app.config.db.driverName)
+		memDB.ExecuteQuery(attch)
+		memDB.ExecuteQuery(fmt.Sprintf(`copy from database memory to %s`, _app["app"]))
+		memDB.ExecuteQuery(fmt.Sprintf(`DETACH '%s/%s.%s.csapp'`, embed_dbs_dir, _app["app"], app.config.db.driverName))
 		fmt.Printf("Backup End: %s -> %v\n", _app["app"], time.Now())
 	}
 	msg, _ := app.i18n.T("success", Dict{})

@@ -44,7 +44,8 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 	}
 	csapp := fmt.Sprintf(`database/%s.%s.csapp`, dbname, app.config.db.driverName)
-	if app.fileExists(csapp) {
+	// PARQUET STYLE
+	/*if app.fileExists(csapp) {
 		ddb, _ := etlx.GetDB("duckdb:")
 		defer ddb.Close()
 		sql := fmt.Sprintf(`select * from read_parquet('%s')`, csapp)
@@ -56,6 +57,43 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		for _, d := range *res {
 			fmt.Println(d["query"].(string))
 			_, err := ddb.ExecuteQuery(d["query"].(string))
+			if err != nil {
+				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
+			}
+		}
+	}*/
+	// PARQUET DUCKDB
+	if app.fileExists(csapp) {
+		ddb, _ := etlx.GetDB(csapp)
+		defer ddb.Close()
+		sql := `select * from "app_query"`
+		//fmt.Println(sql)
+		res, _, err := ddb.QueryMultiRows(sql)
+		if err != nil {
+			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
+		}
+		for _, d := range *res {
+			fmt.Println(d["query"].(string))
+			_, err := newDB.ExecuteQuery(d["query"].(string))
+			if err != nil {
+				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
+			}
+		}
+		sql = `select * from "adm_query"`
+		//fmt.Println(sql)
+		res, _, err = ddb.QueryMultiRows(sql)
+		if err != nil {
+			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
+		}
+		dsn, _, _ := app.GetDBNameFromParams(Dict{"db": Dict{"db": app.config.db.dsn}})
+		admDB, err := etlx.GetDB(dsn)
+		if err != nil {
+			return fmt.Errorf("geting the connection to %s: %w", app.config.db.dsn, err)
+		}
+		defer admDB.Close()
+		for _, d := range *res {
+			fmt.Println(d["query"].(string))
+			_, err := admDB.ExecuteQuery(d["query"].(string))
 			if err != nil {
 				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
