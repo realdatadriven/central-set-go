@@ -100,6 +100,8 @@ func (app *application) nbRunCells(params Dict) Dict {
 				}
 			}
 		} else if len(_match2) > 0 {
+			re := regexp.MustCompile(`;+$`)
+			_sql := re.ReplaceAllString(_sql, "")
 			query_n_rows := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, _sql)
 			patt = regexp.MustCompile(`LIMIT`)
 			_match = patt.FindAllString(_sql, -1)
@@ -116,9 +118,7 @@ func (app *application) nbRunCells(params Dict) Dict {
 					_sql = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, _sql, limit, offset)
 				}
 			}
-			re := regexp.MustCompile(`;+$`)
-			_sql := re.ReplaceAllString(_sql, "")
-			//fmt.Println(_sql)
+			// fmt.Println(_sql)
 			results, cols, _, err := ddbInstance.QueryMultiRowsWithCols(_sql, []any{}...)
 			if err != nil {
 				data[_id] = Dict{
