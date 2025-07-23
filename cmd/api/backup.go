@@ -139,15 +139,43 @@ func (app *application) Buckup(params Dict) Dict {
 		if _app["db"].(string) != admin_db {
 			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, adm_dsn, admin_db, _type)
 			memDB.ExecuteQuery(attach)
+			memDB.ExecuteQuery(fmt.Sprintf(`use %s`, admin_db))
 			//fmt.Println(attach)
 			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
-			for _, adm_tbl := range admin_db_tables {
+			sql = `show tables`
+			res_adm_tbl, _, err := memDB.QueryMultiRows(sql, []any{}...)
+			if err != nil {
+				fmt.Printf("Error getting tables from the admin app: %s: %s!", admin_db, err)
+				continue
+			}
+			for _, _adm_tbl := range *res_adm_tbl {
+				adm_tbl, _ := _adm_tbl["table_name"].(string)
 				if adm_tbl == "" {
 					continue
 				}
-				sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
+				_sql := `select * from duckdb_columns() where table_name = ? and column_name = ?`
+				result, _, err := memDB.QueryMultiRows(_sql, []any{adm_tbl, "app_id"}...)
+				if err != nil {
+					fmt.Printf("Error checking if table has app_id: %s->%s: %s!", admin_db, adm_tbl, err)
+					continue
+				}
+				sql = ""
+				if len(*result) > 0 {
+					sql = fmt.Sprintf(`select * from %s."%s" where "app_id" = ?`, admin_db, adm_tbl)
+				} else {
+					result, _, err := memDB.QueryMultiRows(_sql, []any{adm_tbl, "db"}...)
+					if err != nil {
+						fmt.Printf("Error checking if table has app_id: %s->%s: %s!", admin_db, adm_tbl, err)
+						continue
+					}
+					if len(*result) > 0 {
+						sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
+					} else {
+						continue
+					}
+				}
 				//fmt.Println(sql)
-				result, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
+				result, _, err = memDB.QueryMultiRows(sql, []any{dbname, _app["app_id"]}...)
 				if err != nil {
 					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
 					continue
@@ -158,6 +186,7 @@ func (app *application) Buckup(params Dict) Dict {
 				app.InsertData(memDB, "memory.adm_query", Dict{"query": sqls})
 			}
 			app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, admin_db)})
+			memDB.ExecuteQuery(fmt.Sprintf(`use %s`, "memory"))
 			memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, admin_db))
 		}
 		attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, dsn2, dbname, _type)
@@ -259,10 +288,15 @@ func (app *application) Buckup(params Dict) Dict {
 				"msg":     fmt.Sprintf("Error exporting the app %s: %s!", _app["app"], err),
 			}
 		}*/
-		attch := fmt.Sprintf(`ATTACH '%s/%s.%s.csapp'`, embed_dbs_dir, _app["app"], app.config.db.driverName)
+		filename := fmt.Sprintf(`%s/%s.%s.csapp`, embed_dbs_dir, _app["app"], app.config.db.driverName)
+		if err := os.Remove(filename); err != nil {
+			fmt.Printf("could not delete %s: %v", filename, err)
+			continue
+		}
+		attch := fmt.Sprintf(`attach '%s' as %s`, filename, _app["app"])
 		memDB.ExecuteQuery(attch)
 		memDB.ExecuteQuery(fmt.Sprintf(`copy from database memory to %s`, _app["app"]))
-		memDB.ExecuteQuery(fmt.Sprintf(`DETACH '%s/%s.%s.csapp'`, embed_dbs_dir, _app["app"], app.config.db.driverName))
+		memDB.ExecuteQuery(fmt.Sprintf(`DETACH %s`, _app["app"]))
 		fmt.Printf("Backup End: %s -> %v\n", _app["app"], time.Now())
 	}
 	msg, _ := app.i18n.T("success", Dict{})

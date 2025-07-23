@@ -64,7 +64,7 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 	}*/
 	// PARQUET DUCKDB
 	if app.fileExists(csapp) {
-		ddb, _ := etlx.GetDB(csapp)
+		ddb, _ := etlx.GetDB(fmt.Sprintf(`duckdb:%s`, csapp))
 		defer ddb.Close()
 		sql := `select * from "app_query"`
 		//fmt.Println(sql)
@@ -73,9 +73,9 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
 		}
 		for _, d := range *res {
-			fmt.Println(d["query"].(string))
 			_, err := newDB.ExecuteQuery(d["query"].(string))
 			if err != nil {
+				fmt.Println(d["query"].(string))
 				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
 		}
@@ -92,9 +92,9 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 		defer admDB.Close()
 		for _, d := range *res {
-			fmt.Println(d["query"].(string))
 			_, err := admDB.ExecuteQuery(d["query"].(string))
 			if err != nil {
+				fmt.Println(d["query"].(string))
 				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
 		}
