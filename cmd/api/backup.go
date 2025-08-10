@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 )
 
@@ -79,7 +78,7 @@ func (app *application) Buckup(params Dict) Dict {
 	} else if os.Getenv("DB_EMBEDED_DIR") != "" {
 		embed_dbs_dir = os.Getenv("DB_EMBEDED_DIR")
 	}
-	admin_db_tables := strings.Split(env.GetString("EXPORT_ADMIN_DB_TABLES", ""), ",")
+	//admin_db_tables := strings.Split(env.GetString("EXPORT_ADMIN_DB_TABLES", ""), ",")
 	etlx_obj := &etlx.ETLX{Config: Dict{}}
 	//fmt.Println("APPS:", *apps)
 	memDB, _ := etlx.GetDB("duckdb:")
@@ -160,8 +159,11 @@ func (app *application) Buckup(params Dict) Dict {
 					continue
 				}
 				sql = ""
+				_filter := []any{}
 				if len(*result) > 0 {
 					sql = fmt.Sprintf(`select * from %s."%s" where "app_id" = ?`, admin_db, adm_tbl)
+					fmt.Println("TABLE HAS APP:", admin_db, adm_tbl, sql)
+					_filter = append(_filter, _app["app_id"])
 				} else {
 					result, _, err := memDB.QueryMultiRows(_sql, []any{adm_tbl, "db"}...)
 					if err != nil {
@@ -170,12 +172,14 @@ func (app *application) Buckup(params Dict) Dict {
 					}
 					if len(*result) > 0 {
 						sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
+						fmt.Println("TABLE HAS DB:", admin_db, adm_tbl, sql)
+						_filter = append(_filter, dbname)
 					} else {
 						continue
 					}
 				}
 				//fmt.Println(sql)
-				result, _, err = memDB.QueryMultiRows(sql, []any{dbname, _app["app_id"]}...)
+				result, _, err = memDB.QueryMultiRows(sql, _filter...)
 				if err != nil {
 					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
 					continue
@@ -207,8 +211,8 @@ func (app *application) Buckup(params Dict) Dict {
 			if table["table_name"] == "sqlite_sequence" || table["table_name"] == "sqlite_stat" {
 				continue
 			}
-			sql = table["sql"].(string)
-			/*extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
+			/*sql = table["sql"].(string)
+			extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
 			schema, _, err := appDBCon.TableSchema(params, table["table_name"].(string), _app["db"].(string), extra_conf)
 			if err != nil {
 				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
@@ -228,17 +232,42 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 			if len(fks) > 0 {
 				sql = AddForeignKeyToCreateStmt(sql, app.joinSlice(app.sliceStrs2SliceInterfaces(fks), ","))
-			}*/
-			app.InsertData(memDB, "memory.queries", Dict{"query": sql})
+			}
+			app.InsertData(memDB, "memory.queries", Dict{"query": sql})*/
+			_filter := []any{}
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
-			db_filter := []any{}
+			_sql := `select * from duckdb_columns() where table_name = ? and column_name = ?`
+			result, _, err := memDB.QueryMultiRows(_sql, []any{table["table_name"], "app_id"}...)
+			if err != nil {
+				fmt.Printf("Error checking if table has app_id: %s->%s: %s!", _app["db"].(string), table["table_name"], err)
+				continue
+			}
+			if len(*result) > 0 {
+				sql = fmt.Sprintf(`select * from %s."%s" where "app_id" = ?`, _app["db"].(string), table["table_name"])
+				fmt.Println("TABLE HAS APP:", _app["db"].(string), table["table_name"], sql)
+				_filter = append(_filter, _app["app_id"])
+			} else {
+				result, _, err := memDB.QueryMultiRows(_sql, []any{table["table_name"], "db"}...)
+				if err != nil {
+					fmt.Printf("Error checking if table has app_id: %s->%s: %s!", _app["db"].(string), table["table_name"], err)
+					continue
+				}
+				if len(*result) > 0 {
+					sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, _app["db"].(string), table["table_name"])
+					_filter = append(_filter, _app["db"].(string))
+					fmt.Println("TABLE HAS DB:", _app["db"].(string), table["table_name"], sql)
+				} else {
+					continue
+				}
+			}
+			/*db_filter := []any{}
 			if _app["db"].(string) == admin_db && app.contains(app.sliceStrs2SliceInterfaces(admin_db_tables), table["table_name"]) {
 				sql = fmt.Sprintf(`select * from "%s" where "db" = ?`, table["table_name"])
 				db_filter = []any{admin_db}
-			}
+			}*/
 			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3600)*time.Second)
 			defer cancel()
-			rows, err := memDB.QueryRows(ctx, sql, db_filter...)
+			rows, err := memDB.QueryRows(ctx, sql, _filter...)
 			if err != nil {
 				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
 				return Dict{
@@ -249,17 +278,17 @@ func (app *application) Buckup(params Dict) Dict {
 			defer rows.Close()
 			chunk_size := 500
 			i := 0
-			var result []Dict
+			var result2 []Dict
 			for rows.Next() {
 				i += 1
 				row, _ := app.ScanRowToMap(rows)
-				result = append(result, row)
+				result2 = append(result2, row)
 				if i >= chunk_size {
 					i = 0
-					sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result)
+					sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result2)
 					app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
 					app.InsertData(memDB, "memory.app_query", Dict{"query": sqls})
-					result = []Dict{} //result[:0]
+					result2 = []Dict{} //result[:0]
 				}
 			}
 			if err := rows.Err(); err != nil {
@@ -268,8 +297,8 @@ func (app *application) Buckup(params Dict) Dict {
 					"msg":     fmt.Sprintf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err),
 				}
 			}
-			if len(result) > 0 {
-				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result)
+			if len(result2) > 0 {
+				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result2)
 				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
 				app.InsertData(memDB, "memory.app_query", Dict{"query": sqls})
 			}
