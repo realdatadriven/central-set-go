@@ -135,11 +135,13 @@ func (app *application) Buckup(params Dict) Dict {
 		} else if db.GetDriverName() == "duckdb" {
 			_type = ""
 		}
+		fmt.Println("CHK ADM vs APP DB:", _app["db"].(string) != admin_db, _app["db"].(string), admin_db)
 		if _app["db"].(string) != admin_db {
 			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, adm_dsn, admin_db, _type)
+			fmt.Println(attach)
 			memDB.ExecuteQuery(attach)
 			memDB.ExecuteQuery(fmt.Sprintf(`use %s`, admin_db))
-			//fmt.Println(attach)
+			fmt.Println(attach)
 			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 			sql = `show tables`
 			res_adm_tbl, _, err := memDB.QueryMultiRows(sql, []any{}...)
@@ -148,7 +150,8 @@ func (app *application) Buckup(params Dict) Dict {
 				continue
 			}
 			for _, _adm_tbl := range *res_adm_tbl {
-				adm_tbl, _ := _adm_tbl["table_name"].(string)
+				adm_tbl, _ := _adm_tbl["name"].(string)
+				fmt.Println("ADM TABLES:", adm_tbl)
 				if adm_tbl == "" {
 					continue
 				}
@@ -178,7 +181,7 @@ func (app *application) Buckup(params Dict) Dict {
 						continue
 					}
 				}
-				//fmt.Println(sql)
+				fmt.Println("ADM:", sql)
 				result, _, err = memDB.QueryMultiRows(sql, _filter...)
 				if err != nil {
 					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
@@ -244,7 +247,7 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 			if len(*result) > 0 {
 				sql = fmt.Sprintf(`select * from %s."%s" where "app_id" = ?`, _app["db"].(string), table["table_name"])
-				fmt.Println("TABLE HAS APP:", _app["db"].(string), table["table_name"], sql)
+				//fmt.Println("TABLE HAS APP:", _app["db"].(string), table["table_name"], sql)
 				_filter = append(_filter, _app["app_id"])
 			} else {
 				result, _, err := memDB.QueryMultiRows(_sql, []any{table["table_name"], "db"}...)
@@ -255,7 +258,7 @@ func (app *application) Buckup(params Dict) Dict {
 				if len(*result) > 0 {
 					sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, _app["db"].(string), table["table_name"])
 					_filter = append(_filter, _app["db"].(string))
-					fmt.Println("TABLE HAS DB:", _app["db"].(string), table["table_name"], sql)
+					//fmt.Println("TABLE HAS DB:", _app["db"].(string), table["table_name"], sql)
 				} else {
 					//continue
 				}
