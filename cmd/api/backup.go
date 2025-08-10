@@ -240,7 +240,7 @@ func (app *application) Buckup(params Dict) Dict {
 			result, _, err := memDB.QueryMultiRows(_sql, []any{table["table_name"], "app_id"}...)
 			if err != nil {
 				fmt.Printf("Error checking if table has app_id: %s->%s: %s!", _app["db"].(string), table["table_name"], err)
-				continue
+				//continue
 			}
 			if len(*result) > 0 {
 				sql = fmt.Sprintf(`select * from %s."%s" where "app_id" = ?`, _app["db"].(string), table["table_name"])
@@ -250,14 +250,14 @@ func (app *application) Buckup(params Dict) Dict {
 				result, _, err := memDB.QueryMultiRows(_sql, []any{table["table_name"], "db"}...)
 				if err != nil {
 					fmt.Printf("Error checking if table has app_id: %s->%s: %s!", _app["db"].(string), table["table_name"], err)
-					continue
+					//continue
 				}
 				if len(*result) > 0 {
 					sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, _app["db"].(string), table["table_name"])
 					_filter = append(_filter, _app["db"].(string))
 					fmt.Println("TABLE HAS DB:", _app["db"].(string), table["table_name"], sql)
 				} else {
-					continue
+					//continue
 				}
 			}
 			/*db_filter := []any{}
