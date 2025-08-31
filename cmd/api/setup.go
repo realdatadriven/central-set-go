@@ -73,17 +73,24 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
 		}
 		dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
+		//fmt.Println(dsn)
 		admDB, err := etlx.GetDB(dsn)
 		if err != nil {
 			return fmt.Errorf("geting the connection to %s: %w", app.config.db.dsn, err)
+		}
+		if admDB.GetDriverName() == "sqlite3" {
+			admDB.ExecuteQuery("PRAGMA foreign_keys = OFF")
 		}
 		defer admDB.Close()
 		for _, d := range *res {
 			_, err := admDB.ExecuteQuery(d["query"].(string))
 			if err != nil {
-				fmt.Println(d["query"].(string))
-				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
+				fmt.Printf("failed execute data loading query %s: %w", d["query"], err)
+				//return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
+		}
+		if admDB.GetDriverName() == "sqlite3" {
+			admDB.ExecuteQuery("PRAGMA foreign_keys = ON")
 		}
 		// APP
 		sql = `select * from "app_query"`
@@ -91,12 +98,18 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		if err != nil {
 			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
 		}
+		if newDB.GetDriverName() == "sqlite3" {
+			newDB.ExecuteQuery("PRAGMA foreign_keys = OFF")
+		}
 		for _, d := range *res {
 			_, err := newDB.ExecuteQuery(d["query"].(string))
 			if err != nil {
-				fmt.Println(d["query"].(string))
-				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
+				fmt.Printf("failed execute data loading query %s: %w", d["query"], err)
+				// return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
+		}
+		if newDB.GetDriverName() == "sqlite3" {
+			newDB.ExecuteQuery("PRAGMA foreign_keys = ON")
 		}
 	}
 	return nil
