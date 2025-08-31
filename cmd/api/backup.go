@@ -89,6 +89,7 @@ func (app *application) Buckup(params Dict) Dict {
 		sql := `create or replace table "queries" (
 			"id" bigint primary key default nextval('query_id_seq'),
 			"query" text null,
+			"admin" boolean null,
     		"created_at" timestamp default current_timestamp
 		)`
 		memDB.ExecuteQuery(sql)
@@ -186,9 +187,11 @@ func (app *application) Buckup(params Dict) Dict {
 				if err != nil {
 					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
 					continue
+				} else if len(*result) == 0 {
+					continue
 				}
 				sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into %s."%s" (":columns") values`, admin_db, adm_tbl), *result)
-				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+				app.InsertData(memDB, "memory.queries", Dict{"query": sqls, "admin": true})
 				sqls, _ = etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, adm_tbl), *result)
 				app.InsertData(memDB, "memory.adm_query", Dict{"query": sqls})
 			}
@@ -214,29 +217,6 @@ func (app *application) Buckup(params Dict) Dict {
 			if table["table_name"] == "sqlite_sequence" || table["table_name"] == "sqlite_stat" {
 				continue
 			}
-			/*sql = table["sql"].(string)
-			extra_conf := Dict{"driverName": app.config.db.driverName, "dsn": app.config.db.dsn}
-			schema, _, err := appDBCon.TableSchema(params, table["table_name"].(string), _app["db"].(string), extra_conf)
-			if err != nil {
-				fmt.Printf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err)
-				return Dict{
-					"success": false,
-					"msg":     fmt.Sprintf("Error getting the data from %s->%s: %s!", _app["app"], table["table_name"], err),
-				}
-			}
-			fks := []string{}
-			for _, col := range *schema {
-				if col["fk"].(bool) {
-					//fmt.Println(col)
-					fks = append(fks, fmt.Sprintf(`FOREIGN KEY("%s") REFERENCES "%s"("%s")`, col["field"], col["referred_table"], col["referred_column"]))
-				} else if col["pk"].(bool) {
-
-				}
-			}
-			if len(fks) > 0 {
-				sql = AddForeignKeyToCreateStmt(sql, app.joinSlice(app.sliceStrs2SliceInterfaces(fks), ","))
-			}
-			app.InsertData(memDB, "memory.queries", Dict{"query": sql})*/
 			_filter := []any{}
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
 			_sql := `select * from duckdb_columns() where table_name = ? and column_name = ?`
@@ -263,11 +243,6 @@ func (app *application) Buckup(params Dict) Dict {
 					//continue
 				}
 			}
-			/*db_filter := []any{}
-			if _app["db"].(string) == admin_db && app.contains(app.sliceStrs2SliceInterfaces(admin_db_tables), table["table_name"]) {
-				sql = fmt.Sprintf(`select * from "%s" where "db" = ?`, table["table_name"])
-				db_filter = []any{admin_db}
-			}*/
 			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3600)*time.Second)
 			defer cancel()
 			rows, err := memDB.QueryRows(ctx, sql, _filter...)
@@ -289,7 +264,7 @@ func (app *application) Buckup(params Dict) Dict {
 				if i >= chunk_size {
 					i = 0
 					sqls, _ := etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, table["table_name"]), result2)
-					app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
+					app.InsertData(memDB, "memory.queries", Dict{"query": sqls, "admin": true})
 					app.InsertData(memDB, "memory.app_query", Dict{"query": sqls})
 					result2 = []Dict{} //result[:0]
 				}
@@ -311,7 +286,7 @@ func (app *application) Buckup(params Dict) Dict {
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, "memory")})
 		memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, dbname))
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, dbname)})
-		/*_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapp' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
+		_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapppq' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
 		_, err = memDB.ExecuteQuery(_sql)
 		if err != nil {
 			fmt.Printf("Error exporting the app %s: %s!", _app["app"], err)
@@ -319,7 +294,7 @@ func (app *application) Buckup(params Dict) Dict {
 				"success": false,
 				"msg":     fmt.Sprintf("Error exporting the app %s: %s!", _app["app"], err),
 			}
-		}*/
+		}
 		filename := fmt.Sprintf(`%s/%s.%s.csapp`, embed_dbs_dir, _app["app"], app.config.db.driverName)
 		if err := os.Remove(filename); err != nil {
 			fmt.Printf("could not delete %s: %v", filename, err)

@@ -62,30 +62,17 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 			}
 		}
 	}*/
-	// PARQUET DUCKDB
+	// DUCKDB STYLE
 	if app.fileExists(csapp) {
 		ddb, _ := etlx.GetDB(fmt.Sprintf(`duckdb:%s`, csapp))
 		defer ddb.Close()
-		sql := `select * from "app_query"`
-		//fmt.Println(sql)
+		// ADMIN
+		sql := `select * from "adm_query"`
 		res, _, err := ddb.QueryMultiRows(sql)
 		if err != nil {
 			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
 		}
-		for _, d := range *res {
-			_, err := newDB.ExecuteQuery(d["query"].(string))
-			if err != nil {
-				fmt.Println(d["query"].(string))
-				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
-			}
-		}
-		sql = `select * from "adm_query"`
-		//fmt.Println(sql)
-		res, _, err = ddb.QueryMultiRows(sql)
-		if err != nil {
-			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
-		}
-		dsn, _, _ := app.GetDBNameFromParams(Dict{"db": Dict{"db": app.config.db.dsn}})
+		dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 		admDB, err := etlx.GetDB(dsn)
 		if err != nil {
 			return fmt.Errorf("geting the connection to %s: %w", app.config.db.dsn, err)
@@ -98,18 +85,28 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
 		}
+		// APP
+		sql = `select * from "app_query"`
+		res, _, err = ddb.QueryMultiRows(sql)
+		if err != nil {
+			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
+		}
+		for _, d := range *res {
+			_, err := newDB.ExecuteQuery(d["query"].(string))
+			if err != nil {
+				fmt.Println(d["query"].(string))
+				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
+			}
+		}
 	}
 	return nil
 }
 
 // Execute a single SQL query
 func (app *application) executeSQLQuery(query string, db etlx.DBInterface) error {
-	if strings.HasPrefix(query, "PRAGMA") {
-		println(query)
-	}
 	_, err := db.ExecuteQuery(query)
 	if err != nil {
-		println(query)
+		fmt.Println(query)
 		return fmt.Errorf("execution failed: %w", err)
 	}
 	return nil

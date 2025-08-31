@@ -1,8 +1,8 @@
 module github.com/realdatadriven/central-set-go
 
-go 1.24
+go 1.24.0
 
-toolchain go1.24.4
+toolchain go1.24.5
 
 require (
 	github.com/alexbrainman/odbc v0.0.0-20250601004241-49e6b2bc0cf0 // indirect
@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/lmittmann/tint v1.1.2
 	github.com/marcboeker/go-duckdb/v2 v2.3.5 // indirect
-	github.com/mattn/go-sqlite3 v1.14.30 // indirect
+	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
 	github.com/realdatadriven/etlx v1.2.66
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
@@ -21,7 +21,7 @@ require (
 	github.com/xuri/excelize/v2 v2.9.1
 	github.com/yuangwei/go-i18next v1.0.0
 	golang.org/x/crypto v0.41.0
-	golang.org/x/exp v0.0.0-20250808145144-a408d31f581a
+	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b
 	golang.org/x/text v0.28.0
 )
 
@@ -56,7 +56,7 @@ require (
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/marcboeker/go-duckdb/arrowmapping v0.0.10 // indirect
 	github.com/marcboeker/go-duckdb/mapping v0.0.11 // indirect
-	github.com/microsoft/go-mssqldb v1.9.2 // indirect
+	github.com/microsoft/go-mssqldb v1.9.3 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect

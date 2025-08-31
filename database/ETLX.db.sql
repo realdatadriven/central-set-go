@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS "etlx" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN
 );
-INSERT INTO "etlx" ("etlx_id","etl","etl_desc","attach_etlx_conf","etlx_conf","active","user_id","app_id","created_at","updated_at","excluded") VALUES (1,'S3_EXTRACT','Example extrating from S3 to a local sqlite3 file',NULL,'# ETL
+
+/*INSERT INTO "etlx" ("etlx_id","etl","etl_desc","attach_etlx_conf","etlx_conf","active","user_id","app_id","created_at","updated_at","excluded") VALUES (1,'S3_EXTRACT','Example extrating from S3 to a local sqlite3 file',NULL,'# ETL
 
 The [`httpfs`](https://duckdb.org/docs/extensions/httpfs/s3api, "httpfs") extension supports reading/writing/globbing files on object storage servers using the S3 API. S3 offers a standard API to read and write to remote files (while regular http servers, predating S3, do not offer a common write API). DuckDB conforms to the S3 API, that is now common among industry storage providers.
 The preferred way to configure and authenticate to S3 endpoints is to use secrets. Multiple secret providers are available
@@ -707,5 +708,5 @@ SELECT *
 FROM "DB"."etlx_logs"
 WHERE "ref" = ''{YYYY-MM-DD}''
 ```
-',1,1,3,'2025-03-18T18:51:29.465995658-01:00','2025-03-29 20:46:44.157247059-01:00',0);
+',1,1,3,'2025-03-18T18:51:29.465995658-01:00','2025-03-29 20:46:44.157247059-01:00',0);*/
 COMMIT;
