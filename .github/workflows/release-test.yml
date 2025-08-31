@@ -18,12 +18,14 @@ jobs:
           mkdir -p dist/cs-windows-linking-amd64/database
           cp ./LICENSE dist/cs-windows-linking-amd64
           cp ./README.md dist/cs-windows-linking-amd64
+          cp ./.env-exemple.txt dist/cs-windows-linking-amd64/.env
           cp -r ./static dist/cs-windows-linking-amd64
           cp -r ./locales dist/cs-windows-linking-amd64
           mkdir -p dist/cs-windows-linking-arm64
           mkdir -p dist/cs-windows-linking-arm64/database
           cp ./LICENSE dist/cs-windows-linking-arm64
           cp ./README.md dist/cs-windows-linking-arm64
+          cp ./.env-exemple.txt dist/cs-windows-linking-arm64/.env
           cp -r ./static dist/cs-windows-linking-arm64
           cp -r ./locales dist/cs-windows-linking-arm64
       # Step 2: Set up Go environment
@@ -68,12 +70,14 @@ jobs:
           mkdir -p dist/cs-windows-linking-amd64/database
           cp ./LICENSE dist/cs-windows-linking-amd64
           cp ./README.md dist/cs-windows-linking-amd64
+          cp ./.env-exemple.txt dist/cs-windows-linking-amd64/.env
           cp -r ./static dist/cs-windows-linking-amd64
           cp -r ./locales dist/cs-windows-linking-amd64
           mkdir -p dist/cs-windows-linking-arm64
           mkdir -p dist/cs-windows-linking-arm64/database
           cp ./LICENSE dist/cs-windows-linking-arm64
           cp ./README.md dist/cs-windows-linking-arm64
+          cp ./.env-exemple.txt dist/cs-windows-linking-arm64/.env
           cp -r ./static dist/cs-windows-linking-arm64
           cp -r ./locales dist/cs-windows-linking-arm64
 
