@@ -26,7 +26,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-linux-amd64/database
           cp ./LICENSE dist/central-set-linux-amd64
           cp ./README.md dist/central-set-linux-amd64
-          cp ./.env-exemple.txt dist/central-set-linux-amd64
+          cp ./.env-exemple.txt dist/central-set-linux-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-linux-amd64
           cp -r ./locales dist/central-set-linux-amd64
 
@@ -62,7 +62,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-windows-amd64/database
           cp ./LICENSE dist/central-set-windows-amd64
           cp ./README.md dist/central-set-windows-amd64
-          cp ./.env-exemple.txt dist/central-set-windows-amd64
+          cp ./.env-exemple.txt dist/central-set-windows-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-amd64
           cp -r ./locales dist/central-set-windows-amd64
           mkdir -p dist/central-set-windows-arm64
@@ -71,7 +71,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-windows-arm64/database
           cp ./LICENSE dist/central-set-windows-arm64
           cp ./README.md dist/central-set-windows-arm64
-          cp ./.env-exemple.txt dist/central-set-windows-arm64
+          cp ./.env-exemple.txt dist/central-set-windows-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-arm64
           cp -r ./locales dist/central-set-windows-arm64
       # Step 2: Set up Go environment
@@ -119,7 +119,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-windows-linking-amd64/database
           cp ./LICENSE dist/central-set-windows-linking-amd64
           cp ./README.md dist/central-set-windows-linking-amd64
-          cp ./.env-exemple.txt dist/central-set-windows-linking-amd64
+          cp ./.env-exemple.txt dist/central-set-windows-linking-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-linking-amd64
           cp -r ./locales dist/central-set-windows-linking-amd64
           mkdir -p dist/central-set-windows-linking-arm64
@@ -128,7 +128,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-windows-linking-arm64/database
           cp ./LICENSE dist/central-set-windows-linking-arm64
           cp ./README.md dist/central-set-windows-linking-arm64
-          cp ./.env-exemple.txt dist/central-set-windows-linking-arm64
+          cp ./.env-exemple.txt dist/central-set-windows-linking-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-linking-arm64
           cp -r ./locales dist/central-set-windows-linking-arm64
 
@@ -207,7 +207,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-macos-amd64/database
           cp ./LICENSE dist/central-set-macos-amd64
           cp ./README.md dist/central-set-macos-amd64
-          cp ./.env-exemple.txt dist/central-set-macos-amd64
+          cp ./.env-exemple.txt dist/central-set-macos-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-macos-amd64
           cp -r ./locales dist/central-set-macos-amd64
           mkdir -p dist/central-set-macos-arm64
@@ -216,7 +216,7 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-macos-arm64/database
           cp ./LICENSE dist/central-set-macos-arm64
           cp ./README.md dist/central-set-macos-arm64
-          cp ./.env-exemple.txt dist/central-set-macos-arm64
+          cp ./.env-exemple.txt dist/central-set-macos-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-macos-arm64
           cp -r ./locales dist/central-set-macos-arm64
 
