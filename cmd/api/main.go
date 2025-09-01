@@ -109,7 +109,7 @@ func run(logger *slog.Logger) error {
 	cfg.basicAuth.hashedPassword = env.GetString("BASIC_AUTH_HASHED_PASSWORD", "$2a$10$jRb2qniNcoCyQM23T59RfeEQUbgdAXfR6S0scynmKfJa5Gj3arGJa")
 	cfg.cookie.secretKey = env.GetString("COOKIE_SECRET_KEY", "f2rkbev2yxhk5viz77ok4rxfip6npjpm")
 	cfg.db.driverName = env.GetString("DB_DRIVER_NAME", "sqlite3")
-	cfg.db.dsn = env.GetString("DB_DSN", "database/admin.db")
+	cfg.db.dsn = env.GetString("DB_DSN", "database/ADMIN.db")
 	cfg.db.automigrate = env.GetBool("DB_AUTOMIGRATE", true)
 	cfg.jwt.secretKey = env.GetString("JWT_SECRET_KEY", "mhaitpm4v3mesosefepyupo6qzpbvidc")
 	cfg.jwt.tokenExpireHours = env.GetInt("TOKEN_EXPIRE_HOURS", 24)
