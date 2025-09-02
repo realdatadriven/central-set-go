@@ -11,8 +11,53 @@ The application provides:
 - Default UI with customizable table layouts and CRUD operations.
 - Hooks to override default CRUD actions with custom components.
 - Report automation and ETL support powered by DuckDB and etlx.
-- Built-in support for basic dashboards using `evidence.dev`.
+- Built-in support for basic dashboards using `evidence.dev` by just putting evidence like markown to the dashboord table.
 - The UI is built using Svelte.
+
+## Quick Start
+
+### Step 1 — Initialize the ADMIN Database
+
+Download the latest release and run it once with the `--init` flag:
+
+```bash
+central-set --init
+```
+
+This sets up the **ADMIN** database and creates a default user:
+
+- **Username:** `root`
+- **Password:** `1234`
+
+### Step 2 — Access the App
+
+After initialization, just run the binary and open your browser at:
+
+```
+http://localhost:4444
+```
+
+### Step 3 — Initialize ETL/ELT Interface (Optional)
+
+If you want to use **ETL/ELT tools** and the **SQL notebook**, you can initialize them by running:
+
+```bash
+central-set --init --dbname ETLX
+```
+
+This will create an ETL/ELT app inside Central-Set-Go. Both the ETL processes and SQL notebooks can also be executed and scheduled via the **ADMIN job scheduler**.
+
+### Step 4 — Configure with `.env`
+
+The application ships with a sample configuration file `dot-env-example.txt`. To customize your setup:
+
+```bash
+cp dot-env-example.txt .env
+```
+
+Edit `.env` as needed (database, server port, security, etc.).
+
+---
 
 ## Features
 
@@ -68,9 +113,6 @@ Dashboard components can display various chart types, tables, and key performanc
 
 The dashboard configuration system allows users to create custom views and reports without requiring technical expertise. Dashboard layouts are responsive and support both desktop and mobile viewing, ensuring that critical business information is accessible across different devices and platforms.
 
-
-
-
 ## API Documentation
 
 Central-Set-Go exposes a comprehensive RESTful API that provides programmatic access to all system functionality. The API follows consistent patterns and conventions, making it easy to integrate with external systems and develop custom applications. All API endpoints use JSON for data exchange and support internationalization through language parameters.
@@ -94,22 +136,25 @@ The authentication system provides secure access control through JWT token-based
 The login endpoint authenticates users and returns a JWT token for subsequent API requests. This endpoint does not require authentication and serves as the entry point for all user sessions.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "pt",
-    "data": {
-        "username": "root",
-        "password": "1234"
-    }
+  "lang": "pt",
+  "data": {
+    "username": "root",
+    "password": "1234"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages (pt, en, es, etc.)
 - `data.username`: User's login username
 - `data.password`: User's password in plain text (encrypted during transmission)
@@ -118,23 +163,25 @@ Content-Type: application/json
 The endpoint returns a JWT token that must be included in the Authorization header of subsequent requests. The token contains encoded user information including user ID, username, role assignments, and permissions. Token expiration is configurable and typically set to several hours or days depending on security requirements.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "token": "<JWT_TOKEN>",
-    "user": {
-        "user_id": 1,
-        "username": "root",
-        "first_name": "Super",
-        "last_name": "Admin",
-        "email": "root@domain.com",
-        "role_id": 1,
-        "lang_id": 1
-    }
+  "success": true,
+  "token": "<JWT_TOKEN>",
+  "user": {
+    "user_id": 1,
+    "username": "root",
+    "first_name": "Super",
+    "last_name": "Admin",
+    "email": "root@domain.com",
+    "role_id": 1,
+    "lang_id": 1
+  }
 }
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid username or password
 - `403 Forbidden`: User account is inactive or excluded
 - `400 Bad Request`: Missing required fields or invalid request format
@@ -146,41 +193,45 @@ The endpoint returns a JWT token that must be included in the Authorization head
 This endpoint validates the current JWT token and returns updated user information. It's useful for checking token validity and refreshing user session data.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en"
+  "lang": "en"
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 
 **Response:**
 Returns current user information and token validity status. If the token is valid, the response includes complete user profile data. If the token is expired or invalid, an error response is returned.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "valid": true,
-    "user": {
-        "user_id": 1,
-        "username": "root",
-        "first_name": "Super",
-        "last_name": "Admin",
-        "email": "root@domain.com",
-        "role_id": 1,
-        "lang_id": 1,
-        "active": true,
-        "created_at": "2024-08-29T15:36:59.318618Z",
-        "updated_at": "2024-08-29T15:36:59.318618Z"
-    }
+  "success": true,
+  "valid": true,
+  "user": {
+    "user_id": 1,
+    "username": "root",
+    "first_name": "Super",
+    "last_name": "Admin",
+    "email": "root@domain.com",
+    "role_id": 1,
+    "lang_id": 1,
+    "active": true,
+    "created_at": "2024-08-29T15:36:59.318618Z",
+    "updated_at": "2024-08-29T15:36:59.318618Z"
+  }
 }
 ```
 
@@ -191,26 +242,29 @@ Returns current user information and token validity status. If the token is vali
 This legacy endpoint handles password change operations for authenticated users. It requires the current password for verification before allowing the password change.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
-    "controller": "login",
-    "action": "alter_pass",
-    "data": {
-        "username": "root",
-        "password": 12344654,
-        "new_password": 1234
-    }
+  "lang": "en",
+  "controller": "login",
+  "action": "alter_pass",
+  "data": {
+    "username": "root",
+    "password": 12344654,
+    "new_password": 1234
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `controller`: Always "login" for authentication operations
 - `action`: Always "alter_pass" for password change
@@ -232,40 +286,44 @@ Administrative endpoints provide access to application management, table configu
 This endpoint retrieves and manages application configurations within the Central-Set-Go system. It returns a list of available applications with their configuration details and access permissions.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en"
+  "lang": "en"
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 
 **Response:**
 Returns an array of application configurations including application metadata, database connections, and permission settings. Each application entry includes comprehensive information needed for client applications to connect and interact with the specific application instance.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "applications": [
-        {
-            "app_id": 1,
-            "app": "ADMIN",
-            "app_desc": "Admin",
-            "version": "1.0.0",
-            "db": "ADMIN",
-            "created_at": "2024-08-29T15:36:59.318618Z",
-            "updated_at": "2024-08-29T15:36:59.318618Z",
-            "active": true
-        }
-    ]
+  "success": true,
+  "applications": [
+    {
+      "app_id": 1,
+      "app": "ADMIN",
+      "app_desc": "Admin",
+      "version": "1.0.0",
+      "db": "ADMIN",
+      "created_at": "2024-08-29T15:36:59.318618Z",
+      "updated_at": "2024-08-29T15:36:59.318618Z",
+      "active": true
+    }
+  ]
 }
 ```
 
@@ -276,32 +334,35 @@ Returns an array of application configurations including application metadata, d
 The table management endpoint provides access to database table configurations and metadata. It supports querying table structures, relationships, and access permissions within specific applications.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
-    "db--": {
-        "drivername": "sqlite",
-        "dsn": "ADM"
-    },
-    "data": {
-        "table": "app",
-        "table--.": ["lang", "app"]
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "db": "ADMIN"
-    }
+  "lang": "en",
+  "db--": {
+    "drivername": "sqlite",
+    "dsn": "ADM"
+  },
+  "data": {
+    "table": "app",
+    "table--.": ["lang", "app"]
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `db.drivername`: Database driver type (sqlite, postgresql, mysql)
 - `db.dsn`: Database connection string or identifier
@@ -319,26 +380,29 @@ Returns detailed table metadata including column definitions, data types, constr
 This endpoint manages menu structures and navigation configurations for applications. It returns hierarchical menu data that reflects the user's permissions and the application's table structure.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "db": "ADMIN"
-    }
+  "lang": "en",
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `app`: Complete application context including ID, name, description, version, and database
 
@@ -346,29 +410,29 @@ Authorization: Bearer <JWT_TOKEN>
 Returns a hierarchical menu structure with items organized by categories and access permissions. Each menu item includes navigation information, icons, labels, and associated table or function references.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "menu": [
-        {
-            "menu_id": 1,
-            "menu_name": "User Management",
-            "menu_desc": "Manage users and roles",
-            "table_name": "users",
-            "icon": "users",
-            "order": 1,
-            "active": true,
-            "permissions": {
-                "create": true,
-                "read": true,
-                "update": true,
-                "delete": true
-            }
-        }
-    ]
+  "success": true,
+  "menu": [
+    {
+      "menu_id": 1,
+      "menu_name": "User Management",
+      "menu_desc": "Manage users and roles",
+      "table_name": "users",
+      "icon": "users",
+      "order": 1,
+      "active": true,
+      "permissions": {
+        "create": true,
+        "read": true,
+        "update": true,
+        "delete": true
+      }
+    }
+  ]
 }
 ```
-
 
 ### CRUD Operations
 
@@ -381,41 +445,42 @@ The CRUD (Create, Read, Update, Delete) endpoints form the core of Central-Set-G
 The read endpoint provides sophisticated data querying capabilities with support for filtering, sorting, pagination, and joins. It serves as the primary interface for data retrieval across all tables in the system.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
-    "data": {
-        "distinct--": true,
-        "join--": "none|all",
-        "table": "menu",
-        "limit": 11,
-        "offset": 0,
-        "fields--": ["user_log_id", "user_id", "action"],
-        "filters--": [
-            {"field": "lang_id", "cond": "=", "value": 3},
-            {"field": "menu_id", "cond": "=", "value": 3}
-        ],
-        "order_by": [
-            {"field": "lang_id2", "order": "DESC"}
-        ],
-        "pattern--": "brasil"
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "version": "1.0.0",
-        "db": "ADMIN"
-    }
+  "lang": "en",
+  "data": {
+    "distinct--": true,
+    "join--": "none|all",
+    "table": "menu",
+    "limit": 11,
+    "offset": 0,
+    "fields--": ["user_log_id", "user_id", "action"],
+    "filters--": [
+      { "field": "lang_id", "cond": "=", "value": 3 },
+      { "field": "menu_id", "cond": "=", "value": 3 }
+    ],
+    "order_by": [{ "field": "lang_id2", "order": "DESC" }],
+    "pattern--": "brasil"
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "version": "1.0.0",
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `data.distinct`: Boolean flag to return only distinct records
 - `data.join`: Join strategy ("none", "all", or specific join configuration)
@@ -430,6 +495,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 **Filter Conditions:**
 The filtering system supports various comparison operators:
+
 - `=`: Exact equality match
 - `!=` or `<>`: Not equal
 - `>`: Greater than
@@ -446,25 +512,26 @@ The filtering system supports various comparison operators:
 Returns paginated data results with metadata including total record count, pagination information, and the requested data records. The response structure includes both the data and metadata needed for client-side pagination and display.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "data": [
-        {
-            "menu_id": 1,
-            "menu_name": "Users",
-            "table_name": "users",
-            "lang_id": 3,
-            "created_at": "2024-08-29T15:36:59.318618Z",
-            "updated_at": "2024-08-29T15:36:59.318618Z"
-        }
-    ],
-    "pagination": {
-        "total": 1,
-        "limit": 11,
-        "offset": 0,
-        "has_more": false
+  "success": true,
+  "data": [
+    {
+      "menu_id": 1,
+      "menu_name": "Users",
+      "table_name": "users",
+      "lang_id": 3,
+      "created_at": "2024-08-29T15:36:59.318618Z",
+      "updated_at": "2024-08-29T15:36:59.318618Z"
     }
+  ],
+  "pagination": {
+    "total": 1,
+    "limit": 11,
+    "offset": 0,
+    "has_more": false
+  }
 }
 ```
 
@@ -475,33 +542,36 @@ Returns paginated data results with metadata including total record count, pagin
 The create endpoint handles the insertion of new records into specified tables with comprehensive validation and constraint checking.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
+  "lang": "en",
+  "data": {
+    "table": "lang",
     "data": {
-        "table": "lang",
-        "data": {
-            "lang": "es4",
-            "lang_desc": "Português"
-        }
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "db": "ADMIN"
+      "lang": "es4",
+      "lang_desc": "Português"
     }
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `data.table`: Target table name for the insert operation
 - `data.data`: Object containing the field values for the new record
@@ -509,6 +579,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 **Validation:**
 The create operation performs comprehensive validation including:
+
 - Data type validation based on table schema
 - Required field validation
 - Unique constraint checking
@@ -520,17 +591,18 @@ The create operation performs comprehensive validation including:
 Returns the created record with any auto-generated fields (such as IDs and timestamps) populated. The response includes the complete record data as it was stored in the database.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "data": {
-        "lang_id": 4,
-        "lang": "es4",
-        "lang_desc": "Português",
-        "created_at": "2024-10-19T14:30:00.000Z",
-        "updated_at": "2024-10-19T14:30:00.000Z"
-    },
-    "msg": "Record created successfully"
+  "success": true,
+  "data": {
+    "lang_id": 4,
+    "lang": "es4",
+    "lang_desc": "Português",
+    "created_at": "2024-10-19T14:30:00.000Z",
+    "updated_at": "2024-10-19T14:30:00.000Z"
+  },
+  "msg": "Record created successfully"
 }
 ```
 
@@ -541,43 +613,47 @@ Returns the created record with any auto-generated fields (such as IDs and times
 The update endpoint modifies existing records with support for partial updates and optimistic locking to prevent concurrent modification conflicts.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "pt",
+  "lang": "pt",
+  "data": {
+    "table": "lang",
     "data": {
-        "table": "lang",
-        "data": {
-            "lang_id": 3,
-            "lang": "pt_BR",
-            "lang_desc": "Português Brasil",
-            "created_at": "2022-07-22T10:32:00.791024",
-            "updated_at": "2022-07-22T10:33:22.185972"
-        }
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "email": null,
-        "db": "ADMIN"
+      "lang_id": 3,
+      "lang": "pt_BR",
+      "lang_desc": "Português Brasil",
+      "created_at": "2022-07-22T10:32:00.791024",
+      "updated_at": "2022-07-22T10:33:22.185972"
     }
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "email": null,
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `data.table`: Target table name for the update operation
 - `data.data`: Object containing the field values to update (must include primary key)
 - `app`: Complete application context information
 
 **Update Behavior:**
+
 - Only specified fields are updated (partial update support)
 - Primary key fields are used to identify the target record
 - Timestamp fields are automatically updated
@@ -588,17 +664,18 @@ Authorization: Bearer <JWT_TOKEN>
 Returns the updated record with current field values and updated timestamps. The response confirms the successful update and provides the current state of the record.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "data": {
-        "lang_id": 3,
-        "lang": "pt_BR",
-        "lang_desc": "Português Brasil",
-        "created_at": "2022-07-22T10:32:00.791024",
-        "updated_at": "2024-10-19T14:35:00.000Z"
-    },
-    "msg": "Record updated successfully"
+  "success": true,
+  "data": {
+    "lang_id": 3,
+    "lang": "pt_BR",
+    "lang_desc": "Português Brasil",
+    "created_at": "2022-07-22T10:32:00.791024",
+    "updated_at": "2024-10-19T14:35:00.000Z"
+  },
+  "msg": "Record updated successfully"
 }
 ```
 
@@ -609,35 +686,38 @@ Returns the updated record with current field values and updated timestamps. The
 The delete endpoint supports both soft deletion (marking records as excluded) and permanent deletion based on configuration and user permissions.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
+  "lang": "en",
+  "data": {
+    "table": "lang",
     "data": {
-        "table": "lang",
-        "data": {
-            "lang_id": 3,
-            "exclude": true,
-            "permanently--": true
-        }
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "email": null,
-        "db": "ADMIN"
+      "lang_id": 3,
+      "exclude": true,
+      "permanently--": true
     }
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "email": null,
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `data.table`: Target table name for the delete operation
 - `data.data.{primary_key}`: Primary key value to identify the record
@@ -646,6 +726,7 @@ Authorization: Bearer <JWT_TOKEN>
 - `app`: Complete application context information
 
 **Deletion Types:**
+
 - **Soft Delete**: Sets the `excluded` flag to true, preserving data for audit and recovery
 - **Permanent Delete**: Physically removes the record from the database
 - **Cascade Delete**: Handles related records based on foreign key constraints
@@ -654,15 +735,16 @@ Authorization: Bearer <JWT_TOKEN>
 Confirms the deletion operation and provides information about the affected record. For soft deletes, the response includes the updated record state.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "msg": "Record deleted successfully",
-    "deleted_record": {
-        "lang_id": 3,
-        "excluded": true,
-        "updated_at": "2024-10-19T14:40:00.000Z"
-    }
+  "success": true,
+  "msg": "Record deleted successfully",
+  "deleted_record": {
+    "lang_id": 3,
+    "excluded": true,
+    "updated_at": "2024-10-19T14:40:00.000Z"
+  }
 }
 ```
 
@@ -673,33 +755,36 @@ Confirms the deletion operation and provides information about the affected reco
 The query endpoint allows execution of custom SQL queries using the integrated DuckDB engine, providing advanced analytical and reporting capabilities.
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
-    "data": {
-        "db": "DB.duckdb",
-        "limit": 10,
-        "offset": 0,
-        "query": "select * from \"table\""
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "email": null,
-        "db": "ADMIN"
-    }
+  "lang": "en",
+  "data": {
+    "db": "DB.duckdb",
+    "limit": 10,
+    "offset": 0,
+    "query": "select * from \"table\""
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "email": null,
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `data.db`: Target database file (for DuckDB operations)
 - `data.limit`: Maximum number of records to return
@@ -708,6 +793,7 @@ Authorization: Bearer <JWT_TOKEN>
 - `app`: Application context information
 
 **Query Capabilities:**
+
 - Full SQL SELECT statement support
 - Join operations across multiple tables
 - Aggregate functions and grouping
@@ -716,6 +802,7 @@ Authorization: Bearer <JWT_TOKEN>
 - Subqueries and complex filtering
 
 **Security Considerations:**
+
 - Query execution is restricted to SELECT statements for security
 - User permissions are validated before query execution
 - Query timeout limits prevent resource exhaustion
@@ -725,32 +812,32 @@ Authorization: Bearer <JWT_TOKEN>
 Returns query results with column metadata and pagination information. The response structure adapts to the query output format.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "data": [
-        {
-            "id": 1,
-            "name": "Sample Record",
-            "value": 100.50,
-            "date": "2024-10-19"
-        }
-    ],
-    "columns": [
-        {"name": "id", "type": "INTEGER"},
-        {"name": "name", "type": "VARCHAR"},
-        {"name": "value", "type": "DECIMAL"},
-        {"name": "date", "type": "DATE"}
-    ],
-    "pagination": {
-        "total": 1,
-        "limit": 10,
-        "offset": 0,
-        "has_more": false
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Sample Record",
+      "value": 100.5,
+      "date": "2024-10-19"
     }
+  ],
+  "columns": [
+    { "name": "id", "type": "INTEGER" },
+    { "name": "name", "type": "VARCHAR" },
+    { "name": "value", "type": "DECIMAL" },
+    { "name": "date", "type": "DATE" }
+  ],
+  "pagination": {
+    "total": 1,
+    "limit": 10,
+    "offset": 0,
+    "has_more": false
+  }
 }
 ```
-
 
 ### File Management
 
@@ -763,12 +850,14 @@ Central-Set-Go provides comprehensive file upload and management capabilities th
 The upload endpoint handles multipart file uploads with support for temporary and permanent storage, file validation, and metadata extraction.
 
 **Headers:**
+
 ```
 enctype: multipart/form-data
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body (Form Data):**
+
 ```
 lang: pt
 tmp: true
@@ -777,6 +866,7 @@ file: [binary file data]
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `tmp`: Boolean flag indicating temporary storage (true) or permanent storage (false)
 - `path`: Target path or directory for file storage
@@ -784,6 +874,7 @@ file: [binary file data]
 
 **File Processing:**
 The upload system provides several processing capabilities:
+
 - File type validation based on MIME type and file extension
 - Virus scanning and security validation
 - Automatic file naming and collision resolution
@@ -792,6 +883,7 @@ The upload system provides several processing capabilities:
 - File size and quota validation
 
 **Storage Options:**
+
 - **Temporary Storage**: Files stored temporarily for processing workflows
 - **Permanent Storage**: Files stored permanently with backup and versioning
 - **Cloud Storage**: Integration with cloud storage providers
@@ -801,24 +893,26 @@ The upload system provides several processing capabilities:
 Returns file upload confirmation with file metadata, storage location, and processing status. The response includes information needed for subsequent file operations.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "file": {
-        "file_id": "8a158fac-f01b-4ad0-a87b-0d7551f034d1",
-        "original_name": "File_Name.20240829.xlsx",
-        "stored_name": "8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv",
-        "file_size": 1048576,
-        "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "upload_date": "2024-10-19T14:45:00.000Z",
-        "temporary": true,
-        "path": "/uploads/temp/"
-    },
-    "msg": "File uploaded successfully"
+  "success": true,
+  "file": {
+    "file_id": "8a158fac-f01b-4ad0-a87b-0d7551f034d1",
+    "original_name": "File_Name.20240829.xlsx",
+    "stored_name": "8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv",
+    "file_size": 1048576,
+    "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "upload_date": "2024-10-19T14:45:00.000Z",
+    "temporary": true,
+    "path": "/uploads/temp/"
+  },
+  "msg": "File uploaded successfully"
 }
 ```
 
 **Error Handling:**
+
 - File size exceeding limits
 - Unsupported file types
 - Storage quota exceeded
@@ -838,66 +932,65 @@ The extraction endpoint supports multiple data source types including files, ODB
 #### File-Based Extraction
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
+  "lang": "en",
+  "data": {
     "data": {
-        "data": {
-            "date_ref": "2024-09-17",
-            "date_ref_": ["2024-08-29"],
-            "file_": "file_name.20240829.xlsx",
-            "file__": "8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv",
-            "database": "sqlite_test.duckdb",
-            "name": "test",
-            "save_only_temp": false,
-            "destination_table": "table_name",
-            "check_ref_date": false,
-            "ref_date_field": "file_ref",
-            "etl_rbase_input_conf": {
-                "type_": "file-duckdb",
-                "type": "duckdb",
-                "duckdb": {
-                    "pragmas_config_sql_start": [
-                        "ATTACH 'database/db.duckdb' AS db"
-                    ],
-                    "pragmas_config_sql_end": [
-                        "DETACH DB"
-                    ],
-                    "valid_": [
-                        {
-                            "sql": "SELECT * FROM \"<table>\" WHERE date_field={YYYYMMDD} LIMIT 10",
-                            "rule": "throw_if_not_empty",
-                            "msg": "The table (<table>) already has the data from the date YYYY/MM/DD"
-                        },
-                        {
-                            "sql": "SELECT * FROM '<file>' WHERE date_field={YYYYMMDD} LIMIT 10",
-                            "rule": "throw_if_empty",
-                            "msg": "The file (<file>) has no data from the date \"YYYY/MM/DD\""
-                        }
-                    ],
-                    "sql": "INSERT INTO main.\"<table>\" BY NAME SELECT * FROM DB.\"<table>\" WHERE \"date_field\" = YYYYMMDD"
-                }
+      "date_ref": "2024-09-17",
+      "date_ref_": ["2024-08-29"],
+      "file_": "file_name.20240829.xlsx",
+      "file__": "8a158fac-f01b-4ad0-a87b-0d7551f034d1_20240917.csv",
+      "database": "sqlite_test.duckdb",
+      "name": "test",
+      "save_only_temp": false,
+      "destination_table": "table_name",
+      "check_ref_date": false,
+      "ref_date_field": "file_ref",
+      "etl_rbase_input_conf": {
+        "type_": "file-duckdb",
+        "type": "duckdb",
+        "duckdb": {
+          "pragmas_config_sql_start": ["ATTACH 'database/db.duckdb' AS db"],
+          "pragmas_config_sql_end": ["DETACH DB"],
+          "valid_": [
+            {
+              "sql": "SELECT * FROM \"<table>\" WHERE date_field={YYYYMMDD} LIMIT 10",
+              "rule": "throw_if_not_empty",
+              "msg": "The table (<table>) already has the data from the date YYYY/MM/DD"
+            },
+            {
+              "sql": "SELECT * FROM '<file>' WHERE date_field={YYYYMMDD} LIMIT 10",
+              "rule": "throw_if_empty",
+              "msg": "The file (<file>) has no data from the date \"YYYY/MM/DD\""
             }
+          ],
+          "sql": "INSERT INTO main.\"<table>\" BY NAME SELECT * FROM DB.\"<table>\" WHERE \"date_field\" = YYYYMMDD"
         }
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "email": null,
-        "db": "ADMIN"
+      }
     }
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "email": null,
+    "db": "ADMIN"
+  }
 }
 ```
 
 **Request Parameters:**
+
 - `lang`: Language code for response messages
 - `data.data.date_ref`: Reference date for the extraction operation
 - `data.data.file_`: Source file name for extraction
@@ -908,11 +1001,13 @@ Authorization: Bearer <JWT_TOKEN>
 
 **ETL Configuration:**
 The ETL configuration supports various processing types:
+
 - **file-duckdb**: Extract from files and load into DuckDB
 - **odbc-csv-duckdb**: Extract from ODBC sources via CSV intermediate format
 - **database-direct**: Direct database-to-database transfers
 
 **Validation Rules:**
+
 - `throw_if_empty`: Fail if query returns no results
 - `throw_if_not_empty`: Fail if query returns any results
 - Custom validation with SQL expressions
@@ -921,47 +1016,51 @@ The ETL configuration supports various processing types:
 #### ODBC-Based Extraction
 
 **Request Body:**
+
 ```json
 {
-    "lang": "en",
+  "lang": "en",
+  "data": {
     "data": {
-        "data": {
-            "date_ref": "2024-09-30",
-            "database": "sqlite_test.duckdb",
-            "save_only_temp": true,
-            "destination_table": "table_name",
-            "check_ref_date": false,
-            "ref_date_field": "date_field",
-            "etl_rbase_input_conf": {
-                "type": "odbc-csv-duckdb",
-                "params": {"odbc_conn": "Driver={...ODBC Driver};System=host;Uid=@USERNAME;Pwd=@PASSWORD" },
-                "query": "SELECT * FROM **",
-                "duckdb": {
-                    "extentions": [],
-                    "valid": [
-                        {
-                            "sql": "SELECT DISTINCT \"date_field\" FROM READ_CSV('<filename>', HEADER = TRUE) WHERE \"date_field\" = '{YYYYMMDD}' LIMIT 10",
-                            "rule": "throw_if_empty",
-                            "msg": "A data na origem (<table>) é diferente de DD/MM/YYYY!"
-                        }
-                    ],
-                    "sql": "INSERT INTO \"<table>\" BY NAME SELECT * FROM READ_CSV('<filename>', HEADER = TRUE)"
-                }
+      "date_ref": "2024-09-30",
+      "database": "sqlite_test.duckdb",
+      "save_only_temp": true,
+      "destination_table": "table_name",
+      "check_ref_date": false,
+      "ref_date_field": "date_field",
+      "etl_rbase_input_conf": {
+        "type": "odbc-csv-duckdb",
+        "params": {
+          "odbc_conn": "Driver={...ODBC Driver};System=host;Uid=@USERNAME;Pwd=@PASSWORD"
+        },
+        "query": "SELECT * FROM **",
+        "duckdb": {
+          "extentions": [],
+          "valid": [
+            {
+              "sql": "SELECT DISTINCT \"date_field\" FROM READ_CSV('<filename>', HEADER = TRUE) WHERE \"date_field\" = '{YYYYMMDD}' LIMIT 10",
+              "rule": "throw_if_empty",
+              "msg": "A data na origem (<table>) é diferente de DD/MM/YYYY!"
             }
+          ],
+          "sql": "INSERT INTO \"<table>\" BY NAME SELECT * FROM READ_CSV('<filename>', HEADER = TRUE)"
         }
-    },
-    "app": {
-        "app_id": 1,
-        "app": "ADMIN",
-        "app_desc": "Admin",
-        "version": "1.0.0",
-        "email": null,
-        "db": "ADMIN"
+      }
     }
+  },
+  "app": {
+    "app_id": 1,
+    "app": "ADMIN",
+    "app_desc": "Admin",
+    "version": "1.0.0",
+    "email": null,
+    "db": "ADMIN"
+  }
 }
 ```
 
 **ODBC Configuration:**
+
 - Connection string with driver specification
 - Environment variable support for credentials
 - Query parameterization for dynamic data extraction
@@ -971,10 +1070,11 @@ The ETL configuration supports various processing types:
 Returns extraction status, processed record counts, validation results, and any error messages. The response includes detailed information about the ETL operation for monitoring and debugging.
 
 **Example Response:**
+
 ```json
 {
-    "success": true,
-    "msg": "ETL extraction completed successfully"
+  "success": true,
+  "msg": "ETL extraction completed successfully"
 }
 ```
 
@@ -988,10 +1088,14 @@ Successful API responses include a `success: true` field and relevant data. The 
 
 ```json
 {
-    "success": true,
-    "data": { /* endpoint-specific data */ },
-    "msg": "Operation completed successfully",
-    "metadata": { /* additional information */ }
+  "success": true,
+  "data": {
+    /* endpoint-specific data */
+  },
+  "msg": "Operation completed successfully",
+  "metadata": {
+    /* additional information */
+  }
 }
 ```
 
@@ -1001,17 +1105,17 @@ Error responses include detailed error information with HTTP status codes and de
 
 ```json
 {
-    "success": false,
-    "error": {
-        "code": "VALIDATION_ERROR",
-        "msg": "Invalid input data",
-        "details": [
-            {
-                "field": "username",
-                "msg": "Username is required"
-            }
-        ]
-    }
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "msg": "Invalid input data",
+    "details": [
+      {
+        "field": "username",
+        "msg": "Username is required"
+      }
+    ]
+  }
 }
 ```
 
@@ -1021,15 +1125,17 @@ Endpoints that return multiple records include pagination metadata to support ef
 
 ```json
 {
-    "success": true,
-    "data": [ /* array of records */ ],
-    "pagination": {
-        "total": 1000,
-        "limit": 50,
-        "offset": 0,
-        "has_more": true,
-        "next_offset": 50
-    }
+  "success": true,
+  "data": [
+    /* array of records */
+  ],
+  "pagination": {
+    "total": 1000,
+    "limit": 50,
+    "offset": 0,
+    "has_more": true,
+    "next_offset": 50
+  }
 }
 ```
 
@@ -1071,7 +1177,6 @@ Central-Set-Go implements comprehensive security measures to protect API endpoin
 - Performance monitoring and alerting
 - Security event detection and response
 - Audit trail for compliance requirements
-
 
 ## Getting Started
 
@@ -1148,6 +1253,7 @@ cp .env-exemple .env
 Edit the `.env` file to configure essential settings:
 
 **Database Configuration:**
+
 ```
 DB_DRIVER=sqlite
 DB_DSN=./data/central-set-go.db
@@ -1156,6 +1262,7 @@ DB_MAX_IDLE_CONNECTIONS=5
 ```
 
 **Server Configuration:**
+
 ```
 SERVER_PORT=4444
 SERVER_HOST=0.0.0.0
@@ -1164,6 +1271,7 @@ SERVER_WRITE_TIMEOUT=30s
 ```
 
 **Security Configuration:**
+
 ```
 JWT_SECRET=your-secret-key-here
 JWT_EXPIRATION=24h
@@ -1171,6 +1279,7 @@ BCRYPT_COST=12
 ```
 
 **File Storage Configuration:**
+
 ```
 UPLOAD_PATH=./uploads
 MAX_FILE_SIZE=10MB
@@ -1245,6 +1354,7 @@ Central-Set-Go supports various deployment strategies including Docker container
 Docker provides a consistent deployment environment that simplifies configuration management and ensures reproducible deployments across different environments.
 
 **Building the Docker Image:**
+
 ```bash
 docker build -t central-set-go .
 ```
@@ -1252,6 +1362,7 @@ docker build -t central-set-go .
 This command creates a Docker image containing the compiled application and all necessary runtime dependencies. The Dockerfile includes multi-stage builds to minimize image size while including all required components.
 
 **Running with Docker:**
+
 ```bash
 docker run -p 4444:4444 -v $(pwd)/data:/app/data central-set-go
 ```
@@ -1262,7 +1373,7 @@ This command starts the application in a Docker container with port mapping and 
 For more complex deployments involving multiple services, use Docker Compose:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   central-set-go:
     build: .
@@ -1276,7 +1387,7 @@ services:
       - DB_DSN=postgres://user:password@postgres:5432/central_set_go
     depends_on:
       - postgres
-  
+
   postgres:
     image: postgres:13
     environment:
@@ -1295,6 +1406,7 @@ volumes:
 For traditional server deployments, compile the application and deploy the binary with appropriate system service configuration:
 
 **Compilation for Production:**
+
 ```bash
 CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o central-set-go ./cmd/api
 ```
@@ -1325,18 +1437,21 @@ WantedBy=multi-user.target
 Central-Set-Go can be deployed on various cloud platforms including AWS, Google Cloud Platform, and Azure:
 
 **AWS Deployment:**
+
 - Use AWS Elastic Beanstalk for simple application deployment
 - Deploy on AWS ECS for containerized deployments
 - Use AWS RDS for managed database services
 - Configure AWS S3 for file storage and backups
 
 **Google Cloud Platform:**
+
 - Deploy on Google App Engine for serverless scaling
 - Use Google Cloud Run for containerized deployments
 - Configure Google Cloud SQL for managed databases
 - Use Google Cloud Storage for file management
 
 **Azure Deployment:**
+
 - Deploy on Azure App Service for web applications
 - Use Azure Container Instances for containerized deployments
 - Configure Azure Database for managed database services
@@ -1351,15 +1466,18 @@ Central-Set-Go provides prebuilt binary releases for major operating systems, el
 Each release includes the following artifacts:
 
 **Windows Releases:**
+
 - `central-set-go-windows-amd64.exe`: 64-bit Windows executable
 - `central-set-go-windows-386.exe`: 32-bit Windows executable
 
 **Linux Releases:**
+
 - `central-set-go-linux-amd64`: 64-bit Linux executable
 - `central-set-go-linux-arm64`: ARM64 Linux executable
 - `central-set-go-linux-386`: 32-bit Linux executable
 
 **macOS Releases:**
+
 - `central-set-go-darwin-amd64`: Intel Mac executable
 - `central-set-go-darwin-arm64`: Apple Silicon Mac executable
 
@@ -1405,6 +1523,7 @@ Contributors should follow established development practices including:
 ### Issue Reporting
 
 When reporting issues, include:
+
 - Detailed description of the problem
 - Steps to reproduce the issue
 - Expected vs. actual behavior
@@ -1430,4 +1549,3 @@ Central-Set-Go maintains an active community of users and contributors who provi
 **Professional Support:** Commercial support options are available for organizations requiring dedicated assistance, custom development, or enterprise-level support agreements.
 
 The Central-Set-Go project is committed to maintaining a welcoming and inclusive community where all participants can contribute effectively and feel valued for their contributions.
-
