@@ -18,6 +18,7 @@ build
 *.wal
 *.ipynb
 !db.ipynb
+!app.ETLX.ipynb
 *.env
 !static/conf
 *.zip
