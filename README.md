@@ -29,6 +29,16 @@ This sets up the **ADMIN** database and creates a default user:
 - **Username:** `root`
 - **Password:** `1234`
 
+> **Note for Linux / macOS**
+> Make the downloaded binary executable before running it:
+>
+> ```bash
+> chmod +x ./central-set
+> ```
+>
+> **ODBC Support**
+> Windows includes ODBC support by default. On Linux and macOS you’ll need to install **unixODBC** (or an equivalent ODBC driver manager) to use ETL/ELT features that rely on ODBC connections.
+
 ### Step 2 — Access the App
 
 After initialization, just run the binary and open your browser at:
