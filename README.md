@@ -37,7 +37,7 @@ This sets up the **ADMIN** database and creates a default user:
 > ```
 >
 > **ODBC Support**
-> Windows includes ODBC support by default. On Linux and macOS you’ll need to install **unixODBC** (or an equivalent ODBC driver manager) to use ETL/ELT features that rely on ODBC connections.
+> Windows includes ODBC support by default. On Linux and macOS you’ll need to install **unixODBC** to use ETL/ELT features that rely on ODBC connections.
 
 ### Step 2 — Access the App
 
