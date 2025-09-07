@@ -485,6 +485,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	// fmt.Println(data)
 	err = response.JSON(w, http.StatusOK, data)
 	if err != nil {
 		app.serverError(w, r, err)

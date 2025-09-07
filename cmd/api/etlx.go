@@ -535,6 +535,7 @@ func (app *application) etlxRun(params Dict) Dict {
 		}
 	}
 	msg, _ := app.i18n.T("success", Dict{})
+	//fmt.Println(msg)
 	return Dict{
 		"success": true,
 		"msg":     msg,
