@@ -44,18 +44,18 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 	}
 	csapp := fmt.Sprintf(`database/%s.%s.csapp`, dbname, app.config.db.driverName)
-	// PARQUET STYLE
-	/*if app.fileExists(csapp) {
+	/*/ PARQUET STYLE
+	if app.fileExists(csapp) {
 		ddb, _ := etlx.GetDB("duckdb:")
 		defer ddb.Close()
 		sql := fmt.Sprintf(`select * from read_parquet('%s')`, csapp)
-		fmt.Println(sql)
+		// fmt.Println(sql)
 		res, _, err := ddb.QueryMultiRows(sql)
 		if err != nil {
 			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
 		}
 		for _, d := range *res {
-			fmt.Println(d["query"].(string))
+			// fmt.Println(d["query"].(string))
 			_, err := ddb.ExecuteQuery(d["query"].(string))
 			if err != nil {
 				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)

@@ -125,25 +125,34 @@ func (app *application) Buckup(params Dict) Dict {
 		defer appDBCon.Close()
 		_, dsn2, _ := app.ParseConnection(dsn)
 		_type := ""
+		_driver := ""
 		if db.GetDriverName() == "sqlite3" || db.GetDriverName() == "sqlite" {
 			_type = "(type sqlite)"
+			_driver = "sqlite"
 		} else if db.GetDriverName() == "postgres" {
 			_type = "(type postgres)"
+			_driver = "postgres"
 		} else if db.GetDriverName() == "mysql" {
 			_type = "(type mysql)"
+			_driver = "mysql"
 		} else if db.GetDriverName() == "odbc" {
 			_type = "(type odbc)"
+			_driver = "odbc"
 		} else if db.GetDriverName() == "duckdb" {
 			_type = ""
+			_driver = "duckdb"
 		}
-		fmt.Println("CHK ADM vs APP DB:", _app["db"].(string) != admin_db, _app["db"].(string), admin_db)
+		//fmt.Println("CHK ADM vs APP DB:", _app["db"].(string) != admin_db, _app["db"].(string), admin_db)
 		if _app["db"].(string) != admin_db {
 			attach := fmt.Sprintf(`attach if not exists '%s' as %s %s`, adm_dsn, admin_db, _type)
-			fmt.Println(attach)
+			//fmt.Println(attach)
 			memDB.ExecuteQuery(attach)
 			memDB.ExecuteQuery(fmt.Sprintf(`use %s`, admin_db))
-			fmt.Println(attach)
+			//fmt.Println(attach)
 			app.InsertData(memDB, "memory.queries", Dict{"query": attach})
+			if _driver == "sqlite" {
+				//app.InsertData(memDB, "memory.queries", Dict{"query": "PRAGMA foreign_keys = OFF;", "admin": false})
+			}
 			sql = `show tables`
 			res_adm_tbl, _, err := memDB.QueryMultiRows(sql, []any{}...)
 			if err != nil {
@@ -152,7 +161,7 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 			for _, _adm_tbl := range *res_adm_tbl {
 				adm_tbl, _ := _adm_tbl["name"].(string)
-				fmt.Println("ADM TABLES:", adm_tbl)
+				//fmt.Println("ADM TABLES:", adm_tbl)
 				if adm_tbl == "" {
 					continue
 				}
@@ -166,7 +175,7 @@ func (app *application) Buckup(params Dict) Dict {
 				_filter := []any{}
 				if len(*result) > 0 {
 					sql = fmt.Sprintf(`select * from %s."%s" where "app_id" = ?`, admin_db, adm_tbl)
-					fmt.Println("TABLE HAS APP:", admin_db, adm_tbl, sql)
+					//fmt.Println("TABLE HAS APP:", admin_db, adm_tbl, sql)
 					_filter = append(_filter, _app["app_id"])
 				} else {
 					result, _, err := memDB.QueryMultiRows(_sql, []any{adm_tbl, "db"}...)
@@ -176,13 +185,13 @@ func (app *application) Buckup(params Dict) Dict {
 					}
 					if len(*result) > 0 {
 						sql = fmt.Sprintf(`select * from %s."%s" where "db" = ?`, admin_db, adm_tbl)
-						fmt.Println("TABLE HAS DB:", admin_db, adm_tbl, sql)
+						//fmt.Println("TABLE HAS DB:", admin_db, adm_tbl, sql)
 						_filter = append(_filter, dbname)
 					} else {
 						continue
 					}
 				}
-				fmt.Println("ADM:", sql)
+				//fmt.Println("ADM:", sql)
 				result, _, err = memDB.QueryMultiRows(sql, _filter...)
 				if err != nil {
 					fmt.Printf("Error getting the data from %s->%s: %s!", admin_db, adm_tbl, err)
@@ -195,6 +204,9 @@ func (app *application) Buckup(params Dict) Dict {
 				sqls, _ = etlx_obj.BuildInsertSQL(fmt.Sprintf(`insert into "%s" (":columns") values`, adm_tbl), *result)
 				app.InsertData(memDB, "memory.adm_query", Dict{"query": sqls})
 			}
+			if _driver == "sqlite" {
+				//app.InsertData(memDB, "memory.queries", Dict{"query": "PRAGMA foreign_keys = ON;", "admin": false})
+			}
 			app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, admin_db)})
 			memDB.ExecuteQuery(fmt.Sprintf(`use %s`, "memory"))
 			memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, admin_db))
@@ -204,6 +216,9 @@ func (app *application) Buckup(params Dict) Dict {
 		app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, dbname))
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, dbname)})
+		if _driver == "sqlite" {
+			//app.InsertData(memDB, "memory.queries", Dict{"query": "PRAGMA foreign_keys = OFF;", "admin": false})
+		}
 		sql = `select * from duckdb_tables() where database_name = ?`
 		tables, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 		if err != nil {
@@ -214,7 +229,7 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 		}
 		for _, table := range *tables {
-			if table["table_name"] == "sqlite_sequence" || table["table_name"] == "sqlite_stat" {
+			if strings.HasPrefix(table["table_name"].(string), "sqlite_") {
 				continue
 			}
 			_filter := []any{}
@@ -280,6 +295,9 @@ func (app *application) Buckup(params Dict) Dict {
 				app.InsertData(memDB, "memory.queries", Dict{"query": sqls})
 				app.InsertData(memDB, "memory.app_query", Dict{"query": sqls})
 			}
+		}
+		if _driver == "sqlite" {
+			//app.InsertData(memDB, "memory.queries", Dict{"query": "PRAGMA foreign_keys = ON;", "admin": false})
 		}
 		app.InsertData(memDB, "memory.queries", Dict{"query": "COMMIT;"})
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, "memory"))
