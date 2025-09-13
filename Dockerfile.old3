@@ -21,20 +21,20 @@ ENV CGO_ENABLED=1
 # Clone the central-set-go repository
 RUN git clone --depth=1 https://github.com/realdatadriven/central-set-go.git .
 
-# Build the central-set-go binary with static linking to avoid GLIBC issues
+# Build the central-set-go binary
 RUN go build -o central-set-go ./cmd/api
 
 # ============================================
-# 🚀 Stage 2: Create Minimal Runtime Image
+# 🚀 Stage 2: Create Runtime Image with Same Base
 # ============================================
-# Use Ubuntu 24.04 which has GLIBC 2.39, compatible with Go 1.24
-FROM ubuntu:24.04
+FROM golang:1.24-bookworm
 
-# Install runtime dependencies
+# Install only runtime dependencies
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     unixodbc \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/local/go
 
 # Set working directory
 WORKDIR /app
@@ -44,20 +44,18 @@ COPY --from=builder /app/central-set-go /usr/local/bin/central-set-go
 
 # Copy static folder from the builder stage (if it exists)
 COPY --from=builder /app/static /app/static
-COPY --from=builder /app/database /app/database
-COPY --from=builder /app/locales /app/locales
 
 # Ensure the binary is executable
 RUN chmod +x /usr/local/bin/central-set-go
 
 # Create directory for database
-#RUN mkdir -p /app/database
+RUN mkdir -p /app/database
 
 # Define volume for database only
 VOLUME ["/app/database"]
 
 # Expose common ports (adjust as needed for your application)
-EXPOSE 4444
+EXPOSE 8080
 
 # Create a flexible entrypoint script inline
 RUN echo '#!/bin/bash\n\
@@ -105,4 +103,3 @@ CMD [""]
 
 #docker build -t central-set-go:latest .
 #docker run central-set-go:latest
-

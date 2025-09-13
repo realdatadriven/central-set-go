@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  central-set-go:
+    build: .
+    image: central-set-go:latest
+    container_name: central-set-go
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount .env file for environment configuration
+      - ./.env:/app/.env:ro
+      # Mount database directory for SQLite persistence
+      - ./database:/app/database
+      # Mount config directory for application configuration
+      - ./config:/app/config
+      # Mount data directory for application data
+      - ./data:/app/data
+    environment:
+      - APP_ENV=production
+      - DATABASE_PATH=/app/database
+    # Uncomment the following line to run initialization on startup
+    # command: ["--init"]
+    
+    # Health check (adjust the endpoint as needed)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Service for running initialization commands
+  central-set-go-init:
+    build: .
+    image: central-set-go:latest
+    container_name: central-set-go-init
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./database:/app/database
+      - ./config:/app/config
+      - ./data:/app/data
+    environment:
+      - APP_ENV=production
+      - DATABASE_PATH=/app/database
+    command: ["--init"]
+    profiles:
+      - init
+
+  # Service for running initialization with custom database name
+  central-set-go-init-custom:
+    build: .
+    image: central-set-go:latest
+    container_name: central-set-go-init-custom
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./database:/app/database
+      - ./config:/app/config
+      - ./data:/app/data
+    environment:
+      - APP_ENV=production
+      - DATABASE_PATH=/app/database
+      - DB_NAME=${DB_NAME:-NEW_DATABASE}
+    command: ["--init", "--dbname", "${DB_NAME:-NEW_DATABASE}"]
+    profiles:
+      - init-custom
+
+# Create named volumes for better data management (optional)
+volumes:
+  central_set_database:
+    driver: local
+  central_set_config:
+    driver: local
+  central_set_data:
+    driver: local
+
