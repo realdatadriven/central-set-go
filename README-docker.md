@@ -11,10 +11,18 @@ docker build -t central-set-go:latest .
 ```bash
 docker run -d \
   --name central-set-go \
-  -p 8080:8080 \
-  -v ~/.env:/app/.env:ro \
+  -p 4444:8080 \
+  -v ./.env:/app/.env:ro \
   -v ./database:/app/database \
   central-set-go:latest
+```
+
+```bash
+docker run -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest --init
+```
+
+```bash
+docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
 ```
 
 ### Initialize Database

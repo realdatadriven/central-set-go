@@ -23,6 +23,7 @@ RUN git clone --depth=1 https://github.com/realdatadriven/central-set-go.git .
 
 # Build the central-set-go binary with static linking to avoid GLIBC issues
 RUN go build -o central-set-go ./cmd/api
+RUN rm ./database/ADMIN.db
 
 # ============================================
 # 🚀 Stage 2: Create Minimal Runtime Image
@@ -55,6 +56,7 @@ RUN chmod +x /usr/local/bin/central-set-go
 
 # Define volume for database only
 VOLUME ["/app/database"]
+#, "/app/static/uploads"]
 
 # Expose common ports (adjust as needed for your application)
 EXPOSE 4444
@@ -105,4 +107,8 @@ CMD [""]
 
 #docker build -t central-set-go:latest .
 #docker run central-set-go:latest
-
+#docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
+#podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:latest
+#podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.0.11
+#podman push docker.io/realdatadriven/central-set-go:latest
+#podman push docker.io/realdatadriven/central-set-go:v1.0.11

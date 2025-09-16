@@ -32,3 +32,4 @@ tmp
 database/*.json
 *.parquet
 .venv
+tf/
