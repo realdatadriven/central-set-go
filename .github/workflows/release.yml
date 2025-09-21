@@ -141,7 +141,7 @@ jobs:
       # Step 3: Download DuckDB Precompiled Library
       - name: Download DuckDB Library
         run: |
-          $version = "v1.3.2"
+          $version = "v1.4.0"
           $duckdb_url = "https://github.com/duckdb/duckdb/releases/download/$version/libduckdb-windows-amd64.zip"
           $destinationPath = "$(Get-Location)\duckdb"
           Invoke-WebRequest -Uri $duckdb_url -OutFile "duckdb.zip"
@@ -285,13 +285,13 @@ jobs:
           REPO: ${{ github.repository }}
       - name: Zip Binaries
         run: |
-          zip -r dist/central-set-linux-amd64.zip dist/central-set-linux-amd64/*
-          zip -r dist/central-set-macos-amd64.zip dist/central-set-macos-amd64/*
-          zip -r dist/central-set-windows-amd64.zip dist/central-set-windows-amd64/*
-          zip -r dist/central-set-windows-linking-amd64.zip dist/central-set-windows-linking-amd64/*
-          zip -r dist/central-set-macos-arm64.zip dist/central-set-macos-arm64/*
-          zip -r dist/central-set-windows-arm64.zip dist/central-set-windows-arm64/*
-          zip -r dist/central-set-windows-linking-arm64.zip dist/central-set-windows-linking-arm64/*
+          cd dist/central-set-linux-amd64/ && zip -r ../central-set-linux-amd64.zip . && cd ../../
+          cd dist/central-set-macos-amd64/ && zip -r ../central-set-macos-amd64.zip . && cd ../../
+          cd dist/central-set-windows-amd64/ && zip -r ../central-set-windows-amd64.zip . && cd ../../
+          cd dist/central-set-windows-linking-amd64/ && zip -r ../central-set-windows-linking-amd64.zip . && cd ../../
+          cd dist/central-set-macos-arm64/ && zip -r ../central-set-macos-arm64.zip . && cd ../../
+          cd dist/central-set-windows-arm64/ && zip -r ../central-set-windows-arm64.zip . && cd ../../
+          cd dist/central-set-windows-linking-arm64/ && zip -r ../central-set-windows-linking-arm64.zip . && cd ../../
       #zip -j dist/central-set-linux-arm64.zip dist/central-set-linux-arm64
       - name: Create Release
         uses: softprops/action-gh-release@v1

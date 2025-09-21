@@ -104,11 +104,13 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # Default command (can be overridden)
 CMD [""]
-
+# ============================================
+# 📝 Usage Instructions
 #docker build -t central-set-go:latest .
 #docker run central-set-go:latest
 #docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
 #podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:latest
 #podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.0.11
+#podman login docker.io
 #podman push docker.io/realdatadriven/central-set-go:latest
 #podman push docker.io/realdatadriven/central-set-go:v1.0.11
