@@ -15,7 +15,7 @@ require (
 	github.com/marcboeker/go-duckdb/v2 v2.4.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
-	github.com/realdatadriven/etlx v1.4.2
+	github.com/realdatadriven/etlx v1.4.3
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	github.com/wneessen/go-mail v0.7.0
 	github.com/xuri/excelize/v2 v2.9.1
@@ -25,7 +25,10 @@ require (
 	golang.org/x/text v0.29.0
 )
 
-require github.com/robfig/cron/v3 v3.0.1
+require (
+	github.com/hashicorp/terraform-exec v0.24.0
+	github.com/robfig/cron/v3 v3.0.1
+)
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
@@ -34,6 +37,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/apache/arrow-go/v18 v18.4.1 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/duckdb/duckdb-go-bindings v0.1.20 // indirect
 	github.com/duckdb/duckdb-go-bindings/darwin-amd64 v0.1.20 // indirect
 	github.com/duckdb/duckdb-go-bindings/darwin-arm64 v0.1.20 // indirect
@@ -48,6 +52,8 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/hashicorp/go-version v1.7.0 // indirect
+	github.com/hashicorp/terraform-json v0.27.1 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/jlaffaye/ftp v0.2.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -70,6 +76,7 @@ require (
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
 	github.com/yuin/goldmark v1.7.13 // indirect
+	github.com/zclconf/go-cty v1.16.4 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	golang.org/x/mod v0.28.0 // indirect
 	golang.org/x/net v0.44.0 // indirect
