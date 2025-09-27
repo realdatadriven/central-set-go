@@ -52,6 +52,7 @@ func (app *application) DeployTerraformForTenant(tenantID string, run *Terraform
 	if err := tf.Apply(context.Background()); err != nil {
 		return nil, err
 	}
+
 	outputs, _ := tf.Output(context.Background())
 	result := map[string]string{}
 	for k, v := range outputs {
