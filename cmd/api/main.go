@@ -38,7 +38,7 @@ func main() {
 	}
 }
 
-type config struct {
+type app_config struct {
 	baseURL   string
 	httpPort  int
 	basicAuth struct {
@@ -81,6 +81,7 @@ type config struct {
 	s3ForcePathStyle      bool // Force path-style URLs (necessary for MinIO)
 	s3DisableSSL          bool
 	s3SkipSSLVerify       bool
+	s3Endpoint            string
 }
 
 //type admin struct{}
@@ -91,7 +92,7 @@ type config struct {
 }*/
 
 type application struct {
-	config config
+	config app_config
 	db     etlx.DBInterface //*etlx.DB
 	logger *slog.Logger
 	mailer *smtp.Mailer
@@ -102,7 +103,8 @@ type application struct {
 }
 
 func run(logger *slog.Logger) error {
-	var cfg config
+	var cfg app_config
+	// Load environment variables
 	cfg.baseURL = env.GetString("BASE_URL", "http://localhost:4444")
 	cfg.httpPort = env.GetInt("HTTP_PORT", 4444)
 	cfg.basicAuth.username = env.GetString("BASIC_AUTH_USERNAME", "admin")
@@ -133,6 +135,7 @@ func run(logger *slog.Logger) error {
 	cfg.s3ForcePathStyle = env.GetBool("S3_FORCE_PATH_STYLE", true)
 	cfg.s3DisableSSL = env.GetBool("S3_DISABLE_SSL", false)
 	cfg.s3SkipSSLVerify = env.GetBool("S3_SKIP_SSL_VERIFY", false)
+	cfg.s3Endpoint = env.GetString("AWS_ENDPOINT", "")
 	//cli flags
 	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize the main db")

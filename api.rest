@@ -1,0 +1,13 @@
+# SSE Example                         
+
+# Example Post Request
+POST http://localhost:4444/dyn_apy/crud/read
+Content-Type: application/json
+
+{
+    "lang": "en",
+    "db": "ADMIN",
+    "data": {
+        "table": "lang"
+    }    
+} 

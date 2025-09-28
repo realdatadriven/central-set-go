@@ -1,19 +1,20 @@
 package main
 
 import (
+	"context"
 	"io"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-// S3Handler serves files from an S3 bucket
+/*/ S3Handler serves files from an S3 bucket
 func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
 	// Get the S3 bucket and key from the environment or request
 	bucket := app.config.s3Bucket
 	key := r.URL.Path[len("/uploads/"):]
-	sess, err := app.awsSession()
+	sess, err := app.awsConfig(context.Background())
 	if err != nil {
 		http.Error(w, "Failed to create AWS session", http.StatusInternalServerError)
 		return
@@ -33,11 +34,61 @@ func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
 	// Set the correct content type and serve the file
 	w.Header().Set("Content-Type", *result.ContentType)
 	io.Copy(w, result.Body)
+}*/
+
+func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
+	bucket := app.config.s3Bucket
+	key := r.URL.Path[len("/uploads/"):]
+
+	// Load AWS config (migrated awsConfig from before)
+	cfg, err := app.awsConfig(context.Background())
+	if err != nil {
+		http.Error(w, "Failed to load AWS config", http.StatusInternalServerError)
+		return
+	}
+
+	// Create S3 client
+	svc := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		if endpoint := app.config.s3Endpoint; endpoint != "" {
+			o.BaseEndpoint = aws.String(endpoint)
+		}
+		o.UsePathStyle = app.config.s3ForcePathStyle
+	})
+
+	// Get the object
+	result, err := svc.GetObject(r.Context(), &s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		http.Error(w, "Failed to get file from S3", http.StatusNotFound)
+		return
+	}
+	defer result.Body.Close()
+
+	// ContentType is now *string in v2 (still optional)
+	if result.ContentType != nil {
+		w.Header().Set("Content-Type", *result.ContentType)
+	} else {
+		w.Header().Set("Content-Type", "application/octet-stream")
+	}
+
+	// Stream file to client
+	io.Copy(w, result.Body)
 }
 
 func (app *application) routes() http.Handler {
 	//mux := httprouter.New()
 	mux := http.NewServeMux()
+
+	// Register the WebSocket endpoint
+	manager := app.NewConnectionManager()
+	mux.HandleFunc("/ws", app.websocketEndpoint(manager))
+
+	// Server-Sent Events (SSE)
+	broker := NewBroker()
+	http.HandleFunc("/events", broker.SSEHandler)
+	http.HandleFunc("/notify", broker.NotifyHandler) // example use
 
 	// Handler for static files
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -74,15 +125,6 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /nb/{name}", app.run_notebook)
 	mux.HandleFunc("GET /notebook", app.run_notebook)
 	mux.HandleFunc("GET /notebook/{name}", app.run_notebook)
-
-	// Register the WebSocket endpoint
-	manager := app.NewConnectionManager()
-	mux.HandleFunc("/ws", app.websocketEndpoint(manager))
-
-	// Server-Sent Events (SSE)
-	broker := NewBroker()
-	http.HandleFunc("/events", broker.SSEHandler)
-	http.HandleFunc("/notify", broker.NotifyHandler) // example use
 
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	return app.compress(app.cors(app.logAccess(app.recoverPanic(app.authenticate(mux)))))

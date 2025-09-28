@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,10 +11,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/realdatadriven/central-set-go/internal/password"
 	"github.com/realdatadriven/central-set-go/internal/request"
@@ -159,85 +159,73 @@ func (app *application) fileExists(filePath string) bool {
 }
 
 // fileExistsInS3 checks if a file exists in the given S3 bucket
-func (app *application) fileExistsInS3(svc *s3.S3, bucket, key string) bool {
-	_, err := svc.HeadObject(&s3.HeadObjectInput{
+func (app *application) fileExistsInS3(ctx context.Context, client *s3.Client, bucket, key string) bool {
+	_, err := client.HeadObject(ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
-	// If no error, the file exists
 	return err == nil
 }
 
-// AWS SESSION
-func (app *application) awsSession() (*session.Session, error) {
-	awsConfig := &aws.Config{
-		Region: aws.String(os.Getenv("AWS_REGION")),
-		Credentials: credentials.NewStaticCredentials(
+// awsConfig returns an AWS config for SDK v2
+func (app *application) awsConfig(ctx context.Context) (aws.Config, error) {
+	opts := []func(*config.LoadOptions) error{
+		config.WithRegion(os.Getenv("AWS_REGION")),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			os.Getenv("AWS_ACCESS_KEY_ID"),
 			os.Getenv("AWS_SECRET_ACCESS_KEY"),
-			os.Getenv("AWS_SESSION_TOKEN"), // Optional
-		),
-		Endpoint:         aws.String(os.Getenv("AWS_ENDPOINT")), // Optional custom endpoint,
-		S3ForcePathStyle: aws.Bool(app.config.s3ForcePathStyle), // Force path-style URLs (necessary for MinIO)
-		DisableSSL:       aws.Bool(app.config.s3DisableSSL),     // MinIO often runs without SSL locally
+			os.Getenv("AWS_SESSION_TOKEN"),
+		)),
 	}
-	// Create a custom HTTP client that skips SSL certificate verification
-	if app.config.s3SkipSSLVerify && !app.config.s3DisableSSL {
-		customTransport := http.DefaultTransport.(*http.Transport).Clone()
-		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // Disable SSL verification
-		awsConfig = &aws.Config{
-			Region: aws.String(os.Getenv("AWS_REGION")),
-			Credentials: credentials.NewStaticCredentials(
-				os.Getenv("AWS_ACCESS_KEY_ID"),
-				os.Getenv("AWS_SECRET_ACCESS_KEY"),
-				os.Getenv("AWS_SESSION_TOKEN"), // Optional
-			),
-			Endpoint:         aws.String(os.Getenv("AWS_ENDPOINT")),    // Optional custom endpoint,
-			S3ForcePathStyle: aws.Bool(app.config.s3ForcePathStyle),    // Force path-style URLs (necessary for MinIO)
-			DisableSSL:       aws.Bool(app.config.s3DisableSSL),        // MinIO often runs without SSL locally
-			HTTPClient:       &http.Client{Transport: customTransport}, // Use the custom transport with TLS config
-		}
-	}
-	// Create AWS session
-	sess, err := session.NewSession(awsConfig)
+	/*if ep := os.Getenv("AWS_ENDPOINT"); ep != "" {
+		opts = append(opts, config.WithEndpointResolverWithOptions(
+			aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+				return aws.Endpoint{
+					URL:               ep,
+					SigningRegion:     os.Getenv("AWS_REGION"),
+					HostnameImmutable: true,
+				}, nil
+			}),
+		))
+	}*/
+	cfg, err := config.LoadDefaultConfig(ctx, opts...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create AWS session: %v", err)
+		return cfg, fmt.Errorf("failed to load AWS config: %v", err)
 	}
-	return sess, nil
+	return cfg, nil
 }
 
-// uploadToS3 uploads a file to the configured S3 bucket
+// uploadToS3 uploads a file to the configured S3 bucket using AWS SDK v2
 func (app *application) uploadToS3(file io.Reader, fileName string) (string, error) {
-	// Create AWS session
-	sess, err := app.awsSession()
+	ctx := context.Background()
+	cfg, err := app.awsConfig(ctx)
 	if err != nil {
-		return "", fmt.Errorf("failed to create AWS session: %v", err)
+		return "", fmt.Errorf("failed to create AWS config: %v", err)
 	}
-	// Create S3 service client
-	svc := s3.New(sess)
-	// Define the S3 bucket and key
+	//client := s3.NewFromConfig(cfg)
+	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		if endpoint := app.config.s3Endpoint; endpoint != "" {
+			o.BaseEndpoint = aws.String(endpoint)
+		}
+		o.UsePathStyle = app.config.s3ForcePathStyle
+	})
 	bucket := os.Getenv("S3_BUCKET")
 	originalKey := fileName
 	ext := filepath.Ext(originalKey)
 	baseName := fileName[:len(fileName)-len(ext)]
-	// Check if the file already exists and modify the file name if necessary
 	key := originalKey
-	for i := 1; app.fileExistsInS3(svc, bucket, key); i++ {
+	for i := 1; app.fileExistsInS3(ctx, client, bucket, key); i++ {
 		key = fmt.Sprintf("%s_%d%s", baseName, i, ext)
 	}
-	// Read file into a buffer to allow seeking
 	var buffer bytes.Buffer
 	if _, err := io.Copy(&buffer, file); err != nil {
 		return "", fmt.Errorf("failed to read file into buffer: %v", err)
 	}
-	// Convert buffer into a ReadSeeker
-	fileReader := bytes.NewReader(buffer.Bytes())
-	// Upload file to S3
-	_, err = svc.PutObject(&s3.PutObjectInput{
+	_, err = client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
-		Body:   fileReader,
-		//ACL:    aws.String("public-read"), // Optional: Set ACL for public access if needed
+		Body:   bytes.NewReader(buffer.Bytes()),
+		//ACL:    types.ObjectCannedACLPublicRead, // Optional: Set ACL for public access if needed
 	})
 	if err != nil {
 		return "", fmt.Errorf("failed to upload to S3: %v", err)
