@@ -15,7 +15,7 @@ require (
 	github.com/marcboeker/go-duckdb/v2 v2.4.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
-	github.com/realdatadriven/etlx v1.4.5
+	github.com/realdatadriven/etlx v1.4.6
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	github.com/wneessen/go-mail v0.7.2
 	github.com/xuri/excelize/v2 v2.10.0
