@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "app" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("app_id" AUTOINCREMENT),
 	UNIQUE("app")
 );
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "calendar" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("calendar_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "column_level_access" (
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS "column_level_access" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("column_level_access_id" AUTOINCREMENT)
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS "custom_form" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("custom_form_id" AUTOINCREMENT)
 );
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS "custom_table" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("custom_table_id" AUTOINCREMENT)
 );
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS "dashboard" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("dashboard_id" AUTOINCREMENT)
 );
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS "dashboard_comment" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("dashboard_comment_id" AUTOINCREMENT)
 );
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS "etl_rb_exp_dtail" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("etl_rbase_export_id") REFERENCES "etl_rbase_export"("etl_rbase_export_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS "etl_rb_output_field" (
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("etl_rbase_output_id") REFERENCES "etl_rbase_output"("etl_rbase_output_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("etl_rb_output_field_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "etl_rb_reconc_dtail" (
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS "etl_rb_reconc_dtail" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("etl_rb_reconcilia_id") REFERENCES "etl_rb_reconcilia"("etl_rb_reconcilia_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS "etl_rb_reconcilia" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("etl_rb_reconcilia_id" AUTOINCREMENT)
 );
@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_backup" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
 	PRIMARY KEY("backup_id" AUTOINCREMENT)
 );
@@ -275,7 +275,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_export" (
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
 	FOREIGN KEY("export_type_id") REFERENCES "export_type"("export_type_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("etl_rbase_export_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "etl_rbase_input" (
@@ -314,7 +314,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_input" (
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
 	FOREIGN KEY("input_type_id") REFERENCES "input_type"("input_type_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("etl_rbase_input_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "etl_rbase_notify" (
@@ -336,7 +336,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_notify" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("notify_id" AUTOINCREMENT)
 );
@@ -360,7 +360,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_output" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
 	FOREIGN KEY("output_type_id") REFERENCES "output_type"("output_type_id"),
 	PRIMARY KEY("etl_rbase_output_id" AUTOINCREMENT)
@@ -385,7 +385,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_quality" (
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("etl_rbase_quality_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "etl_rbase_script" (
@@ -401,7 +401,7 @@ CREATE TABLE IF NOT EXISTS "etl_rbase_script" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("script_id" AUTOINCREMENT)
 );
@@ -428,7 +428,7 @@ CREATE TABLE IF NOT EXISTS "etl_report_base" (
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("periodicity_id") REFERENCES "periodicity"("periodicity_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("etl_report_base_id" AUTOINCREMENT),
 	UNIQUE("etl_report_base")
 );
@@ -454,7 +454,7 @@ CREATE TABLE IF NOT EXISTS "etl_report_base_log" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("log_id" AUTOINCREMENT)
 );
@@ -497,7 +497,7 @@ CREATE TABLE IF NOT EXISTS "manage_query" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("manage_query_id" AUTOINCREMENT)
 );
@@ -514,7 +514,7 @@ CREATE TABLE IF NOT EXISTS "menu" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("menu_id" AUTOINCREMENT)
 );
@@ -531,7 +531,7 @@ CREATE TABLE IF NOT EXISTS "menu_table" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("menu_id") REFERENCES "menu"("menu_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("menu_table_id" AUTOINCREMENT)
@@ -582,7 +582,7 @@ CREATE TABLE IF NOT EXISTS "role_app" (
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("role_app_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "role_app_menu" (
@@ -598,7 +598,7 @@ CREATE TABLE IF NOT EXISTS "role_app_menu" (
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("menu_id") REFERENCES "menu"("menu_id"),
 	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("role_app_menu_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "role_app_menu_table" (
@@ -619,7 +619,7 @@ CREATE TABLE IF NOT EXISTS "role_app_menu_table" (
 	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
 	FOREIGN KEY("menu_id") REFERENCES "menu"("menu_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("role_app_menu_table_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "role_row_level_access" (
@@ -639,7 +639,7 @@ CREATE TABLE IF NOT EXISTS "role_row_level_access" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
 	PRIMARY KEY("role_row_level_access_id" AUTOINCREMENT)
@@ -661,7 +661,7 @@ CREATE TABLE IF NOT EXISTS "row_level_access" (
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("row_level_access_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "source_type" (
@@ -683,7 +683,7 @@ CREATE TABLE IF NOT EXISTS "table" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("table_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "table_schema" (
@@ -705,7 +705,7 @@ CREATE TABLE IF NOT EXISTS "table_schema" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("table_schema_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "task" (
@@ -736,7 +736,7 @@ CREATE TABLE IF NOT EXISTS "task" (
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("calendar_id") REFERENCES "calendar"("calendar_id"),
 	FOREIGN KEY("task_status_id") REFERENCES "task_status"("task_status_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("repeat_type_id") REFERENCES "repeat_type"("repeat_type_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("task_id" AUTOINCREMENT)
@@ -763,7 +763,7 @@ CREATE TABLE IF NOT EXISTS "task_track" (
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	FOREIGN KEY("task_id") REFERENCES "task"("task_id"),
 	FOREIGN KEY("task_status_id") REFERENCES "task_status"("task_status_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("task_track_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "translate_table" (
@@ -779,7 +779,7 @@ CREATE TABLE IF NOT EXISTS "translate_table" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("transl_tbl_id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "translate_table_field" (
@@ -796,10 +796,10 @@ CREATE TABLE IF NOT EXISTS "translate_table_field" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("transl_tbl_field_id" AUTOINCREMENT)
 );
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"user_id"	INTEGER NOT NULL,
 	"username"	VARCHAR(50) NOT NULL,
 	"first_name"	VARCHAR(50) NOT NULL,
@@ -841,7 +841,7 @@ CREATE TABLE IF NOT EXISTS "user_log" (
 	"created_at"	DATETIME,
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
 	PRIMARY KEY("user_log_id" AUTOINCREMENT)
 );
@@ -854,7 +854,7 @@ CREATE TABLE IF NOT EXISTS "user_role" (
 	"updated_at"	DATETIME,
 	"excluded"	BOOLEAN,
 	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "user"("user_id"),
+	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
 	PRIMARY KEY("user_role_id" AUTOINCREMENT)
 );
 COMMIT;

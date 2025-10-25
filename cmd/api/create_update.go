@@ -151,11 +151,11 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 					}
 					_data[field] = hashedPassword
 				}
-			} else if app.contains([]any{"app", "app_id"}, field) && !app.contains([]any{"app", "role_app", "role_app_menu", "role_app_menu_table"}, table) {
+			} else if app.contains([]any{"app", "app_id"}, field) && !app.contains([]any{"app", "users", "role_app", "role_app_menu", "role_app_menu_table"}, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
 					_data[field] = params["app"].(map[string]any)[field]
 				}
-			} else if app.contains([]any{"user", "user_id"}, field) && !app.contains([]any{"user", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
+			} else if app.contains([]any{"user", "user_id"}, field) && !app.contains([]any{"user", "users", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
 					_data[field] = params["user"].(map[string]any)[field]
 				}

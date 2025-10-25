@@ -246,7 +246,7 @@ func (app *application) alter_pass(params map[string]any) map[string]any {
 			msg, _ := app.i18n.T("pass_must_have_special", map[string]any{})
 			return map[string]any{"success": false, "msg": msg}
 		}
-		query := `UPDATE user 
+		query := `UPDATE users 
 			SET password = :password 
 		WHERE email = :username
 			OR username = :username`
