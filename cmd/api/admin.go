@@ -643,7 +643,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 							vals := app.joinSlice(keys, `, :`)
 							// Loop through the slice of maps and insert each record
 							_ins_query := fmt.Sprintf(`INSERT INTO table_schema ("%s") VALUES (:%s)`, cols, vals)
-							//fmt.Println(query)
+							fmt.Println(_ins_query)
 							for _, row := range results {
 								_, err := app.db.ExecuteNamedQuery(_ins_query, row)
 								if err != nil {
@@ -747,7 +747,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		WHERE db = ?
 			AND (user_id = ? OR user_id = 1)
 			AND app_id = ?
-			AND "table" IN (?) 
+			AND "table" IN (?)
 			AND excluded = FALSE
 		ORDER BY user_id DESC, custom_table_id DESC`
 		queryParams = []any{_database, user_id, app_id}

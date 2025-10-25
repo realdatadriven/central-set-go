@@ -190,7 +190,8 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	// FILTERS
 	queryParams := []any{}
 	filters := []any{}
-	if _, ok := _schema["fields"].(map[string]any)["excluded"]; ok {
+	if _, ok := _schema["fields"].(map[string]any); !ok {
+	} else if _, ok := _schema["fields"].(map[string]any)["excluded"]; ok {
 		filters = []any{fmt.Sprintf(`"%s"."excluded" IS FALSE`, table)}
 	}
 	if _, ok := params["data"].(map[string]any)["filters"]; !ok {
