@@ -37,7 +37,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 	if _, ok := params["permissions"]; ok {
 		_permissions = params["permissions"].(map[string]any)
 	}
-	//fmt.Println("PK", _schema["pk"])
+	// fmt.Println("PK", _schema["pk"])
 	pk := ""
 	if _, ok := _schema["pk"]; ok {
 		pk = _schema["pk"].(string)

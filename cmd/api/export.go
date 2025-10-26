@@ -67,7 +67,10 @@ func (app *application) export_read(params map[string]any) map[string]any {
 		if _, ok := _data["_fields"]; !ok {
 		} else if _, ok := _data["_fields"].([]any); ok {
 			_cols := app.filterInterface(_data["_fields"].([]any), func(r map[string]any) bool {
-				return r["display"].(bool)
+				if display, ok := r["display"].(bool); !ok {
+					return display
+				}
+				return false
 			})
 			if len(_cols) > 0 {
 				cols = []string{}

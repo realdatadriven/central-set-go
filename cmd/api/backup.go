@@ -161,7 +161,7 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 			for _, _adm_tbl := range *res_adm_tbl {
 				adm_tbl, _ := _adm_tbl["name"].(string)
-				//fmt.Println("ADM TABLES:", adm_tbl)
+				fmt.Println("ADM TABLES:", adm_tbl)
 				if adm_tbl == "" {
 					continue
 				}
@@ -216,10 +216,15 @@ func (app *application) Buckup(params Dict) Dict {
 		app.InsertData(memDB, "memory.queries", Dict{"query": attach})
 		memDB.ExecuteQuery(fmt.Sprintf(`use %s`, dbname))
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, dbname)})
-		if _driver == "sqlite" {
-			//app.InsertData(memDB, "memory.queries", Dict{"query": "PRAGMA foreign_keys = OFF;", "admin": false})
-		}
 		sql = `select * from duckdb_tables() where database_name = ?`
+		switch _driver {
+		case "sqlite":
+			//app.InsertData(memDB, "memory.queries", Dict{"query": "PRAGMA foreign_keys = OFF;", "admin": false})
+		case "postgres":
+			sql = `from duckdb_tables() where database_name = ? and schema_name = 'public'`
+		case "mysql", "odbc", "mssql":
+			sql = `from duckdb_tables() where database_name = ? and schema_name = 'default'`
+		}
 		tables, _, err := memDB.QueryMultiRows(sql, []any{dbname}...)
 		if err != nil {
 			fmt.Printf("Error getting the table %s: %s!", _app["app"], err)
@@ -234,6 +239,7 @@ func (app *application) Buckup(params Dict) Dict {
 			}
 			_filter := []any{}
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
+			//fmt.Println(table)
 			_sql := `select * from duckdb_columns() where table_name = ? and column_name = ?`
 			result, _, err := memDB.QueryMultiRows(_sql, []any{table["table_name"], "app_id"}...)
 			if err != nil {
@@ -304,7 +310,7 @@ func (app *application) Buckup(params Dict) Dict {
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`use %s`, "memory")})
 		memDB.ExecuteQuery(fmt.Sprintf(`detach %s`, dbname))
 		app.InsertData(memDB, "memory.queries", Dict{"query": fmt.Sprintf(`detach %s`, dbname)})
-		_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapppq' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
+		/*_sql := fmt.Sprintf(`copy memory."queries" to '%s/%s.%s.csapppq' (format parquet)`, embed_dbs_dir, _app["app"], app.config.db.driverName)
 		_, err = memDB.ExecuteQuery(_sql)
 		if err != nil {
 			fmt.Printf("Error exporting the app %s: %s!", _app["app"], err)
@@ -312,11 +318,11 @@ func (app *application) Buckup(params Dict) Dict {
 				"success": false,
 				"msg":     fmt.Sprintf("Error exporting the app %s: %s!", _app["app"], err),
 			}
-		}
+		}*/
 		filename := fmt.Sprintf(`%s/%s.%s.csapp`, embed_dbs_dir, _app["app"], app.config.db.driverName)
 		if err := os.Remove(filename); err != nil {
 			fmt.Printf("could not delete %s: %v", filename, err)
-			continue
+			//continue
 		}
 		attch := fmt.Sprintf(`attach '%s' as %s`, filename, _app["app"])
 		memDB.ExecuteQuery(attch)

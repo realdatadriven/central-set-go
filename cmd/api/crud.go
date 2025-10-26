@@ -159,11 +159,12 @@ func (app *application) create_update(params map[string]any) map[string]any {
 	if !_schemas["success"].(bool) {
 		return _schemas
 	}
+	//fmt.Println("TABLES TO CREATE:", tables, _schemas)
 	if _, ok := _schemas["data"]; ok {
 		_schemas = _schemas["data"].(map[string]any)
 		params["schemas"] = _schemas
 	}
-	// fmt.Println("TABLES TO CREATE:", tables, _schemas)
+	//fmt.Println("TABLES TO CREATE:", tables, _schemas)
 	_permissions := app.table_access(params, tables)
 	if !_permissions["success"].(bool) {
 		return _permissions

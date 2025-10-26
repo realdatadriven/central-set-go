@@ -280,11 +280,17 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	//fmt.Println(1, _database)
 	switch _type := _database.(type) {
 	case nil:
+		fmt.Println("IS NIL:", _database, _type)
 		_db := ""
 		fileName := filepath.Base(app.config.db.dsn)
 		fileExt := filepath.Ext(app.config.db.dsn)
 		if app.fileExists(app.config.db.dsn) || (fileName != "" && fileName != "." && fileExt != "") {
 			_db = fileName[:len(fileName)-len(fileExt)]
+		} else {
+			dbname, err := app.ExtractURLDBName(app.config.db.dsn)
+			if err == nil && dbname != "" {
+				_db = dbname
+			}
 		}
 		return app.config.db.dsn, _db, nil
 	case string:
@@ -341,10 +347,12 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 				dsn = new_dsn
 			}
 			dbname, err := app.ExtractURLDBName(dsn)
-			if err == nil {
+			if err == nil && dbname != "" {
 				_database = dbname
 			}
+			fmt.Println(1, "ExtractURLDBName:", dbname, _database.(string), err)
 		}
+		fmt.Println(2, "ExtractURLDBName:", _database.(string))
 		return dsn, _database.(string), nil
 	case []any:
 		fmt.Println("IS []any:", _database, _type)
@@ -355,7 +363,7 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 }
 
 func (app *application) tables(params map[string]any, tables []any) map[string]any {
-	//fmt.Println(params)
+	//fmt.Println(1, params)
 	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
 		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
@@ -416,6 +424,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
 		}
+		fmt.Println("TABLES:", tables)
 		if app.IsEmpty(tables) {
 			// fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)
@@ -437,7 +446,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			allTables = true
 		}
 	}
-	//fmt.Println(dsn, _database, tables, allTables)
+	fmt.Println(2, dsn, _database, tables, allTables)
 	data := map[string]any{}
 	table_by_id := map[int64]any{}
 	if app.IsEmpty(tables) {
@@ -603,7 +612,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		if err != nil {
 			println("Error geting the table query:", err)
 		}
-		//fmt.Println(query, args, queryParams)
+		fmt.Println(allTables, query, args, queryParams, _database)
 		table_schema := map[string]any{}
 		_table_schema, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
@@ -613,7 +622,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		//fmt.Println(*_table_schema)
+		fmt.Println(3, *_table_schema)
 		// POPULATE table_schema WITH THOSE WHO ARE NOT IN table_schema
 		if allTables {
 			tables_not_in_schema := []any{}
