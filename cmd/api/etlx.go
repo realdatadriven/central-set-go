@@ -110,6 +110,12 @@ func (app *application) etlxRun(params Dict) Dict {
 	} else {
 		etlxlib.Config = config
 	}
+	if _, ok := etlxlib.Config["REQUIRES"]; ok {
+		_logs, err := etlxlib.LoadREQUIRES(nil)
+		if err != nil {
+			fmt.Printf("REQUIRES ERR: %v %v", err, _logs)
+		}
+	}
 	// DATE REF
 	var _dateRef any
 	if _, ok := _data["date_ref"]; ok {
@@ -354,7 +360,7 @@ func (app *application) etlxRun(params Dict) Dict {
 			}
 		}
 	}
-	_keys := []any{"NOTIFY", "LOGS", "SCRIPTS", "MULTI_QUERIES", "EXPORTS", "DATA_QUALITY", "ETL", "ACTIONS", "AUTO_LOGS"}
+	_keys := []any{"NOTIFY", "LOGS", "SCRIPTS", "MULTI_QUERIES", "EXPORTS", "DATA_QUALITY", "ETL", "ACTIONS", "AUTO_LOGS", "REQUIRES"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
@@ -525,6 +531,19 @@ func (app *application) etlxRun(params Dict) Dict {
 									"runs_as": runs_as,
 									"logs":    _logs,
 								}
+							}
+						case "REQUIRES":
+							_logs, err := etlxlib.LoadREQUIRES(nil, key)
+							if err != nil {
+								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+							} else {
+								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+									if err != nil {
+										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+									}
+								}
+								logs = append(logs, _logs...)
 							}
 						default:
 							//
