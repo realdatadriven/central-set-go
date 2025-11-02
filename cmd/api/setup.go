@@ -85,7 +85,7 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		for _, d := range *res {
 			_, err := admDB.ExecuteQuery(d["query"].(string))
 			if err != nil {
-				fmt.Printf("failed execute data loading query %s: %w", d["query"], err)
+				fmt.Printf("failed execute data loading query %s: %s", d["query"], err)
 				//return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
 			}
 		}
