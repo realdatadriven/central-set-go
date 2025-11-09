@@ -34,6 +34,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
+	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
@@ -63,6 +64,8 @@ require (
 	github.com/duckdb/duckdb-go/arrowmapping v0.0.24 // indirect
 	github.com/duckdb/duckdb-go/mapping v0.0.24 // indirect
 	github.com/duckdb/duckdb-go/v2 v2.5.1 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
+	github.com/go-ldap/ldap/v3 v3.4.12 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect

@@ -111,7 +111,7 @@ func (app *application) routes() http.Handler {
 	// mux.HandleFunc("POST /authentication-tokens", app.createAuthenticationToken)
 
 	// REPLICA OF THE FASTAPI CENTRAL-SET
-	mux.HandleFunc("POST /dyn_api/login/login", app.login)
+	//mux.HandleFunc("POST /dyn_api/login/login", app.dyn_api)
 	mux.HandleFunc("POST /upload", app.uploadHandler)
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
 	// RUN ENDPOINTS

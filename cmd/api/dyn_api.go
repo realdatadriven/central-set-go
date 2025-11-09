@@ -142,8 +142,6 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	token := app.verifyToken(r)
-	//user := *(contextGetAuthenticatedUser(r))
-	params["user"] = *(contextGetAuthenticatedUser(r))
 	//fmt.Println(params["user"].(Dict)["username"].(string), "->", int(params["user"].(Dict)["user_id"].(float64)), "->", int(params["user"].(Dict)["role_id"].(float64)))
 	var data Dict
 	_ip, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -151,10 +149,15 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 	}
 	_log := Dict{
-		"user_id": params["user"].(Dict)["user_id"],
-		"action":  fmt.Sprintf("%s/%s", ctrl, act),
-		"req_ip":  _ip,
-		"res_at":  time.Now(),
+		"action": fmt.Sprintf("%s/%s", ctrl, act),
+		"req_ip": _ip,
+		"res_at": time.Now(),
+	}
+	//fmt.Println(token, params)
+	if token["success"].(bool) {
+		//user := *(contextGetAuthenticatedUser(r))
+		params["user"] = *(contextGetAuthenticatedUser(r))
+		_log["user_id"] = params["user"].(Dict)["user_id"]
 	}
 	switch ctrl {
 	case "login":

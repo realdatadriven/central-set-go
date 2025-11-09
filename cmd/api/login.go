@@ -1,12 +1,16 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
+	"strings"
 	"time"
 
+	"github.com/go-ldap/ldap/v3"
 	"github.com/realdatadriven/central-set-go/internal/password"
 	"github.com/realdatadriven/central-set-go/internal/request"
 	"github.com/realdatadriven/central-set-go/internal/response"
@@ -58,8 +62,7 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 		return
 	}
-
-	if !found {
+	if !found || len(user) == 0 {
 		err = response.JSON(w, http.StatusOK, map[string]any{
 			"success": false,
 			"msg":     "Email or Password incorrect",
@@ -124,6 +127,82 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// AuthenticateAD connects to AD and validates a user's credentials.
+func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, password string, skipVerify bool) (bool, map[string]any, error) {
+	//fmt.Println("AuthenticateAD:", ldapURL, baseDN, serviceUser, servicePass, username, password)
+	// Connect to LDAP server (use LDAPS if possible)
+	l, err := ldap.DialURL(ldapURL, ldap.DialWithTLSConfig(&tls.Config{InsecureSkipVerify: skipVerify}))
+	if err != nil {
+		return false, nil, fmt.Errorf("failed to connect LDAP: %w", err)
+	}
+	defer l.Close()
+
+	// 1️⃣ Bind as service account (to search)
+	err = l.Bind(serviceUser, servicePass)
+	if err != nil {
+		return false, nil, fmt.Errorf("service bind failed: %w", err)
+	}
+
+	// 2️⃣ Search for user by sAMAccountName, userPrincipalName, or mail
+	filter := fmt.Sprintf("(|(sAMAccountName=%[1]s)(userPrincipalName=%[1]s)(mail=%[1]s))", username)
+	fmt.Println(baseDN, filter)
+	searchReq := ldap.NewSearchRequest(
+		baseDN,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		filter,
+		[]string{"dn", "cn", "mail", "displayName", "givenName", "sn", "sAMAccountName", "userPrincipalName", "memberOf"},
+		nil,
+	)
+
+	sr, err := l.Search(searchReq)
+	if err != nil {
+		return false, nil, fmt.Errorf("LDAP search failed: %w", err)
+	}
+
+	fmt.Println("LDAP search entries:", len(sr.Entries))
+
+	if len(sr.Entries) != 1 {
+		return false, nil, fmt.Errorf("user not found or multiple matches for %s", username)
+	}
+
+	entry := sr.Entries[0]
+	userDN := entry.DN
+
+	// 3️⃣ Verify password by binding as user
+	if err := l.Bind(userDN, password); err != nil {
+		return false, nil, nil // invalid credentials
+	}
+	displayName := entry.GetAttributeValue("displayName")
+	firstName := entry.GetAttributeValue("givenName")
+	lastName := entry.GetAttributeValue("sn")
+
+	// Fallback: split displayName if givenName/sn not available
+	if firstName == "" && displayName != "" {
+		parts := strings.Fields(displayName)
+		if len(parts) > 0 {
+			firstName = parts[0]
+		}
+		if len(parts) > 1 {
+			lastName = strings.Join(parts[1:], " ")
+		}
+	}
+	userInfo := make(map[string]any)
+	// 4️⃣ Extract user attributes into a map
+	userInfo["dn"] = userDN
+	userInfo["cn"] = entry.GetAttributeValue("cn")
+	userInfo["displayName"] = entry.GetAttributeValue("displayName")
+	userInfo["givenName"] = entry.GetAttributeValue("givenName")
+	userInfo["sn"] = entry.GetAttributeValue("sn")
+	userInfo["first_name"] = firstName
+	userInfo["last_name"] = lastName
+	userInfo["username"] = entry.GetAttributeValue("sAMAccountName")
+	userInfo["email"] = entry.GetAttributeValue("mail")
+	userInfo["upn"] = entry.GetAttributeValue("userPrincipalName")
+	userInfo["groups"] = entry.GetAttributeValues("memberOf")
+
+	return true, userInfo, nil
+}
+
 func (app *application) _login(params map[string]any) map[string]any {
 	_data := map[string]any{}
 	if _, ok := params["data"]; ok {
@@ -136,7 +215,6 @@ func (app *application) _login(params map[string]any) map[string]any {
 			"msg":     msg,
 		}
 	}
-	fmt.Println(_data)
 	username := ""
 	if _, ok := _data["username"].(string); ok {
 		username = _data["username"].(string)
@@ -144,13 +222,6 @@ func (app *application) _login(params map[string]any) map[string]any {
 		username = _data["user"].(string)
 	} else if _, ok := _data["u"].(string); ok {
 		username = _data["u"].(string)
-	}
-	user, found, err := app.db.GetUserByNameOrEmail(username)
-	if err != nil {
-		return map[string]any{
-			"success": false,
-			"msg":     err.Error(),
-		}
 	}
 	pass := ""
 	if _, ok := _data["password"].(string); ok {
@@ -160,21 +231,82 @@ func (app *application) _login(params map[string]any) map[string]any {
 	} else if _, ok := _data["p"].(string); ok {
 		pass = _data["p"].(string)
 	}
-	if found {
-		//_hash, _ := password.Hash(pass)
-		//fmt.Println(pass, _hash, user["password"].(string))
-		match, err := password.Matches(pass, user["password"].(string))
+	var user map[string]any
+	var found bool
+	var err error
+	// fmt.Println(_data)
+	if os.Getenv("USE_LDAP_AUTH") == "true" && username != "root" {
+		ldapURL := os.Getenv("LDAP_URL")
+		serviceUser := os.Getenv("LDAP_BIND_USER")
+		servicePass := os.Getenv("LDAP_PASSWORD")
+		skipVerify := false
+		if os.Getenv("LDAP_SKIP_VERIFY_CERT") == "true" {
+			skipVerify = true
+		}
+		baseDN := os.Getenv("LDAP_BASE_DN")
+		_, userInfo, err := AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, pass, skipVerify)
+		//fmt.Println("LDAP", userInfo, err)
 		if err != nil {
 			return map[string]any{
 				"success": false,
 				"msg":     err.Error(),
 			}
 		}
-		if !match {
-			msg, _ := app.i18n.T("user-pass-incorrect", map[string]any{})
+		user, found, err = app.db.GetUserByNameOrEmail(username)
+		if err != nil || len(user) == 0 {
+			user = map[string]any{
+				"username":   userInfo["username"],
+				"password":   "LDAP_USER", //userInfo["password"],
+				"first_name": userInfo["first_name"],
+				"last_name":  userInfo["last_name"],
+				"email":      userInfo["email"],
+				"lang_id":    1,
+				"role_id":    2,
+				"active":     true,
+				"excluded":   false,
+				"create_at":  time.Now(),
+				"updated_at": time.Now(),
+			}
+			err := app.AdminInsertData("users", user)
+			if err != nil {
+				return map[string]any{
+					"success": false,
+					"msg":     err.Error(),
+				}
+			} else {
+				user, found, err = app.db.GetUserByNameOrEmail(username)
+				if err != nil {
+					return map[string]any{
+						"success": false,
+						"msg":     err.Error(),
+					}
+				}
+			}
+		}
+	} else {
+		user, found, err = app.db.GetUserByNameOrEmail(username)
+		if err != nil || len(user) == 0 {
 			return map[string]any{
 				"success": false,
-				"msg":     msg,
+				"msg":     err.Error(),
+			}
+		}
+		if found {
+			//_hash, _ := password.Hash(pass)
+			//fmt.Println(pass, _hash, user["password"].(string))
+			match, err := password.Matches(pass, user["password"].(string))
+			if err != nil {
+				return map[string]any{
+					"success": false,
+					"msg":     err.Error(),
+				}
+			}
+			if !match {
+				msg, _ := app.i18n.T("user-pass-incorrect", map[string]any{})
+				return map[string]any{
+					"success": false,
+					"msg":     msg,
+				}
 			}
 		}
 	}
