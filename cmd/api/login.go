@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"regexp"
 	"strings"
@@ -12,120 +11,9 @@ import (
 
 	"github.com/go-ldap/ldap/v3"
 	"github.com/realdatadriven/central-set-go/internal/password"
-	"github.com/realdatadriven/central-set-go/internal/request"
-	"github.com/realdatadriven/central-set-go/internal/response"
-	"github.com/realdatadriven/central-set-go/internal/validator"
 
 	"github.com/pascaldekloe/jwt"
 )
-
-func (app *application) login(w http.ResponseWriter, r *http.Request) {
-	var params struct {
-		Lang string `json:"lang"`
-		Data struct {
-			Username  string              `json:"username"`
-			Password  string              `json:"password"`
-			Validator validator.Validator `json:"-"`
-		}
-	}
-
-	err := request.DecodeJSON(w, r, &params)
-	if err != nil {
-		app.badRequest(w, r, err)
-		return
-	}
-
-	if params.Data.Username == "" {
-		err = response.JSON(w, http.StatusOK, map[string]any{
-			"success": false,
-			"msg":     "Email is required",
-		})
-		if err != nil {
-			app.serverError(w, r, err)
-		}
-		return
-	}
-
-	if params.Data.Password == "" {
-		err = response.JSON(w, http.StatusOK, map[string]any{
-			"success": false,
-			"msg":     "Password is required",
-		})
-		if err != nil {
-			app.serverError(w, r, err)
-		}
-		return
-	}
-
-	user, found, err := app.db.GetUserByNameOrEmail(params.Data.Username)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-	if !found || len(user) == 0 {
-		err = response.JSON(w, http.StatusOK, map[string]any{
-			"success": false,
-			"msg":     "Email or Password incorrect",
-		})
-		if err != nil {
-			app.serverError(w, r, err)
-		}
-		return
-	}
-
-	if found {
-		passwordMatches, err := password.Matches(params.Data.Password, user["password"].(string))
-		if err != nil {
-			app.serverError(w, r, err)
-			return
-		}
-		if !passwordMatches {
-			err = response.JSON(w, http.StatusOK, map[string]any{
-				"success": false,
-				"msg":     "Email or Password incorrect",
-			})
-			if err != nil {
-				app.serverError(w, r, err)
-			}
-			return
-		}
-	}
-
-	var claims jwt.Claims
-	json_user, err := json.Marshal(user)
-	if err != nil {
-		fmt.Print(err)
-	}
-	claims.Subject = string(json_user) //strconv.Itoa(user["user_id"].(strings))
-	//fmt.Print(claims.Subject)
-	//claims.Subject = user["user_id"].(string) // strconv.Itoa(int64(user["user_id"])
-	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
-	claims.Expires = jwt.NewNumericTime(expiry)
-
-	claims.Issuer = app.config.baseURL
-	claims.Audiences = []string{app.config.baseURL}
-
-	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
-	data := map[string]any{
-		"success": true,
-		"msg":     "Loged in successfully!",
-		"data":    user,
-		"token":   string(jwtBytes),
-		"expiry":  expiry.Format(time.RFC3339),
-	}
-
-	err = response.JSON(w, http.StatusOK, data)
-	if err != nil {
-		app.serverError(w, r, err)
-	}
-}
 
 // AuthenticateAD connects to AD and validates a user's credentials.
 func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, password string, skipVerify bool) (bool, map[string]any, error) {
@@ -136,16 +24,18 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 		return false, nil, fmt.Errorf("failed to connect LDAP: %w", err)
 	}
 	defer l.Close()
-
-	// 1️⃣ Bind as service account (to search)
+	// 1 Bind as service account (to search)
 	err = l.Bind(serviceUser, servicePass)
 	if err != nil {
 		return false, nil, fmt.Errorf("service bind failed: %w", err)
 	}
-
-	// 2️⃣ Search for user by sAMAccountName, userPrincipalName, or mail
-	filter := fmt.Sprintf("(|(sAMAccountName=%[1]s)(userPrincipalName=%[1]s)(mail=%[1]s))", username)
-	fmt.Println(baseDN, filter)
+	// 2 Search for user by sAMAccountName, userPrincipalName, or mail
+	//filter := fmt.Sprintf("(|(sAMAccountName=%[1]s)(userPrincipalName=%[1]s)(mail=%[1]s))", username)
+	filter := fmt.Sprintf("(|(uid=%[1]s)(cn=%[1]s)(mail=%[1]s))", username)
+	if os.Getenv("LDAP_SEARCHREQ_FILTER") != "" {
+		filter = fmt.Sprintf(os.Getenv("LDAP_SEARCHREQ_FILTER"), username)
+	}
+	//fmt.Println(baseDN, 1, os.Getenv("LDAP_SEARCHREQ_FILTER"), 2, filter)
 	searchReq := ldap.NewSearchRequest(
 		baseDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
@@ -153,29 +43,23 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 		[]string{"dn", "cn", "mail", "displayName", "givenName", "sn", "sAMAccountName", "userPrincipalName", "memberOf"},
 		nil,
 	)
-
 	sr, err := l.Search(searchReq)
 	if err != nil {
 		return false, nil, fmt.Errorf("LDAP search failed: %w", err)
 	}
-
-	fmt.Println("LDAP search entries:", len(sr.Entries))
-
 	if len(sr.Entries) != 1 {
 		return false, nil, fmt.Errorf("user not found or multiple matches for %s", username)
 	}
-
 	entry := sr.Entries[0]
 	userDN := entry.DN
-
-	// 3️⃣ Verify password by binding as user
+	//fmt.Println("LDAP search entries:", len(sr.Entries), userDN, password)
+	// 3 Verify password by binding as user
 	if err := l.Bind(userDN, password); err != nil {
-		return false, nil, nil // invalid credentials
+		return false, nil, fmt.Errorf("invalid credentials %s: %v", username, err) // invalid credentials
 	}
 	displayName := entry.GetAttributeValue("displayName")
 	firstName := entry.GetAttributeValue("givenName")
 	lastName := entry.GetAttributeValue("sn")
-
 	// Fallback: split displayName if givenName/sn not available
 	if firstName == "" && displayName != "" {
 		parts := strings.Fields(displayName)
@@ -187,7 +71,11 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 		}
 	}
 	userInfo := make(map[string]any)
-	// 4️⃣ Extract user attributes into a map
+	email := entry.GetAttributeValue("mail")
+	if entry.GetAttributeValue("mail") == "" {
+		email = username
+	}
+	// 4 Extract user attributes into a map
 	userInfo["dn"] = userDN
 	userInfo["cn"] = entry.GetAttributeValue("cn")
 	userInfo["displayName"] = entry.GetAttributeValue("displayName")
@@ -195,11 +83,10 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 	userInfo["sn"] = entry.GetAttributeValue("sn")
 	userInfo["first_name"] = firstName
 	userInfo["last_name"] = lastName
-	userInfo["username"] = entry.GetAttributeValue("sAMAccountName")
-	userInfo["email"] = entry.GetAttributeValue("mail")
+	userInfo["username"] = username
+	userInfo["email"] = email
 	userInfo["upn"] = entry.GetAttributeValue("userPrincipalName")
 	userInfo["groups"] = entry.GetAttributeValues("memberOf")
-
 	return true, userInfo, nil
 }
 
@@ -264,7 +151,7 @@ func (app *application) _login(params map[string]any) map[string]any {
 				"role_id":    2,
 				"active":     true,
 				"excluded":   false,
-				"create_at":  time.Now(),
+				"created_at": time.Now(),
 				"updated_at": time.Now(),
 			}
 			err := app.AdminInsertData("users", user)

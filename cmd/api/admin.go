@@ -50,14 +50,15 @@ func (app *application) apps(params map[string]any) map[string]any {
 		query = `SELECT app.*
 		FROM app
 		JOIN role_app ON role_app.app_id = app.app_id
-		WHERE role_app.role_id IN ($1)
+		WHERE role_app.role_id IN (?)
 			AND role_app.access = TRUE
 			AND role_app.excluded = FALSE
 			AND app.excluded = FALSE`
 		//fmt.Println(app.joinSlice(roles, ","))
-		queryParams = append(queryParams, app.joinSlice(roles, ","))
+		queryParams = append(queryParams, roles)
 	}
-	result, _, err = app.db.QueryMultiRows(query, queryParams...)
+	query, args, err := sqlx.In(query, queryParams...)
+	result, _, err = app.db.QueryMultiRows(query, args...)
 	if err != nil {
 		return map[string]any{
 			"success": false,
@@ -104,7 +105,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	// MENU
 	query = `SELECT *
 	FROM menu
-	WHERE app_id = $1
+	WHERE app_id = ?
 		AND excluded = FALSE
 		AND active = TRUE
 	ORDER BY menu_order ASC, menu_id ASC`
@@ -117,8 +118,8 @@ func (app *application) menu(params map[string]any) map[string]any {
 			role_app_menu.menu_id = menu.menu_id 
 			AND role_app_menu.app_id = menu.app_id
 		)
-		WHERE menu.app_id = $1
-			AND role_app_menu.role_id IN ($2)
+		WHERE menu.app_id = ?
+			AND role_app_menu.role_id IN (?)
 			AND role_app_menu.access = TRUE
 			AND role_app_menu.excluded = FALSE
 			AND menu.excluded = FALSE
@@ -127,15 +128,20 @@ func (app *application) menu(params map[string]any) map[string]any {
 				SELECT menu_id, app_id, MAX(updated_at)
 				FROM role_app_menu
 				WHERE access = True
-					AND role_id IN ($2)
+					AND role_id IN (?)
 					AND excluded = FALSE
 				GROUP BY menu_id, app_id
 			)
 		ORDER BY menu.menu_order ASC, menu.menu_id ASC`
 		//fmt.Println(app.joinSlice(roles, ","))
-		queryParams = append(queryParams, app.joinSlice(roles, ","))
+		queryParams = append(queryParams, roles, roles)
 	}
-	_menu, _, err := app.db.QueryMultiRows(query, queryParams...)
+	query, args, err := sqlx.In(query, queryParams...)
+	//fmt.Println("query:", 1, query, args, len(args))
+	if err != nil {
+		println("Error geting the table query:", err)
+	}
+	_menu, _, err := app.db.QueryMultiRows(query, args...)
 	if err != nil {
 		return map[string]any{
 			"success": false,
@@ -145,7 +151,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	// MENU TABLES
 	query = `SELECT *
 	FROM menu_table
-	WHERE app_id = $1
+	WHERE app_id = ?
 		AND excluded = FALSE
 	ORDER BY menu_table_id ASC`
 	queryParams = []any{app_id}
@@ -154,11 +160,11 @@ func (app *application) menu(params map[string]any) map[string]any {
 		FROM menu_table
 		JOIN role_app_menu_table ON (
 			role_app_menu_table.menu_id = menu_table.menu_id 
-			role_app_menu_table.table_id = menu_table.table_id 
+			AND role_app_menu_table.table_id = menu_table.table_id 
 			AND role_app_menu_table.app_id = menu_table.app_id
 		)
-		WHERE menu_table.app_id = $1
-			AND role_app_menu_table.role_id IN ($2)
+		WHERE menu_table.app_id = ?
+			AND role_app_menu_table.role_id IN (?)
 			AND (
 				role_app_menu_table.read = TRUE
 				OR role_app_menu_table.create = TRUE
@@ -168,15 +174,20 @@ func (app *application) menu(params map[string]any) map[string]any {
 			AND (role_app_menu_table.table_id, role_app_menu_table.menu_id, role_app_menu_table.app_id, role_app_menu_table.updated_at) IN (
 				SELECT table_id, menu_id, app_id, MAX(updated_at)
 				FROM role_app_menu_table
-				WHERE access = True
-					AND role_id IN ($2)
+				WHERE (role_app_menu_table.read = TRUE OR role_app_menu_table.create = TRUE)
+					AND role_id IN (?)
 					AND excluded = FALSE
 				GROUP BY table_id, menu_id, app_id
 			)
 		ORDER BY menu_table_id ASC`
-		queryParams = append(queryParams, app.joinSlice(roles, ","))
+		queryParams = append(queryParams, roles, roles)
 	}
-	_menu_table, _, err := app.db.QueryMultiRows(query, queryParams...)
+	query, args, err = sqlx.In(query, queryParams...)
+	//fmt.Println("query:", 1, query, args, len(args))
+	if err != nil {
+		println("Error geting the table query:", err)
+	}
+	_menu_table, _, err := app.db.QueryMultiRows(query, args...)
 	if err != nil {
 		return map[string]any{
 			"success": false,
@@ -199,8 +210,8 @@ func (app *application) menu(params map[string]any) map[string]any {
 		_aux := mn
 		_aux["children"] = []map[string]any{}
 		for _, mnt := range *_menu_table {
-			if _, ok := mnt["menu_id"].(any); !ok {
-			} else if _, ok := mn["menu_id"].(any); !ok {
+			if _, ok := mnt["menu_id"]; !ok {
+			} else if _, ok := mn["menu_id"]; !ok {
 			} else if int(mnt["menu_id"].(int64)) == int(mn["menu_id"].(int64)) {
 				_mnt := mnt
 				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(map[string]any))
