@@ -292,7 +292,45 @@ func (app *application) query(params map[string]any) map[string]any {
 		}
 	case map[string]any:
 		for key, query := range _query.(map[string]any) {
-			data[key] = app.CrudRunQuery(params, query.(string), newDB)
+			//fmt.Println("KEY:", key, "QUERY:", query)
+			_q := ""
+			switch _t := query.(type) {
+			case string:
+				_q = query.(string)
+			case map[string]any:
+				if _, ok := query.(map[string]any)["sql"]; ok {
+					_q = query.(map[string]any)["sql"].(string)
+				} else if _, ok := query.(map[string]any)["query"]; ok {
+					_q = query.(map[string]any)["query"].(string)
+				}
+				if _db, ok := query.(map[string]any)["database"]; ok && !app.IsEmpty(_db) {
+					database := query.(map[string]any)["database"]
+					//fmt.Println("DB:", database)
+					dsn, _, _ := app.GetDBNameFromParams(map[string]any{"data": map[string]any{"database": database}})
+					newDB, err = etlx.GetDB(dsn)
+					if err != nil {
+						return map[string]any{
+							"success": false,
+							"msg":     fmt.Sprintf("%s", err),
+						}
+					}
+					defer newDB.Close()
+				} else if _, ok := query.(map[string]any)["db"]; ok && !app.IsEmpty(_db) {
+					database := query.(map[string]any)["db"]
+					dsn, _, _ := app.GetDBNameFromParams(map[string]any{"data": map[string]any{"db": database}})
+					newDB, err = etlx.GetDB(dsn)
+					if err != nil {
+						return map[string]any{
+							"success": false,
+							"msg":     fmt.Sprintf("%s", err),
+						}
+					}
+					defer newDB.Close()
+				}
+			default:
+				fmt.Println(_t, query)
+			}
+			data[key] = app.CrudRunQuery(params, _q, newDB)
 		}
 	case map[string]string:
 		for key, query := range _query.(map[string]string) {
