@@ -180,7 +180,7 @@ func (app *application) etlxRun(params Dict) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	// RUN ETL
+	/*/ RUN ETL
 	if _, ok := etlxlib.Config["ETL"]; ok {
 		_logs, err := etlxlib.RunETL(dateRef, nil, extraConf)
 		if err != nil {
@@ -359,8 +359,8 @@ func (app *application) etlxRun(params Dict) Dict {
 				"logs":    _logs,
 			}
 		}
-	}
-	_keys := []any{"NOTIFY", "LOGS", "SCRIPTS", "MULTI_QUERIES", "EXPORTS", "DATA_QUALITY", "ETL", "ACTIONS", "AUTO_LOGS", "REQUIRES"}
+	}*/
+	_keys := []any{"NOTIFY", "LOGS", "SCRIPTS", "MULTI_QUERIES", "EXPORTS", "DATA_QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
@@ -373,184 +373,194 @@ func (app *application) etlxRun(params Dict) Dict {
 			}
 		}
 	} else {
-		hasOrderedKeys = true
+		etlxlib.Config["__order"] = []any{}
+		for key := range etlxlib.Config {
+			etlxlib.Config["__order"] = append(etlxlib.Config["__order"].([]any), key)
+		}
+		//hasOrderedKeys = true
 	}
 	// fmt.Println("LEVEL 1 H:", __order, len(__order))
 	if !hasOrderedKeys {
 	} else if len(__order) > 0 {
 		//fmt.Print("LEVEL 1 H:", __order)
 		for _, key := range __order {
-			if !app.contains(_keys, any(key)) {
-				_key_conf, ok := etlxlib.Config[key].(Dict)
-				if !ok {
-					continue
-				}
-				_key_conf_metadata, ok := _key_conf["metadata"].(Dict)
-				if !ok {
-					continue
-				}
-				if runs_as, ok := _key_conf_metadata["runs_as"]; ok {
-					fmt.Printf("%s RUN AS %s:\n", key, runs_as)
-					if app.contains(_keys, runs_as) {
-						switch runs_as {
-						case "ETL":
-							_logs, err := etlxlib.RunETL(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
-								}
-							}
-						case "DATA_QUALITY":
-							_logs, err := etlxlib.RunDATA_QUALITY(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
+			if key == "metadata" || key == "__order" || key == "order" {
+				continue
+			}
+			//if !app.contains(_keys, any(key)) {
+			_key_conf, ok := etlxlib.Config[key].(Dict)
+			if !ok {
+				continue
+			}
+			_key_conf_metadata, ok := _key_conf["metadata"].(Dict)
+			if !ok {
+				continue
+			}
+			if _, ok := _key_conf_metadata["runs_as"]; !ok {
+				_key_conf_metadata["runs_as"] = strings.ToUpper(key)
+			}
+			if runs_as, ok := _key_conf_metadata["runs_as"]; ok {
+				fmt.Printf("%s RUN AS %s:\n", key, runs_as)
+				if app.contains(_keys, runs_as) {
+					switch runs_as {
+					case "ETL", "ELT":
+						_logs, err := etlxlib.RunETL(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
 								}
 							}
-						case "MULTI_QUERIES":
-							_logs, _, err := etlxlib.RunMULTI_QUERIES(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
-								}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
 							}
-						case "EXPORTS":
-							_logs, err := etlxlib.RunEXPORTS(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
-								}
-							}
-						case "NOTIFY":
-							_logs, err := etlxlib.RunNOTIFY(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-							}
-						case "ACTIONS":
-							_logs, err := etlxlib.RunACTIONS(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
-								}
-							}
-						case "SCRIPTS":
-							_logs, err := etlxlib.RunSCRIPTS(dateRef, nil, extraConf, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
-								}
-							}
-						case "LOGS":
-							_logs, err := etlxlib.RunLOGS(dateRef, nil, logs, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-								data[key] = Dict{
-									"success": true,
-									"runs_as": runs_as,
-									"logs":    _logs,
-								}
-							}
-						case "REQUIRES":
-							_logs, err := etlxlib.LoadREQUIRES(nil, key)
-							if err != nil {
-								fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
-							} else {
-								if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-									_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-									if err != nil {
-										fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-									}
-								}
-								logs = append(logs, _logs...)
-							}
-						default:
-							//
 						}
+					case "DATA_QUALITY":
+						_logs, err := etlxlib.RunDATA_QUALITY(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
+							}
+						}
+					case "MULTI_QUERIES":
+						_logs, _, err := etlxlib.RunMULTI_QUERIES(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
+							}
+						}
+					case "EXPORTS":
+						_logs, err := etlxlib.RunEXPORTS(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
+							}
+						}
+					case "NOTIFY":
+						_logs, err := etlxlib.RunNOTIFY(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					case "ACTIONS":
+						_logs, err := etlxlib.RunACTIONS(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
+							}
+						}
+					case "SCRIPTS":
+						_logs, err := etlxlib.RunSCRIPTS(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
+							}
+						}
+					case "LOGS":
+						_logs, err := etlxlib.RunLOGS(dateRef, nil, logs, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+							data[key] = Dict{
+								"success": true,
+								"runs_as": runs_as,
+								"logs":    _logs,
+							}
+						}
+					case "REQUIRES":
+						_logs, err := etlxlib.LoadREQUIRES(nil, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					default:
+						//
 					}
 				}
 			}
+			//}
 		}
 	}
 	msg, _ := app.i18n.T("success", Dict{})
