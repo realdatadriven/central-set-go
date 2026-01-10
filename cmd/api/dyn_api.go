@@ -173,6 +173,12 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			} else {
 				data = app.alter_pass(params)
 			}
+		case "access_key", "access_token", "credentials":
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.access_key(params)
+			}
 		default:
 			data = Dict{
 				"success": false,

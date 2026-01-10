@@ -78,3 +78,8 @@ dt-file-no-match-dt-form: The date in file name "{{.file_ref}}" doesn't match th
 duckdb-register-filesystem-faild: Duckdb fileSystem ({{.fs}}) failed ({{.err}})!
 no-odbc-conn-str: No ODBC Connection string founded, please check the configuration!
 no-odbc-query: No ODBC Query string founded, please check the configuration!
+access-key-no-description: No description provided!
+access-key-no-expires-dt: No expiration date provided!
+access-key-no-user: No user provided!
+user-incorrect: Incorrect User!
+incorret-expiration-dt: 'Incorrect expiration date "{{.dt}}" shoud be something like YYYY-MM-DD HH:MM!'

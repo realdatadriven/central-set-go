@@ -98,7 +98,7 @@ func (app *application) _login(params map[string]any) map[string]any {
 	if app.IsEmpty(_data) {
 		msg, _ := app.i18n.T("no-data", map[string]any{})
 		return map[string]any{
-			"success": true,
+			"success": false,
 			"msg":     msg,
 		}
 	}
@@ -298,5 +298,92 @@ func (app *application) alter_pass(params map[string]any) map[string]any {
 		}
 	} else {
 		return _check_login
+	}
+}
+
+func (app *application) access_key(params map[string]any) map[string]any {
+	_data := map[string]any{}
+	if _, ok := params["data"]; ok {
+		_data = params["data"].(map[string]any)
+	}
+	fmt.Println(_data)
+	if _, ok := _data["access_key_desc"].(string); !ok {
+		msg, _ := app.i18n.T("access-key-no-description", map[string]any{})
+		return map[string]any{"success": false, "msg": msg}
+	}
+	if _, ok := _data["expires_at"].(string); !ok {
+		msg, _ := app.i18n.T("access-key-no-expires-dt", map[string]any{})
+		return map[string]any{"success": false, "msg": msg}
+	}
+	if _, ok := _data["for_user_id"]; !ok {
+		msg, _ := app.i18n.T("access-key-no-user", map[string]any{})
+		return map[string]any{"success": false, "msg": msg}
+	}
+	sql := `select * from "users" where "user_id" = ? and  "excluded" = false`
+	user, err := app.AdminGetRowByID(sql, _data["for_user_id"])
+	if err != nil {
+		return map[string]any{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	if len(user) == 0 {
+		msg, _ := app.i18n.T("user-incorrect", map[string]any{})
+		return map[string]any{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	if _, ok := user["user_id"]; !ok {
+		msg, _ := app.i18n.T("user-incorrect", map[string]any{})
+		return map[string]any{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	//time.Parse("", )
+	var expires_at time.Time
+	expires_at, err = time.Parse("2006-01-02T15:04:05", _data["expires_at"].(string))
+	if err != nil {
+		expires_at, err = time.Parse("2006-01-02 15:04:05", _data["expires_at"].(string))
+		if err != nil {
+			expires_at, err = time.Parse("2006-01-02 15:04", _data["expires_at"].(string))
+			if err != nil {
+				msg, _ := app.i18n.T("incorret-expiration-dt", map[string]any{"dt": _data["expires_at"].(string)})
+				return map[string]any{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+		}
+	}
+	fmt.Println("EXPIRATION DATE:", _data["expires_at"].(string))
+	var claims jwt.Claims
+	json_user, err := json.Marshal(user)
+	if err != nil {
+		return map[string]any{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	claims.Subject = string(json_user)
+	expiry := time.Now().Add(time.Until(expires_at))
+	claims.Issued = jwt.NewNumericTime(time.Now())
+	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Expires = jwt.NewNumericTime(expiry)
+	claims.Issuer = app.config.baseURL
+	claims.Audiences = []string{app.config.baseURL}
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
+	if err != nil {
+		return map[string]any{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	_data["access_token"] = string(jwtBytes)
+	msg, _ := app.i18n.T("success", map[string]any{})
+	return map[string]any{
+		"success": true,
+		"msg":     msg,
 	}
 }
