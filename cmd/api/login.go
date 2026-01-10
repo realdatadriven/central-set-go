@@ -361,7 +361,7 @@ func (app *application) access_key(params Dict) Dict {
 			}
 		}
 	}
-	fmt.Println("EXPIRATION DATE:", _data["expires_at"].(string))
+	// fmt.Println("EXPIRATION DATE:", _data["expires_at"].(string))
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {
@@ -387,7 +387,7 @@ func (app *application) access_key(params Dict) Dict {
 	_data["access_token"] = string(jwtBytes)
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
-	fmt.Println(upsert)
+	// fmt.Println(upsert)
 	if _, ok := upsert["success"]; !ok {
 		return upsert
 	} else if _, ok := upsert["success"].(bool); !ok {
