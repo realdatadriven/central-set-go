@@ -16,7 +16,7 @@ import (
 )
 
 // AuthenticateAD connects to AD and validates a user's credentials.
-func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, password string, skipVerify bool) (bool, map[string]any, error) {
+func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, password string, skipVerify bool) (bool, Dict, error) {
 	//fmt.Println("AuthenticateAD:", ldapURL, baseDN, serviceUser, servicePass, username, password)
 	// Connect to LDAP server (use LDAPS if possible)
 	l, err := ldap.DialURL(ldapURL, ldap.DialWithTLSConfig(&tls.Config{InsecureSkipVerify: skipVerify}))
@@ -70,7 +70,7 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 			lastName = strings.Join(parts[1:], " ")
 		}
 	}
-	userInfo := make(map[string]any)
+	userInfo := make(Dict)
 	email := entry.GetAttributeValue("mail")
 	if entry.GetAttributeValue("mail") == "" {
 		email = username
@@ -90,14 +90,14 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 	return true, userInfo, nil
 }
 
-func (app *application) _login(params map[string]any) map[string]any {
-	_data := map[string]any{}
+func (app *application) _login(params Dict) Dict {
+	_data := Dict{}
 	if _, ok := params["data"]; ok {
-		_data = params["data"].(map[string]any)
+		_data = params["data"].(Dict)
 	}
 	if app.IsEmpty(_data) {
-		msg, _ := app.i18n.T("no-data", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
@@ -118,7 +118,7 @@ func (app *application) _login(params map[string]any) map[string]any {
 	} else if _, ok := _data["p"].(string); ok {
 		pass = _data["p"].(string)
 	}
-	var user map[string]any
+	var user Dict
 	var found bool
 	var err error
 	// fmt.Println(_data)
@@ -134,14 +134,14 @@ func (app *application) _login(params map[string]any) map[string]any {
 		_, userInfo, err := AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, pass, skipVerify)
 		//fmt.Println("LDAP", userInfo, err)
 		if err != nil {
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     err.Error(),
 			}
 		}
 		user, found, err = app.db.GetUserByNameOrEmail(username)
 		if err != nil || len(user) == 0 {
-			user = map[string]any{
+			user = Dict{
 				"username":   userInfo["username"],
 				"password":   "LDAP_USER", //userInfo["password"],
 				"first_name": userInfo["first_name"],
@@ -156,14 +156,14 @@ func (app *application) _login(params map[string]any) map[string]any {
 			}
 			err := app.AdminInsertData("users", user)
 			if err != nil {
-				return map[string]any{
+				return Dict{
 					"success": false,
 					"msg":     err.Error(),
 				}
 			} else {
 				user, found, err = app.db.GetUserByNameOrEmail(username)
 				if err != nil {
-					return map[string]any{
+					return Dict{
 						"success": false,
 						"msg":     err.Error(),
 					}
@@ -173,7 +173,7 @@ func (app *application) _login(params map[string]any) map[string]any {
 	} else {
 		user, found, err = app.db.GetUserByNameOrEmail(username)
 		if err != nil || len(user) == 0 {
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     err.Error(),
 			}
@@ -183,14 +183,14 @@ func (app *application) _login(params map[string]any) map[string]any {
 			//fmt.Println(pass, _hash, user["password"].(string))
 			match, err := password.Matches(pass, user["password"].(string))
 			if err != nil {
-				return map[string]any{
+				return Dict{
 					"success": false,
 					"msg":     err.Error(),
 				}
 			}
 			if !match {
-				msg, _ := app.i18n.T("user-pass-incorrect", map[string]any{})
-				return map[string]any{
+				msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
+				return Dict{
 					"success": false,
 					"msg":     msg,
 				}
@@ -200,7 +200,7 @@ func (app *application) _login(params map[string]any) map[string]any {
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
@@ -214,12 +214,12 @@ func (app *application) _login(params map[string]any) map[string]any {
 	claims.Audiences = []string{app.config.baseURL}
 	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
 	}
-	data := map[string]any{
+	data := Dict{
 		"success": true,
 		"msg":     "Loged in successfully!",
 		"data":    user,
@@ -229,41 +229,41 @@ func (app *application) _login(params map[string]any) map[string]any {
 	return data
 }
 
-func (app *application) alter_pass(params map[string]any) map[string]any {
+func (app *application) alter_pass(params Dict) Dict {
 	_check_login := app._login(params)
 	if success, ok := _check_login["success"].(bool); ok && success {
-		_data := map[string]any{}
+		_data := Dict{}
 		if _, ok := params["data"]; ok {
-			_data = params["data"].(map[string]any)
+			_data = params["data"].(Dict)
 		}
 		newPassword, _ := _data["new_password"].(string)
 		oldPassword, _ := _data["password"].(string)
 		if newPassword == "" {
-			msg, _ := app.i18n.T("new_pass_is_required", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("new_pass_is_required", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		if newPassword == oldPassword {
-			msg, _ := app.i18n.T("new_pass_old_pass", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("new_pass_old_pass", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		if len(newPassword) < 8 {
-			msg, _ := app.i18n.T("password_min_length", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("password_min_length", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		hasUpper, _ := regexp.MatchString(`[A-Z]`, newPassword)
 		if !hasUpper {
-			msg, _ := app.i18n.T("pass_must_have_upper", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("pass_must_have_upper", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		hasNumber, _ := regexp.MatchString(`[0-9]`, newPassword)
 		if !hasNumber {
-			msg, _ := app.i18n.T("pass_must_have_number", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("pass_must_have_number", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		hasSpecial, _ := regexp.MatchString(`[$&+,:;=?@#!*ªº.-]`, newPassword)
 		if !hasSpecial {
-			msg, _ := app.i18n.T("pass_must_have_special", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("pass_must_have_special", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		query := `UPDATE users 
 			SET password = :password 
@@ -271,8 +271,8 @@ func (app *application) alter_pass(params map[string]any) map[string]any {
 			OR username = :username`
 		pass, err := password.Hash(newPassword)
 		if err != nil {
-			msg, _ := app.i18n.T("pass_must_have_special", map[string]any{})
-			return map[string]any{"success": false, "msg": msg}
+			msg, _ := app.i18n.T("pass_must_have_special", Dict{})
+			return Dict{"success": false, "msg": msg}
 		}
 		username := ""
 		if _, ok := _data["username"].(string); ok {
@@ -282,17 +282,17 @@ func (app *application) alter_pass(params map[string]any) map[string]any {
 		} else if _, ok := _data["u"].(string); ok {
 			username = _data["u"].(string)
 		}
-		_data = map[string]any{"username": username, "password": pass}
+		_data = Dict{"username": username, "password": pass}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
-			msg, _ := app.i18n.T("unexpected-error", map[string]any{"err": err.Error()})
-			return map[string]any{
+			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+			return Dict{
 				"success": false,
 				"msg":     msg,
 			}
 		}
-		msg, _ := app.i18n.T("alter-pass-success", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("alter-pass-success", Dict{})
+		return Dict{
 			"success": true,
 			"msg":     msg,
 		}
@@ -301,42 +301,46 @@ func (app *application) alter_pass(params map[string]any) map[string]any {
 	}
 }
 
-func (app *application) access_key(params map[string]any) map[string]any {
-	_data := map[string]any{}
-	if _, ok := params["data"]; ok {
-		_data = params["data"].(map[string]any)
+func (app *application) access_key(params Dict) Dict {
+	_data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		if _, ok := params["data"].(Dict)["data"]; !ok {
+			msg, _ := app.i18n.T("no-data", Dict{})
+			return Dict{"success": false, "msg": msg}
+		}
+		_data = params["data"].(Dict)["data"].(Dict)
 	}
-	fmt.Println(_data)
+	// fmt.Println(_data)
 	if _, ok := _data["access_key_desc"].(string); !ok {
-		msg, _ := app.i18n.T("access-key-no-description", map[string]any{})
-		return map[string]any{"success": false, "msg": msg}
+		msg, _ := app.i18n.T("access-key-no-description", Dict{})
+		return Dict{"success": false, "msg": msg}
 	}
 	if _, ok := _data["expires_at"].(string); !ok {
-		msg, _ := app.i18n.T("access-key-no-expires-dt", map[string]any{})
-		return map[string]any{"success": false, "msg": msg}
+		msg, _ := app.i18n.T("access-key-no-expires-dt", Dict{})
+		return Dict{"success": false, "msg": msg}
 	}
 	if _, ok := _data["for_user_id"]; !ok {
-		msg, _ := app.i18n.T("access-key-no-user", map[string]any{})
-		return map[string]any{"success": false, "msg": msg}
+		msg, _ := app.i18n.T("access-key-no-user", Dict{})
+		return Dict{"success": false, "msg": msg}
 	}
 	sql := `select * from "users" where "user_id" = ? and  "excluded" = false`
 	user, err := app.AdminGetRowByID(sql, _data["for_user_id"])
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
 	}
 	if len(user) == 0 {
-		msg, _ := app.i18n.T("user-incorrect", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("user-incorrect", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	}
 	if _, ok := user["user_id"]; !ok {
-		msg, _ := app.i18n.T("user-incorrect", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("user-incorrect", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
@@ -349,8 +353,8 @@ func (app *application) access_key(params map[string]any) map[string]any {
 		if err != nil {
 			expires_at, err = time.Parse("2006-01-02 15:04", _data["expires_at"].(string))
 			if err != nil {
-				msg, _ := app.i18n.T("incorret-expiration-dt", map[string]any{"dt": _data["expires_at"].(string)})
-				return map[string]any{
+				msg, _ := app.i18n.T("incorret-expiration-dt", Dict{"dt": _data["expires_at"].(string)})
+				return Dict{
 					"success": false,
 					"msg":     msg,
 				}
@@ -361,7 +365,7 @@ func (app *application) access_key(params map[string]any) map[string]any {
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
@@ -375,15 +379,27 @@ func (app *application) access_key(params map[string]any) map[string]any {
 	claims.Audiences = []string{app.config.baseURL}
 	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
 	}
 	_data["access_token"] = string(jwtBytes)
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	params["data"].(Dict)["data"] = _data
+	upsert := app.create_update(params)
+	fmt.Println(upsert)
+	if _, ok := upsert["success"]; !ok {
+		return upsert
+	} else if _, ok := upsert["success"].(bool); !ok {
+		return upsert
+	} else if ok, _ := upsert["success"].(bool); !ok {
+		return upsert
+	}
+	// fmt.Println(expiry.Format(time.RFC3339), _data["access_token"])
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success": true,
 		"msg":     msg,
+		"expiry":  expiry.Format(time.RFC3339),
 	}
 }
