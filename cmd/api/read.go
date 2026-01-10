@@ -412,6 +412,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		}
 		query = fmt.Sprintf(`%s%s (%s)`, query, _where, app.joinSlice(search_patt, " OR "))
 	}
+	query_total := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, query)
 	if len(orderBy) > 0 {
 		query = fmt.Sprintf(`%s ORDER BY %s`, query, app.joinSlice(orderBy, ", "))
 	}
@@ -437,7 +438,6 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		results = *data
 	}
 	total := 0
-	query_total := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, query)
 	//fmt.Println(query_total)
 	trows, _, err := db.QuerySingleRow(query_total, args...)
 	if err != nil {

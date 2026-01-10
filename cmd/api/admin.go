@@ -722,7 +722,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				referred_columns_desc_org := referred_columns_desc
 				if len(acorr) > 1 {
 					//referred_column = fmt.Sprintf("%s%d", referred_column, len(acorr))
-					referred_columns_desc = fmt.Sprintf("%s %d", referred_columns_desc, len(acorr))
+					referred_columns_desc = fmt.Sprintf("%s%d", referred_columns_desc, len(acorr))
 				}
 				_row["ref"] = map[string]any{
 					"referred_table":            _row["referred_table"],
