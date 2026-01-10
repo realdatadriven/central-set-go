@@ -36,7 +36,7 @@ func (app *application) backgroundTask(r *http.Request, fn func() error) {
 	}()
 }
 
-func (app *application) contains(slice []interface{}, element interface{}) bool {
+func (app *application) contains(slice []any, element any) bool {
 	for _, v := range slice {
 		if v == element {
 			return true
@@ -45,7 +45,7 @@ func (app *application) contains(slice []interface{}, element interface{}) bool 
 	return false
 }
 
-func (app *application) joinSlice_(slice []interface{}) string {
+func (app *application) joinSlice_(slice []any) string {
 	var sb strings.Builder
 	for _, v := range slice {
 		switch t := v.(type) {
@@ -62,7 +62,7 @@ func (app *application) joinSlice_(slice []interface{}) string {
 	return sb.String()
 }
 
-func (app *application) joinSlice(slice []interface{}, sep string) string {
+func (app *application) joinSlice(slice []any, sep string) string {
 	var parts []string
 	for _, v := range slice {
 		parts = append(parts, fmt.Sprintf("%v", v))
@@ -70,8 +70,8 @@ func (app *application) joinSlice(slice []interface{}, sep string) string {
 	return strings.Join(parts, sep)
 }
 
-func (app *application) filter(slice []map[string]interface{}, fn func(map[string]interface{}) bool) []map[string]interface{} {
-	filtered := []map[string]interface{}{}
+func (app *application) filter(slice []map[string]any, fn func(map[string]any) bool) []map[string]any {
+	filtered := []map[string]any{}
 	for _, element := range slice {
 		if fn(element) {
 			filtered = append(filtered, element)
@@ -80,41 +80,55 @@ func (app *application) filter(slice []map[string]interface{}, fn func(map[strin
 	return filtered
 }
 
-func (app *application) filterInterface(slice []interface{}, fn func(map[string]interface{}) bool) []map[string]interface{} {
-	filtered := []map[string]interface{}{}
+func (app *application) filterAny(slice []any, fn func(any) bool) []any {
+	filtered := []any{}
 	for _, element := range slice {
-		if fn(element.(map[string]interface{})) {
-			filtered = append(filtered, element.(map[string]interface{}))
+		if fn(element) {
+			filtered = append(filtered, element)
 		}
 	}
 	return filtered
 }
 
-func (app *application) _map(slice []map[string]interface{}, fn func(map[string]interface{}) map[string]interface{}) []map[string]interface{} {
-	result := make([]map[string]interface{}, len(slice))
+func (app *application) String2Any(s string) any {
+	return s
+}
+
+func (app *application) filterInterface(slice []any, fn func(map[string]any) bool) []map[string]any {
+	filtered := []map[string]any{}
+	for _, element := range slice {
+		if fn(element.(map[string]any)) {
+			filtered = append(filtered, element.(map[string]any))
+		}
+	}
+	return filtered
+}
+
+func (app *application) _map(slice []map[string]any, fn func(map[string]any) map[string]any) []map[string]any {
+	result := make([]map[string]any, len(slice))
 	for i, v := range slice {
 		result[i] = fn(v)
 	}
 	return result
 }
 
-func (app *application) _map2(slice []interface{}, fn func(interface{}) interface{}) []interface{} {
-	result := make([]interface{}, len(slice))
+func (app *application) _map2(slice []any, fn func(any) any) []any {
+	result := make([]any, len(slice))
 	for i, v := range slice {
 		result[i] = fn(v)
 	}
 	return result
 }
 
-func (app *application) sliceStrs2SliceInterfaces(strs []string) []interface{} {
-	interfaces := make([]interface{}, len(strs))
+func (app *application) sliceStrs2SliceInterfaces(strs []string) []any {
+	interfaces := make([]any, len(strs))
 	for i, v := range strs {
 		interfaces[i] = v
 	}
 	return interfaces
 }
 
-func (app *application) sliceInterfaces2SliceStrs(strs []interface{}) []string {
+func (app *application) sliceInterfaces2SliceStrs(strs []any) []string {
 	_strings := make([]string, len(strs))
 	for i, v := range strs {
 		_strings[i] = v.(string)
@@ -142,15 +156,15 @@ func (app *application) tempFIle(content string, name string) (string, error) {
 	return tempFileName, nil
 }
 
-func (app *application) IsEmpty(value interface{}) bool {
+func (app *application) IsEmpty(value any) bool {
 	switch v := value.(type) {
 	case nil:
 		return true
 	case string:
 		return len(v) == 0
-	case []interface{}:
+	case []any:
 		return len(v) == 0
-	case map[interface{}]interface{}:
+	case map[any]any:
 		return len(v) == 0
 	default:
 		return false

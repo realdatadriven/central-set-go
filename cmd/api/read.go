@@ -89,6 +89,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		}
 	}
 	fk_tables_fields := map[string]any{}
+	fk_tables_added := []any{}
 	if _, ok := _schema["fields"]; !ok {
 		// pass
 		_schema["fields"] = map[string]any{}
@@ -99,8 +100,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
 			} else if field_data.(map[string]any)["fk"].(bool) {
 				referred_table := ""
+				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
 					referred_table = field_data.(map[string]any)["referred_table"].(string)
+					fk_tables_added = append(fk_tables_added, referred_table)
+					acorr := app.filterAny(fk_tables_added, func(r any) bool { return r.(string) == referred_table })
+					if len(acorr) > 1 {
+						level = len(acorr)
+					}
 				}
 				referred_column := field_data.(map[string]any)["referred_column"]
 				if _, ok := field_data.(map[string]any)["referred_column"]; ok {
@@ -122,14 +129,20 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 						params["schemas"].(map[string]any)[referred_table] = _referred_table_schema
 					}
 				}
+				alias := referred_table
+				field_sufix := ""
+				if level > 1 {
+					alias = fmt.Sprintf("%s%d", alias, level)
+					field_sufix = fmt.Sprintf("%d", level)
+				}
 				if referred_table != "" && referred_column != "" && len(_referred_table_schema) > 0 {
-					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN "%s" ON "%s"."%s" = "%s"."%s"`, referred_table, referred_table, referred_column, table, field))
+					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN "%s" "%s" ON "%s"."%s" = "%s"."%s"`, referred_table, alias, alias, referred_column, table, field))
 					for key := range _referred_table_schema["fields"].(map[string]any) {
 						//if _, ok := _schema["fields"].(map[string]any)[key]; !ok {
-						_flds = append(_flds, fmt.Sprintf(`"%s"."%s" AS "%s_%s"`, referred_table, key, referred_table, key))
+						_flds = append(_flds, fmt.Sprintf(`"%s"."%s" AS "%s_%s%s"`, alias, key, referred_table, key, field_sufix))
 						//}
 					}
-					fk_tables_fields[referred_table] = _referred_table_schema
+					fk_tables_fields[alias] = _referred_table_schema
 				}
 				// fmt.Println(field, referred_table, referred_column)
 			}
@@ -139,8 +152,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
 			} else if field_data.(map[string]any)["fk"].(bool) {
 				referred_table := ""
+				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
 					referred_table = field_data.(map[string]any)["referred_table"].(string)
+					fk_tables_added = append(fk_tables_added, referred_table)
+					acorr := app.filterAny(fk_tables_added, func(r any) bool { return r.(string) == referred_table })
+					if len(acorr) > 1 {
+						level = len(acorr)
+					}
 				}
 				referred_column := field_data.(map[string]any)["referred_column"]
 				if _, ok := field_data.(map[string]any)["referred_column"]; ok {
@@ -162,11 +181,17 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 						params["schemas"].(map[string]any)[referred_table] = _referred_table_schema
 					}
 				}
+				alias := referred_table
+				field_sufix := ""
+				if level > 1 {
+					alias = fmt.Sprintf("%s%d", alias, level)
+					field_sufix = fmt.Sprintf("%d", level)
+				}
 				if referred_table != "" && referred_column != "" && len(_referred_table_schema) > 0 {
 					if _, ok := _schema["fields"].(map[string]any)[referred_column.(string)]; !ok {
 						continue
 					}
-					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN "%s" ON "%s"."%s" = "%s"."%s"`, referred_table, referred_table, referred_column, table, field))
+					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN "%s" "%s" ON "%s"."%s" = "%s"."%s"`, referred_table, alias, alias, referred_column, table, field))
 					keys := make([]any, len(_referred_table_schema["fields"].(map[string]any)))
 					if _, ok := _referred_table_schema["fields_order"]; ok {
 						keys = _referred_table_schema["fields_order"].([]any)
@@ -178,10 +203,13 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					if len(keys) > 1 {
 						// fmt.Println(keys[1], keys)
 						if _, ok := _schema["fields"].(map[string]any)[keys[1].(string)]; !ok {
-							_flds = append(_flds, fmt.Sprintf(`"%s"."%s"`, referred_table, keys[1].(string)))
+							_flds = append(_flds, fmt.Sprintf(`"%s"."%s" AS "%s%s"`, alias, keys[1].(string), keys[1].(string), field_sufix))
+							if field_sufix != "" {
+								fmt.Printf(`"%s"."%s" AS "%s%s"\n`, alias, keys[1].(string), keys[1].(string), field_sufix)
+							}
 						}
 					}
-					fk_tables_fields[referred_table] = _referred_table_schema
+					fk_tables_fields[alias] = _referred_table_schema
 				}
 				// fmt.Println(field, referred_table, referred_column, len(_referred_table_schema), joins)
 			}

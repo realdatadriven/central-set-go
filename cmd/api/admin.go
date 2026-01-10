@@ -687,6 +687,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			//fmt.Println("tables_not_in_schema:", tables_not_in_schema)
 		}
 		table_fields := map[string]any{}
+		fk_tables_added := []any{}
 		for _, row := range *_table_schema {
 			if _, ok := table_schema[row["table"].(string)]; !ok {
 				table_schema[row["table"].(string)] = map[string]any{}
@@ -713,10 +714,21 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				if _, ok := table_fields[row["referred_table"].(string)].([]any); ok {
 					referred_columns_desc = table_fields[row["referred_table"].(string)].([]any)[1].(string)
 				}
+				fk_tables_added = append(fk_tables_added, map[string]any{"table": _row["table"], "referred_table": _row["referred_table"]})
+				acorr := app.filterAny(fk_tables_added, func(r any) bool {
+					return r.(map[string]any)["table"].(string) == _row["table"].(string) && r.(map[string]any)["referred_table"].(string) == _row["referred_table"].(string)
+				})
+				referred_column := _row["referred_table"]
+				referred_columns_desc_org := referred_columns_desc
+				if len(acorr) > 1 {
+					//referred_column = fmt.Sprintf("%s%d", referred_column, len(acorr))
+					referred_columns_desc = fmt.Sprintf("%s %d", referred_columns_desc, len(acorr))
+				}
 				_row["ref"] = map[string]any{
-					"referred_table":        _row["referred_table"],
-					"referred_column":       _row["referred_column"],
-					"referred_columns_desc": referred_columns_desc,
+					"referred_table":            _row["referred_table"],
+					"referred_column":           referred_column,
+					"referred_columns_desc_org": referred_columns_desc_org,
+					"referred_columns_desc":     referred_columns_desc,
 				}
 			}
 			table_schema[row["table"].(string)].(map[string]any)[row["field"].(string)] = _row
