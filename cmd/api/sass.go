@@ -25,7 +25,11 @@ func (app *application) RunDeploy(params Dict) Dict {
 			return Dict{"success": false, "msg": msg}
 		}
 		_data = params["data"].(Dict)["data"].(Dict)
+	} else {
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{"success": false, "msg": msg}
 	}
+	action := params["data"].(Dict)["action"].(string)
 	sql := `select * from "deployment" where "deployment_id" = ? and "active" = true and "excluded" = false`
 	// fmt.Println(sql, _data["deployment_id"])
 	deployment, err := app.GetRowByFilter(sql, params, []any{_data["deployment_id"]})
@@ -48,19 +52,27 @@ func (app *application) RunDeploy(params Dict) Dict {
 	if terraform_state, ok := deployment["terraform_state"].(string); ok {
 		run.State = json.RawMessage([]byte(terraform_state))
 	}
-	res, err := app.DeployTerraformForTenant(params, tenantID, run)
+	var res map[string]string
+	switch action {
+	case "deploy":
+		res, err = app.DeployTerraformForTenant(params, tenantID, run)
+		_json_out, _ := json.Marshal(res)
+		_data["tf_public_ip"] = string(res["public_ip"])
+		_data["tf_public_dns"] = string(res["public_dns"])
+		_data["tf_public_url"] = string(res["url"])
+		_data["terraform_outputs"] = string(_json_out)
+		_data["deployed"] = true
+	case "cancel":
+		err = app.DestroyTerraform(params, tenantID, run)
+		_data["deployed"] = false
+	}
 	if err != nil {
 		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
 	}
-	_json_out, _ := json.Marshal(res)
 	_data["terraform_template"] = string(run.State)
-	_data["tf_public_ip"] = res["public_ip"]
-	_data["tf_public_dns"] = res["public_dns"]
-	_data["tf_public_url"] = res["url"]
-	_data["terraform_outputs"] = []byte(_json_out)
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
 	// fmt.Println(upsert)
@@ -129,13 +141,13 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 		//fmt.Println("Output Failed:", err)
 		return nil, err
 	}
-	fmt.Println("Output Pass")
+	//fmt.Println("Output Pass")
 
 	result := map[string]string{}
 	for k, v := range outputs {
 		//if v.Value != nil {
-		fmt.Println(k, v)
-		result[k] = fmt.Sprintf("%v", v.Value)
+		fmt.Println(k, string(v.Value))
+		result[k] = fmt.Sprintf("%s", v.Value)
 		//}
 	}
 
@@ -149,7 +161,7 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	return result, nil
 }
 
-func (app *application) DestroyTerraform(params Dict, tenantID string, run *TerraformRun) error {
+func (app *application) DestroyTerraform(params Dict, tenantID any, run *TerraformRun) error {
 	// 1. Create temp dir
 	workDir, err := os.MkdirTemp("", "tf-demo-*")
 	if err != nil {
