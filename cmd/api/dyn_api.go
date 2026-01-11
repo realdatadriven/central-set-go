@@ -413,6 +413,26 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
+
+	case "saas", "software_as_a_service", "software_service":
+		if app.contains([]any{"deploy", "dp"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.RunDeploy(params)
+			}
+		} else if app.contains([]any{"cancel", "quit", "drop"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				//data = app.nbRunCells(params)
+			}
+		} else {
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
 	default:
 		data = Dict{
 			"success": false,

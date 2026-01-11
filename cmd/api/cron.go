@@ -97,6 +97,36 @@ func (app *application) AdminGetRowsByFilter(sql string, params []any) ([]Dict, 
 	}
 }
 
+func (app *application) GetRowByFilter(sql string, params Dict, filters []any) (Dict, error) {
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return nil, err
+	} else {
+		defer db.Close()
+		res, _, err := db.QuerySingleRow(sql, filters...)
+		if err != nil {
+			return nil, err
+		}
+		return *res, nil
+	}
+}
+
+func (app *application) GetRowsByFilter(sql string, params Dict, filters []any) ([]Dict, error) {
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return nil, err
+	} else {
+		defer db.Close()
+		res, _, err := app.db.QueryMultiRows(sql, filters...)
+		if err != nil {
+			return nil, err
+		}
+		return *res, nil
+	}
+}
+
 func (app *application) CronRunEndPoint(data Dict) (Dict, error) {
 	api, ok := data["api"].(string)
 	if !ok {

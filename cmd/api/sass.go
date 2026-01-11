@@ -17,10 +17,53 @@ type TerraformRun struct {
 	State  json.RawMessage // store as JSON in DB
 }
 
-func (app *application) DeployTerraformForTenant(tenantID string, run *TerraformRun) (map[string]string, error) {
-	workDir, _ := os.MkdirTemp("", "tf-*")
-	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
+func (app *application) RunDeploy(params Dict) Dict {
+	_data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		if _, ok := params["data"].(Dict)["data"]; !ok {
+			msg, _ := app.i18n.T("no-data", Dict{})
+			return Dict{"success": false, "msg": msg}
+		}
+		_data = params["data"].(Dict)["data"].(Dict)
+	}
+	sql := `select * from "deployment" where "deployment_id" = ? and "active" = true and "excluded" = false`
+	// fmt.Println(sql, _data["deployment_id"])
+	deployment, err := app.GetRowByFilter(sql, params, []any{_data["deployment_id"]})
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	// fmt.Println(deployment)
+	if _, ok := deployment["terraform_template"].(string); !ok {
+		msg, _ := app.i18n.T("unable-to-match-deployment-id", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	tenantID := _data["tenant_id"]
+	run := &TerraformRun{Config: deployment["terraform_template"].(string)}
+	res, err := app.DeployTerraformForTenant(params, tenantID, run)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
+		"success": true,
+		"msg":     msg,
+		"data":    res,
+	}
+}
 
+func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run *TerraformRun) (map[string]string, error) {
+	workDir, _ := os.MkdirTemp("", "tf-*")
+	fmt.Println("Temp TF Dir:", workDir)
+	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
 	tfPath, err := exec.LookPath("terraform")
 	if err != nil {
 		return nil, err
@@ -29,8 +72,8 @@ func (app *application) DeployTerraformForTenant(tenantID string, run *Terraform
 
 	// 👇 Load tenant-specific env vars
 	//tenantEnv, _ := getTenantEnvVars(tenantID)
-	sql := `select * from "env" where "costomer_id" = ? and "active" = true and "excluded" = false`
-	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{tenantID})
+	sql := `select * from "env" where "tenant_id" = ? and "active" = true and "excluded" = false`
+	tenantEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
 	// Merge with system env so PATH, etc. still exists
 	baseEnv := os.Environ()
 	mergedEnv := map[string]string{}
@@ -47,13 +90,23 @@ func (app *application) DeployTerraformForTenant(tenantID string, run *Terraform
 
 	// Normal Terraform lifecycle
 	if err := tf.Init(context.Background(), tfexec.Upgrade(true)); err != nil {
+		fmt.Println("Init Failed:", err)
 		return nil, err
 	}
+	fmt.Println("Init Pass")
 	if err := tf.Apply(context.Background()); err != nil {
+		fmt.Println("Apply Failed:", err)
 		return nil, err
 	}
+	fmt.Println("Apply Pass")
 
-	outputs, _ := tf.Output(context.Background())
+	outputs, err := tf.Output(context.Background())
+	if err != nil {
+		fmt.Println("Output Failed:", err)
+		return nil, err
+	}
+	fmt.Println("Output Pass")
+
 	result := map[string]string{}
 	for k, v := range outputs {
 		result[k] = fmt.Sprintf("%v", v.Value)
@@ -69,7 +122,7 @@ func (app *application) DeployTerraformForTenant(tenantID string, run *Terraform
 	return result, nil
 }
 
-func (app *application) DestroyTerraform(tenantID string, run *TerraformRun) error {
+func (app *application) DestroyTerraform(params Dict, tenantID string, run *TerraformRun) error {
 	// 1. Create temp dir
 	workDir, err := os.MkdirTemp("", "tf-demo-*")
 	if err != nil {
@@ -90,8 +143,8 @@ func (app *application) DestroyTerraform(tenantID string, run *TerraformRun) err
 	tfPath, _ := exec.LookPath("terraform")
 	tf, _ := tfexec.NewTerraform(workDir, tfPath)
 
-	sql := `select * from "env" where "costomer_id" = ? and "active" = true and "excluded" = false`
-	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{tenantID})
+	sql := `select * from "env" where "tenant_id" = ? and "active" = true and "excluded" = false`
+	tenantEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
 	// Merge with system env so PATH, etc. still exists
 	baseEnv := os.Environ()
 	mergedEnv := map[string]string{}

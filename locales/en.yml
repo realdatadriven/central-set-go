@@ -83,3 +83,4 @@ access-key-no-expires-dt: No expiration date provided!
 access-key-no-user: No user provided!
 user-incorrect: Incorrect User!
 incorret-expiration-dt: 'Incorrect expiration date "{{.dt}}" shoud be something like YYYY-MM-DD HH:MM!'
+unable-to-match-deployment-id: Unable to match Deployment ID!

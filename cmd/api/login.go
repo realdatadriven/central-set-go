@@ -197,6 +197,13 @@ func (app *application) _login(params Dict) Dict {
 			}
 		}
 	}
+	delete(user, "password")
+	delete(user, "created_at")
+	delete(user, "updated_at")
+	delete(user, "phone")
+	delete(user, "email")
+	delete(user, "timezone")
+	delete(user, "attach_profile_pic")
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {
@@ -361,6 +368,13 @@ func (app *application) access_key(params Dict) Dict {
 			}
 		}
 	}
+	delete(user, "password")
+	delete(user, "created_at")
+	delete(user, "updated_at")
+	delete(user, "phone")
+	delete(user, "email")
+	delete(user, "timezone")
+	delete(user, "attach_profile_pic")
 	// fmt.Println("EXPIRATION DATE:", _data["expires_at"].(string))
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
