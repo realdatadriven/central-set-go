@@ -330,7 +330,8 @@
         "crud.run_all":"Executar Tudu",
         "callApi": "Call API",
         "api": "API",
-        "tooltip": "Tooltip"
+        "tooltip": "Tooltip",
+        "accessKey": "Access Key"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",

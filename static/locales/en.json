@@ -337,7 +337,13 @@
         "disabled": "Disabled",
         "callApi": "Call API",
         "api": "API",
-        "tooltip": "Tooltip"
+        "tooltip": "Tooltip",
+        "accessKey": "Access Key",
+        "access-key-no-description": "No description provided!",
+        "access-key-no-expires-dt": "No expiration date provided!",
+        "access-key-no-user": "No user provided!",
+        "readonly": "Read Only",
+        "deploy": "Deploy"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",
