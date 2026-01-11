@@ -45,12 +45,31 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	tenantID := _data["tenant_id"]
 	run := &TerraformRun{Config: deployment["terraform_template"].(string)}
+	if terraform_state, ok := deployment["terraform_state"].(string); ok {
+		run.State = json.RawMessage([]byte(terraform_state))
+	}
 	res, err := app.DeployTerraformForTenant(params, tenantID, run)
 	if err != nil {
 		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
+	}
+	_json_out, _ := json.Marshal(res)
+	_data["terraform_template"] = string(run.State)
+	_data["tf_public_ip"] = res["public_ip"]
+	_data["tf_public_dns"] = res["public_dns"]
+	_data["tf_public_url"] = res["url"]
+	_data["terraform_outputs"] = []byte(_json_out)
+	params["data"].(Dict)["data"] = _data
+	upsert := app.create_update(params)
+	// fmt.Println(upsert)
+	if _, ok := upsert["success"]; !ok {
+		return upsert
+	} else if _, ok := upsert["success"].(bool); !ok {
+		return upsert
+	} else if ok, _ := upsert["success"].(bool); !ok {
+		return upsert
 	}
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
@@ -64,6 +83,11 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	workDir, _ := os.MkdirTemp("", "tf-*")
 	fmt.Println("Temp TF Dir:", workDir)
 	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
+	if len(run.State) > 0 {
+		if err := os.WriteFile(filepath.Join(workDir, "terraform.tfstate"), run.State, 0644); err != nil {
+			return nil, err
+		}
+	}
 	tfPath, err := exec.LookPath("terraform")
 	if err != nil {
 		return nil, err
@@ -90,26 +114,29 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 
 	// Normal Terraform lifecycle
 	if err := tf.Init(context.Background(), tfexec.Upgrade(true)); err != nil {
-		fmt.Println("Init Failed:", err)
+		//fmt.Println("Init Failed:", err)
 		return nil, err
 	}
-	fmt.Println("Init Pass")
+	//fmt.Println("Init Pass")
 	if err := tf.Apply(context.Background()); err != nil {
-		fmt.Println("Apply Failed:", err)
+		//fmt.Println("Apply Failed:", err)
 		return nil, err
 	}
-	fmt.Println("Apply Pass")
+	//fmt.Println("Apply Pass")
 
 	outputs, err := tf.Output(context.Background())
 	if err != nil {
-		fmt.Println("Output Failed:", err)
+		//fmt.Println("Output Failed:", err)
 		return nil, err
 	}
 	fmt.Println("Output Pass")
 
 	result := map[string]string{}
 	for k, v := range outputs {
+		//if v.Value != nil {
+		fmt.Println(k, v)
 		result[k] = fmt.Sprintf("%v", v.Value)
+		//}
 	}
 
 	stateBytes, _ := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
