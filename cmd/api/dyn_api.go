@@ -421,11 +421,11 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			} else {
 				data = app.RunDeploy(params)
 			}
-		} else if app.contains([]any{"cancel", "quit", "drop"}, act) {
+		} else if app.contains([]any{"cancel", "destroy", "quit", "drop"}, act) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
-				//data = app.nbRunCells(params)
+				data = app.RunDeploy(params)
 			}
 		} else {
 			data = Dict{

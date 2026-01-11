@@ -49,7 +49,8 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	tenantID := _data["tenant_id"]
 	run := &TerraformRun{Config: deployment["terraform_template"].(string)}
-	if terraform_state, ok := deployment["terraform_state"].(string); ok {
+	if terraform_state, ok := _data["terraform_state"].(string); ok {
+		//fmt.Println("TEST 1:", _data["terraform_state"])
 		run.State = json.RawMessage([]byte(terraform_state))
 	}
 	var res map[string]string
