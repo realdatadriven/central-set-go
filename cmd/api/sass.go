@@ -17,6 +17,21 @@ type TerraformRun struct {
 	State  json.RawMessage // store as JSON in DB
 }
 
+func terraformCachePath() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("cannot resolve home dir: %w", err)
+	}
+	cacheDir := filepath.Join(home, ".cs-terraform-cache")
+	// Create directory if not exists
+	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+		return "", fmt.Errorf("cannot create terraform cache dir: %w", err)
+	}
+	// Add Terraform plugin cache
+	//env = append(env, "TF_PLUGIN_CACHE_DIR="+cacheDir)
+	return cacheDir, nil
+}
+
 func (app *application) RunDeploy(params Dict) Dict {
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
@@ -63,15 +78,17 @@ func (app *application) RunDeploy(params Dict) Dict {
 		_data["tf_public_url"] = string(res["url"])
 		_data["terraform_outputs"] = string(_json_out)
 		_data["deployed"] = true
-	case "cancel":
+	case "cancel", "destroy":
 		err = app.DestroyTerraform(params, tenantID, run)
 		_data["deployed"] = false
 	}
+	msg, _ := app.i18n.T("success", Dict{})
+	_data["tf_err_msg"] = nil
+	success := true
 	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     err.Error(),
-		}
+		_data["tf_err_msg"] = fmt.Sprintf("%s: %s", action, err.Error())
+		msg = err.Error()
+		success = false
 	}
 	_data["terraform_template"] = string(run.State)
 	params["data"].(Dict)["data"] = _data
@@ -84,9 +101,8 @@ func (app *application) RunDeploy(params Dict) Dict {
 	} else if ok, _ := upsert["success"].(bool); !ok {
 		return upsert
 	}
-	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
-		"success": true,
+		"success": success,
 		"msg":     msg,
 		"data":    res,
 	}
@@ -123,6 +139,12 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 		mergedEnv[v["env_name"].(string)] = v["env_value"].(string)
 		//fmt.Printf("Setting env var for tenant %s: %s=%s\n", tenantID, k, v)
 	}
+	_path, err := terraformCachePath()
+	//fmt.Println("Temp TF CASH Dir:", _path)
+	if err != nil {
+		fmt.Println("Temp TF CASH Dir Err:", _path, err)
+	}
+	mergedEnv["TF_PLUGIN_CACHE_DIR"] = _path
 	tf.SetEnv(mergedEnv)
 
 	// Normal Terraform lifecycle
@@ -164,10 +186,8 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 
 func (app *application) DestroyTerraform(params Dict, tenantID any, run *TerraformRun) error {
 	// 1. Create temp dir
-	workDir, err := os.MkdirTemp("", "tf-demo-*")
-	if err != nil {
-		return err
-	}
+	workDir, _ := os.MkdirTemp("", "tf-*")
+	fmt.Println("Temp TF Dir:", workDir)
 
 	// 2. Write config
 	if err := os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644); err != nil {
@@ -197,9 +217,22 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 		mergedEnv[v["env_name"].(string)] = v["env_value"].(string)
 		//fmt.Printf("Setting env var for tenant %s: %s=%s\n", tenantID, k, v)
 	}
+	_path, err := terraformCachePath()
+	//fmt.Println("Temp TF CASH Dir:", _path)
+	if err != nil {
+		fmt.Println("Temp TF CASH Dir Err:", _path, err)
+	}
+	mergedEnv["TF_PLUGIN_CACHE_DIR"] = _path
 	tf.SetEnv(mergedEnv)
 
+	// Normal Terraform lifecycle
+	if err := tf.Init(context.Background(), tfexec.Upgrade(true)); err != nil {
+		fmt.Println("Init Failed:", err)
+		return err
+	}
+
 	if err := tf.Destroy(context.Background()); err != nil {
+		fmt.Printf("destroy failed: %s", err)
 		return fmt.Errorf("destroy failed: %w", err)
 	}
 
