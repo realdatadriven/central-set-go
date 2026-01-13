@@ -95,9 +95,9 @@ func (app *application) RunDeploy(params Dict) Dict {
 		msg = err.Error()
 		success = false
 	}
-	_data["terraform_template"] = string(run.State)
+	_data["terraform_state"] = string(run.State)
 	_data["terraform_lock"] = string(run.Lock)
-	//fmt.Println(1, "terraform_template", len(_data["terraform_template"].(string)), "terraform_lock", len(_data["terraform_lock"].(string)), len(run.Lock))
+	//fmt.Println(1, "terraform_state", len(_data["terraform_state"].(string)), "terraform_lock", len(_data["terraform_lock"].(string)), len(run.Lock))
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
 	// fmt.Println(upsert)
