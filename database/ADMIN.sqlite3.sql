@@ -1,54 +1,65 @@
 BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS "app" (
-	"app_id"	INTEGER NOT NULL,
-	"app"	VARCHAR(20) NOT NULL,
-	"app_desc"	TEXT,
-	"version"	VARCHAR(10) NOT NULL,
-	"email"	VARCHAR(200),
-	"db"	VARCHAR(20) NOT NULL,
-	"attach_logo"	VARCHAR(200),
-	"config"	TEXT,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("app_id" AUTOINCREMENT),
-	UNIQUE("app")
+CREATE TABLE IF NOT EXISTS access_key (
+	access_key_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	access_key_desc VARCHAR(200) NOT NULL, 
+	access_token TEXT NOT NULL, 
+	expires_at DATETIME, 
+	active BOOLEAN, 
+	for_user_id INTEGER, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(for_user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "calendar" (
-	"calendar_id"	INTEGER NOT NULL,
-	"calendar"	VARCHAR(100) NOT NULL,
-	"calendar_desc"	TEXT,
-	"calendar_email"	VARCHAR(200),
-	"calendar_color"	VARCHAR(50),
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("calendar_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS app (
+	app_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	app VARCHAR(20) NOT NULL, 
+	app_desc TEXT, 
+	version VARCHAR(10) NOT NULL, 
+	email VARCHAR(200), 
+	db VARCHAR(200) NOT NULL, 
+	attach_logo VARCHAR(200), 
+	config TEXT, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (app), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "column_level_access" (
-	"column_level_access_id"	INTEGER NOT NULL,
-	"column"	INTEGER NOT NULL,
-	"table_id"	INTEGER,
-	"table"	VARCHAR(200) NOT NULL,
-	"db"	VARCHAR(200) NOT NULL,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"create"	BOOLEAN,
-	"read"	BOOLEAN,
-	"update"	BOOLEAN,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("column_level_access_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS calendar (
+	calendar_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	calendar VARCHAR(100) NOT NULL, 
+	calendar_desc TEXT, 
+	calendar_email VARCHAR(200), 
+	calendar_color VARCHAR(50), 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
+);
+CREATE TABLE IF NOT EXISTS column_level_access (
+	column_level_access_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	"column" INTEGER NOT NULL, 
+	table_id INTEGER, 
+	"table" VARCHAR(200) NOT NULL, 
+	db VARCHAR(200) NOT NULL, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	"create" BOOLEAN, 
+	read BOOLEAN, 
+	"update" BOOLEAN, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(table_id) REFERENCES "table" (table_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
 CREATE TABLE IF NOT EXISTS cron (
 	cron_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
@@ -83,778 +94,3487 @@ CREATE TABLE IF NOT EXISTS cron_log (
 	FOREIGN KEY(cron_id) REFERENCES cron (cron_id), 
 	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "custom_form" (
-	"custom_form_id"	INTEGER NOT NULL,
-	"table"	VARCHAR(200),
-	"db"	VARCHAR(200),
-	"config"	TEXT,
-	"app_id"	INTEGER,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("custom_form_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS currency (
+	currency_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	currency VARCHAR(3) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (currency)
 );
-CREATE TABLE IF NOT EXISTS "custom_table" (
-	"custom_table_id"	INTEGER NOT NULL,
-	"table"	VARCHAR(200),
-	"db"	VARCHAR(200),
-	"config"	TEXT,
-	"app_id"	INTEGER,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("custom_table_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS custom_form (
+	custom_form_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	"table" VARCHAR(200), 
+	db VARCHAR(200), 
+	config TEXT, 
+	app_id INTEGER, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "dashboard" (
-	"dashboard_id"	INTEGER NOT NULL,
-	"dashboard"	VARCHAR(200),
-	"dashboard_desc"	TEXT,
-	"dashboard_conf"	TEXT NOT NULL,
-	"order"	INTEGER,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("dashboard_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS custom_table (
+	custom_table_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	"table" VARCHAR(200), 
+	db VARCHAR(200), 
+	config TEXT, 
+	app_id INTEGER, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "dashboard_comment" (
-	"dashboard_comment_id"	INTEGER NOT NULL,
-	"dashboard_comment"	TEXT,
-	"dashboard"	VARCHAR(200),
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("dashboard_comment_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS dashboard (
+	dashboard_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	dashboard VARCHAR(200), 
+	dashboard_desc TEXT, 
+	dashboard_conf TEXT NOT NULL, 
+	"order" INTEGER, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rb_exp_dtail" (
-	"etl_rb_exp_dtail_id"	INTEGER NOT NULL,
-	"etl_rb_exp_dtail"	VARCHAR(200) NOT NULL,
-	"etl_rb_exp_dtail_desc"	TEXT,
-	"etl_rbase_export_id"	INTEGER NOT NULL,
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"sql_export_query"	TEXT,
-	"database"	VARCHAR(200) NOT NULL,
-	"dest_sheet_name"	VARCHAR(200),
-	"dest_table_name"	VARCHAR(200),
-	"etl_rb_exp_dtail_conf"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("etl_rbase_export_id") REFERENCES "etl_rbase_export"("etl_rbase_export_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("etl_rb_exp_dtail_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS dashboard_comment (
+	dashboard_comment_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	dashboard_comment TEXT, 
+	dashboard VARCHAR(200), 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rb_output_field" (
-	"etl_rb_output_field_id"	INTEGER NOT NULL,
-	"etl_rb_output_field"	VARCHAR(200) NOT NULL,
-	"etl_rb_output_field_desc"	TEXT,
-	"etl_rbase_output_id"	INTEGER NOT NULL,
-	"sql_select"	TEXT NOT NULL,
-	"sql_from"	TEXT,
-	"sql_join"	TEXT,
-	"sql_where"	TEXT,
-	"sql_group_by"	TEXT,
-	"sql_order_by"	TEXT,
-	"sql_window"	TEXT,
-	"sql_having"	TEXT,
-	"field_order"	INTEGER,
-	"fields_used"	TEXT,
-	"etl_report_base_id"	INTEGER,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("etl_rbase_output_id") REFERENCES "etl_rbase_output"("etl_rbase_output_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("etl_rb_output_field_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS env (
+	env_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	env_name VARCHAR(200) NOT NULL, 
+	env_value TEXT NOT NULL, 
+	tenant_id INTEGER NOT NULL, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (env_name), 
+	FOREIGN KEY(tenant_id) REFERENCES tenant (tenant_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rb_reconc_dtail" (
-	"etl_rb_reconc_dtail_id"	INTEGER NOT NULL,
-	"etl_rb_reconc_dtail"	VARCHAR(50) NOT NULL,
-	"etl_rb_reconc_dtail_desc"	VARCHAR(200) NOT NULL,
-	"sql_query_val_1"	TEXT,
-	"sql_query_val_2"	TEXT,
-	"is_eval_formula"	BOOLEAN,
-	"sql_reconcilia_query"	TEXT,
-	"comments"	TEXT,
-	"etl_rb_reconcilia_id"	INTEGER NOT NULL,
-	"etl_report_base_id"	INTEGER,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("etl_rb_reconcilia_id") REFERENCES "etl_rb_reconcilia"("etl_rb_reconcilia_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("etl_rb_reconc_dtail_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rb_exp_dtail (
+	etl_rb_exp_dtail_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rb_exp_dtail VARCHAR(200) NOT NULL, 
+	etl_rb_exp_dtail_desc TEXT, 
+	etl_rbase_export_id INTEGER NOT NULL, 
+	etl_report_base_id INTEGER NOT NULL, 
+	sql_export_query TEXT, 
+	"database" VARCHAR(200) NOT NULL, 
+	dest_sheet_name VARCHAR(200), 
+	dest_table_name VARCHAR(200), 
+	etl_rb_exp_dtail_conf TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_rbase_export_id) REFERENCES etl_rbase_export (etl_rbase_export_id), 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rb_reconcilia" (
-	"etl_rb_reconcilia_id"	INTEGER NOT NULL,
-	"etl_rb_reconcilia"	VARCHAR(200) NOT NULL,
-	"etl_rb_reconcilia_desc"	TEXT,
-	"etl_rb_reconc_template"	TEXT,
-	"database"	VARCHAR(200) NOT NULL,
-	"active"	BOOLEAN,
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("etl_rb_reconcilia_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rb_output_field (
+	etl_rb_output_field_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rb_output_field VARCHAR(200) NOT NULL, 
+	etl_rb_output_field_desc TEXT, 
+	etl_rbase_output_id INTEGER NOT NULL, 
+	sql_select TEXT NOT NULL, 
+	sql_from TEXT, 
+	sql_join TEXT, 
+	sql_where TEXT, 
+	sql_group_by TEXT, 
+	sql_order_by TEXT, 
+	sql_window TEXT, 
+	sql_having TEXT, 
+	field_order INTEGER, 
+	fields_used TEXT, 
+	etl_report_base_id INTEGER, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_rbase_output_id) REFERENCES etl_rbase_output (etl_rbase_output_id), 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_backup" (
-	"backup_id"	INTEGER NOT NULL,
-	"backup"	VARCHAR(200) NOT NULL,
-	"backup_sql"	TEXT,
-	"backup_copy_to"	BOOLEAN,
-	"backup_copy_path"	VARCHAR(200),
-	"backup_conf"	TEXT,
-	"active"	BOOLEAN,
-	"etl_report_base_id"	INTEGER,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	PRIMARY KEY("backup_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rb_reconc_dtail (
+	etl_rb_reconc_dtail_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rb_reconc_dtail VARCHAR(50) NOT NULL, 
+	etl_rb_reconc_dtail_desc VARCHAR(200) NOT NULL, 
+	sql_query_val_1 TEXT, 
+	sql_query_val_2 TEXT, 
+	is_eval_formula BOOLEAN, 
+	sql_reconcilia_query TEXT, 
+	comments TEXT, 
+	etl_rb_reconcilia_id INTEGER NOT NULL, 
+	etl_report_base_id INTEGER, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_rb_reconcilia_id) REFERENCES etl_rb_reconcilia (etl_rb_reconcilia_id), 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_export" (
-	"etl_rbase_export_id"	INTEGER NOT NULL,
-	"etl_rbase_export"	VARCHAR(200) NOT NULL,
-	"etl_rbase_export_desc"	TEXT,
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"export_type_id"	INTEGER NOT NULL,
-	"attach_file_template"	VARCHAR(200) NOT NULL,
-	"txt_fix_format_layout"	TEXT,
-	"txt_fix_format_header"	TEXT,
-	"etl_rbase_export_conf"	TEXT,
-	"etl_rbase_output_id"	INTEGER,
-	"database"	VARCHAR(200) NOT NULL,
-	"active"	BOOLEAN,
-	"ignore"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("etl_rbase_output_id") REFERENCES "etl_rbase_output"("etl_rbase_output_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("export_type_id") REFERENCES "export_type"("export_type_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("etl_rbase_export_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rb_reconcilia (
+	etl_rb_reconcilia_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rb_reconcilia VARCHAR(200) NOT NULL, 
+	etl_rb_reconcilia_desc TEXT, 
+	etl_rb_reconc_template TEXT, 
+	"database" VARCHAR(200) NOT NULL, 
+	active BOOLEAN, 
+	etl_report_base_id INTEGER NOT NULL, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_input" (
-	"etl_rbase_input_id"	INTEGER NOT NULL,
-	"etl_rbase_input"	VARCHAR(200) NOT NULL,
-	"etl_rbase_input_desc"	TEXT,
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"input_type_id"	INTEGER,
-	"save_only_temp"	BOOLEAN,
-	"replace_existing_data"	BOOLEAN,
-	"check_ref_date"	BOOLEAN,
-	"ref_date_field"	VARCHAR(200),
-	"date_format_org"	VARCHAR(200),
-	"other_date_fields"	VARCHAR(200),
-	"ref_id_keys"	VARCHAR(200),
-	"last_update_date_field"	VARCHAR(200),
-	"incremental_extract"	BOOLEAN,
-	"destination_table"	VARCHAR(200) NOT NULL,
-	"database"	VARCHAR(200) NOT NULL,
-	"allow_import"	BOOLEAN,
-	"multiple_sheets"	BOOLEAN,
-	"specific_sheets"	VARCHAR(200),
-	"specific_range"	VARCHAR(200),
-	"columns_to_import"	VARCHAR(200),
-	"txt_fix_format_layout"	VARCHAR(200),
-	"headers"	VARCHAR(200),
-	"spreadsheet_forms"	BOOLEAN,
-	"spreadsheet_forms_map"	VARCHAR(200),
-	"etl_rbase_input_conf"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("input_type_id") REFERENCES "input_type"("input_type_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("etl_rbase_input_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rbase_backup (
+	backup_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	backup VARCHAR(200) NOT NULL, 
+	backup_sql TEXT, 
+	backup_copy_to BOOLEAN, 
+	backup_copy_path VARCHAR(200), 
+	backup_conf TEXT, 
+	active BOOLEAN, 
+	etl_report_base_id INTEGER, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_notify" (
-	"notify_id"	INTEGER NOT NULL,
-	"notify_subject"	VARCHAR(200) NOT NULL,
-	"notify_body"	TEXT NOT NULL,
-	"notify_to"	VARCHAR(200) NOT NULL,
-	"notify_cc"	VARCHAR(200),
-	"notify_attach_exports"	BOOLEAN,
-	"notify_copy_exports_to"	BOOLEAN,
-	"notify_copy_exports_path"	VARCHAR(200),
-	"notify_conf"	TEXT,
-	"send_email"	BOOLEAN,
-	"active"	BOOLEAN,
-	"etl_report_base_id"	INTEGER,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("notify_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rbase_export (
+	etl_rbase_export_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rbase_export VARCHAR(200) NOT NULL, 
+	etl_rbase_export_desc TEXT, 
+	etl_report_base_id INTEGER NOT NULL, 
+	export_type_id INTEGER NOT NULL, 
+	attach_file_template VARCHAR(200) NOT NULL, 
+	txt_fix_format_layout TEXT, 
+	txt_fix_format_header TEXT, 
+	etl_rbase_export_conf TEXT, 
+	etl_rbase_output_id INTEGER, 
+	"database" VARCHAR(200) NOT NULL, 
+	active BOOLEAN, 
+	"ignore" BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(export_type_id) REFERENCES export_type (export_type_id), 
+	FOREIGN KEY(etl_rbase_output_id) REFERENCES etl_rbase_output (etl_rbase_output_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_output" (
-	"etl_rbase_output_id"	INTEGER NOT NULL,
-	"etl_rbase_output"	VARCHAR(200) NOT NULL,
-	"etl_rbase_output_desc"	TEXT,
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"output_type_id"	INTEGER,
-	"date_field"	VARCHAR(200),
-	"date_field_format"	VARCHAR(200),
-	"destination_table"	VARCHAR(200) NOT NULL,
-	"database"	VARCHAR(200) NOT NULL,
-	"append_it"	BOOLEAN,
-	"output_order"	INTEGER,
-	"etl_rbase_output_conf"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("output_type_id") REFERENCES "output_type"("output_type_id"),
-	PRIMARY KEY("etl_rbase_output_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rbase_input (
+	etl_rbase_input_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rbase_input VARCHAR(200) NOT NULL, 
+	etl_rbase_input_desc TEXT, 
+	etl_report_base_id INTEGER NOT NULL, 
+	input_type_id INTEGER, 
+	save_only_temp BOOLEAN, 
+	replace_existing_data BOOLEAN, 
+	check_ref_date BOOLEAN, 
+	ref_date_field VARCHAR(200), 
+	date_format_org VARCHAR(200), 
+	other_date_fields VARCHAR(200), 
+	ref_id_keys VARCHAR(200), 
+	last_update_date_field VARCHAR(200), 
+	incremental_extract BOOLEAN, 
+	destination_table VARCHAR(200) NOT NULL, 
+	"database" VARCHAR(200) NOT NULL, 
+	allow_import BOOLEAN, 
+	multiple_sheets BOOLEAN, 
+	specific_sheets VARCHAR(200), 
+	specific_range VARCHAR(200), 
+	columns_to_import VARCHAR(200), 
+	txt_fix_format_layout VARCHAR(200), 
+	headers VARCHAR(200), 
+	spreadsheet_forms BOOLEAN, 
+	spreadsheet_forms_map VARCHAR(200), 
+	etl_rbase_input_conf TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(input_type_id) REFERENCES input_type (input_type_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_quality" (
-	"etl_rbase_quality_id"	INTEGER NOT NULL,
-	"etl_rbase_quality"	VARCHAR(200) NOT NULL,
-	"etl_rbase_quality_desc"	TEXT,
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"sql_quality_check"	TEXT NOT NULL,
-	"sql_quality_fix"	TEXT,
-	"comments"	TEXT,
-	"fields"	TEXT,
-	"tables"	TEXT,
-	"database"	VARCHAR(200) NOT NULL,
-	"etl_rbase_quality_conf"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("etl_rbase_quality_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rbase_notify (
+	notify_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	notify_subject VARCHAR(200) NOT NULL, 
+	notify_body TEXT NOT NULL, 
+	notify_to VARCHAR(200) NOT NULL, 
+	notify_cc VARCHAR(200), 
+	notify_attach_exports BOOLEAN, 
+	notify_copy_exports_to BOOLEAN, 
+	notify_copy_exports_path VARCHAR(200), 
+	notify_conf TEXT, 
+	send_email BOOLEAN, 
+	active BOOLEAN, 
+	etl_report_base_id INTEGER, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_rbase_script" (
-	"script_id"	INTEGER NOT NULL,
-	"script"	VARCHAR(200) NOT NULL,
-	"script_sql"	TEXT,
-	"script_conf"	TEXT,
-	"active"	BOOLEAN,
-	"etl_report_base_id"	INTEGER,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("script_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rbase_output (
+	etl_rbase_output_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rbase_output VARCHAR(200) NOT NULL, 
+	etl_rbase_output_desc TEXT, 
+	etl_report_base_id INTEGER NOT NULL, 
+	output_type_id INTEGER, 
+	date_field VARCHAR(200), 
+	date_field_format VARCHAR(200), 
+	destination_table VARCHAR(200) NOT NULL, 
+	"database" VARCHAR(200) NOT NULL, 
+	append_it BOOLEAN, 
+	output_order INTEGER, 
+	etl_rbase_output_conf TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(output_type_id) REFERENCES output_type (output_type_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_report_base" (
-	"etl_report_base_id"	INTEGER NOT NULL,
-	"etl_report_base"	VARCHAR(200) NOT NULL,
-	"etl_report_base_desc"	TEXT,
-	"attach_etl_rbase_doc"	VARCHAR(200),
-	"periodicity_id"	INTEGER,
-	"database"	VARCHAR(200) NOT NULL,
-	"includes_output"	BOOLEAN,
-	"includes_data_quality"	BOOLEAN,
-	"includes_data_reconci"	BOOLEAN,
-	"includes_exports"	BOOLEAN,
-	"includes_backup"	BOOLEAN,
-	"includes_script"	BOOLEAN,
-	"includes_notify"	BOOLEAN,
-	"etl_report_base_conf"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("periodicity_id") REFERENCES "periodicity"("periodicity_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("etl_report_base_id" AUTOINCREMENT),
-	UNIQUE("etl_report_base")
+CREATE TABLE IF NOT EXISTS etl_rbase_quality (
+	etl_rbase_quality_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_rbase_quality VARCHAR(200) NOT NULL, 
+	etl_rbase_quality_desc TEXT, 
+	etl_report_base_id INTEGER NOT NULL, 
+	sql_quality_check TEXT NOT NULL, 
+	sql_quality_fix TEXT, 
+	comments TEXT, 
+	fields TEXT, 
+	tables TEXT, 
+	"database" VARCHAR(200) NOT NULL, 
+	etl_rbase_quality_conf TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "etl_report_base_log" (
-	"log_id"	INTEGER NOT NULL,
-	"type"	VARCHAR(50) NOT NULL,
-	"name"	VARCHAR(100) NOT NULL,
-	"ref"	DATE,
-	"start"	DATETIME,
-	"end"	DATETIME,
-	"timer"	VARCHAR(10),
-	"success"	BOOLEAN,
-	"msg"	TEXT,
-	"num_rows"	INTEGER,
-	"errors"	INTEGER,
-	"fixes"	INTEGER,
-	"fname"	VARCHAR(200),
-	"html"	TEXT,
-	"etl_report_base_id"	INTEGER,
-	"app_id"	INTEGER,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("etl_report_base_id") REFERENCES "etl_report_base"("etl_report_base_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("log_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS etl_rbase_script (
+	script_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	script VARCHAR(200) NOT NULL, 
+	script_sql TEXT, 
+	script_conf TEXT, 
+	active BOOLEAN, 
+	etl_report_base_id INTEGER, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "export_type" (
-	"export_type_id"	INTEGER NOT NULL,
-	"export_type"	VARCHAR(100) NOT NULL,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("export_type_id" AUTOINCREMENT),
-	UNIQUE("export_type")
+CREATE TABLE IF NOT EXISTS etl_report_base (
+	etl_report_base_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	etl_report_base VARCHAR(200) NOT NULL, 
+	etl_report_base_desc TEXT, 
+	attach_etl_rbase_doc VARCHAR(200), 
+	periodicity_id INTEGER, 
+	"database" VARCHAR(200) NOT NULL, 
+	includes_output BOOLEAN, 
+	includes_data_quality BOOLEAN, 
+	includes_data_reconci BOOLEAN, 
+	includes_exports BOOLEAN, 
+	includes_backup BOOLEAN, 
+	includes_script BOOLEAN, 
+	includes_notify BOOLEAN, 
+	etl_report_base_conf TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (etl_report_base), 
+	FOREIGN KEY(periodicity_id) REFERENCES periodicity (periodicity_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "input_type" (
-	"input_type_id"	INTEGER NOT NULL,
-	"input_type"	VARCHAR(100) NOT NULL,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("input_type_id" AUTOINCREMENT),
-	UNIQUE("input_type")
+CREATE TABLE IF NOT EXISTS etl_report_base_log (
+	log_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	type VARCHAR(50) NOT NULL, 
+	name VARCHAR(100) NOT NULL, 
+	ref DATE, 
+	start DATETIME, 
+	"end" DATETIME, 
+	timer VARCHAR(10), 
+	success BOOLEAN, 
+	msg TEXT, 
+	num_rows INTEGER, 
+	errors INTEGER, 
+	fixes INTEGER, 
+	fname VARCHAR(200), 
+	html TEXT, 
+	etl_report_base_id INTEGER, 
+	app_id INTEGER, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(etl_report_base_id) REFERENCES etl_report_base (etl_report_base_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "lang" (
-	"lang_id"	INTEGER NOT NULL,
-	"lang"	VARCHAR(4) NOT NULL,
-	"lang_desc"	VARCHAR(200),
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("lang_id" AUTOINCREMENT),
-	UNIQUE("lang")
+CREATE TABLE IF NOT EXISTS export_type (
+	export_type_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	export_type VARCHAR(100) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (export_type)
 );
-CREATE TABLE IF NOT EXISTS "manage_query" (
-	"manage_query_id"	INTEGER NOT NULL,
-	"manage_query"	VARCHAR(200) NOT NULL,
-	"database"	VARCHAR(200) NOT NULL,
-	"manage_query_conf"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("manage_query_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS input_type (
+	input_type_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	input_type VARCHAR(100) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (input_type)
 );
-CREATE TABLE IF NOT EXISTS "menu" (
-	"menu_id"	INTEGER NOT NULL,
-	"menu"	VARCHAR(20) NOT NULL,
-	"menu_desc"	TEXT,
-	"menu_icon"	VARCHAR(20),
-	"menu_order"	INTEGER,
-	"menu_config"	TEXT,
-	"app_id"	INTEGER NOT NULL,
-	"user_id"	INTEGER NOT NULL,
-	"active"	BOOLEAN,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("menu_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS interval (
+	interval_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	interval VARCHAR(100) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (interval)
 );
-CREATE TABLE IF NOT EXISTS "menu_table" (
-	"menu_table_id"	INTEGER NOT NULL,
-	"menu_id"	INTEGER,
-	"table_id"	INTEGER,
-	"app_id"	INTEGER,
-	"user_id"	INTEGER,
-	"active"	BOOLEAN,
-	"requires_rla"	BOOLEAN,
-	"menu_table_cnf"	TEXT,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("menu_id") REFERENCES "menu"("menu_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("menu_table_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS lang (
+	lang_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	lang VARCHAR(4) NOT NULL, 
+	lang_desc VARCHAR(200), 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (lang)
 );
-CREATE TABLE IF NOT EXISTS "output_type" (
-	"output_type_id"	INTEGER NOT NULL,
-	"output_type"	VARCHAR(100) NOT NULL,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("output_type_id" AUTOINCREMENT),
-	UNIQUE("output_type")
+CREATE TABLE IF NOT EXISTS manage_query (
+	manage_query_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	manage_query VARCHAR(200) NOT NULL, 
+	"database" VARCHAR(200) NOT NULL, 
+	manage_query_conf TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "periodicity" (
-	"periodicity_id"	INTEGER NOT NULL,
-	"periodicity"	VARCHAR(100) NOT NULL,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("periodicity_id" AUTOINCREMENT),
-	UNIQUE("periodicity")
+CREATE TABLE IF NOT EXISTS menu (
+	menu_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	menu VARCHAR(200) NOT NULL, 
+	menu_desc TEXT, 
+	menu_icon VARCHAR(20), 
+	menu_order INTEGER, 
+	menu_config TEXT, 
+	app_id INTEGER NOT NULL, 
+	user_id INTEGER NOT NULL, 
+	active BOOLEAN, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "repeat_type" (
-	"repeat_type_id"	INTEGER NOT NULL,
-	"repeat_type"	VARCHAR(10) NOT NULL,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("repeat_type_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS menu_table (
+	menu_table_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	menu_id INTEGER, 
+	table_id INTEGER, 
+	app_id INTEGER, 
+	user_id INTEGER, 
+	active BOOLEAN, 
+	requires_rla BOOLEAN, 
+	menu_table_cnf TEXT, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(menu_id) REFERENCES menu (menu_id), 
+	FOREIGN KEY(table_id) REFERENCES "table" (table_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "role" (
-	"role_id"	INTEGER NOT NULL,
-	"role"	VARCHAR(20) NOT NULL,
-	"role_desc"	TEXT,
-	"config"	TEXT,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("role_id" AUTOINCREMENT),
-	UNIQUE("role")
+CREATE TABLE IF NOT EXISTS output_type (
+	output_type_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	output_type VARCHAR(100) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (output_type)
 );
-CREATE TABLE IF NOT EXISTS "role_app" (
-	"role_app_id"	INTEGER NOT NULL,
-	"role_id"	INTEGER,
-	"app_id"	INTEGER,
-	"access"	BOOLEAN,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("role_app_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS payment_plan (
+	payment_plan_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	plan_id INTEGER NOT NULL, 
+	deployment_id INTEGER NOT NULL, 
+	product_id INTEGER NOT NULL, 
+	price FLOAT NOT NULL, 
+	currency_id INTEGER NOT NULL, 
+	interval_id INTEGER NOT NULL, 
+	stripe_price_id VARCHAR(255), 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(plan_id) REFERENCES "plan" (plan_id), 
+	FOREIGN KEY(deployment_id) REFERENCES deployment (deployment_id), 
+	FOREIGN KEY(product_id) REFERENCES product (product_id), 
+	FOREIGN KEY(currency_id) REFERENCES currency (currency_id), 
+	FOREIGN KEY(interval_id) REFERENCES interval (interval_id)
 );
-CREATE TABLE IF NOT EXISTS "role_app_menu" (
-	"role_app_menu_id"	INTEGER NOT NULL,
-	"role_id"	INTEGER,
-	"app_id"	INTEGER,
-	"menu_id"	INTEGER,
-	"access"	BOOLEAN,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("menu_id") REFERENCES "menu"("menu_id"),
-	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("role_app_menu_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS periodicity (
+	periodicity_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	periodicity VARCHAR(100) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (periodicity)
 );
-CREATE TABLE IF NOT EXISTS "role_app_menu_table" (
-	"role_app_menu_table_id"	INTEGER NOT NULL,
-	"role_id"	INTEGER,
-	"app_id"	INTEGER,
-	"menu_id"	INTEGER,
-	"table_id"	INTEGER,
-	"create"	BOOLEAN,
-	"read"	BOOLEAN,
-	"update"	BOOLEAN,
-	"delete"	BOOLEAN,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	FOREIGN KEY("menu_id") REFERENCES "menu"("menu_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("role_app_menu_table_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS "plan" (
+	plan_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	"plan" VARCHAR(3) NOT NULL, 
+	price FLOAT, 
+	deployment_id INTEGER NOT NULL, 
+	product_id INTEGER NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE ("plan"), 
+	FOREIGN KEY(deployment_id) REFERENCES deployment (deployment_id), 
+	FOREIGN KEY(product_id) REFERENCES product (product_id)
 );
-CREATE TABLE IF NOT EXISTS "role_row_level_access" (
-	"role_row_level_access_id"	INTEGER NOT NULL,
-	"role_id"	INTEGER,
-	"row_id"	INTEGER NOT NULL,
-	"table_id"	INTEGER,
-	"table"	VARCHAR(200) NOT NULL,
-	"db"	VARCHAR(200) NOT NULL,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"read"	BOOLEAN,
-	"update"	BOOLEAN,
-	"delete"	BOOLEAN,
-	"share"	BOOLEAN,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	PRIMARY KEY("role_row_level_access_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS product (
+	product_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	name VARCHAR(255) NOT NULL, 
+	description TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN
 );
-CREATE TABLE IF NOT EXISTS "row_level_access" (
-	"row_level_access_id"	INTEGER NOT NULL,
-	"row_id"	INTEGER NOT NULL,
-	"table_id"	INTEGER,
-	"table"	VARCHAR(200) NOT NULL,
-	"db"	VARCHAR(200) NOT NULL,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"read"	BOOLEAN,
-	"update"	BOOLEAN,
-	"delete"	BOOLEAN,
-	"share"	BOOLEAN,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("table_id") REFERENCES "table"("table_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("row_level_access_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS provider (
+	provider_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	provider VARCHAR(3) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (provider)
 );
-CREATE TABLE IF NOT EXISTS "source_type" (
-	"source_type_id"	INTEGER NOT NULL,
-	"source_type"	VARCHAR(100) NOT NULL,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("source_type_id" AUTOINCREMENT),
-	UNIQUE("source_type")
+CREATE TABLE IF NOT EXISTS repeat_type (
+	repeat_type_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	repeat_type VARCHAR(10) NOT NULL, 
+	excluded BOOLEAN
+);
+CREATE TABLE IF NOT EXISTS role (
+	role_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	role VARCHAR(20) NOT NULL, 
+	role_desc TEXT, 
+	config TEXT, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (role)
+);
+CREATE TABLE IF NOT EXISTS role_app (
+	role_app_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	role_id INTEGER, 
+	app_id INTEGER, 
+	access BOOLEAN, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(role_id) REFERENCES role (role_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
+);
+CREATE TABLE IF NOT EXISTS role_app_menu (
+	role_app_menu_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	role_id INTEGER, 
+	app_id INTEGER, 
+	menu_id INTEGER, 
+	access BOOLEAN, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(role_id) REFERENCES role (role_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(menu_id) REFERENCES menu (menu_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
+);
+CREATE TABLE IF NOT EXISTS role_app_menu_table (
+	role_app_menu_table_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	role_id INTEGER, 
+	app_id INTEGER, 
+	menu_id INTEGER, 
+	table_id INTEGER, 
+	"create" BOOLEAN, 
+	read BOOLEAN, 
+	"update" BOOLEAN, 
+	"delete" BOOLEAN, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(role_id) REFERENCES role (role_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id), 
+	FOREIGN KEY(menu_id) REFERENCES menu (menu_id), 
+	FOREIGN KEY(table_id) REFERENCES "table" (table_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
+);
+CREATE TABLE IF NOT EXISTS role_row_level_access (
+	role_row_level_access_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	role_id INTEGER, 
+	row_id INTEGER NOT NULL, 
+	table_id INTEGER, 
+	"table" VARCHAR(200) NOT NULL, 
+	db VARCHAR(200) NOT NULL, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	read BOOLEAN, 
+	"update" BOOLEAN, 
+	"delete" BOOLEAN, 
+	share BOOLEAN, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(role_id) REFERENCES role (role_id), 
+	FOREIGN KEY(table_id) REFERENCES "table" (table_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
+);
+CREATE TABLE IF NOT EXISTS row_level_access (
+	row_level_access_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	row_id INTEGER NOT NULL, 
+	table_id INTEGER, 
+	"table" VARCHAR(200) NOT NULL, 
+	db VARCHAR(200) NOT NULL, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	read BOOLEAN, 
+	"update" BOOLEAN, 
+	"delete" BOOLEAN, 
+	share BOOLEAN, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(table_id) REFERENCES "table" (table_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
+);
+CREATE TABLE IF NOT EXISTS source_type (
+	source_type_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	source_type VARCHAR(100) NOT NULL, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (source_type)
+);
+CREATE TABLE IF NOT EXISTS subscription (
+	subscription_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	tenant_id INTEGER NOT NULL, 
+	plan_id INTEGER NOT NULL, 
+	deployment_id INTEGER NOT NULL, 
+	payment_plan_id INTEGER NOT NULL, 
+	product_id INTEGER NOT NULL, 
+	terraform_outputs TEXT, 
+	tf_public_ip VARCHAR(100), 
+	tf_public_dns VARCHAR(255), 
+	terraform_state TEXT, 
+	deployed BOOLEAN, 
+	active BOOLEAN, 
+	stripe_subscription_id VARCHAR(255), 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(tenant_id) REFERENCES tenant (tenant_id), 
+	FOREIGN KEY(plan_id) REFERENCES "plan" (plan_id), 
+	FOREIGN KEY(deployment_id) REFERENCES deployment (deployment_id), 
+	FOREIGN KEY(payment_plan_id) REFERENCES payment_plan (payment_plan_id), 
+	FOREIGN KEY(product_id) REFERENCES product (product_id), 
+	UNIQUE (stripe_subscription_id)
 );
 CREATE TABLE IF NOT EXISTS "table" (
-	"table_id"	INTEGER NOT NULL,
-	"table"	VARCHAR(50) NOT NULL,
-	"table_desc"	VARCHAR(200),
-	"db"	VARCHAR(50),
-	"requires_rla"	BOOLEAN,
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("table_id" AUTOINCREMENT)
+	table_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	"table" VARCHAR(50) NOT NULL, 
+	table_desc VARCHAR(200), 
+	db VARCHAR(50), 
+	requires_rla BOOLEAN, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "table_schema" (
-	"table_schema_id"	INTEGER NOT NULL,
-	"db"	VARCHAR(200) NOT NULL,
-	"table"	VARCHAR(200) NOT NULL,
-	"field"	VARCHAR(200) NOT NULL,
-	"type"	VARCHAR(200) NOT NULL,
-	"comment"	VARCHAR(200),
-	"pk"	BOOLEAN,
-	"autoincrement"	BOOLEAN,
-	"nullable"	BOOLEAN,
-	"computed"	BOOLEAN,
-	"default"	BOOLEAN,
-	"fk"	BOOLEAN,
-	"referred_table"	VARCHAR(200),
-	"referred_column"	VARCHAR(200),
-	"user_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("table_schema_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS table_schema (
+	table_schema_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	db VARCHAR(200) NOT NULL, 
+	"table" VARCHAR(200) NOT NULL, 
+	field VARCHAR(200) NOT NULL, 
+	type VARCHAR(200) NOT NULL, 
+	comment VARCHAR(200), 
+	pk BOOLEAN, 
+	"autoincrement" BOOLEAN, 
+	nullable BOOLEAN, 
+	computed BOOLEAN, 
+	"default" BOOLEAN, 
+	fk BOOLEAN, 
+	referred_table VARCHAR(200), 
+	referred_column VARCHAR(200), 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "task" (
-	"task_id"	INTEGER NOT NULL,
-	"task"	VARCHAR(100) NOT NULL,
-	"task_desc"	TEXT,
-	"starts_at"	DATETIME NOT NULL,
-	"ends_at"	DATETIME,
-	"calendar_id"	INTEGER,
-	"calendar_color"	VARCHAR(50),
-	"calendar_email"	VARCHAR(200),
-	"task_status_id"	INTEGER,
-	"task_status"	VARCHAR(50),
-	"attach_task"	VARCHAR(200),
-	"repeat"	BOOLEAN,
-	"repeat_type_id"	INTEGER,
-	"days_of_week"	VARCHAR(200),
-	"repeat_start_date"	DATE,
-	"repeat_start_time"	TIME,
-	"repeat_end_date"	DATE,
-	"repeat_end_time"	TIME,
-	"attendees"	TEXT,
-	"active"	BOOLEAN,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("calendar_id") REFERENCES "calendar"("calendar_id"),
-	FOREIGN KEY("task_status_id") REFERENCES "task_status"("task_status_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("repeat_type_id") REFERENCES "repeat_type"("repeat_type_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("task_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS task (
+	task_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	task VARCHAR(100) NOT NULL, 
+	task_desc TEXT, 
+	starts_at DATETIME NOT NULL, 
+	ends_at DATETIME, 
+	calendar_id INTEGER, 
+	calendar_color VARCHAR(50), 
+	calendar_email VARCHAR(200), 
+	task_status_id INTEGER, 
+	task_status VARCHAR(50), 
+	attach_task VARCHAR(200), 
+	repeat BOOLEAN, 
+	repeat_type_id INTEGER, 
+	days_of_week VARCHAR(200), 
+	repeat_start_date DATE, 
+	repeat_start_time TIME, 
+	repeat_end_date DATE, 
+	repeat_end_time TIME, 
+	attendees TEXT, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(calendar_id) REFERENCES calendar (calendar_id), 
+	FOREIGN KEY(task_status_id) REFERENCES task_status (task_status_id), 
+	FOREIGN KEY(repeat_type_id) REFERENCES repeat_type (repeat_type_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "task_status" (
-	"task_status_id"	INTEGER NOT NULL,
-	"task_status"	VARCHAR(10) NOT NULL,
-	"excluded"	BOOLEAN,
-	PRIMARY KEY("task_status_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS task_status (
+	task_status_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	task_status VARCHAR(10) NOT NULL, 
+	excluded BOOLEAN
 );
-CREATE TABLE IF NOT EXISTS "task_track" (
-	"task_track_id"	INTEGER NOT NULL,
-	"task_track"	VARCHAR(100) NOT NULL,
-	"task_track_desc"	TEXT,
-	"task_track_date"	DATETIME NOT NULL,
-	"task_status_id"	INTEGER,
-	"attach_task_track"	VARCHAR(200),
-	"task_id"	INTEGER,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("task_id") REFERENCES "task"("task_id"),
-	FOREIGN KEY("task_status_id") REFERENCES "task_status"("task_status_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("task_track_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS task_track (
+	task_track_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	task_track VARCHAR(100) NOT NULL, 
+	task_track_desc TEXT, 
+	task_track_date DATETIME NOT NULL, 
+	task_status_id INTEGER, 
+	attach_task_track VARCHAR(200), 
+	task_id INTEGER, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(task_status_id) REFERENCES task_status (task_status_id), 
+	FOREIGN KEY(task_id) REFERENCES task (task_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "translate_table" (
-	"transl_tbl_id"	INTEGER NOT NULL,
-	"table_org_desc"	VARCHAR(200) NOT NULL,
-	"table_transl_desc"	VARCHAR(200) NOT NULL,
-	"table"	VARCHAR(200) NOT NULL,
-	"db"	VARCHAR(200) NOT NULL,
-	"lang"	VARCHAR(5) NOT NULL,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("transl_tbl_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS tenant (
+	tenant_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	name VARCHAR(200) NOT NULL, 
+	email VARCHAR(200) NOT NULL, 
+	password VARCHAR(200), 
+	phone VARCHAR(200), 
+	address VARCHAR(200), 
+	currency_id INTEGER, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (email), 
+	FOREIGN KEY(currency_id) REFERENCES currency (currency_id)
 );
-CREATE TABLE IF NOT EXISTS "translate_table_field" (
-	"transl_tbl_field_id"	INTEGER NOT NULL,
-	"field_org_desc"	VARCHAR(200) NOT NULL,
-	"field_transl_desc"	VARCHAR(200) NOT NULL,
-	"field"	VARCHAR(200) NOT NULL,
-	"table"	VARCHAR(200) NOT NULL,
-	"db"	VARCHAR(200) NOT NULL,
-	"lang"	VARCHAR(5) NOT NULL,
-	"user_id"	INTEGER,
-	"app_id"	INTEGER,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("transl_tbl_field_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS translate_table (
+	transl_tbl_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	table_org_desc VARCHAR(200) NOT NULL, 
+	table_transl_desc VARCHAR(200) NOT NULL, 
+	"table" VARCHAR(200) NOT NULL, 
+	db VARCHAR(200) NOT NULL, 
+	lang VARCHAR(5) NOT NULL, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "users" (
-	"user_id"	INTEGER NOT NULL,
-	"username"	VARCHAR(50) NOT NULL,
-	"first_name"	VARCHAR(50) NOT NULL,
-	"last_name"	VARCHAR(50) NOT NULL,
-	"email"	VARCHAR(50),
-	"phone"	VARCHAR(50),
-	"password"	VARCHAR(200) NOT NULL,
-	"role_id"	INTEGER,
-	"lang_id"	INTEGER,
-	"timezone"	VARCHAR(50),
-	"attach_profile_pic"	VARCHAR(200),
-	"active"	BOOLEAN,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("lang_id") REFERENCES "lang"("lang_id"),
-	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	PRIMARY KEY("user_id" AUTOINCREMENT),
-	UNIQUE("email"),
-	UNIQUE("username"),
-	UNIQUE("phone")
+CREATE TABLE IF NOT EXISTS translate_table_field (
+	transl_tbl_field_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	field_org_desc VARCHAR(200) NOT NULL, 
+	field_transl_desc VARCHAR(200) NOT NULL, 
+	field VARCHAR(200) NOT NULL, 
+	"table" VARCHAR(200) NOT NULL, 
+	db VARCHAR(200) NOT NULL, 
+	lang VARCHAR(5) NOT NULL, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "user_log" (
-	"user_log_id"	INTEGER NOT NULL,
-	"user_id"	INTEGER,
-	"action"	VARCHAR(200) NOT NULL,
-	"req_ip"	VARCHAR(200),
-	"req_at"	DATETIME,
-	"req_data"	TEXT,
-	"res_at"	DATETIME,
-	"res_type"	VARCHAR(200),
-	"res_msg"	VARCHAR(500),
-	"res_data"	TEXT,
-	"table"	VARCHAR(200),
-	"db"	VARCHAR(200),
-	"row_id"	INTEGER,
-	"app_id"	INTEGER,
-	"new_data"	TEXT,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY("app_id") REFERENCES "app"("app_id"),
-	PRIMARY KEY("user_log_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS user_log (
+	user_log_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	user_id INTEGER, 
+	action VARCHAR(200) NOT NULL, 
+	req_ip VARCHAR(200), 
+	req_at DATETIME, 
+	req_data TEXT, 
+	res_at DATETIME, 
+	res_type VARCHAR(200), 
+	res_msg VARCHAR(500), 
+	res_data TEXT, 
+	"table" VARCHAR(200), 
+	db VARCHAR(200), 
+	row_id INTEGER, 
+	app_id INTEGER, 
+	new_data TEXT, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS "user_role" (
-	"user_role_id"	INTEGER NOT NULL,
-	"user_id"	INTEGER,
-	"role_id"	INTEGER,
-	"active"	BOOLEAN,
-	"created_at"	DATETIME,
-	"updated_at"	DATETIME,
-	"excluded"	BOOLEAN,
-	FOREIGN KEY("role_id") REFERENCES "role"("role_id"),
-	FOREIGN KEY("user_id") REFERENCES "users"("user_id"),
-	PRIMARY KEY("user_role_id" AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS user_role (
+	user_role_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	user_id INTEGER, 
+	role_id INTEGER, 
+	active BOOLEAN, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(role_id) REFERENCES role (role_id)
 );
+CREATE TABLE IF NOT EXISTS users (
+	user_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	username VARCHAR(50) NOT NULL, 
+	first_name VARCHAR(50) NOT NULL, 
+	last_name VARCHAR(50) NOT NULL, 
+	email VARCHAR(50), 
+	phone VARCHAR(50), 
+	password VARCHAR(200) NOT NULL, 
+	role_id INTEGER, 
+	lang_id INTEGER, 
+	timezone VARCHAR(50), 
+	attach_profile_pic VARCHAR(200), 
+	active BOOLEAN, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (username), 
+	UNIQUE (email), 
+	UNIQUE (phone), 
+	FOREIGN KEY(role_id) REFERENCES role (role_id), 
+	FOREIGN KEY(lang_id) REFERENCES lang (lang_id)
+);
+INSERT INTO "access_key" VALUES (1,'xxx','eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzgzNjk0NzAwLCJuYmYiOjE3NjgxMzU5NTAuNzY0NDY0OSwiaWF0IjoxNzY4MTM1OTUwLjc2NDQ2NDZ9.-G3Md3xbUXRMTJTCTZKrhUsy8GEpnuuYOIMLiPChGP8','2026-07-10T14:45:00',1,1,1,'2026-01-10T15:52:13.025593232-01:00','2026-01-11 11:52:30.768447725-01:00',0);
+INSERT INTO "access_key" VALUES (2,'x','eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjUtMTEtMDVUMTg6NTU6MDAuMTMwNzQ3WlwiLFwiZW1haWxcIjpcInJvb3RAZG9tYWluLmNvbVwiLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcIlN1cGVyXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiQWRtaW5cIixcInBhc3N3b3JkXCI6XCIkMmIkMTIkODk1QWphbjlDZ2FkWFc2dzVIOUM3LjRFOUg2VlMxaEpPWTdCRXdhcmZGQnFOc1ppOW9IcU9cIixcInBob25lXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidGltZXpvbmVcIjpudWxsLFwidXBkYXRlZF9hdFwiOlwiMjAyNS0xMS0wNVQxODo1NTowMC4xMzA3NDdaXCIsXCJ1c2VyX2lkXCI6MSxcInVzZXJuYW1lXCI6XCJyb290XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3ODM3MDg4MDAsIm5iZiI6MTc2ODA3NDAzMy4zNTc5OTQzLCJpYXQiOjE3NjgwNzQwMzMuMzU3OTkzNH0.KRNwUlkzRHBWhoeZfk0UdVwifC0PJeG3WOz4T8XQKao','2026-07-10T18:40:00',1,1,1,'2026-01-10 18:40:33.362958945-01:00','2026-01-10 18:40:33.362965641-01:00',0);
+INSERT INTO "access_key" VALUES (3,'y','eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYXR0YWNoX3Byb2ZpbGVfcGljXCI6bnVsbCxcImNyZWF0ZWRfYXRcIjpcIjIwMjYtMDEtMTBUMTQ6NTc6MTcuODQ4NzA4MjgxLTAxOjAwXCIsXCJlbWFpbFwiOlwiZXRsQGRvbWFpbi5jb21cIixcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmaXJzdF9uYW1lXCI6XCJldGx4XCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfbmFtZVwiOlwiZXRsXCIsXCJwYXNzd29yZFwiOlwiJDJhJDEyJDRBTC9YekpZNmgwaHVQR0xjYUFsbk9YSzdBWHd1b3pkM3FISnpHc2w3R0d0Tllvam1xSXltXCIsXCJwaG9uZVwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInRpbWV6b25lXCI6bnVsbCxcInVwZGF0ZWRfYXRcIjpcIjIwMjYtMDEtMTBUMTQ6NTc6MTcuNjIyMjgxNDQ3LTAxOjAwXCIsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJldGx4XCJ9IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDQ0NCJdLCJleHAiOjE3ODM3MDg4NjAsIm5iZiI6MTc2ODA3NDExMS40NDM2MjMsImlhdCI6MTc2ODA3NDExMS40NDM2MjI4fQ.MGBzYpE2QTXA_VPwdysJm2fo52QMZFHYwSLaZLC7s0M','2026-07-10T18:41:00',1,2,1,'2026-01-10 18:41:51.4484346-01:00','2026-01-10 18:41:51.448435722-01:00',0);
+INSERT INTO "access_key" VALUES (4,'x','eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZpcnN0X25hbWVcIjpcImV0bHhcIixcImxhbmdfaWRcIjoxLFwibGFzdF9uYW1lXCI6XCJldGxcIixcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjIsXCJ1c2VybmFtZVwiOlwiZXRseFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzgzNzcwNzgwLCJuYmYiOjE3NjgxMzU5ODguOTA2NTEwOCwiaWF0IjoxNzY4MTM1OTg4LjkwNjUxMDR9.eTGWTDHL17A9XjY0Lk_hEyYUotaJuYss1khEw7DWI1I','2026-07-11T11:53:00',1,2,1,'2026-01-11 11:53:08.912051359-01:00','2026-01-11 11:53:08.912055465-01:00',0);
+INSERT INTO "app" VALUES (1,'ADMIN','Admin','1.0.0',NULL,'ADMIN',NULL,'{}',1,'2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "app" VALUES (2,'ETLX','ETLX UI in CS','1.0.0',NULL,'ETLX',NULL,NULL,1,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "app" VALUES (3,'SAAS','CS SASS Backend','1.0.0',NULL,'SAAS',NULL,NULL,1,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "cron" VALUES (1,'0 0 * * *','Backup','buckup',1,'ADMIN',NULL,0,'2025-11-05T18:55:00.130747Z','2025-11-05 19:13:48.709693622-01:00',0);
+INSERT INTO "custom_form" VALUES (1,'users','ADMIN','{"fields":{"username":{"name":"username","label":"Username","ellipsis":30,"order":1,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":false,"required":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","default":null,"autoincrement":"auto","comment":"Username","computed":null},"first_name":{"name":"first_name","label":"Fisrt Name","ellipsis":30,"order":2,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":false,"required":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","default":null,"autoincrement":"auto","comment":"Fisrt Name","computed":null},"last_name":{"name":"last_name","label":"Last Name","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":false,"required":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","default":null,"autoincrement":"auto","comment":"Last Name","computed":null},"password":{"name":"password","label":"Password","ellipsis":30,"order":4,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":false,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true,"pk":false,"type":"VARCHAR(200)","default":null,"autoincrement":"auto","comment":"Password","computed":null},"email":{"name":"email","label":"Email","ellipsis":30,"order":5,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","default":null,"autoincrement":"auto","comment":"Email","computed":null},"phone":{"name":"phone","label":"Phone","ellipsis":30,"order":6,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","default":null,"autoincrement":"auto","comment":"Phone","computed":null},"role":{"name":"role","label":"Role","ellipsis":30,"order":7,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":true,"autocomplete":true,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"n_rows":null,"pk":false,"type":"INTEGER","default":null,"autoincrement":"auto","comment":"Role","computed":null,"ref":{"name":null,"referred_schema":null,"referred_table":"role","options":{},"constrained_column":"role_id","referred_column":"role_id","referred_columns_desc":"role"},"org_name":"role","referred_table":"role","referred_column":"role_id"},"lang":{"name":"lang","label":"Language","ellipsis":30,"order":8,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":true,"autocomplete":true,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","default":null,"autoincrement":"auto","comment":"Language","computed":null,"ref":{"name":null,"referred_schema":null,"referred_table":"lang","options":{},"constrained_column":"lang_id","referred_column":"lang_id","referred_columns_desc":"lang"},"org_name":"lang","referred_table":"lang","referred_column":"lang_id"},"timezone":{"name":"timezone","label":"Timezone","ellipsis":30,"order":9,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","default":null,"autoincrement":"auto","comment":"Timezone","computed":null},"attach_profile_pic":{"name":"attach_profile_pic","label":"Profile Picture","ellipsis":30,"order":10,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":true,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","default":null,"autoincrement":"auto","comment":"Profile Picture","computed":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":11,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"BOOLEAN","default":null,"autoincrement":"auto","comment":"Active","computed":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"fk":false,"autocomplete":false,"nullable":true,"required":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"tabs_steps":"deactivate","size":9,"tabs_steps_conf":[{"label":"Tab1","fields":["username","first_name","last_name","email","phone"]},{"label":"Tab 2","fields":["password","role","lang","timezone","attach_profile_pic","active"]}],"sub_form_size":9,"form_in_popup":false,"allow_in_subform":{"user_role":true}},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (2,'role','ADMIN','{"fields":{"role":{"name":"role","label":"Role","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"role_desc":{"name":"role_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":4,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","size":8,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (3,'user_log','ADMIN','{"fields":{"username":{"name":"username","label":"Username","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"action":{"name":"action","label":"Action","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"req_ip":{"name":"req_ip","label":"Request IP","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"req_at":{"name":"req_at","label":"Req. At","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"req_data":{"name":"req_data","label":"Req Data","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"use_label":true},"res_at":{"name":"res_at","label":"Resp. At","ellipsis":30,"order":6,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"res_type":{"name":"res_type","label":"Res. Type","ellipsis":30,"order":7,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"res_msg":{"name":"res_msg","label":"Message","ellipsis":30,"order":8,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"res_data":{"name":"res_data","label":"Resp. Data","ellipsis":30,"order":9,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"use_label":true},"table":{"name":"table","label":"Table","ellipsis":30,"order":10,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"db":{"name":"db","label":"Database","ellipsis":30,"order":11,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"row_id":{"name":"row_id","label":"Database","ellipsis":30,"order":12,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":13,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"new_data":{"name":"new_data","label":"New Data","ellipsis":30,"order":14,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":16,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":17,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","size":6,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (4,'menu','ADMIN','{"fields":{"menu":{"name":"menu","label":"Menu","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"menu_desc":{"name":"menu_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"menu_icon":{"name":"menu_icon","label":"Icon","ellipsis":30,"order":3,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"menu_order":{"name":"menu_order","label":"Order","ellipsis":30,"order":4,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":8,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"menu_config":{"name":"menu_config","label":"Config","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"use_label":true}},"layout":{"tabs_steps":"tabs","size":6,"allow_in_subform":{},"tabs_steps_conf":[],"form_in_popup":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (5,'app','ADMIN','{"fields":{"app":{"name":"app","label":"App Name","ellipsis":30,"order":1,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"version":{"name":"version","label":"Versão","ellipsis":30,"order":2,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_desc":{"name":"app_desc","label":"Description","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"email":{"name":"email","label":"Email","ellipsis":30,"order":4,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":"^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$"},"db":{"name":"db","label":"Database","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"attach_logo":{"name":"attach_logo","label":"Logo","ellipsis":30,"order":6,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":true,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"allow_in_subform":{"menu":true,"role_app":true},"tabs_steps_conf":[],"sub_form_size":9},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (6,'table','ADMIN','{"fields":{"table":{"name":"table","label":"Table","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"table_desc":{"name":"table_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"db":{"name":"db","label":"Database","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"requires_rla":{"name":"requires_rla","label":"Requires Row Level Access","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (7,'etl_report_base','ADMIN','{"fields":{"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":1,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":2,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"periodicity":{"name":"periodicity","label":"Periodicity","ellipsis":30,"order":3,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base_desc":{"name":"etl_report_base_desc","label":"Description","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"1"},"includes_data_quality":{"name":"includes_data_quality","label":"Data Quality","ellipsis":30,"order":5,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"includes_data_reconci":{"name":"includes_data_reconci","label":"Data Reconc.","ellipsis":30,"order":6,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"includes_exports":{"name":"includes_exports","label":"Exports","ellipsis":30,"order":7,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"includes_notify":{"name":"includes_notify","label":"Notify","ellipsis":30,"order":8,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"includes_backup":{"name":"includes_backup","label":"Backup","ellipsis":30,"order":9,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"attach_etl_rbase_doc":{"name":"attach_etl_rbase_doc","label":"Documentation","ellipsis":30,"order":10,"display":true,"size":8,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":true,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":11,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base_conf":{"name":"etl_report_base_conf","label":"Config","ellipsis":30,"order":12,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"5","code":"json"},"username":{"name":"username","label":"Username","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":16,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":17,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":12,"allow_in_subform":{"etl_rbase_input":true,"etl_rbase_output":true,"etl_rbase_quality":true,"etl_rb_reconcilia":true,"etl_rbase_export":true,"etl_rbase_notify":true,"etl_rbase_backup":true},"tabs_steps_conf":[{"label":"Params","fields":["etl_report_base","etl_report_base_desc","periodicity","database"]},{"label":"Config","fields":["etl_report_base_conf","includes_data_quality","includes_data_reconci","includes_exports","includes_notify","attach_etl_rbase_doc","active","includes_backup"]}]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (8,'etl_rbase_input','ADMIN','{"fields":{"etl_rbase_input":{"name":"etl_rbase_input","label":"Input","ellipsis":30,"order":1,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"input_type":{"name":"input_type","label":"Input Type","ellipsis":30,"order":2,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_input_desc":{"name":"etl_rbase_input_desc","label":"Input Description","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"save_only_temp":{"name":"save_only_temp","label":"Save only temp","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"replace_existing_data":{"name":"replace_existing_data","label":"Replace existing data","ellipsis":30,"order":6,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"check_ref_date":{"name":"check_ref_date","label":"Check ref. date","ellipsis":30,"order":7,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"ref_date_field":{"name":"ref_date_field","label":"Ref. date field","ellipsis":30,"order":8,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"date_format_org":{"name":"date_format_org","label":"Date Format in origin","ellipsis":30,"order":9,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"other_date_fields":{"name":"other_date_fields","label":"Other Date Fields","ellipsis":30,"order":10,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"ref_id_keys":{"name":"ref_id_keys","label":"Reference / Id Keys","ellipsis":30,"order":11,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"last_update_date_field":{"name":"last_update_date_field","label":"Last update date field","ellipsis":30,"order":12,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"incremental_extract":{"name":"incremental_extract","label":"Incremental Extraction","ellipsis":30,"order":13,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"destination_table":{"name":"destination_table","label":"Destination Table","ellipsis":30,"order":14,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":15,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"allow_import":{"name":"allow_import","label":"Allow Import","ellipsis":30,"order":16,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"multiple_sheets":{"name":"multiple_sheets","label":"Multiple Sheets","ellipsis":30,"order":17,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"specific_sheets":{"name":"specific_sheets","label":"Specific Sheets","ellipsis":30,"order":18,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"columns_to_import":{"name":"columns_to_import","label":"Columns to Import","ellipsis":30,"order":19,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"txt_fix_format_layout":{"name":"txt_fix_format_layout","label":"Text with fixed format Layout","ellipsis":30,"order":20,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"headers":{"name":"headers","label":"Headers","ellipsis":30,"order":21,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"spreadsheet_forms":{"name":"spreadsheet_forms","label":"Spreadsheet Forms","ellipsis":30,"order":22,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"spreadsheet_forms_map":{"name":"spreadsheet_forms_map","label":"Spreadsheet Forms Map","ellipsis":30,"order":23,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":24,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_input_conf":{"name":"etl_rbase_input_conf","label":"Config","ellipsis":30,"order":25,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"10","code":"json"},"username":{"name":"username","label":"Username","ellipsis":30,"order":26,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":27,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":28,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":29,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":30,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (9,'etl_rb_output_field','ADMIN','{"fields":{"etl_rb_output_field":{"name":"etl_rb_output_field","label":"Field","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_output_field_desc":{"name":"etl_rb_output_field_desc","label":"Field Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_rbase_output":{"name":"etl_rbase_output","label":"Output","ellipsis":30,"order":3,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_select":{"name":"sql_select","label":"SELECT","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_from":{"name":"sql_from","label":"FROM","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_join":{"name":"sql_join","label":"JOIN","ellipsis":30,"order":6,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_where":{"name":"sql_where","label":"WHERE","ellipsis":30,"order":7,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_group_by":{"name":"sql_group_by","label":"GROUP BY","ellipsis":30,"order":8,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_order_by":{"name":"sql_order_by","label":"ORDER BY","ellipsis":30,"order":9,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_window":{"name":"sql_window","label":"WINDOW","ellipsis":30,"order":10,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"sql_having":{"name":"sql_having","label":"HAVING","ellipsis":30,"order":11,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql","n_rows":"10"},"field_order":{"name":"field_order","label":"Field Order","ellipsis":30,"order":12,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":true,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"fields_used":{"name":"fields_used","label":"Fields Used","ellipsis":30,"order":13,"display":true,"size":8,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":15,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":16,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":17,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":18,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":19,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":20,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[{"label":"Main","fields":["etl_rb_output_field","etl_rb_output_field_desc","field_order","fields_used","active"]},{"label":"SELECT","fields":["sql_select"]},{"label":"FROM","fields":["sql_from"]},{"label":"JOIN","fields":["sql_join"]},{"label":"WHERE","fields":["sql_where"]},{"label":"GROUP BY","fields":["sql_group_by"]},{"label":"ORDER BY","fields":["sql_order_by"]}]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (10,'etl_rbase_output','ADMIN','{"fields":{"etl_rbase_output":{"name":"etl_rbase_output","label":"Output","ellipsis":30,"order":1,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_output_desc":{"name":"etl_rbase_output_desc","label":"Output Description","ellipsis":30,"order":2,"display":true,"size":8,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"output_order":{"name":"output_order","label":"Order","ellipsis":30,"order":3,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":4,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"output_type":{"name":"output_type","label":"Souce Type","ellipsis":30,"order":5,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"date_field":{"name":"date_field","label":"Date field","ellipsis":30,"order":6,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"destination_table":{"name":"destination_table","label":"Destination Table","ellipsis":30,"order":7,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":8,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":9,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_output_conf":{"name":"etl_rbase_output_conf","label":"Config","ellipsis":30,"order":10,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"1","code":"json"},"username":{"name":"username","label":"Username","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"date_field_format":{"name":"date_field_format","label":"date_field_format","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"append_it":{"name":"append_it","label":"append_it","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":9,"allow_in_subform":{"etl_rb_output_field":true},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (11,'etl_rbase_quality','ADMIN','{"fields":{"etl_rbase_quality":{"name":"etl_rbase_quality","label":"Data Quality Rule","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_quality_desc":{"name":"etl_rbase_quality_desc","label":"Rule Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_quality_check":{"name":"sql_quality_check","label":"SQL Quality Check","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql"},"sql_quality_fix":{"name":"sql_quality_fix","label":"SQL Quality Fix","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql"},"comments":{"name":"comments","label":"Comments / Justifications","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"fields":{"name":"fields","label":"Fields","ellipsis":30,"order":7,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"tables":{"name":"tables","label":"Tables","ellipsis":30,"order":8,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[{"label":"Aux","fields":["etl_rbase_quality","etl_rbase_quality_desc","etl_report_base","active","fields","tables"]},{"label":"SQL Check","fields":["sql_quality_check"]},{"label":"SQL Fix","fields":["sql_quality_fix"]}]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (12,'etl_rb_reconcilia','ADMIN','{"fields":{"etl_rb_reconcilia":{"name":"etl_rb_reconcilia","label":"Data Reconciliation Rule","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_reconcilia_desc":{"name":"etl_rb_reconcilia_desc","label":"Rule Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"comments":{"name":"comments","label":"Comments / Justifications","ellipsis":30,"order":3,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_rb_reconc_template":{"name":"etl_rb_reconc_template","label":"Template","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":6,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":7,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":12,"allow_in_subform":{"etl_rb_reconc_dtail":true},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (13,'etl_rb_reconc_dtail','ADMIN','{"fields":{"etl_rb_reconc_dtail":{"name":"etl_rb_reconc_dtail","label":"Variable Name","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_reconc_dtail_desc":{"name":"etl_rb_reconc_dtail_desc","label":"Var. Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_query_val_1":{"name":"sql_query_val_1","label":"SQL Value 1","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_query_val_2":{"name":"sql_query_val_2","label":"SQL Value 2","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"is_eval_formula":{"name":"is_eval_formula","label":"Is Eval Formula","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_reconcilia_query":{"name":"sql_reconcilia_query","label":"SQL Reconciliation","ellipsis":30,"order":6,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_rb_reconcilia":{"name":"etl_rb_reconcilia","label":"Data Reconciliation","ellipsis":30,"order":7,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":8,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":9,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[{"label":"Main","fields":["etl_rb_reconc_dtail","etl_rb_reconc_dtail_desc","etl_report_base","active","etl_rb_reconcilia"]},{"label":"SQL Value 1","fields":["sql_query_val_1"]},{"label":"SQL Value 2","fields":["sql_query_val_2"]},{"label":"SQL Reconc","fields":["sql_reconcilia_query","is_eval_formula"]}]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (14,'etl_rbase_export','ADMIN','{"fields":{"etl_rbase_export":{"name":"etl_rbase_export","label":"Export","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_export_desc":{"name":"etl_rbase_export_desc","label":"Export Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"database","ellipsis":30,"order":4,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"export_type":{"name":"export_type","label":"Export Type","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"attach_file_template":{"name":"attach_file_template","label":"File name / Template","ellipsis":30,"order":6,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":true,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"txt_fix_format_layout":{"name":"txt_fix_format_layout","label":"Text with fixed format Layout","ellipsis":30,"order":7,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":8,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_export_conf":{"name":"etl_rbase_export_conf","label":"Config","ellipsis":30,"order":9,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":"","regex_val":null,"n_rows":"3","code":"json"},"username":{"name":"username","label":"Username","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"txt_fix_format_header":{"name":"txt_fix_format_header","label":"txt_fix_format_header","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"allow_in_subform":{"etl_rb_exp_dtail":true},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (15,'etl_rb_exp_dtail','ADMIN','{"fields":{"etl_rb_exp_dtail":{"name":"etl_rb_exp_dtail","label":"Export Detail","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_exp_dtail_desc":{"name":"etl_rb_exp_dtail_desc","label":"Export Detail Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_export":{"name":"etl_rbase_export","label":"Export","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_export_query":{"name":"sql_export_query","label":"Export SQL Query","ellipsis":30,"order":6,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"txt_fix_format_layout":{"name":"txt_fix_format_layout","label":"Text with fixed format Layout","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"dest_sheet_name":{"name":"dest_sheet_name","label":"Dest. Sheet Name","ellipsis":30,"order":8,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dest_table_name":{"name":"dest_table_name","label":"Dest. Table Name","ellipsis":30,"order":9,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_exp_dtail_conf":{"name":"etl_rb_exp_dtail_conf","label":"Config","ellipsis":30,"order":11,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"json"},"username":{"name":"username","label":"Username","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":16,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (16,'etl_rbase_notify','ADMIN','{"fields":{"notify_subject":{"name":"notify_subject","label":"Subject","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_body":{"name":"notify_body","label":"Body","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"html"},"notify_to":{"name":"notify_to","label":"Mail TO","ellipsis":30,"order":3,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_cc":{"name":"notify_cc","label":"Mail CC","ellipsis":30,"order":4,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_attach_exports":{"name":"notify_attach_exports","label":"Attach Exports","ellipsis":30,"order":5,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_copy_exports_to":{"name":"notify_copy_exports_to","label":"Copy Exports","ellipsis":30,"order":6,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_copy_exports_path":{"name":"notify_copy_exports_path","label":"Copy Exports Path","ellipsis":30,"order":7,"display":true,"size":5,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"active","ellipsis":30,"order":8,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_conf":{"name":"notify_conf","label":"Conf","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (17,'task','ADMIN','{"fields":{"task":{"name":"task","label":"Task","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true,"pk":false,"type":"VARCHAR(100)","nullable":false,"default":null,"autoincrement":null,"comment":"task","computed":null},"task_desc":{"name":"task_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"pk":false,"type":"TEXT","nullable":true,"default":null,"autoincrement":null,"comment":"Description","computed":null},"starts_at":{"name":"starts_at","label":"Starts at","ellipsis":30,"order":3,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"DATETIME","nullable":false,"default":null,"autoincrement":null,"comment":"Starts at","computed":null},"ends_at":{"name":"ends_at","label":"Ends at","ellipsis":30,"order":4,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"DATETIME","nullable":true,"default":null,"autoincrement":null,"comment":"Ends at","computed":null},"calendar":{"name":"calendar","label":"Calendar","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","nullable":true,"default":null,"autoincrement":null,"comment":"Calendar","computed":null,"fk":true,"ref":{"name":null,"referred_schema":null,"referred_table":"calendar","options":{},"constrained_column":"calendar_id","referred_column":"calendar_id","referred_columns_desc":"calendar"},"org_name":"calendar","referred_table":"calendar","referred_column":"calendar_id"},"calendar_color":{"name":"calendar_color","label":"Calendar Color","ellipsis":30,"order":6,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","nullable":true,"default":null,"autoincrement":null,"comment":"Calendar Color","computed":null},"calendar_email":{"name":"calendar_email","label":"Email","ellipsis":30,"order":7,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","nullable":true,"default":null,"autoincrement":null,"comment":"Email","computed":null},"task_status":{"name":"task_status","label":"Status","ellipsis":30,"order":8,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(50)","nullable":true,"default":null,"autoincrement":null,"comment":"Status","computed":null},"attach_task":{"name":"attach_task","label":"Attachment","ellipsis":30,"order":9,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":true,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","nullable":true,"default":null,"autoincrement":null,"comment":"Attachment","computed":null},"repeat":{"name":"repeat","label":"Repeat","ellipsis":30,"order":10,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"BOOLEAN","nullable":true,"default":null,"autoincrement":null,"comment":"Repeat","computed":null},"repeat_type":{"name":"repeat_type","label":"Type of Repetition","ellipsis":30,"order":11,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","nullable":true,"default":null,"autoincrement":null,"comment":"Type of Repetition","computed":null,"fk":true,"ref":{"name":null,"referred_schema":null,"referred_table":"repeat_type","options":{},"constrained_column":"repeat_type_id","referred_column":"repeat_type_id","referred_columns_desc":"repeat_type"},"org_name":"repeat_type","referred_table":"repeat_type","referred_column":"repeat_type_id"},"days_of_week":{"name":"days_of_week","label":"Dias de Semana","ellipsis":30,"order":12,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","nullable":true,"default":null,"autoincrement":null,"comment":"Dias de Semana","computed":null},"repeat_start_date":{"name":"repeat_start_date","label":"repeat_start_date","ellipsis":30,"order":13,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"repeat_start_time":{"name":"repeat_start_time","label":"Hora starts_at Repetição","ellipsis":30,"order":14,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"TIME","nullable":true,"default":null,"autoincrement":null,"comment":"Hora starts_at Repetição","computed":null},"repeat_end_date":{"name":"repeat_end_date","label":"Data ends_at Repetição","ellipsis":30,"order":15,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"DATE","nullable":true,"default":null,"autoincrement":null,"comment":"Data ends_at Repetição","computed":null},"repeat_end_time":{"name":"repeat_end_time","label":"Hora ends_at Repetição","ellipsis":30,"order":16,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"TIME","nullable":true,"default":null,"autoincrement":null,"comment":"Hora ends_at Repetição","computed":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":17,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"BOOLEAN","nullable":true,"default":null,"autoincrement":null,"comment":"Active","computed":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":18,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":19,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":20,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":21,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":22,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{"task_track":true},"tabs_steps_conf":[{"label":"Task","fields":["task","task_desc","starts_at","ends_at","calendar","calendar_color","calendar_email","task_status","attach_task","active"]},{"label":"Repeat","fields":["repeat","repeat_type","days_of_week","repeat_start_time","repeat_end_date","repeat_end_time","repeat_start_date"]}]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (18,'custom_table','ADMIN','{"fields":{"table":{"name":"table","label":"Table","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"db":{"name":"db","label":"Database","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"json"},"app":{"name":"app","label":"App Name","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05T18:55:19.298372Z','2026-01-10 18:07:36.019498985-01:00',0);
+INSERT INTO "custom_form" VALUES (19,'calendar','ADMIN','{"fields":{"calendar":{"name":"calendar","label":"Calendar","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_desc":{"name":"calendar_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_email":{"name":"calendar_email","label":"Email","ellipsis":30,"order":3,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_color":{"name":"calendar_color","label":"Calendar Color","ellipsis":30,"order":4,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":true,"size":6,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (20,'user_role','ADMIN','{"fields":{"username":{"name":"username","label":"Username","ellipsis":30,"order":1,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"role":{"name":"role","label":"Perfil","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":4,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":4,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (21,'etl_rbase_backup','ADMIN','{"fields":{"backup":{"name":"backup","label":"Buckup","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"backup_sql":{"name":"backup_sql","label":"SQL","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"sql"},"backup_copy_to":{"name":"backup_copy_to","label":"Copy","ellipsis":30,"order":4,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"backup_copy_path":{"name":"backup_copy_path","label":"Path","ellipsis":30,"order":5,"display":true,"size":8,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"link":true},"active":{"name":"active","label":"Active","ellipsis":30,"order":6,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"backup_conf":{"name":"backup_conf","label":"Conf","ellipsis":30,"order":7,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":6,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (22,'dashboard','ADMIN','{"fields":{"dashboard":{"name":"dashboard","label":"dashboard","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dashboard_desc":{"name":"dashboard_desc","label":"dashboard_desc","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dashboard_conf":{"name":"dashboard_conf","label":"dashboard_conf","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"15","code":"markdown"},"order":{"name":"order","label":"order","ellipsis":30,"order":4,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"active","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"created_at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"updated_at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"excluded","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05T18:55:19.298372Z','2026-01-10 18:02:38.440991882-01:00',0);
+INSERT INTO "custom_form" VALUES (23,'cron','ADMIN','{"fields":{"cron":{"name":"cron","label":"Cron","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"cron_desc":{"name":"cron_desc","label":"Decription","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"api":{"name":"api","label":"API","ellipsis":30,"order":3,"display":true,"size":10,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":2,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":10,"sub_form_size":null,"sub_form_limit":"10","allow_in_subform":{"cron_log":true},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (24,'cron_log','ADMIN','{"fields":{"cron":{"name":"cron","label":"Cron","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"disabled":true},"cron_desc":{"name":"cron_desc","label":"Decription","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"disabled":true},"api":{"name":"api","label":"API","ellipsis":30,"order":3,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"disabled":true},"start_at":{"name":"start_at","label":"Job Start","ellipsis":30,"order":4,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"disabled":true},"end_at":{"name":"end_at","label":"Job End","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"disabled":true},"success":{"name":"success","label":"Success","ellipsis":30,"order":6,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"disabled":true},"cron_msg":{"name":"cron_msg","label":"Message","ellipsis":30,"order":7,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"5","disabled":true},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":8,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_form" VALUES (25,'etlx','ETLX','{"fields":{"etl":{"name":"etl","label":"Name","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_desc":{"name":"etl_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etlx_conf":{"name":"etlx_conf","label":"Config Text","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"15","code":"markdown"},"attach_etlx_conf":{"name":"attach_etlx_conf","label":"Config File","ellipsis":30,"order":4,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":true,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":7,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',2,1,'2025-11-05T19:01:44.683366Z','2026-01-10 17:59:39.60868053-01:00',0);
+INSERT INTO "custom_form" VALUES (26,'etlx_conf','ETLX','{"fields":{"etlx_conf":{"name":"etlx_conf","label":"Name","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etlx_conf_desc":{"name":"etlx_conf_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etlx_extra_conf":{"name":"etlx_extra_conf","label":"Config Text","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"15"},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":4,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_form" VALUES (27,'dashboard','ETLX','{"fields":{"dashboard":{"name":"dashboard","label":"Dashboard","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dashboard_desc":{"name":"dashboard_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dashboard_conf":{"name":"dashboard_conf","label":"Conf / Params","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"15"},"order":{"name":"order","label":"Order","ellipsis":30,"order":4,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_form" VALUES (28,'notebook','ETLX','{"fields":{"notebook":{"name":"notebook","label":"Name","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notebook_desc":{"name":"notebook_desc","label":"Description","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notebook_conf":{"name":"notebook_conf","label":"Conf / Params","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"n_rows":"15"},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":8,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_form" VALUES (29,'access_key','ADMIN','{"fields":{"access_key_desc":{"name":"access_key_desc","label":"Description","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"access_token":{"name":"access_token","label":"Token","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"expires_at":{"name":"expires_at","label":"Expires at","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username 2":{"name":"username 2","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username2":{"name":"username2","label":"Username","ellipsis":30,"order":6,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2026-01-10T07:43:28.248182722-01:00','2026-01-10 08:05:01.033144553-01:00',1);
+INSERT INTO "custom_form" VALUES (30,'access_key','ADMIN','{"fields":{"access_key_desc":{"name":"access_key_desc","label":"Description","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Description","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"access_key_desc","fk":false,"nullable":false,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":696,"type":"VARCHAR(200)","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"access_token":{"name":"access_token","label":"Token","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Token","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"access_token","fk":false,"nullable":false,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":697,"type":"TEXT","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"disabled":false},"expires_at":{"name":"expires_at","label":"Expires at","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Expires at","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"expires_at","fk":false,"nullable":true,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":698,"type":"DATETIME","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Active","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":true,"excluded":false,"field":"active","fk":false,"nullable":true,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":699,"type":"BOOLEAN","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"username":{"name":"username","label":"For","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true,"autoincrement":null,"comment":"Username","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"for_user_id","fk":true,"nullable":true,"pk":false,"ref":{"referred_column":"users","referred_columns_desc":"username","referred_columns_desc_org":"username","referred_table":"users"},"referred_column":"users","referred_table":"users","table":"access_key","table_schema_id":700,"type":"INTEGER","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"org_name":"username"},"username2":{"name":"username2","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"user_id","fk":true,"nullable":true,"pk":false,"ref":{"referred_column":"users","referred_columns_desc":"username2","referred_columns_desc_org":"username","referred_table":"users"},"referred_column":"users","referred_table":"users","table":"access_key","table_schema_id":701,"type":"INTEGER","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"org_name":"username2"},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":6,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2026-01-10T09:33:34.856172877-01:00','2026-01-10 16:03:16.703462121-01:00',0);
+INSERT INTO "custom_form" VALUES (31,'access_key','ADMIN','{"fields":{"access_key_desc":{"name":"access_key_desc","label":"Description","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Description","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"access_key_desc","fk":false,"nullable":false,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":696,"type":"VARCHAR(200)","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"access_token":{"name":"access_token","label":"Token","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Token","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"access_token","fk":false,"nullable":false,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":697,"type":"TEXT","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"disabled":false,"readonly":true},"expires_at":{"name":"expires_at","label":"Expires at","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Expires at","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"expires_at","fk":false,"nullable":true,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":698,"type":"DATETIME","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Active","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":true,"excluded":false,"field":"active","fk":false,"nullable":true,"pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":699,"type":"BOOLEAN","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"username":{"name":"username","label":"For","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true,"autoincrement":null,"comment":"Username","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"for_user_id","fk":true,"nullable":true,"pk":false,"ref":{"referred_column":"users","referred_columns_desc":"username","referred_columns_desc_org":"username","referred_table":"users"},"referred_column":"users","referred_table":"users","table":"access_key","table_schema_id":700,"type":"INTEGER","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"org_name":"username","referred_columns_desc":"username","referred_columns_desc_org":"username","referred_pk":"user_id"},"username2":{"name":"username2","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"user_id","fk":true,"nullable":true,"pk":false,"ref":{"referred_column":"users","referred_columns_desc":"username2","referred_columns_desc_org":"username","referred_table":"users"},"referred_column":"users","referred_table":"users","table":"access_key","table_schema_id":701,"type":"INTEGER","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"org_name":"username2"},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":6,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2026-01-10T09:33:34.856172877-01:00','2026-01-10 16:08:03.245549421-01:00',0);
+INSERT INTO "custom_form" VALUES (32,'custom_form','ADMIN','{"fields":{"table":{"name":"table","label":"Table","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"db":{"name":"db","label":"Database","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"json"},"app":{"name":"app","label":"App Name","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":12,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',1,1,'2026-01-10 18:14:48.775648844-01:00','2026-01-10 18:14:48.77564962-01:00',0);
+INSERT INTO "custom_form" VALUES (36,'product','SAAS','{"fields":{"product":{"name":"product","label":"Product Name","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"description":{"name":"description","label":"Product Description","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":6,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',3,1,'2026-01-11T07:50:46.094065124-01:00','2026-01-11 12:05:13.753277649-01:00',0);
+INSERT INTO "custom_form" VALUES (37,'manage_query','ETLX','{"fields":{"manage_query":{"name":"manage_query","label":"Query Desc","ellipsis":30,"order":1,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Query Desc","computed":null,"created_at":"2026-01-10T19:01:13.74475Z","db":"ETLX","default":null,"excluded":false,"field":"manage_query","fk":false,"nullable":false,"pk":false,"referred_column":null,"referred_table":null,"table":"manage_query","table_schema_id":617,"type":"VARCHAR(200)","updated_at":"2026-01-10T19:01:13.74475Z","user_id":1},"database":{"name":"database","label":"Database","ellipsis":30,"order":2,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Database","computed":null,"created_at":"2026-01-10T19:01:13.74475Z","db":"ETLX","default":null,"excluded":false,"field":"database","fk":false,"nullable":false,"pk":false,"referred_column":null,"referred_table":null,"table":"manage_query","table_schema_id":618,"type":"VARCHAR(200)","updated_at":"2026-01-10T19:01:13.74475Z","user_id":1},"manage_query_conf":{"name":"manage_query_conf","label":"Query Config","ellipsis":30,"order":3,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"json","autoincrement":null,"comment":"Query Config","computed":null,"created_at":"2026-01-10T19:01:13.74475Z","db":"ETLX","default":null,"excluded":false,"field":"manage_query_conf","fk":false,"nullable":true,"pk":false,"referred_column":null,"referred_table":null,"table":"manage_query","table_schema_id":619,"type":"TEXT","updated_at":"2026-01-10T19:01:13.74475Z","user_id":1},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Active","computed":null,"created_at":"2026-01-10T19:01:13.74475Z","db":"ETLX","default":true,"excluded":false,"field":"active","fk":false,"nullable":true,"pk":false,"referred_column":null,"referred_table":null,"table":"manage_query","table_schema_id":620,"type":"BOOLEAN","updated_at":"2026-01-10T19:01:13.74475Z","user_id":1},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',2,1,'2026-01-11 08:14:51.307414988-01:00','2026-01-11 08:15:06.564902028-01:00',0);
+INSERT INTO "custom_form" VALUES (38,'deployment','SAAS','{"fields":{"deployment":{"name":"deployment","label":"Deployment","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment_desc":{"name":"deployment_desc","label":"Deployment Description","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"name":{"name":"name","label":"Product Name","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"provider":{"name":"provider","label":"Provider","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"terraform_template":{"name":"terraform_template","label":"Terraform Script","ellipsis":30,"order":6,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"terraform"},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":9,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',3,1,'2026-01-11 10:49:31.887664158-01:00','2026-01-11 10:49:31.887655849-01:00',0);
+INSERT INTO "custom_form" VALUES (39,'payment_plan','SAAS','{"fields":{"plan":{"name":"plan","label":"Plan","ellipsis":30,"order":1,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment":{"name":"deployment","label":"Deployment","ellipsis":30,"order":2,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"name":{"name":"name","label":"Product Name","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"price":{"name":"price","label":"Plan Price","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"currency":{"name":"currency","label":"Currency","ellipsis":30,"order":5,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"interval":{"name":"interval","label":"Interval","ellipsis":30,"order":6,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":true,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"stripe_price_id":{"name":"stripe_price_id","label":"Stripe Price ID","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":8,"display":true,"size":6,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":8,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',3,1,'2026-01-11 10:54:03.637971894-01:00','2026-01-11 10:54:03.637972659-01:00',0);
+INSERT INTO "custom_form" VALUES (40,'tenant','SAAS','{"fields":{"tenant":{"name":"tenant","label":"Tenant Name","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"email":{"name":"email","label":"Email","ellipsis":30,"order":3,"display":true,"size":8,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"password":{"name":"password","label":"Password","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":true,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"phone":{"name":"phone","label":"Phone","ellipsis":30,"order":5,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"address":{"name":"address","label":"Adress","ellipsis":30,"order":6,"display":true,"size":9,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"currency":{"name":"currency","label":"Currency","ellipsis":30,"order":7,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":8,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":10,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":8,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{"subscription":true,"env":true},"tabs_steps_conf":[]},"extra_options":[]}',3,1,'2026-01-11T10:55:37.981970418-01:00','2026-01-11 12:13:14.306850926-01:00',0);
+INSERT INTO "custom_form" VALUES (41,'env','SAAS','{"fields":{"env_name":{"name":"env_name","label":"Env Name","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"env_value":{"name":"env_value","label":"Env Value","ellipsis":30,"order":2,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"tenant":{"name":"tenant","label":"Tenant Name","ellipsis":30,"order":3,"display":true,"size":8,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":6,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',3,1,'2026-01-11T12:09:29.971689551-01:00','2026-01-11 12:10:54.437035371-01:00',0);
+INSERT INTO "custom_form" VALUES (42,'subscription','SAAS','{"fields":{"tenant":{"name":"tenant","label":"Tenant Name","ellipsis":30,"order":1,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"plan":{"name":"plan","label":"Plan","ellipsis":30,"order":2,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment":{"name":"deployment","label":"Deployment","ellipsis":30,"order":3,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"product":{"name":"product","label":"Product Name","ellipsis":30,"order":4,"display":true,"size":4,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":true,"required":true,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"terraform_outputs":{"name":"terraform_outputs","label":"Terraform Outputs","ellipsis":30,"order":5,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"json"},"tf_public_ip":{"name":"tf_public_ip","label":"Terraform Public IP","ellipsis":30,"order":6,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"tf_public_dns":{"name":"tf_public_dns","label":"Terraform Public DNS","ellipsis":30,"order":7,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployed":{"name":"deployed","label":"Deployed","ellipsis":30,"order":8,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":9,"display":true,"size":3,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"terraform_state":{"name":"terraform_state","label":"Terraform State","ellipsis":30,"order":10,"display":true,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"code":"json"},"stripe_subscription_id":{"name":"stripe_subscription_id","label":"Stripe Subscription ID","ellipsis":30,"order":11,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":12,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":13,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":14,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":15,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":16,"display":false,"size":12,"sizelg":12,"sizemd":12,"sizesm":12,"sizexs":12,"autocomplete":false,"required":false,"att":false,"number":false,"password":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"tabs_steps":"tabs","form_in_popup":false,"size":8,"sub_form_size":null,"sub_form_limit":5,"allow_in_subform":{},"tabs_steps_conf":[]},"extra_options":[]}',3,1,'2026-01-11T12:17:22.899229417-01:00','2026-01-11 20:46:10.752724633-01:00',0);
+INSERT INTO "custom_table" VALUES (1,'app','ADMIN','{"fields":{"app":{"name":"app","label":"App Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"App Name","computed":null,"created_at":"2024-10-02T09:20:21.995101Z","db":"ADMIN","default":null,"excluded":false,"field":"app","pk":false,"referred_column":null,"referred_table":null,"table":"app","table_schema_id":37,"type":"VARCHAR(20)","updated_at":"2024-10-02T09:20:21.995101Z","user_id":1},"app_desc":{"name":"app_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Description","computed":null,"created_at":"2024-10-02T09:20:21.995101Z","db":"ADMIN","default":null,"excluded":false,"field":"app_desc","pk":false,"referred_column":null,"referred_table":null,"table":"app","table_schema_id":38,"type":"TEXT","updated_at":"2024-10-02T09:20:21.995101Z","user_id":1},"version":{"name":"version","label":"Version","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Version","computed":null,"created_at":"2024-10-02T09:20:21.995101Z","db":"ADMIN","default":null,"excluded":false,"field":"version","pk":false,"referred_column":null,"referred_table":null,"table":"app","table_schema_id":39,"type":"VARCHAR(10)","updated_at":"2024-10-02T09:20:21.995101Z","user_id":1},"db":{"name":"db","label":"Database","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Database","computed":null,"created_at":"2024-10-02T09:20:21.995101Z","db":"ADMIN","default":null,"excluded":false,"field":"db","pk":false,"referred_column":null,"referred_table":null,"table":"app","table_schema_id":41,"type":"VARCHAR(20)","updated_at":"2024-10-02T09:20:21.995101Z","user_id":1},"email":{"name":"email","label":"Email","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Email","computed":null,"created_at":"2024-10-02T09:20:21.995101Z","db":"ADMIN","default":null,"excluded":false,"field":"email","pk":false,"referred_column":null,"referred_table":null,"table":"app","table_schema_id":40,"type":"VARCHAR(200)","updated_at":"2024-10-02T09:20:21.995101Z","user_id":1},"attach_logo":{"name":"attach_logo","label":"Logo","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":true,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Logo","computed":null,"created_at":"2024-10-02T09:20:21.995101Z","db":"ADMIN","default":null,"excluded":false,"field":"attach_logo","pk":false,"referred_column":null,"referred_table":null,"table":"app","table_schema_id":42,"type":"VARCHAR(200)","updated_at":"2024-10-02T09:20:21.995101Z","user_id":1},"config":{"name":"config","label":"Config","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":8,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":"DD/MM/YY","regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{"menu":true},"default_order":[{"field":"app_id","order":"DESC"}],"exec_button":{"callApi":false,"api":"cron","tooltip":"Run Job","icon":"play"}},"extra_options":[{"size":12,"component":"AdminApps","label":"admin_apps","data":"{     \"profile\": false,     \"actions\": [         {             \"type\": \"btn\",             \"icon\": \"refresh\",             \"name\": \"REFRESH\",             \"class\": \"btn-sm text-info\",             \"label\": \"crud.refresh\",             \"action\": null         },         {             \"type\": \"btn\",             \"icon\": \"save\",             \"name\": \"SAVE\",             \"class\": \"btn-sm text-info\",             \"label\": \"crud.save\",             \"action\": null         }     ] }","icon":"cog","pop_up":false,"main":true}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (2,'menu','ADMIN','{"fields":{"menu":{"name":"menu","label":"Menu","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(20)","default":null,"autoincrement":"auto","comment":"Menu","computed":null},"menu_desc":{"name":"menu_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"pk":false,"type":"TEXT","default":null,"autoincrement":"auto","comment":"Description","computed":null},"menu_icon":{"name":"menu_icon","label":"Icon","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(20)","default":null,"autoincrement":"auto","comment":"Icon","computed":null},"menu_order":{"name":"menu_order","label":"Order","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","default":null,"autoincrement":"auto","comment":"Order","computed":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null,"pk":false,"type":"TEXT","default":null,"autoincrement":"auto","comment":"Config","computed":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":6,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","default":null,"autoincrement":"auto","comment":"App Name","computed":null,"ref":{"name":null,"referred_schema":null,"referred_table":"app","options":{},"constrained_column":"app_id","referred_column":"app_id","referred_columns_desc":"app"},"org_name":"app","referred_table":"app","referred_column":"app_id"},"active":{"name":"active","label":"Active","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"BOOLEAN","default":null,"autoincrement":"auto","comment":"Active","computed":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":8,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","default":null,"autoincrement":"auto","comment":"Username","computed":null,"ref":{"name":null,"referred_schema":null,"referred_table":"users","options":{},"constrained_column":"user_id","referred_column":"user_id","referred_columns_desc":"username"},"org_name":"username","referred_table":"users","referred_column":"user_id"},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"menu_config":{"name":"menu_config","label":"menu_config","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{"menu_table":true},"default_order":[{"field":"menu_order","order":"ASC"}],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (3,'user_log','ADMIN','{"fields":{"username":{"name":"username","label":"Username","ellipsis":30,"order":1,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"action":{"name":"action","label":"Action","ellipsis":"30","order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"req_ip":{"name":"req_ip","label":"Request IP","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"req_at":{"name":"req_at","label":"Request Time","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":"YY/MM/DD HH:mm","regex_val":null,"use_label":true},"req_data":{"name":"req_data","label":"req_data","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"res_at":{"name":"res_at","label":"Response Time","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":"YY/MM/DD HH:mm","regex_val":null,"use_label":true},"res_type":{"name":"res_type","label":"Response Type","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"res_msg":{"name":"res_msg","label":"Response Msg","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"res_data":{"name":"res_data","label":"res_data","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"table":{"name":"table","label":"Table","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"db":{"name":"db","label":"Database","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"row_id":{"name":"row_id","label":"Database","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":13,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"new_data":{"name":"new_data","label":"New Data","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":16,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":17,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[{"field":"user_log_id","order":"DESC"}],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (4,'lang','ADMIN','{"fields":{"lang":{"name":"lang","label":"Language","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"lang_desc":{"name":"lang_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":3,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":4,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[]},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (5,'custom_table','ADMIN',NULL,1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (6,'users','ADMIN','{"fields":{"username":{"name":"username","label":"Username","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"first_name":{"name":"first_name","label":"Fisrt Name","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"last_name":{"name":"last_name","label":"Last Name","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"email":{"name":"email","label":"Email","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"phone":{"name":"phone","label":"Phone","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"password":{"name":"password","label":"Password","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"role":{"name":"role","label":"Role","ellipsis":30,"order":7,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"lang":{"name":"lang","label":"Language","ellipsis":30,"order":8,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"timezone":{"name":"timezone","label":"Timezone","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"attach_profile_pic":{"name":"attach_profile_pic","label":"Profile Picture","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":true,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"preview":true},"active":{"name":"active","label":"Active","ellipsis":30,"order":11,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":12,"component":"AdminApps","label":"permissions","data":"{\n  \"profile\": true,\n  \"user_rla\": true,\n  \"actions\": [\n    {\n      \"type\": \"btn\",\n      \"icon\": \"refresh\",\n      \"name\": \"REFRESH\",\n      \"class\": \"btn-sm text-info\",\n      \"label\": \"crud.refresh\",\n      \"action\": null\n    },\n    {\n      \"type\": \"btn\",\n      \"icon\": \"save\",\n      \"name\": \"SAVE\",\n      \"class\": \"btn-sm text-info\",\n      \"label\": \"crud.save\",\n      \"action\": null\n    }\n  ]\n}\n","pop_up":true,"main":true,"icon":"key"}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (7,'role','ADMIN','{"fields":{"role":{"name":"role","label":"Role","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"role_desc":{"name":"role_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"config":{"name":"config","label":"Config","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":true,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":4,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":12,"component":"AdminApps","label":"permissions","data":"{     \"profile\": true,     \"actions\": [         {             \"type\": \"btn\",             \"icon\": \"refresh\",             \"name\": \"REFRESH\",             \"class\": \"btn-sm text-info\",             \"label\": \"crud.refresh\",             \"action\": null         },         {             \"type\": \"btn\",             \"icon\": \"save\",             \"name\": \"SAVE\",             \"class\": \"btn-sm text-info\",             \"label\": \"crud.save\",             \"action\": null         }     ] }","icon":"key","pop_up":true,"main":true}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (8,'table','ADMIN','{"fields":{"table":{"name":"table","label":"Table","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"table_desc":{"name":"table_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"db":{"name":"db","label":"Database","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"requires_rla":{"name":"requires_rla","label":"Row Level Access","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":false,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (9,'etl_report_base','ADMIN','{"fields":{"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base_desc":{"name":"etl_report_base_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"attach_etl_rbase_doc":{"name":"attach_etl_rbase_doc","label":"Documentation","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":true,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"periodicity":{"name":"periodicity","label":"Periodicity","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"includes_data_quality":{"name":"includes_data_quality","label":"Includes Data Quality","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"includes_data_reconci":{"name":"includes_data_reconci","label":"Includes Data Reconc.","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"includes_exports":{"name":"includes_exports","label":"Includes Exports","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base_conf":{"name":"etl_report_base_conf","label":"Config","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":11,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":12,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"includes_notify":{"name":"includes_notify","label":"Includes Notify","ellipsis":30,"order":16,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"includes_backup":{"name":"includes_backup","label":"Includes Backup","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true}},"layout":{"allow_in_submenu":{"etl_rbase_input":true,"etl_rbase_output":true},"default_order":[],"allow_import":false},"extra_options":[{"size":12,"component":"ETLReportBase","intercept_r":false,"icon":"circle-stack","data":"{   \"actions\": [     {       \"type\": \"btn\",       \"icon\": \"refresh\",       \"name\": \"REFRESH\",       \"class\": \"btn-sm text-info\",       \"label\": \"crud.refresh\",       \"action\": null     },         {         \"type\": \"btn\",         \"icon\": \"bolt\",         \"name\": \"RUN_ALL\",         \"class\": \"btn-sm text-info\",         \"label\": \"crud.run_all\",         \"action\": null       }   ] }","label":"etl_report_base","pop_up":false,"main":true}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (10,'etl_rbase_input','ADMIN','{"fields":{"etl_rbase_input":{"name":"etl_rbase_input","label":"Input","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_input_desc":{"name":"etl_rbase_input_desc","label":"Input Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"input_type":{"name":"input_type","label":"Input Type","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"save_only_temp":{"name":"save_only_temp","label":"Save only temp","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"replace_existing_data":{"name":"replace_existing_data","label":"Replace existing data","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"check_ref_date":{"name":"check_ref_date","label":"Check ref. date","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"ref_date_field":{"name":"ref_date_field","label":"Ref. date field","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"date_format_org":{"name":"date_format_org","label":"Date Format in origin","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"other_date_fields":{"name":"other_date_fields","label":"Other Date Fields","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"ref_id_keys":{"name":"ref_id_keys","label":"Reference / Id Keys","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"last_update_date_field":{"name":"last_update_date_field","label":"Last update date field","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"incremental_extract":{"name":"incremental_extract","label":"Incremental Extraction","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"destination_table":{"name":"destination_table","label":"Destination Table","ellipsis":30,"order":14,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"allow_import":{"name":"allow_import","label":"Allow Import","ellipsis":30,"order":16,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"multiple_sheets":{"name":"multiple_sheets","label":"Multiple Sheets","ellipsis":30,"order":17,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"specific_sheets":{"name":"specific_sheets","label":"Specific Sheets","ellipsis":30,"order":18,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"columns_to_import":{"name":"columns_to_import","label":"Columns to Import","ellipsis":30,"order":19,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"txt_fix_format_layout":{"name":"txt_fix_format_layout","label":"Text with fixed format Layout","ellipsis":30,"order":20,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"headers":{"name":"headers","label":"Headers","ellipsis":30,"order":21,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"spreadsheet_forms":{"name":"spreadsheet_forms","label":"Spreadsheet Forms","ellipsis":30,"order":22,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"spreadsheet_forms_map":{"name":"spreadsheet_forms_map","label":"Spreadsheet Forms Map","ellipsis":30,"order":23,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_input_conf":{"name":"etl_rbase_input_conf","label":"Config","ellipsis":30,"order":24,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":25,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":26,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":27,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":28,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":29,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":30,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (11,'etl_rbase_output','ADMIN','{"fields":{"etl_rbase_output":{"name":"etl_rbase_output","label":"Output","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","default":null,"autoincrement":null,"comment":"Output","computed":null},"etl_rbase_output_desc":{"name":"etl_rbase_output_desc","label":"Output Description","ellipsis":30,"order":2,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"output_type":{"name":"output_type","label":"Souce Type","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"INTEGER","default":null,"autoincrement":null,"comment":"Souce Type","computed":null,"ref":{"name":null,"referred_schema":null,"referred_table":"output_type","options":{},"constrained_column":"output_type_id","referred_column":"output_type_id","referred_columns_desc":"output_type"},"org_name":"output_type","referred_table":"output_type","referred_column":"output_type_id"},"date_field":{"name":"date_field","label":"Date field","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","default":null,"autoincrement":null,"comment":"Date field","computed":null},"destination_table":{"name":"destination_table","label":"Destination Table","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"VARCHAR(200)","default":null,"autoincrement":null,"comment":"Destination Table","computed":null},"output_order":{"name":"output_order","label":"Order","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"database":{"name":"database","label":"Database","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_output_conf":{"name":"etl_rbase_output_conf","label":"Config","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"pk":false,"type":"BOOLEAN","default":null,"autoincrement":null,"comment":"Active","computed":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":11,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":12,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{"etl_rb_output_field":true},"default_order":[{"field":"output_order","order":"ASC"},{"field":"etl_rbase_output_id","order":"ASC"}],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (12,'etl_rbase_quality','ADMIN','{"fields":{"etl_rbase_quality":{"name":"etl_rbase_quality","label":"Data Quality Rule","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_quality_desc":{"name":"etl_rbase_quality_desc","label":"Rule Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_quality_check":{"name":"sql_quality_check","label":"SQL Quality Check","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_quality_fix":{"name":"sql_quality_fix","label":"SQL Quality Fix","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"comments":{"name":"comments","label":"Comments / Justifications","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"fields":{"name":"fields","label":"Fields","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"tables":{"name":"tables","label":"Tables","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":11,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":12,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (13,'etl_rb_reconcilia','ADMIN','{"fields":{"etl_rb_reconcilia":{"name":"etl_rb_reconcilia","label":"Data Reconciliation Rule","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_reconcilia_desc":{"name":"etl_rb_reconcilia_desc","label":"Rule Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_reconcilia_val1":{"name":"sql_reconcilia_val1","label":"SQL Reconcil. Value 1","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_reconcilia_val2":{"name":"sql_reconcilia_val2","label":"SQL Reconcil. Value 2","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_reconcilia_diff":{"name":"sql_reconcilia_diff","label":"SQL Reconcil. Diff.","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"comments":{"name":"comments","label":"Comments / Justifications","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":10,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":11,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (14,'etl_rbase_export','ADMIN','{"fields":{"etl_rbase_export":{"name":"etl_rbase_export","label":"Export","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_export_desc":{"name":"etl_rbase_export_desc","label":"Export Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":3,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"export_type":{"name":"export_type","label":"Export Type","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"attach_file_template":{"name":"attach_file_template","label":"File name / Template","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":true,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"txt_fix_format_layout":{"name":"txt_fix_format_layout","label":"Text with fixed format Layout","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rbase_export_conf":{"name":"etl_rbase_export_conf","label":"Config","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":9,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":10,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (15,'etl_report_base_log','ADMIN','{"fields":{"type":{"name":"type","label":"Type","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"name":{"name":"name","label":"Name","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"ref":{"name":"ref","label":"Ref. Date","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"start":{"name":"start","label":"Started At","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"timer":{"name":"timer","label":"Duration","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"success":{"name":"success","label":"Sucess","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"msg":{"name":"msg","label":"Response","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"num_rows":{"name":"num_rows","label":"Affected Rows","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"errors":{"name":"errors","label":"Errors","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"fixes":{"name":"fixes","label":"Automated Fixes","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"fname":{"name":"fname","label":"Generated Files","ellipsis":30,"order":11,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":12,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":13,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":16,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (16,'manage_query','ADMIN','{"fields":{"manage_query":{"name":"manage_query","label":"Query Desc","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"manage_query_conf":{"name":"manage_query_conf","label":"Query Config","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":6,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":11,"component":"DBExplorer","label":"explore_db","intercept_c":true,"intercept_u":true,"data":"{     \"actions\": [         {             \"type\": ''btn'',              \"icon\": ''refresh'',              \"name\": ''REFRESH'',              \"class\": ''btn-sm text-info'',              \"label\": ''crud.refresh'',              \"action\": null         },     ] }","icon":"circle-stack","main":true}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (17,'etl_rb_output_field','ADMIN','{"fields":{"etl_rb_output_field":{"name":"etl_rb_output_field","label":"Field","ellipsis":"20","order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_output_field_desc":{"name":"etl_rb_output_field_desc","label":"Field Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_rbase_output":{"name":"etl_rbase_output","label":"Output","ellipsis":30,"order":3,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_select":{"name":"sql_select","label":"SELECT","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_from":{"name":"sql_from","label":"FROM","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_join":{"name":"sql_join","label":"JOIN","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_where":{"name":"sql_where","label":"WHERE","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_group_by":{"name":"sql_group_by","label":"GROUP BY","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_order_by":{"name":"sql_order_by","label":"ORDER BY","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_window":{"name":"sql_window","label":"WINDOW","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"sql_having":{"name":"sql_having","label":"HAVING","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"field_order":{"name":"field_order","label":"Field Order","ellipsis":30,"order":12,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"fields_used":{"name":"fields_used","label":"Fields Used","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":14,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":15,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":16,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":17,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":18,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":19,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":20,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":8,"component":"ImportFields","icon":"arrow-up-on-square","main":true,"pop_up":false,"label":"import_fields","not_row_centred":true,"data":"{   \"key\": \"etl_rb_output_field\",   \"etl_rb_output_field\": [\"name\", \"field_name\", \"nome\"],   \"etl_rb_output_field_desc\": [     \"field_desc\",     \"desc\",     \"description\",     \"descrição\",     \"descricao\"   ],   \"actions\": [     {       \"type\": \"btn\",       \"icon\": \"refresh\",       \"name\": \"REFRESH\",       \"class\": \"btn-sm text-info\",       \"label\": \"crud.refresh\",       \"action\": null     },     {       \"type\": \"btn\",       \"icon\": \"save\",       \"name\": \"SAVE\",       \"class\": \"btn-sm text-info\",       \"label\": \"crud.save\",       \"action\": null     }   ] }"}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (18,'etl_rb_reconc_dtail','ADMIN','{"fields":{"etl_rb_reconc_dtail":{"name":"etl_rb_reconc_dtail","label":"Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"etl_rb_reconc_dtail_desc":{"name":"etl_rb_reconc_dtail_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"etl_rb_reconc_dtail_row":{"name":"etl_rb_reconc_dtail_row","label":"Row","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"etl_rb_reconc_dtail_col":{"name":"etl_rb_reconc_dtail_col","label":"Column","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"is_eval_formula":{"name":"is_eval_formula","label":"Is Eval Formula","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"sql_reconcilia_query":{"name":"sql_reconcilia_query","label":"SQL Query / Formula","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null,"use_label":true},"etl_rb_reconcilia":{"name":"etl_rb_reconcilia","label":"Data Reconciliation Rule","ellipsis":30,"order":7,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":false},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":8,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"active","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":10,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":11,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"created_at","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"updated_at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"excluded","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (19,'etl_rb_exp_dtail','ADMIN','{"fields":{"etl_rb_exp_dtail":{"name":"etl_rb_exp_dtail","label":"Export Detail","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_exp_dtail_desc":{"name":"etl_rb_exp_dtail_desc","label":"Export Detail Description","ellipsis":30,"order":2,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etl_rbase_export":{"name":"etl_rbase_export","label":"Export","ellipsis":30,"order":3,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":4,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"sql_export_query":{"name":"sql_export_query","label":"Export SQL Query","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"txt_fix_format_layout":{"name":"txt_fix_format_layout","label":"Text with fixed format Layout","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"dest_sheet_name":{"name":"dest_sheet_name","label":"Dest. Sheet Name","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dest_table_name":{"name":"dest_table_name","label":"Dest. Table Name","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_rb_exp_dtail_conf":{"name":"etl_rb_exp_dtail_conf","label":"Config","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":11,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":12,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":13,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":16,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (20,'task','ADMIN','{"fields":{"task":{"name":"task","label":"Task","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"task_desc":{"name":"task_desc","label":"Description","ellipsis":30,"order":2,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"starts_at":{"name":"starts_at","label":"Starts at","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"ends_at":{"name":"ends_at","label":"Ends at","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"calendar":{"name":"calendar","label":"Calendar","ellipsis":30,"order":5,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_color":{"name":"calendar_color","label":"Calendar Color","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_email":{"name":"calendar_email","label":"Email","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"task_status":{"name":"task_status","label":"Status","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"attach_task":{"name":"attach_task","label":"Attachment","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":true,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"repeat":{"name":"repeat","label":"Repeat","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"repeat_type":{"name":"repeat_type","label":"Type of Repetition","ellipsis":30,"order":11,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"days_of_week":{"name":"days_of_week","label":"Dias de Semana","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"repeat_start_time":{"name":"repeat_start_time","label":"Hora starts_at Repetição","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"repeat_end_date":{"name":"repeat_end_date","label":"Data ends_at Repetição","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"repeat_end_time":{"name":"repeat_end_time","label":"Hora ends_at Repetição","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":16,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":17,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":18,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":19,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":20,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":21,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"repeat_start_date":{"name":"repeat_start_date","label":"repeat_start_date","ellipsis":30,"order":13,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":12,"component":"Calendar","label":"view_calendar","icon":"calendar-days","intercept_c":false,"not_row_centred":true,"main":true,"intercept_r":true,"data":"{   \"id\": \"task_id\",   \"groupId\": \"task_id\",   \"allDay\": null,   \"title\": \"task\",   \"start\": \"starts_at\",   \"end\": \"ends_at\",   \"description\": \"task_desc\",   \"backgroundColor\": \"calendar_color\",   \"calendar\": {     \"table\": \"calendar\",     \"id\": \"calendar_id\",     \"label\": \"calendar\",     \"color\": \"calendar_color\"   },   \"repeat\": \"repeat\",   \"repeatType\": \"repeat_type_id\",   \"daysOfWeek\": \"days_of_week\",   \"startRecur\": \"repeat_start_date\",   \"startTime\": \"repeat_start_time\",   \"endRecur\": \"repeat_end_date\",   \"endTime\": \"repeat_end_time\",   \"notify\": true }","intercept_d":false}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (21,'dashboard','ADMIN','{"fields":{"dashboard":{"name":"dashboard","label":"dashboard","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"dashboard_desc":{"name":"dashboard_desc","label":"dashboard_desc","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"dashboard_conf":{"name":"dashboard_conf","label":"dashboard_conf","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"order":{"name":"order","label":"order","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"active","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":6,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":7,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"created_at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"updated_at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"excluded","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":12,"component":"EvidenceDash","label":"dashboard","intercept_r":true}]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (22,'task_track','ADMIN','{"fields":{"task_track":{"name":"task_track","label":"Status Update","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"task_track_desc":{"name":"task_track_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"task_track_date":{"name":"task_track_date","label":"Date","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"task_status":{"name":"task_status","label":"Status","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"attach_task_track":{"name":"attach_task_track","label":"Attachment","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":true,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"task":{"name":"task","label":"task","ellipsis":30,"order":6,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":7,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":8,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (23,'calendar','ADMIN','{"fields":{"calendar":{"name":"calendar","label":"Calendar","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_desc":{"name":"calendar_desc","label":"Description","ellipsis":30,"order":2,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"calendar_email":{"name":"calendar_email","label":"Email","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"calendar_color":{"name":"calendar_color","label":"Calendar Color","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":5,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app":{"name":"app","label":"App Name","ellipsis":30,"order":6,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (24,'user_role','ADMIN','{"fields":{"username":{"name":"username","label":"Username","ellipsis":30,"order":1,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"role":{"name":"role","label":"Perfil","ellipsis":30,"order":2,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":4,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (25,'etl_rbase_backup','ADMIN','{"fields":{"backup":{"name":"backup","label":"Backup","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"backup_sql":{"name":"backup_sql","label":"SQL","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"backup_copy_to":{"name":"backup_copy_to","label":"Copy","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"backup_copy_path":{"name":"backup_copy_path","label":"Path","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"link":true},"backup_conf":{"name":"backup_conf","label":"Conf","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":7,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":8,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (26,'etl_rbase_notify','ADMIN','{"fields":{"notify_subject":{"name":"notify_subject","label":"Subject","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_body":{"name":"notify_body","label":"Body","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"notify_to":{"name":"notify_to","label":"Mail TO","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_cc":{"name":"notify_cc","label":"Mail CC","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_attach_exports":{"name":"notify_attach_exports","label":"Attach Exports","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_copy_exports_to":{"name":"notify_copy_exports_to","label":"Copy Exports","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_copy_exports_path":{"name":"notify_copy_exports_path","label":"Copy Exports Path","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notify_conf":{"name":"notify_conf","label":"Conf","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"send_email":{"name":"send_email","label":"Send Mail","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"use_label":true},"etl_report_base":{"name":"etl_report_base","label":"ETL / Report / Base","ellipsis":30,"order":11,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":12,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (27,'cron','ADMIN','{"fields":{"cron":{"name":"cron","label":"Cron","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"cron_desc":{"name":"cron_desc","label":"Decription","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"api":{"name":"api","label":"API","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":true,"api":"cron/run","tooltip":"Run Backup","icon":"play"}},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (28,'cron_log','ADMIN','{"fields":{"cron":{"name":"cron","label":"Cron","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"cron_desc":{"name":"cron_desc","label":"Decription","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"api":{"name":"api","label":"API","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"start_at":{"name":"start_at","label":"Job Start","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"end_at":{"name":"end_at","label":"Job End","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"success":{"name":"success","label":"Success","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"cron_msg":{"name":"cron_msg","label":"Message","ellipsis":"50","order":7,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[{"field":"start_at","order":"DESC"}],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',1,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "custom_table" VALUES (29,'etlx','ETLX','{"fields":{"etl":{"name":"etl","label":"Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etl_desc":{"name":"etl_desc","label":"Description","ellipsis":"40","order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"attach_etlx_conf":{"name":"attach_etlx_conf","label":"Config File","ellipsis":30,"order":3,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":true,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etlx_conf":{"name":"etlx_conf","label":"Config Text","ellipsis":"90","order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":11,"component":"ETLX","label":"etlx","main":true,"icon":"play","data":"{   \"actions\": [     {       \"type\": \"btn\",       \"icon\": \"refresh\",       \"name\": \"REFRESH\",       \"class\": \"btn-sm text-info\",       \"label\": \"crud.refresh\",       \"action\": null     },     {       \"type\": \"btn\",       \"icon\": \"bolt\",       \"name\": \"RUN_ALL\",       \"class\": \"btn-sm text-info\",       \"label\": \"crud.run_all\",       \"action\": null     }   ] }"}]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_table" VALUES (30,'etlx_conf','ETLX','{"fields":{"etlx_conf":{"name":"etlx_conf","label":"Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"etlx_conf_desc":{"name":"etlx_conf_desc","label":"Description","ellipsis":"90","order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"etlx_extra_conf":{"name":"etlx_extra_conf","label":"Config Text","ellipsis":"90","order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":4,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_table" VALUES (31,'dashboard','ETLX','{"fields":{"dashboard":{"name":"dashboard","label":"Dashboard","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Dashboard","computed":null,"created_at":"2025-03-05T15:28:31.401483Z","db":"ETLX","default":null,"excluded":false,"field":"dashboard","pk":false,"referred_column":null,"referred_table":null,"table":"dashboard","table_schema_id":2394,"type":"VARCHAR(200)","updated_at":"2025-03-05T15:28:31.401483Z","user_id":1},"dashboard_desc":{"name":"dashboard_desc","label":"Description","ellipsis":"40","order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Description","computed":null,"created_at":"2025-03-05T15:28:31.401483Z","db":"ETLX","default":null,"excluded":false,"field":"dashboard_desc","pk":false,"referred_column":null,"referred_table":null,"table":"dashboard","table_schema_id":2395,"type":"TEXT","updated_at":"2025-03-05T15:28:31.401483Z","user_id":1},"dashboard_conf":{"name":"dashboard_conf","label":"Conf / Params","ellipsis":"60","order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Conf / Params","computed":null,"created_at":"2025-03-05T15:28:31.401483Z","db":"ETLX","default":null,"excluded":false,"field":"dashboard_conf","pk":false,"referred_column":null,"referred_table":null,"table":"dashboard","table_schema_id":2396,"type":"TEXT","updated_at":"2025-03-05T15:28:31.401483Z","user_id":1},"order":{"name":"order","label":"Order","ellipsis":"10","order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Order","computed":null,"created_at":"2025-03-05T15:28:31.401483Z","db":"ETLX","default":null,"excluded":false,"field":"order","pk":false,"referred_column":null,"referred_table":null,"table":"dashboard","table_schema_id":2397,"type":"INTEGER","updated_at":"2025-03-05T15:28:31.401483Z","user_id":1},"active":{"name":"active","label":"Active","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Active","computed":null,"created_at":"2025-03-05T15:28:31.401483Z","db":"ETLX","default":true,"excluded":false,"field":"active","pk":false,"referred_column":null,"referred_table":null,"table":"dashboard","table_schema_id":2398,"type":"BOOLEAN","updated_at":"2025-03-05T15:28:31.401483Z","user_id":1},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false},"extra_options":[{"size":12,"component":"EvidenceDash","intercept_r":true,"label":"dashboard"}]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_table" VALUES (32,'notebook','ETLX','{"fields":{"notebook":{"name":"notebook","label":"Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"notebook_desc":{"name":"notebook_desc","label":"Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"notebook_conf":{"name":"notebook_conf","label":"Conf / Params","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[{"size":12,"component":"Notebook","label":"notebook","intercept_r":true,"icon":"book-open"}]}',2,1,'2025-11-05 19:01:44.683366','2025-11-05 19:01:44.683366',0);
+INSERT INTO "custom_table" VALUES (33,'access_key','ADMIN','{"fields":{"access_key_desc":{"name":"access_key_desc","label":"Description","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Description","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"access_key_desc","pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":696,"type":"VARCHAR(200)","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"access_token":{"name":"access_token","label":"Token","ellipsis":"70","order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Token","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"access_token","pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":697,"type":"TEXT","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"expires_at":{"name":"expires_at","label":"Expires at","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Expires at","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"expires_at","pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":698,"type":"DATETIME","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Active","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":true,"excluded":false,"field":"active","pk":false,"referred_column":null,"referred_table":null,"table":"access_key","table_schema_id":699,"type":"BOOLEAN","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1},"username":{"name":"username","label":"For","ellipsis":30,"order":5,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null,"autoincrement":null,"comment":"Username","computed":null,"created_at":"2026-01-10T06:36:38.574193Z","db":"ADMIN","default":null,"excluded":false,"field":"for_user_id","pk":false,"ref":{"referred_column":"users","referred_columns_desc":"username","referred_columns_desc_org":"username","referred_table":"users"},"referred_column":"users","referred_table":"users","table":"access_key","table_schema_id":700,"type":"INTEGER","updated_at":"2026-01-10T06:36:38.574193Z","user_id":1,"org_name":"username","use_label":true},"username2":{"name":"username2","ellipsis":30,"order":6,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[{"size":6,"component":"AccessKey","label":"accessKey","intercept_c":true,"intercept_u":true,"intercept_r":false,"data":"{     \"actions\": [         {\"type\": \"btn\", \"icon\": \"refresh\", \"name\": \"refresh\",  \"class\": \"btn-sm text-info\", \"label\": \"crud.refresh\", \"action\": null},         {\"type\": \"btn\", \"icon\": \"save\", \"name\": \"save\", \"class\": \"btn-sm text-info\", \"label\": \"crud.save\", \"action\": null },         {\"type\": \"icon\", \"icon\": \"cog-8-tooth\", \"name\": \"form_customization\", \"label\": \"crud.form_customization\", \"action\": null}     ] }","main":true,"icon":"key"}]}',1,1,'2026-01-10T09:31:53.035979949-01:00','2026-01-10 15:54:13.832302281-01:00',0);
+INSERT INTO "custom_table" VALUES (38,'product','SAAS','{"fields":{"product_id":{"name":"product_id","label":"Product ID","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"name":{"name":"name","label":"Product Name","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"description":{"name":"description","label":"Product Description","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11 08:06:40.82082708-01:00','2026-01-11 08:06:40.820824028-01:00',1);
+INSERT INTO "custom_table" VALUES (39,'deployment','SAAS','{"fields":{"deployment_id":{"name":"deployment_id","label":"Deployment ID","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment":{"name":"deployment","label":"Deployment","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment_desc":{"name":"deployment_desc","label":"Deployment Description","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"name":{"name":"name","label":"Product Name","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"provider":{"name":"provider","label":"Provider","ellipsis":30,"order":5,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"terraform_template":{"name":"terraform_template","label":"Terraform Script","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11 08:07:48.900819347-01:00','2026-01-11 08:07:48.90082557-01:00',0);
+INSERT INTO "custom_table" VALUES (40,'manage_query','ETLX','{"fields":{"manage_query":{"name":"manage_query","label":"Query Desc","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"database":{"name":"database","label":"Database","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"manage_query_conf":{"name":"manage_query_conf","label":"Query Config","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',2,1,'2026-01-11 08:13:22.576654198-01:00','2026-01-11 08:13:22.576655231-01:00',0);
+INSERT INTO "custom_table" VALUES (41,'payment_plan','SAAS','{"fields":{"plan":{"name":"plan","label":"Plan","ellipsis":30,"order":1,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment":{"name":"deployment","label":"Deployment","ellipsis":30,"order":2,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"name":{"name":"name","label":"Product Name","ellipsis":30,"order":3,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"price":{"name":"price","label":"Plan Price","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"currency":{"name":"currency","label":"Currency","ellipsis":30,"order":5,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"interval":{"name":"interval","label":"Interval","ellipsis":30,"order":6,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":true,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"stripe_price_id":{"name":"stripe_price_id","label":"Stripe Price ID","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11 10:51:58.224712114-01:00','2026-01-11 10:51:58.22470699-01:00',0);
+INSERT INTO "custom_table" VALUES (42,'tenant','SAAS','{"fields":{"name":{"name":"name","label":"Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"email":{"name":"email","label":"Email","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"password":{"name":"password","label":"Password","ellipsis":30,"order":3,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"phone":{"name":"phone","label":"Phone","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"address":{"name":"address","label":"Adress","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"currency":{"name":"currency","label":"Currency","ellipsis":30,"order":6,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11 10:54:37.912116954-01:00','2026-01-11 10:54:37.912118212-01:00',1);
+INSERT INTO "custom_table" VALUES (43,'subscription','SAAS','{"fields":{"name":{"name":"name","label":"Product Name","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"plan":{"name":"plan","label":"Plan","ellipsis":30,"order":2,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"deployment":{"name":"deployment","label":"Deployment","ellipsis":30,"order":3,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"terraform_outputs":{"name":"terraform_outputs","label":"Terraform Outputs","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"tf_public_ip":{"name":"tf_public_ip","label":"Terraform Public IP","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"tf_public_dns":{"name":"tf_public_dns","label":"Terraform Public DNS","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"terraform_state":{"name":"terraform_state","label":"Terraform State","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"deployed":{"name":"deployed","label":"Deployed","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"stripe_subscription_id":{"name":"stripe_subscription_id","label":"Stripe Subscription ID","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":13,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":14,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":16,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"tenant":{"name":"tenant","label":"Tenant Name","ellipsis":30,"order":1,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"product":{"name":"product","label":"Product Name","ellipsis":30,"order":4,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[{"size":4,"icon":"cloud-arrow-up","pop_up":true,"main":true,"component":"Deploy","label":"deploy","data":"{     \"actions\": [         {\"type\": \"btn\", \"icon\": \"cloud-arrow-down\", \"name\": \"cancel\", \"class\": \"btn-sm text-error\", \"label\": \"crud.cancel\", \"action\": null },         {\"type\": \"btn\", \"icon\": \"cloud-arrow-up\", \"name\": \"deploy\", \"class\": \"btn-sm text-success\", \"label\": \"crud.deploy\", \"action\": null}     ] }"}]}',3,1,'2026-01-11T10:58:17.182994071-01:00','2026-01-11 12:46:11.009265402-01:00',0);
+INSERT INTO "custom_table" VALUES (44,'table_schema','ADMIN','{"fields":{"db":{"name":"db","label":"Database","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"table":{"name":"table","label":"Table","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"field":{"name":"field","label":"Field","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"type":{"name":"type","label":"Type","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"comment":{"name":"comment","label":"Comment","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"pk":{"name":"pk","label":"Primary Key","ellipsis":30,"order":6,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"autoincrement":{"name":"autoincrement","label":"Auto Increment","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"nullable":{"name":"nullable","label":"Nullable","ellipsis":30,"order":8,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"computed":{"name":"computed","label":"Nullable","ellipsis":30,"order":9,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"default":{"name":"default","label":"Default","ellipsis":30,"order":10,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"fk":{"name":"fk","label":"Foreign  Key","ellipsis":30,"order":11,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"referred_table":{"name":"referred_table","label":"Ref. Table.","ellipsis":30,"order":12,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"referred_column":{"name":"referred_column","label":"Ref. Column","ellipsis":30,"order":13,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"username":{"name":"username","label":"Username","ellipsis":30,"order":14,"display":false,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":15,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":16,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":17,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',1,1,'2026-01-11 11:25:04.475354045-01:00','2026-01-11 11:25:04.475354783-01:00',0);
+INSERT INTO "custom_table" VALUES (45,'product','SAAS','{"fields":{"product":{"name":"product","label":"Product Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"description":{"name":"description","label":"Product Description","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":3,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":4,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11 12:04:29.829333031-01:00','2026-01-11 12:04:29.829333857-01:00',0);
+INSERT INTO "custom_table" VALUES (46,'tenant','SAAS','{"fields":{"tenant":{"name":"tenant","label":"Tenant Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"email":{"name":"email","label":"Email","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"password":{"name":"password","label":"Password","ellipsis":30,"order":3,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"phone":{"name":"phone","label":"Phone","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"address":{"name":"address","label":"Adress","ellipsis":30,"order":5,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"currency":{"name":"currency","label":"Currency","ellipsis":30,"order":6,"display":true,"fk":true,"autocomplete":true,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":7,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":10,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":11,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":12,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11T12:06:33.575489201-01:00','2026-01-11 12:34:23.231993769-01:00',0);
+INSERT INTO "custom_table" VALUES (47,'env','SAAS','{"fields":{"env_name":{"name":"env_name","label":"Env Name","ellipsis":30,"order":1,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"env_value":{"name":"env_value","label":"Env Value","ellipsis":30,"order":2,"display":true,"fk":false,"autocomplete":false,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":true,"date_format":null,"regex_val":null},"tenant":{"name":"tenant","label":"Tenant Name","ellipsis":30,"order":3,"display":true,"fk":true,"autocomplete":true,"nullable":false,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"active":{"name":"active","label":"Active","ellipsis":30,"order":4,"display":true,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"user_id":{"name":"user_id","label":"User ID","ellipsis":30,"order":5,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"app_id":{"name":"app_id","label":"App ID","ellipsis":30,"order":6,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null},"created_at":{"name":"created_at","label":"Created at","ellipsis":30,"order":7,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"updated_at":{"name":"updated_at","label":"Updated at","ellipsis":30,"order":8,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":true,"long_text":false,"date_format":null,"regex_val":null},"excluded":{"name":"excluded","label":"Excluded","ellipsis":30,"order":9,"display":false,"fk":false,"autocomplete":false,"nullable":true,"att":false,"number":false,"dec_places":null,"tous_sep":null,"intl_nformat":null,"date":false,"long_text":false,"date_format":null,"regex_val":null}},"layout":{"allow_in_submenu":{},"default_order":[],"allow_import":false,"exec_button":{"callApi":false,"api":"","tooltip":"","icon":""}},"extra_options":[]}',3,1,'2026-01-11 12:08:10.108718018-01:00','2026-01-11 12:08:10.108719172-01:00',0);
+INSERT INTO "dashboard" VALUES (1,'Unnamed Dashboard','Unnamed Dashboard','
+<!---DASHBOARD-->
+
+```config
+    "auto_refresh_every_n_seconds": null,  
+    "all_query_run_locally_in_ddb_wasm": false,
+    "pre_prepared_parquets_logs_table": "export_logs",
+    "pre_prepared_parquets_logs_sql": null,
+    "pre_prepared_parquets_logs_db": "ADMIN",
+    "pre_prepared_parquets_for_ddb_wasm": {
+        "ds_name": "path/to/parquet_file.parquet",
+        "or_ds_name": "parquet_file_to_match_latest_from_export_logs.parquet"
+    },
+    "replace_source_name_in_sql": {
+        "ds_name": "ds_x|ds_y"
+    },
+    "query_datasource": {
+        "ds_name": "ds_"
+    },
+    "disable_md": false,
+    "disable_code": false
+```
+
+<!---FILTERS SECTION-->
+
+```sql query_sample
+select ''Option 1'' as "label", 1 as "value"
+union
+select ''Option 2'' as "label", 2 as "value"
+```
+
+<Grid>
+    <GridItem width=''w-auto'' _type=''auto'' extra_cls=''p-1''>
+        <Dropdown data={query_sample} name=input_1 value=value label=label defaultValue="%" --no-input_label=''Dropdown Exemple''>
+            <DropdownOption value="%" valueLabel="All"/>
+        </Dropdown>
+    </GridItem>
+    <GridItem width=''w-auto'' _type=''auto'' extra_cls=''p-1 grow''/>
+    <GridItem width=''w-auto !align-bottom'' _type=''auto'' extra_cls=''p-1''>
+        <RadioButtons 
+            data={query_sample} 
+            name=input_2
+            value=value
+            label=label
+            defaultValue=nth_1
+            extra_cls=''btn-sm''
+        />
+    </GridItem>
+    {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
+    <GridItem width=''w-auto'' _type=''auto'' extra_cls=''p-1 text-left''>
+        <Button tooltip="Editar" name = "edit" action = "edit" label="" icon = "pencil" extra_cls=''btn-sm btn-gost'' />
+    </GridItem>
+    {/if}
+    {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
+    <GridItem width=''w-auto'' _type=''auto'' extra_cls=''p-1 text-left''>
+        <Button tooltip="Duplicar" name = "duplicate" action = "duplicate" label="" icon = "document-duplicate" extra_cls=''btn-sm btn-gost'' />
+    </GridItem>
+    {/if}
+    <GridItem width=''w-auto'' _type=''auto'' extra_cls=''p-1 text-left''>
+        <Button tooltip="Atualizar" name = "refresh" action = "refresh" label="" icon = "refresh" extra_cls=''btn-sm btn-gost'' />
+    </GridItem>
+    {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
+    <GridItem width=''w-auto'' _type=''auto'' extra_cls=''p-1 text-left''>
+        <Button tooltip="Detalhes" name = "details" action = "details" label="" icon = "ellipsis-vertical" extra_cls=''btn-sm btn-gost'' />
+    </GridItem>
+     {/if}
+</Grid>
+
+<!---DASHBOARD SECTION-->',1,1,1,1,'2026-01-10T18:15:49.345038757-01:00','2026-01-10 18:17:08.77310504-01:00',0);
+INSERT INTO "export_type" VALUES (1,'File','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "export_type" VALUES (2,'Template','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "input_type" VALUES (1,'Aux','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "input_type" VALUES (2,'Main','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "lang" VALUES (1,'en','English','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "menu" VALUES (1,'Admin','Admin','user-group',1,NULL,1,1,1,'2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "menu" VALUES (2,'Params',NULL,'adjustments',2,NULL,1,1,1,'2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "menu" VALUES (3,'Dashboards','Dashboards','document-report',0,'{"label": "dashboard", "tooltip": "dashboard_desc", "load_items": {"table": "dashboard", "tables": ["dashboard"]}}',1,1,1,'2025-11-05 18:55:34.015239','2025-11-05 18:55:34.015239',0);
+INSERT INTO "menu" VALUES (4,'Jobs Scheduling','Jobs Scheduling','clock',5,NULL,1,1,1,'2025-11-05 18:55:34.015239','2025-11-05 18:55:34.015239',0);
+INSERT INTO "menu" VALUES (5,'Dashboards','Dashboards','document-report',1,'{"label": "dashboard", "tooltip": "dashboard_desc", "load_items": {"table": "dashboard", "tables": ["dashboard"]}}',2,1,1,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu" VALUES (6,'ETLX','ETLX','circle-stack',2,NULL,2,1,1,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu" VALUES (7,'Notebook','Notebook','book-open',3,'{"label": "notebook", "tooltip": "notebook_desc", "load_items": {"table": "notebook", "tables": ["notebook"]}}',2,1,1,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu" VALUES (8,'Dashboards','Dashboards','document-report',1,'{"label": "dashboard", "tooltip": "dashboard_desc", "load_items": {"table": "dashboard", "tables": ["dashboard"]}}',3,1,1,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu" VALUES (9,'SASS','SASS','server-stack',2,NULL,3,1,1,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (1,3,42,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.944719186-01:00',0);
+INSERT INTO "menu_table" VALUES (2,1,5,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.945026853-01:00',0);
+INSERT INTO "menu_table" VALUES (3,1,6,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.945226097-01:00',0);
+INSERT INTO "menu_table" VALUES (4,1,2,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.945727137-01:00',0);
+INSERT INTO "menu_table" VALUES (5,1,3,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.945963458-01:00',0);
+INSERT INTO "menu_table" VALUES (6,1,12,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.946202389-01:00',0);
+INSERT INTO "menu_table" VALUES (7,1,13,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.946446611-01:00',0);
+INSERT INTO "menu_table" VALUES (8,1,14,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.946677703-01:00',0);
+INSERT INTO "menu_table" VALUES (9,1,7,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.946866163-01:00',0);
+INSERT INTO "menu_table" VALUES (10,2,1,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.94706409-01:00',0);
+INSERT INTO "menu_table" VALUES (11,4,21,1,1,1,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.947251953-01:00',0);
+INSERT INTO "menu_table" VALUES (12,4,22,1,1,0,NULL,NULL,'2025-11-05T18:55:34.015239Z','2026-01-11 11:24:15.947429056-01:00',0);
+INSERT INTO "menu_table" VALUES (13,5,53,2,1,1,0,NULL,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu_table" VALUES (14,6,50,2,1,1,0,NULL,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu_table" VALUES (15,6,51,2,1,1,0,NULL,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu_table" VALUES (16,6,52,2,1,1,0,NULL,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu_table" VALUES (17,7,55,2,1,1,0,NULL,'2025-11-05 19:01:54.055156','2025-11-05 19:01:54.055156',0);
+INSERT INTO "menu_table" VALUES (18,1,61,1,1,1,NULL,NULL,'2026-01-10T06:37:22.990039Z','2026-01-11 11:24:15.947820561-01:00',0);
+INSERT INTO "menu_table" VALUES (19,8,72,3,1,1,0,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (20,9,62,3,1,1,0,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (21,9,63,3,1,0,NULL,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (22,9,64,3,1,1,0,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (23,9,65,3,1,0,NULL,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (24,9,66,3,1,0,NULL,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (25,9,67,3,1,0,NULL,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (26,9,68,3,1,1,0,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (27,9,69,3,1,1,0,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (28,9,70,3,1,1,0,NULL,'2026-01-10 18:53:52.783348','2026-01-10 18:53:52.783348',0);
+INSERT INTO "menu_table" VALUES (29,6,74,2,1,NULL,NULL,NULL,'2026-01-10 19:02:29.175185','2026-01-10 19:02:29.175185',0);
+INSERT INTO "menu_table" VALUES (30,9,71,3,1,0,NULL,NULL,'2026-01-11 11:17:33.312376','2026-01-11 11:17:33.312376',0);
+INSERT INTO "menu_table" VALUES (31,1,20,1,1,1,NULL,NULL,'2026-01-11 11:24:15.94797838-01:00','2026-01-11 11:24:15.947979114-01:00',0);
+INSERT INTO "output_type" VALUES (1,'Table','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "output_type" VALUES (2,'View','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "periodicity" VALUES (1,'Daily','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "periodicity" VALUES (2,'Monthly','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "repeat_type" VALUES (1,'Daily',0);
+INSERT INTO "repeat_type" VALUES (2,'Weekly',0);
+INSERT INTO "repeat_type" VALUES (3,'Monthly',0);
+INSERT INTO "repeat_type" VALUES (4,'Anualy',0);
+INSERT INTO "role" VALUES (1,'root','Root role',NULL,'2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "role" VALUES (2,'no_role','No Role',NULL,0,0,0);
+INSERT INTO "source_type" VALUES (1,'File','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "source_type" VALUES (2,'Database','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "source_type" VALUES (3,'FTP','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "source_type" VALUES (4,'eMail','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "source_type" VALUES (5,'FileSystem','2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "table" VALUES (1,'lang','Languages','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (2,'role','Roles','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (3,'users','Users','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (4,'user_role','User Roles','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (5,'app','Applications','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (6,'menu','Menus','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (7,'table','Tables','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (8,'menu_table','Menu Tables','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (9,'role_app','Role Apps','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (10,'role_app_menu','Role App Menus','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (11,'role_app_menu_table','Role App Menu Tables','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (12,'user_log','User Logs','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (13,'custom_table','Custom Table','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (14,'custom_form','Custom Form','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (15,'role_row_level_access','Role Row Level Access','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (16,'column_level_access','Column Level Access','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (17,'row_level_access','Row Level Access','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (18,'translate_table','Translate Table','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (19,'translate_table_field','Translate Table Fields','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (20,'table_schema','Table Schema','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (21,'cron','Jobs scheduling','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (22,'cron_log','Jobs scheduling logs','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (23,'periodicity','Periodicity','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (24,'etl_report_base','DB | ETL | Report | Quality','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (25,'input_type','Input Type','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (26,'source_type','Source Type','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (27,'etl_rbase_input','Inputs','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (28,'output_type','Output Type','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (29,'etl_rbase_output','Outputs','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (30,'etl_rb_output_field','Output Fields','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (31,'etl_rbase_quality','Data Quality','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (32,'etl_rb_reconcilia','Data Reconciliation','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (33,'etl_rb_reconc_dtail','Data Reconciliation','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (34,'export_type','Export Type','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (35,'etl_rbase_export','Exports','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (36,'etl_rb_exp_dtail','Export Details','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (37,'etl_report_base_log','Logs DB | ETL | Report | Quality','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (38,'etl_rbase_notify','Notify','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (39,'etl_rbase_backup','Backups','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (40,'etl_rbase_script','Scripts','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (41,'manage_query','Queries','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (42,'dashboard','Dashboards','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (43,'dashboard_comment','Dashboards Comments','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (44,'calendar','Calendar','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (45,'task_status','Status','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (46,'repeat_type','Type of repetition','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (47,'task','Tasks','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (48,'task_track','Status Updates','ADMIN',NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table" VALUES (49,'sqlite_sequence','sqlite_sequence','ADMIN',0,1,'2025-11-05 18:59:37.868120764-01:00','2025-11-05 18:59:37.868120933-01:00',0);
+INSERT INTO "table" VALUES (50,'etlx','ETLX','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (51,'etlx_conf','ETLX Extra Cofig','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (52,'manage_query','Queries','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (53,'dashboard','Dashboards','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (54,'dashboard_comment','Dashboards Comments','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (55,'notebook','Notebooks','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (56,'sqlite_sequence','sqlite_sequence','ETLX',0,1,'2025-11-05 19:02:20.788376053-01:00','2025-11-05 19:02:20.788376286-01:00',0);
+INSERT INTO "table" VALUES (57,'NYC_TAXI','NYC_TAXI','ETLX_DATA',0,1,'2025-11-16 13:41:35.243038574-01:00','2025-11-16 13:41:35.243038891-01:00',0);
+INSERT INTO "table" VALUES (58,'PeadkHours','PeadkHours','ETLX_DATA',0,1,'2025-11-16 13:41:35.243039611-01:00','2025-11-16 13:41:35.243039731-01:00',0);
+INSERT INTO "table" VALUES (59,'VERSION','VERSION','ETLX_DATA',0,1,'2025-11-16 13:41:35.243040257-01:00','2025-11-16 13:41:35.243040375-01:00',0);
+INSERT INTO "table" VALUES (60,'etlx_logs','etlx_logs','ETLX_DATA',0,1,'2025-11-16 13:41:35.243040886-01:00','2025-11-16 13:41:35.243041019-01:00',0);
+INSERT INTO "table" VALUES (61,'access_key','Access Keys','ADMIN',NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table" VALUES (62,'product','Products','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (63,'provider','Cloud Provider','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (64,'deployment','Deployments','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (65,'currency','Currency','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (66,'plan','Plan','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (67,'interval','Intervals','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (68,'payment_plan','Payment Plans','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (69,'tenant','Tenants','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (70,'subscription','Subscriptions','SAAS',NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table" VALUES (71,'env','Envariomental Variables','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (72,'dashboard','Dashboards','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (73,'dashboard_comment','Dashboards Comments','SAAS',NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table" VALUES (74,'arrow_flight','Expose Arrow Flight','ETLX',NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table" VALUES (75,'sqlite_sequence','sqlite_sequence','SAAS',0,1,'2026-01-10 19:03:59.813686332-01:00','2026-01-10 19:03:59.813686495-01:00',0);
+INSERT INTO "table" VALUES (76,'product','product','ADMIN',0,1,'2026-01-11 11:18:19.550368421-01:00','2026-01-11 11:18:19.550368603-01:00',0);
+INSERT INTO "table" VALUES (77,'provider','provider','ADMIN',0,1,'2026-01-11 11:18:19.550369258-01:00','2026-01-11 11:18:19.550369339-01:00',0);
+INSERT INTO "table" VALUES (78,'currency','currency','ADMIN',0,1,'2026-01-11 11:18:19.550369911-01:00','2026-01-11 11:18:19.550370002-01:00',0);
+INSERT INTO "table" VALUES (79,'interval','interval','ADMIN',0,1,'2026-01-11 11:18:19.550370543-01:00','2026-01-11 11:18:19.55037062-01:00',0);
+INSERT INTO "table" VALUES (80,'deployment','deployment','ADMIN',0,1,'2026-01-11 11:18:19.550371164-01:00','2026-01-11 11:18:19.550371239-01:00',0);
+INSERT INTO "table" VALUES (81,'tenant','tenant','ADMIN',0,1,'2026-01-11 11:18:19.550371822-01:00','2026-01-11 11:18:19.55037191-01:00',0);
+INSERT INTO "table" VALUES (82,'plan','plan','ADMIN',0,1,'2026-01-11 11:18:19.550372513-01:00','2026-01-11 11:18:19.55037259-01:00',0);
+INSERT INTO "table" VALUES (83,'env','env','ADMIN',0,1,'2026-01-11 11:18:19.550373089-01:00','2026-01-11 11:18:19.550373166-01:00',0);
+INSERT INTO "table" VALUES (84,'payment_plan','payment_plan','ADMIN',0,1,'2026-01-11 11:18:19.55037372-01:00','2026-01-11 11:18:19.550373797-01:00',0);
+INSERT INTO "table" VALUES (85,'subscription','subscription','ADMIN',0,1,'2026-01-11 11:18:19.550374376-01:00','2026-01-11 11:18:19.550374497-01:00',0);
+INSERT INTO "table_schema" VALUES (1,'ADMIN','lang','lang_id','INTEGER','Lang ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (2,'ADMIN','lang','lang','VARCHAR(4)','Language',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (3,'ADMIN','lang','lang_desc','VARCHAR(200)','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (4,'ADMIN','lang','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (5,'ADMIN','lang','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (6,'ADMIN','lang','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (7,'ADMIN','role','role_id','INTEGER','Role ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (8,'ADMIN','role','role','VARCHAR(20)','Role',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (9,'ADMIN','role','role_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (10,'ADMIN','role','config','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (11,'ADMIN','role','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (12,'ADMIN','role','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (13,'ADMIN','role','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (14,'ADMIN','users','user_id','INTEGER','User ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (15,'ADMIN','users','username','VARCHAR(50)','Username',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (16,'ADMIN','users','first_name','VARCHAR(50)','Fisrt Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (17,'ADMIN','users','last_name','VARCHAR(50)','Last Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (18,'ADMIN','users','email','VARCHAR(50)','Email',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (19,'ADMIN','users','phone','VARCHAR(50)','Phone',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (20,'ADMIN','users','password','VARCHAR(200)','Password',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (21,'ADMIN','users','role_id','INTEGER','Default Role ID',0,NULL,1,NULL,NULL,1,'role','role_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (22,'ADMIN','users','lang_id','INTEGER','Lang ID',0,NULL,1,NULL,NULL,1,'lang','lang_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (23,'ADMIN','users','timezone','VARCHAR(50)','Timezone',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (24,'ADMIN','users','attach_profile_pic','VARCHAR(200)','Profile Picture',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (25,'ADMIN','users','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (26,'ADMIN','users','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (27,'ADMIN','users','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (28,'ADMIN','users','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (29,'ADMIN','user_role','user_role_id','INTEGER','User Role ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (30,'ADMIN','user_role','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (31,'ADMIN','user_role','role_id','INTEGER','Role ID',0,NULL,1,NULL,NULL,1,'role','role_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (32,'ADMIN','user_role','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (33,'ADMIN','user_role','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (34,'ADMIN','user_role','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (35,'ADMIN','user_role','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (36,'ADMIN','app','app_id','INTEGER','App ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (37,'ADMIN','app','app','VARCHAR(20)','App Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (38,'ADMIN','app','app_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (39,'ADMIN','app','version','VARCHAR(10)','Version',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (40,'ADMIN','app','email','VARCHAR(200)','Email',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (41,'ADMIN','app','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (42,'ADMIN','app','attach_logo','VARCHAR(200)','Logo',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (43,'ADMIN','app','config','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (44,'ADMIN','app','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (45,'ADMIN','app','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (46,'ADMIN','app','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (47,'ADMIN','app','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (48,'ADMIN','menu','menu_id','INTEGER','Menu ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (49,'ADMIN','menu','menu','VARCHAR(200)','Menu',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (50,'ADMIN','menu','menu_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (51,'ADMIN','menu','menu_icon','VARCHAR(20)','Icon',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (52,'ADMIN','menu','menu_order','INTEGER','Order',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (53,'ADMIN','menu','menu_config','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (54,'ADMIN','menu','app_id','INTEGER','App ID',0,NULL,0,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (55,'ADMIN','menu','user_id','INTEGER','User ID',0,NULL,0,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (56,'ADMIN','menu','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (57,'ADMIN','menu','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (58,'ADMIN','menu','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (59,'ADMIN','menu','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (60,'ADMIN','table','table_id','INTEGER','Table ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (61,'ADMIN','table','table','VARCHAR(50)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (62,'ADMIN','table','table_desc','VARCHAR(200)','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (63,'ADMIN','table','db','VARCHAR(50)','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (64,'ADMIN','table','requires_rla','BOOLEAN','Requires Row Level Access',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (65,'ADMIN','table','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (66,'ADMIN','table','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (67,'ADMIN','table','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (68,'ADMIN','table','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (69,'ADMIN','menu_table','menu_table_id','INTEGER','Menu Table ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (70,'ADMIN','menu_table','menu_id','INTEGER','Menu ID',0,NULL,1,NULL,NULL,1,'menu','menu_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (71,'ADMIN','menu_table','table_id','INTEGER','Table ID',0,NULL,1,NULL,NULL,1,'table','table_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (72,'ADMIN','menu_table','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (73,'ADMIN','menu_table','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (74,'ADMIN','menu_table','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (75,'ADMIN','menu_table','requires_rla','BOOLEAN','Requires Row Level Access',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (76,'ADMIN','menu_table','menu_table_cnf','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (77,'ADMIN','menu_table','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (78,'ADMIN','menu_table','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (79,'ADMIN','menu_table','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (80,'ADMIN','role_app','role_app_id','INTEGER','Role App ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (81,'ADMIN','role_app','role_id','INTEGER','Role ID',0,NULL,1,NULL,NULL,1,'role','role_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (82,'ADMIN','role_app','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (83,'ADMIN','role_app','access','BOOLEAN','Access',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (84,'ADMIN','role_app','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (85,'ADMIN','role_app','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (86,'ADMIN','role_app','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (87,'ADMIN','role_app','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (88,'ADMIN','role_app_menu','role_app_menu_id','INTEGER','Role App Menu ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (89,'ADMIN','role_app_menu','role_id','INTEGER','Role ID',0,NULL,1,NULL,NULL,1,'role','role_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (90,'ADMIN','role_app_menu','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (91,'ADMIN','role_app_menu','menu_id','INTEGER','Menu ID',0,NULL,1,NULL,NULL,1,'menu','menu_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (92,'ADMIN','role_app_menu','access','BOOLEAN','Access',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (93,'ADMIN','role_app_menu','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (94,'ADMIN','role_app_menu','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (95,'ADMIN','role_app_menu','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (96,'ADMIN','role_app_menu','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (97,'ADMIN','role_app_menu_table','role_app_menu_table_id','INTEGER','Role App Menu Table ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (98,'ADMIN','role_app_menu_table','role_id','INTEGER','Role ID',0,NULL,1,NULL,NULL,1,'role','role_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (99,'ADMIN','role_app_menu_table','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (100,'ADMIN','role_app_menu_table','menu_id','INTEGER','Menu ID',0,NULL,1,NULL,NULL,1,'menu','menu_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (101,'ADMIN','role_app_menu_table','table_id','INTEGER','Table ID',0,NULL,1,NULL,NULL,1,'table','table_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (102,'ADMIN','role_app_menu_table','create','BOOLEAN','Create',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (103,'ADMIN','role_app_menu_table','read','BOOLEAN','Read',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (104,'ADMIN','role_app_menu_table','update','BOOLEAN','Update',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (105,'ADMIN','role_app_menu_table','delete','BOOLEAN','Delete',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (106,'ADMIN','role_app_menu_table','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (107,'ADMIN','role_app_menu_table','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (108,'ADMIN','role_app_menu_table','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (109,'ADMIN','role_app_menu_table','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (110,'ADMIN','user_log','user_log_id','INTEGER','User Log ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (111,'ADMIN','user_log','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (112,'ADMIN','user_log','action','VARCHAR(200)','Action',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (113,'ADMIN','user_log','req_ip','VARCHAR(200)','Request IP',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (114,'ADMIN','user_log','req_at','DATETIME','Request at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (115,'ADMIN','user_log','req_data','TEXT','Request Data',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (116,'ADMIN','user_log','res_at','DATETIME','Response at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (117,'ADMIN','user_log','res_type','VARCHAR(200)','Response Type',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (118,'ADMIN','user_log','res_msg','VARCHAR(500)','Response Message',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (119,'ADMIN','user_log','res_data','TEXT','Request Data',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (120,'ADMIN','user_log','table','VARCHAR(200)','Table',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (121,'ADMIN','user_log','db','VARCHAR(200)','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (122,'ADMIN','user_log','row_id','INTEGER','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (123,'ADMIN','user_log','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (124,'ADMIN','user_log','new_data','TEXT','New Data',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (125,'ADMIN','user_log','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (126,'ADMIN','user_log','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (127,'ADMIN','user_log','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (128,'ADMIN','custom_table','custom_table_id','INTEGER','Custom Table ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (129,'ADMIN','custom_table','table','VARCHAR(200)','Table',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (130,'ADMIN','custom_table','db','VARCHAR(200)','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (131,'ADMIN','custom_table','config','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (132,'ADMIN','custom_table','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (133,'ADMIN','custom_table','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (134,'ADMIN','custom_table','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (135,'ADMIN','custom_table','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (136,'ADMIN','custom_table','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (137,'ADMIN','custom_form','custom_form_id','INTEGER','Custom Form ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (138,'ADMIN','custom_form','table','VARCHAR(200)','Table',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (139,'ADMIN','custom_form','db','VARCHAR(200)','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (140,'ADMIN','custom_form','config','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (141,'ADMIN','custom_form','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (142,'ADMIN','custom_form','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (143,'ADMIN','custom_form','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (144,'ADMIN','custom_form','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (145,'ADMIN','custom_form','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (146,'ADMIN','role_row_level_access','role_row_level_access_id','INTEGER','Role Row Level Access ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (147,'ADMIN','role_row_level_access','role_id','INTEGER','Role ID',0,NULL,1,NULL,NULL,1,'role','role_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (148,'ADMIN','role_row_level_access','row_id','INTEGER','Row ID',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (149,'ADMIN','role_row_level_access','table_id','INTEGER','Table ID',0,NULL,1,NULL,NULL,1,'table','table_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (150,'ADMIN','role_row_level_access','table','VARCHAR(200)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (151,'ADMIN','role_row_level_access','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (152,'ADMIN','role_row_level_access','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (153,'ADMIN','role_row_level_access','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (154,'ADMIN','role_row_level_access','read','BOOLEAN','Read',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (155,'ADMIN','role_row_level_access','update','BOOLEAN','Update',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (156,'ADMIN','role_row_level_access','delete','BOOLEAN','Delete',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (157,'ADMIN','role_row_level_access','share','BOOLEAN','Share',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (158,'ADMIN','role_row_level_access','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (159,'ADMIN','role_row_level_access','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (160,'ADMIN','role_row_level_access','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (161,'ADMIN','column_level_access','column_level_access_id','INTEGER','Column Level Access ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (162,'ADMIN','column_level_access','column','INTEGER','Column',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (163,'ADMIN','column_level_access','table_id','INTEGER','Table ID',0,NULL,1,NULL,NULL,1,'table','table_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (164,'ADMIN','column_level_access','table','VARCHAR(200)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (165,'ADMIN','column_level_access','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (166,'ADMIN','column_level_access','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (167,'ADMIN','column_level_access','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (168,'ADMIN','column_level_access','create','BOOLEAN','Create',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (169,'ADMIN','column_level_access','read','BOOLEAN','Read',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (170,'ADMIN','column_level_access','update','BOOLEAN','Update',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (171,'ADMIN','column_level_access','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (172,'ADMIN','column_level_access','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (173,'ADMIN','column_level_access','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (174,'ADMIN','row_level_access','row_level_access_id','INTEGER','Row Level Access ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (175,'ADMIN','row_level_access','row_id','INTEGER','Row ID',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (176,'ADMIN','row_level_access','table_id','INTEGER','Table ID',0,NULL,1,NULL,NULL,1,'table','table_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (177,'ADMIN','row_level_access','table','VARCHAR(200)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (178,'ADMIN','row_level_access','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (179,'ADMIN','row_level_access','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (180,'ADMIN','row_level_access','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (181,'ADMIN','row_level_access','read','BOOLEAN','Read',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (182,'ADMIN','row_level_access','update','BOOLEAN','Update',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (183,'ADMIN','row_level_access','delete','BOOLEAN','Delete',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (184,'ADMIN','row_level_access','share','BOOLEAN','Share',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (185,'ADMIN','row_level_access','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (186,'ADMIN','row_level_access','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (187,'ADMIN','row_level_access','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (188,'ADMIN','translate_table','transl_tbl_id','INTEGER','Translate Table ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (189,'ADMIN','translate_table','table_org_desc','VARCHAR(200)','Table Org. Desc',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (190,'ADMIN','translate_table','table_transl_desc','VARCHAR(200)','Table Transl. Desc',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (191,'ADMIN','translate_table','table','VARCHAR(200)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (192,'ADMIN','translate_table','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (193,'ADMIN','translate_table','lang','VARCHAR(5)','Lang',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (194,'ADMIN','translate_table','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (195,'ADMIN','translate_table','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (196,'ADMIN','translate_table','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (197,'ADMIN','translate_table','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (198,'ADMIN','translate_table','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (199,'ADMIN','translate_table_field','transl_tbl_field_id','INTEGER','Translate Table Field ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (200,'ADMIN','translate_table_field','field_org_desc','VARCHAR(200)','Field Org. Desc',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (201,'ADMIN','translate_table_field','field_transl_desc','VARCHAR(200)','Field Transl. Desc',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (202,'ADMIN','translate_table_field','field','VARCHAR(200)','Field',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (203,'ADMIN','translate_table_field','table','VARCHAR(200)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (204,'ADMIN','translate_table_field','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (205,'ADMIN','translate_table_field','lang','VARCHAR(5)','Lang',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (206,'ADMIN','translate_table_field','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (207,'ADMIN','translate_table_field','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (208,'ADMIN','translate_table_field','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (209,'ADMIN','translate_table_field','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (210,'ADMIN','translate_table_field','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (211,'ADMIN','table_schema','table_schema_id','INTEGER','Table field ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (212,'ADMIN','table_schema','db','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (213,'ADMIN','table_schema','table','VARCHAR(200)','Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (214,'ADMIN','table_schema','field','VARCHAR(200)','Field',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (215,'ADMIN','table_schema','type','VARCHAR(200)','Type',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (216,'ADMIN','table_schema','comment','VARCHAR(200)','Comment',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (217,'ADMIN','table_schema','pk','BOOLEAN','Primary Key',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (218,'ADMIN','table_schema','autoincrement','BOOLEAN','Auto Increment',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (219,'ADMIN','table_schema','nullable','BOOLEAN','Nullable',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (220,'ADMIN','table_schema','computed','BOOLEAN','Nullable',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (221,'ADMIN','table_schema','default','BOOLEAN','Default',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (222,'ADMIN','table_schema','fk','BOOLEAN','Foreign  Key',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (223,'ADMIN','table_schema','referred_table','VARCHAR(200)','Ref. Table.',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (224,'ADMIN','table_schema','referred_column','VARCHAR(200)','Ref. Column',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (225,'ADMIN','table_schema','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (226,'ADMIN','table_schema','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (227,'ADMIN','table_schema','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (228,'ADMIN','table_schema','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (229,'ADMIN','cron','cron_id','INTEGER','Cron ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (230,'ADMIN','cron','cron','VARCHAR(50)','Cron',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (231,'ADMIN','cron','cron_desc','VARCHAR(200)','Decription',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (232,'ADMIN','cron','api','VARCHAR(200)','API',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (233,'ADMIN','cron','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (234,'ADMIN','cron','db','VARCHAR(200)','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (235,'ADMIN','cron','table','VARCHAR(50)','Table',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (236,'ADMIN','cron','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (237,'ADMIN','cron','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (238,'ADMIN','cron','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (239,'ADMIN','cron','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (240,'ADMIN','cron_log','cron_log_id','INTEGER','Cron Log ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (241,'ADMIN','cron_log','cron_id','INTEGER','Cron ID',0,NULL,1,NULL,NULL,1,'cron','cron_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (242,'ADMIN','cron_log','cron','VARCHAR(50)','Cron',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (243,'ADMIN','cron_log','cron_desc','VARCHAR(200)','Decription',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (244,'ADMIN','cron_log','api','VARCHAR(200)','API',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (245,'ADMIN','cron_log','start_at','DATETIME','Job Start',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (246,'ADMIN','cron_log','end_at','DATETIME','Job End',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (247,'ADMIN','cron_log','success','BOOLEAN','Success',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (248,'ADMIN','cron_log','cron_msg','TEXT','Message',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (249,'ADMIN','cron_log','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (250,'ADMIN','cron_log','db','VARCHAR(200)','Database',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (251,'ADMIN','cron_log','table','VARCHAR(50)','Table',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (252,'ADMIN','cron_log','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (253,'ADMIN','cron_log','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (254,'ADMIN','cron_log','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (255,'ADMIN','periodicity','periodicity_id','INTEGER','Periodicity ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (256,'ADMIN','periodicity','periodicity','VARCHAR(100)','Periodicity',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (257,'ADMIN','periodicity','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (258,'ADMIN','periodicity','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (259,'ADMIN','periodicity','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (260,'ADMIN','etl_report_base','etl_report_base_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (261,'ADMIN','etl_report_base','etl_report_base','VARCHAR(200)','DB | ETL | Report | Quality',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (262,'ADMIN','etl_report_base','etl_report_base_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (263,'ADMIN','etl_report_base','attach_etl_rbase_doc','VARCHAR(200)','Documentation',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (264,'ADMIN','etl_report_base','periodicity_id','INTEGER','Periodicity',0,NULL,1,NULL,NULL,1,'periodicity','periodicity_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (265,'ADMIN','etl_report_base','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (266,'ADMIN','etl_report_base','includes_output','BOOLEAN','Includes Output',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (267,'ADMIN','etl_report_base','includes_data_quality','BOOLEAN','Includes Data Quality',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (268,'ADMIN','etl_report_base','includes_data_reconci','BOOLEAN','Includes Data Reconc.',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (269,'ADMIN','etl_report_base','includes_exports','BOOLEAN','Includes Exports',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (270,'ADMIN','etl_report_base','includes_backup','BOOLEAN','Includes Backup',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (271,'ADMIN','etl_report_base','includes_script','BOOLEAN','Includes Scripts',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (272,'ADMIN','etl_report_base','includes_notify','BOOLEAN','Includes Notefy',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (273,'ADMIN','etl_report_base','etl_report_base_conf','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (274,'ADMIN','etl_report_base','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (275,'ADMIN','etl_report_base','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (276,'ADMIN','etl_report_base','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (277,'ADMIN','etl_report_base','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (278,'ADMIN','etl_report_base','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (279,'ADMIN','etl_report_base','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (280,'ADMIN','input_type','input_type_id','INTEGER','Input Type ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (281,'ADMIN','input_type','input_type','VARCHAR(100)','Input Type',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (282,'ADMIN','input_type','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (283,'ADMIN','input_type','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (284,'ADMIN','input_type','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (285,'ADMIN','source_type','source_type_id','INTEGER','Source Type ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (286,'ADMIN','source_type','source_type','VARCHAR(100)','Souce Type',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (287,'ADMIN','source_type','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (288,'ADMIN','source_type','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (289,'ADMIN','source_type','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (290,'ADMIN','etl_rbase_input','etl_rbase_input_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (291,'ADMIN','etl_rbase_input','etl_rbase_input','VARCHAR(200)','Input',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (292,'ADMIN','etl_rbase_input','etl_rbase_input_desc','TEXT','Input Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (293,'ADMIN','etl_rbase_input','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,0,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (294,'ADMIN','etl_rbase_input','input_type_id','INTEGER','Input Type ID',0,NULL,1,NULL,NULL,1,'input_type','input_type_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (295,'ADMIN','etl_rbase_input','save_only_temp','BOOLEAN','Save only temp',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (296,'ADMIN','etl_rbase_input','replace_existing_data','BOOLEAN','Replace existing data',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (297,'ADMIN','etl_rbase_input','check_ref_date','BOOLEAN','Check ref. date',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (298,'ADMIN','etl_rbase_input','ref_date_field','VARCHAR(200)','Ref. date field',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (299,'ADMIN','etl_rbase_input','date_format_org','VARCHAR(200)','Date Format in origin',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (300,'ADMIN','etl_rbase_input','other_date_fields','VARCHAR(200)','Other Date Fields',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (301,'ADMIN','etl_rbase_input','ref_id_keys','VARCHAR(200)','Reference / Id Keys',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (302,'ADMIN','etl_rbase_input','last_update_date_field','VARCHAR(200)','Last update date field',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (303,'ADMIN','etl_rbase_input','incremental_extract','BOOLEAN','Incremental Extraction',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (304,'ADMIN','etl_rbase_input','destination_table','VARCHAR(200)','Destination Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (305,'ADMIN','etl_rbase_input','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (306,'ADMIN','etl_rbase_input','allow_import','BOOLEAN','Allow Import',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (307,'ADMIN','etl_rbase_input','multiple_sheets','BOOLEAN','Multiple Sheets',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (308,'ADMIN','etl_rbase_input','specific_sheets','VARCHAR(200)','Specific Sheets',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (309,'ADMIN','etl_rbase_input','specific_range','VARCHAR(200)','Specific Range',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (310,'ADMIN','etl_rbase_input','columns_to_import','VARCHAR(200)','Columns to Import',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (311,'ADMIN','etl_rbase_input','txt_fix_format_layout','VARCHAR(200)','Text with fixed format Layout',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (312,'ADMIN','etl_rbase_input','headers','VARCHAR(200)','Headers',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (313,'ADMIN','etl_rbase_input','spreadsheet_forms','BOOLEAN','Spreadsheet Forms',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (314,'ADMIN','etl_rbase_input','spreadsheet_forms_map','VARCHAR(200)','Spreadsheet Forms Map',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (315,'ADMIN','etl_rbase_input','etl_rbase_input_conf','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (316,'ADMIN','etl_rbase_input','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (317,'ADMIN','etl_rbase_input','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (318,'ADMIN','etl_rbase_input','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (319,'ADMIN','etl_rbase_input','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (320,'ADMIN','etl_rbase_input','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (321,'ADMIN','etl_rbase_input','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (322,'ADMIN','output_type','output_type_id','INTEGER','Output Type ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (323,'ADMIN','output_type','output_type','VARCHAR(100)','Souce Type',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (324,'ADMIN','output_type','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (325,'ADMIN','output_type','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (326,'ADMIN','output_type','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (327,'ADMIN','etl_rbase_output','etl_rbase_output_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (328,'ADMIN','etl_rbase_output','etl_rbase_output','VARCHAR(200)','Output',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (329,'ADMIN','etl_rbase_output','etl_rbase_output_desc','TEXT','Output Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (330,'ADMIN','etl_rbase_output','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,0,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (331,'ADMIN','etl_rbase_output','output_type_id','INTEGER','Input Type ID',0,NULL,1,NULL,NULL,1,'output_type','output_type_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (332,'ADMIN','etl_rbase_output','date_field','VARCHAR(200)','Date field',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (333,'ADMIN','etl_rbase_output','date_field_format','VARCHAR(200)','Date Format',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (334,'ADMIN','etl_rbase_output','destination_table','VARCHAR(200)','Destination Table',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (335,'ADMIN','etl_rbase_output','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (336,'ADMIN','etl_rbase_output','append_it','BOOLEAN','Append',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (337,'ADMIN','etl_rbase_output','output_order','INTEGER','Field Order',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (338,'ADMIN','etl_rbase_output','etl_rbase_output_conf','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (339,'ADMIN','etl_rbase_output','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (340,'ADMIN','etl_rbase_output','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (341,'ADMIN','etl_rbase_output','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (342,'ADMIN','etl_rbase_output','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (343,'ADMIN','etl_rbase_output','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (344,'ADMIN','etl_rbase_output','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (345,'ADMIN','etl_rb_output_field','etl_rb_output_field_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (346,'ADMIN','etl_rb_output_field','etl_rb_output_field','VARCHAR(200)','Field',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (347,'ADMIN','etl_rb_output_field','etl_rb_output_field_desc','TEXT','Field Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (348,'ADMIN','etl_rb_output_field','etl_rbase_output_id','INTEGER','Output ID',0,NULL,0,NULL,NULL,1,'etl_rbase_output','etl_rbase_output_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (349,'ADMIN','etl_rb_output_field','sql_select','TEXT','SELECT',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (350,'ADMIN','etl_rb_output_field','sql_from','TEXT','FROM',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (351,'ADMIN','etl_rb_output_field','sql_join','TEXT','JOIN',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (352,'ADMIN','etl_rb_output_field','sql_where','TEXT','WHERE',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (353,'ADMIN','etl_rb_output_field','sql_group_by','TEXT','GROUP BY',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (354,'ADMIN','etl_rb_output_field','sql_order_by','TEXT','ORDER BY',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (355,'ADMIN','etl_rb_output_field','sql_window','TEXT','WINDOW',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (356,'ADMIN','etl_rb_output_field','sql_having','TEXT','HAVING',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (357,'ADMIN','etl_rb_output_field','field_order','INTEGER','Field Order',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (358,'ADMIN','etl_rb_output_field','fields_used','TEXT','Fields Used',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (359,'ADMIN','etl_rb_output_field','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,1,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (360,'ADMIN','etl_rb_output_field','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (361,'ADMIN','etl_rb_output_field','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (362,'ADMIN','etl_rb_output_field','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (363,'ADMIN','etl_rb_output_field','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (364,'ADMIN','etl_rb_output_field','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (365,'ADMIN','etl_rb_output_field','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (366,'ADMIN','etl_rbase_quality','etl_rbase_quality_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (367,'ADMIN','etl_rbase_quality','etl_rbase_quality','VARCHAR(200)','Data Quality Rule',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (368,'ADMIN','etl_rbase_quality','etl_rbase_quality_desc','TEXT','Rule Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (369,'ADMIN','etl_rbase_quality','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,0,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (370,'ADMIN','etl_rbase_quality','sql_quality_check','TEXT','SQL Quality Check',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (371,'ADMIN','etl_rbase_quality','sql_quality_fix','TEXT','SQL Quality Fix',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (372,'ADMIN','etl_rbase_quality','comments','TEXT','Comments / Justifications',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (373,'ADMIN','etl_rbase_quality','fields','TEXT','Fields',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (374,'ADMIN','etl_rbase_quality','tables','TEXT','Tables',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (375,'ADMIN','etl_rbase_quality','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (376,'ADMIN','etl_rbase_quality','etl_rbase_quality_conf','TEXT','Rule Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (377,'ADMIN','etl_rbase_quality','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (378,'ADMIN','etl_rbase_quality','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (379,'ADMIN','etl_rbase_quality','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (380,'ADMIN','etl_rbase_quality','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (381,'ADMIN','etl_rbase_quality','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (382,'ADMIN','etl_rbase_quality','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (383,'ADMIN','etl_rb_reconcilia','etl_rb_reconcilia_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (384,'ADMIN','etl_rb_reconcilia','etl_rb_reconcilia','VARCHAR(200)','Data Reconciliation Rule',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (385,'ADMIN','etl_rb_reconcilia','etl_rb_reconcilia_desc','TEXT','Rule Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (386,'ADMIN','etl_rb_reconcilia','etl_rb_reconc_template','TEXT','Template',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (387,'ADMIN','etl_rb_reconcilia','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (388,'ADMIN','etl_rb_reconcilia','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (389,'ADMIN','etl_rb_reconcilia','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,0,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (390,'ADMIN','etl_rb_reconcilia','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (391,'ADMIN','etl_rb_reconcilia','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (392,'ADMIN','etl_rb_reconcilia','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (393,'ADMIN','etl_rb_reconcilia','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (394,'ADMIN','etl_rb_reconcilia','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (395,'ADMIN','etl_rb_reconc_dtail','etl_rb_reconc_dtail_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (396,'ADMIN','etl_rb_reconc_dtail','etl_rb_reconc_dtail','VARCHAR(50)','Variable Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (397,'ADMIN','etl_rb_reconc_dtail','etl_rb_reconc_dtail_desc','VARCHAR(200)','Var. Description',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (398,'ADMIN','etl_rb_reconc_dtail','sql_query_val_1','TEXT','SQL Query Valor 1',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (399,'ADMIN','etl_rb_reconc_dtail','sql_query_val_2','TEXT','SQL Query Valor 2',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (400,'ADMIN','etl_rb_reconc_dtail','is_eval_formula','BOOLEAN','Is Eval Formula',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (401,'ADMIN','etl_rb_reconc_dtail','sql_reconcilia_query','TEXT','SQL / Formula Reconc',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (402,'ADMIN','etl_rb_reconc_dtail','comments','TEXT','Comments / Justifications',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (403,'ADMIN','etl_rb_reconc_dtail','etl_rb_reconcilia_id','INTEGER','Data Reconciliation ID',0,NULL,0,NULL,NULL,1,'etl_rb_reconcilia','etl_rb_reconcilia_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (404,'ADMIN','etl_rb_reconc_dtail','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,1,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (405,'ADMIN','etl_rb_reconc_dtail','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (406,'ADMIN','etl_rb_reconc_dtail','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (407,'ADMIN','etl_rb_reconc_dtail','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (408,'ADMIN','etl_rb_reconc_dtail','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (409,'ADMIN','etl_rb_reconc_dtail','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (410,'ADMIN','etl_rb_reconc_dtail','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (411,'ADMIN','export_type','export_type_id','INTEGER','Export Type ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (412,'ADMIN','export_type','export_type','VARCHAR(100)','Export Type',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (413,'ADMIN','export_type','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (414,'ADMIN','export_type','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (415,'ADMIN','export_type','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (416,'ADMIN','etl_rbase_export','etl_rbase_export_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (417,'ADMIN','etl_rbase_export','etl_rbase_export','VARCHAR(200)','Export',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (418,'ADMIN','etl_rbase_export','etl_rbase_export_desc','TEXT','Export Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (419,'ADMIN','etl_rbase_export','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,0,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (420,'ADMIN','etl_rbase_export','export_type_id','INTEGER','Export ID',0,NULL,0,NULL,NULL,1,'export_type','export_type_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (421,'ADMIN','etl_rbase_export','attach_file_template','VARCHAR(200)','File name / Template',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (422,'ADMIN','etl_rbase_export','txt_fix_format_layout','TEXT','Text with fixed format Layout',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (423,'ADMIN','etl_rbase_export','txt_fix_format_header','TEXT','Text with fixed format Headers',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (424,'ADMIN','etl_rbase_export','etl_rbase_export_conf','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (425,'ADMIN','etl_rbase_export','etl_rbase_output_id','INTEGER','Output ID',0,NULL,1,NULL,NULL,1,'etl_rbase_output','etl_rbase_output_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (426,'ADMIN','etl_rbase_export','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (427,'ADMIN','etl_rbase_export','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (428,'ADMIN','etl_rbase_export','ignore','BOOLEAN','Ignore',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (429,'ADMIN','etl_rbase_export','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (430,'ADMIN','etl_rbase_export','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (431,'ADMIN','etl_rbase_export','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (432,'ADMIN','etl_rbase_export','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (433,'ADMIN','etl_rbase_export','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (434,'ADMIN','etl_rb_exp_dtail','etl_rb_exp_dtail_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (435,'ADMIN','etl_rb_exp_dtail','etl_rb_exp_dtail','VARCHAR(200)','Export Detail',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (436,'ADMIN','etl_rb_exp_dtail','etl_rb_exp_dtail_desc','TEXT','Export Detail Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (437,'ADMIN','etl_rb_exp_dtail','etl_rbase_export_id','INTEGER','Export ID',0,NULL,0,NULL,NULL,1,'etl_rbase_export','etl_rbase_export_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (438,'ADMIN','etl_rb_exp_dtail','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,0,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (439,'ADMIN','etl_rb_exp_dtail','sql_export_query','TEXT','Export SQL Query',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (440,'ADMIN','etl_rb_exp_dtail','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (441,'ADMIN','etl_rb_exp_dtail','dest_sheet_name','VARCHAR(200)','Dest. Sheet Name',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (442,'ADMIN','etl_rb_exp_dtail','dest_table_name','VARCHAR(200)','Dest. Table Name',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (443,'ADMIN','etl_rb_exp_dtail','etl_rb_exp_dtail_conf','TEXT','Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (444,'ADMIN','etl_rb_exp_dtail','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (445,'ADMIN','etl_rb_exp_dtail','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (446,'ADMIN','etl_rb_exp_dtail','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (447,'ADMIN','etl_rb_exp_dtail','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (448,'ADMIN','etl_rb_exp_dtail','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (449,'ADMIN','etl_rb_exp_dtail','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (450,'ADMIN','etl_report_base_log','log_id','INTEGER','ID Log',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (451,'ADMIN','etl_report_base_log','type','VARCHAR(50)','Type',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (452,'ADMIN','etl_report_base_log','name','VARCHAR(100)','Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (453,'ADMIN','etl_report_base_log','ref','DATE','Ref. Date',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (454,'ADMIN','etl_report_base_log','start','DATETIME','Started At',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (455,'ADMIN','etl_report_base_log','end','DATETIME','End At',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (456,'ADMIN','etl_report_base_log','timer','VARCHAR(10)','Duration',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (457,'ADMIN','etl_report_base_log','success','BOOLEAN','Success',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (458,'ADMIN','etl_report_base_log','msg','TEXT','Response',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (459,'ADMIN','etl_report_base_log','num_rows','INTEGER','Affected Rows',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (460,'ADMIN','etl_report_base_log','errors','INTEGER','Errors',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (461,'ADMIN','etl_report_base_log','fixes','INTEGER','Automated Fixes',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (462,'ADMIN','etl_report_base_log','fname','VARCHAR(200)','Generated Files',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (463,'ADMIN','etl_report_base_log','html','TEXT','Html',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (464,'ADMIN','etl_report_base_log','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,1,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (465,'ADMIN','etl_report_base_log','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (466,'ADMIN','etl_report_base_log','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (467,'ADMIN','etl_report_base_log','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (468,'ADMIN','etl_report_base_log','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (469,'ADMIN','etl_report_base_log','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (470,'ADMIN','etl_rbase_notify','notify_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (471,'ADMIN','etl_rbase_notify','notify_subject','VARCHAR(200)','Subject',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (472,'ADMIN','etl_rbase_notify','notify_body','TEXT','Body',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (473,'ADMIN','etl_rbase_notify','notify_to','VARCHAR(200)','Mail TO',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (474,'ADMIN','etl_rbase_notify','notify_cc','VARCHAR(200)','Mail CC',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (475,'ADMIN','etl_rbase_notify','notify_attach_exports','BOOLEAN','Attach Exports',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (476,'ADMIN','etl_rbase_notify','notify_copy_exports_to','BOOLEAN','Copy Exports',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (477,'ADMIN','etl_rbase_notify','notify_copy_exports_path','VARCHAR(200)','Copy Exports Path',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (478,'ADMIN','etl_rbase_notify','notify_conf','TEXT','Conf',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (479,'ADMIN','etl_rbase_notify','send_email','BOOLEAN','Send Email',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (480,'ADMIN','etl_rbase_notify','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (481,'ADMIN','etl_rbase_notify','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,1,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (482,'ADMIN','etl_rbase_notify','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (483,'ADMIN','etl_rbase_notify','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (484,'ADMIN','etl_rbase_notify','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (485,'ADMIN','etl_rbase_notify','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (486,'ADMIN','etl_rbase_notify','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (487,'ADMIN','etl_rbase_backup','backup_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (488,'ADMIN','etl_rbase_backup','backup','VARCHAR(200)','Backup',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (489,'ADMIN','etl_rbase_backup','backup_sql','TEXT','SQL',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (490,'ADMIN','etl_rbase_backup','backup_copy_to','BOOLEAN','Copy',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (491,'ADMIN','etl_rbase_backup','backup_copy_path','VARCHAR(200)','Path',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (492,'ADMIN','etl_rbase_backup','backup_conf','TEXT','Conf',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (493,'ADMIN','etl_rbase_backup','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (494,'ADMIN','etl_rbase_backup','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,1,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (495,'ADMIN','etl_rbase_backup','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (496,'ADMIN','etl_rbase_backup','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (497,'ADMIN','etl_rbase_backup','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (498,'ADMIN','etl_rbase_backup','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (499,'ADMIN','etl_rbase_backup','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (500,'ADMIN','etl_rbase_script','script_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (501,'ADMIN','etl_rbase_script','script','VARCHAR(200)','Script',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (502,'ADMIN','etl_rbase_script','script_sql','TEXT','SQL',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (503,'ADMIN','etl_rbase_script','script_conf','TEXT','Conf',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (504,'ADMIN','etl_rbase_script','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (505,'ADMIN','etl_rbase_script','etl_report_base_id','INTEGER','DB | ETL | Report | Quality ID',0,NULL,1,NULL,NULL,1,'etl_report_base','etl_report_base_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (506,'ADMIN','etl_rbase_script','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (507,'ADMIN','etl_rbase_script','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (508,'ADMIN','etl_rbase_script','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (509,'ADMIN','etl_rbase_script','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (510,'ADMIN','etl_rbase_script','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (511,'ADMIN','manage_query','manage_query_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (512,'ADMIN','manage_query','manage_query','VARCHAR(200)','Query Desc',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (513,'ADMIN','manage_query','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (514,'ADMIN','manage_query','manage_query_conf','TEXT','Query Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (515,'ADMIN','manage_query','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (516,'ADMIN','manage_query','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (517,'ADMIN','manage_query','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (518,'ADMIN','manage_query','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (519,'ADMIN','manage_query','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (520,'ADMIN','manage_query','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (521,'ADMIN','dashboard','dashboard_id','INTEGER','Dashboard ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (522,'ADMIN','dashboard','dashboard','VARCHAR(200)','Dashboard',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (523,'ADMIN','dashboard','dashboard_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (524,'ADMIN','dashboard','dashboard_conf','TEXT','Conf / Params',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (525,'ADMIN','dashboard','order','INTEGER','Order',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (526,'ADMIN','dashboard','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (527,'ADMIN','dashboard','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (528,'ADMIN','dashboard','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (529,'ADMIN','dashboard','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (530,'ADMIN','dashboard','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (531,'ADMIN','dashboard','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (532,'ADMIN','dashboard_comment','dashboard_comment_id','INTEGER','Comment ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (533,'ADMIN','dashboard_comment','dashboard_comment','TEXT','Comments',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (534,'ADMIN','dashboard_comment','dashboard','VARCHAR(200)','Dashboard',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (535,'ADMIN','dashboard_comment','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (536,'ADMIN','dashboard_comment','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (537,'ADMIN','dashboard_comment','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (538,'ADMIN','dashboard_comment','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (539,'ADMIN','dashboard_comment','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (540,'ADMIN','dashboard_comment','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (541,'ADMIN','calendar','calendar_id','INTEGER','Calendar ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (542,'ADMIN','calendar','calendar','VARCHAR(100)','Calendar',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (543,'ADMIN','calendar','calendar_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (544,'ADMIN','calendar','calendar_email','VARCHAR(200)','Email',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (545,'ADMIN','calendar','calendar_color','VARCHAR(50)','Calendar Color',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (546,'ADMIN','calendar','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (547,'ADMIN','calendar','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (548,'ADMIN','calendar','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (549,'ADMIN','calendar','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (550,'ADMIN','calendar','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (551,'ADMIN','task_status','task_status_id','INTEGER','Status ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (552,'ADMIN','task_status','task_status','VARCHAR(10)','Status',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (553,'ADMIN','task_status','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (554,'ADMIN','repeat_type','repeat_type_id','INTEGER','Type of repetition ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (555,'ADMIN','repeat_type','repeat_type','VARCHAR(10)','Type of Repetition',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (556,'ADMIN','repeat_type','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (557,'ADMIN','task','task_id','INTEGER','Task Id',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (558,'ADMIN','task','task','VARCHAR(100)','task',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (559,'ADMIN','task','task_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (560,'ADMIN','task','starts_at','DATETIME','Starts at',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (561,'ADMIN','task','ends_at','DATETIME','Ends at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (562,'ADMIN','task','calendar_id','INTEGER','Calendar ID',0,NULL,1,NULL,NULL,1,'calendar','calendar_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (563,'ADMIN','task','calendar_color','VARCHAR(50)','Calendar Color',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (564,'ADMIN','task','calendar_email','VARCHAR(200)','Email',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (565,'ADMIN','task','task_status_id','INTEGER','Status ID',0,NULL,1,NULL,NULL,1,'task_status','task_status_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (566,'ADMIN','task','task_status','VARCHAR(50)','Status',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (567,'ADMIN','task','attach_task','VARCHAR(200)','Attachment',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (568,'ADMIN','task','repeat','BOOLEAN','Repeat',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (569,'ADMIN','task','repeat_type_id','INTEGER','Repeat Type ID',0,NULL,1,NULL,NULL,1,'repeat_type','repeat_type_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (570,'ADMIN','task','days_of_week','VARCHAR(200)','Days of week',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (571,'ADMIN','task','repeat_start_date','DATE','Repeat start date',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (572,'ADMIN','task','repeat_start_time','TIME','Repeat start time',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (573,'ADMIN','task','repeat_end_date','DATE','Repeat end date',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (574,'ADMIN','task','repeat_end_time','TIME','Repeat end time',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (575,'ADMIN','task','attendees','TEXT','Attendees',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (576,'ADMIN','task','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (577,'ADMIN','task','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (578,'ADMIN','task','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (579,'ADMIN','task','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (580,'ADMIN','task','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (581,'ADMIN','task','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (582,'ADMIN','task_track','task_track_id','INTEGER','Status Update ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (583,'ADMIN','task_track','task_track','VARCHAR(100)','Status Update',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (584,'ADMIN','task_track','task_track_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (585,'ADMIN','task_track','task_track_date','DATETIME','Date',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (586,'ADMIN','task_track','task_status_id','INTEGER','Status ID',0,NULL,1,NULL,NULL,1,'task_status','task_status_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (587,'ADMIN','task_track','attach_task_track','VARCHAR(200)','Attachment',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (588,'ADMIN','task_track','task_id','INTEGER','Task ID',0,NULL,1,NULL,NULL,1,'task','task_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (589,'ADMIN','task_track','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (590,'ADMIN','task_track','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,1,'app','app_id',1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (591,'ADMIN','task_track','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (592,'ADMIN','task_track','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (593,'ADMIN','task_track','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "table_schema" VALUES (594,'ADMIN','sqlite_sequence','name','',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-05 18:59:37.892578328-01:00','2025-11-05 18:59:37.892578556-01:00',0);
+INSERT INTO "table_schema" VALUES (595,'ADMIN','sqlite_sequence','seq','',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-05 18:59:37.892579911-01:00','2025-11-05 18:59:37.892580031-01:00',0);
+INSERT INTO "table_schema" VALUES (596,'ETLX','etlx','etlx_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (597,'ETLX','etlx','etl','VARCHAR(200)','Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (598,'ETLX','etlx','etl_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (599,'ETLX','etlx','attach_etlx_conf','VARCHAR(200)','Config File',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (600,'ETLX','etlx','etlx_conf','TEXT','Config Text',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (601,'ETLX','etlx','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (602,'ETLX','etlx','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (603,'ETLX','etlx','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (604,'ETLX','etlx','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (605,'ETLX','etlx','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (606,'ETLX','etlx','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (607,'ETLX','etlx_conf','etlx_conf_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (608,'ETLX','etlx_conf','etlx_conf','VARCHAR(200)','Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (609,'ETLX','etlx_conf','etlx_conf_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (610,'ETLX','etlx_conf','etlx_extra_conf','TEXT','Config Text',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (611,'ETLX','etlx_conf','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (612,'ETLX','etlx_conf','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (613,'ETLX','etlx_conf','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (614,'ETLX','etlx_conf','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (615,'ETLX','etlx_conf','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (616,'ETLX','manage_query','manage_query_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (617,'ETLX','manage_query','manage_query','VARCHAR(200)','Query Desc',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (618,'ETLX','manage_query','database','VARCHAR(200)','Database',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (619,'ETLX','manage_query','manage_query_conf','TEXT','Query Config',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (620,'ETLX','manage_query','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (621,'ETLX','manage_query','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (622,'ETLX','manage_query','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (623,'ETLX','manage_query','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (624,'ETLX','manage_query','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (625,'ETLX','manage_query','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (626,'ETLX','dashboard','dashboard_id','INTEGER','Dashboard ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (627,'ETLX','dashboard','dashboard','VARCHAR(200)','Dashboard',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (628,'ETLX','dashboard','dashboard_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (629,'ETLX','dashboard','dashboard_conf','TEXT','Conf / Params',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (630,'ETLX','dashboard','order','INTEGER','Order',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (631,'ETLX','dashboard','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (632,'ETLX','dashboard','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (633,'ETLX','dashboard','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (634,'ETLX','dashboard','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (635,'ETLX','dashboard','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (636,'ETLX','dashboard','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (637,'ETLX','dashboard_comment','dashboard_comment_id','INTEGER','Comment ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (638,'ETLX','dashboard_comment','dashboard_comment','TEXT','Comments',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (639,'ETLX','dashboard_comment','dashboard','VARCHAR(200)','Dashboard',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (640,'ETLX','dashboard_comment','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (641,'ETLX','dashboard_comment','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (642,'ETLX','dashboard_comment','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (643,'ETLX','dashboard_comment','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (644,'ETLX','dashboard_comment','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (645,'ETLX','dashboard_comment','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (646,'ETLX','notebook','notebook_id','INTEGER','Notebook ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (647,'ETLX','notebook','notebook','VARCHAR(200)','Name',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (648,'ETLX','notebook','notebook_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (649,'ETLX','notebook','notebook_conf','TEXT','Conf / Params',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (650,'ETLX','notebook','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (651,'ETLX','notebook','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (652,'ETLX','notebook','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (653,'ETLX','notebook','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (654,'ETLX','notebook','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (655,'ETLX','notebook','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (656,'ETLX','sqlite_sequence','name','',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-05 19:02:20.793514784-01:00','2025-11-05 19:02:20.793514985-01:00',0);
+INSERT INTO "table_schema" VALUES (657,'ETLX','sqlite_sequence','seq','',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-05 19:02:20.793516379-01:00','2025-11-05 19:02:20.793516498-01:00',0);
+INSERT INTO "table_schema" VALUES (658,'ETLX_DATA','NYC_TAXI','VendorID','integer',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273397902-01:00','2025-11-16 13:41:35.273398274-01:00',0);
+INSERT INTO "table_schema" VALUES (659,'ETLX_DATA','NYC_TAXI','tpep_pickup_datetime','timestamp without time zone',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273399388-01:00','2025-11-16 13:41:35.273399576-01:00',0);
+INSERT INTO "table_schema" VALUES (660,'ETLX_DATA','NYC_TAXI','tpep_dropoff_datetime','timestamp without time zone',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273400944-01:00','2025-11-16 13:41:35.273401046-01:00',0);
+INSERT INTO "table_schema" VALUES (661,'ETLX_DATA','NYC_TAXI','passenger_count','bigint',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273401792-01:00','2025-11-16 13:41:35.273401881-01:00',0);
+INSERT INTO "table_schema" VALUES (662,'ETLX_DATA','NYC_TAXI','trip_distance','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273402626-01:00','2025-11-16 13:41:35.273403945-01:00',0);
+INSERT INTO "table_schema" VALUES (663,'ETLX_DATA','NYC_TAXI','RatecodeID','bigint',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273404782-01:00','2025-11-16 13:41:35.273404883-01:00',0);
+INSERT INTO "table_schema" VALUES (664,'ETLX_DATA','NYC_TAXI','store_and_fwd_flag','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273406246-01:00','2025-11-16 13:41:35.273406334-01:00',0);
+INSERT INTO "table_schema" VALUES (665,'ETLX_DATA','NYC_TAXI','PULocationID','integer',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273406975-01:00','2025-11-16 13:41:35.273407055-01:00',0);
+INSERT INTO "table_schema" VALUES (666,'ETLX_DATA','NYC_TAXI','DOLocationID','integer',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273407758-01:00','2025-11-16 13:41:35.273407843-01:00',0);
+INSERT INTO "table_schema" VALUES (667,'ETLX_DATA','NYC_TAXI','payment_type','bigint',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273408611-01:00','2025-11-16 13:41:35.27340871-01:00',0);
+INSERT INTO "table_schema" VALUES (668,'ETLX_DATA','NYC_TAXI','fare_amount','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273409338-01:00','2025-11-16 13:41:35.273409424-01:00',0);
+INSERT INTO "table_schema" VALUES (669,'ETLX_DATA','NYC_TAXI','extra','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273411607-01:00','2025-11-16 13:41:35.2734117-01:00',0);
+INSERT INTO "table_schema" VALUES (670,'ETLX_DATA','NYC_TAXI','mta_tax','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.27341242-01:00','2025-11-16 13:41:35.273412506-01:00',0);
+INSERT INTO "table_schema" VALUES (671,'ETLX_DATA','NYC_TAXI','tip_amount','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273413245-01:00','2025-11-16 13:41:35.273413331-01:00',0);
+INSERT INTO "table_schema" VALUES (672,'ETLX_DATA','NYC_TAXI','tolls_amount','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273414025-01:00','2025-11-16 13:41:35.273414108-01:00',0);
+INSERT INTO "table_schema" VALUES (673,'ETLX_DATA','NYC_TAXI','improvement_surcharge','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273414756-01:00','2025-11-16 13:41:35.273414839-01:00',0);
+INSERT INTO "table_schema" VALUES (674,'ETLX_DATA','NYC_TAXI','total_amount','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273415794-01:00','2025-11-16 13:41:35.273415883-01:00',0);
+INSERT INTO "table_schema" VALUES (675,'ETLX_DATA','NYC_TAXI','congestion_surcharge','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273416767-01:00','2025-11-16 13:41:35.27341685-01:00',0);
+INSERT INTO "table_schema" VALUES (676,'ETLX_DATA','NYC_TAXI','Airport_fee','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.273417973-01:00','2025-11-16 13:41:35.273418063-01:00',0);
+INSERT INTO "table_schema" VALUES (677,'ETLX_DATA','PeadkHours','hour_of_day','bigint',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.285560127-01:00','2025-11-16 13:41:35.285560856-01:00',0);
+INSERT INTO "table_schema" VALUES (678,'ETLX_DATA','PeadkHours','total_trips','bigint',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.2855628-01:00','2025-11-16 13:41:35.285562925-01:00',0);
+INSERT INTO "table_schema" VALUES (679,'ETLX_DATA','PeadkHours','avg_fare','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.285564297-01:00','2025-11-16 13:41:35.28556442-01:00',0);
+INSERT INTO "table_schema" VALUES (680,'ETLX_DATA','PeadkHours','avg_distance','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.285565785-01:00','2025-11-16 13:41:35.2855659-01:00',0);
+INSERT INTO "table_schema" VALUES (681,'ETLX_DATA','PeadkHours','avg_duration_minutes','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.285567174-01:00','2025-11-16 13:41:35.28556729-01:00',0);
+INSERT INTO "table_schema" VALUES (682,'ETLX_DATA','VERSION','VERSION','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.296204999-01:00','2025-11-16 13:41:35.296205432-01:00',0);
+INSERT INTO "table_schema" VALUES (683,'ETLX_DATA','etlx_logs','description','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307116521-01:00','2025-11-16 13:41:35.307116957-01:00',0);
+INSERT INTO "table_schema" VALUES (684,'ETLX_DATA','etlx_logs','duration','double precision',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307118395-01:00','2025-11-16 13:41:35.307118486-01:00',0);
+INSERT INTO "table_schema" VALUES (685,'ETLX_DATA','etlx_logs','end_at','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307119336-01:00','2025-11-16 13:41:35.307119423-01:00',0);
+INSERT INTO "table_schema" VALUES (686,'ETLX_DATA','etlx_logs','key','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307120346-01:00','2025-11-16 13:41:35.307120436-01:00',0);
+INSERT INTO "table_schema" VALUES (687,'ETLX_DATA','etlx_logs','name','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307121148-01:00','2025-11-16 13:41:35.307121236-01:00',0);
+INSERT INTO "table_schema" VALUES (688,'ETLX_DATA','etlx_logs','start_at','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307122027-01:00','2025-11-16 13:41:35.307122115-01:00',0);
+INSERT INTO "table_schema" VALUES (689,'ETLX_DATA','etlx_logs','item_key','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307126178-01:00','2025-11-16 13:41:35.307126269-01:00',0);
+INSERT INTO "table_schema" VALUES (690,'ETLX_DATA','etlx_logs','msg','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307126992-01:00','2025-11-16 13:41:35.30712708-01:00',0);
+INSERT INTO "table_schema" VALUES (691,'ETLX_DATA','etlx_logs','ref','date',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307127832-01:00','2025-11-16 13:41:35.307127915-01:00',0);
+INSERT INTO "table_schema" VALUES (692,'ETLX_DATA','etlx_logs','success','boolean',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307128757-01:00','2025-11-16 13:41:35.307128874-01:00',0);
+INSERT INTO "table_schema" VALUES (693,'ETLX_DATA','etlx_logs','rows','bigint',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307129912-01:00','2025-11-16 13:41:35.307130008-01:00',0);
+INSERT INTO "table_schema" VALUES (694,'ETLX_DATA','etlx_logs','fname','character varying',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2025-11-16 13:41:35.307130638-01:00','2025-11-16 13:41:35.307130726-01:00',0);
+INSERT INTO "table_schema" VALUES (695,'ADMIN','access_key','access_key_id','INTEGER','Access Key ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (696,'ADMIN','access_key','access_key_desc','VARCHAR(200)','Description',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (697,'ADMIN','access_key','access_token','TEXT','Token',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (698,'ADMIN','access_key','expires_at','DATETIME','Expires at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (699,'ADMIN','access_key','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (700,'ADMIN','access_key','for_user_id','INTEGER','Created For',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (701,'ADMIN','access_key','user_id','INTEGER','Created BY',0,NULL,1,NULL,NULL,1,'users','user_id',1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (702,'ADMIN','access_key','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (703,'ADMIN','access_key','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (704,'ADMIN','access_key','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "table_schema" VALUES (822,'ETLX','arrow_flight','arrow_flight_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (823,'ETLX','arrow_flight','arrow_flight','VARCHAR(200)','Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (824,'ETLX','arrow_flight','arrow_flight_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (825,'ETLX','arrow_flight','arrow_flight_conf','TEXT','Config Text',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (826,'ETLX','arrow_flight','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (827,'ETLX','arrow_flight','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (828,'ETLX','arrow_flight','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (829,'ETLX','arrow_flight','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (830,'ETLX','arrow_flight','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "table_schema" VALUES (1198,'ADMIN','product','product_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.58291408-01:00','2026-01-11 11:18:19.582914318-01:00',0);
+INSERT INTO "table_schema" VALUES (1199,'ADMIN','product','name','VARCHAR(255)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.582915244-01:00','2026-01-11 11:18:19.582915329-01:00',0);
+INSERT INTO "table_schema" VALUES (1200,'ADMIN','product','description','TEXT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.58291657-01:00','2026-01-11 11:18:19.582916654-01:00',0);
+INSERT INTO "table_schema" VALUES (1201,'ADMIN','product','active','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.58291748-01:00','2026-01-11 11:18:19.582917562-01:00',0);
+INSERT INTO "table_schema" VALUES (1202,'ADMIN','product','user_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.582918276-01:00','2026-01-11 11:18:19.582918368-01:00',0);
+INSERT INTO "table_schema" VALUES (1203,'ADMIN','product','app_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.58291916-01:00','2026-01-11 11:18:19.582919252-01:00',0);
+INSERT INTO "table_schema" VALUES (1204,'ADMIN','product','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.582920577-01:00','2026-01-11 11:18:19.582920662-01:00',0);
+INSERT INTO "table_schema" VALUES (1205,'ADMIN','product','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.58292134-01:00','2026-01-11 11:18:19.582921416-01:00',0);
+INSERT INTO "table_schema" VALUES (1206,'ADMIN','product','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.582922088-01:00','2026-01-11 11:18:19.582922166-01:00',0);
+INSERT INTO "table_schema" VALUES (1207,'ADMIN','provider','provider_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.593044449-01:00','2026-01-11 11:18:19.593044843-01:00',0);
+INSERT INTO "table_schema" VALUES (1208,'ADMIN','provider','provider','VARCHAR(3)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.593046419-01:00','2026-01-11 11:18:19.593046526-01:00',0);
+INSERT INTO "table_schema" VALUES (1209,'ADMIN','provider','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.593049668-01:00','2026-01-11 11:18:19.593049788-01:00',0);
+INSERT INTO "table_schema" VALUES (1210,'ADMIN','provider','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.593051505-01:00','2026-01-11 11:18:19.593051609-01:00',0);
+INSERT INTO "table_schema" VALUES (1211,'ADMIN','provider','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.593057203-01:00','2026-01-11 11:18:19.593057326-01:00',0);
+INSERT INTO "table_schema" VALUES (1212,'ADMIN','currency','currency_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.599443209-01:00','2026-01-11 11:18:19.599443567-01:00',0);
+INSERT INTO "table_schema" VALUES (1213,'ADMIN','currency','currency','VARCHAR(3)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.599444524-01:00','2026-01-11 11:18:19.599444606-01:00',0);
+INSERT INTO "table_schema" VALUES (1214,'ADMIN','currency','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.599445356-01:00','2026-01-11 11:18:19.599445442-01:00',0);
+INSERT INTO "table_schema" VALUES (1215,'ADMIN','currency','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.599446155-01:00','2026-01-11 11:18:19.599446238-01:00',0);
+INSERT INTO "table_schema" VALUES (1216,'ADMIN','currency','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.59944809-01:00','2026-01-11 11:18:19.599448174-01:00',0);
+INSERT INTO "table_schema" VALUES (1217,'ADMIN','interval','interval_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.604459663-01:00','2026-01-11 11:18:19.604460001-01:00',0);
+INSERT INTO "table_schema" VALUES (1218,'ADMIN','interval','interval','VARCHAR(100)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.604466624-01:00','2026-01-11 11:18:19.604466886-01:00',0);
+INSERT INTO "table_schema" VALUES (1219,'ADMIN','interval','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.604468413-01:00','2026-01-11 11:18:19.604468536-01:00',0);
+INSERT INTO "table_schema" VALUES (1220,'ADMIN','interval','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.60446978-01:00','2026-01-11 11:18:19.604469883-01:00',0);
+INSERT INTO "table_schema" VALUES (1221,'ADMIN','interval','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.604473338-01:00','2026-01-11 11:18:19.604473451-01:00',0);
+INSERT INTO "table_schema" VALUES (1222,'ADMIN','deployment','deployment_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610478261-01:00','2026-01-11 11:18:19.610478518-01:00',0);
+INSERT INTO "table_schema" VALUES (1223,'ADMIN','deployment','deployment','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610479506-01:00','2026-01-11 11:18:19.610479591-01:00',0);
+INSERT INTO "table_schema" VALUES (1224,'ADMIN','deployment','deployment_desc','TEXT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610480518-01:00','2026-01-11 11:18:19.610480597-01:00',0);
+INSERT INTO "table_schema" VALUES (1225,'ADMIN','deployment','product_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 11:18:19.61048354-01:00','2026-01-11 11:18:19.610483624-01:00',0);
+INSERT INTO "table_schema" VALUES (1226,'ADMIN','deployment','provider_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'provider','provider_id',1,'2026-01-11 11:18:19.610485572-01:00','2026-01-11 11:18:19.610485658-01:00',0);
+INSERT INTO "table_schema" VALUES (1227,'ADMIN','deployment','terraform_template','TEXT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610486559-01:00','2026-01-11 11:18:19.610486642-01:00',0);
+INSERT INTO "table_schema" VALUES (1228,'ADMIN','deployment','active','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610487383-01:00','2026-01-11 11:18:19.610487467-01:00',0);
+INSERT INTO "table_schema" VALUES (1229,'ADMIN','deployment','user_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610488208-01:00','2026-01-11 11:18:19.610488291-01:00',0);
+INSERT INTO "table_schema" VALUES (1230,'ADMIN','deployment','app_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610488946-01:00','2026-01-11 11:18:19.610489027-01:00',0);
+INSERT INTO "table_schema" VALUES (1231,'ADMIN','deployment','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610489769-01:00','2026-01-11 11:18:19.610489847-01:00',0);
+INSERT INTO "table_schema" VALUES (1232,'ADMIN','deployment','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610492225-01:00','2026-01-11 11:18:19.610492306-01:00',0);
+INSERT INTO "table_schema" VALUES (1233,'ADMIN','deployment','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.610492956-01:00','2026-01-11 11:18:19.610493035-01:00',0);
+INSERT INTO "table_schema" VALUES (1234,'ADMIN','tenant','tenant_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623657495-01:00','2026-01-11 11:18:19.623657657-01:00',0);
+INSERT INTO "table_schema" VALUES (1235,'ADMIN','tenant','name','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623658937-01:00','2026-01-11 11:18:19.623659018-01:00',0);
+INSERT INTO "table_schema" VALUES (1236,'ADMIN','tenant','email','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623659794-01:00','2026-01-11 11:18:19.623659872-01:00',0);
+INSERT INTO "table_schema" VALUES (1237,'ADMIN','tenant','password','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623660629-01:00','2026-01-11 11:18:19.62366071-01:00',0);
+INSERT INTO "table_schema" VALUES (1238,'ADMIN','tenant','phone','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623661413-01:00','2026-01-11 11:18:19.623661494-01:00',0);
+INSERT INTO "table_schema" VALUES (1239,'ADMIN','tenant','address','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623663535-01:00','2026-01-11 11:18:19.623663618-01:00',0);
+INSERT INTO "table_schema" VALUES (1240,'ADMIN','tenant','currency_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'currency','currency_id',1,'2026-01-11 11:18:19.623664665-01:00','2026-01-11 11:18:19.623664743-01:00',0);
+INSERT INTO "table_schema" VALUES (1241,'ADMIN','tenant','active','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623666139-01:00','2026-01-11 11:18:19.62366622-01:00',0);
+INSERT INTO "table_schema" VALUES (1242,'ADMIN','tenant','user_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623666905-01:00','2026-01-11 11:18:19.623666987-01:00',0);
+INSERT INTO "table_schema" VALUES (1243,'ADMIN','tenant','app_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623667846-01:00','2026-01-11 11:18:19.623667932-01:00',0);
+INSERT INTO "table_schema" VALUES (1244,'ADMIN','tenant','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623668613-01:00','2026-01-11 11:18:19.623668693-01:00',0);
+INSERT INTO "table_schema" VALUES (1245,'ADMIN','tenant','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623669406-01:00','2026-01-11 11:18:19.623669489-01:00',0);
+INSERT INTO "table_schema" VALUES (1246,'ADMIN','tenant','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.623670598-01:00','2026-01-11 11:18:19.623670681-01:00',0);
+INSERT INTO "table_schema" VALUES (1247,'ADMIN','plan','plan_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.638380416-01:00','2026-01-11 11:18:19.638380606-01:00',0);
+INSERT INTO "table_schema" VALUES (1248,'ADMIN','plan','plan','VARCHAR(3)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.638382044-01:00','2026-01-11 11:18:19.638382166-01:00',0);
+INSERT INTO "table_schema" VALUES (1249,'ADMIN','plan','price','FLOAT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.638383444-01:00','2026-01-11 11:18:19.638383568-01:00',0);
+INSERT INTO "table_schema" VALUES (1250,'ADMIN','plan','deployment_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'deployment','deployment_id',1,'2026-01-11 11:18:19.638385397-01:00','2026-01-11 11:18:19.638385523-01:00',0);
+INSERT INTO "table_schema" VALUES (1251,'ADMIN','plan','product_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 11:18:19.638387086-01:00','2026-01-11 11:18:19.638387207-01:00',0);
+INSERT INTO "table_schema" VALUES (1252,'ADMIN','plan','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.638388536-01:00','2026-01-11 11:18:19.638388661-01:00',0);
+INSERT INTO "table_schema" VALUES (1253,'ADMIN','plan','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.638391365-01:00','2026-01-11 11:18:19.638391491-01:00',0);
+INSERT INTO "table_schema" VALUES (1254,'ADMIN','plan','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.638392742-01:00','2026-01-11 11:18:19.638392867-01:00',0);
+INSERT INTO "table_schema" VALUES (1255,'ADMIN','env','env_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647892413-01:00','2026-01-11 11:18:19.647892746-01:00',0);
+INSERT INTO "table_schema" VALUES (1256,'ADMIN','env','env_name','VARCHAR(200)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647894292-01:00','2026-01-11 11:18:19.647894416-01:00',0);
+INSERT INTO "table_schema" VALUES (1257,'ADMIN','env','env_value','TEXT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647895766-01:00','2026-01-11 11:18:19.64789589-01:00',0);
+INSERT INTO "table_schema" VALUES (1258,'ADMIN','env','tenant_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'tenant','tenant_id',1,'2026-01-11 11:18:19.647897625-01:00','2026-01-11 11:18:19.647897749-01:00',0);
+INSERT INTO "table_schema" VALUES (1259,'ADMIN','env','active','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647899159-01:00','2026-01-11 11:18:19.647899283-01:00',0);
+INSERT INTO "table_schema" VALUES (1260,'ADMIN','env','user_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647902181-01:00','2026-01-11 11:18:19.647902352-01:00',0);
+INSERT INTO "table_schema" VALUES (1261,'ADMIN','env','app_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647904002-01:00','2026-01-11 11:18:19.647904159-01:00',0);
+INSERT INTO "table_schema" VALUES (1262,'ADMIN','env','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647906391-01:00','2026-01-11 11:18:19.647906556-01:00',0);
+INSERT INTO "table_schema" VALUES (1263,'ADMIN','env','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647908302-01:00','2026-01-11 11:18:19.647908542-01:00',0);
+INSERT INTO "table_schema" VALUES (1264,'ADMIN','env','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.647909963-01:00','2026-01-11 11:18:19.647910128-01:00',0);
+INSERT INTO "table_schema" VALUES (1265,'ADMIN','payment_plan','payment_plan_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.657906286-01:00','2026-01-11 11:18:19.657906528-01:00',0);
+INSERT INTO "table_schema" VALUES (1266,'ADMIN','payment_plan','plan_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'plan','plan_id',1,'2026-01-11 11:18:19.65790832-01:00','2026-01-11 11:18:19.657908448-01:00',0);
+INSERT INTO "table_schema" VALUES (1267,'ADMIN','payment_plan','deployment_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'deployment','deployment_id',1,'2026-01-11 11:18:19.657911142-01:00','2026-01-11 11:18:19.657911281-01:00',0);
+INSERT INTO "table_schema" VALUES (1268,'ADMIN','payment_plan','product_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 11:18:19.657912806-01:00','2026-01-11 11:18:19.657912945-01:00',0);
+INSERT INTO "table_schema" VALUES (1269,'ADMIN','payment_plan','price','FLOAT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.65791416-01:00','2026-01-11 11:18:19.657914283-01:00',0);
+INSERT INTO "table_schema" VALUES (1270,'ADMIN','payment_plan','currency_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'currency','currency_id',1,'2026-01-11 11:18:19.657915952-01:00','2026-01-11 11:18:19.657916075-01:00',0);
+INSERT INTO "table_schema" VALUES (1271,'ADMIN','payment_plan','interval_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'interval','interval_id',1,'2026-01-11 11:18:19.657917553-01:00','2026-01-11 11:18:19.657917673-01:00',0);
+INSERT INTO "table_schema" VALUES (1272,'ADMIN','payment_plan','stripe_price_id','VARCHAR(255)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.65791885-01:00','2026-01-11 11:18:19.657918971-01:00',0);
+INSERT INTO "table_schema" VALUES (1273,'ADMIN','payment_plan','active','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.657920114-01:00','2026-01-11 11:18:19.657920235-01:00',0);
+INSERT INTO "table_schema" VALUES (1274,'ADMIN','payment_plan','user_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.657921859-01:00','2026-01-11 11:18:19.657921982-01:00',0);
+INSERT INTO "table_schema" VALUES (1275,'ADMIN','payment_plan','app_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.65792321-01:00','2026-01-11 11:18:19.657923347-01:00',0);
+INSERT INTO "table_schema" VALUES (1276,'ADMIN','payment_plan','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.657924584-01:00','2026-01-11 11:18:19.657924705-01:00',0);
+INSERT INTO "table_schema" VALUES (1277,'ADMIN','payment_plan','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.657925872-01:00','2026-01-11 11:18:19.657925994-01:00',0);
+INSERT INTO "table_schema" VALUES (1278,'ADMIN','payment_plan','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.657927184-01:00','2026-01-11 11:18:19.657927304-01:00',0);
+INSERT INTO "table_schema" VALUES (1279,'ADMIN','subscription','subscription_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676178259-01:00','2026-01-11 11:18:19.676178671-01:00',0);
+INSERT INTO "table_schema" VALUES (1280,'ADMIN','subscription','tenant_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'tenant','tenant_id',1,'2026-01-11 11:18:19.676180203-01:00','2026-01-11 11:18:19.67618029-01:00',0);
+INSERT INTO "table_schema" VALUES (1281,'ADMIN','subscription','plan_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'plan','plan_id',1,'2026-01-11 11:18:19.676182192-01:00','2026-01-11 11:18:19.676182281-01:00',0);
+INSERT INTO "table_schema" VALUES (1282,'ADMIN','subscription','deployment_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'deployment','deployment_id',1,'2026-01-11 11:18:19.676183414-01:00','2026-01-11 11:18:19.6761835-01:00',0);
+INSERT INTO "table_schema" VALUES (1283,'ADMIN','subscription','payment_plan_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'payment_plan','payment_plan_id',1,'2026-01-11 11:18:19.676184523-01:00','2026-01-11 11:18:19.676184606-01:00',0);
+INSERT INTO "table_schema" VALUES (1284,'ADMIN','subscription','product_id','INTEGER',NULL,0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 11:18:19.676185687-01:00','2026-01-11 11:18:19.676185786-01:00',0);
+INSERT INTO "table_schema" VALUES (1285,'ADMIN','subscription','terraform_outputs','TEXT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676186583-01:00','2026-01-11 11:18:19.676186664-01:00',0);
+INSERT INTO "table_schema" VALUES (1286,'ADMIN','subscription','tf_public_ip','VARCHAR(100)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676187502-01:00','2026-01-11 11:18:19.676187588-01:00',0);
+INSERT INTO "table_schema" VALUES (1287,'ADMIN','subscription','tf_public_dns','VARCHAR(255)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676188293-01:00','2026-01-11 11:18:19.676188372-01:00',0);
+INSERT INTO "table_schema" VALUES (1288,'ADMIN','subscription','terraform_state','TEXT',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676189648-01:00','2026-01-11 11:18:19.676189737-01:00',0);
+INSERT INTO "table_schema" VALUES (1289,'ADMIN','subscription','deployed','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676190439-01:00','2026-01-11 11:18:19.676190517-01:00',0);
+INSERT INTO "table_schema" VALUES (1290,'ADMIN','subscription','active','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676191131-01:00','2026-01-11 11:18:19.676191211-01:00',0);
+INSERT INTO "table_schema" VALUES (1291,'ADMIN','subscription','stripe_subscription_id','VARCHAR(255)',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676191986-01:00','2026-01-11 11:18:19.676192068-01:00',0);
+INSERT INTO "table_schema" VALUES (1292,'ADMIN','subscription','user_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676192732-01:00','2026-01-11 11:18:19.676192812-01:00',0);
+INSERT INTO "table_schema" VALUES (1293,'ADMIN','subscription','app_id','INTEGER',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676193488-01:00','2026-01-11 11:18:19.67619357-01:00',0);
+INSERT INTO "table_schema" VALUES (1294,'ADMIN','subscription','created_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676194262-01:00','2026-01-11 11:18:19.676194345-01:00',0);
+INSERT INTO "table_schema" VALUES (1295,'ADMIN','subscription','updated_at','DATETIME',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676195469-01:00','2026-01-11 11:18:19.67619555-01:00',0);
+INSERT INTO "table_schema" VALUES (1296,'ADMIN','subscription','excluded','BOOLEAN',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 11:18:19.676196278-01:00','2026-01-11 11:18:19.67619636-01:00',0);
+INSERT INTO "table_schema" VALUES (1297,'SAAS','product','product_id','INTEGER','Product ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1298,'SAAS','product','product','VARCHAR(255)','Product Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1299,'SAAS','product','description','TEXT','Product Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1300,'SAAS','product','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1301,'SAAS','product','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1302,'SAAS','product','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1303,'SAAS','product','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1304,'SAAS','product','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1305,'SAAS','product','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1306,'SAAS','provider','provider_id','INTEGER','Provider ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1307,'SAAS','provider','provider','VARCHAR(3)','Provider',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1308,'SAAS','provider','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1309,'SAAS','provider','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1310,'SAAS','provider','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1311,'SAAS','deployment','deployment_id','INTEGER','Deployment ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1312,'SAAS','deployment','deployment','VARCHAR(200)','Deployment',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1313,'SAAS','deployment','deployment_desc','TEXT','Deployment Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1314,'SAAS','deployment','product_id','INTEGER','Product ID',0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1315,'SAAS','deployment','provider_id','INTEGER','Provider ID',0,NULL,0,NULL,NULL,1,'provider','provider_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1316,'SAAS','deployment','terraform_template','TEXT','Terraform Script',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1317,'SAAS','deployment','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1318,'SAAS','deployment','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1319,'SAAS','deployment','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1320,'SAAS','deployment','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1321,'SAAS','deployment','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1322,'SAAS','deployment','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1323,'SAAS','currency','currency_id','INTEGER','Currency ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1324,'SAAS','currency','currency','VARCHAR(3)','Currency',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1325,'SAAS','currency','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1326,'SAAS','currency','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1327,'SAAS','currency','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1328,'SAAS','plan','plan_id','INTEGER','Plan ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1329,'SAAS','plan','plan','VARCHAR(3)','Plan',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1330,'SAAS','plan','price','FLOAT','Plan Price',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1331,'SAAS','plan','deployment_id','INTEGER','Deployment ID',0,NULL,0,NULL,NULL,1,'deployment','deployment_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1332,'SAAS','plan','product_id','INTEGER','Product ID',0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1333,'SAAS','plan','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1334,'SAAS','plan','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1335,'SAAS','plan','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1336,'SAAS','interval','interval_id','INTEGER','Interval ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1337,'SAAS','interval','interval','VARCHAR(100)','Interval',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1338,'SAAS','interval','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1339,'SAAS','interval','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1340,'SAAS','interval','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1341,'SAAS','payment_plan','payment_plan_id','INTEGER','Payment Plan ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1342,'SAAS','payment_plan','plan_id','INTEGER','Plan ID',0,NULL,0,NULL,NULL,1,'plan','plan_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1343,'SAAS','payment_plan','deployment_id','INTEGER','Deployment ID',0,NULL,0,NULL,NULL,1,'deployment','deployment_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1344,'SAAS','payment_plan','product_id','INTEGER','Product ID',0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1345,'SAAS','payment_plan','price','FLOAT','Plan Price',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1346,'SAAS','payment_plan','currency_id','INTEGER','Currency ID',0,NULL,0,NULL,NULL,1,'currency','currency_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1347,'SAAS','payment_plan','interval_id','INTEGER','Billing Interval',0,NULL,0,NULL,NULL,1,'interval','interval_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1348,'SAAS','payment_plan','stripe_price_id','VARCHAR(255)','Stripe Price ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1349,'SAAS','payment_plan','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1350,'SAAS','payment_plan','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1351,'SAAS','payment_plan','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1352,'SAAS','payment_plan','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1353,'SAAS','payment_plan','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1354,'SAAS','payment_plan','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1355,'SAAS','tenant','tenant_id','INTEGER','ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1356,'SAAS','tenant','tenant','VARCHAR(200)','Tenant Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1357,'SAAS','tenant','email','VARCHAR(200)','Email',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1358,'SAAS','tenant','password','VARCHAR(200)','Password',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1359,'SAAS','tenant','phone','VARCHAR(200)','Phone',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1360,'SAAS','tenant','address','VARCHAR(200)','Adress',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1361,'SAAS','tenant','currency_id','INTEGER','Currency ID',0,NULL,1,NULL,NULL,1,'currency','currency_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1362,'SAAS','tenant','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1363,'SAAS','tenant','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1364,'SAAS','tenant','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1365,'SAAS','tenant','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1366,'SAAS','tenant','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1367,'SAAS','tenant','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1368,'SAAS','subscription','subscription_id','INTEGER','Subscription ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1369,'SAAS','subscription','tenant_id','INTEGER','Tenant ID',0,NULL,0,NULL,NULL,1,'tenant','tenant_id',1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1370,'SAAS','subscription','plan_id','INTEGER','Plan ID',0,NULL,0,NULL,NULL,1,'plan','plan_id',1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1371,'SAAS','subscription','deployment_id','INTEGER','Deployment ID',0,NULL,0,NULL,NULL,1,'deployment','deployment_id',1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1372,'SAAS','subscription','payment_plan_id','INTEGER','Payment Plan ID',0,NULL,0,NULL,NULL,1,'payment_plan','payment_plan_id',1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1373,'SAAS','subscription','product_id','INTEGER','Product ID',0,NULL,0,NULL,NULL,1,'product','product_id',1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1374,'SAAS','subscription','terraform_outputs','TEXT','Terraform Outputs',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1375,'SAAS','subscription','tf_public_ip','VARCHAR(100)','Terraform Public IP',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1376,'SAAS','subscription','tf_public_dns','VARCHAR(255)','Terraform Public DNS',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1377,'SAAS','subscription','terraform_state','TEXT','Terraform State',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1378,'SAAS','subscription','deployed','BOOLEAN','Deployed',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1379,'SAAS','subscription','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1380,'SAAS','subscription','stripe_subscription_id','VARCHAR(255)','Stripe Subscription ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1381,'SAAS','subscription','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1382,'SAAS','subscription','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1383,'SAAS','subscription','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1384,'SAAS','subscription','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1385,'SAAS','subscription','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1386,'SAAS','env','env_id','INTEGER','env ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1387,'SAAS','env','env_name','VARCHAR(200)','Env Name',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1388,'SAAS','env','env_value','TEXT','Env Value',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1389,'SAAS','env','tenant_id','INTEGER','Tenant ID',0,NULL,0,NULL,NULL,1,'tenant','tenant_id',1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1390,'SAAS','env','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1391,'SAAS','env','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1392,'SAAS','env','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1393,'SAAS','env','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1394,'SAAS','env','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1395,'SAAS','env','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1396,'SAAS','dashboard','dashboard_id','INTEGER','Dashboard ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1397,'SAAS','dashboard','dashboard','VARCHAR(200)','Dashboard',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1398,'SAAS','dashboard','dashboard_desc','TEXT','Description',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1399,'SAAS','dashboard','dashboard_conf','TEXT','Conf / Params',0,NULL,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1400,'SAAS','dashboard','order','INTEGER','Order',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1401,'SAAS','dashboard','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1402,'SAAS','dashboard','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1403,'SAAS','dashboard','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1404,'SAAS','dashboard','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1405,'SAAS','dashboard','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1406,'SAAS','dashboard','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1407,'SAAS','dashboard_comment','dashboard_comment_id','INTEGER','Comment ID',1,1,0,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1408,'SAAS','dashboard_comment','dashboard_comment','TEXT','Comments',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1409,'SAAS','dashboard_comment','dashboard','VARCHAR(200)','Dashboard',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1410,'SAAS','dashboard_comment','active','BOOLEAN','Active',0,NULL,1,NULL,1,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1411,'SAAS','dashboard_comment','user_id','INTEGER','User ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1412,'SAAS','dashboard_comment','app_id','INTEGER','App ID',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1413,'SAAS','dashboard_comment','created_at','DATETIME','Created at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1414,'SAAS','dashboard_comment','updated_at','DATETIME','Updated at',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1415,'SAAS','dashboard_comment','excluded','BOOLEAN','Excluded',0,NULL,1,NULL,0,0,NULL,NULL,1,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "table_schema" VALUES (1416,'SAAS','sqlite_sequence','name','',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 12:03:58.600853582-01:00','2026-01-11 12:03:58.600857597-01:00',0);
+INSERT INTO "table_schema" VALUES (1417,'SAAS','sqlite_sequence','seq','',NULL,0,NULL,0,NULL,NULL,0,'','',1,'2026-01-11 12:03:58.60085858-01:00','2026-01-11 12:03:58.600858674-01:00',0);
+INSERT INTO "table_schema" VALUES (1418,'SAAS','subscription','terraform_lock','TEXT','Terraform Lock',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "table_schema" VALUES (1419,'SAAS','subscription','tf_err_msg','TEXT','Terraform error msg',0,NULL,1,NULL,NULL,0,NULL,NULL,1,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "task_status" VALUES (1,'Assigned',0);
+INSERT INTO "task_status" VALUES (2,'Staterd',0);
+INSERT INTO "task_status" VALUES (3,'On Standby',0);
+INSERT INTO "task_status" VALUES (4,'Concluded',0);
+INSERT INTO "translate_table" VALUES (1,'Languages','Languages','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (2,'Roles','Roles','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (3,'Users','Users','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (4,'User Roles','User Roles','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (5,'Applications','Applications','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (6,'Menus','Menus','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (7,'Tables','Tables','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (8,'Menu Tables','Menu Tables','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (9,'Role Apps','Role Apps','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (10,'Role App Menus','Role App Menus','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (11,'Role App Menu Tables','Role App Menu Tables','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (12,'User Logs','User Logs','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (13,'Custom Table','Custom Table','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (14,'Custom Form','Custom Form','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (15,'Role Row Level Access','Role Row Level Access','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (16,'Column Level Access','Column Level Access','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (17,'Row Level Access','Row Level Access','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (18,'Translate Table','Translate Table','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (19,'Translate Table Fields','Translate Table Fields','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (20,'Table Schema','Table Schema','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (21,'Jobs scheduling','Jobs scheduling','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (22,'Jobs scheduling logs','Jobs scheduling logs','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (23,'Periodicity','Periodicity','periodicity','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (24,'DB | ETL | Report | Quality','DB | ETL | Report | Quality','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (25,'Input Type','Input Type','input_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (26,'Source Type','Source Type','source_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (27,'Inputs','Inputs','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (28,'Output Type','Output Type','output_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (29,'Outputs','Outputs','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (30,'Output Fields','Output Fields','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (31,'Data Quality','Data Quality','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (32,'Data Reconciliation','Data Reconciliation','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (33,'Data Reconciliation','Data Reconciliation','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (34,'Export Type','Export Type','export_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (35,'Exports','Exports','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (36,'Export Details','Export Details','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (37,'Logs DB | ETL | Report | Quality','Logs DB | ETL | Report | Quality','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (38,'Notify','Notify','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (39,'Backups','Backups','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (40,'Scripts','Scripts','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (41,'Queries','Queries','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (42,'Dashboards','Dashboards','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (43,'Dashboards Comments','Dashboards Comments','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (44,'Calendar','Calendar','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (45,'Status','Status','task_status','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (46,'Type of repetition','Type of repetition','repeat_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (47,'Tasks','Tasks','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (48,'Status Updates','Status Updates','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table" VALUES (49,'ETLX','ETLX','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table" VALUES (50,'ETLX Extra Cofig','ETLX Extra Cofig','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table" VALUES (51,'Queries','Queries','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table" VALUES (52,'Dashboards','Dashboards','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table" VALUES (53,'Dashboards Comments','Dashboards Comments','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table" VALUES (54,'Notebooks','Notebooks','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table" VALUES (55,'Access Keys','Access Keys','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table" VALUES (56,'Products','Products','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (57,'Cloud Provider','Cloud Provider','provider','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (58,'Deployments','Deployments','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (59,'Currency','Currency','currency','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (60,'Plan','Plan','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (61,'Intervals','Intervals','interval','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (62,'Payment Plans','Payment Plans','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (63,'Tenants','Tenants','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (64,'Subscriptions','Subscriptions','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table" VALUES (65,'Envariomental Variables','Envariomental Variables','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (66,'Dashboards','Dashboards','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (67,'Dashboards Comments','Dashboards Comments','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table" VALUES (68,'Expose Arrow Flight','Expose Arrow Flight','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (1,'Lang ID','Lang ID','lang_id','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (2,'Language','Language','lang','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (3,'Description','Description','lang_desc','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (4,'Created at','Created at','created_at','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (5,'Updated at','Updated at','updated_at','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (6,'Excluded','Excluded','excluded','lang','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (7,'Role ID','Role ID','role_id','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (8,'Role','Role','role','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (9,'Description','Description','role_desc','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (10,'Config','Config','config','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (11,'Created at','Created at','created_at','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (12,'Updated at','Updated at','updated_at','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (13,'Excluded','Excluded','excluded','role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (14,'User ID','User ID','user_id','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (15,'Username','Username','username','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (16,'Fisrt Name','Fisrt Name','first_name','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (17,'Last Name','Last Name','last_name','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (18,'Email','Email','email','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (19,'Phone','Phone','phone','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (20,'Password','Password','password','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (21,'Default Role ID','Default Role ID','role_id','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (22,'Lang ID','Lang ID','lang_id','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (23,'Timezone','Timezone','timezone','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (24,'Profile Picture','Profile Picture','attach_profile_pic','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (25,'Active','Active','active','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (26,'Created at','Created at','created_at','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (27,'Updated at','Updated at','updated_at','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (28,'Excluded','Excluded','excluded','users','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (29,'User Role ID','User Role ID','user_role_id','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (30,'User ID','User ID','user_id','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (31,'Role ID','Role ID','role_id','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (32,'Active','Active','active','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (33,'Created at','Created at','created_at','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (34,'Updated at','Updated at','updated_at','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (35,'Excluded','Excluded','excluded','user_role','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (36,'App ID','App ID','app_id','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (37,'App Name','App Name','app','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (38,'Description','Description','app_desc','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (39,'Version','Version','version','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (40,'Email','Email','email','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (41,'Database','Database','db','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (42,'Logo','Logo','attach_logo','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (43,'Config','Config','config','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (44,'User ID','User ID','user_id','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (45,'Created at','Created at','created_at','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (46,'Updated at','Updated at','updated_at','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (47,'Excluded','Excluded','excluded','app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (48,'Menu ID','Menu ID','menu_id','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (49,'Menu','Menu','menu','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (50,'Description','Description','menu_desc','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (51,'Icon','Icon','menu_icon','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (52,'Order','Order','menu_order','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (53,'Config','Config','menu_config','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (54,'App ID','App ID','app_id','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (55,'User ID','User ID','user_id','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (56,'Active','Active','active','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (57,'Created at','Created at','created_at','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (58,'Updated at','Updated at','updated_at','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (59,'Excluded','Excluded','excluded','menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (60,'Table ID','Table ID','table_id','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (61,'Table','Table','table','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (62,'Description','Description','table_desc','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (63,'Database','Database','db','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (64,'Requires Row Level Access','Requires Row Level Access','requires_rla','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (65,'User ID','User ID','user_id','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (66,'Created at','Created at','created_at','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (67,'Updated at','Updated at','updated_at','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (68,'Excluded','Excluded','excluded','table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (69,'Menu Table ID','Menu Table ID','menu_table_id','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (70,'Menu ID','Menu ID','menu_id','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (71,'Table ID','Table ID','table_id','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (72,'App ID','App ID','app_id','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (73,'User ID','User ID','user_id','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (74,'Active','Active','active','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (75,'Requires Row Level Access','Requires Row Level Access','requires_rla','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (76,'Config','Config','menu_table_cnf','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (77,'Created at','Created at','created_at','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (78,'Updated at','Updated at','updated_at','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (79,'Excluded','Excluded','excluded','menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (80,'Role App ID','Role App ID','role_app_id','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (81,'Role ID','Role ID','role_id','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (82,'App ID','App ID','app_id','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (83,'Access','Access','access','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (84,'User ID','User ID','user_id','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (85,'Created at','Created at','created_at','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (86,'Updated at','Updated at','updated_at','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (87,'Excluded','Excluded','excluded','role_app','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (88,'Role App Menu ID','Role App Menu ID','role_app_menu_id','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (89,'Role ID','Role ID','role_id','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (90,'App ID','App ID','app_id','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (91,'Menu ID','Menu ID','menu_id','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (92,'Access','Access','access','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (93,'User ID','User ID','user_id','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (94,'Created at','Created at','created_at','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (95,'Updated at','Updated at','updated_at','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (96,'Excluded','Excluded','excluded','role_app_menu','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (97,'Role App Menu Table ID','Role App Menu Table ID','role_app_menu_table_id','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (98,'Role ID','Role ID','role_id','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (99,'App ID','App ID','app_id','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (100,'Menu ID','Menu ID','menu_id','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (101,'Table ID','Table ID','table_id','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (102,'Create','Create','create','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (103,'Read','Read','read','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (104,'Update','Update','update','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (105,'Delete','Delete','delete','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (106,'User ID','User ID','user_id','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (107,'Created at','Created at','created_at','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (108,'Updated at','Updated at','updated_at','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (109,'Excluded','Excluded','excluded','role_app_menu_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (110,'User Log ID','User Log ID','user_log_id','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (111,'User ID','User ID','user_id','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (112,'Action','Action','action','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (113,'Request IP','Request IP','req_ip','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (114,'Request at','Request at','req_at','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (115,'Request Data','Request Data','req_data','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (116,'Response at','Response at','res_at','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (117,'Response Type','Response Type','res_type','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (118,'Response Message','Response Message','res_msg','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (119,'Request Data','Request Data','res_data','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (120,'Table','Table','table','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (121,'Database','Database','db','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (122,'Database','Database','row_id','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (123,'App ID','App ID','app_id','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (124,'New Data','New Data','new_data','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (125,'Created at','Created at','created_at','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (126,'Updated at','Updated at','updated_at','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (127,'Excluded','Excluded','excluded','user_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (128,'Custom Table ID','Custom Table ID','custom_table_id','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (129,'Table','Table','table','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (130,'Database','Database','db','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (131,'Config','Config','config','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (132,'App ID','App ID','app_id','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (133,'User ID','User ID','user_id','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (134,'Created at','Created at','created_at','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (135,'Updated at','Updated at','updated_at','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (136,'Excluded','Excluded','excluded','custom_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (137,'Custom Form ID','Custom Form ID','custom_form_id','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (138,'Table','Table','table','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (139,'Database','Database','db','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (140,'Config','Config','config','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (141,'App ID','App ID','app_id','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (142,'User ID','User ID','user_id','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (143,'Created at','Created at','created_at','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (144,'Updated at','Updated at','updated_at','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (145,'Excluded','Excluded','excluded','custom_form','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (146,'Role Row Level Access ID','Role Row Level Access ID','role_row_level_access_id','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (147,'Role ID','Role ID','role_id','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (148,'Row ID','Row ID','row_id','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (149,'Table ID','Table ID','table_id','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (150,'Table','Table','table','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (151,'Database','Database','db','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (152,'User ID','User ID','user_id','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (153,'App ID','App ID','app_id','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (154,'Read','Read','read','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (155,'Update','Update','update','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (156,'Delete','Delete','delete','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (157,'Share','Share','share','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (158,'Created at','Created at','created_at','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (159,'Updated at','Updated at','updated_at','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (160,'Excluded','Excluded','excluded','role_row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (161,'Column Level Access ID','Column Level Access ID','column_level_access_id','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (162,'Column','Column','column','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (163,'Table ID','Table ID','table_id','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (164,'Table','Table','table','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (165,'Database','Database','db','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (166,'User ID','User ID','user_id','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (167,'App ID','App ID','app_id','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (168,'Create','Create','create','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (169,'Read','Read','read','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (170,'Update','Update','update','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (171,'Created at','Created at','created_at','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (172,'Updated at','Updated at','updated_at','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (173,'Excluded','Excluded','excluded','column_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (174,'Row Level Access ID','Row Level Access ID','row_level_access_id','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (175,'Row ID','Row ID','row_id','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (176,'Table ID','Table ID','table_id','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (177,'Table','Table','table','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (178,'Database','Database','db','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (179,'User ID','User ID','user_id','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (180,'App ID','App ID','app_id','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (181,'Read','Read','read','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (182,'Update','Update','update','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (183,'Delete','Delete','delete','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (184,'Share','Share','share','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (185,'Created at','Created at','created_at','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (186,'Updated at','Updated at','updated_at','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (187,'Excluded','Excluded','excluded','row_level_access','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (188,'Translate Table ID','Translate Table ID','transl_tbl_id','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (189,'Table Org. Desc','Table Org. Desc','table_org_desc','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (190,'Table Transl. Desc','Table Transl. Desc','table_transl_desc','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (191,'Table','Table','table','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (192,'Database','Database','db','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (193,'Lang','Lang','lang','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (194,'User ID','User ID','user_id','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (195,'App ID','App ID','app_id','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (196,'Created at','Created at','created_at','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (197,'Updated at','Updated at','updated_at','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (198,'Excluded','Excluded','excluded','translate_table','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (199,'Translate Table Field ID','Translate Table Field ID','transl_tbl_field_id','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (200,'Field Org. Desc','Field Org. Desc','field_org_desc','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (201,'Field Transl. Desc','Field Transl. Desc','field_transl_desc','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (202,'Field','Field','field','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (203,'Table','Table','table','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (204,'Database','Database','db','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (205,'Lang','Lang','lang','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (206,'User ID','User ID','user_id','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (207,'App ID','App ID','app_id','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (208,'Created at','Created at','created_at','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (209,'Updated at','Updated at','updated_at','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (210,'Excluded','Excluded','excluded','translate_table_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (211,'Table field ID','Table field ID','table_schema_id','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (212,'Database','Database','db','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (213,'Table','Table','table','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (214,'Field','Field','field','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (215,'Type','Type','type','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (216,'Comment','Comment','comment','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (217,'Primary Key','Primary Key','pk','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (218,'Auto Increment','Auto Increment','autoincrement','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (219,'Nullable','Nullable','nullable','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (220,'Nullable','Nullable','computed','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (221,'Default','Default','default','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (222,'Foreign  Key','Foreign  Key','fk','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (223,'Ref. Table.','Ref. Table.','referred_table','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (224,'Ref. Column','Ref. Column','referred_column','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (225,'User ID','User ID','user_id','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (226,'Created at','Created at','created_at','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (227,'Updated at','Updated at','updated_at','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (228,'Excluded','Excluded','excluded','table_schema','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (229,'Cron ID','Cron ID','cron_id','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (230,'Cron','Cron','cron','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (231,'Decription','Decription','cron_desc','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (232,'API','API','api','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (233,'App ID','App ID','app_id','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (234,'Database','Database','db','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (235,'Table','Table','table','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (236,'Active','Active','active','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (237,'Created at','Created at','created_at','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (238,'Updated at','Updated at','updated_at','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (239,'Excluded','Excluded','excluded','cron','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (240,'Cron Log ID','Cron Log ID','cron_log_id','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (241,'Cron ID','Cron ID','cron_id','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (242,'Cron','Cron','cron','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (243,'Decription','Decription','cron_desc','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (244,'API','API','api','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (245,'Job Start','Job Start','start_at','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (246,'Job End','Job End','end_at','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (247,'Success','Success','success','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (248,'Message','Message','cron_msg','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (249,'App ID','App ID','app_id','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (250,'Database','Database','db','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (251,'Table','Table','table','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (252,'Created at','Created at','created_at','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (253,'Updated at','Updated at','updated_at','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (254,'Excluded','Excluded','excluded','cron_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (255,'Periodicity ID','Periodicity ID','periodicity_id','periodicity','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (256,'Periodicity','Periodicity','periodicity','periodicity','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (257,'Created at','Created at','created_at','periodicity','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (258,'Updated at','Updated at','updated_at','periodicity','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (259,'Excluded','Excluded','excluded','periodicity','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (260,'ID','ID','etl_report_base_id','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (261,'DB | ETL | Report | Quality','DB | ETL | Report | Quality','etl_report_base','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (262,'Description','Description','etl_report_base_desc','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (263,'Documentation','Documentation','attach_etl_rbase_doc','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (264,'Periodicity','Periodicity','periodicity_id','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (265,'Database','Database','database','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (266,'Includes Output','Includes Output','includes_output','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (267,'Includes Data Quality','Includes Data Quality','includes_data_quality','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (268,'Includes Data Reconc.','Includes Data Reconc.','includes_data_reconci','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (269,'Includes Exports','Includes Exports','includes_exports','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (270,'Includes Backup','Includes Backup','includes_backup','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (271,'Includes Scripts','Includes Scripts','includes_script','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (272,'Includes Notefy','Includes Notefy','includes_notify','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (273,'Config','Config','etl_report_base_conf','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (274,'Active','Active','active','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (275,'User ID','User ID','user_id','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (276,'App ID','App ID','app_id','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (277,'Created at','Created at','created_at','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (278,'Updated at','Updated at','updated_at','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (279,'Excluded','Excluded','excluded','etl_report_base','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (280,'Input Type ID','Input Type ID','input_type_id','input_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (281,'Input Type','Input Type','input_type','input_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (282,'Created at','Created at','created_at','input_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (283,'Updated at','Updated at','updated_at','input_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (284,'Excluded','Excluded','excluded','input_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (285,'Source Type ID','Source Type ID','source_type_id','source_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (286,'Souce Type','Souce Type','source_type','source_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (287,'Created at','Created at','created_at','source_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (288,'Updated at','Updated at','updated_at','source_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (289,'Excluded','Excluded','excluded','source_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (290,'ID','ID','etl_rbase_input_id','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (291,'Input','Input','etl_rbase_input','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (292,'Input Description','Input Description','etl_rbase_input_desc','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (293,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (294,'Input Type ID','Input Type ID','input_type_id','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (295,'Save only temp','Save only temp','save_only_temp','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (296,'Replace existing data','Replace existing data','replace_existing_data','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (297,'Check ref. date','Check ref. date','check_ref_date','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (298,'Ref. date field','Ref. date field','ref_date_field','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (299,'Date Format in origin','Date Format in origin','date_format_org','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (300,'Other Date Fields','Other Date Fields','other_date_fields','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (301,'Reference / Id Keys','Reference / Id Keys','ref_id_keys','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (302,'Last update date field','Last update date field','last_update_date_field','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (303,'Incremental Extraction','Incremental Extraction','incremental_extract','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (304,'Destination Table','Destination Table','destination_table','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (305,'Database','Database','database','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (306,'Allow Import','Allow Import','allow_import','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (307,'Multiple Sheets','Multiple Sheets','multiple_sheets','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (308,'Specific Sheets','Specific Sheets','specific_sheets','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (309,'Specific Range','Specific Range','specific_range','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (310,'Columns to Import','Columns to Import','columns_to_import','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (311,'Text with fixed format Layout','Text with fixed format Layout','txt_fix_format_layout','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (312,'Headers','Headers','headers','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (313,'Spreadsheet Forms','Spreadsheet Forms','spreadsheet_forms','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (314,'Spreadsheet Forms Map','Spreadsheet Forms Map','spreadsheet_forms_map','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (315,'Config','Config','etl_rbase_input_conf','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (316,'Active','Active','active','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (317,'User ID','User ID','user_id','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (318,'App ID','App ID','app_id','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (319,'Created at','Created at','created_at','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (320,'Updated at','Updated at','updated_at','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (321,'Excluded','Excluded','excluded','etl_rbase_input','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (322,'Output Type ID','Output Type ID','output_type_id','output_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (323,'Souce Type','Souce Type','output_type','output_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (324,'Created at','Created at','created_at','output_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (325,'Updated at','Updated at','updated_at','output_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (326,'Excluded','Excluded','excluded','output_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (327,'ID','ID','etl_rbase_output_id','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (328,'Output','Output','etl_rbase_output','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (329,'Output Description','Output Description','etl_rbase_output_desc','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (330,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (331,'Input Type ID','Input Type ID','output_type_id','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (332,'Date field','Date field','date_field','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (333,'Date Format','Date Format','date_field_format','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (334,'Destination Table','Destination Table','destination_table','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (335,'Database','Database','database','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (336,'Append','Append','append_it','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (337,'Field Order','Field Order','output_order','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (338,'Config','Config','etl_rbase_output_conf','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (339,'Active','Active','active','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (340,'User ID','User ID','user_id','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (341,'App ID','App ID','app_id','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (342,'Created at','Created at','created_at','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (343,'Updated at','Updated at','updated_at','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (344,'Excluded','Excluded','excluded','etl_rbase_output','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (345,'ID','ID','etl_rb_output_field_id','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (346,'Field','Field','etl_rb_output_field','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (347,'Field Description','Field Description','etl_rb_output_field_desc','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (348,'Output ID','Output ID','etl_rbase_output_id','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (349,'SELECT','SELECT','sql_select','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (350,'FROM','FROM','sql_from','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (351,'JOIN','JOIN','sql_join','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (352,'WHERE','WHERE','sql_where','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (353,'GROUP BY','GROUP BY','sql_group_by','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (354,'ORDER BY','ORDER BY','sql_order_by','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (355,'WINDOW','WINDOW','sql_window','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (356,'HAVING','HAVING','sql_having','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (357,'Field Order','Field Order','field_order','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (358,'Fields Used','Fields Used','fields_used','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (359,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (360,'Active','Active','active','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (361,'User ID','User ID','user_id','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (362,'App ID','App ID','app_id','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (363,'Created at','Created at','created_at','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (364,'Updated at','Updated at','updated_at','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (365,'Excluded','Excluded','excluded','etl_rb_output_field','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (366,'ID','ID','etl_rbase_quality_id','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (367,'Data Quality Rule','Data Quality Rule','etl_rbase_quality','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (368,'Rule Description','Rule Description','etl_rbase_quality_desc','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (369,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (370,'SQL Quality Check','SQL Quality Check','sql_quality_check','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (371,'SQL Quality Fix','SQL Quality Fix','sql_quality_fix','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (372,'Comments / Justifications','Comments / Justifications','comments','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (373,'Fields','Fields','fields','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (374,'Tables','Tables','tables','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (375,'Database','Database','database','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (376,'Rule Description','Rule Description','etl_rbase_quality_conf','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (377,'Active','Active','active','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (378,'User ID','User ID','user_id','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (379,'App ID','App ID','app_id','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (380,'Created at','Created at','created_at','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (381,'Updated at','Updated at','updated_at','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (382,'Excluded','Excluded','excluded','etl_rbase_quality','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (383,'ID','ID','etl_rb_reconcilia_id','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (384,'Data Reconciliation Rule','Data Reconciliation Rule','etl_rb_reconcilia','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (385,'Rule Description','Rule Description','etl_rb_reconcilia_desc','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (386,'Template','Template','etl_rb_reconc_template','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (387,'Database','Database','database','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (388,'Active','Active','active','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (389,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (390,'User ID','User ID','user_id','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (391,'App ID','App ID','app_id','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (392,'Created at','Created at','created_at','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (393,'Updated at','Updated at','updated_at','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (394,'Excluded','Excluded','excluded','etl_rb_reconcilia','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (395,'ID','ID','etl_rb_reconc_dtail_id','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (396,'Variable Name','Variable Name','etl_rb_reconc_dtail','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (397,'Var. Description','Var. Description','etl_rb_reconc_dtail_desc','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (398,'SQL Query Valor 1','SQL Query Valor 1','sql_query_val_1','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (399,'SQL Query Valor 2','SQL Query Valor 2','sql_query_val_2','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (400,'Is Eval Formula','Is Eval Formula','is_eval_formula','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (401,'SQL / Formula Reconc','SQL / Formula Reconc','sql_reconcilia_query','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (402,'Comments / Justifications','Comments / Justifications','comments','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (403,'Data Reconciliation ID','Data Reconciliation ID','etl_rb_reconcilia_id','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (404,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (405,'Active','Active','active','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (406,'User ID','User ID','user_id','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (407,'App ID','App ID','app_id','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (408,'Created at','Created at','created_at','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (409,'Updated at','Updated at','updated_at','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (410,'Excluded','Excluded','excluded','etl_rb_reconc_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (411,'Export Type ID','Export Type ID','export_type_id','export_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (412,'Export Type','Export Type','export_type','export_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (413,'Created at','Created at','created_at','export_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (414,'Updated at','Updated at','updated_at','export_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (415,'Excluded','Excluded','excluded','export_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (416,'ID','ID','etl_rbase_export_id','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (417,'Export','Export','etl_rbase_export','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (418,'Export Description','Export Description','etl_rbase_export_desc','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (419,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (420,'Export ID','Export ID','export_type_id','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (421,'File name / Template','File name / Template','attach_file_template','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (422,'Text with fixed format Layout','Text with fixed format Layout','txt_fix_format_layout','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (423,'Text with fixed format Headers','Text with fixed format Headers','txt_fix_format_header','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (424,'Config','Config','etl_rbase_export_conf','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (425,'Output ID','Output ID','etl_rbase_output_id','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (426,'Database','Database','database','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (427,'Active','Active','active','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (428,'Ignore','Ignore','ignore','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (429,'User ID','User ID','user_id','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (430,'App ID','App ID','app_id','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (431,'Created at','Created at','created_at','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (432,'Updated at','Updated at','updated_at','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (433,'Excluded','Excluded','excluded','etl_rbase_export','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (434,'ID','ID','etl_rb_exp_dtail_id','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (435,'Export Detail','Export Detail','etl_rb_exp_dtail','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (436,'Export Detail Description','Export Detail Description','etl_rb_exp_dtail_desc','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (437,'Export ID','Export ID','etl_rbase_export_id','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (438,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (439,'Export SQL Query','Export SQL Query','sql_export_query','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (440,'Database','Database','database','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (441,'Dest. Sheet Name','Dest. Sheet Name','dest_sheet_name','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (442,'Dest. Table Name','Dest. Table Name','dest_table_name','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (443,'Config','Config','etl_rb_exp_dtail_conf','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (444,'Active','Active','active','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (445,'User ID','User ID','user_id','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (446,'App ID','App ID','app_id','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (447,'Created at','Created at','created_at','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (448,'Updated at','Updated at','updated_at','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (449,'Excluded','Excluded','excluded','etl_rb_exp_dtail','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (450,'ID Log','ID Log','log_id','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (451,'Type','Type','type','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (452,'Name','Name','name','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (453,'Ref. Date','Ref. Date','ref','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (454,'Started At','Started At','start','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (455,'End At','End At','end','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (456,'Duration','Duration','timer','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (457,'Success','Success','success','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (458,'Response','Response','msg','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (459,'Affected Rows','Affected Rows','num_rows','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (460,'Errors','Errors','errors','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (461,'Automated Fixes','Automated Fixes','fixes','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (462,'Generated Files','Generated Files','fname','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (463,'Html','Html','html','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (464,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (465,'App ID','App ID','app_id','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (466,'User ID','User ID','user_id','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (467,'Created at','Created at','created_at','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (468,'Updated at','Updated at','updated_at','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (469,'Excluded','Excluded','excluded','etl_report_base_log','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (470,'ID','ID','notify_id','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (471,'Subject','Subject','notify_subject','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (472,'Body','Body','notify_body','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (473,'Mail TO','Mail TO','notify_to','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (474,'Mail CC','Mail CC','notify_cc','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (475,'Attach Exports','Attach Exports','notify_attach_exports','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (476,'Copy Exports','Copy Exports','notify_copy_exports_to','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (477,'Copy Exports Path','Copy Exports Path','notify_copy_exports_path','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (478,'Conf','Conf','notify_conf','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (479,'Send Email','Send Email','send_email','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (480,'Active','Active','active','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (481,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (482,'User ID','User ID','user_id','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (483,'App ID','App ID','app_id','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (484,'Created at','Created at','created_at','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (485,'Updated at','Updated at','updated_at','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (486,'Excluded','Excluded','excluded','etl_rbase_notify','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (487,'ID','ID','backup_id','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (488,'Backup','Backup','backup','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (489,'SQL','SQL','backup_sql','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (490,'Copy','Copy','backup_copy_to','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (491,'Path','Path','backup_copy_path','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (492,'Conf','Conf','backup_conf','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (493,'Active','Active','active','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (494,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (495,'User ID','User ID','user_id','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (496,'App ID','App ID','app_id','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (497,'Created at','Created at','created_at','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (498,'Updated at','Updated at','updated_at','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (499,'Excluded','Excluded','excluded','etl_rbase_backup','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (500,'ID','ID','script_id','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (501,'Script','Script','script','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (502,'SQL','SQL','script_sql','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (503,'Conf','Conf','script_conf','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (504,'Active','Active','active','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (505,'DB | ETL | Report | Quality ID','DB | ETL | Report | Quality ID','etl_report_base_id','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (506,'User ID','User ID','user_id','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (507,'App ID','App ID','app_id','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (508,'Created at','Created at','created_at','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (509,'Updated at','Updated at','updated_at','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (510,'Excluded','Excluded','excluded','etl_rbase_script','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (511,'ID','ID','manage_query_id','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (512,'Query Desc','Query Desc','manage_query','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (513,'Database','Database','database','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (514,'Query Config','Query Config','manage_query_conf','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (515,'Active','Active','active','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (516,'User ID','User ID','user_id','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (517,'App ID','App ID','app_id','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (518,'Created at','Created at','created_at','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (519,'Updated at','Updated at','updated_at','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (520,'Excluded','Excluded','excluded','manage_query','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (521,'Dashboard ID','Dashboard ID','dashboard_id','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (522,'Dashboard','Dashboard','dashboard','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (523,'Description','Description','dashboard_desc','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (524,'Conf / Params','Conf / Params','dashboard_conf','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (525,'Order','Order','order','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (526,'Active','Active','active','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (527,'User ID','User ID','user_id','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (528,'App ID','App ID','app_id','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (529,'Created at','Created at','created_at','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (530,'Updated at','Updated at','updated_at','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (531,'Excluded','Excluded','excluded','dashboard','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (532,'Comment ID','Comment ID','dashboard_comment_id','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (533,'Comments','Comments','dashboard_comment','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (534,'Dashboard','Dashboard','dashboard','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (535,'Active','Active','active','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (536,'User ID','User ID','user_id','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (537,'App ID','App ID','app_id','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (538,'Created at','Created at','created_at','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (539,'Updated at','Updated at','updated_at','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (540,'Excluded','Excluded','excluded','dashboard_comment','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (541,'Calendar ID','Calendar ID','calendar_id','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (542,'Calendar','Calendar','calendar','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (543,'Description','Description','calendar_desc','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (544,'Email','Email','calendar_email','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (545,'Calendar Color','Calendar Color','calendar_color','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (546,'User ID','User ID','user_id','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (547,'App ID','App ID','app_id','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (548,'Created at','Created at','created_at','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (549,'Updated at','Updated at','updated_at','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (550,'Excluded','Excluded','excluded','calendar','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (551,'Status ID','Status ID','task_status_id','task_status','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (552,'Status','Status','task_status','task_status','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (553,'Excluded','Excluded','excluded','task_status','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (554,'Type of repetition ID','Type of repetition ID','repeat_type_id','repeat_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (555,'Type of Repetition','Type of Repetition','repeat_type','repeat_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (556,'Excluded','Excluded','excluded','repeat_type','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (557,'Task Id','Task Id','task_id','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (558,'task','task','task','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (559,'Description','Description','task_desc','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (560,'Starts at','Starts at','starts_at','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (561,'Ends at','Ends at','ends_at','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (562,'Calendar ID','Calendar ID','calendar_id','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (563,'Calendar Color','Calendar Color','calendar_color','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (564,'Email','Email','calendar_email','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (565,'Status ID','Status ID','task_status_id','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (566,'Status','Status','task_status','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (567,'Attachment','Attachment','attach_task','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (568,'Repeat','Repeat','repeat','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (569,'Repeat Type ID','Repeat Type ID','repeat_type_id','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (570,'Days of week','Days of week','days_of_week','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (571,'Repeat start date','Repeat start date','repeat_start_date','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (572,'Repeat start time','Repeat start time','repeat_start_time','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (573,'Repeat end date','Repeat end date','repeat_end_date','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (574,'Repeat end time','Repeat end time','repeat_end_time','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (575,'Attendees','Attendees','attendees','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (576,'Active','Active','active','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (577,'User ID','User ID','user_id','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (578,'App ID','App ID','app_id','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (579,'Created at','Created at','created_at','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (580,'Updated at','Updated at','updated_at','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (581,'Excluded','Excluded','excluded','task','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (582,'Status Update ID','Status Update ID','task_track_id','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (583,'Status Update','Status Update','task_track','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (584,'Description','Description','task_track_desc','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (585,'Date','Date','task_track_date','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (586,'Status ID','Status ID','task_status_id','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (587,'Attachment','Attachment','attach_task_track','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (588,'Task ID','Task ID','task_id','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (589,'User ID','User ID','user_id','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (590,'App ID','App ID','app_id','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (591,'Created at','Created at','created_at','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (592,'Updated at','Updated at','updated_at','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (593,'Excluded','Excluded','excluded','task_track','ADMIN','en',1,NULL,'2025-11-05 18:55:19.298372','2025-11-05 18:55:19.298372',0);
+INSERT INTO "translate_table_field" VALUES (594,'ID','ID','etlx_id','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (595,'Name','Name','etl','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (596,'Description','Description','etl_desc','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (597,'Config File','Config File','attach_etlx_conf','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (598,'Config Text','Config Text','etlx_conf','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (599,'Active','Active','active','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (600,'User ID','User ID','user_id','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (601,'App ID','App ID','app_id','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (602,'Created at','Created at','created_at','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (603,'Updated at','Updated at','updated_at','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (604,'Excluded','Excluded','excluded','etlx','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (605,'ID','ID','etlx_conf_id','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (606,'Name','Name','etlx_conf','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (607,'Description','Description','etlx_conf_desc','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (608,'Config Text','Config Text','etlx_extra_conf','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (609,'User ID','User ID','user_id','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (610,'App ID','App ID','app_id','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (611,'Created at','Created at','created_at','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (612,'Updated at','Updated at','updated_at','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (613,'Excluded','Excluded','excluded','etlx_conf','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (614,'ID','ID','manage_query_id','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (615,'Query Desc','Query Desc','manage_query','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (616,'Database','Database','database','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (617,'Query Config','Query Config','manage_query_conf','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (618,'Active','Active','active','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (619,'User ID','User ID','user_id','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (620,'App ID','App ID','app_id','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (621,'Created at','Created at','created_at','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (622,'Updated at','Updated at','updated_at','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (623,'Excluded','Excluded','excluded','manage_query','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (624,'Dashboard ID','Dashboard ID','dashboard_id','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (625,'Dashboard','Dashboard','dashboard','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (626,'Description','Description','dashboard_desc','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (627,'Conf / Params','Conf / Params','dashboard_conf','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (628,'Order','Order','order','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (629,'Active','Active','active','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (630,'User ID','User ID','user_id','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (631,'App ID','App ID','app_id','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (632,'Created at','Created at','created_at','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (633,'Updated at','Updated at','updated_at','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (634,'Excluded','Excluded','excluded','dashboard','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (635,'Comment ID','Comment ID','dashboard_comment_id','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (636,'Comments','Comments','dashboard_comment','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (637,'Dashboard','Dashboard','dashboard','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (638,'Active','Active','active','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (639,'User ID','User ID','user_id','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (640,'App ID','App ID','app_id','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (641,'Created at','Created at','created_at','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (642,'Updated at','Updated at','updated_at','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (643,'Excluded','Excluded','excluded','dashboard_comment','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (644,'Notebook ID','Notebook ID','notebook_id','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (645,'Name','Name','notebook','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (646,'Description','Description','notebook_desc','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (647,'Conf / Params','Conf / Params','notebook_conf','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (648,'Active','Active','active','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (649,'User ID','User ID','user_id','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (650,'App ID','App ID','app_id','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (651,'Created at','Created at','created_at','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (652,'Updated at','Updated at','updated_at','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (653,'Excluded','Excluded','excluded','notebook','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (654,'Access Key ID','Access Key ID','access_key_id','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (655,'Description','Description','access_key_desc','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (656,'Token','Token','access_token','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (657,'Expires at','Expires at','expires_at','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (658,'Active','Active','active','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (659,'Created For','Created For','for_user_id','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (660,'Created BY','Created BY','user_id','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (661,'Created at','Created at','created_at','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (662,'Updated at','Updated at','updated_at','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (663,'Excluded','Excluded','excluded','access_key','ADMIN','en',1,NULL,'2026-01-10 06:36:38.574193','2026-01-10 06:36:38.574193',0);
+INSERT INTO "translate_table_field" VALUES (664,'Product ID','Product ID','product_id','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (665,'Product Name','Product Name','name','product','SAAS','en',1,NULL,'2026-01-11 08:44:43.636020','2026-01-11 08:44:43.636020',0);
+INSERT INTO "translate_table_field" VALUES (666,'Product Description','Product Description','description','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (667,'Active','Active','active','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (668,'User ID','User ID','user_id','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (669,'App ID','App ID','app_id','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (670,'Created at','Created at','created_at','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (671,'Updated at','Updated at','updated_at','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (672,'Excluded','Excluded','excluded','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (673,'Provider ID','Provider ID','provider_id','provider','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (674,'Provider','Provider','provider','provider','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (675,'Created at','Created at','created_at','provider','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (676,'Updated at','Updated at','updated_at','provider','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (677,'Excluded','Excluded','excluded','provider','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (678,'Deployment ID','Deployment ID','deployment_id','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (679,'Deployment','Deployment','deployment','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (680,'Product ID','Product ID','product_id','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (681,'Provider ID','Provider ID','provider_id','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (682,'Deployment Name','Deployment Name','name','deployment','SAAS','en',1,NULL,'2026-01-10 18:53:36.756558','2026-01-10 18:53:36.756558',0);
+INSERT INTO "translate_table_field" VALUES (683,'Deployment Description','Deployment Description','deployment_desc','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (684,'Terraform Script','Terraform Script','terraform_template','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (685,'Active','Active','active','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (686,'User ID','User ID','user_id','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (687,'App ID','App ID','app_id','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (688,'Created at','Created at','created_at','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (689,'Updated at','Updated at','updated_at','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (690,'Excluded','Excluded','excluded','deployment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (691,'Currency ID','Currency ID','currency_id','currency','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (692,'Currency','Currency','currency','currency','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (693,'Created at','Created at','created_at','currency','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (694,'Updated at','Updated at','updated_at','currency','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (695,'Excluded','Excluded','excluded','currency','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (696,'Plan ID','Plan ID','plan_id','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (697,'Plan','Plan','plan','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (698,'Plan Price','Plan Price','price','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (699,'Deployment ID','Deployment ID','deployment_id','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (700,'Created at','Created at','created_at','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (701,'Updated at','Updated at','updated_at','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (702,'Excluded','Excluded','excluded','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (703,'Interval ID','Interval ID','interval_id','interval','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (704,'Interval','Interval','interval','interval','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (705,'Created at','Created at','created_at','interval','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (706,'Updated at','Updated at','updated_at','interval','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (707,'Excluded','Excluded','excluded','interval','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (708,'Payment Plan ID','Payment Plan ID','payment_plan_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (709,'Product ID','Product ID','product_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (710,'Plan ID','Plan ID','plan_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (711,'Plan Price','Plan Price','price','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (712,'Currency ID','Currency ID','currency_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (713,'Billing Interval','Billing Interval','interval_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (714,'Stripe Price ID','Stripe Price ID','stripe_price_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (715,'Active','Active','active','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (716,'User ID','User ID','user_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (717,'App ID','App ID','app_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (718,'Created at','Created at','created_at','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (719,'Updated at','Updated at','updated_at','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (720,'Excluded','Excluded','excluded','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (721,'ID','ID','tenant_id','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (722,'Name','Name','name','tenant','SAAS','en',1,NULL,'2026-01-11 08:44:43.636020','2026-01-11 08:44:43.636020',0);
+INSERT INTO "translate_table_field" VALUES (723,'Email','Email','email','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (724,'Password','Password','password','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (725,'Phone','Phone','phone','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (726,'Adress','Adress','address','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (727,'Currency ID','Currency ID','currency_id','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (728,'Active','Active','active','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (729,'User ID','User ID','user_id','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (730,'App ID','App ID','app_id','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (731,'Created at','Created at','created_at','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (732,'Updated at','Updated at','updated_at','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (733,'Excluded','Excluded','excluded','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (734,'Subscription ID','Subscription ID','subscription_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (735,'Tenant ID','Tenant ID','tenant_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (736,'Plan ID','Plan ID','plan_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (737,'Deployment ID','Deployment ID','deployment_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (738,'Payment Plan ID','Payment Plan ID','payment_plan_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (739,'Terraform Outputs','Terraform Outputs','terraform_outputs','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (740,'Terraform Public IP','Terraform Public IP','tf_public_ip','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (741,'Terraform Public DNS','Terraform Public DNS','tf_public_dns','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (742,'Terraform State','Terraform State','terraform_state','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (743,'Deployed','Deployed','deployed','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (744,'Active','Active','active','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (745,'Stripe Subscription ID','Stripe Subscription ID','stripe_subscription_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (746,'User ID','User ID','user_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (747,'App ID','App ID','app_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (748,'Created at','Created at','created_at','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (749,'Updated at','Updated at','updated_at','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (750,'Excluded','Excluded','excluded','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (751,'env ID','env ID','env_id','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (752,'Env Name','Env Name','env_name','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (753,'Env Value','Env Value','env_value','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (754,'Tenant ID','Tenant ID','tenant_id','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (755,'Active','Active','active','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (756,'User ID','User ID','user_id','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (757,'App ID','App ID','app_id','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (758,'Created at','Created at','created_at','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (759,'Updated at','Updated at','updated_at','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (760,'Excluded','Excluded','excluded','env','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (761,'Dashboard ID','Dashboard ID','dashboard_id','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (762,'Dashboard','Dashboard','dashboard','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (763,'Description','Description','dashboard_desc','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (764,'Conf / Params','Conf / Params','dashboard_conf','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (765,'Order','Order','order','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (766,'Active','Active','active','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (767,'User ID','User ID','user_id','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (768,'App ID','App ID','app_id','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (769,'Created at','Created at','created_at','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (770,'Updated at','Updated at','updated_at','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (771,'Excluded','Excluded','excluded','dashboard','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (772,'Comment ID','Comment ID','dashboard_comment_id','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (773,'Comments','Comments','dashboard_comment','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (774,'Dashboard','Dashboard','dashboard','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (775,'Active','Active','active','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (776,'User ID','User ID','user_id','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (777,'App ID','App ID','app_id','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (778,'Created at','Created at','created_at','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (779,'Updated at','Updated at','updated_at','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (780,'Excluded','Excluded','excluded','dashboard_comment','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (781,'ID','ID','arrow_flight_id','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (782,'Name','Name','arrow_flight','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (783,'Description','Description','arrow_flight_desc','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (784,'Config Text','Config Text','arrow_flight_conf','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (785,'User ID','User ID','user_id','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (786,'App ID','App ID','app_id','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (787,'Created at','Created at','created_at','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (788,'Updated at','Updated at','updated_at','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (789,'Excluded','Excluded','excluded','arrow_flight','ETLX','en',1,NULL,'2026-01-10 19:01:13.744750','2026-01-10 19:01:13.744750',0);
+INSERT INTO "translate_table_field" VALUES (790,'Product ID','Product ID','product_id','plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (791,'Deployment ID','Deployment ID','deployment_id','payment_plan','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (792,'Product ID','Product ID','product_id','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (793,'Product Name','Product Name','product','product','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (794,'Tenant Name','Tenant Name','tenant','tenant','SAAS','en',1,NULL,'2026-01-11 12:01:29.528230','2026-01-11 12:01:29.528230',0);
+INSERT INTO "translate_table_field" VALUES (795,'Terraform Lock','Terraform Lock','terraform_lock','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "translate_table_field" VALUES (796,'Terraform error msg','Terraform error msg','tf_err_msg','subscription','SAAS','en',1,NULL,'2026-01-12 23:04:02.960646','2026-01-12 23:04:02.960646',0);
+INSERT INTO "user_log" VALUES (1,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 18:59:43.877102856-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 18:59:43.888036035-01:00','2025-11-05 18:59:43.888036771-01:00',0);
+INSERT INTO "user_log" VALUES (2,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 18:59:43.87721837-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 18:59:43.888561012-01:00','2025-11-05 18:59:43.88854952-01:00',0);
+INSERT INTO "user_log" VALUES (3,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:00:11.317288175-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:00:11.330064117-01:00','2025-11-05 19:00:11.330049155-01:00',0);
+INSERT INTO "user_log" VALUES (4,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:00:11.317288166-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:00:11.333245163-01:00','2025-11-05 19:00:11.333254634-01:00',0);
+INSERT INTO "user_log" VALUES (5,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:00:11.320653678-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:00:11.335746498-01:00','2025-11-05 19:00:11.335761643-01:00',0);
+INSERT INTO "user_log" VALUES (6,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:18.078147357-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:02:18.091790832-01:00','2025-11-05 19:02:18.091796091-01:00',0);
+INSERT INTO "user_log" VALUES (7,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:18.078094864-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:02:18.094855016-01:00','2025-11-05 19:02:18.094864148-01:00',0);
+INSERT INTO "user_log" VALUES (8,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:18.080891161-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:02:18.094825719-01:00','2025-11-05 19:02:18.094828441-01:00',0);
+INSERT INTO "user_log" VALUES (9,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:20.827672521-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:02:20.837512349-01:00','2025-11-05 19:02:20.837520505-01:00',0);
+INSERT INTO "user_log" VALUES (10,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:20.827525704-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:02:20.837767499-01:00','2025-11-05 19:02:20.837774475-01:00',0);
+INSERT INTO "user_log" VALUES (11,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:20.835674243-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:02:20.845701333-01:00','2025-11-05 19:02:20.845702124-01:00',0);
+INSERT INTO "user_log" VALUES (12,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:28.306836398-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:02:28.318314718-01:00','2025-11-05 19:02:28.318306203-01:00',0);
+INSERT INTO "user_log" VALUES (13,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:02:28.3068364-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:02:28.320368625-01:00','2025-11-05 19:02:28.320340688-01:00',0);
+INSERT INTO "user_log" VALUES (14,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:06:50.079771019-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:06:50.089037717-01:00','2025-11-05 19:06:50.089040177-01:00',0);
+INSERT INTO "user_log" VALUES (15,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:06:50.080153293-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:06:50.092890095-01:00','2025-11-05 19:06:50.0928849-01:00',0);
+INSERT INTO "user_log" VALUES (16,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:06:58.416903151-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:06:58.427140774-01:00','2025-11-05 19:06:58.42714156-01:00',0);
+INSERT INTO "user_log" VALUES (17,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:06:58.41702638-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:06:58.42859501-01:00','2025-11-05 19:06:58.428590015-01:00',0);
+INSERT INTO "user_log" VALUES (18,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:10:55.763223275-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:10:55.772604668-01:00','2025-11-05 19:10:55.772593492-01:00',0);
+INSERT INTO "user_log" VALUES (19,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:10:55.763223068-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:10:55.775569086-01:00','2025-11-05 19:10:55.775574499-01:00',0);
+INSERT INTO "user_log" VALUES (20,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-05 19:12:44.991155061-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:12:45.001389912-01:00','2025-11-05 19:12:45.001400063-01:00',0);
+INSERT INTO "user_log" VALUES (21,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:12:45.045147373-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-05 19:12:45.131740635-01:00','2025-11-05 19:12:45.131735125-01:00',0);
+INSERT INTO "user_log" VALUES (22,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-05 19:12:58.110333857-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:12:58.123961731-01:00','2025-11-05 19:12:58.123962873-01:00',0);
+INSERT INTO "user_log" VALUES (23,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:12:58.176146823-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-05 19:12:58.223656792-01:00','2025-11-05 19:12:58.223671622-01:00',0);
+INSERT INTO "user_log" VALUES (24,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-05 19:13:02.903330164-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:13:03.013965464-01:00','2025-11-05 19:13:03.013977346-01:00',0);
+INSERT INTO "user_log" VALUES (25,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-05 19:13:06.460905316-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:13:06.467096881-01:00','2025-11-05 19:13:06.467100015-01:00',0);
+INSERT INTO "user_log" VALUES (26,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-05 19:13:08.475813339-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-05 19:13:17.135315647-01:00','2025-11-05 19:13:17.135334124-01:00',0);
+INSERT INTO "user_log" VALUES (27,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:13:36.948050915-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:13:36.958601865-01:00','2025-11-05 19:13:36.958606029-01:00',0);
+INSERT INTO "user_log" VALUES (28,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-05 19:13:36.948033525-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2025-11-05 19:13:36.962201498-01:00','2025-11-05 19:13:36.962224707-01:00',0);
+INSERT INTO "user_log" VALUES (29,1,'cron/run','127.0.0.1',NULL,NULL,'2025-11-05 19:13:52.049052326-01:00','success','Operation executed successfully!',NULL,'cron','ADMIN',NULL,1,NULL,'2025-11-05 19:13:53.613300457-01:00','2025-11-05 19:13:53.613291462-01:00',0);
+INSERT INTO "user_log" VALUES (30,1,'cron/run','127.0.0.1',NULL,NULL,'2025-11-12 19:56:23.903319164-01:00','success','Operation executed successfully!',NULL,'cron','ADMIN',NULL,1,NULL,'2025-11-12 19:56:24.858514728-01:00','2025-11-12 19:56:24.858515485-01:00',0);
+INSERT INTO "user_log" VALUES (31,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:36:14.870214052-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:36:14.876941275-01:00','2025-11-16 13:36:14.876915193-01:00',0);
+INSERT INTO "user_log" VALUES (32,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:36:14.870275765-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:36:14.879977397-01:00','2025-11-16 13:36:14.879981897-01:00',0);
+INSERT INTO "user_log" VALUES (33,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-16 13:36:28.367002913-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:36:28.37542089-01:00','2025-11-16 13:36:28.37542192-01:00',0);
+INSERT INTO "user_log" VALUES (34,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:36:28.398784971-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-16 13:36:28.442137539-01:00','2025-11-16 13:36:28.442142963-01:00',0);
+INSERT INTO "user_log" VALUES (35,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-16 13:36:31.65280537-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:36:31.732878666-01:00','2025-11-16 13:36:31.732874379-01:00',0);
+INSERT INTO "user_log" VALUES (36,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-16 13:36:33.144843628-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:36:33.150135447-01:00','2025-11-16 13:36:33.15013037-01:00',0);
+INSERT INTO "user_log" VALUES (37,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-16 13:36:35.784187228-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:36:44.147412163-01:00','2025-11-16 13:36:44.147417632-01:00',0);
+INSERT INTO "user_log" VALUES (38,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-16 13:37:11.467430247-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:37:11.54636889-01:00','2025-11-16 13:37:11.546349028-01:00',0);
+INSERT INTO "user_log" VALUES (39,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-16 13:37:13.417531751-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:37:13.484548913-01:00','2025-11-16 13:37:13.484541653-01:00',0);
+INSERT INTO "user_log" VALUES (40,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-16 13:37:15.403328772-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:37:15.474766666-01:00','2025-11-16 13:37:15.474743753-01:00',0);
+INSERT INTO "user_log" VALUES (41,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-16 13:38:48.183578994-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:38:48.192730168-01:00','2025-11-16 13:38:48.192717902-01:00',0);
+INSERT INTO "user_log" VALUES (42,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:38:48.243227347-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-16 13:38:48.28965722-01:00','2025-11-16 13:38:48.289603726-01:00',0);
+INSERT INTO "user_log" VALUES (43,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-16 13:41:31.223595637-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:41:31.232284071-01:00','2025-11-16 13:41:31.232294836-01:00',0);
+INSERT INTO "user_log" VALUES (44,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:41:31.271833782-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-16 13:41:31.302657957-01:00','2025-11-16 13:41:31.302634116-01:00',0);
+INSERT INTO "user_log" VALUES (45,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:43:56.380906799-01:00','success','Operação executada com successo!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-16 13:43:56.393838293-01:00','2025-11-16 13:43:56.393841775-01:00',0);
+INSERT INTO "user_log" VALUES (46,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:44:11.451970158-01:00','success','Operação executada com successo!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-16 13:44:11.467494202-01:00','2025-11-16 13:44:11.467495681-01:00',0);
+INSERT INTO "user_log" VALUES (47,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-16 13:50:20.409020332-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-16 13:50:20.417315509-01:00','2025-11-16 13:50:20.417316243-01:00',0);
+INSERT INTO "user_log" VALUES (48,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-16 13:50:20.447513187-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-16 13:50:20.480218143-01:00','2025-11-16 13:50:20.480219253-01:00',0);
+INSERT INTO "user_log" VALUES (49,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 18:50:21.519491971-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:21.549102004-01:00','2025-11-19 18:50:21.549114938-01:00',0);
+INSERT INTO "user_log" VALUES (50,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 18:50:21.519608834-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:21.553000144-01:00','2025-11-19 18:50:21.553013632-01:00',0);
+INSERT INTO "user_log" VALUES (51,1,'etlx/conf','127.0.0.1',NULL,NULL,'2025-11-19 18:50:37.444750482-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:37.46381224-01:00','2025-11-19 18:50:37.463817497-01:00',0);
+INSERT INTO "user_log" VALUES (52,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 18:50:37.503951931-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2025-11-19 18:50:37.633610192-01:00','2025-11-19 18:50:37.633615019-01:00',0);
+INSERT INTO "user_log" VALUES (53,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:50:43.482120944-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:43.818817436-01:00','2025-11-19 18:50:43.818811133-01:00',0);
+INSERT INTO "user_log" VALUES (54,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:50:45.561893854-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:45.713864621-01:00','2025-11-19 18:50:45.71386556-01:00',0);
+INSERT INTO "user_log" VALUES (55,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:50:51.88924445-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:52.893710875-01:00','2025-11-19 18:50:52.893712187-01:00',0);
+INSERT INTO "user_log" VALUES (56,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:50:54.570730335-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:54.807328713-01:00','2025-11-19 18:50:54.807321815-01:00',0);
+INSERT INTO "user_log" VALUES (57,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:50:56.315936488-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:50:56.577798549-01:00','2025-11-19 18:50:56.577790695-01:00',0);
+INSERT INTO "user_log" VALUES (58,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:51:04.954908077-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:51:05.201734-01:00','2025-11-19 18:51:05.201730595-01:00',0);
+INSERT INTO "user_log" VALUES (59,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:51:18.811952747-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:51:19.043237383-01:00','2025-11-19 18:51:19.043242221-01:00',0);
+INSERT INTO "user_log" VALUES (60,1,'etlx/run','127.0.0.1',NULL,NULL,'2025-11-19 18:51:21.10013466-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:51:21.322143342-01:00','2025-11-19 18:51:21.32213865-01:00',0);
+INSERT INTO "user_log" VALUES (61,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 18:51:31.047976911-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:51:31.057438803-01:00','2025-11-19 18:51:31.057447948-01:00',0);
+INSERT INTO "user_log" VALUES (62,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 18:51:31.048021764-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 18:51:31.057507379-01:00','2025-11-19 18:51:31.057512086-01:00',0);
+INSERT INTO "user_log" VALUES (63,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:10.189914221-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:03:10.195734342-01:00','2025-11-19 19:03:10.195732373-01:00',0);
+INSERT INTO "user_log" VALUES (64,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:19.47075595-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:03:19.482939829-01:00','2025-11-19 19:03:19.482940807-01:00',0);
+INSERT INTO "user_log" VALUES (65,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:19.470593916-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:03:19.487238401-01:00','2025-11-19 19:03:19.487231367-01:00',0);
+INSERT INTO "user_log" VALUES (66,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:19.473476096-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:03:19.48936557-01:00','2025-11-19 19:03:19.48937572-01:00',0);
+INSERT INTO "user_log" VALUES (67,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:19.51564968-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:03:19.522215274-01:00','2025-11-19 19:03:19.522213702-01:00',0);
+INSERT INTO "user_log" VALUES (68,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:40.440773687-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:03:40.446694153-01:00','2025-11-19 19:03:40.446701219-01:00',0);
+INSERT INTO "user_log" VALUES (69,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:03:40.45659757-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:03:40.464282162-01:00','2025-11-19 19:03:40.464283644-01:00',0);
+INSERT INTO "user_log" VALUES (70,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:04:59.837310169-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:04:59.842532741-01:00','2025-11-19 19:04:59.842534514-01:00',0);
+INSERT INTO "user_log" VALUES (71,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:04:59.851351396-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:04:59.858304407-01:00','2025-11-19 19:04:59.858299393-01:00',0);
+INSERT INTO "user_log" VALUES (72,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:06:52.069630339-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:06:52.077115155-01:00','2025-11-19 19:06:52.077112528-01:00',0);
+INSERT INTO "user_log" VALUES (73,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:06:52.108627955-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:06:52.115859225-01:00','2025-11-19 19:06:52.115861003-01:00',0);
+INSERT INTO "user_log" VALUES (74,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:19:40.917218387-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:19:40.922886703-01:00','2025-11-19 19:19:40.922881415-01:00',0);
+INSERT INTO "user_log" VALUES (75,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:19:40.930585341-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:19:40.937368534-01:00','2025-11-19 19:19:40.937370513-01:00',0);
+INSERT INTO "user_log" VALUES (76,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:21:44.403184455-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:21:44.408760004-01:00','2025-11-19 19:21:44.408760863-01:00',0);
+INSERT INTO "user_log" VALUES (77,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:21:44.415815778-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:21:44.423138383-01:00','2025-11-19 19:21:44.423134225-01:00',0);
+INSERT INTO "user_log" VALUES (78,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:26:13.738436548-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:26:13.744198294-01:00','2025-11-19 19:26:13.744201437-01:00',0);
+INSERT INTO "user_log" VALUES (79,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:32:25.915048365-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:32:25.921663737-01:00','2025-11-19 19:32:25.921668627-01:00',0);
+INSERT INTO "user_log" VALUES (80,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:33:07.398735327-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:33:07.403820708-01:00','2025-11-19 19:33:07.40382791-01:00',0);
+INSERT INTO "user_log" VALUES (81,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:33:07.431889847-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:33:07.440134122-01:00','2025-11-19 19:33:07.440143696-01:00',0);
+INSERT INTO "user_log" VALUES (82,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:33:07.48282636-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:33:07.487945467-01:00','2025-11-19 19:33:07.487949668-01:00',0);
+INSERT INTO "user_log" VALUES (83,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:44:27.518434787-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:44:27.523852356-01:00','2025-11-19 19:44:27.523856879-01:00',0);
+INSERT INTO "user_log" VALUES (84,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:44:27.531712297-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:44:27.538538253-01:00','2025-11-19 19:44:27.538529222-01:00',0);
+INSERT INTO "user_log" VALUES (85,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:44:27.546287776-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:44:27.55271956-01:00','2025-11-19 19:44:27.552712384-01:00',0);
+INSERT INTO "user_log" VALUES (86,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:57:50.046710865-01:00','success','no such table: etlx_logs',NULL,NULL,'ETLX_DATA',NULL,2,NULL,'2025-11-19 19:57:50.053091078-01:00','2025-11-19 19:57:50.05309172-01:00',0);
+INSERT INTO "user_log" VALUES (87,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:57:50.060020255-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:57:50.066941727-01:00','2025-11-19 19:57:50.066939609-01:00',0);
+INSERT INTO "user_log" VALUES (88,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 19:57:50.185246177-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-19 19:57:50.192564329-01:00','2025-11-19 19:57:50.192576193-01:00',0);
+INSERT INTO "user_log" VALUES (89,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 20:03:43.537979009-01:00','success','Operation executed successfully!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-19 20:03:43.557964231-01:00','2025-11-19 20:03:43.557957978-01:00',0);
+INSERT INTO "user_log" VALUES (90,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-19 20:03:43.537420484-01:00','success','Operation executed successfully!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-19 20:03:43.560096686-01:00','2025-11-19 20:03:43.560089082-01:00',0);
+INSERT INTO "user_log" VALUES (91,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-20 18:36:48.923570601-01:00','success','Operação executada com successo!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-20 18:36:48.941342037-01:00','2025-11-20 18:36:48.94135133-01:00',0);
+INSERT INTO "user_log" VALUES (92,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-20 18:36:50.284143317-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-20 18:36:50.290039458-01:00','2025-11-20 18:36:50.290040168-01:00',0);
+INSERT INTO "user_log" VALUES (93,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-20 18:36:50.302418883-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2025-11-20 18:36:50.309469338-01:00','2025-11-20 18:36:50.309470124-01:00',0);
+INSERT INTO "user_log" VALUES (94,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-20 18:40:15.820609374-01:00','success','Operation executed successfully!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-20 18:40:15.837033981-01:00','2025-11-20 18:40:15.837034742-01:00',0);
+INSERT INTO "user_log" VALUES (95,1,'crud/query','127.0.0.1',NULL,NULL,'2025-11-21 18:42:58.63603634-01:00','success','Operação executada com successo!',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2025-11-21 18:43:03.093086911-01:00','2025-11-21 18:43:03.093078542-01:00',0);
+INSERT INTO "user_log" VALUES (96,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:40.085523071-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 06:37:40.092493769-01:00','2026-01-10 06:37:40.092502918-01:00',0);
+INSERT INTO "user_log" VALUES (97,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:40.10084697-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 06:37:40.109315893-01:00','2026-01-10 06:37:40.10930631-01:00',0);
+INSERT INTO "user_log" VALUES (98,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:40.117187522-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 06:37:40.122691606-01:00','2026-01-10 06:37:40.122692716-01:00',0);
+INSERT INTO "user_log" VALUES (99,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:44.414636666-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 06:37:44.422085416-01:00','2026-01-10 06:37:44.422091431-01:00',0);
+INSERT INTO "user_log" VALUES (100,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:44.433597055-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 06:37:44.439981799-01:00','2026-01-10 06:37:44.439972211-01:00',0);
+INSERT INTO "user_log" VALUES (101,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:44.451662936-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 06:37:44.456746479-01:00','2026-01-10 06:37:44.456751734-01:00',0);
+INSERT INTO "user_log" VALUES (102,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:47.513614488-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 06:37:47.520252807-01:00','2026-01-10 06:37:47.520253732-01:00',0);
+INSERT INTO "user_log" VALUES (103,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:47.527023082-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 06:37:47.532814215-01:00','2026-01-10 06:37:47.532820436-01:00',0);
+INSERT INTO "user_log" VALUES (104,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:47.5385893-01:00','success','Operação executada com successo!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 06:37:47.544311427-01:00','2026-01-10 06:37:47.544309229-01:00',0);
+INSERT INTO "user_log" VALUES (105,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:58.731935679-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 06:37:58.741676119-01:00','2026-01-10 06:37:58.741676975-01:00',0);
+INSERT INTO "user_log" VALUES (106,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 06:37:58.73210249-01:00','success','Operação executada com successo!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 06:37:58.743254913-01:00','2026-01-10 06:37:58.743242864-01:00',0);
+INSERT INTO "user_log" VALUES (107,1,'login/login','127.0.0.1',NULL,NULL,'2026-01-10 08:03:23.456332614-01:00','success','Loged in successfully!',NULL,NULL,'',NULL,1,NULL,'2026-01-10 08:03:23.68415958-01:00','2026-01-10 08:03:23.684177077-01:00',0);
+INSERT INTO "user_log" VALUES (108,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 08:03:30.126812658-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 08:03:30.134056759-01:00','2026-01-10 08:03:30.134058896-01:00',0);
+INSERT INTO "user_log" VALUES (109,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 08:03:30.147018212-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 08:03:30.153959687-01:00','2026-01-10 08:03:30.153960468-01:00',0);
+INSERT INTO "user_log" VALUES (110,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 08:03:30.15990024-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 08:03:30.165148429-01:00','2026-01-10 08:03:30.165149739-01:00',0);
+INSERT INTO "user_log" VALUES (111,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 08:03:41.576336448-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 08:03:41.585353875-01:00','2026-01-10 08:03:41.585360871-01:00',0);
+INSERT INTO "user_log" VALUES (112,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 08:03:41.576631378-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 08:03:41.589133069-01:00','2026-01-10 08:03:41.589141901-01:00',0);
+INSERT INTO "user_log" VALUES (113,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 13:37:25.244319014-01:00','success','No route login/access_key exists yet!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 13:37:25.253776928-01:00','2026-01-10 13:37:25.253780354-01:00',0);
+INSERT INTO "user_log" VALUES (114,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 13:37:47.275795734-01:00','success','No route login/access_key exists yet!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 13:37:47.279968335-01:00','2026-01-10 13:37:47.279968957-01:00',0);
+INSERT INTO "user_log" VALUES (115,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 14:58:19.187677954-01:00','success','No description provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 14:58:19.19303882-01:00','2026-01-10 14:58:19.193051308-01:00',0);
+INSERT INTO "user_log" VALUES (116,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 14:58:26.70456903-01:00','success','No description provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 14:58:26.710748651-01:00','2026-01-10 14:58:26.710749357-01:00',0);
+INSERT INTO "user_log" VALUES (117,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 14:58:38.998241479-01:00','success','No description provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 14:58:39.004327414-01:00','2026-01-10 14:58:39.004309497-01:00',0);
+INSERT INTO "user_log" VALUES (118,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 14:58:52.269590637-01:00','success','No description provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 14:58:52.27556885-01:00','2026-01-10 14:58:52.275571649-01:00',0);
+INSERT INTO "user_log" VALUES (119,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:00:16.265816987-01:00','success','No description provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:00:16.272635419-01:00','2026-01-10 15:00:16.27263849-01:00',0);
+INSERT INTO "user_log" VALUES (120,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:02:17.578134192-01:00','success','No user provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:02:17.584141089-01:00','2026-01-10 15:02:17.584122869-01:00',0);
+INSERT INTO "user_log" VALUES (121,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:02:24.467892923-01:00','success','No user provided!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:02:24.47297858-01:00','2026-01-10 15:02:24.472967507-01:00',0);
+INSERT INTO "user_log" VALUES (122,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:29:20.995288275-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:29:21.002790792-01:00','2026-01-10 15:29:21.002791544-01:00',0);
+INSERT INTO "user_log" VALUES (123,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:29:32.416777751-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:29:32.422795331-01:00','2026-01-10 15:29:32.422782676-01:00',0);
+INSERT INTO "user_log" VALUES (124,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:33:06.18076479-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:33:06.187649081-01:00','2026-01-10 15:33:06.187650072-01:00',0);
+INSERT INTO "user_log" VALUES (125,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:44:23.75544398-01:00','success','No data recived',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:44:23.761662859-01:00','2026-01-10 15:44:23.761663686-01:00',0);
+INSERT INTO "user_log" VALUES (126,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:45:33.941535775-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:45:33.949489216-01:00','2026-01-10 15:45:33.949492329-01:00',0);
+INSERT INTO "user_log" VALUES (127,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:46:06.105451024-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:46:06.114596199-01:00','2026-01-10 15:46:06.114586226-01:00',0);
+INSERT INTO "user_log" VALUES (128,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:47:34.432171484-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:47:34.442343436-01:00','2026-01-10 15:47:34.442333816-01:00',0);
+INSERT INTO "user_log" VALUES (129,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:47:36.676366045-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:47:36.685729537-01:00','2026-01-10 15:47:36.685723489-01:00',0);
+INSERT INTO "user_log" VALUES (130,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:49:59.525207897-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 15:49:59.535644706-01:00','2026-01-10 15:49:59.535623918-01:00',0);
+INSERT INTO "user_log" VALUES (131,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 15:52:13.017972178-01:00','success','Operation executed successfully!',NULL,'access_key','ADMIN',NULL,1,NULL,'2026-01-10 15:52:13.039100879-01:00','2026-01-10 15:52:13.039111552-01:00',0);
+INSERT INTO "user_log" VALUES (132,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:19:03.962497188-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 16:19:03.970492811-01:00','2026-01-10 16:19:03.970486817-01:00',0);
+INSERT INTO "user_log" VALUES (133,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:19:03.979768327-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:19:03.984912571-01:00','2026-01-10 16:19:03.984903848-01:00',0);
+INSERT INTO "user_log" VALUES (134,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:19:03.991016736-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:19:03.997716855-01:00','2026-01-10 16:19:03.997650722-01:00',0);
+INSERT INTO "user_log" VALUES (135,1,'etlx/conf','127.0.0.1',NULL,NULL,'2026-01-10 16:19:13.400460335-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:19:13.4085413-01:00','2026-01-10 16:19:13.408544371-01:00',0);
+INSERT INTO "user_log" VALUES (136,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:19:13.499240713-01:00','success','Catalog Error: Table with name etlx_logs does not exist!
+Did you mean "duckdb_logs"?
+
+LINE 1: select * from "etlx_logs" order by "sart_at" desc LIMIT 10 OFFSET 0
+                      ^',NULL,NULL,'duckdb:',NULL,2,NULL,'2026-01-10 16:19:13.527553276-01:00','2026-01-10 16:19:13.527549592-01:00',0);
+INSERT INTO "user_log" VALUES (137,1,'etlx/run','127.0.0.1',NULL,NULL,'2026-01-10 16:19:47.317705413-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:19:47.497934774-01:00','2026-01-10 16:19:47.497932203-01:00',0);
+INSERT INTO "user_log" VALUES (138,1,'etlx/run','127.0.0.1',NULL,NULL,'2026-01-10 16:19:49.967673143-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:19:50.119079539-01:00','2026-01-10 16:19:50.119082317-01:00',0);
+INSERT INTO "user_log" VALUES (139,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:20:06.992264395-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 16:20:06.999348838-01:00','2026-01-10 16:20:06.999339406-01:00',0);
+INSERT INTO "user_log" VALUES (140,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:20:07.006716568-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:20:07.011420548-01:00','2026-01-10 16:20:07.011421327-01:00',0);
+INSERT INTO "user_log" VALUES (141,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 16:20:07.020288224-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 16:20:07.027207008-01:00','2026-01-10 16:20:07.027200819-01:00',0);
+INSERT INTO "user_log" VALUES (142,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:02:19.061628763-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:02:19.072144346-01:00','2026-01-10 18:02:19.072154848-01:00',0);
+INSERT INTO "user_log" VALUES (143,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:02:19.062369461-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:02:19.074407258-01:00','2026-01-10 18:02:19.074553425-01:00',0);
+INSERT INTO "user_log" VALUES (144,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:03:38.296689721-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:03:38.307134335-01:00','2026-01-10 18:03:38.307140519-01:00',0);
+INSERT INTO "user_log" VALUES (145,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:03:38.297031745-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:03:38.307793783-01:00','2026-01-10 18:03:38.307800901-01:00',0);
+INSERT INTO "user_log" VALUES (146,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:05:17.435931002-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:05:17.445217336-01:00','2026-01-10 18:05:17.445223493-01:00',0);
+INSERT INTO "user_log" VALUES (147,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:05:17.435675431-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:05:17.44725704-01:00','2026-01-10 18:05:17.447252182-01:00',0);
+INSERT INTO "user_log" VALUES (148,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:15:37.070386074-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:15:37.082990603-01:00','2026-01-10 18:15:37.082978373-01:00',0);
+INSERT INTO "user_log" VALUES (149,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:15:37.070272057-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:15:37.085754114-01:00','2026-01-10 18:15:37.085754892-01:00',0);
+INSERT INTO "user_log" VALUES (150,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:15:49.369227943-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:15:49.376799709-01:00','2026-01-10 18:15:49.376801819-01:00',0);
+INSERT INTO "user_log" VALUES (151,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:16:57.703507557-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:16:57.709851481-01:00','2026-01-10 18:16:57.70985224-01:00',0);
+INSERT INTO "user_log" VALUES (152,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:17:08.877234732-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:17:08.886144523-01:00','2026-01-10 18:17:08.886147493-01:00',0);
+INSERT INTO "user_log" VALUES (153,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:17:08.878109697-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 18:17:08.886218031-01:00','2026-01-10 18:17:08.886218845-01:00',0);
+INSERT INTO "user_log" VALUES (154,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 18:40:33.356701727-01:00','success','Operation executed successfully!',NULL,'access_key','ADMIN',NULL,1,NULL,'2026-01-10 18:40:33.370016882-01:00','2026-01-10 18:40:33.370021665-01:00',0);
+INSERT INTO "user_log" VALUES (155,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-10 18:41:51.442409731-01:00','success','Operation executed successfully!',NULL,'access_key','ADMIN',NULL,1,NULL,'2026-01-10 18:41:51.454314895-01:00','2026-01-10 18:41:51.454315751-01:00',0);
+INSERT INTO "user_log" VALUES (156,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:57:01.927016657-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 18:57:01.934043806-01:00','2026-01-10 18:57:01.934049063-01:00',0);
+INSERT INTO "user_log" VALUES (157,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:57:01.939413836-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 18:57:01.945600163-01:00','2026-01-10 18:57:01.945608477-01:00',0);
+INSERT INTO "user_log" VALUES (158,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:57:01.953021614-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 18:57:01.958363051-01:00','2026-01-10 18:57:01.958355292-01:00',0);
+INSERT INTO "user_log" VALUES (159,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:57:05.639113056-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 18:57:05.646383788-01:00','2026-01-10 18:57:05.64639439-01:00',0);
+INSERT INTO "user_log" VALUES (160,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:57:05.652827489-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 18:57:05.658583997-01:00','2026-01-10 18:57:05.658588109-01:00',0);
+INSERT INTO "user_log" VALUES (161,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 18:57:05.666033487-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 18:57:05.670695649-01:00','2026-01-10 18:57:05.670698933-01:00',0);
+INSERT INTO "user_log" VALUES (162,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:05:37.525538464-01:00','success','Operation executed successfully!',NULL,NULL,'SAAS',NULL,3,NULL,'2026-01-10 19:05:37.534238296-01:00','2026-01-10 19:05:37.534240097-01:00',0);
+INSERT INTO "user_log" VALUES (163,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:05:37.525667186-01:00','success','Operation executed successfully!',NULL,NULL,'SAAS',NULL,3,NULL,'2026-01-10 19:05:37.534687492-01:00','2026-01-10 19:05:37.534926622-01:00',0);
+INSERT INTO "user_log" VALUES (164,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:19.565931216-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-10 19:15:19.573269245-01:00','2026-01-10 19:15:19.573278438-01:00',0);
+INSERT INTO "user_log" VALUES (165,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:22.866436071-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 19:15:22.874330296-01:00','2026-01-10 19:15:22.874321641-01:00',0);
+INSERT INTO "user_log" VALUES (166,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:22.869277318-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-10 19:15:22.87570518-01:00','2026-01-10 19:15:22.875712303-01:00',0);
+INSERT INTO "user_log" VALUES (167,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:22.925745967-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 19:15:22.931202902-01:00','2026-01-10 19:15:22.931212333-01:00',0);
+INSERT INTO "user_log" VALUES (168,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:22.939405011-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-10 19:15:22.945432103-01:00','2026-01-10 19:15:22.945434063-01:00',0);
+INSERT INTO "user_log" VALUES (169,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:26.441307929-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,3,NULL,'2026-01-10 19:15:26.447453189-01:00','2026-01-10 19:15:26.4474611-01:00',0);
+INSERT INTO "user_log" VALUES (170,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:26.443152683-01:00','success','Operation executed successfully!',NULL,NULL,'SAAS',NULL,3,NULL,'2026-01-10 19:15:26.449763997-01:00','2026-01-10 19:15:26.449765231-01:00',0);
+INSERT INTO "user_log" VALUES (171,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-10 19:15:26.455526601-01:00','success','Operation executed successfully!',NULL,NULL,'SAAS',NULL,3,NULL,'2026-01-10 19:15:26.460128616-01:00','2026-01-10 19:15:26.460125632-01:00',0);
+INSERT INTO "user_log" VALUES (172,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-11 08:12:48.760966394-01:00','success','postgres Conn: dial tcp [::1]:5432: connect: connection refused',NULL,NULL,'postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable',NULL,2,NULL,'2026-01-11 08:12:48.7686846-01:00','2026-01-11 08:12:48.768676898-01:00',0);
+INSERT INTO "user_log" VALUES (173,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-11 08:12:48.803461139-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-11 08:12:48.808756925-01:00','2026-01-11 08:12:48.808752525-01:00',0);
+INSERT INTO "user_log" VALUES (174,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-11 08:12:48.84282203-01:00','success','Operation executed successfully!',NULL,NULL,'ETLX',NULL,2,NULL,'2026-01-11 08:12:48.849595848-01:00','2026-01-11 08:12:48.849596918-01:00',0);
+INSERT INTO "user_log" VALUES (175,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-11 11:18:20.664616451-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-11 11:18:20.672903887-01:00','2026-01-11 11:18:20.672892564-01:00',0);
+INSERT INTO "user_log" VALUES (176,1,'crud/query','127.0.0.1',NULL,NULL,'2026-01-11 11:23:53.94839286-01:00','success','Operation executed successfully!',NULL,NULL,'ADMIN',NULL,1,NULL,'2026-01-11 11:23:53.955846244-01:00','2026-01-11 11:23:53.955821396-01:00',0);
+INSERT INTO "user_log" VALUES (177,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-11 11:52:30.763196102-01:00','success','Operation executed successfully!',NULL,'access_key','ADMIN',NULL,1,NULL,'2026-01-11 11:52:30.774995269-01:00','2026-01-11 11:52:30.775005925-01:00',0);
+INSERT INTO "user_log" VALUES (178,1,'login/access_key','127.0.0.1',NULL,NULL,'2026-01-11 11:53:08.904697773-01:00','success','Operation executed successfully!',NULL,'access_key','ADMIN',NULL,1,NULL,'2026-01-11 11:53:08.91816338-01:00','2026-01-11 11:53:08.918170531-01:00',0);
+INSERT INTO "user_log" VALUES (179,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 13:08:46.958720927-01:00','success','No route saas/deploy exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:08:46.966918135-01:00','2026-01-11 13:08:46.96692529-01:00',0);
+INSERT INTO "user_log" VALUES (180,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 13:08:56.755035245-01:00','success','No route saas/deploy exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:08:56.759998484-01:00','2026-01-11 13:08:56.759988791-01:00',0);
+INSERT INTO "user_log" VALUES (181,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 13:09:41.188485506-01:00','success','No route saas/deploy exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:09:41.193161324-01:00','2026-01-11 13:09:41.193153531-01:00',0);
+INSERT INTO "user_log" VALUES (182,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-11 13:10:09.870282299-01:00','success','No route saas/cancel exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:10:09.876171289-01:00','2026-01-11 13:10:09.876157572-01:00',0);
+INSERT INTO "user_log" VALUES (183,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-11 13:10:13.344486591-01:00','success','No route saas/cancel exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:10:13.350450075-01:00','2026-01-11 13:10:13.350450855-01:00',0);
+INSERT INTO "user_log" VALUES (184,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 13:10:15.350999548-01:00','success','No route saas/deploy exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:10:15.357064827-01:00','2026-01-11 13:10:15.357068174-01:00',0);
+INSERT INTO "user_log" VALUES (185,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 13:11:51.397964247-01:00','success','No route saas/deploy exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:11:51.405651925-01:00','2026-01-11 13:11:51.405650116-01:00',0);
+INSERT INTO "user_log" VALUES (186,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 13:26:32.283709185-01:00','success','No route saas/deploy exists yet!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 13:26:32.29338362-01:00','2026-01-11 13:26:32.293367559-01:00',0);
+INSERT INTO "user_log" VALUES (187,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:17:57.756352735-01:00','success','No notebook cells identified!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:17:57.761172481-01:00','2026-01-11 14:17:57.761162826-01:00',0);
+INSERT INTO "user_log" VALUES (188,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:18:54.736925554-01:00','success','Unable to match Deployment ID!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:18:54.743342149-01:00','2026-01-11 14:18:54.743337973-01:00',0);
+INSERT INTO "user_log" VALUES (189,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:20:23.898306261-01:00','success','Unable to match Deployment ID!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:20:23.905521681-01:00','2026-01-11 14:20:23.905522347-01:00',0);
+INSERT INTO "user_log" VALUES (190,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:21:39.459273996-01:00','success','Unable to match Deployment ID!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:21:39.465533618-01:00','2026-01-11 14:21:39.465524284-01:00',0);
+INSERT INTO "user_log" VALUES (191,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:23:31.32623088-01:00','success','Unable to match Deployment ID!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:23:31.336127328-01:00','2026-01-11 14:23:31.336128975-01:00',0);
+INSERT INTO "user_log" VALUES (192,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:26:35.350216944-01:00','success','Unable to match Deployment ID!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:26:35.360635208-01:00','2026-01-11 14:26:35.360618037-01:00',0);
+INSERT INTO "user_log" VALUES (193,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:28:05.371766556-01:00','success','no such table: deployment',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:28:05.38025316-01:00','2026-01-11 14:28:05.380235913-01:00',0);
+INSERT INTO "user_log" VALUES (194,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:29:15.079241209-01:00','success','no such table: deployment',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:29:15.086760299-01:00','2026-01-11 14:29:15.086761495-01:00',0);
+INSERT INTO "user_log" VALUES (195,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:29:22.080999354-01:00','success','no such table: deployment',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:29:22.086973834-01:00','2026-01-11 14:29:22.086978545-01:00',0);
+INSERT INTO "user_log" VALUES (196,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:32:03.944517502-01:00','success','no such table: deployment',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:32:03.957990532-01:00','2026-01-11 14:32:03.957974736-01:00',0);
+INSERT INTO "user_log" VALUES (197,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:34:15.563926582-01:00','success','no such table: deployment',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:34:15.573808738-01:00','2026-01-11 14:34:15.573810282-01:00',0);
+INSERT INTO "user_log" VALUES (198,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 14:44:07.967364729-01:00','success','exit status 1
+
+Error: Retrieving AWS account details: validating provider credentials: retrieving caller identity from STS: operation error STS: GetCallerIdentity, https response error StatusCode: 403, RequestID: 97812be1-a963-4a32-9ef7-06a9685d2243, api error InvalidClientTokenId: The security token included in the request is invalid.
+
+  with provider["registry.terraform.io/hashicorp/aws"],
+  on main.tf line 35, in provider "aws":
+  35: provider "aws" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 14:45:49.588379765-01:00','2026-01-11 14:45:49.588375862-01:00',0);
+INSERT INTO "user_log" VALUES (199,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 15:16:52.461066677-01:00','success','exit status 1
+
+Error: Retrieving AWS account details: validating provider credentials: retrieving caller identity from STS: operation error STS: GetCallerIdentity, https response error StatusCode: 403, RequestID: 0349c177-193e-4fee-8d7f-08d1b011e8e1, api error InvalidClientTokenId: The security token included in the request is invalid.
+
+  with provider["registry.terraform.io/hashicorp/aws"],
+  on main.tf line 35, in provider "aws":
+  35: provider "aws" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 15:18:32.222395529-01:00','2026-01-11 15:18:32.222379445-01:00',0);
+INSERT INTO "user_log" VALUES (200,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 15:33:35.747113492-01:00','success','Operation executed successfully!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 15:36:20.545722911-01:00','2026-01-11 15:36:20.545700417-01:00',0);
+INSERT INTO "user_log" VALUES (201,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 19:51:08.507289493-01:00','success','exit status 1
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: e3c4828c-be2e-407b-8870-6e9c110c9c24, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 19:53:38.998699934-01:00','2026-01-11 19:53:38.998694828-01:00',0);
+INSERT INTO "user_log" VALUES (202,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 20:25:03.501213596-01:00','success','exit status 1
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 21223f3f-f46b-4536-9027-ea537c7155d5, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 20:27:34.506685491-01:00','2026-01-11 20:27:34.506686407-01:00',0);
+INSERT INTO "user_log" VALUES (203,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 20:35:02.953951456-01:00','success','Operation executed successfully!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 20:37:50.341343225-01:00','2026-01-11 20:37:50.341344478-01:00',0);
+INSERT INTO "user_log" VALUES (204,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 21:01:20.973831872-01:00','success','exit status 1
+
+Error: creating EC2 VPC: operation error EC2: CreateVpc, https response error StatusCode: 400, RequestID: 86af1446-f73d-4b32-8b82-6871b8b219ec, api error VpcLimitExceeded: The maximum number of VPCs has been reached.
+
+  with aws_vpc.this,
+  on main.tf line 59, in resource "aws_vpc" "this":
+  59: resource "aws_vpc" "this" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 6bd60dc8-b5a9-49a3-ad22-db339c549958, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 21:03:06.061749187-01:00','2026-01-11 21:03:06.061749956-01:00',0);
+INSERT INTO "user_log" VALUES (205,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 21:10:13.732672902-01:00','success','Unable to match Deployment ID!',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 21:10:13.843594434-01:00','2026-01-11 21:10:13.843595453-01:00',0);
+INSERT INTO "user_log" VALUES (206,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-11 21:12:38.734296491-01:00','success','exit status 1
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 2542e334-0c69-4054-b5ad-81f41d57f51b, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 21:14:28.623738592-01:00','2026-01-11 21:14:28.623744565-01:00',0);
+INSERT INTO "user_log" VALUES (207,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-11 21:14:53.425729093-01:00','error',NULL,NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 21:14:53.432515596-01:00','2026-01-11 21:14:53.432497689-01:00',0);
+INSERT INTO "user_log" VALUES (208,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-11 21:16:16.198872816-01:00','success','destroy failed: exit status 1
+
+Error: Inconsistent dependency lock file
+
+The following dependency selections recorded in the lock file are
+inconsistent with the current configuration:
+  - provider registry.terraform.io/hashicorp/aws: required by this configuration but no version is selected
+
+To make the initial dependency selections that will initialize the dependency
+lock file, run:
+  terraform init
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 21:16:16.240468001-01:00','2026-01-11 21:16:16.240478828-01:00',0);
+INSERT INTO "user_log" VALUES (209,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-11 21:16:48.478856434-01:00','success','destroy failed: exit status 1
+
+Error: Inconsistent dependency lock file
+
+The following dependency selections recorded in the lock file are
+inconsistent with the current configuration:
+  - provider registry.terraform.io/hashicorp/aws: required by this configuration but no version is selected
+
+To make the initial dependency selections that will initialize the dependency
+lock file, run:
+  terraform init
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-11 21:16:48.515458496-01:00','2026-01-11 21:16:48.515462985-01:00',0);
+INSERT INTO "user_log" VALUES (210,1,'login/login','127.0.0.1',NULL,NULL,'2026-01-11 21:21:42.849811058-01:00','success','Loged in successfully!',NULL,NULL,'',NULL,1,NULL,'2026-01-11 21:21:43.091349889-01:00','2026-01-11 21:21:43.091352607-01:00',0);
+INSERT INTO "user_log" VALUES (211,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-12 18:05:21.337913062-01:00','success','destroy failed: exit status 1
+
+Error: Inconsistent dependency lock file
+
+The following dependency selections recorded in the lock file are
+inconsistent with the current configuration:
+  - provider registry.terraform.io/hashicorp/aws: required by this configuration but no version is selected
+
+To make the initial dependency selections that will initialize the dependency
+lock file, run:
+  terraform init
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 18:05:21.379612807-01:00','2026-01-12 18:05:21.379604286-01:00',0);
+INSERT INTO "user_log" VALUES (212,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-12 18:08:19.668577867-01:00','success','destroy failed: exit status 1
+
+Error: Inconsistent dependency lock file
+
+The following dependency selections recorded in the lock file are
+inconsistent with the current configuration:
+  - provider registry.terraform.io/hashicorp/aws: required by this configuration but no version is selected
+
+To make the initial dependency selections that will initialize the dependency
+lock file, run:
+  terraform init
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 18:08:19.706542191-01:00','2026-01-12 18:08:19.706558769-01:00',0);
+INSERT INTO "user_log" VALUES (213,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-12 18:16:32.798602295-01:00','success','destroy failed: exit status 1
+
+Error: deleting EC2 VPC (vpc-050474556eebd97c8): operation error EC2: DeleteVpc, https response error StatusCode: 400, RequestID: c2684c5a-f115-4a16-8da8-e7281814317f, api error DependencyViolation: The vpc ''vpc-050474556eebd97c8'' has dependencies and cannot be deleted.
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 19:40:13.301578136-01:00','2026-01-12 19:40:13.301587978-01:00',0);
+INSERT INTO "user_log" VALUES (214,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 19:57:50.531830303-01:00','success','exit status 1
+
+Error: creating Security Group (allow_http): operation error EC2: CreateSecurityGroup, https response error StatusCode: 400, RequestID: b6a8b3ea-efe6-4b6f-875e-aadf2597c0d4, api error InvalidGroup.Duplicate: The security group ''allow_http'' already exists for VPC ''vpc-050474556eebd97c8''
+
+  with aws_security_group.http,
+  on main.tf line 114, in resource "aws_security_group" "http":
+ 114: resource "aws_security_group" "http" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: a58b085b-0eac-4137-8c91-6ccaac94ce51, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 19:59:44.223588575-01:00','2026-01-12 19:59:44.223589306-01:00',0);
+INSERT INTO "user_log" VALUES (215,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 20:19:55.371142968-01:00','success','exit status 1
+
+Error: creating EC2 Subnet: operation error EC2: CreateSubnet, https response error StatusCode: 400, RequestID: 2bbca9f5-1342-4ae9-873a-3cbf830df275, api error InvalidSubnet.Conflict: The CIDR ''10.0.1.0/24'' conflicts with another subnet
+
+  with aws_subnet.public,
+  on main.tf line 69, in resource "aws_subnet" "public":
+  69: resource "aws_subnet" "public" {
+
+
+Error: creating EC2 Internet Gateway: operation error EC2: CreateInternetGateway, https response error StatusCode: 400, RequestID: 61f86ba7-e502-4e52-9875-f94c247b741b, api error InternetGatewayLimitExceeded: The maximum number of internet gateways has been reached.
+
+  with aws_internet_gateway.igw,
+  on main.tf line 81, in resource "aws_internet_gateway" "igw":
+  81: resource "aws_internet_gateway" "igw" {
+
+
+Error: creating Security Group (allow_http): operation error EC2: CreateSecurityGroup, https response error StatusCode: 400, RequestID: 706804d6-9960-451e-8b52-2fd8b062493c, api error InvalidGroup.Duplicate: The security group ''allow_http'' already exists for VPC ''vpc-050474556eebd97c8''
+
+  with aws_security_group.http,
+  on main.tf line 114, in resource "aws_security_group" "http":
+ 114: resource "aws_security_group" "http" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: d30c7fb2-c5d9-4ffd-8209-ac2c9e2a3e2a, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 20:21:42.082253772-01:00','2026-01-12 20:21:42.082254454-01:00',0);
+INSERT INTO "user_log" VALUES (216,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 20:52:23.771068199-01:00','success','exit status 1
+
+Error: creating EC2 Subnet: operation error EC2: CreateSubnet, https response error StatusCode: 400, RequestID: af124a60-cc4c-47eb-9141-7fbff43da0ee, api error InvalidSubnet.Conflict: The CIDR ''10.0.1.0/24'' conflicts with another subnet
+
+  with aws_subnet.public,
+  on main.tf line 69, in resource "aws_subnet" "public":
+  69: resource "aws_subnet" "public" {
+
+
+Error: creating EC2 Internet Gateway: operation error EC2: CreateInternetGateway, https response error StatusCode: 400, RequestID: d417db62-3ce9-40f3-b0ad-9adee9eb03e6, api error InternetGatewayLimitExceeded: The maximum number of internet gateways has been reached.
+
+  with aws_internet_gateway.igw,
+  on main.tf line 81, in resource "aws_internet_gateway" "igw":
+  81: resource "aws_internet_gateway" "igw" {
+
+
+Error: creating Security Group (allow_http): operation error EC2: CreateSecurityGroup, https response error StatusCode: 400, RequestID: 2376853b-f2d7-4251-8dd7-5eb2801b08dd, api error InvalidGroup.Duplicate: The security group ''allow_http'' already exists for VPC ''vpc-050474556eebd97c8''
+
+  with aws_security_group.http,
+  on main.tf line 114, in resource "aws_security_group" "http":
+ 114: resource "aws_security_group" "http" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 985383fb-2888-4b5c-9f0c-76cd55762a47, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 20:54:14.605372089-01:00','2026-01-12 20:54:14.605369221-01:00',0);
+INSERT INTO "user_log" VALUES (217,1,'saas/cancel','127.0.0.1',NULL,NULL,'2026-01-12 21:03:32.381763062-01:00','success','destroy failed: exit status 1
+
+Error: deleting EC2 VPC (vpc-050474556eebd97c8): operation error EC2: DeleteVpc, https response error StatusCode: 400, RequestID: efd4b6c9-e852-4e9f-9874-70c130e24212, api error DependencyViolation: The vpc ''vpc-050474556eebd97c8'' has dependencies and cannot be deleted.
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 21:25:31.239115122-01:00','2026-01-12 21:25:31.239104715-01:00',0);
+INSERT INTO "user_log" VALUES (218,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 21:40:42.282434039-01:00','success','exit status 1
+
+Error: creating EC2 Subnet: operation error EC2: CreateSubnet, https response error StatusCode: 400, RequestID: 8b5a6ea0-7d64-4782-949a-57dcee2a26ed, api error InvalidSubnet.Conflict: The CIDR ''10.0.1.0/24'' conflicts with another subnet
+
+  with aws_subnet.public,
+  on main.tf line 69, in resource "aws_subnet" "public":
+  69: resource "aws_subnet" "public" {
+
+
+Error: creating EC2 Internet Gateway: operation error EC2: CreateInternetGateway, https response error StatusCode: 400, RequestID: 144f1dd5-e285-4e75-8cea-df57e8dd2a94, api error InternetGatewayLimitExceeded: The maximum number of internet gateways has been reached.
+
+  with aws_internet_gateway.igw,
+  on main.tf line 81, in resource "aws_internet_gateway" "igw":
+  81: resource "aws_internet_gateway" "igw" {
+
+
+Error: creating Security Group (allow_http): operation error EC2: CreateSecurityGroup, https response error StatusCode: 400, RequestID: 62c9aca6-1411-476d-88e0-e829f9d5bfc7, api error InvalidGroup.Duplicate: The security group ''allow_http'' already exists for VPC ''vpc-050474556eebd97c8''
+
+  with aws_security_group.http,
+  on main.tf line 114, in resource "aws_security_group" "http":
+ 114: resource "aws_security_group" "http" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: abb6750b-3907-4fc7-9c16-9bad2ad2ac61, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 21:42:41.053275939-01:00','2026-01-12 21:42:41.053271207-01:00',0);
+INSERT INTO "user_log" VALUES (219,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 22:19:51.190149193-01:00','success','exit status 1
+
+Error: creating EC2 VPC: operation error EC2: CreateVpc, https response error StatusCode: 400, RequestID: 9ea574eb-2cbf-4cac-9d68-eccb9b8baaff, api error VpcLimitExceeded: The maximum number of VPCs has been reached.
+
+  with aws_vpc.this,
+  on main.tf line 59, in resource "aws_vpc" "this":
+  59: resource "aws_vpc" "this" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 22:21:36.991729252-01:00','2026-01-12 22:21:36.991731012-01:00',0);
+INSERT INTO "user_log" VALUES (220,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 22:38:51.862178831-01:00','success','exit status 1
+
+Error: creating EC2 VPC: operation error EC2: CreateVpc, https response error StatusCode: 400, RequestID: 7300427e-e810-40cc-b205-e96ebaa52e55, api error VpcLimitExceeded: The maximum number of VPCs has been reached.
+
+  with aws_vpc.this,
+  on main.tf line 59, in resource "aws_vpc" "this":
+  59: resource "aws_vpc" "this" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: edaeb899-fc5d-4ccf-9e44-135025bf8a35, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 22:40:33.835445747-01:00','2026-01-12 22:40:33.835443235-01:00',0);
+INSERT INTO "user_log" VALUES (221,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 22:45:53.89010633-01:00','success','exit status 1
+
+Error: creating EC2 VPC: operation error EC2: CreateVpc, https response error StatusCode: 400, RequestID: 5fe375ce-1522-463b-9220-1ddda13512fb, api error VpcLimitExceeded: The maximum number of VPCs has been reached.
+
+  with aws_vpc.this,
+  on main.tf line 59, in resource "aws_vpc" "this":
+  59: resource "aws_vpc" "this" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 6d7bb811-ecdb-4313-874a-0d125ca2c420, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 22:47:40.936814841-01:00','2026-01-12 22:47:40.936806672-01:00',0);
+INSERT INTO "user_log" VALUES (222,1,'saas/deploy','127.0.0.1',NULL,NULL,'2026-01-12 23:10:43.227350517-01:00','success','exit status 1
+
+Error: creating EC2 VPC: operation error EC2: CreateVpc, https response error StatusCode: 400, RequestID: fe0a0535-e862-4570-87b2-c49ed5d02977, api error VpcLimitExceeded: The maximum number of VPCs has been reached.
+
+  with aws_vpc.this,
+  on main.tf line 59, in resource "aws_vpc" "this":
+  59: resource "aws_vpc" "this" {
+
+
+Error: importing EC2 Key Pair (centralset-key): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 82254171-990e-43bd-96bb-201000ca1058, api error InvalidKeyPair.Duplicate: The keypair already exists
+
+  with aws_key_pair.deployer,
+  on main.tf line 167, in resource "aws_key_pair" "deployer":
+ 167: resource "aws_key_pair" "deployer" {
+
+',NULL,'subscription','SAAS',NULL,3,NULL,'2026-01-12 23:12:23.337736386-01:00','2026-01-12 23:12:23.337737492-01:00',0);
+INSERT INTO "user_log" VALUES (223,1,'cron/run','127.0.0.1',NULL,NULL,'2026-01-13 10:44:58.432897176-01:00','success','Operation executed successfully!',NULL,'cron','ADMIN',NULL,1,NULL,'2026-01-13 10:45:00.262860336-01:00','2026-01-13 10:45:00.262855778-01:00',0);
+INSERT INTO "users" VALUES (1,'root','Super','Admin','root@domain.com',NULL,'$2b$12$895Ajan9CgadXW6w5H9C7.4E9H6VS1hJOY7BEwarfFBqNsZi9oHqO',1,1,NULL,NULL,1,'2025-11-05 18:55:00.130747','2025-11-05 18:55:00.130747',0);
+INSERT INTO "users" VALUES (2,'etlx','etlx','etl','etl@domain.com',NULL,'$2a$12$4AL/XzJY6h0huPGLcaAlnOXK7AXwuozd3qHJzGsl7GGtNYojmqIym',1,1,NULL,NULL,1,'2026-01-10 14:57:17.848708281-01:00','2026-01-10 14:57:17.622281447-01:00',0);
 COMMIT;
