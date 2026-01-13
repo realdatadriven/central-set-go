@@ -15,6 +15,7 @@ import (
 type TerraformRun struct {
 	Config string
 	State  json.RawMessage // store as JSON in DB
+	Lock   string
 }
 
 func terraformCachePath() (string, error) {
@@ -68,6 +69,10 @@ func (app *application) RunDeploy(params Dict) Dict {
 		//fmt.Println("TEST 1:", _data["terraform_state"])
 		run.State = json.RawMessage([]byte(terraform_state))
 	}
+	if terraform_lock, ok := _data["terraform_lock"].(string); ok {
+		//fmt.Println("TEST 1:", _data["terraform_state"])
+		run.Lock = terraform_lock
+	}
 	var res map[string]string
 	switch action {
 	case "deploy":
@@ -91,6 +96,8 @@ func (app *application) RunDeploy(params Dict) Dict {
 		success = false
 	}
 	_data["terraform_template"] = string(run.State)
+	_data["terraform_lock"] = string(run.Lock)
+	//fmt.Println(1, "terraform_template", len(_data["terraform_template"].(string)), "terraform_lock", len(_data["terraform_lock"].(string)), len(run.Lock))
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
 	// fmt.Println(upsert)
@@ -117,12 +124,16 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 			return nil, err
 		}
 	}
+	if len(run.Lock) > 0 {
+		if err := os.WriteFile(filepath.Join(workDir, ".terraform.lock.hcl"), []byte(run.Lock), 0644); err != nil {
+			return nil, err
+		}
+	}
 	tfPath, err := exec.LookPath("terraform")
 	if err != nil {
 		return nil, err
 	}
 	tf, _ := tfexec.NewTerraform(workDir, tfPath)
-
 	// 👇 Load tenant-specific env vars
 	//tenantEnv, _ := getTenantEnvVars(tenantID)
 	sql := `select * from "env" where "tenant_id" = ? and "active" = true and "excluded" = false`
@@ -146,36 +157,62 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	}
 	mergedEnv["TF_PLUGIN_CACHE_DIR"] = _path
 	tf.SetEnv(mergedEnv)
-
 	// Normal Terraform lifecycle
 	if err := tf.Init(context.Background(), tfexec.Upgrade(true)); err != nil {
 		//fmt.Println("Init Failed:", err)
 		return nil, err
 	}
+	stateBytes, err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	if err == nil {
+		run.State = json.RawMessage(stateBytes)
+	}
+	lockBytes, err := os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	if err == nil {
+		run.Lock = string(lockBytes)
+	}
+	if err := tf.Refresh(context.Background()); err != nil {
+		fmt.Printf("resfreh failed: %s", err)
+		return nil, fmt.Errorf("resfreh failed: %w", err)
+	}
+	stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	if err == nil {
+		run.State = json.RawMessage(stateBytes)
+	}
+	lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	if err == nil {
+		run.Lock = string(lockBytes)
+	}
 	//fmt.Println("Init Pass")
 	if err := tf.Apply(context.Background()); err != nil {
-		//fmt.Println("Apply Failed:", err)
+		fmt.Println("Apply Failed:", err)
 		return nil, err
 	}
+	stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	if err == nil {
+		run.State = json.RawMessage(stateBytes)
+	}
+	lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	if err == nil {
+		run.Lock = string(lockBytes)
+	}
 	//fmt.Println("Apply Pass")
-
 	outputs, err := tf.Output(context.Background())
 	if err != nil {
-		//fmt.Println("Output Failed:", err)
+		fmt.Println("Output Failed:", err)
 		return nil, err
 	}
 	//fmt.Println("Output Pass")
-
 	result := map[string]string{}
 	for k, v := range outputs {
 		//if v.Value != nil {
-		fmt.Println(k, string(v.Value))
+		//fmt.Println(k, string(v.Value))
 		result[k] = fmt.Sprintf("%s", v.Value)
 		//}
 	}
-
-	stateBytes, _ := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	stateBytes, _ = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 	run.State = json.RawMessage(stateBytes)
+	lockBytes, _ = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	run.Lock = string(lockBytes)
 	tfexec.CleanEnv(mergedEnv)
 	// Clean up temp directory after use
 	defer os.RemoveAll(workDir)
@@ -188,21 +225,22 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 	// 1. Create temp dir
 	workDir, _ := os.MkdirTemp("", "tf-*")
 	fmt.Println("Temp TF Dir:", workDir)
-
 	// 2. Write config
 	if err := os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644); err != nil {
 		return err
 	}
-
 	// 3. Restore state
 	if err := os.WriteFile(filepath.Join(workDir, "terraform.tfstate"), run.State, 0644); err != nil {
 		return err
 	}
-
+	if len(run.Lock) > 0 {
+		if err := os.WriteFile(filepath.Join(workDir, ".terraform.lock.hcl"), []byte(run.Lock), 0644); err != nil {
+			return err
+		}
+	}
 	// 4. Run terraform destroy
 	tfPath, _ := exec.LookPath("terraform")
 	tf, _ := tfexec.NewTerraform(workDir, tfPath)
-
 	sql := `select * from "env" where "tenant_id" = ? and "active" = true and "excluded" = false`
 	tenantEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
 	// Merge with system env so PATH, etc. still exists
@@ -224,24 +262,42 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 	}
 	mergedEnv["TF_PLUGIN_CACHE_DIR"] = _path
 	tf.SetEnv(mergedEnv)
-
 	// Normal Terraform lifecycle
 	if err := tf.Init(context.Background(), tfexec.Upgrade(true)); err != nil {
 		fmt.Println("Init Failed:", err)
 		return err
 	}
 
+	stateBytes, err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	if err == nil {
+		run.State = json.RawMessage(stateBytes)
+	}
+	lockBytes, err := os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	if err == nil {
+		run.Lock = string(lockBytes)
+	}
+	if err := tf.Refresh(context.Background()); err != nil {
+		fmt.Printf("resfreh failed: %s", err)
+		return fmt.Errorf("resfreh failed: %w", err)
+	}
+	stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	if err == nil {
+		run.State = json.RawMessage(stateBytes)
+	}
+	lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	if err == nil {
+		run.Lock = string(lockBytes)
+	}
 	if err := tf.Destroy(context.Background()); err != nil {
 		fmt.Printf("destroy failed: %s", err)
 		return fmt.Errorf("destroy failed: %w", err)
 	}
-
 	tfexec.CleanEnv(mergedEnv)
-
-	stateBytes, _ := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+	stateBytes, _ = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 	run.State = json.RawMessage(stateBytes)
+	lockBytes, _ = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+	run.Lock = string(lockBytes)
 	// Clean up temp directory after use
 	defer os.RemoveAll(workDir)
-
 	return nil
 }
