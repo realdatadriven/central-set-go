@@ -1,0 +1,169 @@
+# Note: Template blocks require a 'weight' parameter so they're correctly ordered on the landing page
+
+# Hero
+hero:
+  enable: true
+  weight: 10
+  template: hero
+
+  backgroundImage:
+    path: "images/templates/hero"
+    filename:
+      desktop: "gradient-desktop.webp"
+      mobile: "gradient-mobile.webp"
+
+  badge:
+    text: v1.4.13
+    color: secondary
+    pill: false
+    soft: true
+
+  title: "ETLX"
+  subtitle: >
+    A **modern, composable ETL / ELT framework** built for data engineers.
+    Build **simpler, faster, and more maintainable** data pipelines —
+    without heavy orchestration platforms or vendor lock-in.
+
+  image:
+    path: "images"
+    filename: "etlx-pipeline.gif" #ffmpeg -i "Screencast From 2026-01-03 16-51-40.webm" -vf "fps=10,scale=480:-1" etlx.gif
+    alt: "ETLX pipeline overview"
+    boxShadow: true
+    rounded: true
+
+  ctaButton:
+    icon: rocket_launch
+    btnText: "Get Started"
+    url: "./docs/quickstart/"
+  cta2Button:
+    icon: code
+    btnText: "View on GitHub"
+    url: "https://github.com/realdatadriven/etlx"
+
+  info: "**Open Source** • MIT Licensed • DuckDB-powered"
+
+# Feature Grid
+featureGrid:
+  enable: true
+  weight: 20
+  template: feature grid
+
+  title: Why ETLX?
+  subtitle: >
+    Modern data stacks are powerful — but often overcomplicated.
+    ETLX focuses on **clarity, composability, and observability**,
+    giving engineers full control over data pipelines.
+
+  items:
+    - title: Code-First & Declarative
+      icon: code
+      description: >
+        Define *what* should happen, not *how*.
+        ETLX pipelines are configuration-driven, version-controlled,
+        and fully reproducible.
+
+    - title: DuckDB at the Core
+      icon: database
+      description: >
+        SQL-first transformations, in-process analytics,
+        and efficient joins across files, APIs, and databases —
+        powered by DuckDB.
+
+    - title: Multi-Engine by Design
+      icon: hub
+      description: >
+        Run pipelines on DuckDB, PostgreSQL, SQLite, MySQL,
+        SQL Server, or any engine supported via ODBC or DuckDB extensions.
+
+    - title: Local-First, Production-Ready
+      icon: laptop
+      description: >
+        Iterate fast locally, run in CI, containers, or cloud.
+        No separate “dev vs prod” pipeline definitions.
+
+    - title: Fully Observable Execution
+      icon: visibility
+      description: >
+        Every run captures timings, validations, warnings,
+        failures, retries, and execution context —
+        automatically and transparently.
+
+    - title: Metadata-Driven
+      icon: schema
+      description: >
+        Pipelines are structured metadata documents that double as
+        living documentation, lineage sources, and governance artifacts.
+
+    - title: Self-Documenting Pipelines
+      icon: description
+      description: >
+        Generate documentation, lineage, data dictionaries,
+        and SQL explanations directly from pipeline definitions.
+
+    - title: Beyond ETL / ELT
+      icon: analytics
+      description: >
+        Use ETLX for reporting, regulatory documents,
+        structured exports, and templated outputs —
+        all from the same pipeline.
+
+    - title: Built for Engineers
+      icon: engineering
+      description: >
+        No black boxes. No hidden state.
+        Debuggable, inspectable, and deterministic execution by design.
+
+# Image Compare
+imageCompare:
+  enable: true
+  weight: 30
+  template: image compare
+
+  title: From Configuration to Execution & Documentation
+  subtitle: >
+    ETLX treats configuration as **executable documentation**.
+    The same pipeline definition powers execution, observability,
+    lineage, and reporting.
+
+  items:
+    - title: Declarative Pipelines
+      config:
+        startingPoint: 50
+        addCircle: true
+        addCircleBlur: false
+        showLabels: true
+        labelOptions:
+          before: "Configuration"
+          after: "Execution"
+          onHover: false
+      imagePath: "images/screenshots"
+      imageBefore: "etlx_pipeline_config.png"
+      imageAfter: "etlx_pipeline_config.png"
+
+    - title: Metadata → Documentation
+      config:
+        startingPoint: 40
+        addCircle: true
+        addCircleBlur: false
+        showLabels: true
+        labelOptions:
+          before: "Pipeline Metadata"
+          after: "Generated Docs"
+          onHover: false
+      imagePath: "images/screenshots"
+      imageBefore: "etlx_docs_generated.png"
+      imageAfter: "etlx_docs_generated.png"
+
+    - title: Execution Observability
+      config:
+        startingPoint: 30
+        addCircle: true
+        addCircleBlur: true
+        showLabels: true
+        labelOptions:
+          before: "Run Context"
+          after: "Execution Trace"
+          onHover: false
+      imagePath: "images/screenshots"
+      imageBefore: "etlx_execution_trace.png"
+      imageAfter: "etlx_execution_trace.png"

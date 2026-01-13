@@ -33,3 +33,11 @@ database/*.json
 *.parquet
 .venv
 tf/
+docs/resources/_gen/
+public/
+resources/_gen/
+.vscode/
+.env
+.vercel
+node_modules
+.hugo_build.lock
