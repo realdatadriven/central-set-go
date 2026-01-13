@@ -2,6 +2,48 @@
 
 \connect "ADMIN";
 
+DROP TABLE IF EXISTS "access_key";
+DROP SEQUENCE IF EXISTS access_key_access_key_id_seq;
+CREATE SEQUENCE access_key_access_key_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
+
+CREATE TABLE "public"."access_key" (
+    "access_key_id" integer DEFAULT nextval('access_key_access_key_id_seq') NOT NULL,
+    "access_key_desc" character varying(200) NOT NULL,
+    "access_token" text NOT NULL,
+    "expires_at" timestamp,
+    "active" boolean,
+    "for_user_id" integer,
+    "user_id" integer,
+    "created_at" timestamp,
+    "updated_at" timestamp,
+    "excluded" boolean,
+    CONSTRAINT "access_key_pkey" PRIMARY KEY ("access_key_id")
+)
+WITH (oids = false);
+
+COMMENT ON TABLE "public"."access_key" IS 'Access Keys';
+
+COMMENT ON COLUMN "public"."access_key"."access_key_id" IS 'Access Key ID';
+
+COMMENT ON COLUMN "public"."access_key"."access_key_desc" IS 'Description';
+
+COMMENT ON COLUMN "public"."access_key"."access_token" IS 'Token';
+
+COMMENT ON COLUMN "public"."access_key"."expires_at" IS 'Expires at';
+
+COMMENT ON COLUMN "public"."access_key"."active" IS 'Active';
+
+COMMENT ON COLUMN "public"."access_key"."for_user_id" IS 'Created For';
+
+COMMENT ON COLUMN "public"."access_key"."user_id" IS 'Created BY';
+
+COMMENT ON COLUMN "public"."access_key"."created_at" IS 'Created at';
+
+COMMENT ON COLUMN "public"."access_key"."updated_at" IS 'Updated at';
+
+COMMENT ON COLUMN "public"."access_key"."excluded" IS 'Excluded';
+
+
 DROP TABLE IF EXISTS "app";
 DROP SEQUENCE IF EXISTS app_app_id_seq;
 CREATE SEQUENCE app_app_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
@@ -249,7 +291,7 @@ COMMENT ON COLUMN "public"."cron_log"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "custom_form";
 DROP SEQUENCE IF EXISTS custom_form_custom_form_id_seq;
-CREATE SEQUENCE custom_form_custom_form_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 25 CACHE 1;
+CREATE SEQUENCE custom_form_custom_form_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."custom_form" (
     "custom_form_id" integer DEFAULT nextval('custom_form_custom_form_id_seq') NOT NULL,
@@ -288,7 +330,7 @@ COMMENT ON COLUMN "public"."custom_form"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "custom_table";
 DROP SEQUENCE IF EXISTS custom_table_custom_table_id_seq;
-CREATE SEQUENCE custom_table_custom_table_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 29 CACHE 1;
+CREATE SEQUENCE custom_table_custom_table_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."custom_table" (
     "custom_table_id" integer DEFAULT nextval('custom_table_custom_table_id_seq') NOT NULL,
@@ -306,7 +348,7 @@ WITH (oids = false);
 
 COMMENT ON TABLE "public"."custom_table" IS 'Custom Table';
 
-COMMENT ON COLUMN "public"."custom_table"."custom_table_id" IS 'User Log ID';
+COMMENT ON COLUMN "public"."custom_table"."custom_table_id" IS 'Custom Table ID';
 
 COMMENT ON COLUMN "public"."custom_table"."table" IS 'Table';
 
@@ -1394,7 +1436,7 @@ COMMENT ON COLUMN "public"."manage_query"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "menu";
 DROP SEQUENCE IF EXISTS menu_menu_id_seq;
-CREATE SEQUENCE menu_menu_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 6 CACHE 1;
+CREATE SEQUENCE menu_menu_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."menu" (
     "menu_id" integer DEFAULT nextval('menu_menu_id_seq') NOT NULL,
@@ -1442,7 +1484,7 @@ COMMENT ON COLUMN "public"."menu"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "menu_table";
 DROP SEQUENCE IF EXISTS menu_table_menu_table_id_seq;
-CREATE SEQUENCE menu_table_menu_table_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 13 CACHE 1;
+CREATE SEQUENCE menu_table_menu_table_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."menu_table" (
     "menu_table_id" integer DEFAULT nextval('menu_table_menu_table_id_seq') NOT NULL,
@@ -1867,7 +1909,7 @@ CREATE UNIQUE INDEX source_type_source_type_key ON public.source_type USING btre
 
 DROP TABLE IF EXISTS "table";
 DROP SEQUENCE IF EXISTS table_table_id_seq;
-CREATE SEQUENCE table_table_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 49 CACHE 1;
+CREATE SEQUENCE table_table_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."table" (
     "table_id" integer DEFAULT nextval('table_table_id_seq') NOT NULL,
@@ -1906,7 +1948,7 @@ COMMENT ON COLUMN "public"."table"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "table_schema";
 DROP SEQUENCE IF EXISTS table_schema_table_schema_id_seq;
-CREATE SEQUENCE table_schema_table_schema_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 594 CACHE 1;
+CREATE SEQUENCE table_schema_table_schema_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."table_schema" (
     "table_schema_id" integer DEFAULT nextval('table_schema_table_schema_id_seq') NOT NULL,
@@ -2128,7 +2170,7 @@ COMMENT ON COLUMN "public"."task_track"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "translate_table";
 DROP SEQUENCE IF EXISTS translate_table_transl_tbl_id_seq;
-CREATE SEQUENCE translate_table_transl_tbl_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 49 CACHE 1;
+CREATE SEQUENCE translate_table_transl_tbl_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."translate_table" (
     "transl_tbl_id" integer DEFAULT nextval('translate_table_transl_tbl_id_seq') NOT NULL,
@@ -2173,7 +2215,7 @@ COMMENT ON COLUMN "public"."translate_table"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "translate_table_field";
 DROP SEQUENCE IF EXISTS translate_table_field_transl_tbl_field_id_seq;
-CREATE SEQUENCE translate_table_field_transl_tbl_field_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 594 CACHE 1;
+CREATE SEQUENCE translate_table_field_transl_tbl_field_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."translate_table_field" (
     "transl_tbl_field_id" integer DEFAULT nextval('translate_table_field_transl_tbl_field_id_seq') NOT NULL,
@@ -2221,7 +2263,7 @@ COMMENT ON COLUMN "public"."translate_table_field"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "user_log";
 DROP SEQUENCE IF EXISTS user_log_user_log_id_seq;
-CREATE SEQUENCE user_log_user_log_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 13 CACHE 1;
+CREATE SEQUENCE user_log_user_log_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."user_log" (
     "user_log_id" integer DEFAULT nextval('user_log_user_log_id_seq') NOT NULL,
@@ -2381,6 +2423,9 @@ CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email);
 CREATE UNIQUE INDEX users_phone_key ON public.users USING btree (phone);
 
 
+ALTER TABLE ONLY "public"."access_key" ADD CONSTRAINT "access_key_for_user_id_fkey" FOREIGN KEY (for_user_id) REFERENCES users(user_id) NOT DEFERRABLE;
+ALTER TABLE ONLY "public"."access_key" ADD CONSTRAINT "access_key_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(user_id) NOT DEFERRABLE;
+
 ALTER TABLE ONLY "public"."app" ADD CONSTRAINT "app_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(user_id) NOT DEFERRABLE;
 
 ALTER TABLE ONLY "public"."calendar" ADD CONSTRAINT "calendar_app_id_fkey" FOREIGN KEY (app_id) REFERENCES app(app_id) NOT DEFERRABLE;
@@ -2531,4 +2576,4 @@ ALTER TABLE ONLY "public"."user_role" ADD CONSTRAINT "user_role_user_id_fkey" FO
 ALTER TABLE ONLY "public"."users" ADD CONSTRAINT "users_lang_id_fkey" FOREIGN KEY (lang_id) REFERENCES lang(lang_id) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY (role_id) REFERENCES role(role_id) NOT DEFERRABLE;
 
--- 2025-10-26 11:16:19 UTC
+-- 2026-01-13 13:14:09 UTC

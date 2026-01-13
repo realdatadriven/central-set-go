@@ -180,186 +180,6 @@ func (app *application) etlxRun(params Dict) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	/*/ RUN ETL
-	if _, ok := etlxlib.Config["ETL"]; ok {
-		_logs, err := etlxlib.RunETL(dateRef, nil, extraConf)
-		if err != nil {
-			data["ETL"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("%v", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["ETL"] = Dict{
-				"success": true,
-				"logs":    _logs,
-			}
-		}
-	}
-	// DATA_QUALITY
-	if _, ok := etlxlib.Config["DATA_QUALITY"]; ok {
-		_logs, err := etlxlib.RunDATA_QUALITY(dateRef, nil, extraConf)
-		if err != nil {
-			data["DATA_QUALITY"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("DATA_QUALITY ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["DATA_QUALITY"] = Dict{
-				"success": true,
-				"logs":    _logs,
-			}
-		}
-	}
-	// EXPORTS
-	if _, ok := etlxlib.Config["EXPORTS"]; ok {
-		_logs, err := etlxlib.RunEXPORTS(dateRef, nil, extraConf)
-		if err != nil {
-			data["EXPORTS"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("EXPORTS ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["EXPORTS"] = Dict{
-				"success": true,
-				"logs":    _logs,
-			}
-		}
-	}
-	// MULTI_QUERIES
-	if _, ok := etlxlib.Config["MULTI_QUERIES"]; ok {
-		_logs, _data, err := etlxlib.RunMULTI_QUERIES(dateRef, nil, extraConf)
-		if err != nil {
-			data["MULTI_QUERIES"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("MULTI_QUERIES ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["MULTI_QUERIES"] = Dict{
-				"success": true,
-				"data":    _data,
-				"logs":    _logs,
-			}
-		}
-	}
-	// SCRIPTS
-	if _, ok := etlxlib.Config["SCRIPTS"]; ok {
-		_logs, err := etlxlib.RunSCRIPTS(dateRef, nil, extraConf)
-		if err != nil {
-			data["SCRIPTS"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("SCRIPTS ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["SCRIPTS"] = Dict{
-				"success": true,
-				"logs":    _logs,
-			}
-		}
-	}
-	// ACTIONS
-	if _, ok := etlxlib.Config["ACTIONS"]; ok {
-		_logs, err := etlxlib.RunACTIONS(dateRef, nil, extraConf)
-		if err != nil {
-			data["ACTIONS"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("ACTIONS ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["ACTIONS"] = Dict{
-				"success": true,
-				"logs":    _logs,
-			}
-		}
-	}
-	// LOGS
-	if _, ok := etlxlib.Config["LOGS"]; ok {
-		_logs, err := etlxlib.RunLOGS(dateRef, nil, logs)
-		if err != nil {
-			data["LOGS"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("LOGS ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-		}
-	}
-	// NOTIFY
-	if _, ok := etlxlib.Config["NOTIFY"]; ok {
-		_logs, err := etlxlib.RunNOTIFY(dateRef, nil, extraConf)
-		if err != nil {
-			data["NOTIFY"] = Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("NOTIFY ERR: %v!", err),
-			}
-		} else {
-			// LOGS
-			if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
-				_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
-				if err != nil {
-					fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
-				}
-			}
-			logs = append(logs, _logs...)
-			data["NOTIFY"] = Dict{
-				"success": true,
-				"logs":    _logs,
-			}
-		}
-	}*/
 	_keys := []any{"NOTIFY", "LOGS", "SCRIPTS", "MULTI_QUERIES", "EXPORTS", "DATA_QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
@@ -421,7 +241,7 @@ func (app *application) etlxRun(params Dict) Dict {
 								"logs":    _logs,
 							}
 						}
-					case "DATA_QUALITY":
+					case "DATA_QUALITY", "DATAQUALITY", "QUALITY":
 						_logs, err := etlxlib.RunDATA_QUALITY(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
@@ -439,7 +259,7 @@ func (app *application) etlxRun(params Dict) Dict {
 								"logs":    _logs,
 							}
 						}
-					case "MULTI_QUERIES":
+					case "MULTI_QUERIES", "STACKED_QUERIES":
 						_logs, _, err := etlxlib.RunMULTI_QUERIES(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
@@ -475,7 +295,7 @@ func (app *application) etlxRun(params Dict) Dict {
 								"logs":    _logs,
 							}
 						}
-					case "NOTIFY":
+					case "NOTIFY", "NOTIFICATION":
 						_logs, err := etlxlib.RunNOTIFY(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
@@ -524,7 +344,7 @@ func (app *application) etlxRun(params Dict) Dict {
 								"logs":    _logs,
 							}
 						}
-					case "LOGS":
+					case "LOGS", "OBSERVABILITY":
 						_logs, err := etlxlib.RunLOGS(dateRef, nil, logs, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
@@ -542,7 +362,7 @@ func (app *application) etlxRun(params Dict) Dict {
 								"logs":    _logs,
 							}
 						}
-					case "REQUIRES":
+					case "REQUIRES", "IMPORTS":
 						_logs, err := etlxlib.LoadREQUIRES(nil, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)

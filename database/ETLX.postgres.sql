@@ -2,6 +2,47 @@
 
 \connect "ETLX";
 
+DROP TABLE IF EXISTS "arrow_flight";
+DROP SEQUENCE IF EXISTS arrow_flight_arrow_flight_id_seq;
+CREATE SEQUENCE arrow_flight_arrow_flight_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
+
+CREATE TABLE "public"."arrow_flight" (
+    "arrow_flight_id" integer DEFAULT nextval('arrow_flight_arrow_flight_id_seq') NOT NULL,
+    "arrow_flight" character varying(200) NOT NULL,
+    "arrow_flight_desc" text,
+    "arrow_flight_conf" text,
+    "user_id" integer,
+    "app_id" integer,
+    "created_at" timestamp,
+    "updated_at" timestamp,
+    "excluded" boolean,
+    CONSTRAINT "arrow_flight_pkey" PRIMARY KEY ("arrow_flight_id")
+)
+WITH (oids = false);
+
+COMMENT ON TABLE "public"."arrow_flight" IS 'Expose Arrow Flight';
+
+COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight_id" IS 'ID';
+
+COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight" IS 'Name';
+
+COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight_desc" IS 'Description';
+
+COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight_conf" IS 'Config Text';
+
+COMMENT ON COLUMN "public"."arrow_flight"."user_id" IS 'User ID';
+
+COMMENT ON COLUMN "public"."arrow_flight"."app_id" IS 'App ID';
+
+COMMENT ON COLUMN "public"."arrow_flight"."created_at" IS 'Created at';
+
+COMMENT ON COLUMN "public"."arrow_flight"."updated_at" IS 'Updated at';
+
+COMMENT ON COLUMN "public"."arrow_flight"."excluded" IS 'Excluded';
+
+CREATE UNIQUE INDEX arrow_flight_arrow_flight_key ON public.arrow_flight USING btree (arrow_flight);
+
+
 DROP TABLE IF EXISTS "dashboard";
 DROP SEQUENCE IF EXISTS dashboard_dashboard_id_seq;
 CREATE SEQUENCE dashboard_dashboard_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
@@ -88,7 +129,7 @@ COMMENT ON COLUMN "public"."dashboard_comment"."excluded" IS 'Excluded';
 
 DROP TABLE IF EXISTS "etlx";
 DROP SEQUENCE IF EXISTS etlx_etlx_id_seq;
-CREATE SEQUENCE etlx_etlx_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 2 CACHE 1;
+CREATE SEQUENCE etlx_etlx_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."etlx" (
     "etlx_id" integer DEFAULT nextval('etlx_etlx_id_seq') NOT NULL,
@@ -258,4 +299,4 @@ COMMENT ON COLUMN "public"."notebook"."updated_at" IS 'Updated at';
 COMMENT ON COLUMN "public"."notebook"."excluded" IS 'Excluded';
 
 
--- 2025-10-26 14:55:17 UTC
+-- 2026-01-13 13:14:34 UTC
