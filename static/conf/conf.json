@@ -1,5 +1,5 @@
 {
-    "app_name": "CSGO",
+    "app_name": "CS",
     "company_name": "Real Data-Driven",
     "company_website": "https://github.com/realdatadriven",
     "url": "conf/conf.json",
@@ -10,7 +10,7 @@
     "_ws_api": "ws",
     "update_on_backend_change": true,
     "secret_key": "o1KwptgRuXtHd4LsvBu63DDh",
-    "app": "CSGO",
+    "app": "CS",
     "icon":"img/logo.svg",
     "logo":"img/logo.svg",
     "lang": "pt",

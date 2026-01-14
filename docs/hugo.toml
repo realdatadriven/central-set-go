@@ -3,7 +3,7 @@
 baseURL = "./docs" # (or set via env variable HUGO_BASEURL)
 #baseURL = 'https://realdatadriven.github.io/central-set-go/'
 languageCode = "en-GB"
-title = "CSGO - Data Plataform"
+title = "CS - Data Plataform"
 # theme = "lotusdocs"
 contentDir = "content"
 enableEmoji = true
@@ -66,7 +66,7 @@ enableGitInfo = true # N.B. .GitInfo does not currently function with submodule 
         # rss = true                     # show rss icon with link
 
     [params.docs] # Parameters for the /docs 'template'
-        title           = "CSGO"                        # default html title for documentation pages/sections
+        title           = "CS"                        # default html title for documentation pages/sections
 
         # pathName        = "docs"                            # path for documentation site | default "docs"
 
@@ -138,7 +138,7 @@ enableGitInfo = true # N.B. .GitInfo does not currently function with submodule 
         negativeEventName = "Negative Feedback"
         positiveFormTitle = "What did you like?"
         negativeFormTitle = "What went wrong?"
-        successMsg = "Thank you for helping to improve CSGO Docs' documentation!"
+        successMsg = "Thank you for helping to improve CS Docs' documentation!"
         errorMsg = "Sorry! There was an error while attempting to submit your feedback!"
         positiveForm = [
           ["Accurate", "Accurately describes the feature or option."],

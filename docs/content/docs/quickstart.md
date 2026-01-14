@@ -4,21 +4,21 @@ date: "2026-01-03T10:00:00+00:00"
 draft: false
 title: "Quickstart"
 icon: "rocket_launch"
-description: "Get Central Set Go (CSGO) running in minutes with a connected database admin UI and optional ETLX support."
+description: "Get Central Set (CS) running in minutes with a connected database admin UI and optional ETLX support."
 publishdate: "2026-01-03T10:00:00+00:00"
 tags: ["Beginners", "Quickstart", "Admin", "Databases"]
 categories: ["Getting Started"]
 
 twitter:
   card: "summary"
-  title: "CSGO Quickstart"
-  description: "Initialize and run Central Set Go locally in minutes"
+  title: "CS Quickstart"
+  description: "Initialize and run Central Set locally in minutes"
 ---
 
 
 ## 🚀 Quickstart
 
-This guide will help you **run Central Set Go (CSGO)** locally in minutes — initialize the admin database, access the admin UI, and optionally set up the ETLX subsystem.
+This guide will help you **run Central Set (CS)** locally in minutes — initialize the admin database, access the admin UI, and optionally set up the ETLX subsystem.
 
 ---
 
@@ -28,7 +28,7 @@ This guide will help you **run Central Set Go (CSGO)** locally in minutes — in
 
 * **Linux, macOS, or Windows**
 * **A SQL database engine** (SQLite, PostgreSQL, MySQL, etc.)
-* CSGO treats the **database itself as the data model**
+* CS treats the **database itself as the data model**
 
 ### Optional (for ETLX / ODBC features)
 
@@ -38,7 +38,7 @@ This guide will help you **run Central Set Go (CSGO)** locally in minutes — in
 
 ## 🐙 Installation
 
-You can run CSGO in **three different ways**:
+You can run CS in **three different ways**:
 
 1. Precompiled binary (recommended)
 2. Build from source
@@ -50,7 +50,7 @@ Choose the option that best fits your workflow.
 
 ## ▶️ Option 1: Download a Precompiled Binary (Recommended)
 
-Download the **latest CSGO release** for your platform:
+Download the **latest CS release** for your platform:
 
 👉 https://github.com/realdatadriven/central-set-go/releases
 
@@ -64,7 +64,7 @@ chmod +x central-set
 
 ## 🛠️ Option 2: Build from Source (Git Clone)
 
-If you want to build CSGO yourself:
+If you want to build CS yourself:
 
 ### Requirements
 
@@ -91,7 +91,7 @@ This produces the same binary as the official releases.
 
 ## 🐳 Option 3: Run with Docker
 
-CSGO can be run entirely via Docker.
+CS can be run entirely via Docker.
 
 ### Build the image
 
@@ -99,7 +99,7 @@ CSGO can be run entirely via Docker.
 docker build -t central-set-go:latest .
 ```
 
-### Run CSGO
+### Run CS
 
 ```bash
 docker run --rm -it \
@@ -142,13 +142,13 @@ Password: 1234
 
 ---
 
-## ▶️ Start CSGO
+## ▶️ Start CS
 
 ```bash
 ./central-set
 ```
 
-CSGO will start a web server and expose the admin UI.
+CS will start a web server and expose the admin UI.
 
 ---
 
@@ -183,7 +183,7 @@ This creates an ETLX-powered app that integrates with:
 
 ## ⚙️ Configure with `.env`
 
-CSGO ships with a sample environment file:
+CS ships with a sample environment file:
 
 ```bash
 cp dot-env-example.txt .env
@@ -213,7 +213,7 @@ HTTP_PORT=4444
 
 ## 🧩 What Just Happened
 
-CSGO has now:
+CS has now:
 
 * Initialized its **admin control database**
 * Reflected database tables into:
@@ -244,6 +244,6 @@ You can now:
 
 ---
 
-CSGO is **MIT-licensed**, **open source**, and designed to make the **database the single source of truth**.
+CS is **MIT-licensed**, **open source**, and designed to make the **database the single source of truth**.
 
 If you believe admin UIs, APIs, pipelines, and analytics should all align around the schema — welcome aboard 🚀

@@ -20,17 +20,17 @@ hero:
     pill: false
     soft: true
 
-  title: "Central Set Go (CSGO)"
+  title: "Central Set (CS)"
   subtitle: >
-    A **configuration-driven data platform & admin backoffice**
+    A **configuration-driven data platform & Admin UI**
     built with **Golang**.
     Manage **applications, databases, users, roles, data pipelines,
     dashboards, and analytics** — all from one unified system.
 
   image:
     path: "images"
-    filename: "csgo-overview.gif"
-    alt: "CSGO platform overview"
+    filename: "CS-overview.gif"
+    alt: "CS platform overview"
     boxShadow: true
     rounded: true
 
@@ -44,7 +44,7 @@ hero:
     btnText: "View on GitHub"
     url: "https://github.com/realdatadriven/central-set-go"
 
-  info: "**Open Source** • Golang • Multi-DB • Token-based API Access • ETLX & DuckDB Powered"
+  info: "Golang • Multi-DB • API Access • ETLX & DuckDB Powered"
 
 # =========================
 # Feature Grid
@@ -54,10 +54,10 @@ featureGrid:
   weight: 20
   template: feature grid
 
-  title: Why Central Set Go?
+  title: Why Central Set?
   subtitle: >
     Most admin panels, data tools, and dashboards solve *one problem*.
-    CSGO unifies **application management, data engineering,
+    CS unifies **application management, data engineering,
     analytics, and governance** into a single, extensible platform.
 
   items:
@@ -68,7 +68,7 @@ featureGrid:
         pipelines, and security using metadata — not custom code.
         Changes are reproducible, versionable, and auditable.
 
-    - title: Built-In Admin Backoffice
+    - title: Built-In Admin UI
       icon: admin_panel_settings
       description: >
         Out-of-the-box admin UI with authentication, user management,
@@ -129,7 +129,7 @@ featureGrid:
         Everything is exposed via REST-ish APIs.
         Access the platform using generated API keys and tokens,
         and build custom frontends, services,
-        or integrations on top of CSGO.
+        or integrations on top of CS.
 
     - title: API Access with Keys & Tokens
       icon: key
@@ -149,7 +149,7 @@ imageCompare:
 
   title: From Configuration to Operations & Analytics
   subtitle: >
-    CSGO treats configuration as **the single source of truth** —
+    CS treats configuration as **the single source of truth** —
     powering CRUD apps, pipelines, dashboards,
     security, and automation.
 
@@ -165,8 +165,8 @@ imageCompare:
           after: "Admin UI & CRUD"
           onHover: false
       imagePath: "images/screenshots"
-      imageBefore: "csgo_schema.png"
-      imageAfter: "csgo_crud_ui.png"
+      imageBefore: "CS_schema.png"
+      imageAfter: "CS_crud_ui.png"
 
     - title: ETLX Config → Visual Workflow
       config:
@@ -179,8 +179,8 @@ imageCompare:
           after: "Visual Pipeline"
           onHover: false
       imagePath: "images/screenshots"
-      imageBefore: "csgo_etlx_config.png"
-      imageAfter: "csgo_etlx_visual.png"
+      imageBefore: "CS_etlx_config.png"
+      imageAfter: "CS_etlx_visual.png"
 
     - title: Markdown → Interactive Dashboard
       config:
@@ -193,5 +193,5 @@ imageCompare:
           after: "DuckDB-WASM Dashboard"
           onHover: false
       imagePath: "images/screenshots"
-      imageBefore: "csgo_dashboard_md.png"
-      imageAfter: "csgo_dashboard_ui.png"
+      imageBefore: "CS_dashboard_md.png"
+      imageAfter: "CS_dashboard_ui.png"
