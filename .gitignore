@@ -33,7 +33,7 @@ database/*.json
 *.parquet
 .venv
 tf/
-docs/resources/_gen/
+docs/resources/
 public/
 resources/_gen/
 .vscode/
