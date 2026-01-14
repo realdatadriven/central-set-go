@@ -1,5 +1,4 @@
 ---
-
 weight: 100
 date: "2026-01-03T10:00:00+00:00"
 draft: false
@@ -16,7 +15,7 @@ card: "summary"
 title: "What is Central Set Go?"
 description: "A database-reflective data platform with built-in admin UI, APIs, and pipelines"
 image: ""
----------
+---
 
 ---
 
