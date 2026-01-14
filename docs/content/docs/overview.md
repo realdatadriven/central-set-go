@@ -1,229 +1,256 @@
 ---
+
 weight: 100
 date: "2026-01-03T10:00:00+00:00"
 draft: false
 title: "Overview"
 icon: "circle"
 toc: true
-description: "ETLX is a modern, composable, metadata-driven ETL framework for data engineers."
+description: "Central Set Go (CSGO) is a configuration-driven, database-reflective platform with a built-in admin UI, secure APIs, data pipelines, and analytics."
 publishdate: "2026-01-03T10:00:00+00:00"
-tags: ["Beginners", "ETL", "DuckDB"]
+tags: ["Beginners", "Admin", "Data Platform", "Databases", "ETLX"]
 categories: ["Concepts"]
 
 twitter:
-  card: "summary"
-  title: "What is ETLX?"
-  description: "A modern, composable ETL framework built for data engineers"
-  image: ""
----
-
-Welcome to the **ETLX documentation**.
-
-This guide explains **what ETLX is**, **why it exists**, and **how to think about it** before diving into pipelines, configuration, and execution details.
-
-If you are looking for a fast way to get started, jump directly to the [Quickstart]({{% relref "quickstart" %}}).
+card: "summary"
+title: "What is Central Set Go?"
+description: "A database-reflective data platform with built-in admin UI, APIs, and pipelines"
+image: ""
+---------
 
 ---
 
-## What is ETLX?
+## Welcome to the **Central Set Go (CSGO) documentation**
 
-**ETLX** is an **open-source, developer-first ETL framework** designed to make data pipelines:
+This documentation explains **what CSGO is**, **how it works**, and **how to think about it** before diving into applications, databases, security, APIs, pipelines, and dashboards.
 
-- **Simpler**
-- **More transparent**
-- **Easier to reason about**
-- **Fully observable and reproducible**
-
-Instead of relying on heavyweight orchestration platforms or opaque runtime behavior, ETLX embraces a **declarative, metadata-first approach**.
-
-At its core, ETLX lets you define *what should happen* — and then executes it deterministically, while capturing **rich execution metadata** along the way.
+If you want to get running quickly, start here:
+👉 [Quickstart]({{% relref "quickstart" %}})
 
 ---
 
-## Why ETLX?
+## What is Central Set Go?
 
-Modern data stacks are powerful — but often **overengineered**.
+**Central Set Go (CSGO)** is an **open-source, configuration-driven data platform** built with **Golang**.
 
-Common pain points ETLX aims to solve:
+At its core, CSGO provides a **built-in admin application** that turns your existing database into:
 
-- Pipelines that are hard to debug
-- Logic scattered across code, configs, and orchestration tools
-- Poor visibility into *what actually happened* during execution
-- Documentation that drifts away from reality
-- Vendor lock-in and engine-specific implementations
+* A fully functional **admin backoffice UI**
+* A consistent, **secure API layer**
+* A foundation for **data pipelines and analytics**
 
-ETLX takes a different path.
+CSGO does **not** generate schemas and does **not** hide or abstract your data model.
 
-<!-- markdownlint-disable MD026 -->
+Instead, it treats the **database itself as the source of truth**.
 
-### ETLX is built on these principles:
-
-- **Code-first, configuration-driven**
-- **Database-centric**, powered by DuckDB
-- **Composable pipelines**, not monolithic DAGs
-- **Local-first**, but production-ready
-- **Metadata as a first-class citizen**
+Your tables *are* the data model — and CSGO reflects them faithfully into UI, APIs, pipelines, and analytics, with configuration defining behavior rather than structure.
 
 ---
 
-## Core Capabilities
+## Database as the Data Model
 
-<!-- markdownlint-disable MD033 -->
+In CSGO, the **database schema is the canonical model**.
 
-<div class="row flex-xl-wrap pb-4">
+When a database is connected:
 
-  <!-- Declarative Pipelines -->
-  <div id="list-item" class="col-md-4 col-12 py-2">
-    <a class="text-decoration-none text-reset" href="../features/etl-elt#example">
-      <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
-        <span class="h1 icon-color">
-          <i class="material-icons align-middle">schema</i>
-        </span>
-        <div class="card-body p-0 content">
-          <p class="fs-5 fw-semibold card-title mb-1">Declarative Pipelines</p>
-          <p class="para card-text mb-0">
-            Define what should happen, not how.
-            Pipelines are structured, readable, and reproducible.
-          </p>
-        </div>
-      </div>
-    </a>
-  </div>
+* Tables are discovered directly from the database
+* Each table becomes manageable through the admin UI
+* Data can be browsed, created, updated, and deleted
+* APIs and UI share the exact same data contract
 
-  <!-- DuckDB at the Core -->
-  <div id="list-item" class="col-md-4 col-12 py-2">
-    <a class="text-decoration-none text-reset" href="../features/ddb-at-the-core">
-      <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
-        <span class="h1 icon-color">
-          <i class="material-icons align-middle">database</i>
-        </span>
-        <div class="card-body p-0 content">
-          <p class="fs-5 fw-semibold card-title mb-1">DuckDB at the Core</p>
-          <p class="para card-text mb-0">
-            SQL-first transformations and in-process analytics
-            powered by DuckDB.
-          </p>
-        </div>
-      </div>
-    </a>
-  </div>
+There is no duplication of models, DTOs, or schemas.
 
-  <!-- Multi-Engine Execution -->
-  <div id="list-item" class="col-md-4 col-12 py-2">
-    <a class="text-decoration-none text-reset" href="../features/multi-engine-execution">
-      <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
-        <span class="h1 icon-color">
-          <i class="material-icons align-middle">hub</i>
-        </span>
-        <div class="card-body p-0 content">
-          <p class="fs-5 fw-semibold card-title mb-1">Multi-Engine Execution</p>
-          <p class="para card-text mb-0">
-            Run pipelines on DuckDB, PostgreSQL, SQLite,
-            MySQL, SQL Server, and ODBC sources.
-          </p>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Execution & Observability -->
-  <div id="list-item" class="col-md-4 col-12 py-2">
-    <a class="text-decoration-none text-reset" href="../features/logs">
-      <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
-        <span class="h1 icon-color">
-          <i class="material-icons align-middle">visibility</i>
-        </span>
-        <div class="card-body p-0 content">
-          <p class="fs-5 fw-semibold card-title mb-1">Full Observability</p>
-          <p class="para card-text mb-0">
-            Every execution captures timings, validations,
-            warnings, memory usage, and failure context.
-          </p>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Metadata & Lineage -->
-  <div id="list-item" class="col-md-4 col-12 py-2">
-    <a class="text-decoration-none text-reset" href="../features/query-documentation#documenting-fields-with-metadata">
-      <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
-        <span class="h1 icon-color">
-          <i class="material-icons align-middle">description</i>
-        </span>
-        <div class="card-body p-0 content">
-          <p class="fs-5 fw-semibold card-title mb-1">Metadata & Governance Doc</p>
-          <p class="para card-text mb-0">
-            Pipelines double as metadata documents,
-            enabling lineage, dictionaries, and governance.
-          </p>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Beyond ETL -->
-  <div id="list-item" class="col-md-4 col-12 py-2">
-    <a class="text-decoration-none text-reset" href="../features/beyond-etl">
-      <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
-        <span class="h1 icon-color">
-          <i class="material-icons align-middle">analytics</i>
-        </span>
-        <div class="card-body p-0 content">
-          <p class="fs-5 fw-semibold card-title mb-1">Beyond ETL</p>
-          <p class="para card-text mb-0">
-            Use ETLX for reporting, document generation,
-            structured exports, and regulatory workflows.
-          </p>
-        </div>
-      </div>
-    </a>
-  </div>
-
-</div>
+If it exists in the database, CSGO can manage it.
 
 ---
 
-## How ETLX Is Different
+## Built-In Admin UI (Auto-Generated, Yet Fully Customizable)
 
-ETLX is **not**:
+CSGO ships with a **built-in admin application** — no UI builders, no code generation, no separate frontend project.
 
-- A workflow scheduler
-- A GUI-driven orchestration platform
-- A black-box ETL tool
+### Automatic UI generation
 
-ETLX **is**:
+For every discovered table, CSGO automatically provides:
 
-- A deterministic execution engine
-- A metadata-driven pipeline framework
-- A foundation for documentation, lineage, and governance
-- A tool that scales from local development to production
+* Data tables for browsing records
+* CRUD operations (create, read, update, delete)
+* Auto-generated forms for create and edit
 
-> **Your pipeline configuration is the source of truth.**
+UI generation is **schema-driven**:
+
+* Column comments are used as human-friendly labels
+* Column names remain stable field identifiers behind the scenes
+* Data types drive widgets, formatting, and validation
+* Foreign keys define relations, selectors, and lookups
+
+This guarantees that:
+
+* The UI always matches the real schema
+* APIs and UI never drift apart
+* Schema refactors remain predictable and safe
 
 ---
 
-## Who Is ETLX For?
+## Admin Configuration Model (Apps → Menus → Tables)
 
-ETLX is designed for:
+CSGO uses its **own admin database** to define how your data is presented and managed.
 
-- Data engineers who prefer **clarity**
-- Analytics engineers building SQL-first pipelines
-- Teams that want **observable, auditable execution**
-- Organizations that care about **governance and lineage**
-- Anyone tired of pipelines that are hard to explain six months later
+Core admin concepts include:
+
+* **Apps** – logical applications or domains
+* **Menus** – navigation and grouping
+* **Tables** – database tables exposed in the UI
+
+These relationships:
+
+```
+Apps → Menus → Tables
+```
+
+Define how CRUD interfaces are generated for your database.
+
+Through the admin UI you can configure:
+
+* Which tables are exposed
+* Menu structure and navigation
+* Table views, filters, and ordering
+* Form layouts (tabs, steps, sections, subforms)
+* Relationship behavior (inline edits, selectors, popups)
+* Permissions and access rules
+
+All configuration is:
+
+* Stored in the admin database
+* Managed through the same CSGO UI
+* Applied instantly, without redeploys
+
+---
+
+## Multi-Database Support (via `.env`)
+
+CSGO supports **multiple database engines out of the box**.
+
+The application database is configured using a simple `.env` file:
+
+```env
+DB_DRIVER=postgres
+DB_DSN=postgres://user:password@host:5432/appdb
+```
+
+### Key points
+
+* The driver and DSN fully define the application database
+* Any database supported by **`sqlx`** can be used
+* Switching databases requires **no code changes**
+* Different apps can point to different databases
+
+### Commonly used engines
+
+* PostgreSQL
+* SQLite
+* MySQL / MariaDB
+* SQL Server
+* Any SQL database supported by `sqlx` drivers
+
+This makes CSGO suitable for:
+
+* Local development
+* Embedded deployments
+* Internal tools
+* SaaS and multi-tenant platforms
+
+---
+
+## Secure API Access (Keys & Tokens)
+
+Everything in CSGO is **API-first**.
+
+* The admin UI is just another API consumer
+* Access keys and tokens can be generated for users and services
+* Permissions are enforced via role-based access control (RBAC)
+* External systems interact safely with the same APIs
+
+This enables:
+
+* Automation and scripting
+* CI/CD integrations
+* Service-to-service communication
+* Headless usage of CSGO as a backend
+
+---
+
+## Data Pipelines with ETLX
+
+CSGO embeds **ETLX** as its data engineering engine.
+
+With ETLX you can:
+
+* Define metadata-driven pipelines
+* Visualize pipelines as workflows
+* Execute them manually, via API, or on a schedule
+* Capture execution logs, metadata, and results
+
+Pipelines are managed through the same admin UI and governed by the same security and permission model.
+
+---
+
+## Analytics, Notebooks & Dashboards
+
+CSGO also includes tools for **data exploration and analytics**:
+
+* Built-in SQL notebooks for exploration
+* Configuration-driven dashboards (Markdown-based)
+* DuckDB (including WASM) for analytical workloads
+* Arrow Flight for sharing datasets with external tools
+
+This connects **data engineering outputs** directly to **analysis and consumption**.
+
+---
+
+## How CSGO Is Different
+
+CSGO is **not**:
+
+* A CRUD code generator
+* A schema designer
+* A low-code UI builder
+* A collection of loosely coupled tools
+
+CSGO **is**:
+
+* A **database-reflective admin platform**
+* A **configuration-driven control plane**
+* An **API-first backend with secure tokens**
+* A **data engineering platform powered by ETLX**
+* An **analytics foundation built on DuckDB**
+
+> **The database schema is the source of truth.**
+> **Configuration defines behavior — not structure.**
+
+---
+
+## Who Is CSGO For?
+
+CSGO is designed for:
+
+* Teams building **internal tools and admin backoffices**
+* SaaS platforms needing **secure, multi-database management**
+* Data engineers wanting **pipelines, governance, and UI in one place**
+* Platform teams tired of stitching admin tools, APIs, and ETL together
 
 ---
 
 ## Where to Go Next
 
-- 👉 [Quickstart]({{% relref "quickstart" %}}) — run your first pipeline
-- 👉 [Core Concepts]({{% relref "features/beyond-etl" %}}) — understand pipelines and metadata
-- 👉 [Execution & Observability]({{% relref "features/logs" %}}) — see what ETLX captures
-- 👉 [Configuration Reference]({{% relref "features/etl-elt#example" %}}) — full schema details
+* 👉 [Quickstart]({{% relref "quickstart" %}}) — run CSGO locally
+* 👉 [Core Concepts]({{% relref "concepts" %}})
+* 👉 [Admin & UI]({{% relref "admin" %}})
+* 👉 [Security & API Access]({{% relref "security" %}})
+* 👉 [ETLX & Pipelines]({{% relref "etlx" %}})
+* 👉 [Dashboards & Analytics]({{% relref "dashboards" %}})
 
 ---
 
-ETLX is open source and evolving.
+CSGO is open source and evolving.
 
-If you want to understand **what your pipelines are doing, why they ran, and how to trust them**, you’re in the right place.
+If you believe the **database should be the source of truth** — and that admin, APIs, data pipelines, and analytics should all align around it — you’re in the right place.

@@ -1,299 +1,249 @@
 ---
 weight: 300
-date: "2025-06-08T19:25:22+01:00"
+date: "2026-01-03T10:00:00+00:00"
 draft: false
 title: "Quickstart"
 icon: "rocket_launch"
-description: "Get ETLX running in minutes and execute your first declarative, metadata-driven data pipeline."
-publishdate: "2025-06-08T19:25:22+01:00"
-tags: ["Beginners", "Quickstart", "ETL"]
+description: "Get Central Set Go (CSGO) running in minutes with a connected database admin UI and optional ETLX support."
+publishdate: "2026-01-03T10:00:00+00:00"
+tags: ["Beginners", "Quickstart", "Admin", "Databases"]
 categories: ["Getting Started"]
 
 twitter:
   card: "summary"
-  title: "ETLX Quickstart"
-  description: "Run your first ETLX pipeline in minutes."
+  title: "CSGO Quickstart"
+  description: "Initialize and run Central Set Go locally in minutes"
 ---
 
 
-## ✅ Requirements
+## 🚀 Quickstart
 
-Depending on how you install ETLX:
+This guide will help you **run Central Set Go (CSGO)** locally in minutes — initialize the admin database, access the admin UI, and optionally set up the ETLX subsystem.
+
+---
+
+## ✅ Requirements
 
 ### Minimum
 
 * **Linux, macOS, or Windows**
-* **DuckDB-compatible environment**
+* **A SQL database engine** (SQLite, PostgreSQL, MySQL, etc.)
+* CSGO treats the **database itself as the data model**
 
-### Optional (for building from source)
+### Optional (for ETLX / ODBC features)
+
+* **unixODBC** (Linux/macOS) for ODBC-based ETL sources
+
+---
+
+## 🐙 Installation
+
+You can run CSGO in **three different ways**:
+
+1. Precompiled binary (recommended)
+2. Build from source
+3. Docker
+
+Choose the option that best fits your workflow.
+
+---
+
+## ▶️ Option 1: Download a Precompiled Binary (Recommended)
+
+Download the **latest CSGO release** for your platform:
+
+👉 https://github.com/realdatadriven/central-set-go/releases
+
+Make it executable (Linux/macOS):
+
+```bash
+chmod +x central-set
+```
+
+---
+
+## 🛠️ Option 2: Build from Source (Git Clone)
+
+If you want to build CSGO yourself:
+
+### Requirements
 
 * **Go ≥ 1.21**
 * **git**
 
----
-
-## 📦 Installation
-
-Choose **one** of the following options.
-
----
-
-### Option 1: Precompiled Binary (Recommended)
-
-Download the latest release for your OS from:
-
-👉 [https://github.com/realdatadriven/etlx/releases](https://github.com/realdatadriven/etlx/releases)
-
-Make it executable and verify:
+### Clone and build
 
 ```bash
-chmod +x etlx
-./etlx --help
+git clone https://github.com/realdatadriven/central-set-go.git
+cd central-set-go
+go build -o central-set ./cmd
 ```
 
-#### 🪟 Windows & DuckDB Extensions (Important Note)
-
-Some **DuckDB extensions do not support MinGW** on Windows.
-For this reason, ETLX provides **two Windows binaries**:
-
-1. **Statically linked DuckDB** (default)
-2. **Dynamically linked DuckDB** (recommended when using more extensions like `postgres`)
-
-If you download the **dynamically linked** ETLX binary:
-
-* You **must also download `libduckdb`** from the official DuckDB releases:
-  👉 [https://github.com/duckdb/duckdb/releases/latest](https://github.com/duckdb/duckdb/releases/latest)
-* The `libduckdb` library **must be**:
-
-  * In your system `PATH`, **or**
-  * In the **same directory** as the `etlx` binary
-
-Otherwise, ETLX will not be able to load DuckDB or its extensions.
-
-> 💡 This approach allows ETLX to support **a wider set of DuckDB extensions on Windows**, while keeping the runtime flexible and lightweight.
-
----
-
-### When should I use the dynamic DuckDB binary?
-
-Use the **dynamic DuckDB build** if you:
-
-* Are on **Windows**
-* Rely on **DuckDB extensions** not available for MinGW
-* Want closer compatibility with upstream DuckDB releases
-
-For Linux and macOS users, the default precompiled binary usually works without additional setup.
-
----
-
-### Option 2: Install via Go
-
-If you want ETLX as a Go dependency or to build it yourself:
+Run it:
 
 ```bash
-go get github.com/realdatadriven/etlx
+./central-set --help
 ```
+
+This produces the same binary as the official releases.
 
 ---
 
-### Option 3: Clone the Repository
+## 🐳 Option 3: Run with Docker
+
+CSGO can be run entirely via Docker.
+
+### Build the image
 
 ```bash
-git clone https://github.com/realdatadriven/etlx.git
-cd etlx
+docker build -t central-set-go:latest .
 ```
 
-Run directly:
+### Run CSGO
 
 ```bash
-go run cmd/main.go --config pipeline.md
+docker run --rm -it \
+  -p 4444:4444 \
+  -v $(pwd)/database:/app/database \
+  central-set-go:latest
 ```
 
-> ⚠️ **Windows note**
-> If you encounter DuckDB build issues, use the official DuckDB library and build with:
->
-> ```bash
-> CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/libs" \
-> go run -tags=duckdb_use_lib cmd/main.go --config pipeline.md
-> ```
-
----
-
-## 🧱 Your First Pipeline
-
-ETLX pipelines are defined using **structured Markdown**.
-
-Create a file named `pipeline.md`:
-
-````md {linenos=table style=emacs}
-# INPUTS
-```yaml
-name: INPUTS
-description: Extracts data from source and load on target
-runs_as: ETL
-active: true
-```
-
-## INPUT_1
-```yaml
-name: INPUT_1
-description: Input 1 from an ODBC Source
-table: INPUT_1 # Destination Table
-load_conn: "duckdb:"
-load_before_sql:
-  - "ATTACH 'ducklake:@DL_DSN_URL' AS DL (DATA_PATH 's3://dl-bucket...')"
-  - "ATTACH '@OLTP_DSN_URL' AS PG (TYPE POSTGRES)"
-load_sql: load_input_in_dl
-load_on_err_match_patt: '(?i)table.+with.+name.+(\w+).+does.+not.+exist'
-load_on_err_match_sql: create_input_in_dl
-load_after_sql:
-  - DETACH DL
-  - DETACH pg
-active: true
-```
-
-```sql
--- load_input_in_dl
-INSERT INTO DL.INPUT_1 BY NAME
-SELECT * FROM PG.INPUT_1
-```
-
-```sql
--- create_input_in_dl
-CREATE TABLE DL.INPUT_1 AS
-SELECT * FROM PG.INPUT_1
-```
-...
-
-````
-
----
-
-## ▶️ Run the Pipeline
+To initialize the admin database:
 
 ```bash
-etlx --config pipeline.md
+docker run --rm -it \
+  -v $(pwd)/database:/app/database \
+  central-set-go:latest --init
 ```
 
-That’s it.
-
-ETLX will:
-
-* Parse the configuration
-* Resolve dependencies
-* Execute steps deterministically
-* Capture execution metadata automatically
+> 💡 Mounting the `database/` directory ensures your admin DB persists between runs.
 
 ---
 
-## ⚙️ Common CLI Flags
+## 🗄️ Initialize the **Admin Database**
 
-| Flag       | Description                                         |
-| ---------- | --------------------------------------------------- |
-| `--config` | Path to pipeline file (default: `config.md`)        |
-| `--date`   | Reference date (`YYYY-MM-DD`)                       |
-| `--only`   | Run only specific keys                              |
-| `--skip`   | Skip specific keys                                  |
-| `--steps`  | Run specific steps (`extract`, `transform`, `load`) |
-| `--clean`  | Run `clean_sql` blocks                              |
-| `--drop`   | Run `drop_sql` blocks                               |
-| `--rows`   | Show row counts                                     |
-
-Example:
+Before first use, initialize the admin database:
 
 ```bash
-etlx --config pipeline.md --only sales --steps extract,load
+./central-set --init
+```
+
+This will:
+
+* Create the internal **admin database**
+* Create default configuration tables (`apps`, `menus`, `tables`, etc.) for the admin ui
+* Create a **default user**
+* Print credentials:
+
+```
+Username: root
+Password: 1234
 ```
 
 ---
 
-## 🔐 Environment Variables
+## ▶️ Start CSGO
 
-ETLX supports environment-based configuration.
+```bash
+./central-set
+```
 
-Example `.env` file:
+CSGO will start a web server and expose the admin UI.
+
+---
+
+## 🖥️ Open the Admin UI
+
+👉 [http://localhost:4444](http://localhost:4444)
+
+Login using:
+
+```
+Username: root
+Password: 1234
+```
+
+---
+
+## 🧬 Optional: Initialize ETLX Support
+
+To enable **ETLX pipelines, notebooks, and SQL tools**, initialize an additional app database:
+
+```bash
+./central-set --init --dbname ETLX
+```
+
+This creates an ETLX-powered app that integrates with:
+
+* Pipeline execution
+* Observability
+* Dashboards
+
+---
+
+## ⚙️ Configure with `.env`
+
+CSGO ships with a sample environment file:
+
+```bash
+cp dot-env-example.txt .env
+```
+
+Edit `.env` to configure:
+
+* Database driver & DSN
+* HTTP port
+* Authentication & security
+* ETLX options
+
+### Example
 
 ```env
-DL_DSN_URL=mysql:db=ducklake_catalog host=localhost
-OLTP_DSN_URL=postgres:dbname=erpdb host=localhost user=postgres
+# Admin database
+DB_DRIVER_NAME=sqlite3
+DB_DSN=database/ADMIN.db
+
+# HTTP server
+HTTP_PORT=4444
 ```
 
-These variables are automatically loaded at runtime.
+> 🧠 Any database supported by **sqlx** can be used by simply changing the driver and DSN.
 
 ---
 
-## 🐳 Running ETLX with Docker
+## 🧩 What Just Happened
 
-You can run ETLX **without installing anything locally**.
+CSGO has now:
 
-### Build the Image
+* Initialized its **admin control database**
+* Reflected database tables into:
 
-```bash
-docker build -t etlx:latest .
-```
+  * Auto-generated data tables
+  * CRUD forms
+  * APIs
+* Enabled **RBAC at table level**
+* Exposed everything through a **secure, API-first backend**
+* Optionally enabled **ETLX-powered pipelines and analytics**
 
-Or pull (when available):
+You can now:
 
-```bash
-docker pull docker.io/realdatadriven/etlx:latest
-```
-
----
-
-### Run a Pipeline
-
-```bash
-docker run --rm \
-  -v $(pwd)/pipeline.md:/app/pipeline.md:ro \
-  etlx:latest --config /app/pipeline.md
-```
+* Manage applications, menus, and tables
+* Customize UI layouts and forms
+* Generate API keys and tokens
+* Schedule ETL jobs
+* Build dashboards and notebooks
 
 ---
 
-### Using `.env` and Database Directory
+## 🧠 Next Steps
 
-```bash
-docker run --rm \
-  -v $(pwd)/.env:/app/.env:ro \
-  -v $(pwd)/pipeline.md:/app/pipeline.md:ro \
-  -v $(pwd)/database:/app/database \
-  etlx:latest --config /app/pipeline.md
-```
+* 👉 **Admin & UI** — How Apps → Menus → Tables define the UI
+* 👉 **Security & API Access** — Users, roles, access keys
+* 👉 **ETLX & Pipelines** — Data workflows and scheduling
+* 👉 **Dashboards & Analytics** — DuckDB-powered insights
 
 ---
 
-### Interactive Mode
+CSGO is **MIT-licensed**, **open source**, and designed to make the **database the single source of truth**.
 
-```bash
-docker run -it --rm etlx:latest repl
-```
-
----
-
-### 💡 Optional: Docker Alias
-
-Make Docker feel like a native binary:
-
-```bash
-alias etlx="docker run --rm -v $(pwd):/app etlx:latest"
-```
-
-Now:
-
-```bash
-etlx --help
-etlx --config pipeline.md
-```
-
----
-
-## 🧠 What’s Next?
-
-* 📘 **Core Concepts** – Pipelines, steps, metadata
-* 🔍 **Execution & Observability** – What ETLX records automatically
-* 🧾 **Self-Documenting Pipelines**
-* 🧬 **Metadata → Lineage → Governance**
-* 🧩 **Advanced Use Cases & Examples**
-
-👉 Continue with **Core Concepts** to understand how ETLX works under the hood.
-
+If you believe admin UIs, APIs, pipelines, and analytics should all align around the schema — welcome aboard 🚀

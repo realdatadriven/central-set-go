@@ -1,6 +1,8 @@
 # Note: Template blocks require a 'weight' parameter so they're correctly ordered on the landing page
 
+# =========================
 # Hero
+# =========================
 hero:
   enable: true
   weight: 10
@@ -13,21 +15,22 @@ hero:
       mobile: "gradient-mobile.webp"
 
   badge:
-    text: v1.4.13
+    text: v0.1.0
     color: secondary
     pill: false
     soft: true
 
-  title: "ETLX"
+  title: "Central Set Go (CSGO)"
   subtitle: >
-    A **modern, composable ETL / ELT framework** built for data engineers.
-    Build **simpler, faster, and more maintainable** data pipelines —
-    without heavy orchestration platforms or vendor lock-in.
+    A **configuration-driven data platform & admin backoffice**
+    built with **Golang**.
+    Manage **applications, databases, users, roles, data pipelines,
+    dashboards, and analytics** — all from one unified system.
 
   image:
     path: "images"
-    filename: "etlx-pipeline.gif" #ffmpeg -i "Screencast From 2026-01-03 16-51-40.webm" -vf "fps=10,scale=480:-1" etlx.gif
-    alt: "ETLX pipeline overview"
+    filename: "csgo-overview.gif"
+    alt: "CSGO platform overview"
     boxShadow: true
     rounded: true
 
@@ -35,135 +38,160 @@ hero:
     icon: rocket_launch
     btnText: "Get Started"
     url: "./docs/quickstart/"
+
   cta2Button:
     icon: code
     btnText: "View on GitHub"
-    url: "https://github.com/realdatadriven/etlx"
+    url: "https://github.com/realdatadriven/central-set-go"
 
-  info: "**Open Source** • MIT Licensed • DuckDB-powered"
+  info: "**Open Source** • Golang • Multi-DB • Token-based API Access • ETLX & DuckDB Powered"
 
+# =========================
 # Feature Grid
+# =========================
 featureGrid:
   enable: true
   weight: 20
   template: feature grid
 
-  title: Why ETLX?
+  title: Why Central Set Go?
   subtitle: >
-    Modern data stacks are powerful — but often overcomplicated.
-    ETLX focuses on **clarity, composability, and observability**,
-    giving engineers full control over data pipelines.
+    Most admin panels, data tools, and dashboards solve *one problem*.
+    CSGO unifies **application management, data engineering,
+    analytics, and governance** into a single, extensible platform.
 
   items:
-    - title: Code-First & Declarative
-      icon: code
+    - title: Configuration-Driven Platform
+      icon: settings
       description: >
-        Define *what* should happen, not *how*.
-        ETLX pipelines are configuration-driven, version-controlled,
-        and fully reproducible.
+        Define applications, schemas, CRUD behavior, dashboards,
+        pipelines, and security using metadata — not custom code.
+        Changes are reproducible, versionable, and auditable.
 
-    - title: DuckDB at the Core
+    - title: Built-In Admin Backoffice
+      icon: admin_panel_settings
+      description: >
+        Out-of-the-box admin UI with authentication, user management,
+        role-based access control, and CRUD permissions
+        at **table and operation level**.
+
+    - title: Advanced CRUD UI Builder
+      icon: table_view
+      description: >
+        Configure table views, forms, tabs, steps, subforms,
+        and foreign-key selectors directly in the browser —
+        no frontend code required.
+
+    - title: Multi-Database Support
       icon: database
       description: >
-        SQL-first transformations, in-process analytics,
-        and efficient joins across files, APIs, and databases —
-        powered by DuckDB.
+        Works across SQLite, PostgreSQL, MySQL, and SQL Server.
+        Manage multiple applications and databases
+        from a single control plane.
 
-    - title: Multi-Engine by Design
-      icon: hub
+    - title: ETLX-Powered Data Engineering
+      icon: account_tree
       description: >
-        Run pipelines on DuckDB, PostgreSQL, SQLite, MySQL,
-        SQL Server, or any engine supported via ODBC or DuckDB extensions.
+        Build visual, executable data workflows using ETLX.
+        Run pipelines manually, programmatically,
+        or via built-in job scheduling.
 
-    - title: Local-First, Production-Ready
-      icon: laptop
+    - title: Job Scheduling & Automation
+      icon: schedule
       description: >
-        Iterate fast locally, run in CI, containers, or cloud.
-        No separate “dev vs prod” pipeline definitions.
+        Native cron-style job scheduling for ETLX pipelines,
+        maintenance tasks, and automated data processes —
+        fully managed by the admin app.
 
-    - title: Fully Observable Execution
-      icon: visibility
+    - title: Built-In Notebook & Exploration
+      icon: terminal
       description: >
-        Every run captures timings, validations, warnings,
-        failures, retries, and execution context —
-        automatically and transparently.
+        Explore data quickly using a built-in notebook
+        for ad-hoc queries, transformations,
+        and rapid experimentation.
 
-    - title: Metadata-Driven
-      icon: schema
+    - title: Configuration-Driven Dashboards
+      icon: dashboard
       description: >
-        Pipelines are structured metadata documents that double as
-        living documentation, lineage sources, and governance artifacts.
+        [evidence.dev](https://evidence.dev/docs) like dashboards powered by Markdown configuration
+        and **DuckDB-WASM** running directly in the browser.
 
-    - title: Self-Documenting Pipelines
-      icon: description
-      description: >
-        Generate documentation, lineage, data dictionaries,
-        and SQL explanations directly from pipeline definitions.
-
-    - title: Beyond ETL / ELT
+    - title: Analytics & Data Sharing
       icon: analytics
       description: >
-        Use ETLX for reporting, regulatory documents,
-        structured exports, and templated outputs —
-        all from the same pipeline.
+        Expose ETLX datasets via **Arrow Flight**
+        to connect data engineering outputs
+        directly with data science and analytics tools.
 
-    - title: Built for Engineers
-      icon: engineering
+    - title: API-First & Extensible
+      icon: api
       description: >
-        No black boxes. No hidden state.
-        Debuggable, inspectable, and deterministic execution by design.
+        Everything is exposed via REST-ish APIs.
+        Access the platform using generated API keys and tokens,
+        and build custom frontends, services,
+        or integrations on top of CSGO.
 
+    - title: API Access with Keys & Tokens
+      icon: key
+      description: >
+        Generate access keys and tokens for secure API access.
+        Authenticate external services, scripts, and applications
+        with fine-grained permissions and role-based control.
+
+
+# =========================
 # Image Compare
+# =========================
 imageCompare:
   enable: true
   weight: 30
   template: image compare
 
-  title: From Configuration to Execution & Documentation
+  title: From Configuration to Operations & Analytics
   subtitle: >
-    ETLX treats configuration as **executable documentation**.
-    The same pipeline definition powers execution, observability,
-    lineage, and reporting.
+    CSGO treats configuration as **the single source of truth** —
+    powering CRUD apps, pipelines, dashboards,
+    security, and automation.
 
   items:
-    - title: Declarative Pipelines
+    - title: Schema → Managed Application
       config:
         startingPoint: 50
         addCircle: true
         addCircleBlur: false
         showLabels: true
         labelOptions:
-          before: "Configuration"
-          after: "Execution"
+          before: "Database Schema"
+          after: "Admin UI & CRUD"
           onHover: false
       imagePath: "images/screenshots"
-      imageBefore: "etlx_pipeline_config.png"
-      imageAfter: "etlx_pipeline_config.png"
+      imageBefore: "csgo_schema.png"
+      imageAfter: "csgo_crud_ui.png"
 
-    - title: Metadata → Documentation
+    - title: ETLX Config → Visual Workflow
       config:
-        startingPoint: 40
+        startingPoint: 45
         addCircle: true
         addCircleBlur: false
         showLabels: true
         labelOptions:
-          before: "Pipeline Metadata"
-          after: "Generated Docs"
+          before: "ETLX Configuration"
+          after: "Visual Pipeline"
           onHover: false
       imagePath: "images/screenshots"
-      imageBefore: "etlx_docs_generated.png"
-      imageAfter: "etlx_docs_generated.png"
+      imageBefore: "csgo_etlx_config.png"
+      imageAfter: "csgo_etlx_visual.png"
 
-    - title: Execution Observability
+    - title: Markdown → Interactive Dashboard
       config:
-        startingPoint: 30
+        startingPoint: 40
         addCircle: true
         addCircleBlur: true
         showLabels: true
         labelOptions:
-          before: "Run Context"
-          after: "Execution Trace"
+          before: "Markdown Config"
+          after: "DuckDB-WASM Dashboard"
           onHover: false
       imagePath: "images/screenshots"
-      imageBefore: "etlx_execution_trace.png"
-      imageAfter: "etlx_execution_trace.png"
+      imageBefore: "csgo_dashboard_md.png"
+      imageAfter: "csgo_dashboard_ui.png"
