@@ -2,7 +2,7 @@
 weight: 7010
 title: "Authentication & Access"
 description: "User authentication, password management, and API access in Central Set Go"
-icon: auto_awesome
+icon: lock
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
 draft: false
