@@ -99,7 +99,14 @@ Allows an authenticated user to change their password.
 **Endpoint**
 
 ```
-POST /api/
+POST /dyn_api/login/alter_pass
+```
+
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
 ```
 
 **Request**
@@ -131,10 +138,11 @@ Returns the list of applications available to the user.
 POST /dyn_api/admin/apps
 ```
 
-**Authorization**
+**Headers**
 
 ```
-Bearer <JWT_TOKEN>
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
 ```
 
 **Request**
@@ -155,6 +163,13 @@ Loads the menus for a given application.
 
 ```
 POST /dyn_api/admin/menu
+```
+
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
 ```
 
 **Request**
@@ -190,6 +205,13 @@ Returns metadata about tables available in the application.
 POST /dyn_api/admin/tables
 ```
 
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
 **Request**
 
 ```json
@@ -218,6 +240,13 @@ All CRUD operations share the same **dynamic payload structure**.
 
 ```
 POST /dyn_api/crud/read
+```
+
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
 ```
 
 **Request**
@@ -253,7 +282,12 @@ POST /dyn_api/crud/read
 ```
 POST /dyn_api/crud/create
 ```
+**Headers**
 
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
 **Request**
 
 ```json
@@ -283,7 +317,12 @@ POST /dyn_api/crud/create
 ```
 POST /dyn_api/crud/update
 ```
+**Headers**
 
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
 **Request**
 
 ```json
@@ -316,7 +355,12 @@ Supports soft delete and permanent delete.
 ```
 POST /dyn_api/crud/delete
 ```
+**Headers**
 
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
 **Request**
 
 ```json
@@ -349,7 +393,12 @@ Executes a raw SQL query.
 ```
 POST /dyn_api/crud/query
 ```
+**Headers**
 
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
 **Request**
 
 ```json
@@ -398,7 +447,7 @@ Content-Type: multipart/form-data
 
 ---
 
-## ET
+## ETL
 
 ### Extract from File + Attach Database
 
@@ -414,24 +463,25 @@ Extracts data from files (CSV, XLSX, DuckDB) and optionally attaches databases f
 
 This endpoint powers **ETLX pipelines** in the UI.
 
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
 **Request (simplified)**
 
 ```json
 {
   "lang": "en",
   "data": {
-    "destination_table": "BALANCETE",
-    "file_": "Treasury_Projection.xlsx",
-    "database": "sqlite_test.duckdb",
-    "etl_rbase_input_conf": {
-      "type": "duckdb",
-      "sql": "INSERT INTO main.\"<table>\" SELECT * FROM '<file>'"
-    }
+    "conf": "# ..."
   },
   "app": {
-    "app_id": 1,
-    "app": "ADMIN",
-    "db": "ADMIN"
+    "app_id": 2,
+    "app": "ETLX",
+    "db": "ETLX"
   }
 }
 ```
