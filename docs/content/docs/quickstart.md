@@ -60,6 +60,12 @@ Make it executable (Linux/macOS):
 chmod +x central-set
 ```
 
+Run it:
+
+```bash
+./central-set --help
+```
+
 ---
 
 ## 🛠️ Option 2: Build from Source (Git Clone)
@@ -76,7 +82,7 @@ If you want to build CS yourself:
 ```bash
 git clone https://github.com/realdatadriven/central-set-go.git
 cd central-set-go
-go build -o central-set ./cmd
+go build -o central-set ./cmd/api
 ```
 
 Run it:
