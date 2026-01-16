@@ -36,15 +36,27 @@ order by "ref" desc
 ```
 
 <!-- LEVEL 1 - PROCESS -->
-```sql lvl1_proc
-select distinct "key"
+```sql main_process_query
+select distinct "key" as "main_process"
 from "LOGS"
 ```
 
 <!-- LEVEL 2 - ITEMS -->
+```sql sub_process_query
+select distinct "item_key" as "sub_process"
+from "LOGS"
+where "item_key" is not null
+```
 
 <!-- SUCCESS -->
-
+```sql query_success
+select *
+from (values
+    ('%', 'ALL')
+    , ('true', 'TRUE')
+    , ('false', 'FALSE')
+) t ("val", "desc")
+```
 <Grid>
     <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
         <Input type=date
@@ -55,24 +67,31 @@ from "LOGS"
             name=date_ref 
             options_value=ref 
             options_label=ref
+            input_label="Reference Date"
         />
     </GridItem>
     <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
-        <Dropdown data={query_sample} name=input_1 value=value label=label defaultValue="%" --no-input_label='Dropdown Exemple'>
+        <Dropdown data={main_process_query} name=main_process value=main_process label=main_process defaultValue="%" input_label='Main Process'>
             <DropdownOption value="%" valueLabel="All"/>
         </Dropdown>
     </GridItem>
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1 grow'/>
+    <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
+        <Dropdown data={sub_process_query} name=sub_process value=sub_process label=sub_process defaultValue="%" input_label='Sub Proccess'>
+            <DropdownOption value="%" valueLabel="All"/>
+        </Dropdown>
+    </GridItem>
     <GridItem width='w-auto !align-bottom' _type='auto' extra_cls='p-1'>
         <RadioButtons 
-            data={query_sample} 
-            name=input_2
-            value=value
-            label=label
-            defaultValue=nth_1
+            data={query_success} 
+            name=success
+            value=val
+            label=desc
+            defaultValue=nth_0
             extra_cls='btn-sm'
+            input_label="Status"
         />
     </GridItem>
+    <GridItem width='w-auto' _type='auto' extra_cls='p-1 grow'/>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
     <GridItem width='w-auto' _type='auto' extra_cls='p-1 text-left'>
         <Button tooltip="Editar" name = "edit" action = "edit" label="" icon = "pencil" extra_cls='btn-sm btn-gost' />
@@ -93,11 +112,35 @@ from "LOGS"
      {/if}
 </Grid>
 
+<!--{inputs?.date_ref?.value}-->
+
 <!---DASHBOARD SECTION-->
 
+<!-- BIG NUMBERS SECTION -->
+
+
+
+<!-- LOG DETAILS -->
+
 ```sql _logs
-select * 
+select *
 from "LOGS"
+where "ref" = 'inputs.date_ref.value'
+    and "key" like 'inputs.main_process.value'
+    and "item_key" like 'inputs.sub_process.value'
+    and case 
+        when "success" is true or "success" = 1 then 'true' 
+        else 'false' 
+    end like 'inputs.success.value'
+order by "start_at" asc
 ```
 
-{inputs?.date_ref?.value}
+<DataTable data={_logs}> 
+    <Column id=key title="Proccess"/> 
+	<Column id=item_key  title="Sub Proccess"/> 
+	<Column id=start_at title=Start/> 
+	<Column id=end_at title=End/> 
+	<Column id=duration title=Duration/> 
+	<Column id=msg title=Message/> 
+	<Column id=success title=Success/>
+</DataTable>
