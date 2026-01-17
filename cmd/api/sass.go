@@ -65,12 +65,12 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	tenantID := _data["tenant_id"]
 	run := &TerraformRun{Config: deployment["terraform_template"].(string)}
-	if terraform_state, ok := _data["terraform_state"].(string); ok {
-		//fmt.Println("TEST 1:", _data["terraform_state"])
+	if terraform_state, ok := _data["terraform_state"].(string); ok && terraform_state != "" {
+		fmt.Println("State:", _data["terraform_state"])
 		run.State = json.RawMessage([]byte(terraform_state))
 	}
-	if terraform_lock, ok := _data["terraform_lock"].(string); ok {
-		//fmt.Println("TEST 1:", _data["terraform_state"])
+	if terraform_lock, ok := _data["terraform_lock"].(string); ok && terraform_lock != "" {
+		fmt.Println("Lock:", _data["terraform_state"])
 		run.Lock = terraform_lock
 	}
 	var res map[string]string
@@ -170,9 +170,11 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	if err == nil {
 		run.Lock = string(lockBytes)
 	}
-	if err := tf.Refresh(context.Background()); err != nil {
-		fmt.Printf("resfreh failed: %s", err)
-		return nil, fmt.Errorf("resfreh failed: %w", err)
+	if len(run.State) > 0 {
+		if err := tf.Refresh(context.Background()); err != nil {
+			fmt.Printf("resfreh failed: %s", err)
+			return nil, fmt.Errorf("resfreh failed: %w", err)
+		}
 	}
 	stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 	if err == nil {

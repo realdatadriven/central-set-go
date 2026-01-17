@@ -5,7 +5,7 @@
     "all_query_run_locally_in_ddb_wasm": true,
     "pre_prepared_parquets_logs_table": null,
     "pre_prepared_parquets_logs_sql": "with _logs as (select * from etlx_logs where fname is not null and (fname, end_at) in (select fname, max(end_at) from etlx_logs group by fname)) select item_key as name, replace(fname, 'tmp/', '') as file FROM _logs",
-    "pre_prepared_parquets_logs_db": "postgres:user=postgres password=1234 dbname=ETLX_DATA host=localhost port=5432 sslmode=disable",
+    "pre_prepared_parquets_logs_db": "postgres:@OLAP_DB_DSN",
     "pre_prepared_parquets_for_ddb_wasm": {
         "LOGS": "hist_logs.parquet"
     },
@@ -14,9 +14,7 @@
     },
     "query_datasource": {
         "ds_name": "ds_"
-    },
-    "disable_md": false,
-    "disable_code": false
+    }
 ```
 
 <!---FILTERS SECTION-->
@@ -140,8 +138,8 @@ where "key" like 'inputs.main_process.value'
 <Div _class="w-full p-2">
     <Stats _class='shadow' name=big_numbers_select>
         <Stat name=total parent_name=big_numbers_select bg_selected='bg-base-200'>
-            <StatFigure _class='text-info p-0 w-20 h-20' icon='document-text' />
-            <StatTitle _class='text-success font-bold'># Total Logs Entry</StatTitle>
+            <StatFigure _class='text-info p-0 w-14 h-14' icon='document-text' />
+            <StatTitle _class='text-info font-bold'># Total Logs Entry</StatTitle>
             <StatValue _class=''
                 data={big_numbers_query}
                 value=total
@@ -156,7 +154,7 @@ where "key" like 'inputs.main_process.value'
             />
         </Stat>
         <Stat name=total_success parent_name=big_numbers_select bg_selected='bg-base-200'>
-            <StatFigure _class='text-success p-0 w-20 h-20' icon='check-circle'/>
+            <StatFigure _class='text-success p-0 w-14 h-14' icon='check-circle'/>
             <StatTitle _class='text-success font-bold'># Success</StatTitle>
             <StatValue _class=''
                 data={big_numbers_query}
@@ -172,7 +170,7 @@ where "key" like 'inputs.main_process.value'
             />
         </Stat>
         <Stat name=total_fail parent_name=big_numbers_select bg_selected='bg-base-200'>
-            <StatFigure _class='text-error p-0 w-20 h-20' icon='x-circle'/>
+            <StatFigure _class='text-error p-0 w-14 h-14' icon='x-circle'/>
             <StatTitle _class='text-error font-bold'># Fail</StatTitle>
             <StatValue _class=''
                 data={big_numbers_query}
@@ -188,7 +186,7 @@ where "key" like 'inputs.main_process.value'
             />
         </Stat>
         <Stat name=total_success_n1 parent_name=big_numbers_select bg_selected='bg-base-200'>
-            <StatFigure _class='text-success p-0 w-20 h-20' icon='check'/>
+            <StatFigure _class='text-success p-0 w-14 h-14' icon='check'/>
             <StatTitle _class='text-success font-bold'># Success Period N-1</StatTitle>
             <StatValue _class=''
                 data={big_numbers_query}
@@ -204,33 +202,66 @@ where "key" like 'inputs.main_process.value'
             >do total ({queries?.big_numbers_query?.data?.[0]?.total_n1}) n-1
             </StatDesc>
         </Stat>
-        <!--<Stat name=total_success parent_name=big_numbers_select>
-            <StatFigure _class='text-error w-20 h-20' icon='x-circle'/>
-            <StatTitle _class='text-error font-bold'># Fail Period N-1</StatTitle>
-            <StatValue _class=''
-                data={big_numbers_query}
-                value=total_fail_n1
-                fmt=num0
-                name=total_fail_n1
-            />
-            <StatDesc _class=''
-                data={big_numbers_query}
-                value=fail_delta_n1
-                fmt=pct2
-                title='of total'
-            />
-        </Stat>-->
     </Stats>
 </Div>
 <!--{inputs?.big_numbers_select?.value}-->
 
 <!-- CHART EXEMPES -->
+```sql total_by_process_query
+select "key" as "name", count(*) as "value"
+from "LOGS"
+where "ref" = 'inputs.date_ref.value'
+    and "key" like 'inputs.main_process.value'
+    and "item_key" like 'inputs.sub_process.value'
+    and case 
+        when "success" is true or "success" = 1 then 'true' 
+        else 'false' 
+    end like 'inputs.success.value'
+group by "key"
+```
+```sql total_by_ref_query
+select "ref"::varchar as "dt"
+    , case
+        when "success" is true or "success" = 1 then 'Success'
+        else 'Error'
+    end as "category"
+    , count(*) as "total"
+from "LOGS"
+where "key" like 'inputs.main_process.value'
+    and "item_key" like 'inputs.sub_process.value'
+    and case 
+        when "success" is true or "success" = 1 then 'true' 
+        else 'false' 
+    end like 'inputs.success.value'
+group by "ref", case
+        when "success" is true or "success" = 1 then 'Success'
+        else 'Error'
+    end
+order by "ref" asc
+```
 <Grid>
-    <GridItem width=4 _class='p-1 --border --border-slate-300'>
-        Grid1 W-4
+    <GridItem width=4 _class='p-1'>Logs Entry by Main Processs</GridItem>  
+    <GridItem width=8 _class='p-1'>History</GridItem>  
+    <GridItem width=4 _class='p-1'>
+        <!-- https://docs.evidence.dev/components/charts/custom-echarts/ -->
+        <ECharts config={{
+                tooltip: { formatter: '{b}: {c} ({d}%)' },
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    data: [...queries?.total_by_process_query?.data]
+                }]
+            }}
+        />
     </GridItem>  
-    <GridItem width=8 _class='p-1 --border --border-slate-300'>
-        Grid2 W-8
+    <GridItem width=8 _class='p-1'>
+        <!-- https://docs.evidence.dev/components/charts/area-chart/ -->
+        <AreaChart 
+            data={total_by_ref_query}
+            x=dt
+            y=total
+            series=category
+        />
     </GridItem>   
 </Grid>
 
