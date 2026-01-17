@@ -21,12 +21,6 @@
 
 <!---FILTERS SECTION-->
 
-```sql query_sample
-select 'Option 1' as "label", 1 as "value"
-union
-select 'Option 2' as "label", 2 as "value"
-```
-
 <!-- DATA (add option to sugest dates that alread in the database to the compenent) --> 
 ```sql _dts
 select distinct strftime("ref"::date, '%Y-%m-%d') "ref"
@@ -68,6 +62,14 @@ from (values
             options_value=ref 
             options_label=ref
             input_label="Reference Date"
+        />
+    </GridItem>
+    <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
+        <Input type=date
+            defaultValue={config?.moment()?.subtract(2, 'day').format('YYYY-MM-DD')}
+            extra_cls='input input-sm input-bordered'
+            name=date_ref_n1
+            input_label="Reference Date N-1"
         />
     </GridItem>
     <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
@@ -117,7 +119,114 @@ from (values
 <!---DASHBOARD SECTION-->
 
 <!-- BIG NUMBERS SECTION -->
+```sql big_numbers_query
+select count(*) filter("ref" = 'inputs.date_ref.value') as "total"
+    , count(*) filter("ref" = 'inputs.date_ref.value' and ("success" is true or "success" = 1)) as "total_success"
+    , count(*) filter("ref" = 'inputs.date_ref.value' and ("success" is false or "success" = 0)) as "total_fail"
+    , total_success / total as "success_delta"
+    , total_fail / total as "fail_delta"
+    , count(*) filter("ref" = 'inputs.date_ref_n1.value') as "total_n1"
+    , count(*) filter("ref" = 'inputs.date_ref_n1.value' and ("success" is true or "success" = 1)) as "total_success_n1"
+    , count(*) filter("ref" = 'inputs.date_ref_n1.value' and ("success" is false or "success" = 0)) as "total_fail_n1"
+    , total_success_n1 / total_n1 as "success_delta_n1"
+    , total_fail_n1 / total_n1 as "fail_delta_n1"
+    , (1 - total / total_n1) as "total_delta"
+from "LOGS"
+where "key" like 'inputs.main_process.value'
+    and "item_key" like 'inputs.sub_process.value'
+    and case 
+        when "success" is true or "success" = 1 then 'true' 
+        else 'false' 
+    end like 'inputs.success.value'
+```
 
+<Stats extra_cls='shadow m-2 pr-2' name=big_numbers_select>
+    <Stat >
+        <StatFigure extra_cls='text-info w-20 h-20' icon='document-text' />
+        <StatTitle extra_cls='text-success'># Total Logs Entry</StatTitle>
+        <StatValue extra_cls=''
+            data={big_numbers_query}
+            value=total
+            fmt=num0
+            name=total
+            parent_name=big_numbers_select
+        />
+        <StatDesc extra_cls=''
+            data={big_numbers_query}
+            value=total_delta
+            fmt=pct2
+            title='vs total N-1'
+        />
+    </Stat>
+    <Stat >
+        <StatFigure extra_cls='text-success w-20 h-20' icon='check-circle'/>
+        <StatTitle extra_cls='text-success'># Success</StatTitle>
+        <StatValue extra_cls=''
+            data={big_numbers_query}
+            value=total_success
+            fmt=num0
+            name=total_success
+            parent_name=big_numbers_select
+        />
+        <StatDesc extra_cls=''
+            data={big_numbers_query}
+            value=success_delta
+            fmt=pct2
+            title='Do total proccesses'
+        />
+    </Stat>
+    <Stat >
+        <StatFigure extra_cls='text-error  w-20 h-20' icon='x-circle'/>
+        <StatTitle extra_cls='text-error'># Fail</StatTitle>
+        <StatValue extra_cls=''
+            data={big_numbers_query}
+            value=total_fail
+            fmt=num0
+            name=total_fail
+            parent_name=big_numbers_select
+        />
+        <StatDesc extra_cls=''
+            data={big_numbers_query}
+            value=fail_delta
+            fmt=pct2
+            title='Do total proccesses'
+        />
+    </Stat>
+    <Stat >
+        <StatFigure extra_cls='text-success  w-20 h-20' icon='check-circle'/>
+        <StatTitle extra_cls='text-success'># Success Period N-1</StatTitle>
+        <StatValue extra_cls=''
+            data={big_numbers_query}
+            value=total_success_n1
+            fmt=num0
+            name=total_success_n1
+            parent_name=big_numbers_select
+        />
+        <StatDesc extra_cls=''
+            data={big_numbers_query}
+            value=success_delta_n1
+            fmt=pct2
+            title='Do total proccesses'
+        />
+    </Stat>
+    <Stat >
+        <StatFigure extra_cls='text-error w-20 h-20' icon='x-circle'/>
+        <StatTitle extra_cls='text-error'># Fail Period N-1</StatTitle>
+        <StatValue extra_cls=''
+            data={big_numbers_query}
+            value=total_fail_n1
+            fmt=num0
+            name=total_fail_n1
+            parent_name=big_numbers_select
+        />
+        <StatDesc extra_cls=''
+            data={big_numbers_query}
+            value=fail_delta_n1
+            fmt=pct2
+            title='Do total proccesses'
+        />
+    </Stat>
+</Stats>
 
 
 <!-- LOG DETAILS -->
