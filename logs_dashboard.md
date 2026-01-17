@@ -52,10 +52,10 @@ from (values
 ) t ("val", "desc")
 ```
 <Grid>
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
+    <GridItem width='w-auto' _type='auto' _class='p-1'>
         <Input type=date
             defaultValue={config?.moment()?.subtract(1, 'day').format('YYYY-MM-DD')}
-            extra_cls='input input-sm input-bordered'
+            _class='input input-sm input-bordered'
             list=dates 
             data={_dts} 
             name=date_ref 
@@ -64,57 +64,55 @@ from (values
             input_label="Reference Date"
         />
     </GridItem>
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
+    <GridItem width='w-auto' _type='auto' _class='p-1'>
         <Input type=date
             defaultValue={config?.moment()?.subtract(2, 'day').format('YYYY-MM-DD')}
-            extra_cls='input input-sm input-bordered'
+            _class='input input-sm input-bordered'
             name=date_ref_n1
             input_label="Reference Date N-1"
         />
     </GridItem>
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
+    <GridItem width='w-auto' _type='auto' _class='p-1'>
         <Dropdown data={main_process_query} name=main_process value=main_process label=main_process defaultValue="%" input_label='Main Process'>
             <DropdownOption value="%" valueLabel="All"/>
         </Dropdown>
     </GridItem>
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1'>
-        <Dropdown data={sub_process_query} name=sub_process value=sub_process label=sub_process defaultValue="%" input_label='Sub Proccess'>
+    <GridItem width='w-auto' _type='auto' _class='p-1'>
+        <Dropdown data={sub_process_query} name=sub_process value=sub_process label=sub_process defaultValue="%" input_label='Sub Process'>
             <DropdownOption value="%" valueLabel="All"/>
         </Dropdown>
     </GridItem>
-    <GridItem width='w-auto !align-bottom' _type='auto' extra_cls='p-1'>
+    <GridItem width='w-auto !align-bottom' _type='auto' _class='p-1'>
         <RadioButtons 
             data={query_success} 
             name=success
             value=val
             label=desc
             defaultValue=nth_0
-            extra_cls='btn-sm'
+            _class='btn-sm'
             input_label="Status"
         />
     </GridItem>
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1 grow'/>
+    <GridItem width='w-auto' _type='auto' _class='p-1 grow'/>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1 text-left'>
-        <Button tooltip="Editar" name = "edit" action = "edit" label="" icon = "pencil" extra_cls='btn-sm btn-gost' />
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Editar" name = "edit" action = "edit" label="" icon = "pencil" _class='btn-sm btn-gost' />
     </GridItem>
     {/if}
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1 text-left'>
-        <Button tooltip="Duplicar" name = "duplicate" action = "duplicate" label="" icon = "document-duplicate" extra_cls='btn-sm btn-gost' />
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Duplicar" name = "duplicate" action = "duplicate" label="" icon = "document-duplicate" _class='btn-sm btn-gost' />
     </GridItem>
     {/if}
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1 text-left'>
-        <Button tooltip="Atualizar" name = "refresh" action = "refresh" label="" icon = "refresh" extra_cls='btn-sm btn-gost' />
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Atualizar" name = "refresh" action = "refresh" label="" icon = "refresh" _class='btn-sm btn-gost' />
     </GridItem>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
-    <GridItem width='w-auto' _type='auto' extra_cls='p-1 text-left'>
-        <Button tooltip="Detalhes" name = "details" action = "details" label="" icon = "ellipsis-vertical" extra_cls='btn-sm btn-gost' />
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Detalhes" name = "details" action = "details" label="" icon = "ellipsis-vertical" _class='btn-sm btn-gost' />
     </GridItem>
      {/if}
 </Grid>
-
-<!--{inputs?.date_ref?.value}-->
 
 <!---DASHBOARD SECTION-->
 
@@ -139,100 +137,111 @@ where "key" like 'inputs.main_process.value'
         else 'false' 
     end like 'inputs.success.value'
 ```
+<Div _class="w-full p-2">
+    <Stats _class='shadow' name=big_numbers_select>
+        <Stat name=total parent_name=big_numbers_select bg_selected='bg-base-200'>
+            <StatFigure _class='text-info p-0 w-20 h-20' icon='document-text' />
+            <StatTitle _class='text-success font-bold'># Total Logs Entry</StatTitle>
+            <StatValue _class=''
+                data={big_numbers_query}
+                value=total
+                fmt=num0
+                name=total
+            />
+            <StatDesc _class=''
+                data={big_numbers_query}
+                value=total_delta
+                fmt=pct2
+                title='vs total N-1'
+            />
+        </Stat>
+        <Stat name=total_success parent_name=big_numbers_select bg_selected='bg-base-200'>
+            <StatFigure _class='text-success p-0 w-20 h-20' icon='check-circle'/>
+            <StatTitle _class='text-success font-bold'># Success</StatTitle>
+            <StatValue _class=''
+                data={big_numbers_query}
+                value=total_success
+                fmt=num0
+                name=total_success
+            />
+            <StatDesc _class=''
+                data={big_numbers_query}
+                value=success_delta
+                fmt=pct2
+                title='of total'
+            />
+        </Stat>
+        <Stat name=total_fail parent_name=big_numbers_select bg_selected='bg-base-200'>
+            <StatFigure _class='text-error p-0 w-20 h-20' icon='x-circle'/>
+            <StatTitle _class='text-error font-bold'># Fail</StatTitle>
+            <StatValue _class=''
+                data={big_numbers_query}
+                value=total_fail
+                fmt=num0
+                name=total_fail
+            />
+            <StatDesc _class=''
+                data={big_numbers_query}
+                value=fail_delta
+                fmt=pct2
+                title='of total'
+            />
+        </Stat>
+        <Stat name=total_success_n1 parent_name=big_numbers_select bg_selected='bg-base-200'>
+            <StatFigure _class='text-success p-0 w-20 h-20' icon='check'/>
+            <StatTitle _class='text-success font-bold'># Success Period N-1</StatTitle>
+            <StatValue _class=''
+                data={big_numbers_query}
+                value=total_success_n1
+                fmt=num0
+                name=total_success_n1
+            />
+            <StatDesc _class='text-error'
+                data={big_numbers_query}
+                value=success_delta_n1
+                fmt=pct2
+                --title='of total'
+            >do total ({queries?.big_numbers_query?.data?.[0]?.total_n1}) n-1
+            </StatDesc>
+        </Stat>
+        <!--<Stat name=total_success parent_name=big_numbers_select>
+            <StatFigure _class='text-error w-20 h-20' icon='x-circle'/>
+            <StatTitle _class='text-error font-bold'># Fail Period N-1</StatTitle>
+            <StatValue _class=''
+                data={big_numbers_query}
+                value=total_fail_n1
+                fmt=num0
+                name=total_fail_n1
+            />
+            <StatDesc _class=''
+                data={big_numbers_query}
+                value=fail_delta_n1
+                fmt=pct2
+                title='of total'
+            />
+        </Stat>-->
+    </Stats>
+</Div>
+<!--{inputs?.big_numbers_select?.value}-->
 
-<Stats extra_cls='shadow m-2 pr-2' name=big_numbers_select>
-    <Stat >
-        <StatFigure extra_cls='text-info w-20 h-20' icon='document-text' />
-        <StatTitle extra_cls='text-success'># Total Logs Entry</StatTitle>
-        <StatValue extra_cls=''
-            data={big_numbers_query}
-            value=total
-            fmt=num0
-            name=total
-            parent_name=big_numbers_select
-        />
-        <StatDesc extra_cls=''
-            data={big_numbers_query}
-            value=total_delta
-            fmt=pct2
-            title='vs total N-1'
-        />
-    </Stat>
-    <Stat >
-        <StatFigure extra_cls='text-success w-20 h-20' icon='check-circle'/>
-        <StatTitle extra_cls='text-success'># Success</StatTitle>
-        <StatValue extra_cls=''
-            data={big_numbers_query}
-            value=total_success
-            fmt=num0
-            name=total_success
-            parent_name=big_numbers_select
-        />
-        <StatDesc extra_cls=''
-            data={big_numbers_query}
-            value=success_delta
-            fmt=pct2
-            title='Do total proccesses'
-        />
-    </Stat>
-    <Stat >
-        <StatFigure extra_cls='text-error  w-20 h-20' icon='x-circle'/>
-        <StatTitle extra_cls='text-error'># Fail</StatTitle>
-        <StatValue extra_cls=''
-            data={big_numbers_query}
-            value=total_fail
-            fmt=num0
-            name=total_fail
-            parent_name=big_numbers_select
-        />
-        <StatDesc extra_cls=''
-            data={big_numbers_query}
-            value=fail_delta
-            fmt=pct2
-            title='Do total proccesses'
-        />
-    </Stat>
-    <Stat >
-        <StatFigure extra_cls='text-success  w-20 h-20' icon='check-circle'/>
-        <StatTitle extra_cls='text-success'># Success Period N-1</StatTitle>
-        <StatValue extra_cls=''
-            data={big_numbers_query}
-            value=total_success_n1
-            fmt=num0
-            name=total_success_n1
-            parent_name=big_numbers_select
-        />
-        <StatDesc extra_cls=''
-            data={big_numbers_query}
-            value=success_delta_n1
-            fmt=pct2
-            title='Do total proccesses'
-        />
-    </Stat>
-    <Stat >
-        <StatFigure extra_cls='text-error w-20 h-20' icon='x-circle'/>
-        <StatTitle extra_cls='text-error'># Fail Period N-1</StatTitle>
-        <StatValue extra_cls=''
-            data={big_numbers_query}
-            value=total_fail_n1
-            fmt=num0
-            name=total_fail_n1
-            parent_name=big_numbers_select
-        />
-        <StatDesc extra_cls=''
-            data={big_numbers_query}
-            value=fail_delta_n1
-            fmt=pct2
-            title='Do total proccesses'
-        />
-    </Stat>
-</Stats>
+<!-- CHART EXEMPES -->
+<Grid>
+    <GridItem width=4 _class='p-1 --border --border-slate-300'>
+        Grid1 W-4
+    </GridItem>  
+    <GridItem width=8 _class='p-1 --border --border-slate-300'>
+        Grid2 W-8
+    </GridItem>   
+</Grid>
 
 
-<!-- LOG DETAILS -->
+<!-- LOG DETAILS - DATATABLE -->
 
 ```sql _logs
-select *
+select * replace(
+    strftime("start_at"::datetime, '%Y-%m-%d %H:%M:%S') as "start_at"
+    , strftime("end_at"::datetime, '%Y-%m-%d %H:%M:%S') as "end_at"
+)
 from "LOGS"
 where "ref" = 'inputs.date_ref.value'
     and "key" like 'inputs.main_process.value'
@@ -244,9 +253,13 @@ where "ref" = 'inputs.date_ref.value'
 order by "start_at" asc
 ```
 
-<DataTable data={_logs}> 
-    <Column id=key title="Proccess"/> 
-	<Column id=item_key  title="Sub Proccess"/> 
+<DataTable data={_logs}
+    rowShading=true 
+    rowLines=false
+    rows=20
+    search=true
+>   <Column id=key title="Process"/> 
+	<Column id=item_key  title="Sub Process"/> 
 	<Column id=start_at title=Start/> 
 	<Column id=end_at title=End/> 
 	<Column id=duration title=Duration/> 

@@ -406,7 +406,7 @@ Content-Type: application/json
   "lang": "en",
   "data": {
     "db": "DB.duckdb",
-    "query": "select * from \"APOCR\"",
+    "query": "select * from \"table_name\"",
     "limit": 10,
     "offset": 0
   },

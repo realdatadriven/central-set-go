@@ -232,7 +232,7 @@
             ],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"db\": \"DB.duckdb\",\n        \"limit\": 10,\n        \"offset\": 0,\n        \"query\": \"select * from \\\"APOCR\\\"\"\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
+                "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"db\": \"DB.duckdb\",\n        \"limit\": 10,\n        \"offset\": 0,\n        \"query\": \"select * from \\\"table_name\\\"\"\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}",
                 "form": []
             }
         },
