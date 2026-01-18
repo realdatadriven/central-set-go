@@ -126,7 +126,7 @@ select count(*) filter("ref" = 'inputs.date_ref.value') as "total"
     , count(*) filter("ref" = 'inputs.date_ref_n1.value' and ("success" is false or "success" = 0)) as "total_fail_n1"
     , total_success_n1 / total_n1 as "success_delta_n1"
     , total_fail_n1 / total_n1 as "fail_delta_n1"
-    , (1 - total / total_n1) as "total_delta"
+    , ((total - total_n1) / total_n1) as "total_delta"
 from "LOGS"
 where "key" like 'inputs.main_process.value'
     and "item_key" like 'inputs.sub_process.value'
@@ -247,6 +247,7 @@ order by "ref" asc
         <ECharts config={{
                 tooltip: { formatter: '{b}: {c} ({d}%)' },
                 //height: 230,
+                color: ['#08eae3ff', '#eab308', '#ea08d7ff', '#0c08eaff', '#ea081fff'],
                 series: [{
                     type: 'pie',
                     radius: ['40%', '70%'],
