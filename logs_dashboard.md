@@ -5,7 +5,7 @@
     "all_query_run_locally_in_ddb_wasm": true,
     "pre_prepared_parquets_logs_table": null,
     "pre_prepared_parquets_logs_sql": "with _logs as (select * from etlx_logs where fname is not null and (fname, end_at) in (select fname, max(end_at) from etlx_logs group by fname)) select item_key as name, replace(fname, 'tmp/', '') as file FROM _logs",
-    "pre_prepared_parquets_logs_db": "postgres:@OLAP_DB_DSN",
+    "pre_prepared_parquets_logs_db": "sqlite3:database/sqlite_ex.db",
     "pre_prepared_parquets_for_ddb_wasm": {
         "LOGS": "hist_logs.parquet"
     },
@@ -241,17 +241,19 @@ order by "ref" asc
 ```
 <Grid>
     <GridItem width=4 _class='p-1'>Logs Entry by Main Processs</GridItem>  
-    <GridItem width=8 _class='p-1'>History</GridItem>  
+    <GridItem width=8 _class='p-1'>Logs History</GridItem>  
     <GridItem width=4 _class='p-1'>
         <!-- https://docs.evidence.dev/components/charts/custom-echarts/ -->
         <ECharts config={{
                 tooltip: { formatter: '{b}: {c} ({d}%)' },
+                //height: 230,
                 series: [{
                     type: 'pie',
                     radius: ['40%', '70%'],
                     data: [...queries?.total_by_process_query?.data]
                 }]
             }}
+            height=230px
         />
     </GridItem>  
     <GridItem width=8 _class='p-1'>
@@ -261,6 +263,11 @@ order by "ref" asc
             x=dt
             y=total
             series=category
+            fillOpacity=0.2
+            seriesColors={{'Success': 'green', 'Error': 'red'}}
+            sort=false
+            markers=true 
+            height=230px
         />
     </GridItem>   
 </Grid>
