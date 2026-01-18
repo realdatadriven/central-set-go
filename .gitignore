@@ -41,3 +41,4 @@ resources/_gen/
 .vercel
 node_modules
 .hugo_build.lock
+*.sh
