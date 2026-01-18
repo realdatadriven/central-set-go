@@ -113,7 +113,7 @@ featureGrid:
     - title: Configuration-Driven Dashboards
       icon: dashboard
       description: >
-        [evidence.dev](https://evidence.dev/docs) like dashboards powered by Markdown configuration
+        [evidence.dev](https://docs.evidence.dev) like dashboards powered by Markdown configuration
         and **DuckDB-WASM** running directly in the browser.
 
     - title: Analytics & Data Sharing

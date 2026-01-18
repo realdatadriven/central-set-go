@@ -32,9 +32,9 @@ This section documents **each authentication-related feature** with:
 
 The login process authenticates a user and returns a **JWT token** used for all subsequent API requests.
 
-{{< tabs >}}
+{{< tabs tabTotal="2" >}}
 
-{{< tab title="UI" >}}
+{{% tab tabName="UI" %}}
 
 ### Login Screen
 
@@ -46,17 +46,17 @@ The login screen is the entry point to CSGO.
 
 **Light mode**
 
-![CSGO Login – Light Mode](/images/auth/auth_login_light.png)
+![CSGO Login - Light Mode](/images/auth/auth_login_light.png)
 
 **Dark mode**
 
-![CSGO Login – Dark Mode](/images/auth/auth_login_dark.png)
+![CSGO Login - Dark Mode](/images/auth/auth_login_dark.png)
 
 Once authenticated, the user is redirected to the main admin interface and the token is stored client-side.
 
-{{< /tab >}}
+{{% /tab %}}
 
-{{< tab title="API" >}}
+{{% tab tabName="API" %}}
 
 ### Login API
 
@@ -130,7 +130,7 @@ The returned token must be sent in all subsequent requests:
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 
@@ -140,9 +140,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 Users can change their own password from the UI or via the API.
 
-{{< tabs >}}
+{{< tabs tabTotal="2" >}}
 
-{{< tab title="UI" >}}
+{{% tab tabName="UI" %}}
 
 ### Change Password Screen
 
@@ -156,9 +156,9 @@ This action immediately invalidates previous credentials and updates the stored 
 
 > 🔒 Password changes always require the **current password**.
 
-{{< /tab >}}
+{{% /tab %}}
 
-{{< tab title="API" >}}
+{{% tab tabName="API" %}}
 
 ### Change Password API
 
@@ -209,7 +209,7 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 
@@ -314,9 +314,9 @@ LDAP_SEARCHREQ_FILTER="(|(uid=%[1]s)(cn=%[1]s)(mail=%[1]s))"
 
 ## Login Flow with LDAP Enabled
 
-{{< tabs >}}
+{{< tabs tabTotal="2" >}}
 
-{{< tab title="UI" >}}
+{{% tab tabName="UI" %}}
 
 ### Login UI (Unchanged)
 
@@ -332,11 +332,11 @@ The user does **not** need to know whether authentication is backed by:
 * Local users table
 * LDAP directory
 
-![CSGO Login – LDAP uses the same UI](/images/auth/auth_login_light.png)
+![CSGO Login - LDAP uses the same UI](/images/auth/auth_login_light.png)
 
-{{< /tab >}}
+{{% /tab %}}
 
-{{< tab title="API" >}}
+{{% tab tabName="API" %}}
 
 ### Login API (Unchanged)
 
@@ -364,7 +364,7 @@ CSGO will:
 * Bind and authenticate against LDAP
 * Issue a JWT token on success
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 

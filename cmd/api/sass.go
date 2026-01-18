@@ -157,49 +157,58 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	}
 	mergedEnv["TF_PLUGIN_CACHE_DIR"] = _path
 	tf.SetEnv(mergedEnv)
+	var stateBytes []byte
+	var lockBytes []byte
 	// Normal Terraform lifecycle
 	if err := tf.Init(context.Background(), tfexec.Upgrade(true)); err != nil {
-		//fmt.Println("Init Failed:", err)
+		stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+		if err == nil {
+			run.State = json.RawMessage(stateBytes)
+		}
+		lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+		if err == nil {
+			run.Lock = string(lockBytes)
+		}
 		return nil, err
-	}
-	stateBytes, err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
-	if err == nil {
-		run.State = json.RawMessage(stateBytes)
-	}
-	lockBytes, err := os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
-	if err == nil {
-		run.Lock = string(lockBytes)
 	}
 	if len(run.State) > 0 {
 		if err := tf.Refresh(context.Background()); err != nil {
+			stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+			if err == nil {
+				run.State = json.RawMessage(stateBytes)
+			}
+			lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+			if err == nil {
+				run.Lock = string(lockBytes)
+			}
 			fmt.Printf("resfreh failed: %s", err)
 			return nil, fmt.Errorf("resfreh failed: %w", err)
 		}
 	}
-	stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
-	if err == nil {
-		run.State = json.RawMessage(stateBytes)
-	}
-	lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
-	if err == nil {
-		run.Lock = string(lockBytes)
-	}
 	//fmt.Println("Init Pass")
 	if err := tf.Apply(context.Background()); err != nil {
+		stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+		if err == nil {
+			run.State = json.RawMessage(stateBytes)
+		}
+		lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+		if err == nil {
+			run.Lock = string(lockBytes)
+		}
 		fmt.Println("Apply Failed:", err)
 		return nil, err
-	}
-	stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
-	if err == nil {
-		run.State = json.RawMessage(stateBytes)
-	}
-	lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
-	if err == nil {
-		run.Lock = string(lockBytes)
 	}
 	//fmt.Println("Apply Pass")
 	outputs, err := tf.Output(context.Background())
 	if err != nil {
+		stateBytes, err = os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
+		if err == nil {
+			run.State = json.RawMessage(stateBytes)
+		}
+		lockBytes, err = os.ReadFile(filepath.Join(workDir, ".terraform.lock.hcl"))
+		if err == nil {
+			run.Lock = string(lockBytes)
+		}
 		fmt.Println("Output Failed:", err)
 		return nil, err
 	}

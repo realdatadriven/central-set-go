@@ -13,6 +13,30 @@ images: []
 
 ## Overview
 
+<!--{{< tabs tabTotal="3">}}
+{{% tab tabName="Windows" %}}
+
+**Windows Content**
+
+Example content specific to **Windows** operating systems
+
+{{% /tab %}}
+{{% tab tabName="MacOS" %}}
+
+**MacOS Content**
+
+Example content specific to **Mac** operating systems
+
+{{% /tab %}}
+{{% tab tabName="Linux" %}}
+
+**Linux Content**
+
+Example content specific to **Linux** operating systems
+
+{{% /tab %}}
+{{< /tabs >}}-->
+
 After a successful login, the user is automatically redirected to the **default application** they have access to.
 
 By default, this application is **ADMIN**.
@@ -54,19 +78,19 @@ You can treat **ADMIN** as:
 
 ## UI: Applications List
 
-{{< tabs >}}
+{{< tabs tabTotal="2">}}
 
-{{< tab title="Light" >}}
+{{% tab tabName="Light" %}}
 
-![Applications – Light Mode](apps_apps_light.png)
+![Applications - Light Mode](images/screenshots/apps_apps_light.png)
 
-{{< /tab >}}
+{{% /tab %}}
 
-{{< tab title="Dark" >}}
+{{% tab tabName="Dark" %}}
 
-![Applications – Dark Mode](apps_apps_dark.png)
+![Applications - Dark Mode](images/screenshots/apps_apps_dark.png)
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 
@@ -139,9 +163,15 @@ This ensures the UI is **fully driven by configuration**.
 
 ## API: Load Applications
 
-{{< tabs >}}
+{{< tabs tabTotal="2" >}}
 
-{{< tab title="API" >}}
+{{% tab tabName="UI" %}}
+
+![Login - Light Mode](images/auth/auth_login_light.png)
+
+{{% /tab %}}
+
+{{% tab tabName="API" %}}
 
 **Endpoint**
 
@@ -176,7 +206,7 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 
@@ -184,9 +214,15 @@ Authorization: Bearer <JWT_TOKEN>
 
 ## API: Load Menus
 
-{{< tabs >}}
+{{< tabs tabTotal="2" >}}
 
-{{< tab title="API" >}}
+{{% tab tabName="UI" %}}
+
+![Menus - Light Mode](images/apps/apps_menus_light.png)
+
+{{% /tab %}}
+
+{{% tab tabName="API" %}}
 
 **Endpoint**
 
@@ -220,7 +256,7 @@ Menus define navigation structure and grouping.
 }
 ```
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 
@@ -228,9 +264,15 @@ Menus define navigation structure and grouping.
 
 ## API: Load Table Data (Dynamic CRUD)
 
-{{< tabs >}}
+{{< tabs tabTotal="2" >}}
 
-{{< tab title="API" >}}
+{{% tab tabName="UI" %}}
+
+![CRUD - Light Mode](images/screenshots/apps_menus_light.png)
+
+{{% /tab %}}
+
+{{% tab tabName="API" %}}
 
 **Endpoint**
 
@@ -260,7 +302,7 @@ This endpoint powers:
 }
 ```
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabs >}}
 
