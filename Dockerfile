@@ -1,7 +1,7 @@
 # ============================================
 # 🛠️ Stage 1: Build central-set-go from Source
 # ============================================
-FROM golang:1.24 as builder
+FROM golang:1.25 as builder
 
 # Set working directory inside the container
 WORKDIR /app
@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     unixodbc \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Set working directory
 WORKDIR /app
@@ -110,7 +111,7 @@ CMD [""]
 #docker run central-set-go:latest
 #docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
 #podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:latest
-#podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.0.11
+#podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.1.6
 #podman login docker.io
 #podman push docker.io/realdatadriven/central-set-go:latest
-#podman push docker.io/realdatadriven/central-set-go:v1.0.11
+#podman push docker.io/realdatadriven/central-set-go:v1.1.6
