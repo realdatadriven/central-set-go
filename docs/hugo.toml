@@ -68,9 +68,9 @@ enableGitInfo = true # N.B. .GitInfo does not currently function with submodule 
     [params.docs] # Parameters for the /docs 'template'
         title           = "CS"                        # default html title for documentation pages/sections
 
-        # pathName        = "docs"                            # path for documentation site | default "docs"
+        pathName        = "docs"                            # path for documentation site | default "docs"
 
-        # themeColor      = "cyan"                            # (optional) - Set theme accent colour. Options include: blue (default), green, red, yellow, emerald, cardinal, magenta, cyan
+        themeColor      = "cyan"                            # (optional) - Set theme accent colour. Options include: blue (default), green, red, yellow, emerald, cardinal, magenta, cyan
 
         darkMode        = true                                # enable dark mode option? default false
 
@@ -79,7 +79,7 @@ enableGitInfo = true # N.B. .GitInfo does not currently function with submodule 
         # prismTheme      = "lotusdocs"                         # (optional) - Set theme for PrismJS. Options include: lotusdocs (default), solarized-light, twilight, lucario
 
         # gitinfo
-        repoURL         = "https://github.com/realdatadriven/central-set-go/docs"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
+        repoURL         = "https://github.com/realdatadriven/central-set-go/"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
         repoBranch      = "main"                           # Name of your Git repository branch
         editPage        = true                                # enable 'Edit this page' feature - default false
         lastMod         = true                                # enable 'Last modified' date on pages - default false
