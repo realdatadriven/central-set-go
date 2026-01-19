@@ -13,29 +13,12 @@ images: []
 
 ## Overview
 
-<!--{{< tabs tabTotal="3">}}
-{{% tab tabName="Windows" %}}
+{{% alert context="warning" %}}
+**Caution** — Central Set is **production-ready and actively used**, but this documentation is still **under active development**.
 
-**Windows Content**
+Large parts of the docs are **auto-generated**, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.
+{{% /alert %}}
 
-Example content specific to **Windows** operating systems
-
-{{% /tab %}}
-{{% tab tabName="MacOS" %}}
-
-**MacOS Content**
-
-Example content specific to **Mac** operating systems
-
-{{% /tab %}}
-{{% tab tabName="Linux" %}}
-
-**Linux Content**
-
-Example content specific to **Linux** operating systems
-
-{{% /tab %}}
-{{< /tabs >}}-->
 
 After a successful login, the user is automatically redirected to the **default application** they have access to.
 

@@ -11,6 +11,13 @@ images: []
 
 ## Overview
 
+{{% alert context="warning" %}}
+**Caution** — Central Set is **production-ready and actively used**, but this documentation is still **under active development**.
+
+Large parts of the docs are **auto-generated**, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.
+{{% /alert %}}
+
+
 The **ADMIN schema** is the **DNA of Central Set**.
 
 Everything you see in the UI — applications, menus, tables, forms, permissions, and even automation — is defined as **data stored in the ADMIN database**.

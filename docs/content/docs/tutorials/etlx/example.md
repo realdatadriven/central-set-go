@@ -278,6 +278,9 @@ The final stages show how ETLX:
 
 This makes ETLX pipelines **observable by design**, enabling dashboards like the Logs Dashboard you documented earlier.
 
+## Job Scheduling & Automation
+
+Native cron-style job scheduling for ETLX pipelines in Admin > Jobs
 
 ## Summary
 
