@@ -94,20 +94,20 @@ from (values
     <GridItem width='w-auto' _type='auto' _class='p-1 grow'/>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
-        <Button tooltip="Editar" name = "edit" action = "edit" label="" icon = "pencil" _class='btn-sm btn-gost' />
+        <Button tooltip="Edit" name = "edit" action = "edit" label="" icon = "pencil" _class='btn-sm btn-gost' />
     </GridItem>
     {/if}
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
-        <Button tooltip="Duplicar" name = "duplicate" action = "duplicate" label="" icon = "document-duplicate" _class='btn-sm btn-gost' />
+        <Button tooltip="Clone" name = "duplicate" action = "duplicate" label="" icon = "document-duplicate" _class='btn-sm btn-gost' />
     </GridItem>
     {/if}
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
-        <Button tooltip="Atualizar" name = "refresh" action = "refresh" label="" icon = "refresh" _class='btn-sm btn-gost' />
+        <Button tooltip="Update" name = "refresh" action = "refresh" label="" icon = "refresh" _class='btn-sm btn-gost' />
     </GridItem>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
-        <Button tooltip="Detalhes" name = "details" action = "details" label="" icon = "ellipsis-vertical" _class='btn-sm btn-gost' />
+        <Button tooltip="Details" name = "details" action = "details" label="" icon = "ellipsis-vertical" _class='btn-sm btn-gost' />
     </GridItem>
      {/if}
 </Grid>
