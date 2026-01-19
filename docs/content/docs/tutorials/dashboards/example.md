@@ -20,15 +20,42 @@ This dashboard uses:
 * **ETLX-generated datasets and Parquet files**
 * **DuckDB WASM** for in-browser analytics
 
-To start, by deafult an empty dashboard is display and it has an edit button:
+### Getting Started With Dashboard
+By default, a newly created dashboard is **empty** and displays only a basic layout with an **Edit** button.
 
-[Empty Dashboard](images/screenshots/empty-dash-light.png)
+![Empty Dashboard](images/screenshots/empty-dash-light.png)
 
-On clicking in the edit button, this form is openned, where you can set your configuration ([more about configuration](config/))
+Clicking the **Edit** button opens the dashboard configuration form, where you can define how the dashboard behaves and what it renders ([learn more about configuration](config/)).
 
-[Empty Dashboard](images/screenshots/edit-dash-light.png)
+![Edit Dashboard](images/screenshots/edit-dash-light.png)
 
-...
+Once you assign a name and save the configuration, the dashboard becomes active.
+
+The configuration itself represents an **Evidence-like Markdown dashboard**, which is:
+
+* Compiled **in real time**
+* Rendered **entirely on the client side**
+* Interpreted as standard Markdown → HTML
+* Enhanced with interactive components
+
+If components are referenced, they are loaded as **native Svelte components**, just like any other part of the Central Set UI.
+
+### How Rendering Works
+
+Under the hood:
+
+* Markdown is rendered as regular HTML
+* SQL blocks are detected and executed dynamically
+* Query execution depends on the dashboard configuration:
+
+  * In-browser databases (DuckDB WASM)
+  * Databases mapped in Central Set
+  * Datasets produced by ETLX pipelines
+
+The query results are then injected directly into components such as charts, tables, stats, and filters.
+
+This approach allows dashboards to feel **live**, **interactive**, and **fully integrated**, without requiring a static build step or server-side compilation.
+
 
 ---
 
@@ -58,7 +85,7 @@ This is where CentralSet **overrides Evidence defaults** and wires the dashboard
 
 #### Execution model
 
-* `all_query_run_locally_in_ddb_wasm: true`
+* `all_query_run_locally_in_ddb_wasm: true` (RECOMENDED)
   → All SQL runs **inside the browser** using DuckDB WASM.
 
 #### Data source binding
