@@ -24,11 +24,11 @@ This dashboard uses:
 
 By default, a newly created dashboard is **empty** and displays only a basic layout with an **Edit** button.
 
-![Empty Dashboard](images/screenshots/empty-dash-light.png)
+![Empty Dashboard](/images/screenshots/empty-dash-light.png)
 
 Clicking the **Edit** button opens the dashboard configuration form, where you can define how the dashboard behaves and what it renders ([learn more about configuration](config/)).
 
-![Edit Dashboard](images/screenshots/edit-dash-light.png)
+![Edit Dashboard](/images/screenshots/edit-dash-light.png)
 
 Once you assign a name and save the configuration, the dashboard becomes active.
 
@@ -724,7 +724,7 @@ order by "start_at" asc
 
 ## The resulting dashboard
 
-![Dashboard Example](images/screenshots/logs-dashboard-compact-light.png)
+![Dashboard Example](/images/screenshots/logs-dashboard-compact-light.png)
 
 ## Summary
 

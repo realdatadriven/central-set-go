@@ -31,13 +31,13 @@ When you first open the **ETLX** menu, the system displays an **empty CRUD table
 
 This table represents your **pipeline registry** — each row corresponds to one ETLX configuration.
 
-![Empty ETLX](images/screenshots/etlx-menu-light.png)
+![Empty ETLX](/images/screenshots/etlx-menu-light.png)
 
 ### Creating a New Pipeline
 
 Clicking the **Add/Edit** button opens the ETLX configuration form.
 
-![Add ETLX](images/screenshots/edit-add-etlx-light.png)
+![Add ETLX](/images/screenshots/edit-add-etlx-light.png)
 
 In this form you:
 
@@ -55,7 +55,7 @@ After saving, a new record appears in the CRUD table.
 Each record includes a **play icon** ▶️.
 Clicking it opens the **pipeline workflow view**.
 
-![ETLX Pipeline UI](images/screenshots/etlx-ui-pieline-light.png)
+![ETLX Pipeline UI](/images/screenshots/etlx-ui-pieline-light.png)
 
 In this view, the markdown configuration **materializes into a structured pipeline**:
 

@@ -82,13 +82,13 @@ You can treat **ADMIN** as:
 
 {{% tab tabName="Light" %}}
 
-![Applications - Light Mode](images/screenshots/apps_apps_light.png)
+![Applications - Light Mode](/images/screenshots/apps_apps_light.png)
 
 {{% /tab %}}
 
 {{% tab tabName="Dark" %}}
 
-![Applications - Dark Mode](images/screenshots/apps_apps_dark.png)
+![Applications - Dark Mode](/images/screenshots/apps_apps_dark.png)
 
 {{% /tab %}}
 
@@ -167,7 +167,7 @@ This ensures the UI is **fully driven by configuration**.
 
 {{% tab tabName="UI" %}}
 
-![Login - Light Mode](images/auth/auth_login_light.png)
+![Login - Light Mode](/images/auth/auth_login_light.png)
 
 {{% /tab %}}
 
@@ -218,7 +218,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 {{% tab tabName="UI" %}}
 
-![Menus - Light Mode](images/apps/apps_menus_light.png)
+![Menus - Light Mode](/images/apps/apps_menus_light.png)
 
 {{% /tab %}}
 
@@ -268,7 +268,7 @@ Menus define navigation structure and grouping.
 
 {{% tab tabName="UI" %}}
 
-![CRUD - Light Mode](images/screenshots/apps_menus_light.png)
+![CRUD - Light Mode](/images/screenshots/apps_menus_light.png)
 
 {{% /tab %}}
 
