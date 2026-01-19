@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ETLX &amp; Data Pipelines on CS - Data Plataform</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/</link><description>Recent content in ETLX &amp; Data Pipelines on CS - Data Plataform</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Mon, 19 Jan 2026 20:05:52 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set was born primarily from the need to &lt;strong&gt;manage data engineering workflows&lt;/strong&gt;, but real-world data systems require much more than just pipelines.&lt;/p&gt;
+&lt;p&gt;To operate reliable data platforms, you need:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;User and role management&lt;/li&gt;
+&lt;li&gt;Database and schema management&lt;/li&gt;
+&lt;li&gt;Forms and datatables to manage configurations&lt;/li&gt;
+&lt;li&gt;Secure access keys and API tokens&lt;/li&gt;
+&lt;li&gt;UI-driven configuration&lt;/li&gt;
+&lt;li&gt;Observability over pipelines&lt;/li&gt;
+&lt;li&gt;A way to &lt;strong&gt;run data workflows reliably&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Dashboards for monitoring and insight&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What started as a data-engineering support layer evolved into something broader.&lt;/p&gt;</description></item><item><title>Example</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/</guid><description>&lt;h2 id="example---etlx--data-pipelines"&gt;Example - ETLX &amp;amp; Data Pipelines &lt;a href="#example---etlx--data-pipelines" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This page walks through a &lt;strong&gt;real-world ETLX pipeline&lt;/strong&gt;, showing how a single markdown configuration can describe:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Data ingestion&lt;/li&gt;
+&lt;li&gt;Transformations&lt;/li&gt;
+&lt;li&gt;Data quality rules&lt;/li&gt;
+&lt;li&gt;Governance artifacts&lt;/li&gt;
+&lt;li&gt;Exports&lt;/li&gt;
+&lt;li&gt;Logging&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All driven by configuration and executed step-by-step through the ETLX UI.&lt;/p&gt;
+&lt;p&gt;The example uses the &lt;strong&gt;NYC Yellow Taxi - January 2024&lt;/strong&gt; dataset as a concrete and realistic scenario.&lt;/p&gt;
+&lt;h2 id="getting-started-with-etlx-pipelines"&gt;Getting Started with ETLX Pipelines &lt;a href="#getting-started-with-etlx-pipelines" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When you first open the &lt;strong&gt;ETLX&lt;/strong&gt; menu, the system displays an &lt;strong&gt;empty CRUD table&lt;/strong&gt;, when added pipeline its shown.&lt;/p&gt;</description></item></channel></rss>

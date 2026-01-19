@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Database on CSGO - Data Plataform</title>
+    <link>//localhost:1313/docs/tags/database/</link>
+    <description>Recent content in Database on CSGO - Data Plataform</description>
+    <generator>Hugo</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Tue, 16 Dec 2025 01:04:15 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/docs/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Logs / Observability</title>
+      <link>//localhost:1313/docs/docs/features/logs/</link>
+      <pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/features/logs/</guid>
+      <description>&lt;h2 id=&#34;logs--observability-handling--logs&#34;&gt;Logs / Observability Handling (&lt;code&gt;# LOGS&lt;/code&gt;) &lt;a href=&#34;#logs--observability-handling--logs&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;ETLX provides a &lt;strong&gt;logging mechanism&lt;/strong&gt; that allows &lt;strong&gt;saving logs&lt;/strong&gt; into a database. This is useful for tracking &lt;strong&gt;executions, debugging, and auditing ETL processes&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;p&gt;By default, ETLX logs &lt;strong&gt;every relevant aspect of the pipeline&lt;/strong&gt;:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Step name / description&lt;/li&gt;&#xA;&lt;li&gt;Timestamp start / end&lt;/li&gt;&#xA;&lt;li&gt;Duration in seconds&lt;/li&gt;&#xA;&lt;li&gt;Success / failure&lt;/li&gt;&#xA;&lt;li&gt;Messages and errors&lt;/li&gt;&#xA;&lt;li&gt;Memory usage&lt;/li&gt;&#xA;&lt;li&gt;Optional row counts, files generated, or other metrics&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;All logs are serialized as &lt;strong&gt;JSON&lt;/strong&gt; and persisted using the LOGS block.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Runtime on CSGO - Data Plataform</title>
+    <link>//localhost:1313/docs/tags/runtime/</link>
+    <description>Recent content in Runtime on CSGO - Data Plataform</description>
+    <generator>Hugo</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Tue, 16 Dec 2025 01:04:15 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/docs/tags/runtime/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go API &amp; Programmatic Usage</title>
+      <link>//localhost:1313/docs/docs/features/api/</link>
+      <pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/features/api/</guid>
+      <description>&lt;h2 id=&#34;go-api--programmatic-usage&#34;&gt;Go API &amp;amp; Programmatic Usage &lt;a href=&#34;#go-api--programmatic-usage&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;ETLX is &lt;strong&gt;not only a CLI tool&lt;/strong&gt; — it is also a &lt;strong&gt;Go library&lt;/strong&gt; that you can embed directly into your own applications.&lt;/p&gt;&#xA;&lt;p&gt;The official &lt;code&gt;etlx&lt;/code&gt; binary is built using &lt;strong&gt;the same public Go APIs&lt;/strong&gt; exposed by the project.&#xA;This page documents those APIs in a &lt;strong&gt;ready-to-use&lt;/strong&gt; way, based on how &lt;code&gt;cmd/main.go&lt;/code&gt; constructs and executes pipelines.&lt;/p&gt;&#xA;&lt;h2 id=&#34;-cli-internals-important-context&#34;&gt;🔧 CLI Internals (Important Context) &lt;a href=&#34;#-cli-internals-important-context&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The ETLX CLI:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

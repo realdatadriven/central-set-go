@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Help on CS - Data Plataform</title><link>https://realdatadriven.github.io/central-set-go/docs/help/</link><description>Recent content in Help on CS - Data Plataform</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Tue, 13 Jan 2026 20:24:03 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/help/index.xml" rel="self" type="application/rss+xml"/><item><title>Troubleshooting</title><link>https://realdatadriven.github.io/central-set-go/docs/help/troubleshooting/</link><pubDate>Wed, 12 Nov 2025 15:22:20 +0100</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/help/troubleshooting/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; - This documentation is in progress&lt;/div&gt;
+ &lt;/div&gt;
+&lt;h2 id="troubleshooting"&gt;Troubleshooting &lt;a href="#troubleshooting" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This section provides solutions to common issues you may encounter while using &lt;strong&gt;ETLX&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Because ETLX is &lt;strong&gt;declarative&lt;/strong&gt;, &lt;strong&gt;SQL-first&lt;/strong&gt;, and &lt;strong&gt;configuration-driven&lt;/strong&gt;, most problems are not runtime crashes but &lt;strong&gt;execution decisions&lt;/strong&gt;: blocks not running, steps being skipped, or conditions preventing execution.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important mental model:&lt;/strong&gt;&lt;br&gt;
+If ETLX executed &lt;em&gt;anything&lt;/em&gt;, it was logged.&lt;br&gt;
+If it did &lt;em&gt;nothing&lt;/em&gt;, the reason is almost always visible in logs or terminal output.&lt;/p&gt;</description></item><item><title>FAQ</title><link>https://realdatadriven.github.io/central-set-go/docs/help/faqs/</link><pubDate>Mon, 06 Oct 2025 08:49:31 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/help/faqs/</guid><description>&lt;h2 id="general-questions"&gt;General Questions &lt;a href="#general-questions" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;h3 id="what-is-etlx"&gt;What is ETLX? &lt;a href="#what-is-etlx" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;ETLX&lt;/strong&gt; is an &lt;strong&gt;open-source, SQL-first data workflow engine&lt;/strong&gt; and an &lt;strong&gt;evolving open specification&lt;/strong&gt; for describing complete data workflows as &lt;strong&gt;executable documentation&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;ETLX lets you define ETL, analytics, reporting, exports, etc using &lt;strong&gt;Markdown + YAML + SQL&lt;/strong&gt;, where the pipeline itself becomes the documentation, governance artifact, and execution plan.&lt;/p&gt;
+&lt;h3 id="what-problem-does-etlx-solve"&gt;What problem does ETLX solve? &lt;a href="#what-problem-does-etlx-solve" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;ETLX addresses common problems in modern data workflows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hidden logic spread across code, SQL, and orchestration tools&lt;/li&gt;
+&lt;li&gt;Poor documentation and weak data governance&lt;/li&gt;
+&lt;li&gt;Tight coupling between pipelines and execution engines&lt;/li&gt;
+&lt;li&gt;Difficult auditing, reproducibility, and compliance&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ETLX makes &lt;strong&gt;all logic explicit&lt;/strong&gt;, &lt;strong&gt;self-documenting&lt;/strong&gt;, and &lt;strong&gt;auditable by design&lt;/strong&gt;.&lt;/p&gt;</description></item></channel></rss>

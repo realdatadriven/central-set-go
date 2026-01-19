@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Architecture on CSGO - Data Plataform</title>
+    <link>//localhost:1313/docs/tags/architecture/</link>
+    <description>Recent content in Architecture on CSGO - Data Plataform</description>
+    <generator>Hugo</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Tue, 16 Dec 2025 01:04:15 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/docs/tags/architecture/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Multi-Engine Execution</title>
+      <link>//localhost:1313/docs/docs/features/multi-engine-execution/</link>
+      <pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/features/multi-engine-execution/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;multi-engine-execution&#34;&gt;Multi-Engine Execution &lt;a href=&#34;#multi-engine-execution&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;ETLX is designed to be &lt;strong&gt;engine-agnostic by default&lt;/strong&gt;. While &lt;strong&gt;DuckDB is the recommended and primary execution engine&lt;/strong&gt;, ETLX can execute pipelines across &lt;strong&gt;multiple database engines within the same workflow&lt;/strong&gt;, depending on availability, constraints, and use cases.&lt;/p&gt;&#xA;&lt;p&gt;This allows ETLX to operate:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Fully &lt;strong&gt;embedded and in-process&lt;/strong&gt; (DuckDB, SQLite)&lt;/li&gt;&#xA;&lt;li&gt;Against &lt;strong&gt;external OLTP / analytical databases&lt;/strong&gt; (PostgreSQL, MySQL, SQL Server)&lt;/li&gt;&#xA;&lt;li&gt;Through &lt;strong&gt;ODBC or other sqlx-supported drivers&lt;/strong&gt; for broader compatibility&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;🧠 DuckDB is a &lt;em&gt;developer choice&lt;/em&gt;, not a hard dependency.&#xA;ETLX adapts to your environment instead of forcing a single execution engine.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Beyond ETL / ELT</title>
+      <link>//localhost:1313/docs/docs/features/beyond-etl/</link>
+      <pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/features/beyond-etl/</guid>
+      <description>&lt;h2 id=&#34;beyond-etl--elt&#34;&gt;Beyond ETL / ELT &lt;a href=&#34;#beyond-etl--elt&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;ETLX is &lt;strong&gt;not just an ETL / ELT engine&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;p&gt;It is a &lt;strong&gt;declarative specification&lt;/strong&gt; for describing &lt;em&gt;how modern data workflows should be built, executed, documented, audited, and governed&lt;/em&gt; — in a way that is &lt;strong&gt;transparent&lt;/strong&gt;, &lt;strong&gt;portable&lt;/strong&gt;, and &lt;strong&gt;self-documented&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;p&gt;In ETLX, the pipeline &lt;em&gt;is&lt;/em&gt; the documentation.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;from-pipelines-to-specifications&#34;&gt;From Pipelines to Specifications &lt;a href=&#34;#from-pipelines-to-specifications&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Traditional data platforms tend to:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Hide logic inside &lt;strong&gt;closed-source binaries&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Spread business rules across:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;SQL files&lt;/li&gt;&#xA;&lt;li&gt;Python scripts&lt;/li&gt;&#xA;&lt;li&gt;Airflow DAGs&lt;/li&gt;&#xA;&lt;li&gt;Wiki pages&lt;/li&gt;&#xA;&lt;li&gt;Spreadsheets&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Separate &lt;strong&gt;execution&lt;/strong&gt;, &lt;strong&gt;documentation&lt;/strong&gt;, &lt;strong&gt;validation&lt;/strong&gt;, and &lt;strong&gt;governance&lt;/strong&gt; into disconnected systems&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
