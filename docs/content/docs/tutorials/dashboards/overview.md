@@ -55,6 +55,9 @@ UI rendering and transforms database-backed records into analytical dashboards.
 Some Evidence components are not yet integrated or are slightly modified to better fit Central Set,
 but **the core visualization components (what really matters) are fully compatible**, including:
 
+* [If / Else](https://docs.evidence.dev/core-concepts/if-else/)
+* [Loops](https://docs.evidence.dev/core-concepts/loops/)
+* [Formating](https://docs.evidence.dev/core-concepts/formatting/)
 * [Value](https://docs.evidence.dev/components/data/value/)
 * [Big Value](https://docs.evidence.dev/components/data/big-value/)
 * [Data Table](https://docs.evidence.dev/components/data/data-table/)
