@@ -56,8 +56,11 @@ The query results are then injected directly into components such as charts, tab
 
 This approach allows dashboards to feel **live**, **interactive**, and **fully integrated**, without requiring a static build step or server-side compilation.
 
-
 ---
+
+## This Example
+
+This example use the ETLX [sqlite exemple](https://github.com/realdatadriven/etlx/blob/main/examples/tmpl.sqlite.md) also used in this doc in [ETLX & Data Pipelines](tutorials/etlx) use to demostrate a basic setup with an embbed database with no databse server setup: 
 
 ## 1. Dashboard Configuration Block
 
