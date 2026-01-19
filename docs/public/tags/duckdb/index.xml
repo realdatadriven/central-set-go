@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Duckdb on CSGO - Data Plataform</title>
+    <link>//localhost:1313/docs/tags/duckdb/</link>
+    <description>Recent content in Duckdb on CSGO - Data Plataform</description>
+    <generator>Hugo</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Sat, 03 Jan 2026 10:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/docs/tags/duckdb/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Overview</title>
+      <link>//localhost:1313/docs/docs/overview/</link>
+      <pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/overview/</guid>
+      <description>&lt;p&gt;Welcome to the &lt;strong&gt;ETLX documentation&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;p&gt;This guide explains &lt;strong&gt;what ETLX is&lt;/strong&gt;, &lt;strong&gt;why it exists&lt;/strong&gt;, and &lt;strong&gt;how to think about it&lt;/strong&gt; before diving into pipelines, configuration, and execution details.&lt;/p&gt;&#xA;&lt;p&gt;If you are looking for a fast way to get started, jump directly to the &lt;a href=&#34;//localhost:1313/docs/docs/quickstart/&#34;&gt;Quickstart&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;what-is-etlx&#34;&gt;What is ETLX? &lt;a href=&#34;#what-is-etlx&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;ETLX&lt;/strong&gt; is an &lt;strong&gt;open-source, developer-first ETL framework&lt;/strong&gt; designed to make data pipelines:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Simpler&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;More transparent&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Easier to reason about&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Fully observable and reproducible&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Instead of relying on heavyweight orchestration platforms or opaque runtime behavior, ETLX embraces a &lt;strong&gt;declarative, metadata-first approach&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DuckDB at the Core</title>
+      <link>//localhost:1313/docs/docs/features/ddb-at-the-core/</link>
+      <pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/features/ddb-at-the-core/</guid>
+      <description>&lt;h2 id=&#34;duckdb-at-the-core&#34;&gt;DuckDB at the Core &lt;a href=&#34;#duckdb-at-the-core&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;ETLX is built &lt;strong&gt;around DuckDB&lt;/strong&gt; as its execution engine. At its core, ETLX embraces a &lt;strong&gt;SQL-first philosophy&lt;/strong&gt;, enabling powerful &lt;strong&gt;in-process analytics and transformations&lt;/strong&gt; without requiring external compute engines or distributed systems.&lt;/p&gt;&#xA;&lt;p&gt;DuckDB acts as the &lt;strong&gt;analytical backbone&lt;/strong&gt; of the pipeline, executing transformations, validations, exports, and even orchestration-related logic using standard SQL.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;-why-duckdb&#34;&gt;🧠 Why DuckDB? &lt;a href=&#34;#-why-duckdb&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;DuckDB is a modern analytical database designed for &lt;strong&gt;OLAP workloads&lt;/strong&gt;, embedded directly into applications. This makes it a perfect fit for ETLX.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

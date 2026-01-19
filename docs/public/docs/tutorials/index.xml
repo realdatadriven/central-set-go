@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on CS - Data Plataform</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/</link><description>Recent content in Tutorials on CS - Data Plataform</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Mon, 19 Jan 2026 20:10:14 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Authentication &amp; Access</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/</guid><description>&lt;h2 id="-authentication--access"&gt;🔐 Authentication &amp;amp; Access &lt;a href="#-authentication--access" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;Central Set Go (CSGO) provides a &lt;strong&gt;unified authentication system&lt;/strong&gt; used consistently across:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;strong&gt;Admin UI&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;REST API&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;External integrations and automation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This section documents &lt;strong&gt;each authentication-related feature&lt;/strong&gt; with:&lt;/p&gt;</description></item><item><title>Applications</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/</guid><description>&lt;hr&gt;
+&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;After a successful login, the user is automatically redirected to the &lt;strong&gt;default application&lt;/strong&gt; they have access to.&lt;/p&gt;
+&lt;p&gt;By default, this application is &lt;strong&gt;ADMIN&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>Admin Schema (the DNA)</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;The &lt;strong&gt;ADMIN schema&lt;/strong&gt; is the &lt;strong&gt;DNA of Central Set&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Everything you see in the UI — applications, menus, tables, forms, permissions, and even automation — is defined as &lt;strong&gt;data stored in the ADMIN database&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>Navigation &amp; Menus</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;</description></item><item><title>CRUD</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;</description></item><item><title>Security &amp; Permissions</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;</description></item><item><title>Automation &amp; Jobs</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;</description></item><item><title>Dynamic API Reference</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/api/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/api/</guid><description>&lt;h1 id="dynamic-api-reference"&gt;Dynamic API Reference &lt;a href="#dynamic-api-reference" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;Central Set Go exposes a &lt;strong&gt;dynamic, context-driven API&lt;/strong&gt;.
+All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt; requests to allow rich payloads, permissions, and future extensibility.&lt;/p&gt;</description></item></channel></rss>

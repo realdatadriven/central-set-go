@@ -1,0 +1,646 @@
+<!doctype html><html lang=en-GB><head><meta charset=utf-8><title>Applications | CS</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Applications define how databases are exposed as admin interfaces in Central Set Go."><meta name=keywords content="Documentation,Hugo,Hugo Theme,Bootstrap"><meta name=author content="Colin Wilson - Lotus Labs"><meta name=email content="support@aigis.uk"><meta name=website content="https://lotusdocs.dev"><meta name=Version content="v0.1.0"><link rel=icon href=https://realdatadriven.github.io/central-set-go/favicon.ico sizes=any><link rel=icon type=image/svg+xml href=https://realdatadriven.github.io/central-set-go/favicon.svg><link rel=apple-touch-icon sizes=180x180 href=https://realdatadriven.github.io/central-set-go/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://realdatadriven.github.io/central-set-go/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://realdatadriven.github.io/central-set-go/favicon-16x16.png><link rel=manifest crossorigin=use-credentials href=https://realdatadriven.github.io/central-set-go/site.webmanifest><meta property="og:title" content="Applications"><meta property="og:description" content="Applications define how databases are exposed as admin interfaces in Central Set Go."><meta property="og:type" content="article"><meta property="og:url" content="https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/"><meta property="og:image" content="https://realdatadriven.github.io/central-set-go/opengraph/card-base-2_hu_bb161eb3bca6c52c.png"><meta property="article:section" content="docs"><meta property="article:published_time" content="2025-12-16T01:04:15+00:00"><meta property="article:modified_time" content="2026-01-19T20:10:14-01:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://realdatadriven.github.io/central-set-go/opengraph/card-base-2_hu_bb161eb3bca6c52c.png"><meta name=twitter:title content="Applications"><meta name=twitter:description content="Applications define how databases are exposed as admin interfaces in Central Set Go."><link rel=alternate type=application/atom+xml title="Atom feed for CS - Data Plataform" href=/index.xml><script>(()=>{var t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,e=localStorage.getItem("theme");t&&e===null&&(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")),t&&e==="dark"&&document.documentElement.setAttribute("data-dark-mode",""),e==="dark"&&document.documentElement.setAttribute("data-dark-mode","")})()</script><script type=text/javascript src=https://realdatadriven.github.io/central-set-go/docs/js/flexsearch.bundle.min.f5159d5a2151ffbb653996ec17eaff7da4e04c286bd879fc41839d36a5586f3f20eaead0b6089de48f9adc669cdee771.js integrity=sha384-9RWdWiFR/7tlOZbsF+r/faTgTChr2Hn8QYOdNqVYbz8g6urQtgid5I+a3Gac3udx crossorigin=anonymous></script><link rel=preconnect href=https://fonts.gstatic.com/><link rel=preconnect href=https://fonts.gstatic.com/ crossorigin><link href="https://fonts.googleapis.com/css?family=Inter:300,400,600,700|Fira+Code:500,700&display=block" rel=stylesheet><link rel=stylesheet href=/central-set-go/docs/scss/style.min.f667656027a2bf1743e3b5561f79d3e485d54e1a03ce867bea46027110dd846ceb0b4ab42659491adb6a1536089561e0.css integrity=sha384-9mdlYCeivxdD47VWH3nT5IXVThoDzoZ76kYCcRDdhGzrC0q0JllJGttqFTYIlWHg crossorigin=anonymous><script defer data-domain=realdatadriven.github.io/central-set-go data-api=/docs/s/api/event/ src=/docs/s/js/script.outbound-links.js></script><script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div class=content><div class="page-wrapper toggled"><nav id=sidebar class=sidebar-wrapper><div class=sidebar-brand><a href=https://realdatadriven.github.io/central-set-go/ aria-label=HomePage alt=HomePage><svg id="Layer_1" viewBox="0 0 250 250"><path d="m143 39.5c-18 0-18 18-18 18s0-18-18-18H22c-2.76.0-5 2.24-5 5v143c0 2.76 2.24 5 5 5h76c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h76c2.76.0 5-2.24 5-5V44.5c0-2.76-2.24-5-5-5h-85zM206 163c0 1.38-1.12 2.5-2.5 2.5H143c-18 0-18 18-18 18s0-18-18-18H46.5c-1.38.0-2.5-1.12-2.5-2.5V69c0-1.38 1.12-2.5 2.5-2.5H98c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h51.5c1.38.0 2.5 1.12 2.5 2.5v94z" style="fill:#06f"/></svg></a></div><div class=sidebar-content style="height:calc(100% - 131px)"><ul class=sidebar-menu><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/overview/><i class="material-icons me-2">circle</i>
+Overview</a></li><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/quickstart/><i class="material-icons me-2">rocket_launch</i>
+Quickstart</a></li><li class="sidebar-dropdown current active"><button class=btn>
+<i class="material-icons me-2">auto_awesome</i>
+Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li class=current><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested"><button class=btn>
+ETLX & Data Pipelines</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li></ul></div></li><li class="sidebar-dropdown nested"><button class=btn>
+Analytics & Dashboards</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
+<i class="material-icons me-2">heart_plus</i>
+Contributing</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/contributing/how-to-contribute/>How to Contribute</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/contributing/code-of-conduct/>Code of Conduct</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
+<i class="material-icons me-2">help</i>
+Help</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/help/troubleshooting/>Troubleshooting</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/help/faqs/>FAQ</a></li></ul></div></li></ul></div><ul class="sidebar-footer list-unstyled mb-0"></ul></nav><main class="page-content bg-transparent"><div id=top-header class="top-header d-print-none"><div class="header-bar d-flex justify-content-between"><div class="d-flex align-items-center"><a href=https://realdatadriven.github.io/central-set-go/ class="logo-icon me-3" aria-label=HomePage alt=HomePage><div class=small><svg id="Layer_1" viewBox="0 0 250 250"><path d="m143 39.5c-18 0-18 18-18 18s0-18-18-18H22c-2.76.0-5 2.24-5 5v143c0 2.76 2.24 5 5 5h76c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h76c2.76.0 5-2.24 5-5V44.5c0-2.76-2.24-5-5-5h-85zM206 163c0 1.38-1.12 2.5-2.5 2.5H143c-18 0-18 18-18 18s0-18-18-18H46.5c-1.38.0-2.5-1.12-2.5-2.5V69c0-1.38 1.12-2.5 2.5-2.5H98c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h51.5c1.38.0 2.5 1.12 2.5 2.5v94z" style="fill:#06f"/></svg></div><div class=big><svg id="Layer_1" viewBox="0 0 250 250"><path d="m143 39.5c-18 0-18 18-18 18s0-18-18-18H22c-2.76.0-5 2.24-5 5v143c0 2.76 2.24 5 5 5h76c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h76c2.76.0 5-2.24 5-5V44.5c0-2.76-2.24-5-5-5h-85zM206 163c0 1.38-1.12 2.5-2.5 2.5H143c-18 0-18 18-18 18s0-18-18-18H46.5c-1.38.0-2.5-1.12-2.5-2.5V69c0-1.38 1.12-2.5 2.5-2.5H98c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h51.5c1.38.0 2.5 1.12 2.5 2.5v94z" style="fill:#06f"/></svg></div></a><button id=close-sidebar class="btn btn-icon btn-soft">
+<span class="material-icons size-20 menu-icon align-middle">menu</span>
+</button>
+<button id=flexsearch-button class="ms-3 btn btn-soft" data-bs-toggle=collapse data-bs-target=#FlexSearchCollapse aria-expanded=false aria-controls=FlexSearchCollapse>
+<span class="material-icons size-20 menu-icon align-middle">search</span>
+<span class="flexsearch-button-placeholder ms-1 me-2 d-none d-sm-block">Search</span><div class="d-none d-sm-block"><span class=flexsearch-button-keys><kbd class=flexsearch-button-cmd-key><svg width="44" height="15"><path d="M2.118 11.5A1.519 1.519.0 011 11.042 1.583 1.583.0 011 8.815a1.519 1.519.0 011.113-.458h.715V6.643h-.71A1.519 1.519.0 011 6.185 1.519 1.519.0 01.547 5.071 1.519 1.519.0 011 3.958 1.519 1.519.0 012.118 3.5a1.519 1.519.0 011.114.458A1.519 1.519.0 013.69 5.071v.715H5.4V5.071A1.564 1.564.0 016.976 3.5 1.564 1.564.0 018.547 5.071 1.564 1.564.0 016.976 6.643H6.261V8.357h.715a1.575 1.575.0 011.113 2.685 1.583 1.583.0 01-2.227.0A1.519 1.519.0 015.4 9.929V9.214H3.69v.715a1.519 1.519.0 01-.458 1.113A1.519 1.519.0 012.118 11.5zm0-.857a.714.714.0 00.715-.714V9.214H2.118a.715.715.0 100 1.429zm4.858.0a.715.715.0 100-1.429H6.261v.715a.714.714.0 00.715.714zM3.69 8.357H5.4V6.643H3.69zM2.118 5.786h.715V5.071a.714.714.0 00-.715-.714.715.715.0 00-.5 1.22A.686.686.0 002.118 5.786zm4.143.0h.715a.715.715.0 00.5-1.22.715.715.0 00-1.22.5z" fill="currentColor"/><path d="M12.4 11.475H11.344l3.879-7.95h1.056z" fill="currentColor"/><path d="M25.073 5.384l-.864.576a2.121 2.121.0 00-1.786-.923 2.207 2.207.0 00-2.266 2.326 2.206 2.206.0 002.266 2.325 2.1 2.1.0 001.782-.918l.84.617a3.108 3.108.0 01-2.622 1.293 3.217 3.217.0 01-3.349-3.317 3.217 3.217.0 013.349-3.317A3.046 3.046.0 0125.073 5.384z" fill="currentColor"/><path d="M30.993 5.142h-2.07v5.419H27.891V5.142h-2.07V4.164h5.172z" fill="currentColor"/><path d="M34.67 4.164c1.471.0 2.266.658 2.266 1.851.0 1.087-.832 1.809-2.134 1.855l2.107 2.691h-1.28L33.591 7.87H33.07v2.691H32.038v-6.4zm-1.6.969v1.8h1.572c.832.0 1.22-.3 1.22-.918s-.411-.882-1.22-.882z" fill="currentColor"/><path d="M42.883 10.561H38.31v-6.4h1.033V9.583h3.54z" fill="currentColor"/></svg>
+</kbd><kbd class=flexsearch-button-key><svg width="15" height="15"><path d="M5.926 12.279H4.41L9.073 2.721H10.59z" fill="currentColor"/></svg></kbd></span></div></button></div><div class="d-flex align-items-center"><ul class="list-unstyled mb-0"><li class="list-inline-item mb-0"><a href=https://github.com/realdatadriven/etlx alt=github rel="noopener noreferrer" target=_blank><div class="btn btn-icon btn-default border-0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>GitHub</title><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></div></a></li></ul><button id=mode class="btn btn-icon btn-default ms-2" type=button aria-label="Toggle user interface mode">
+<span class=toggle-dark><svg height="30" width="30" viewBox="0 0 48 48" fill="currentColor"><title>Enable dark mode</title><path d="M24 42q-7.5.0-12.75-5.25T6 24t5.25-12.75T24 6q.4.0.85.025.45.025 1.15.075-1.8 1.6-2.8 3.95t-1 4.95q0 4.5 3.15 7.65Q28.5 25.8 33 25.8q2.6.0 4.95-.925T41.9 22.3q.05.6.075.975Q42 23.65 42 24q0 7.5-5.25 12.75T24 42zm0-3q5.45.0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75.0-9.775-4.025T19.2 15q0-1.2.25-2.575t.9-3.125q-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39zm-.2-14.85z"/></svg>
+</span><span class=toggle-light><svg height="30" width="30" viewBox="0 0 48 48" fill="currentColor"><title>Enable light mode</title><path d="M24 31q2.9.0 4.95-2.05T31 24t-2.05-4.95T24 17t-4.95 2.05T17 24t2.05 4.95T24 31zm0 3q-4.15.0-7.075-2.925T14 24t2.925-7.075T24 14t7.075 2.925T34 24t-2.925 7.075T24 34zM3.5 25.5q-.65.0-1.075-.425Q2 24.65 2 24t.425-1.075Q2.85 22.5 3.5 22.5h5q.65.0 1.075.425Q10 23.35 10 24t-.425 1.075T8.5 25.5zm36 0q-.65.0-1.075-.425Q38 24.65 38 24t.425-1.075T39.5 22.5h5q.65.0 1.075.425Q46 23.35 46 24t-.425 1.075-1.075.425zM24 10q-.65.0-1.075-.425Q22.5 9.15 22.5 8.5v-5q0-.65.425-1.075Q23.35 2 24 2t1.075.425T25.5 3.5v5q0 .65-.425 1.075Q24.65 10 24 10zm0 36q-.65.0-1.075-.425T22.5 44.5v-5q0-.65.425-1.075Q23.35 38 24 38t1.075.425.425 1.075v5q0 .65-.425 1.075Q24.65 46 24 46zM12 14.1l-2.85-2.8q-.45-.45-.425-1.075.025-.625.425-1.075.45-.45 1.075-.45t1.075.45L14.1 12q.4.45.4 1.05.0.6-.4 1-.4.45-1.025.45T12 14.1zm24.7 24.75L33.9 36q-.4-.45-.4-1.075t.45-1.025q.4-.45 1-.45t1.05.45l2.85 2.8q.45.45.425 1.075-.025.625-.425 1.075-.45.45-1.075.45t-1.075-.45zM33.9 14.1q-.45-.45-.45-1.05.0-.6.45-1.05l2.8-2.85q.45-.45 1.075-.425.625.025 1.075.425.45.45.45 1.075t-.45 1.075L36 14.1q-.4.4-1.025.4t-1.075-.4zM9.15 38.85q-.45-.45-.45-1.075t.45-1.075L12 33.9q.45-.45 1.05-.45.6.0 1.05.45.45.45.45 1.05.0.6-.45 1.05l-2.8 2.85q-.45.45-1.075.425-.625-.025-1.075-.425zM24 24z"/></svg></span></button></div></div><div class=collapse id=FlexSearchCollapse><div class=flexsearch-container><div class=flexsearch-keymap><li><kbd class=flexsearch-button-cmd-key><svg width="15" height="15" aria-label="Arrow down" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M7.5 3.5v8m3-3-3 3-3-3"/></g></svg></kbd>
+<kbd class=flexsearch-button-cmd-key><svg width="15" height="15" aria-label="Arrow up" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M7.5 11.5v-8m3 3-3-3-3 3"/></g></svg></kbd>
+<span class=flexsearch-key-label>to navigate</span></li><li><kbd class=flexsearch-button-cmd-key><svg width="15" height="15" aria-label="Enter key" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M12 3.53088v3c0 1-1 2-2 2H4m3 3-3-3 3-3"/></g></svg></kbd>
+<span class=flexsearch-key-label>to select</span></li><li><kbd class=flexsearch-button-cmd-key><svg width="15" height="15" aria-label="Escape key" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993.0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016s1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5s-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864.0 1.6425 1.031 1.5443 2.2492h-2.956"/></g></svg></kbd>
+<span class=flexsearch-key-label>to close</span></li></div><form class="flexsearch position-relative flex-grow-1 ms-2 me-2"><div class="d-flex flex-row"><input id=flexsearch class=form-control type=search placeholder=Search aria-label=Search autocomplete=off>
+<button id=hideFlexsearch type=button class="ms-2 btn btn-soft">
+cancel</button></div><div id=suggestions class="shadow rounded-1 d-none"></div></form></div></div></div><div class=container-fluid><div class=layout-spacing><div class="d-md-flex justify-content-between align-items-center"><nav aria-label=breadcrumb class="d-inline-block pb-2 mt-1 mt-sm-0"><ul id=breadcrumbs class="breadcrumb bg-transparent mb-0" itemscope itemtype=https://schema.org/BreadcrumbList><li class="breadcrumb-item text-capitalize active" aria-current=page itemprop=itemListElement itemscope itemtype=https://schema.org/ListItem><a itemprop=item href=/central-set-go/docs/><i class="material-icons size-20 align-text-bottom" itemprop=name>Home</i>
+</a><meta itemprop=position content='1'></li><li class="breadcrumb-item text-capitalize" itemprop=itemListElement itemscope itemtype=https://schema.org/ListItem><a itemprop=item href=/central-set-go/docs/tutorials/><span itemprop=name>Tutorials</span>
+</a><meta itemprop=position content='2'></li><li class="breadcrumb-item text-capitalize active" itemprop=itemListElement itemscope itemtype=https://schema.org/ListItem><span itemprop=name>Applications</span>
+<meta itemprop=position content='3'></li></ul></nav></div><div class="row flex-xl-nowrap"><div class="docs-toc col-xl-3 d-xl-block"><toc><div class="fw-bold text-uppercase mb-2">On this page</div><nav id=toc><ul><li><ul><li><a href=#overview>Overview</a></li><li><a href=#default-application-admin>Default Application: <code>ADMIN</code></a></li><li><a href=#ui-applications-list>UI: Applications List</a><ul><li><a href=#what-you-see>What you see</a></li></ul></li><li><a href=#how-applications-work>How Applications Work</a><ul><li><a href=#relationship-model>Relationship model</a></li></ul></li><li><a href=#application-load-sequence-api-flow>Application Load Sequence (API Flow)</a><ul><li><a href=#sequence>Sequence</a></li></ul></li><li><a href=#api-load-applications>API: Load Applications</a></li><li><a href=#api-load-menus>API: Load Menus</a></li><li><a href=#api-load-table-data-dynamic-crud>API: Load Table Data (Dynamic CRUD)</a></li><li><a href=#extending-the-admin-application>Extending the ADMIN Application</a></li><li><a href=#key-principles>Key Principles</a></li><li><a href=#whats-next>What’s Next</a></li></ul></li></ul></nav></toc></div><div class="docs-toc-mobile d-print-none d-xl-none"><button id=toc-dropdown-btn class="btn-secondary dropdown-toggle" type=button data-bs-toggle=dropdown data-bs-offset=0,0 aria-expanded=false>
+Table of Contents</button><nav id=toc-mobile><ul class=dropdown-menu><li><ul><li><a href=#overview>Overview</a></li><li><a href=#default-application-admin>Default Application: <code>ADMIN</code></a></li><li><a href=#ui-applications-list>UI: Applications List</a><ul><li><a href=#what-you-see>What you see</a></li></ul></li><li><a href=#how-applications-work>How Applications Work</a><ul><li><a href=#relationship-model>Relationship model</a></li></ul></li><li><a href=#application-load-sequence-api-flow>Application Load Sequence (API Flow)</a><ul><li><a href=#sequence>Sequence</a></li></ul></li><li><a href=#api-load-applications>API: Load Applications</a></li><li><a href=#api-load-menus>API: Load Menus</a></li><li><a href=#api-load-table-data-dynamic-crud>API: Load Table Data (Dynamic CRUD)</a></li><li><a href=#extending-the-admin-application>Extending the ADMIN Application</a></li><li><a href=#key-principles>Key Principles</a></li><li><a href=#whats-next>What’s Next</a></li></ul></li></ul></nav></div><div class="docs-content col-12 col-xl-9 mt-0"><div class="mb-0 d-flex"><i class="material-icons title-icon me-2">apps</i><h1 class="content-title mb-0">Applications</h1></div><p class="lead mb-3">Applications define how databases are exposed as admin interfaces in Central Set Go.</p><div id=content class=main-content data-bs-spy=scroll data-bs-root-margin="0px 0px -65%" data-bs-target=#toc-mobile><div data-prismjs-copy data-prismjs-copy-success data-prismjs-copy-error><hr><h2 id=overview>Overview <a href=#overview class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><div class="alert alert-warning d-flex" role=alert><div class="flex-shrink-1 alert-icon"><span class="material-icons size-20 me-2">warning</span></div><div class=w-100><strong>Caution</strong> — Central Set is <strong>production-ready and actively used</strong>, but this documentation is still <strong>under active development</strong>. Large parts of the docs are <strong>auto-generated</strong>, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.</div></div><p>After a successful login, the user is automatically redirected to the <strong>default application</strong> they have access to.</p><p>By default, this application is <strong>ADMIN</strong>.</p><p>An <strong>Application</strong> in Central Set Go (CSGO):</p><ul><li>Represents a <strong>logical admin interface</strong></li><li>Is linked to <strong>one database</strong></li><li>Groups menus and tables</li><li>Defines what data the user can manage</li><li>Drives both <strong>UI rendering</strong> and <strong>API exposure</strong></li></ul><blockquote><p><strong>Applications are not code artifacts.
+They are database-backed configuration objects.</strong></p></blockquote><hr><h2 id=default-application-admin>Default Application: <code>ADMIN</code> <a href=#default-application-admin class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><p>Every CSGO instance ships with a built-in <strong>ADMIN</strong> application.</p><p>The ADMIN app allows you to:</p><ul><li>Manage users and roles</li><li>Define permissions</li><li>Create additional applications</li><li>Configure menus and tables</li><li>Extend itself by adding new tables and menus</li><li>Customize datatables and forms</li><li>Manage access keys and API tokens</li></ul><p>You can treat <strong>ADMIN</strong> as:</p><ul><li>A system control panel</li><li>A bootstrap admin UI</li><li>Or a regular application that you extend over time</li></ul><hr><h2 id=ui-applications-list>UI: Applications List <a href=#ui-applications-list class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><nav><div class="nav nav-tabs" id=nav-tab role=tablist><a class="nav-link active" id=dfebacTab data-bs-toggle=tab data-bs-target=#dfebac type=button role=tab aria-controls=dfebac aria-selected=true>Light</a>
+<a class=nav-link id=ecbfadTab data-bs-toggle=tab data-bs-target=#ecbfad type=button role=tab aria-controls=ecbfad aria-selected=true>Dark</a></div></nav><div class=tab-content id=nav-tab-content><div class="tab-pane fade show active" id=dfebac role=tabpanel aria-labelledby=nav-1><p><img src=/central-set-go/images/screenshots/apps_apps_light.png alt="Applications - Light Mode" width=1920 height=946 loading=lazy></p></div><div class="tab-pane fade" id=ecbfad role=tabpanel aria-labelledby=nav-1><p><img src=/central-set-go/images/screenshots/apps_apps_dark.png alt="Applications - Dark Mode" width=1920 height=947 loading=lazy></p></div></div><h3 id=what-you-see>What you see <a href=#what-you-see class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h3><p>The <strong>Applications</strong> screen displays:</p><ul><li><p>App Name</p></li><li><p>Description</p></li><li><p>Version</p></li><li><p>Database name</p></li><li><p>Associated logo</p></li><li><p>Action buttons:</p><ul><li>Edit</li><li>Delete</li><li>Configure</li><li>Context menu</li></ul></li></ul><p>Each row corresponds to <strong>one application</strong>, backed by a database.</p><hr><h2 id=how-applications-work>How Applications Work <a href=#how-applications-work class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><p>An application is defined by:</p><ul><li><p>A <strong>database connection</strong></p></li><li><p>A set of <strong>menus</strong></p></li><li><p>Each menu contains <strong>tables</strong></p></li><li><p>Tables define:</p><ul><li>Data source</li><li>CRUD behavior</li><li>UI layout</li><li>Forms and widgets</li><li>Permissions</li></ul></li></ul><h3 id=relationship-model>Relationship model <a href=#relationship-model class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h3><div class=prism-codeblock><pre id=d3eff97 class=language->
+  <code>Application
+ └── Menus
+      └── Tables
+           └── CRUD &#43; Forms &#43; UI behavior</code>
+  </pre></div><p>This structure allows you to:</p><ul><li>Expose multiple databases</li><li>Create isolated admin areas</li><li>Reuse the same engine for different domains</li><li>Control visibility per role</li></ul><hr><h2 id=application-load-sequence-api-flow>Application Load Sequence (API Flow) <a href=#application-load-sequence-api-flow class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><p>When a user logs in and lands in the ADMIN app, CSGO executes a <strong>deterministic sequence of API calls</strong>.</p><p>This ensures the UI is <strong>fully driven by configuration</strong>.</p><h3 id=sequence>Sequence <a href=#sequence class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h3><ol><li>Load applications the user has access to</li><li>Load menus for the selected application</li><li>Load table data dynamically</li></ol><hr><h2 id=api-load-applications>API: Load Applications <a href=#api-load-applications class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><nav><div class="nav nav-tabs" id=nav-tab role=tablist><a class="nav-link active" id=fbceadTab data-bs-toggle=tab data-bs-target=#fbcead type=button role=tab aria-controls=fbcead aria-selected=true>UI</a>
+<a class=nav-link id=defbcaTab data-bs-toggle=tab data-bs-target=#defbca type=button role=tab aria-controls=defbca aria-selected=true>API</a></div></nav><div class=tab-content id=nav-tab-content><div class="tab-pane fade show active" id=fbcead role=tabpanel aria-labelledby=nav-1><p><img src=/central-set-go/images/auth/auth_login_light.png alt="Login - Light Mode" width=1224 height=837 loading=lazy></p></div><div class="tab-pane fade" id=defbca role=tabpanel aria-labelledby=nav-1><p><strong>Endpoint</strong></p><div class=prism-codeblock><pre id=b55047f class=language->
+  <code>GET /dyn_api/admin/apps</code>
+  </pre></div><p><strong>Description</strong></p><p>Returns the list of applications accessible to the authenticated user.</p><p><strong>Authorization</strong></p><div class=prism-codeblock><pre id=1a7b8b7 class=language->
+  <code>Authorization: Bearer &lt;JWT_TOKEN&gt;</code>
+  </pre></div><p><strong>Response (simplified)</strong></p><div class="prism-codeblock linenos"><pre id=52be430 class="language-json line-numbers">
+  <code>{
+  &#34;success&#34;: true,
+  &#34;data&#34;: [
+    {
+      &#34;app_id&#34;: 1,
+      &#34;name&#34;: &#34;ADMIN&#34;,
+      &#34;description&#34;: &#34;Admin&#34;,
+      &#34;version&#34;: &#34;1.0.0&#34;,
+      &#34;database&#34;: &#34;ADMIN&#34;
+    }
+  ]
+}</code>
+  </pre></div></div></div><hr><h2 id=api-load-menus>API: Load Menus <a href=#api-load-menus class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><nav><div class="nav nav-tabs" id=nav-tab role=tablist><a class="nav-link active" id=dfaebcTab data-bs-toggle=tab data-bs-target=#dfaebc type=button role=tab aria-controls=dfaebc aria-selected=true>UI</a>
+<a class=nav-link id=fceabdTab data-bs-toggle=tab data-bs-target=#fceabd type=button role=tab aria-controls=fceabd aria-selected=true>API</a></div></nav><div class=tab-content id=nav-tab-content><div class="tab-pane fade show active" id=dfaebc role=tabpanel aria-labelledby=nav-1><p></p></div><div class="tab-pane fade" id=fceabd role=tabpanel aria-labelledby=nav-1><p><strong>Endpoint</strong></p><div class=prism-codeblock><pre id=717d72c class=language->
+  <code>GET /dyn_api/admin/menus</code>
+  </pre></div><p><strong>Description</strong></p><p>Loads menus associated with the currently selected application.</p><p>Menus define navigation structure and grouping.</p><p><strong>Response (simplified)</strong></p><div class="prism-codeblock linenos"><pre id=a299365 class="language-json line-numbers">
+  <code>{
+  &#34;success&#34;: true,
+  &#34;data&#34;: [
+    {
+      &#34;menu_id&#34;: 1,
+      &#34;name&#34;: &#34;Applications&#34;,
+      &#34;icon&#34;: &#34;apps&#34;
+    },
+    {
+      &#34;menu_id&#34;: 2,
+      &#34;name&#34;: &#34;Users&#34;,
+      &#34;icon&#34;: &#34;group&#34;
+    }
+  ]
+}</code>
+  </pre></div></div></div><hr><h2 id=api-load-table-data-dynamic-crud>API: Load Table Data (Dynamic CRUD) <a href=#api-load-table-data-dynamic-crud class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><nav><div class="nav nav-tabs" id=nav-tab role=tablist><a class="nav-link active" id=cdefbaTab data-bs-toggle=tab data-bs-target=#cdefba type=button role=tab aria-controls=cdefba aria-selected=true>UI</a>
+<a class=nav-link id=efacbdTab data-bs-toggle=tab data-bs-target=#efacbd type=button role=tab aria-controls=efacbd aria-selected=true>API</a></div></nav><div class=tab-content id=nav-tab-content><div class="tab-pane fade show active" id=cdefba role=tabpanel aria-labelledby=nav-1><p><img src=/central-set-go/images/screenshots/apps_menus_light.png alt="CRUD - Light Mode" width=465 height=958 loading=lazy></p></div><div class="tab-pane fade" id=efacbd role=tabpanel aria-labelledby=nav-1><p><strong>Endpoint</strong></p><div class=prism-codeblock><pre id=1628ad6 class=language->
+  <code>POST /dyn_api/crud/read</code>
+  </pre></div><p><strong>Description</strong></p><p>Loads table data dynamically based on configuration stored in the ADMIN database.</p><p>This endpoint powers:</p><ul><li>Datatables</li><li>Pagination</li><li>Filtering</li><li>Sorting</li><li>Permissions</li></ul><p><strong>Request (simplified)</strong></p><div class="prism-codeblock linenos"><pre id=16be83c class="language-json line-numbers">
+  <code>{
+  &#34;table&#34;: &#34;apps&#34;,
+  &#34;page&#34;: 1,
+  &#34;limit&#34;: 10
+}</code>
+  </pre></div></div></div><blockquote><p>💡 <strong>The UI does not know schemas upfront.</strong>
+Everything is resolved at runtime from database metadata.</p></blockquote><hr><h2 id=extending-the-admin-application>Extending the ADMIN Application <a href=#extending-the-admin-application class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><p>ADMIN is not special — it follows the same rules as any other app.</p><p>You can extend it by:</p><ul><li><p>Creating new tables in the ADMIN database</p></li><li><p>Associating them with a menu</p></li><li><p>Configuring:</p><ul><li>Column visibility</li><li>Labels (via column comments)</li><li>Form layout</li><li>Field behavior</li><li>Permissions</li></ul></li></ul><p>No frontend rebuild.
+No code generation.</p><hr><h2 id=key-principles>Key Principles <a href=#key-principles class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><ul><li><strong>Database = data model</strong></li><li><strong>Applications define context</strong></li><li><strong>Menus define navigation</strong></li><li><strong>Tables define behavior</strong></li><li><strong>UI and API share the same contract</strong></li></ul><blockquote><p>If it exists in the database, it can exist in the UI.</p></blockquote><hr><h2 id=whats-next>What’s Next <a href=#whats-next class=anchor aria-hidden=true><i class="material-icons align-middle">link</i></a></h2><ul><li>👉 <strong>Menus & Navigation</strong> — how menus are structured</li><li>👉 <strong>Tables & CRUD</strong> — configuring data exposure</li><li>👉 <strong>Forms & UI Behavior</strong> — layout, widgets, validation</li><li>👉 <strong>Security & Permissions</strong> — per-app and per-table access</li><li>👉 <strong>Access Keys & API Tokens</strong> — headless integrations</li></ul></div><div class="gitinfo d-flex flex-wrap justify-content-between align-items-center opacity-85 pt-3"><div id=edit-this-page class=mt-1><a href=https://github.com/realdatadriven/central-set-go/blob/main/content/docs/tutorials/apps.md alt=Applications rel="noopener noreferrer" target=_blank><span class="me-1 align-text-bottom"><svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M16 .396c-8.839.0-16 7.167-16 16 0 7.073 4.584 13.068 10.937 15.183.803.151 1.093-.344 1.093-.772.0-.38-.009-1.385-.015-2.719-4.453.964-5.391-2.151-5.391-2.151-.729-1.844-1.781-2.339-1.781-2.339-1.448-.989.115-.968.115-.968 1.604.109 2.448 1.645 2.448 1.645 1.427 2.448 3.744 1.74 4.661 1.328.14-1.031.557-1.74 1.011-2.135-3.552-.401-7.287-1.776-7.287-7.907.0-1.751.62-3.177 1.645-4.297-.177-.401-.719-2.031.141-4.235.0.0 1.339-.427 4.4 1.641 1.281-.355 2.641-.532 4-.541 1.36.009 2.719.187 4 .541 3.043-2.068 4.381-1.641 4.381-1.641.859 2.204.317 3.833.161 4.235 1.015 1.12 1.635 2.547 1.635 4.297.0 6.145-3.74 7.5-7.296 7.891.556.479 1.077 1.464 1.077 2.959.0 2.14-.02 3.864-.02 4.385.0.416.28.916 1.104.755 6.4-2.093 10.979-8.093 10.979-15.156.0-8.833-7.161-16-16-16z"/></svg>
+</span>Edit this page</a></div><div id=last-modified class=mt-1><p class="mb-0 fw-semibold">Last updated <span id=relativetime data-authdate=2026-01-19T20:10:14-0100 title="19 Jan 2026, 20:10 -01">19 Jan 2026, 20:10 -01
+</span>. <span class="material-icons size-20 align-text-bottom opacity-75">history</span></p></div></div><div class="container d-flex align-items-center justify-content-center"><div id=feedback-widget-emoticon class=mt-4><div id=feedback-cta class="d-flex justify-content-center py-1"><span class="fs-6 align-self-center align-middle ms-2 me-0">Was this page helpful?</span><div class=d-flex><div class="form-emoji d-flex ps-2"><div class=radio-emoji><input type=radio name=feedback-emoticon autocomplete=off value="Very Satisfied" id=radio_0 required>
+<label class="d-flex justify-content-center align-items-center" for=radio_0><svg height="24" viewBox="0 -960 960 960" width="24"><path d="M480-260q68 0 123.5-38.5T684-4e2H276q25 63 80.5 101.5T480-260zM312-520l44-42 42 42 42-42-84-86-86 86 42 42zm250 0 42-42 44 42 42-42-86-86-84 86 42 42zM480-80q-83 0-156-31.5T197-197t-85.5-127T80-480t31.5-156T197-763t127-85.5T480-880t156 31.5T763-763t85.5 127T880-480t-31.5 156T763-197t-127 85.5T480-80zm0-4e2zm0 320q134 0 227-93t93-227-93-227-227-93-227 93-93 227 93 227 227 93z" fill="currentColor"/></svg></label></div><div class=radio-emoji><input type=radio name=feedback-emoticon autocomplete=off value=Satisfied id=radio_1 required>
+<label class="d-flex justify-content-center align-items-center" for=radio_1><svg height="24" viewBox="0 -960 960 960" width="24"><path d="M620-520q25 0 42.5-17.5T680-580t-17.5-42.5T620-640t-42.5 17.5T560-580t17.5 42.5T620-520zm-280 0q25 0 42.5-17.5T4e2-580t-17.5-42.5T340-640t-42.5 17.5T280-580t17.5 42.5T340-520zm140 260q68 0 123.5-38.5T684-4e2h-66q-22 37-58.5 58.5T480-320t-79.5-21.5T342-4e2h-66q25 63 80.5 101.5T480-260zm0 180q-83 0-156-31.5T197-197t-85.5-127T80-480t31.5-156T197-763t127-85.5T480-880t156 31.5T763-763t85.5 127T880-480t-31.5 156T763-197t-127 85.5T480-80zm0-4e2zm0 320q134 0 227-93t93-227-93-227-227-93-227 93-93 227 93 227 227 93z" fill="currentColor"/></svg></label></div><div class=radio-emoji><input type=radio name=feedback-emoticon autocomplete=off value=Dissatisfied id=radio_2 required>
+<label class="d-flex justify-content-center align-items-center" for=radio_2><svg height="24" viewBox="0 -960 960 960" width="24"><path d="M620-520q25 0 42.5-17.5T680-580t-17.5-42.5T620-640t-42.5 17.5T560-580t17.5 42.5T620-520zm-280 0q25 0 42.5-17.5T4e2-580t-17.5-42.5T340-640t-42.5 17.5T280-580t17.5 42.5T340-520zm140 1e2q-68 0-123.5 38.5T276-280h66q22-37 58.5-58.5T480-360t79.5 21.5T618-280h66q-25-63-80.5-101.5T480-420zm0 340q-83 0-156-31.5T197-197t-85.5-127T80-480t31.5-156T197-763t127-85.5T480-880t156 31.5T763-763t85.5 127T880-480t-31.5 156T763-197t-127 85.5T480-80zm0-4e2zm0 320q134 0 227-93t93-227-93-227-227-93-227 93-93 227 93 227 227 93z" fill="currentColor"/></svg></label></div><div class=radio-emoji><input type=radio name=feedback-emoticon autocomplete=off value="Very Dissatisfied" id=radio_3 required>
+<label class="d-flex justify-content-center align-items-center" for=radio_3><svg height="24" viewBox="0 -960 960 960" width="24"><path d="M480-420q-68 0-123.5 38.5T276-280h408q-25-63-80.5-101.5T480-420zm-168-60 44-42 42 42 42-42-42-42 42-44-42-42-42 42-44-42-42 42 42 44-42 42 42 42zm250 0 42-42 44 42 42-42-42-42 42-44-42-42-44 42-42-42-42 42 42 44-42 42 42 42zM480-80q-83 0-156-31.5T197-197t-85.5-127T80-480t31.5-156T197-763t127-85.5T480-880t156 31.5T763-763t85.5 127T880-480t-31.5 156T763-197t-127 85.5T480-80zm0-4e2zm0 320q134 0 227-93t93-227-93-227-227-93-227 93-93 227 93 227 227 93z" fill="currentColor"/></svg></label></div></div></div></div><div id=feedback-emoji-end class="d-flex justify-content-md-start justify-content-sm-center"></div><div id=feedback-send><div id=text-wrapper><textarea id=textarea-emoji cols=55 maxlength=500 rows=3 placeholder="(Optional) Try to be as specific and detailed as possible!" type=text class="feedback-textarea-emoji p-2 mb-2"></textarea></div><div id=feedback-emoji-submit-container class="d-flex justify-content-end"><button type=button id=feedback-emoji-submit-button class="feedback-submit-emoji-btn btn btn-sm btn-primary mt-1 mb-2" role=button type=submit disabled>
+Submit</button></div></div></div></div><script>const emojiTextWrapper=document.getElementById("text-wrapper"),emojiRadios=document.querySelectorAll('input[name="feedback-emoticon"]'),emojiContainer=document.getElementById("feedback-widget-emoticon"),feedbackEmojiCta=document.getElementById("feedback-cta"),feedbackEmojiSubmitContainer=document.getElementById("feedback-emoji-submit-container"),feedbackEmojiSubmitBtn=document.getElementById("feedback-emoji-submit-button");emojiRadios.forEach(e=>{e.addEventListener("change",function(e){const t=e.target.id;emojiContainer.style.borderRadius="8px",feedbackEmojiCta.classList.add("px-4"),emojiTextWrapper.classList.add("is-visible"),feedbackEmojiSubmitBtn.removeAttribute("disabled"),feedbackEmojiSubmitContainer.classList.add("is-visible")})}),feedbackEmojiSubmitBtn.addEventListener("click",e=>{const t=document.getElementById("feedback-emoji-end"),n=document.getElementById("feedback-send"),s=document.querySelector('input[name="feedback-emoticon"]:checked').value,o=document.getElementById("textarea-emoji").value;function i(){feedbackEmojiCta.remove(),n.remove(),t.innerHTML="Thank you for helping to improve CS Docs' documentation!",t.classList.add("is-visible")}try{plausible("Feedback",{callback:i,props:{rating:s,message:o}})}catch(e){console.log(e),feedbackEmojiCta.remove(),n.remove(),t.innerHTML="Sorry! There was an error while attempting to submit your feedback!",t.classList.add("is-visible")}})</script></div><div><hr class=doc-hr><div id=doc-nav class=d-print-none><div class="row flex-xl-nowrap"><div class="col-sm-6 pt-2 doc-next"><a href=/central-set-go/docs/tutorials/auth/><div class="card h-100 my-1"><div class="card-body py-2"><p class="card-title fs-5 fw-semibold lh-base mb-0"><i class="material-icons align-middle">navigate_before</i> Authentication & Access</p><p class="card-text ms-2">User authentication, password …</p></div></div></a></div><div class="col-sm-6 pt-2 doc-prev"><a class=ms-auto href=/central-set-go/docs/tutorials/admin-schema/><div class="card h-100 my-1 text-end"><div class="card-body py-2"><p class="card-title fs-5 fw-semibold lh-base mb-0">Admin Schema (the DNA) <i class="material-icons align-middle">navigate_next</i></p><p class="card-text me-2">How Central Set defines …</p></div></div></a></div></div></div></div></div></div></div></div><footer class="shadow py-3 d-print-none"><div class=container-fluid><div class="row align-items-center"><div class=col><div class="text-sm-start text-center mx-md-2"><p class=mb-0>© 2026 Real Data-Driven. Built with <a href=https://github.com/colinwilson/lotusdocs><strong>Lotus Docs</strong></a></p></div></div></div></div></footer></main></div></div><button onclick=topFunction() id=back-to-top aria-label="Back to Top Button" class="back-to-top fs-5"><svg width="24" height="24"><path d="M12 10.224l-6.3 6.3-1.38-1.372L12 7.472l7.68 7.68-1.38 1.376z" style="fill:#fff"/></svg></button>
+<script>(()=>{var e=document.getElementById("mode");e!==null&&(window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{e.matches?(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")):(localStorage.setItem("theme","light"),document.documentElement.removeAttribute("data-dark-mode"))}),e.addEventListener("click",()=>{document.documentElement.toggleAttribute("data-dark-mode"),localStorage.setItem("theme",document.documentElement.hasAttribute("data-dark-mode")?"dark":"light")}),localStorage.getItem("theme")==="dark"?document.documentElement.setAttribute("data-dark-mode",""):document.documentElement.removeAttribute("data-dark-mode"))})()</script><script src=/central-set-go/docs/js/bootstrap.eac7ee3f6fa791c684e7a51fc2fd50b6f724271b9e39562e4fe8c3942412df3acbfc4045f043d03399dac70091207507.js integrity=sha384-6sfuP2+nkcaE56Ufwv1QtvckJxueOVYuT+jDlCQS3zrL/EBF8EPQM5naxwCRIHUH defer></script><script type=text/javascript src=https://realdatadriven.github.io/central-set-go/docs/js/bundle.min.ca6cf2b16f81c8ae026040ad94b2104f6d60d69be5e59f1ef2f91b6d7f179fb00589a02372f5b6f185bf527775b939bf.js integrity=sha384-ymzysW+ByK4CYECtlLIQT21g1pvl5Z8e8vkbbX8Xn7AFiaAjcvW28YW/Und1uTm/ crossorigin=anonymous defer></script><script type=module>
+    var suggestions = document.getElementById('suggestions');
+    var search = document.getElementById('flexsearch');
+
+    const flexsearchContainer = document.getElementById('FlexSearchCollapse');
+
+    const hideFlexsearchBtn = document.getElementById('hideFlexsearch');
+
+    const configObject = { toggle: false }
+    const flexsearchContainerCollapse = new Collapse(flexsearchContainer, configObject) 
+
+    if (search !== null) {
+        document.addEventListener('keydown', inputFocus);
+        flexsearchContainer.addEventListener('shown.bs.collapse', function () {
+            search.focus();
+        });
+        
+        var topHeader = document.getElementById("top-header");
+        document.addEventListener('click', function(elem) {
+            if (!flexsearchContainer.contains(elem.target) && !topHeader.contains(elem.target))
+                flexsearchContainerCollapse.hide();
+        });
+    }
+
+    hideFlexsearchBtn.addEventListener('click', () =>{
+        flexsearchContainerCollapse.hide()
+    })
+
+    function inputFocus(e) {
+        if (e.ctrlKey && e.key === '/') {
+            e.preventDefault();
+            flexsearchContainerCollapse.toggle();
+        }
+        if (e.key === 'Escape' ) {
+            search.blur();
+            
+            flexsearchContainerCollapse.hide();
+        }
+    };
+
+    document.addEventListener('click', function(event) {
+
+    var isClickInsideElement = suggestions.contains(event.target);
+
+    if (!isClickInsideElement) {
+        suggestions.classList.add('d-none');
+    }
+
+    });
+
+    
+
+
+    document.addEventListener('keydown',suggestionFocus);
+
+    function suggestionFocus(e) {
+    const suggestionsHidden = suggestions.classList.contains('d-none');
+    if (suggestionsHidden) return;
+
+    const focusableSuggestions= [...suggestions.querySelectorAll('a')];
+    if (focusableSuggestions.length === 0) return;
+
+    const index = focusableSuggestions.indexOf(document.activeElement);
+
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const nextIndex = index > 0 ? index - 1 : 0;
+        focusableSuggestions[nextIndex].focus();
+    }
+    else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const nextIndex= index + 1 < focusableSuggestions.length ? index + 1 : index;
+        focusableSuggestions[nextIndex].focus();
+    }
+
+    }
+
+    
+
+
+    (function(){
+
+    var index = new FlexSearch.Document({
+        
+        tokenize: "forward",
+        minlength:  0 ,
+        cache:  100 ,
+        optimize:  true ,
+        document: {
+        id: 'id',
+        store: [
+            "href", "title", "description"
+        ],
+        index: ["title", "description", "content"]
+        }
+    });
+
+
+    
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+
+    
+
+    index.add(
+            {
+                id:  0 ,
+                href: "\/central-set-go\/docs\/",
+                title: "Documentation",
+                description: "Documentation for Central Set (CS), a configuration-driven data platform and Admin UI built in Golang, combining application management, secure APIs, data engineering, and analytics.",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  1 ,
+                href: "\/central-set-go\/docs\/overview\/",
+                title: "Overview",
+                description: "Central Set (CS) is a configuration-driven, database-reflective platform with a built-in admin UI, secure APIs, data pipelines, and analytics.",
+                content: " Welcome to the Central Set (CS) documentation linkThis documentation explains what CS is, how it works, and how to think about it before diving into applications, databases, security, APIs, pipelines, and dashboards.\nIf you want to get running quickly, start here: 👉 Quickstart\nWhat is Central Set? linkCentral Set (CS) is an open-source, configuration-driven data platform built with Golang.\nAt its core, CS provides a built-in admin application that turns your existing database into:\nA fully functional Admin UI UI A consistent, secure API layer A foundation for data pipelines and analytics CS does not generate schemas and does not hide or abstract your data model.\nInstead, it treats the database itself as the source of truth.\nYour tables are the data model — and CS reflects them faithfully into UI, APIs, pipelines, and analytics, with configuration defining behavior rather than structure.\nDatabase as the Data Model linkIn CS, the database schema is the canonical model.\nWhen a database is connected:\nTables are discovered directly from the database Each table becomes manageable through the admin UI Data can be browsed, created, updated, and deleted APIs and UI share the exact same data contract There is no duplication of models, DTOs, or schemas.\nIf it exists in the database, CS can manage it.\nBuilt-In Admin UI (Auto-Generated, Yet Fully Customizable) linkCS ships with a built-in admin application — no UI builders, no code generation, no separate frontend project.\nAutomatic UI generation linkFor every discovered table, CS automatically provides:\nData tables for browsing records CRUD operations (create, read, update, delete) Auto-generated forms for create and edit UI generation is schema-driven:\nColumn comments are used as human-friendly labels Column names remain stable field identifiers behind the scenes Data types drive widgets, formatting, and validation Foreign keys define relations, selectors, and lookups This guarantees that:\nThe UI always matches the real schema APIs and UI never drift apart Schema refactors remain predictable and safe Admin Configuration Model (Apps → Menus → Tables) linkCS uses its own admin database to define how your data is presented and managed.\nCore admin concepts include:\nApps – logical applications or domains Menus – navigation and grouping Tables – database tables exposed in the UI These relationships:\nApps → Menus → Tables Define how CRUD interfaces are generated for your database.\nThrough the admin UI you can configure:\nWhich tables are exposed Menu structure and navigation Table views, filters, and ordering Form layouts (tabs, steps, sections, subforms) Relationship behavior (inline edits, selectors, popups) Permissions and access rules All configuration is:\nStored in the admin database Managed through the same CS UI Applied instantly, without redeploys Multi-Database Support (via .env) linkCS supports multiple database engines out of the box.\nThe application database is configured using a simple .env file:\nDB_DRIVER=postgres DB_DSN=postgres://user:password@host:5432/appdb Key points link The driver and DSN fully define the application database Any database supported by sqlx can be used Switching databases requires no code changes Different apps can point to different databases Commonly used engines link PostgreSQL SQLite MySQL / MariaDB SQL Server Any SQL database supported by sqlx drivers This makes CS suitable for:\nLocal development Embedded deployments Internal tools SaaS and multi-tenant platforms Secure API Access (Keys \u0026 Tokens) linkEverything in CS is API-first.\nThe admin UI is just another API consumer Access keys and tokens can be generated for users and services Permissions are enforced via role-based access control (RBAC) External systems interact safely with the same APIs This enables:\nAutomation and scripting CI/CD integrations Service-to-service communication Headless usage of CS as a backend Data Pipelines with ETLX linkCS embeds ETLX as its data engineering engine.\nWith ETLX you can:\nDefine metadata-driven pipelines Visualize pipelines as workflows Execute them manually, via API, or on a schedule Capture execution logs, metadata, and results Pipelines are managed through the same admin UI and governed by the same security and permission model.\nAnalytics, Notebooks \u0026 Dashboards linkCS also includes tools for data exploration and analytics:\nBuilt-in SQL notebooks for exploration Configuration-driven dashboards (Markdown-based) DuckDB (including WASM) for analytical workloads Arrow Flight for sharing datasets with external tools This connects data engineering outputs directly to analysis and consumption.\nHow CS Is Different linkCS is not:\nA CRUD code generator A schema designer A low-code UI builder A collection of loosely coupled tools CS is:\nA database-reflective admin platform A configuration-driven control plane An API-first backend with secure tokens A data engineering platform powered by ETLX An analytics foundation built on DuckDB The database schema is the source of truth. Configuration defines behavior — not structure.\nWho Is CS For? linkCS is designed for:\nTeams building internal tools and Admin UIs SaaS platforms needing secure, multi-database management Data engineers wanting pipelines, governance, and UI in one place Platform teams tired of stitching admin tools, APIs, and ETL together Where to Go Next link 👉 Quickstart — run CS locally 👉 Core Concepts 👉 Admin \u0026 UI 👉 Security \u0026 API Access 👉 ETLX \u0026 Pipelines 👉 Dashboards \u0026 Analytics CS is open source and evolving.\nIf you believe the database should be the source of truth — and that admin, APIs, data pipelines, and analytics should all align around it — you’re in the right place.\n"
+            }
+        );
+    index.add(
+            {
+                id:  2 ,
+                href: "\/central-set-go\/docs\/quickstart\/",
+                title: "Quickstart",
+                description: "Get Central Set (CS) running in minutes with a connected database admin UI and optional ETLX support.",
+                content: "🚀 Quickstart linkThis guide will help you run Central Set (CS) locally in minutes — initialize the admin database, access the admin UI, and optionally set up the ETLX subsystem.\n✅ Requirements linkMinimum link Linux, macOS, or Windows A SQL database engine (SQLite, PostgreSQL, MySQL, etc.) CS treats the database itself as the data model Optional (for ETLX / ODBC features) link unixODBC (Linux/macOS) for ODBC-based ETL sources 🐙 Installation linkYou can run CS in three different ways:\nPrecompiled binary (recommended) Build from source Docker Choose the option that best fits your workflow.\n▶️ Option 1: Download a Precompiled Binary (Recommended) linkDownload the latest CS release for your platform:\n👉 https://github.com/realdatadriven/central-set-go/releases\nMake it executable (Linux/macOS):\nchmod +x central-set Run it:\n./central-set --help 🛠️ Option 2: Build from Source (Git Clone) linkIf you want to build CS yourself:\nRequirements link Go ≥ 1.21 git Clone and build link git clone https://github.com/realdatadriven/central-set-go.git cd central-set-go go build -o central-set ./cmd/api Run it:\n./central-set --help This produces the same binary as the official releases.\n🐳 Option 3: Run with Docker linkCS can be run entirely via Docker.\nBuild the image link docker build -t central-set-go:latest . Run CS link docker run --rm -it \\ -p 4444:4444 \\ -v $(pwd)/database:/app/database \\ central-set-go:latest To initialize the admin database:\ndocker run --rm -it \\ -v $(pwd)/database:/app/database \\ central-set-go:latest --init 💡 Mounting the database/ directory ensures your admin DB persists between runs.\n🗄️ Initialize the Admin Database linkBefore first use, initialize the admin database:\n./central-set --init This will:\nCreate the internal admin database Create default configuration tables (apps, menus, tables, etc.) for the admin ui Create a default user Print credentials: Username: root Password: 1234 ▶️ Start CS link ./central-set CS will start a web server and expose the admin UI.\n🖥️ Open the Admin UI link👉 http://localhost:4444\nLogin using:\nUsername: root Password: 1234 🧬 Optional: Initialize ETLX Support linkTo enable ETLX pipelines, notebooks, and SQL tools, initialize an additional app database:\n./central-set --init --dbname ETLX This creates an ETLX-powered app that integrates with:\nPipeline execution Observability Dashboards ⚙️ Configure with .env linkCS ships with a sample environment file:\ncp dot-env-example.txt .env Edit .env to configure:\nDatabase driver \u0026 DSN HTTP port Authentication \u0026 security ETLX options Example link # Admin database DB_DRIVER_NAME=sqlite3 DB_DSN=database/ADMIN.db # HTTP server HTTP_PORT=4444 🧠 Any database supported by sqlx can be used by simply changing the driver and DSN.\n🧩 What Just Happened linkCS has now:\nInitialized its admin control database\nReflected database tables into:\nAuto-generated data tables CRUD forms APIs Enabled RBAC at table level\nExposed everything through a secure, API-first backend\nOptionally enabled ETLX-powered pipelines and analytics\nYou can now:\nManage applications, menus, and tables Customize UI layouts and forms Generate API keys and tokens Schedule ETL jobs Build dashboards and notebooks 🧠 Next Steps link 👉 Admin \u0026 UI — How Apps → Menus → Tables define the UI 👉 Security \u0026 API Access — Users, roles, access keys 👉 ETLX \u0026 Pipelines — Data workflows and scheduling 👉 Dashboards \u0026 Analytics — DuckDB-powered insights CS is MIT-licensed, open source, and designed to make the database the single source of truth.\nIf you believe admin UIs, APIs, pipelines, and analytics should all align around the schema — welcome aboard 🚀\n"
+            }
+        );
+    index.add(
+            {
+                id:  3 ,
+                href: "\/central-set-go\/docs\/tutorials\/",
+                title: "Tutorials",
+                description: "Tutorials ...",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  4 ,
+                href: "\/central-set-go\/docs\/contributing\/",
+                title: "Contributing",
+                description: "How to contribute to Lotus Labs.",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  5 ,
+                href: "\/central-set-go\/docs\/contributing\/how-to-contribute\/",
+                title: "How to Contribute",
+                description: "Contribute to code, improve documentation, help others, submit to showcase, and contribute financially.",
+                content: "Contribute to code linkCreate a Pull Request link Follow the GitHub flow. Follow the Conventional Commits Specification Improve documentation link Follow the GitHub flow. Follow the Conventional Commits Specification Create an issue link Bug report Feature request Help others linkETLX Discussions is the place to get help and help others with ETLX.\nSubmit to showcase linkShare what you’ve built with us.\nContribute financially linkHelp support the team developing ETLX by becoming a financial contributor.\n"
+            }
+        );
+    index.add(
+            {
+                id:  6 ,
+                href: "\/central-set-go\/docs\/contributing\/code-of-conduct\/",
+                title: "Code of Conduct",
+                description: "Contributor Covenant Code of Conduct.",
+                content: "Our Pledge linkWe as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, color, religion, or sexual identity and orientation.\nWe pledge to act and interact in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.\nOur Standards linkExamples of behaviour that contributes to a positive environment for our community include:\nDemonstrating empathy and kindness toward other people Being respectful of differing opinions, viewpoints, and experiences Giving and gracefully accepting constructive feedback Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience Focusing on what is best not just for us as individuals, but for the overall community Examples of unacceptable behaviour include:\nThe use of sexualized language or imagery, and sexual attention or advances of any kind Trolling, insulting or derogatory comments, and personal or political attacks Public or private harassment Publishing others’ private information, such as a physical or email address, without their explicit permission Other conduct which could reasonably be considered inappropriate in a professional setting Enforcement Responsibilities linkCommunity leaders are responsible for clarifying and enforcing our standards of acceptable behaviour and will take appropriate and fair corrective action in response to any behaviour that they deem inappropriate, threatening, offensive, or harmful.\nCommunity leaders have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct, and will communicate reasons for moderation decisions when appropriate.\nScope linkThis Code of Conduct applies within all community spaces, and also applies when an individual is officially representing the community in public spaces. Examples of representing our community include using an official e-mail address, posting via an official social media account, or acting as an appointed representative at an online or offline event.\nEnforcement linkInstances of abusive, harassing, or otherwise unacceptable behaviour may be reported by contacting the project team at realdatadriven@gmail.com. All complaints will be reviewed and investigated promptly and fairly.\nAll community leaders are obligated to respect the privacy and security of the reporter of any incident.\nEnforcement Guidelines linkCommunity leaders will follow these Community Impact Guidelines in determining the consequences for any action they deem in violation of this Code of Conduct:\n1. Correction linkCommunity Impact: Use of inappropriate language or other behaviour deemed unprofessional or unwelcome in the community.\nConsequence: A private, written warning from community leaders, providing clarity around the nature of the violation and an explanation of why the behaviour was inappropriate. A public apology may be requested.\n2. Warning linkCommunity Impact: A violation through a single incident or series of actions.\nConsequence: A warning with consequences for continued behaviour. No interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, for a specified period of time. This includes avoiding interactions in community spaces as well as external channels like social media. Violating these terms may lead to a temporary or permanent ban.\n3. Temporary Ban linkCommunity Impact: A serious violation of community standards, including sustained inappropriate behaviour.\nConsequence: A temporary ban from any sort of interaction or public communication with the community for a specified period of time. No public or private interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, is allowed during this period. Violating these terms may lead to a permanent ban.\n4. Permanent Ban linkCommunity Impact: Demonstrating a pattern of violation of community standards, including sustained inappropriate behaviour, harassment of an individual, or aggression toward or disparagement of classes of individuals.\nConsequence: A permanent ban from any sort of public interaction within the community.\nAttribution linkThis Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.\nCommunity Impact Guidelines were inspired by Mozilla’s code of conduct enforcement ladder.\nFor answers to common questions about this code of conduct, see the FAQ at https://www.contributor-covenant.org/faq. Translations are available at https://www.contributor-covenant.org/translations.\n"
+            }
+        );
+    index.add(
+            {
+                id:  7 ,
+                href: "\/central-set-go\/docs\/help\/",
+                title: "Help",
+                description: "Help using the ETLX.",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  8 ,
+                href: "\/central-set-go\/docs\/help\/troubleshooting\/",
+                title: "Troubleshooting",
+                description: "Solutions to common problems.",
+                content: " warning Caution - This documentation is in progress Troubleshooting linkThis section provides solutions to common issues you may encounter while using ETLX.\nBecause ETLX is declarative, SQL-first, and configuration-driven, most problems are not runtime crashes but execution decisions: blocks not running, steps being skipped, or conditions preventing execution.\nImportant mental model:\nIf ETLX executed anything, it was logged.\nIf it did nothing, the reason is almost always visible in logs or terminal output.\nIf you don’t find a solution here, please open an issue or start a discussion.\nCommon Issues and Solutions linkIssue 1: You execute a pipeline, but nothing happens linkSymptoms\nThe command finishes immediately No errors are shown No data is created or modified Possible Causes \u0026 Solutions\n1️⃣ All blocks or steps are inactive linkETLX only executes blocks and steps marked as active: true.\nIf active is missing → it is considered active by default If active: false → the block (and all children) are skipped Check\nactive: true If a parent block is inactive, all nested blocks are ignored.\n2️⃣ The pipeline does not match the execution mode linkSome blocks require a specific runs_as mode (e.g. ETL, QUERY_DOC, EXPORTS, SCRIPTS).\nIf you run:\netlx --config pipeline.md But the top-level block has:\nruns_as: ETL Then ETLX may skip execution depending on flags and configuration.\n✔ Ensure the runs_as value matches your intent and the execution context.\n3️⃣ No executable SQL was defined linkETLX executes explicit SQL references such as:\nload_sql query_sql export_sql script_sql If a step only contains metadata and no executable SQL, it will be skipped by design.\nThis is intentional — metadata alone is not execution.\n4️⃣ Conditions prevented execution linkSome steps may include conditional execution (e.g. validations or _condition).\nIf a condition evaluates to false, the step will not run.\n✔ Check validation rules and condition SQL. ✔ The evaluation result is logged.\nIssue 2: You can’t find the logs for debugging linkSymptoms\nNo visible logs in the terminal You expect SQL-level output but see nothing How logging works in ETLX (important) link✔ Everything is logged ✔ Logs are generated for:\nExecution steps SQL execution Errors Validation results Skipped steps and reasons If logs are not explicitly configured to be stored somewhere, ETLX will:\n👉 Save them to the operating system’s default temporary directory\nThis guarantees logs always exist, even if you did not define a logging sink.\n1️⃣ Default logging behavior linkDepending on configuration, logs may be:\nPrinted to the terminal (stdout) Stored in the OS temp directory Written to files Persisted in a database Exported as structured artifacts If you did not configure a destination, check:\nThe terminal output where ETLX was executed The OS temporary folder 2️⃣ The terminal output matters linkETLX is explicit by design.\nThe terminal where execution happens often tells you in in debugg mode ETLX_DEBUG_QUERY=true:\nWhich blocks were detected Which steps were skipped Why something didn’t run Which SQL failed 👉 Always read the terminal output first.\n3️⃣ Use EXPORTS for observability linkETLX encourages observable pipelines.\nYou can define an EXPORTS block to generate:\nExecution summaries Logs in tabular form Validation results Data quality reports Audit trails Logs are not only runtime artifacts — they can be persisted, queried, and audited like any other dataset.\nIssue 3: A step is silently skipped linkSymptoms\nSome steps run, others don’t No errors are raised Possible Causes\nactive: false on the step Parent block inactive Validation rule failed Condition evaluated to false Tip\nThink of ETLX as a declarative execution graph:\nIf the configuration says “don’t run”, ETLX won’t — and it will log why.\nIssue 4: SQL runs fine in my database, but fails in ETLX linkSymptoms\nSQL works in psql / mysql / SSMS Fails or behaves differently in ETLX Possible Causes\n1️⃣ Different execution engine linkETLX may execute SQL via:\nDuckDB Another attached engine Some SQL syntax, functions, or data types are engine-specific.\n✔ Verify:\nSQL dialect Extensions Function availability 2️⃣ Missing ATTACH or extension linkIf your SQL references external data:\nFROM SRC.my_table Make sure the source is attached:\nbefore_sql: - ATTACH 'postgres:@PG_DSN' AS SRC (TYPE POSTGRES) If it’s not attached, ETLX cannot resolve it — and this will be logged.\nIssue 5: Data is duplicated or partially loaded linkSymptoms\nRe-running a pipeline duplicates data Unexpected extra rows Explanation\nETLX does not assume idempotency by default.\nYou must explicitly define:\nValidation rules Conditional execution Cleanup logic Best Practices\nUse load_validation Use date-based or watermark checks Fail fast if data already exists Issue 6: Exports or templates generate empty output linkSymptoms\nExport file exists but is empty Template renders without content Possible Causes\ndata_sql returned no rows Template logic does not match the data structure You are iterating over a key that does not exist Tip\nETLX templates can consume any data, including the parsed configuration itself (.conf).\nIf something exists in the config, it can be exported.\nIssue 7: I expected documentation or governance artifacts, but nothing was generated linkExplanation\nETLX only generates artifacts that are explicitly declared.\nDocumentation, data dictionaries, and audits are pipeline outputs, not side effects.\n✔ Ensure you have an EXPORTS block that:\nReferences metadata Uses a text or HTML template Targets a file or destination General Debugging Tips link Read the terminal output Assume logs exist — find where they are stored Start simple: one block, one step Verify active flags Check execution order Inspect parsed configuration via exports Prefer explicit behavior over assumptions Still stuck? linkIf the issue persists:\nOpen an issue on GitHub 👉 https://github.com/realdatadriven/etlx/issues\nInclude:\nMinimal pipeline example Expected vs actual behavior Execution engine and version Relevant logs or terminal output ETLX favors transparency and clarity — most issues can be understood by inspecting configuration, logs, and execution output.\n"
+            }
+        );
+    index.add(
+            {
+                id:  9 ,
+                href: "\/central-set-go\/docs\/help\/faqs\/",
+                title: "FAQ",
+                description: "Answers to frequently asked questions.",
+                content: "General Questions linkWhat is ETLX? linkETLX is an open-source, SQL-first data workflow engine and an evolving open specification for describing complete data workflows as executable documentation.\nETLX lets you define ETL, analytics, reporting, exports, etc using Markdown + YAML + SQL, where the pipeline itself becomes the documentation, governance artifact, and execution plan.\nWhat problem does ETLX solve? linkETLX addresses common problems in modern data workflows:\nHidden logic spread across code, SQL, and orchestration tools Poor documentation and weak data governance Tight coupling between pipelines and execution engines Difficult auditing, reproducibility, and compliance ETLX makes all logic explicit, self-documenting, and auditable by design.\nWho is ETLX for? linkETLX is designed for:\nData engineers building ETL / ELT pipelines Analytics engineers working SQL-first Data scientists needing reproducible / automated data workflows Data analysts creating reports and dashboards Platform and data architects Governance, compliance, and data quality teams Organizations that value transparency and reproducibility If you believe SQL should be the transformation language and documentation should not be an afterthought, ETLX is for you.\nHow do I get started? linkStart with the documentation:\n👉 Getting Started \u0026 Concepts https://realdatadriven.github.io/etlxdocs\nYou can:\nRun ETLX via the CLI Embed it as a Go library Start with a single Markdown file and grow from there Technical Questions linkWhat technologies does ETLX use? linkETLX is built primarily in Go and is:\nSQL-first Markdown-driven DBMS Engine-agnostic It is powered by DuckDB for in-process analytics, but also supports:\nPostgreSQL SQLite MySQL SQL Server ODBC-compatible databases ETLX does not introduce a proprietary DSL.\nIs ETLX tied to DuckDB? linkNo.\nDuckDB is the default and recommended engine due to its:\nIn-process execution Multi-source querying Performance However, ETLX is designed to support multiple SQL engines and execution backends. DuckDB is a strength — not a lock-in.\nIs ETLX just a runtime? linkNo.\nETLX is:\nA runtime A configuration model An specification The same configuration can be used to:\nExecute workflows Generate documentation Produce governance artifacts like data dictionaries, data lineage, data quality rules, reports, … How does ETLX handle documentation and governance? linkETLX parses Markdown into a structured model (map[string]any in Go), which includes:\nDataset metadata Column-level definitions Ownership and lineage Validation rules Execution semantics This enables automatic generation of:\nData dictionaries Governance documentation Audit reports Quality checks Without duplicating logic.\nHow can I contribute? linkETLX is community-driven.\nYou can contribute by:\nImproving documentation Adding examples Submitting bug reports Proposing specification improvements Contributing code 👉 Contribution Guide https://realdatadriven.github.io/etlxdocs/docs/contributing/\nWhere is the source code? linkThe source code is hosted on GitHub:\n👉 https://github.com/realdatadriven/etlx\nSupport Questions linkHow can I get help? linkYou can get support by:\nReading the documentation Opening GitHub issues Participating in discussions The community is encouraged to help shape ETLX’s evolution.\nAre there tutorials or examples? linkYes.\nThe documentation includes:\nQuickstart guides Core concepts Advanced examples Real-world patterns 👉 https://realdatadriven.github.io/etlxdocs\nHow do I report a bug? linkPlease open an issue on GitHub:\n👉 https://github.com/realdatadriven/etlx/issues\nInclude:\nA minimal example The ETLX version Expected vs actual behavior Licensing Questions linkWhat license does ETLX use? linkETLX is licensed under the Apache License 2.0.\nThis allows:\nCommercial use Modification Distribution With proper attribution.\nCan ETLX be used commercially? linkYes.\nETLX is explicitly designed to be usable in commercial and enterprise environments.\nHow should ETLX be attributed? linkPlease reference the project as:\nETLX — https://github.com/realdatadriven/etlx by RealDataDriven\nFuture \u0026 Roadmap Questions linkIs ETLX stable? linkETLX is actively developed.\nThe core ideas are stable, while the specification is evolving with community feedback.\nAre there upcoming features? linkPlanned and ongoing work includes:\nExpanded open specification More advanced examples Additional export and governance templates Improved observability and validation primitives How can I suggest features? linkFeature suggestions are welcome.\nYou can:\nOpen a GitHub issue Start a discussion Propose changes to the specification Will ETLX receive regular updates? linkYes.\nETLX follows an incremental, transparent development approach. Changes and improvements are tracked openly in GitHub.\n"
+            }
+        );
+    index.add(
+            {
+                id:  10 ,
+                href: "\/central-set-go\/docs\/tutorials\/auth\/",
+                title: "Authentication \u0026 Access",
+                description: "User authentication, password management, and API access in Central Set Go",
+                content: "🔐 Authentication \u0026 Access link warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. Central Set Go (CSGO) provides a unified authentication system used consistently across:\nThe Admin UI The REST API External integrations and automation This section documents each authentication-related feature with:\nThe UI screen The user workflow The exact API call backing that screen 🧠 The Admin UI is just another API client.\nEverything you can do in the UI can be done programmatically.\nLogin linkThe login process authenticates a user and returns a JWT token used for all subsequent API requests.\nUI API Login Screen linkThe login screen is the entry point to CSGO.\nUsers provide their username and password Language and theme (light/dark) can be selected Optionally supports “Remember me” Light mode\nDark mode\nOnce authenticated, the user is redirected to the main admin interface and the token is stored client-side.\nLogin API linkEndpoint\nPOST /dyn_api/login/login Authenticates a user and returns a JWT token.\nThis endpoint:\nDoes not require authentication Is the entry point for all user sessions Headers link Content-Type: application/json Request Body link {\r\"lang\": \"pt\",\r\"data\": {\r\"username\": \"root\",\r\"password\": \"1234\"\r}\r} Parameters\nField Description lang Language code (pt, en, es, …) data.username User login name data.password User password (encrypted in transit) Response link {\r\"success\": true,\r\"token\": \"\",\r\"user\": {\r\"user_id\": 1,\r\"username\": \"root\",\r\"first_name\": \"Super\",\r\"last_name\": \"Admin\",\r\"email\": \"root@domain.com\",\r\"role_id\": 1,\r\"lang_id\": 1\r}\r} The returned token must be sent in all subsequent requests:\nAuthorization: Bearer Change Password linkUsers can change their own password from the UI or via the API.\nUI API Change Password Screen linkThe Change Password screen allows a logged-in user to:\nProvide the current password Set a new password Confirm the new password This action immediately invalidates previous credentials and updates the stored password hash.\n🔒 Password changes always require the current password.\nChange Password API linkEndpoint\nPOST /dyn_api/login/alter_password Headers link Content-Type: application/json\rAuthorization: Bearer Request Body link {\r\"lang\": \"en\",\r\"data\": {\r\"old_password\": \"1234\",\r\"new_password\": \"new_secure_password\"\r}\r} Parameters\nField Description old_password Current password new_password New password Response link {\r\"success\": true,\r\"message\": \"Password updated successfully\"\r} API Access \u0026 Tokens linkCSGO uses JWT-based authentication for all protected endpoints.\nTokens are issued at login\nTokens encode:\nUser ID Username Role assignments Permissions Token expiration is configurable\nUsing the Token linkAll authenticated requests must include:\nAuthorization: Bearer Security Model link UI and API share the same RBAC rules Permissions are enforced server-side Tokens cannot bypass UI restrictions LDAP Authentication (Optional) linkCentral Set Go supports direct authentication against an LDAP directory instead of the internal users table.\nWhen LDAP authentication is enabled:\nThe Login UI remains exactly the same The Login API endpoint remains exactly the same Credentials are validated against LDAP User records are resolved dynamically, not stored locally Roles and permissions are still managed inside CSGO 🔁 UI and API do not change — only the authentication backend does.\nHow LDAP Authentication Works link A user submits credentials via:\nLogin UI or POST /dyn_api/login/login CSGO validates credentials against the configured LDAP server\nIf authentication succeeds:\nA JWT token is issued The user session behaves like a normal CSGO user Authorization (roles, permissions) is still enforced by CSGO\nEnabling LDAP Authentication linkLDAP authentication is enabled entirely via environment variables.\n.env Configuration link # Enable / Disable LDAP authentication\rUSE_LDAP_AUTH=false\r# LDAP connection\rLDAP_URL=ldap://localhost:1389\rLDAP_BIND_USER=cn=admin,dc=example,dc=com\rLDAP_PASSWORD=admin\rLDAP_BASE_DN=dc=example,dc=com\r# TLS / certificate behavior\rLDAP_SKIP_VERIFY_CERT=true\r# User lookup filter\rLDAP_SEARCHREQ_FILTER=\"(|(uid=%[1]s)(cn=%[1]s)(mail=%[1]s))\" Key Variables Explained link Variable Description USE_LDAP_AUTH Enables LDAP authentication when set to true LDAP_URL LDAP server URL LDAP_BIND_USER Bind DN used for authentication LDAP_PASSWORD Password for the bind user LDAP_BASE_DN Base DN for user searches LDAP_SKIP_VERIFY_CERT Skip TLS certificate verification LDAP_SEARCHREQ_FILTER User search filter (supports username, CN, email) Login Flow with LDAP Enabled link UI API Login UI (Unchanged) linkThe login screen remains exactly the same:\nUsername Password Language Theme The user does not need to know whether authentication is backed by:\nLocal users table LDAP directory Login API (Unchanged) linkEndpoint\nPOST /dyn_api/login/login Request Body\n{\r\"lang\": \"en\",\r\"data\": {\r\"username\": \"jdoe\",\r\"password\": \"secret\"\r}\r} CSGO will:\nResolve jdoe via the configured LDAP filter Bind and authenticate against LDAP Issue a JWT token on success Authorization with LDAP Users linkLDAP handles authentication only.\nCSGO remains responsible for:\nRoles Permissions App / menu / table access API authorization This allows you to:\nCentralize identity in LDAP\nKeep fine-grained access control inside CSGO\nUse the same RBAC model for:\nLocal users LDAP users Service tokens Tested LDAP Setup linkLDAP authentication has been tested using:\nLDAP Server osixia/openldap:1.5.0\nLDAP Admin UI osixia/phpldapadmin:0.9.0\nBoth managed via Docker.\nThis setup is suitable for:\nLocal development Testing Integration with enterprise LDAP-compatible directories Summary linkCSGO authentication supports:\n✅ Local users (database-backed) ✅ LDAP-backed authentication ✅ Unified UI and API login flow ✅ JWT-based sessions ✅ Centralized authorization 🔧 Switch authentication backends without changing your UI or API clients.\nNext link👉 Security \u0026 Permissions Learn how roles, permissions, and table-level access control apply to both local and LDAP-authenticated users.\n"
+            }
+        );
+    index.add(
+            {
+                id:  11 ,
+                href: "\/central-set-go\/docs\/tutorials\/apps\/",
+                title: "Applications",
+                description: "Applications define how databases are exposed as admin interfaces in Central Set Go.",
+                content: " Overview link warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. After a successful login, the user is automatically redirected to the default application they have access to.\nBy default, this application is ADMIN.\nAn Application in Central Set Go (CSGO):\nRepresents a logical admin interface Is linked to one database Groups menus and tables Defines what data the user can manage Drives both UI rendering and API exposure Applications are not code artifacts. They are database-backed configuration objects.\nDefault Application: ADMIN linkEvery CSGO instance ships with a built-in ADMIN application.\nThe ADMIN app allows you to:\nManage users and roles Define permissions Create additional applications Configure menus and tables Extend itself by adding new tables and menus Customize datatables and forms Manage access keys and API tokens You can treat ADMIN as:\nA system control panel A bootstrap admin UI Or a regular application that you extend over time UI: Applications List link Light Dark What you see linkThe Applications screen displays:\nApp Name\nDescription\nVersion\nDatabase name\nAssociated logo\nAction buttons:\nEdit Delete Configure Context menu Each row corresponds to one application, backed by a database.\nHow Applications Work linkAn application is defined by:\nA database connection\nA set of menus\nEach menu contains tables\nTables define:\nData source CRUD behavior UI layout Forms and widgets Permissions Relationship model link Application\r└── Menus\r└── Tables\r└── CRUD + Forms + UI behavior This structure allows you to:\nExpose multiple databases Create isolated admin areas Reuse the same engine for different domains Control visibility per role Application Load Sequence (API Flow) linkWhen a user logs in and lands in the ADMIN app, CSGO executes a deterministic sequence of API calls.\nThis ensures the UI is fully driven by configuration.\nSequence link Load applications the user has access to Load menus for the selected application Load table data dynamically API: Load Applications link UI API Endpoint\nGET /dyn_api/admin/apps Description\nReturns the list of applications accessible to the authenticated user.\nAuthorization\nAuthorization: Bearer Response (simplified)\n{\r\"success\": true,\r\"data\": [\r{\r\"app_id\": 1,\r\"name\": \"ADMIN\",\r\"description\": \"Admin\",\r\"version\": \"1.0.0\",\r\"database\": \"ADMIN\"\r}\r]\r} API: Load Menus link UI API Endpoint\nGET /dyn_api/admin/menus Description\nLoads menus associated with the currently selected application.\nMenus define navigation structure and grouping.\nResponse (simplified)\n{\r\"success\": true,\r\"data\": [\r{\r\"menu_id\": 1,\r\"name\": \"Applications\",\r\"icon\": \"apps\"\r},\r{\r\"menu_id\": 2,\r\"name\": \"Users\",\r\"icon\": \"group\"\r}\r]\r} API: Load Table Data (Dynamic CRUD) link UI API Endpoint\nPOST /dyn_api/crud/read Description\nLoads table data dynamically based on configuration stored in the ADMIN database.\nThis endpoint powers:\nDatatables Pagination Filtering Sorting Permissions Request (simplified)\n{\r\"table\": \"apps\",\r\"page\": 1,\r\"limit\": 10\r} 💡 The UI does not know schemas upfront. Everything is resolved at runtime from database metadata.\nExtending the ADMIN Application linkADMIN is not special — it follows the same rules as any other app.\nYou can extend it by:\nCreating new tables in the ADMIN database\nAssociating them with a menu\nConfiguring:\nColumn visibility Labels (via column comments) Form layout Field behavior Permissions No frontend rebuild. No code generation.\nKey Principles link Database = data model Applications define context Menus define navigation Tables define behavior UI and API share the same contract If it exists in the database, it can exist in the UI.\nWhat’s Next link 👉 Menus \u0026 Navigation — how menus are structured 👉 Tables \u0026 CRUD — configuring data exposure 👉 Forms \u0026 UI Behavior — layout, widgets, validation 👉 Security \u0026 Permissions — per-app and per-table access 👉 Access Keys \u0026 API Tokens — headless integrations "
+            }
+        );
+    index.add(
+            {
+                id:  12 ,
+                href: "\/central-set-go\/docs\/tutorials\/admin-schema\/",
+                title: "Admin Schema (the DNA)",
+                description: "How Central Set defines applications, UI, permissions, and automation using database metadata.",
+                content: "Overview link warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. The ADMIN schema is the DNA of Central Set.\nEverything you see in the UI — applications, menus, tables, forms, permissions, and even automation — is defined as data stored in the ADMIN database.\nThere is no hardcoded admin UI. There are no per-app APIs. There are no generated frontends.\nInstead, Central Set uses a metadata-driven control plane that describes what exists, who can access it, and how it behaves.\nIf it exists in the ADMIN schema, it can exist in the UI and APIs.\nThe ADMIN Database as a Control Plane linkThe ADMIN database is not just a configuration store.\nIt acts as a control plane that defines:\nApplications and their databases Navigation structure (menus) Tables and schemas CRUD behavior Permissions and access rules UI layout and forms Automation hooks Integration with ETLX pipelines Central Set reads this metadata at runtime and uses it to generate UI behavior and API responses dynamically.\nA Metadata-First Architecture linkCentral Set follows a simple but powerful rule:\nThe database is the specification.\nInstead of encoding logic in code or YAML files, Central Set stores intent as structured metadata.\nThis enables:\nRuntime UI generation Dynamic APIs Multi-tenant setups Safe extensibility Zero frontend rebuilds Conceptual Model (No Table Names) linkAt a high level, the ADMIN schema models the system in layers:\nUsers \u0026 Roles\r↓\rApplications\r↓\rMenus\r↓\rTables\r↓\rPermissions \u0026 UI Behavior\r↓\rAutomation \u0026 Pipelines Each layer builds on the previous one, and each layer is defined as data.\nApplications, Menus, and Tables linkApplications linkAn Application represents a logical admin interface.\nEach application:\nIs linked to one database Defines a context for menus and tables Can be isolated by permissions Can represent a product, domain, or system The built-in ADMIN app is just one application — not a special case.\nMenus linkMenus define navigation, not logic.\nThey group tables and features into meaningful sections and control how users move through the application.\nMenus are:\nOrdered Permission-aware Fully configurable via metadata Tables linkTables are the heart of the system.\nA table definition tells Central Set:\nWhich database table to expose How CRUD operations behave Which columns are visible How data is labeled How forms are rendered What permissions apply Adding a table to the ADMIN schema is enough to make it appear in the UI.\nSchema Discovery \u0026 Introspection linkCentral Set dynamically inspects connected databases to understand:\nTables Columns Types Constraints Relationships This information is cached and enriched with metadata stored in the ADMIN schema.\nThis allows Central Set to:\nRender forms automatically Validate input Build datatables Enforce permissions Stay in sync with the database Permissions Are Data linkPermissions in Central Set are not hardcoded rules.\nThey are metadata-driven and can apply at multiple levels:\nApplication access Menu visibility Table access CRUD operations Column visibility Row-level filtering Because permissions live in the database:\nThey can be managed via the UI They apply consistently to UI and APIs They scale naturally in multi-tenant systems UI Customization via Metadata linkThe ADMIN schema also defines how things look and behave.\nThis includes:\nColumn labels Field order Form layouts Widgets and input types Translations Read-only or computed fields This makes Central Set suitable not just for admins, but for data-facing internal tools and apps.\nAutomation \u0026 ETLX Integration linkThe ADMIN schema also acts as the bridge to automation.\nIt defines:\nWhich workflows exist How they are triggered What data they operate on How they integrate with ETLX pipelines Central Set handles:\nConfiguration Security Triggers Observability hooks ETLX handles:\nExecution Data movement Pipeline semantics Together, they form a complete data platform.\n👉 See ETLX \u0026 Data Pipelines for more details.\nThe Full Schema (Source of Truth) linkThis documentation explains concepts, not every table and column.\nThe canonical definition of the ADMIN schema lives in the repository as a living document:\n📓 ADMIN schema notebook\n👉 https://github.com/realdatadriven/central-set-go/blob/main/db.ipynb\nThis notebook documents:\nTables Relationships Intended usage Evolution of the schema If you want to extend Central Set at a deep level, this is the place to start.\nKey Takeaways link ADMIN is fully metadata-driven The database is the control plane UI and APIs share the same contract Permissions are data, not logic ETLX executes what ADMIN describes Central Set does not define applications in code.\nIt defines them in data.\nAdding a New Application (How ADMIN Grows) linkCentral Set ships with a fully configured ADMIN application, defined entirely in the ADMIN database.\nAdding a new application — such as ETLX — does not require frontend work or custom backend code. Instead, you extend the metadata that already powers ADMIN.\nThe ETLX application included in the repository is the canonical example of how this works.\nThe High-Level Flow linkAdding a new app follows a deterministic, repeatable process:\n1. Create a database schema for the app\r2. Register the app in ADMIN\r3. Discover tables from the app database\r4. Attach tables to menus\r5. Customize UI behavior (optional) This entire flow is data-driven and can be replayed on any machine.\n1. Define the Application Database linkEach application points to one database.\nFor ETLX, this database is defined in:\n📓 app.ETLX.ipynb (repository root)\nThis notebook:\nDefines ETLX domain tables (pipelines, dashboards, notebooks, etc.) Uses SQLAlchemy only as a schema authoring tool Creates the physical database if it does not exist Adds rich table and column comments These comments later become UI labels and tooltips.\nAt this stage, Central Set does not yet know about the app — only the database exists.\n2. Register the Application in ADMIN linkOnce the ETLX database exists, it is registered as an Application inside the ADMIN schema.\nThis is done by inserting a record into the app table:\nApp name (e.g. ETLX) Description Version Database name Ownership metadata From this moment on:\nCentral Set recognizes the database as an application context.\n3. Automatic Schema Discovery linkAfter the app is registered, Central Set introspects the database:\nTables Columns Types Primary keys Foreign keys Defaults Comments This discovery process populates ADMIN metadata tables such as:\nTable registry Column registry Translations Relationships No manual mapping is required.\nIf a table exists in the app database, it becomes eligible for the UI.\n4. Create Menus for the App linkApplications do not expose tables directly.\nThey expose menus, which define navigation and grouping.\nFor ETLX, menus include:\nDashboards ETLX Notebook Each menu is:\nCreated in the ADMIN database Linked to the application Assigned an icon and order Marked active or inactive Menus are pure metadata — they do not contain logic.\n5. Attach Tables to Menus linkOnce tables are discovered, they can be attached to menus.\nThis step defines:\nWhich tables appear in which menu Whether the table is active Special behaviors (e.g. row-level access) For example, in ETLX:\netlx, etlx_conf, manage_query → ETLX menu dashboard → Dashboards menu notebook → Notebook menu At this point:\nThe UI becomes fully functional for the new app.\nTables appear as datatables. Forms are auto-generated. CRUD APIs are enabled.\n6. UI Behavior Comes from Metadata linkThe ETLX notebook also demonstrates how Central Set uses metadata to control UI behavior:\nTable comments → table titles Column comments → form labels JSON configs → menu behavior Flags → visibility and activation Because this configuration is stored in ADMIN tables, it can be:\nModified from the UI itself Exported Reapplied on another installation Portability \u0026 Reproducibility linkA key design goal is repeatable installations.\nThe ETLX setup shows how Central Set supports:\nRebuilding apps on new machines Syncing UI customizations Shipping opinionated defaults Treating the database as the source of truth This allows Central Set to behave like a data-driven platform, not a static admin panel.\nWhat This Enables linkBy following this pattern, you can:\nAdd new domains without frontend work Build internal tools quickly Expose databases safely Treat data models as products Give ETLX (or any engine) a full UI ADMIN defines the language. Applications define the vocabulary. Databases define the meaning.\n"
+            }
+        );
+    index.add(
+            {
+                id:  13 ,
+                href: "\/central-set-go\/docs\/tutorials\/menus\/",
+                title: "Navigation \u0026 Menus",
+                description: "Navigation \u0026 Menus",
+                content: " warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. "
+            }
+        );
+    index.add(
+            {
+                id:  14 ,
+                href: "\/central-set-go\/docs\/tutorials\/tables\/",
+                title: "CRUD",
+                description: "CRUD",
+                content: " warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. "
+            }
+        );
+    index.add(
+            {
+                id:  15 ,
+                href: "\/central-set-go\/docs\/tutorials\/users-roles\/",
+                title: "Security \u0026 Permissions",
+                description: "Security \u0026 Permissions",
+                content: " warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. "
+            }
+        );
+    index.add(
+            {
+                id:  16 ,
+                href: "\/central-set-go\/docs\/tutorials\/jobs\/",
+                title: "Automation \u0026 Jobs",
+                description: "Automation \u0026 Jobs",
+                content: " warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. "
+            }
+        );
+    index.add(
+            {
+                id:  17 ,
+                href: "\/central-set-go\/docs\/tutorials\/etlx\/",
+                title: "ETLX \u0026 Data Pipelines",
+                description: "Configuration-driven data pipelines powered by ETLX",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  18 ,
+                href: "\/central-set-go\/docs\/tutorials\/etlx\/overview\/",
+                title: "Overview",
+                description: "Configuration-driven data pipelines powered by ETLX",
+                content: "Overview linkCentral Set was born primarily from the need to manage data engineering workflows, but real-world data systems require much more than just pipelines.\nTo operate reliable data platforms, you need:\nUser and role management Database and schema management Forms and datatables to manage configurations Secure access keys and API tokens UI-driven configuration Observability over pipelines A way to run data workflows reliably Dashboards for monitoring and insight What started as a data-engineering support layer evolved into something broader.\nBecause Central Set is fully configuration-driven, database-backed, and UI-agnostic, it can act as a general-purpose backend platform for small to medium-scale applications — with a UI that adapts to your data model.\nThat data-engineering execution layer is ETLX.\nETLX is the data pipeline engine behind Central Set.\nCentral Set provides the UI, configuration, security, and orchestration layer. ETLX provides the runtime, execution model, and pipeline semantics.\nWhat is ETLX? linkETLX is a lightweight, specification-driven data pipeline engine.\nIt focuses on:\nDeclarative pipeline definitions Explicit data movement Deterministic execution Simple primitives instead of heavy abstractions ETLX pipelines are defined as specifications, not frameworks or monolithic codebases.\n📘 Full ETLX documentation 👉 https://realdatadriven.github.io/etlxdocs\n📦 ETLX repository 👉 https://github.com/realdatadriven/etlx\nCentral Set + ETLX linkCentral Set ships with ETLX enabled by default.\nTogether, they form a layered system:\n┌────────────────────────────┐\r│ Central Set UI │\r│ - Users \u0026 Roles │\r│ - Databases │\r│ - Apps \u0026 Menus │\r│ - Tables \u0026 Forms │\r│ - Access Keys │\r└──────────────┬─────────────┘\r│\r▼\r┌────────────────────────────┐\r│ Configuration \u0026 Metadata │\r│ (stored in databases) │\r└──────────────┬─────────────┘\r│\r▼\r┌────────────────────────────┐\r│ ETLX Runtime │\r│ - Pipelines │\r│ - Extract / Transform │\r│ - Load / Write │\r│ - File \u0026 DB connectors │\r└────────────────────────────┘ The UI never hardcodes pipelines.\nEverything ETLX runs is:\nDefined via database-backed specifications Triggered through APIs Observable and manageable from the platform Why ETLX Exists linkMost data tooling ecosystems assume:\nHeavy orchestration frameworks YAML sprawl Code-first pipelines Tight coupling to infrastructure ETLX takes a different approach:\nPipelines are data-first Configuration lives in databases Execution is explicit and deterministic The UI is just another client This makes ETLX well suited for:\nEmbedded data platforms Multi-tenant systems Admin-driven data workflows Headless or UI-driven execution ETLX as a First-Class Application linkIn Central Set, ETLX is treated like any other application:\nIt can define:\nMenus Tables Permissions Pipelines can be:\nConfigured via UI Triggered via API Observed through dashboards This allows you to build:\nData ingestion systems Transformation pipelines Validation workflows Automation jobs Internal data products All without writing frontend code.\nRunning Pipelines via API linkETLX pipelines can be executed headlessly using the API.\nRun Pipeline linkEndpoint\nGET /etlx/run/{name} Description\nExecutes an ETLX pipeline by name.\n{name} is the pipeline identifier Execution context is resolved at runtime Permissions are enforced via access keys or user tokens Example\nGET /etlx/run/daily_sales_load This enables:\nCI/CD triggers Cron-based execution External system integration Event-driven workflows Observability \u0026 Health (Conceptual) linkETLX pipelines are designed to expose:\nExecution status Errors Logs Metadata about runs Central Set can leverage this data to build:\nPipeline health dashboards Execution history views Error inspection tools Retry and recovery flows ETLX does not impose a visualization model. Central Set provides the building blocks to create one.\nKey Principles link Data apps need more than pipelines Pipelines need configuration, not frameworks The database is the control plane The UI reflects metadata ETLX executes what Central Set describes "
+            }
+        );
+    index.add(
+            {
+                id:  19 ,
+                href: "\/central-set-go\/docs\/tutorials\/etlx\/example\/",
+                title: "Example",
+                description: "Configuration-driven data pipelines powered by ETLX",
+                content: "Example - ETLX \u0026 Data Pipelines linkThis page walks through a real-world ETLX pipeline, showing how a single markdown configuration can describe:\nData ingestion Transformations Data quality rules Governance artifacts Exports Logging All driven by configuration and executed step-by-step through the ETLX UI.\nThe example uses the NYC Yellow Taxi - January 2024 dataset as a concrete and realistic scenario.\nGetting Started with ETLX Pipelines linkWhen you first open the ETLX menu, the system displays an empty CRUD table, when added pipeline its shown.\nThis table represents your pipeline registry — each row corresponds to one ETLX configuration.\nCreating a New Pipeline linkClicking the Add/Edit button opens the ETLX configuration form.\nIn this form you:\nGive the pipeline a name Paste or write the ETLX configuration Save the record Once saved, the configuration becomes an executable ETLX pipeline.\nEntering the Pipeline Workflow linkAfter saving, a new record appears in the CRUD table.\nEach record includes a play icon ▶️. Clicking it opens the pipeline workflow view.\nIn this view, the markdown configuration materializes into a structured pipeline:\nHigh-level stages (EXTRACT_LOAD, TRANSFORM, QUALITY_CHECK, etc.) Individual executable items inside each stage Execution controls per item or per stage From here, the pipeline can be:\nExplored Executed entirely Executed partially Executed step-by-step Re-run safely, thanks to validation rules Pipeline Configuration Overview linkThis example use the ETLX sqlite exemple also used in this doc in ETLX \u0026 Data Pipelines use to demostrate a basic setup with an embbed database with no databse server setup:\nThe configuration below represents a complete ETLX pipeline.\nIt demonstrates how ETLX extends a traditional ETL definition with:\nRich metadata Governance context Declarative execution logic Embedded SQL Reusable QueryDocs The dataset used is hosted at:\nhttps://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet EXTRACT_LOAD — Ingestion Stage linkThe pipeline begins with the EXTRACT_LOAD stage.\nname: EXTRACT_LOAD\rruns_as: ETL\rdescription: |\rExtracts and loads datasets into the local analytical database.\rconnection: \"sqlite3:database/sqlite_ex.db\"\rdatabase: \"sqlite3:database/sqlite_ex.db\"\ractive: true What this means link Defines a logical stage in the pipeline\nGroups multiple extraction and loading tasks\nDeclares:\nExecution type (ETL) Target database Activation state In the UI, this appears as a top-level expandable section.\nVERSION — Environment Validation link name: VERSION\rdescription: \"DuckDB version check\"\rtable: VERSION\rload_conn: \"duckdb:\"\rload_before_sql: \"ATTACH 'database/sqlite_ex.db' AS DB (TYPE SQLITE)\"\rload_sql: 'CREATE OR REPLACE TABLE DB.\"\" AS SELECT version() AS \"VERSION\";'\rload_after_sql: \"DETACH DB;\"\rrows_sql: 'SELECT COUNT(*) AS \"nrows\" FROM DB.\"\"'\ractive: true Purpose linkThis step:\nVerifies the DuckDB runtime version Writes it into the database Acts as a sanity check before loading data In the workflow UI, this is a single executable item with a row count result.\nTRIP_DATA — Core Dataset Ingestion link name: TRIP_DATA\rdescription: \"Extracting NYC Yellow Taxi trip data\"\rtable: TRIP_DATA\rload_conn: \"duckdb:\"\rload_before_sql: \"ATTACH 'database/sqlite_ex.db' AS DB (TYPE SQLITE)\"\rload_validation:\r- type: throw_if_not_empty\rsql: FROM \"DB\".\"\" WHERE \"ref_date\" = '{YYYY-MM}' LIMIT 10\rmsg: \"This date is already imported — aborting to avoid duplicates.\"\rload_sql: update_trip_data_table\rload_on_err_match_patt: '(?i)table.+does.+not.+exist'\rload_on_err_match_sql: create_trip_data_table\rload_after_sql: DETACH \"DB\"\r_query_doc: QUERY_EXTRACT_TRIP_DATA\rfile: \"https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{YYYY-MM}.parquet\"\ractive: true Key concepts demonstrated link Parameterized ingestion ({YYYY-MM}) Idempotency checks via load_validation Automatic table creation on first run Separation of SQL logic via QueryDocs In the UI, this step shows:\nValidation results Executed SQL Number of rows loaded QUERY_EXTRACT_TRIP_DATA — QueryDoc linkQueryDocs define reusable, documented SQL logic.\nname: QUERY_EXTRACT_TRIP_DATA\ris_query: true\rowner: taxi-analytics-team\rsource:\ruri: \"...yellow_tripdata_2024-01.parquet\"\rformat: parquet Each field inside the QueryDoc:\nHas metadata (description, type, owner) Contributes a fragment to the final SQL query Can be reused by multiple pipeline steps This structure enables automatic governance artifacts later.\nTRANSFORM — Analytical Transformations link name: TRANSFORM\rruns_as: ETL\rdescription: Transforms raw data into analytical outputs\rconnection: \"sqlite3:database/DB_EX_DGOV.db\"\ractive: true Example: MostPopularRoutes link name: MostPopularRoutes\rdescription: Most common pickup/dropoff routes\rtransform_conn: \"duckdb:\"\rtransform_sql: trf_most_popular_routes\ractive: true This step aggregates trips and produces a curated analytical table.\nIn the UI, this appears as:\nA transformation step With dependencies on previously loaded datasets QUALITY_CHECK — Data Validation link runs_as: DATA_QUALITY\rdescription: Runs data quality rules\ractive: true Rule Example link name: Rule0001\rdescription: Validate payment_type domain These rules:\nRun as first-class pipeline steps Can fail, warn, or auto-fix data Are fully auditable GOVERNANCE_ARTIFACTS — Documentation as Output linkThis stage demonstrates a key ETLX concept:\nGovernance artifacts are generated, not written manually\nThe DATA_DICTIONARY export renders an HTML document from metadata defined throughout the pipeline.\nThis includes:\nField descriptions Ownership Lineage Quality rules EXPORT \u0026 SAVE_LOGS — Observability linkThe final stages show how ETLX:\nExports logs to Parquet Persists execution metadata Evolves log schemas dynamically This makes ETLX pipelines observable by design, enabling dashboards like the Logs Dashboard you documented earlier.\nJob Scheduling \u0026 Automation linkNative cron-style job scheduling for ETLX pipelines in Admin \u003e Jobs\nSummary linkThis example demonstrates how ETLX enables:\nDeclarative pipelines Metadata-first design Strong governance Reproducible execution UI-driven exploration All from a single markdown configuration.\n"
+            }
+        );
+    index.add(
+            {
+                id:  20 ,
+                href: "\/central-set-go\/docs\/tutorials\/dashboards\/",
+                title: "Analytics \u0026 Dashboards",
+                description: "Analytics \u0026 Dashboards",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  21 ,
+                href: "\/central-set-go\/docs\/tutorials\/api\/",
+                title: "Dynamic API Reference",
+                description: "D",
+                content: "Dynamic API Reference link warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. Central Set Go exposes a dynamic, context-driven API. All operations — including read-only ones — use POST requests to allow rich payloads, permissions, and future extensibility.\n⚠️ Design note Even read operations (apps, menus, tables, crud.read) use POST by design.\nAuthentication linkLogin linkAuthenticates a user and returns a JWT token used by all subsequent requests.\nEndpoint\nPOST /dyn_api/login/login Headers\nContent-Type: application/json Request\n{\r\"lang\": \"pt\",\r\"data\": {\r\"username\": \"root\",\r\"password\": \"1234\"\r}\r} Response (simplified)\n{\r\"success\": true,\r\"token\": \"\",\r\"user\": {\r\"user_id\": 1,\r\"username\": \"root\",\r\"role_id\": 1\r}\r} Check Token linkValidates an existing JWT token.\nEndpoint\nPOST /dyn_api/login/chk_token Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\"\r} Change Password linkAllows an authenticated user to change their password.\nEndpoint\nPOST /dyn_api/login/alter_pass Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"controller\": \"login\",\r\"action\": \"alter_pass\",\r\"data\": {\r\"username\": \"root\",\r\"password\": 12344654,\r\"new_password\": 1234\r}\r} Applications \u0026 Navigation linkLoad Applications linkReturns the list of applications available to the user.\nEndpoint\nPOST /dyn_api/admin/apps Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\"\r} Load Menus linkLoads the menus for a given application.\nEndpoint\nPOST /dyn_api/admin/menu Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"app_desc\": \"Admin\",\r\"version\": \"1.0.0\",\r\"db\": \"ADMIN\"\r}\r} Menus define:\nSidebar navigation Icons Table grouping Load Tables (Metadata) linkReturns metadata about tables available in the application.\nEndpoint\nPOST /dyn_api/admin/tables Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"data\": {\r\"table\": \"app\"\r},\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"db\": \"ADMIN\"\r}\r} CRUD Operations linkAll CRUD operations share the same dynamic payload structure.\nRead linkEndpoint\nPOST /dyn_api/crud/read Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"data\": {\r\"table\": \"menu\",\r\"limit\": 11,\r\"offset\": 0,\r\"filters--\": [\r{ \"field\": \"lang_id\", \"cond\": \"=\", \"value\": 3 }\r],\r\"order_by\": [\r{ \"field\": \"lang_id2\", \"order\": \"DESC\" }\r]\r},\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"db\": \"ADMIN\"\r}\r} Create linkEndpoint\nPOST /dyn_api/crud/create Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"data\": {\r\"table\": \"lang\",\r\"data\": {\r\"lang\": \"es4\",\r\"lang_desc\": \"Português\"\r}\r},\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"db\": \"ADMIN\"\r}\r} Update linkEndpoint\nPOST /dyn_api/crud/update Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"pt\",\r\"data\": {\r\"table\": \"lang\",\r\"data\": {\r\"lang_id\": 3,\r\"lang\": \"pt_BR\",\r\"lang_desc\": \"Português Brasil\"\r}\r},\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"db\": \"ADMIN\"\r}\r} Delete linkSupports soft delete and permanent delete.\nEndpoint\nPOST /dyn_api/crud/delete Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"data\": {\r\"table\": \"lang\",\r\"data\": {\r\"lang_id\": 3,\r\"exclude\": true,\r\"permanently--\": true\r}\r},\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"db\": \"ADMIN\"\r}\r} Query (Raw SQL) linkExecutes a raw SQL query.\nEndpoint\nPOST /dyn_api/crud/query Headers\nAuthorization: Bearer Content-Type: application/json Request\n{\r\"lang\": \"en\",\r\"data\": {\r\"db\": \"DB.duckdb\",\r\"query\": \"select * from \\\"table_name\\\"\",\r\"limit\": 10,\r\"offset\": 0\r},\r\"app\": {\r\"app_id\": 1,\r\"app\": \"ADMIN\",\r\"db\": \"ADMIN\"\r}\r} File Uploads linkUploads files for temporary or permanent storage.\nEndpoint\nPOST /upload Headers\nAuthorization: Bearer Content-Type: multipart/form-data Form Data\nField Description lang Language tmp Temporary upload path Destination path ETL linkExtract from File + Attach Database linkEndpoint\nPOST /dyn_api/etlx/run Description\nExtracts data from files (CSV, XLSX, DuckDB) and optionally attaches databases for transformation.\nThis endpoint powers ETLX pipelines in the UI.\nHeaders\nAuthorization: Bearer Content-Type: application/json Request (simplified)\n{\r\"lang\": \"en\",\r\"data\": {\r\"conf\": \"# ...\"\r},\r\"app\": {\r\"app_id\": 2,\r\"app\": \"ETLX\",\r\"db\": \"ETLX\"\r}\r} Conceptual Summary link Area Covered By Authentication /dyn_api/login/* Applications /dyn_api/admin/apps Menus /dyn_api/admin/menu Metadata /dyn_api/admin/tables CRUD /dyn_api/crud/* Files /upload ETL /dyn_api/etl/* "
+            }
+        );
+    index.add(
+            {
+                id:  22 ,
+                href: "\/central-set-go\/docs\/tutorials\/dashboards\/overview\/",
+                title: "Overview",
+                description: "Overview",
+                content: "Overview linkCentral Set provides a first-class analytics and dashboarding layer by embedding and extending evidence.dev.\nThis allows you to build interactive analytical dashboards directly on top of:\nETLX pipelines Exported datasets Parquet files Curated analytical tables All dashboards live inside Central Set, inherit authentication and authorization, and are fully integrated with the platform’s data model.\nWhy Evidence.dev? linkEvidence.dev was chosen because it is:\nSQL-first Component-based Open-source Developer-friendly Designed for analytical storytelling However, Central Set does not use Evidence in its default standalone mode.\nInstead, Evidence is embedded as a dashboard frontend, while Central Set controls:\nConfiguration Data access Execution context Security Dataset lifecycle In Central Set, Evidence configuration is rendered in real time in the browser, rather than being compiled into a static website.\nConceptually, Evidence behaves as a Svelte-based rendering layer that intercepts normal CRUD-based UI rendering and transforms database-backed records into analytical dashboards.\nSome Evidence components are not yet integrated or are slightly modified to better fit Central Set, but the core visualization components (what really matters) are fully compatible, including:\nIf / Else Loops Formating Value Big Value Data Table Delta Charts Charts are based on Apache ECharts and can be fully customized using:\nECharts Extra Options Custom Charts This allows the full ECharts configuration object to be passed directly, enabling virtually any visualization supported by ECharts.\nWhat’s Different from Vanilla Evidence link Area Evidence.dev Central Set Data Sources Inline SQL / DB connections Central Set APIs Authentication None / external Native Central Set auth Dataset Storage Ad-hoc queries ETLX datasets \u0026 Parquet Runtime Static site / dev server Embedded application In short:\nEvidence provides the rendering engine. Central Set provides the platform.\nData Flow: ETLX → Dashboards linkThe dashboard layer is designed to sit downstream of ETLX.\nTypical Flow link ETLX Pipeline\r↓\rDataset / Parquet Export\r↓\rCentral Set Dataset Registry\r↓\rEvidence Dashboard Components ETLX pipelines produce:\nParquet files Materialized datasets Analytical views These outputs are registered and managed by Central Set and exposed to dashboards as named datasets.\nDashboards never access raw databases directly.\nDataset-Centric Architecture linkInstead of writing SQL directly inside dashboards:\nDatasets are defined once Produced by ETLX Versioned and traceable Reused across dashboards This ensures:\nReproducibility Performance Clear lineage Separation of concerns Dashboards consume data. Pipelines produce data.\nEmbedded Evidence Frontend linkCentral Set embeds the Evidence dashboard frontend directly into the UI.\nThis means:\nDashboards appear as native Central Set pages Navigation is unified Authentication is shared Permissions apply automatically From the user’s perspective, dashboards are simply another application menu.\nExtended Components linkIn addition to standard Evidence components, Central Set adds its own components, such as .\nMost of these are Svelte components built with DaisyUI, since Central Set itself is built on the DaisyUI design system.\nThis ensures visual consistency between dashboards and the rest of the platform UI.\nConfiguration Model linkEvidence dashboards normally rely on a local configuration block.\nIn Central Set:\nConfiguration is metadata-driven Stored and versioned centrally Linked to applications and menus Managed from the ADMIN app This allows dashboards to be:\nActivated or deactivated Versioned Assigned to profiles Shipped as part of an application Security \u0026 Governance linkBecause dashboards are embedded:\nAccess is controlled by Central Set profiles Users only see datasets they are authorized to access Dashboards can be restricted by role or tenant This makes dashboards suitable for:\nInternal analytics Multi-tenant environments Customer-facing data products Analytics as a Product linkDashboards are not just visualizations.\nThey are:\nVersioned artifacts Backed by pipelines Governed by metadata Deployable across environments This aligns with Central Set’s core philosophy:\nEverything is configuration. Everything is data-driven.\nHow This Fits Together link Layer Responsibility ETLX Data pipelines \u0026 transformations Datasets Canonical analytical outputs ADMIN Metadata, permissions, structure Dashboards Exploration \u0026 insight Evidence Rendering engine "
+            }
+        );
+    index.add(
+            {
+                id:  23 ,
+                href: "\/central-set-go\/docs\/tutorials\/dashboards\/example\/",
+                title: "Example",
+                description: "Analytics \u0026 Dashboards — Logs Dashboard Example",
+                content: "Analytics \u0026 Dashboards — Logs Dashboard Example linkThis page walks through a real dashboard definition and explains how configuration, filters, metrics, charts, and tables work together to produce the final analytics UI.\nThis dashboard uses:\nEvidence.dev components (Charts, Stats, DataTable, Inputs) CentralSet runtime instead of Evidence’s native data layer ETLX-generated datasets and Parquet files DuckDB WASM for in-browser analytics Getting Started With Dashboard linkBy default, a newly created dashboard is empty and displays only a basic layout with an Edit button.\nClicking the Edit button opens the dashboard configuration form, where you can define how the dashboard behaves and what it renders (learn more about configuration).\nOnce you assign a name and save the configuration, the dashboard becomes active.\nThe configuration itself represents an Evidence-like Markdown dashboard, which is:\nCompiled in real time Rendered entirely on the client side Interpreted as standard Markdown → HTML Enhanced with interactive components If components are referenced, they are loaded as native Svelte components, just like any other part of the Central Set UI.\nHow Rendering Works linkUnder the hood:\nMarkdown is rendered as regular HTML\nSQL blocks are detected and executed dynamically\nQuery execution depends on the dashboard configuration:\nIn-browser databases (DuckDB WASM) Databases mapped in Central Set Datasets produced by ETLX pipelines The query results are then injected directly into components such as charts, tables, stats, and filters.\nThis approach allows dashboards to feel live, interactive, and fully integrated, without requiring a static build step or server-side compilation.\nThis Example linkThis example use the ETLX sqlite exemple also used in this doc in ETLX \u0026 Data Pipelines use to demostrate a basic setup with an embbed database with no databse server setup:\n1. Dashboard Configuration Block linkEvery dashboard starts with a config block. This is where CentralSet overrides Evidence defaults and wires the dashboard to ETLX outputs.\n\"auto_refresh_every_n_seconds\": null, \"all_query_run_locally_in_ddb_wasm\": true,\r\"pre_prepared_parquets_logs_table\": null,\r\"pre_prepared_parquets_logs_sql\": \"with _logs as (select * from etlx_logs where fname is not null and (fname, end_at) in (select fname, max(end_at) from etlx_logs group by fname)) select item_key as name, replace(fname, 'tmp/', '') as file FROM _logs\",\r\"pre_prepared_parquets_logs_db\": \"sqlite3:database/sqlite_ex.db\",\r\"pre_prepared_parquets_for_ddb_wasm\": {\r\"LOGS\": \"hist_logs.parquet\"\r},\r\"replace_source_name_in_sql\": {\r\"ds_name\": \"ds_x|ds_y\"\r},\r\"query_datasource\": {\r\"ds_name\": \"ds_\"\r} What this configuration does linkExecution model link all_query_run_locally_in_ddb_wasm: true (RECOMENDED) → All SQL runs inside the browser using DuckDB WASM. Data source binding link pre_prepared_parquets_for_ddb_wasm Maps logical table names (LOGS) to ETLX-exported Parquet files. This means:\nFROM \"LOGS\" actually reads from hist_logs.parquet.\nPre-prepared metadata link pre_prepared_parquets_logs_sql Used to discover available log files and metadata before loading the dashboard. Source name normalization link replace_source_name_in_sql and query_datasource Allow dashboards to stay portable, even when datasets are renamed or versioned. 📸 What you see in the UI The dashboard loads instantly with no backend round-trips, powered entirely by Parquet + WASM.\n2. Filters Section (User Controls) linkFilters define how users interact with the data. Each filter is backed by SQL queries that populate dropdowns and inputs.\n2.1 Reference Date Selector link select distinct strftime(\"ref\"::date, '%Y-%m-%d') \"ref\"\rfrom \"LOGS\"\rwhere \"ref\" is not null\rorder by \"ref\" desc Purpose\nExtracts all available reference dates from logs Feeds the date picker suggestions 📸 UI result A date input that suggests only valid dates present in the data.\n2.2 Process Hierarchy Filters linkMain Process link select distinct \"key\" as \"main_process\"\rfrom \"LOGS\" Sub Process link select distinct \"item_key\" as \"sub_process\"\rfrom \"LOGS\"\rwhere \"item_key\" is not null These queries populate hierarchical dropdowns:\nMain Process → high-level ETLX step Sub Process → specific task within the step 2.3 Success / Failure Filter link select *\rfrom (values\r('%', 'ALL'),\r('true', 'TRUE'),\r('false', 'FALSE')\r) t (\"val\", \"desc\") Allows filtering logs by:\nAll Successful runs Failed runs 2.4 Filter Layout (Grid) link 📸 UI result\nA compact control bar Filters on the left Action buttons (edit, refresh, duplicate) on the right 3. Big Numbers (KPIs) linkThe Big Numbers section summarizes system health at a glance.\n3.1 KPI Query link select\rcount(*) filter(\"ref\" = 'inputs.date_ref.value') as \"total\",\rcount(*) filter(\"ref\" = 'inputs.date_ref.value' and success) as \"total_success\",\rcount(*) filter(\"ref\" = 'inputs.date_ref.value' and not success) as \"total_fail\",\rtotal_success / total as \"success_delta\",\rtotal_fail / total as \"fail_delta\",\rcount(*) filter(\"ref\" = 'inputs.date_ref_n1.value') as \"total_n1\",\r((total - total_n1) / total_n1) as \"total_delta\"\rfrom \"LOGS\"\rwhere \"key\" like 'inputs.main_process.value'\rand \"item_key\" like 'inputs.sub_process.value' This query:\nCompares today vs N-1 Computes success/failure ratios Powers KPI deltas 3.2 KPI Rendering link # Total Logs Entry\r# Success\r# Fail\r📸 UI result\nLarge numeric tiles Color-coded status Percentage deltas vs previous period 4. Charts Section linkThis section explains why things changed, not just what changed.\n4.1 Logs by Process (Pie Chart) link select \"key\" as \"name\", count(*) as \"value\"\rfrom \"LOGS\"\rwhere \"ref\" = 'inputs.date_ref.value'\rgroup by \"key\" "
+            }
+        );
+    search.addEventListener('input', show_results, true);
+
+    function show_results(){
+        const maxResult =  5 ;
+        const minlength =  0 ;
+        var searchQuery = sanitizeHTML(this.value);
+        var results = index.search(searchQuery, {limit: maxResult, enrich: true});
+
+        
+        const flatResults = new Map(); 
+        for (const result of results.flatMap(r => r.result)) {
+        if (flatResults.has(result.doc.href)) continue;
+        flatResults.set(result.doc.href, result.doc);
+        }
+
+        suggestions.innerHTML = "";
+        suggestions.classList.remove('d-none');
+
+        
+        if (searchQuery.length < minlength) {
+            const minCharMessage = document.createElement('div')
+            minCharMessage.innerHTML = `Please type at least <strong>${minlength}</strong> characters`
+            minCharMessage.classList.add("suggestion__no-results");
+            suggestions.appendChild(minCharMessage);
+            return;
+        } else {
+            
+            if (flatResults.size === 0 && searchQuery) {
+                const noResultsMessage = document.createElement('div')
+                noResultsMessage.innerHTML = "No results for" + ` "<strong>${searchQuery}</strong>"`
+                noResultsMessage.classList.add("suggestion__no-results");
+                suggestions.appendChild(noResultsMessage);
+                return;
+            }
+        }
+
+        
+        for(const [href, doc] of flatResults) {
+            const entry = document.createElement('div');
+            suggestions.appendChild(entry);
+
+            const a = document.createElement('a');
+            a.href = href;
+            entry.appendChild(a);
+
+            const title = document.createElement('span');
+            title.textContent = doc.title;
+            title.classList.add("suggestion__title");
+            a.appendChild(title);
+
+            const description = document.createElement('span');
+            description.textContent = doc.description;
+            description.classList.add("suggestion__description");
+            a.appendChild(description);
+
+            suggestions.appendChild(entry);
+
+            if(suggestions.childElementCount == maxResult) break;
+        }
+    }
+    }());
+</script></body></html>

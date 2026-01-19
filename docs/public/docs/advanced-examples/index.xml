@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Advanced Examples on CSGO - Data Plataform</title>
+    <link>//localhost:1313/docs/docs/advanced-examples/</link>
+    <description>Recent content in Advanced Examples on CSGO - Data Plataform</description>
+    <generator>Hugo</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Thu, 08 Jan 2026 01:04:15 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/docs/docs/advanced-examples/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Embedded SQLite Example</title>
+      <link>//localhost:1313/docs/docs/advanced-examples/embedded-sqlite/</link>
+      <pubDate>Thu, 08 Jan 2026 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/advanced-examples/embedded-sqlite/</guid>
+      <description>&lt;h2 id=&#34;embedded-sqlite-example&#34;&gt;Embedded SQLite Example &lt;a href=&#34;#embedded-sqlite-example&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This section provides examples of using embedded SQLite databases as storage. SQLite is a self-contained, serverless, zero-configuration, transactional SQL database engine that is widely used for local data storage in applications.&#xA;Good for prototyping, small to medium-sized applications, and scenarios where a full-fledged database server is not required, and change the databse maybe as simple as change the environment variable with the connection string.&lt;/p&gt;&#xA;&lt;h3 id=&#34;why-use-sqlite&#34;&gt;Why use sqlite? &lt;a href=&#34;#why-use-sqlite&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Simplicity&lt;/strong&gt;: SQLite is easy to set up and requires no server configuration.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Portability&lt;/strong&gt;: The entire database is stored in a single file, making it easy to move and share, and explore data locally with tools like DB Browser for SQLite.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Lightweight&lt;/strong&gt;: SQLite has a small footprint and is efficient for read-heavy workloads.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;All those points make it ideal for teaching, prototyping, demos, &amp;hellip;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Governance Artifacts</title>
+      <link>//localhost:1313/docs/docs/advanced-examples/governance-artifacts/</link>
+      <pubDate>Thu, 08 Jan 2026 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/advanced-examples/governance-artifacts/</guid>
+      <description>&lt;h2 id=&#34;generate-governance-artifacts&#34;&gt;Generate Governance Artifacts &lt;a href=&#34;#generate-governance-artifacts&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;To generate governance artifacts for the example above, you can add an &lt;code&gt;EXPORTS&lt;/code&gt; block that defines a text template. This template can traverse all the metadata already embedded in the pipeline to generate artifacts such as a data dictionary, data quality rules, or compliance documentation.&lt;/p&gt;&#xA;&lt;p&gt;This is possible because an export template in ETLX is not limited to query results. It can generate text from &lt;em&gt;any&lt;/em&gt; data passed through it via &lt;code&gt;data_sql&lt;/code&gt;, including the pipeline configuration itself, which is available through the &lt;code&gt;.conf&lt;/code&gt; variable.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Loading Dependencies</title>
+      <link>//localhost:1313/docs/docs/advanced-examples/load-external-dependencies/</link>
+      <pubDate>Thu, 08 Jan 2026 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/advanced-examples/load-external-dependencies/</guid>
+      <description>&lt;h2 id=&#34;loading-external-dependencies-in-etlx&#34;&gt;Loading External Dependencies in ETLX &lt;a href=&#34;#loading-external-dependencies-in-etlx&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;In real-world scenarios, an ETLX project can quickly grow beyond what is practical to manage in a single file. As pipelines evolve, you may also want to &lt;strong&gt;reuse queries, transformations, or documentation blocks across multiple projects&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;p&gt;To address this, ETLX allows you to split your pipeline into multiple files and load them as &lt;strong&gt;external dependencies&lt;/strong&gt; using the &lt;a href=&#34;//localhost:1313/docs/docs/features/require/&#34;&gt;&lt;code&gt;require&lt;/code&gt;&lt;/a&gt; feature.&lt;/p&gt;&#xA;&lt;p&gt;A good example of this pattern is the &lt;a href=&#34;//localhost:1313/docs/docs/advanced-examples/embedded-sqlite/#extract-and-transform-data&#34;&gt;Embedded SQLite&lt;/a&gt; walkthrough. While the core execution logic is relatively small, with just two inputs and one transformation, the pipeline grows rapidly once queries are documented and detailed at field level.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Schema Update Example</title>
+      <link>//localhost:1313/docs/docs/advanced-examples/schema-update/</link>
+      <pubDate>Thu, 08 Jan 2026 01:04:15 +0000</pubDate>
+      <guid>//localhost:1313/docs/docs/advanced-examples/schema-update/</guid>
+      <description>&lt;h2 id=&#34;schema-update-example&#34;&gt;Schema Update Example &lt;a href=&#34;#schema-update-example&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;There are many scenarios where you load &lt;strong&gt;all columns from a source dataset&lt;/strong&gt; into a target table and expect the schema to remain stable over time.&lt;/p&gt;&#xA;&lt;p&gt;In practice, this assumption often breaks.&lt;/p&gt;&#xA;&lt;p&gt;A common failure mode is:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;The source dataset introduces &lt;strong&gt;new columns&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;Your pipeline still tries to insert into the existing table&lt;/li&gt;&#xA;&lt;li&gt;The workflow fails due to a schema mismatch&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;This is a perfect use case for &lt;strong&gt;dynamic schema handling&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

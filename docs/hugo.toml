@@ -1,7 +1,7 @@
-#hugo --themesDir themes --minify
-#git subtree push --prefix public origin gh-pages
-baseURL = "./docs" # (or set via env variable HUGO_BASEURL)
-#baseURL = 'https://realdatadriven.github.io/central-set-go/'
+#hugo --source docs --themesDir themes --minify
+#git subtree push --prefix docs/public origin gh-pages
+#baseURL = "./docs" # (or set via env variable HUGO_BASEURL)
+baseURL = 'https://realdatadriven.github.io/central-set-go/'
 languageCode = "en-GB"
 title = "CS - Data Plataform"
 # theme = "lotusdocs"

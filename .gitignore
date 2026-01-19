@@ -34,7 +34,7 @@ database/*.json
 .venv
 tf/
 docs/resources/
-public/
+_public/
 resources/_gen/
 .vscode/
 .env
