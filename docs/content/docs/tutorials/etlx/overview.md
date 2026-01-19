@@ -1,6 +1,6 @@
 ---
 weight: 7071
-title: "Overview - ETLX & Data Pipelines"
+title: "Overview"
 description: "Configuration-driven data pipelines powered by ETLX"
 icon: auto_awesome
 date: 2025-12-16T01:04:15+00:00

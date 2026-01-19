@@ -1,6 +1,6 @@
 ---
 weight: 7072
-title: "Example – ETLX & Data Pipelines"
+title: "Example"
 description: "Configuration-driven data pipelines powered by ETLX"
 icon: auto_awesome
 date: 2025-12-16T01:04:15+00:00
@@ -9,7 +9,7 @@ draft: false
 images: []
 ---
 
-## Example – ETLX & Data Pipelines
+## Example - ETLX & Data Pipelines
 
 This page walks through a **real-world ETLX pipeline**, showing how a single markdown configuration can describe:
 
@@ -22,22 +22,22 @@ This page walks through a **real-world ETLX pipeline**, showing how a single mar
 
 All driven by configuration and executed step-by-step through the ETLX UI.
 
-The example uses the **NYC Yellow Taxi – January 2024** dataset as a concrete and realistic scenario.
+The example uses the **NYC Yellow Taxi - January 2024** dataset as a concrete and realistic scenario.
 
 
 ## Getting Started with ETLX Pipelines
 
-When you first open the **ETLX** menu, the system displays an **empty CRUD table**.
+When you first open the **ETLX** menu, the system displays an **empty CRUD table**, when added pipeline its shown.
 
 This table represents your **pipeline registry** — each row corresponds to one ETLX configuration.
 
-![Empty ETLX](images/screenshots/empty-etlx-light.png)
+![Empty ETLX](images/screenshots/etlx-menu-light.png)
 
 ### Creating a New Pipeline
 
-Clicking the **Add** button opens the ETLX configuration form.
+Clicking the **Add/Edit** button opens the ETLX configuration form.
 
-![Add ETLX](images/screenshots/edit-etlx-light.png)
+![Add ETLX](images/screenshots/edit-add-etlx-light.png)
 
 In this form you:
 
@@ -97,7 +97,7 @@ https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet
 
 The pipeline begins with the **EXTRACT_LOAD** stage.
 
-```yaml metadata
+```yaml {linenos=table}
 name: EXTRACT_LOAD
 runs_as: ETL
 description: |
@@ -122,7 +122,7 @@ In the UI, this appears as a **top-level expandable section**.
 
 ## VERSION — Environment Validation
 
-```yaml metadata
+```yaml {linenos=table}
 name: VERSION
 description: "DuckDB version check"
 table: VERSION
@@ -147,7 +147,7 @@ In the workflow UI, this is a **single executable item** with a row count result
 
 ### TRIP_DATA — Core Dataset Ingestion
 
-```yaml metadata
+```yaml {linenos=table}
 name: TRIP_DATA
 description: "Extracting NYC Yellow Taxi trip data"
 table: TRIP_DATA
@@ -183,7 +183,7 @@ In the UI, this step shows:
 
 QueryDocs define **reusable, documented SQL logic**.
 
-```yaml metadata
+```yaml {linenos=table}
 name: QUERY_EXTRACT_TRIP_DATA
 is_query: true
 owner: taxi-analytics-team
@@ -204,7 +204,7 @@ This structure enables **automatic governance artifacts** later.
 
 ### TRANSFORM — Analytical Transformations
 
-```yaml metadata
+```yaml {linenos=table}
 name: TRANSFORM
 runs_as: ETL
 description: Transforms raw data into analytical outputs
@@ -214,7 +214,7 @@ active: true
 
 #### Example: MostPopularRoutes
 
-```yaml metadata
+```yaml {linenos=table}
 name: MostPopularRoutes
 description: Most common pickup/dropoff routes
 transform_conn: "duckdb:"

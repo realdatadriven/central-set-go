@@ -1,6 +1,6 @@
 ---
 weight: 7082
-title: "Example Dashboard"
+title: "Example"
 description: "Analytics & Dashboards — Logs Dashboard Example"
 icon: auto_awesome
 date: 2025-12-16T01:04:15+00:00
@@ -21,6 +21,7 @@ This dashboard uses:
 * **DuckDB WASM** for in-browser analytics
 
 ### Getting Started With Dashboard
+
 By default, a newly created dashboard is **empty** and displays only a basic layout with an **Edit** button.
 
 ![Empty Dashboard](images/screenshots/empty-dash-light.png)
@@ -67,7 +68,7 @@ This example use the ETLX [sqlite exemple](https://github.com/realdatadriven/etl
 Every dashboard starts with a `config` block.
 This is where CentralSet **overrides Evidence defaults** and wires the dashboard to ETLX outputs.
 
-```json config
+```json config {linenos=table}
 "auto_refresh_every_n_seconds": null,  
 "all_query_run_locally_in_ddb_wasm": true,
 "pre_prepared_parquets_logs_table": null,
@@ -98,7 +99,7 @@ This is where CentralSet **overrides Evidence defaults** and wires the dashboard
 
 This means:
 
-```sql
+```sql {linenos=table}
 FROM "LOGS"
 ```
 
@@ -128,7 +129,7 @@ Each filter is backed by SQL queries that populate dropdowns and inputs.
 
 ### 2.1 Reference Date Selector
 
-```sql _dts
+```sql _dts {linenos=table}
 select distinct strftime("ref"::date, '%Y-%m-%d') "ref"
 from "LOGS"
 where "ref" is not null
@@ -149,14 +150,14 @@ A date input that **suggests only valid dates present in the data**.
 
 #### Main Process
 
-```sql main_process_query
+```sql main_process_query {linenos=table}
 select distinct "key" as "main_process"
 from "LOGS"
 ```
 
 #### Sub Process
 
-```sql sub_process_query
+```sql sub_process_query {linenos=table}
 select distinct "item_key" as "sub_process"
 from "LOGS"
 where "item_key" is not null
@@ -171,7 +172,7 @@ These queries populate hierarchical dropdowns:
 
 ### 2.3 Success / Failure Filter
 
-```sql query_success
+```sql query_success {linenos=table}
 select *
 from (values
     ('%', 'ALL'),
@@ -190,7 +191,7 @@ Allows filtering logs by:
 
 ### 2.4 Filter Layout (Grid)
 
-```html
+```html {linenos=table}
 <Grid>
     <GridItem>
         <Input type=date ... input_label="Reference Date" />
@@ -240,7 +241,7 @@ The **Big Numbers section** summarizes system health at a glance.
 
 ### 3.1 KPI Query
 
-```sql big_numbers_query
+```sql big_numbers_query {linenos=table}
 select
     count(*) filter("ref" = 'inputs.date_ref.value') as "total",
     count(*) filter("ref" = 'inputs.date_ref.value' and success) as "total_success",
@@ -264,7 +265,7 @@ This query:
 
 ### 3.2 KPI Rendering
 
-```html
+```html {linenos=table}
 <Stats>
     <Stat>
         <StatFigure icon='document-text'/>
@@ -303,14 +304,14 @@ This section explains **why things changed**, not just **what changed**.
 
 ### 4.1 Logs by Process (Pie Chart)
 
-```sql total_by_process_query
+```sql total_by_process_query {linenos=table}
 select "key" as "name", count(*) as "value"
 from "LOGS"
 where "ref" = 'inputs.date_ref.value'
 group by "key"
 ```
 
-```html
+```html {linenos=table}
 <ECharts
     config={{
         series: [{
@@ -331,7 +332,7 @@ group by "key"
 
 ### 4.2 Logs Over Time (Area Chart)
 
-```sql total_by_ref_query
+```sql total_by_ref_query {linenos=table}
 select
     "ref"::varchar as "dt",
     case when success then 'Success' else 'Error' end as "category",
@@ -341,7 +342,7 @@ group by "ref", category
 order by "ref"
 ```
 
-```html
+```html {linenos=table}
 <AreaChart
     data={total_by_ref_query}
     x=dt
@@ -365,7 +366,7 @@ The final section lets users **drill into raw data**.
 
 ### 5.1 Logs Query
 
-```sql _logs
+```sql _logs {linenos=table}
 select *
 from "LOGS"
 where "ref" = 'inputs.date_ref.value'
@@ -374,7 +375,7 @@ order by "start_at"
 
 ### 5.2 DataTable
 
-```html
+```html {linenos=table}
 <DataTable data={_logs} rows=20 search=true>
     <Column id=key title="Process"/>
     <Column id=item_key title="Sub Process"/>
@@ -410,7 +411,7 @@ order by "start_at"
 
 A dashboard configuration ([logs_dashboard.md](https://github.com/realdatadriven/central-set-go/blob/main/logs_dashboard.md)) looks like:
 
-````markdown
+````markdown {linenos=table}
 <!---DASHBOARD-->
 
 ```json config
@@ -705,6 +706,7 @@ where "ref" = 'inputs.date_ref.value'
 order by "start_at" asc
 ```
 
+
 <DataTable data={_logs}
     rowShading=true 
     rowLines=false
@@ -719,6 +721,10 @@ order by "start_at" asc
 	<Column id=success title=Success/>
 </DataTable>
 ````
+
+## The resulting dashboard
+
+![Dashboard Example](images/screenshots/logs-dashboard-compact-light.png)
 
 ## Summary
 

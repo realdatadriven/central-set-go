@@ -191,7 +191,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 **Response (simplified)**
 
-```json
+```json {linenos=table}
 {
   "success": true,
   "data": [
@@ -238,7 +238,7 @@ Menus define navigation structure and grouping.
 
 **Response (simplified)**
 
-```json
+```json {linenos=table}
 {
   "success": true,
   "data": [
@@ -294,7 +294,7 @@ This endpoint powers:
 
 **Request (simplified)**
 
-```json
+```json {linenos=table}
 {
   "table": "apps",
   "page": 1,

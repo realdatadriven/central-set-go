@@ -86,7 +86,7 @@ Content-Type: application/json
 
 #### Request Body
 
-```json
+```json {linenos=table}
 {
   "lang": "pt",
   "data": {
@@ -108,7 +108,7 @@ Content-Type: application/json
 
 #### Response
 
-```json
+```json {linenos=table}
 {
   "success": true,
   "token": "<JWT_TOKEN>",
@@ -181,7 +181,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 #### Request Body
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
@@ -202,7 +202,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 #### Response
 
-```json
+```json {linenos=table}
 {
   "success": true,
   "message": "Password updated successfully"
@@ -348,7 +348,7 @@ POST /dyn_api/login/login
 
 **Request Body**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {

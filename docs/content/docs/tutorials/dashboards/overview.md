@@ -1,7 +1,7 @@
 ---
 weight: 7081
-title: "Overview - Analytics & Dashboards"
-description: "Overview - Analytics & Dashboards"
+title: "Overview"
+description: "Overview"
 icon: auto_awesome
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
@@ -22,7 +22,7 @@ This allows you to build **interactive analytical dashboards** directly on top o
 * Curated analytical tables
 
 All dashboards live **inside Central Set**, inherit authentication and authorization, and are fully
-integrated with the platform’s data model.
+integrated with the platform's data model.
 
 ---
 
@@ -74,7 +74,7 @@ visualization supported by ECharts.
 
 ---
 
-## What’s Different from Vanilla Evidence
+## What's Different from Vanilla Evidence
 
 | Area            | Evidence.dev                | Central Set             |
 | --------------- | --------------------------- | ----------------------- |
@@ -150,7 +150,7 @@ This means:
 * Authentication is shared
 * Permissions apply automatically
 
-From the user’s perspective, dashboards are simply **another application menu**.
+From the user's perspective, dashboards are simply **another application menu**.
 
 ---
 
@@ -213,7 +213,7 @@ They are:
 * Governed by metadata
 * Deployable across environments
 
-This aligns with Central Set’s core philosophy:
+This aligns with Central Set's core philosophy:
 
 > **Everything is configuration.
 > Everything is data-driven.**

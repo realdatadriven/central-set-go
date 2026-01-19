@@ -39,7 +39,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "pt",
   "data": {
@@ -51,7 +51,7 @@ Content-Type: application/json
 
 **Response (simplified)**
 
-```json
+```json {linenos=table}
 {
   "success": true,
   "token": "<JWT_TOKEN>",
@@ -84,7 +84,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en"
 }
@@ -111,7 +111,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "controller": "login",
@@ -147,7 +147,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en"
 }
@@ -174,7 +174,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "app": {
@@ -214,7 +214,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
@@ -251,7 +251,7 @@ Content-Type: application/json
 
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
@@ -290,7 +290,7 @@ Content-Type: application/json
 ```
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
@@ -325,7 +325,7 @@ Content-Type: application/json
 ```
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "pt",
   "data": {
@@ -363,7 +363,7 @@ Content-Type: application/json
 ```
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
@@ -401,7 +401,7 @@ Content-Type: application/json
 ```
 **Request**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
@@ -472,7 +472,7 @@ Content-Type: application/json
 
 **Request (simplified)**
 
-```json
+```json {linenos=table}
 {
   "lang": "en",
   "data": {
