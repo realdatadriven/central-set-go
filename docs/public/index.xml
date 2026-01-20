@@ -150,4 +150,64 @@ All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt
 &lt;li&gt;&lt;strong&gt;ETLX-generated datasets and Parquet files&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;DuckDB WASM&lt;/strong&gt; for in-browser analytics&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id="getting-started-with-dashboard"&gt;Getting Started With Dashboard &lt;a href="#getting-started-with-dashboard" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;By default, a newly created dashboard is &lt;strong&gt;empty&lt;/strong&gt; and displays only a basic layout with an &lt;strong&gt;Edit&lt;/strong&gt; button.&lt;/p&gt;</description></item></channel></rss>
+&lt;h3 id="getting-started-with-dashboard"&gt;Getting Started With Dashboard &lt;a href="#getting-started-with-dashboard" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;By default, a newly created dashboard is &lt;strong&gt;empty&lt;/strong&gt; and displays only a basic layout with an &lt;strong&gt;Edit&lt;/strong&gt; button.&lt;/p&gt;</description></item><item><title>OData v4 API</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</guid><description>&lt;h1 id="odata-v4-api"&gt;OData v4 API &lt;a href="#odata-v4-api" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Documentation status&lt;/strong&gt; — The application itself is mature and production-ready, but this documentation is still under active development. Large parts are auto-generated and continuously evolving.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;The application exposes a &lt;strong&gt;standards-compliant OData v4 API&lt;/strong&gt; that allows controlled, secure access to relational data using HTTP-based query semantics.&lt;/p&gt;
+&lt;p&gt;This API is designed to be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Consumable by &lt;strong&gt;data science and analytics tools&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Easy to integrate with &lt;strong&gt;DuckDB, Python, R, BI tools&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Governed by the &lt;strong&gt;same access-control rules&lt;/strong&gt; as the UI&lt;/li&gt;
+&lt;li&gt;Composable with &lt;strong&gt;ETLX workflows and metadata-driven pipelines&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="endpoint-overview"&gt;Endpoint Overview &lt;a href="#endpoint-overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;
+
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ &lt;div class="prism-codeblock "&gt;
+ &lt;pre id="aff2bbb" class="language-http "&gt;
+ &lt;code&gt;GET /odata/{db}/{table}&lt;/code&gt;
+ &lt;/pre&gt;
+ &lt;/div&gt;
+&lt;h3 id="example"&gt;Example &lt;a href="#example" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ &lt;div class="prism-codeblock "&gt;
+ &lt;pre id="9b97760" class="language-http "&gt;
+ &lt;code&gt;GET http://localhost:4444/odata/ADMIN/menu?$filter=app_id eq 1&amp;amp;$format=json&lt;/code&gt;
+ &lt;/pre&gt;
+ &lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;db&lt;/code&gt; → logical database name (e.g. &lt;code&gt;ADMIN&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;table&lt;/code&gt; → exposed table or view&lt;/li&gt;
+&lt;li&gt;Query options follow &lt;strong&gt;OData v4&lt;/strong&gt; conventions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="supported-odata-query-options"&gt;Supported OData Query Options &lt;a href="#supported-odata-query-options" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The API supports the most commonly used OData v4 operators:&lt;/p&gt;</description></item></channel></rss>

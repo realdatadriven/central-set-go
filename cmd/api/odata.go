@@ -281,7 +281,6 @@ func sqlToEdmType(sqlType string) string {
 		return "Edm.String"
 	}
 }
-
 func BuildODataMetadata(rows []map[string]any) (string, error) {
 	type Column struct {
 		Name     string

@@ -1,7 +1,7 @@
 ---
 weight: 7080
 title: "Dynamic API Reference"
-description: "D"
+description: "Dynamic API Reference"
 icon: code
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
