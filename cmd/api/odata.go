@@ -194,7 +194,7 @@ func parseSimpleFilter(expr string) (map[string]any, error) {
 		return map[string]any{
 			"field": field,
 			"cond":  cond,
-			"value": strings.Join(parts, ";"),
+			"value": strings.Join(parts, ","),
 		}, nil
 	case "between":
 		if len(tokens) < 5 || strings.ToLower(tokens[3]) != "and" {
@@ -205,7 +205,7 @@ func parseSimpleFilter(expr string) (map[string]any, error) {
 		return map[string]any{
 			"field": field,
 			"cond":  cond,
-			"value": v1 + ";" + v2,
+			"value": v1 + "," + v2,
 		}, nil
 	default:
 		value := stripSingleQuotes(strings.Join(tokens[2:], " "))
@@ -260,10 +260,324 @@ func splitAndTrim(s string) []string {
 	}
 	return parts
 }
+func sqlToEdmType(sqlType string) string {
+	t := strings.ToUpper(sqlType)
+	switch {
+	case strings.Contains(t, "INT"):
+		return "Edm.Int32"
+	case strings.Contains(t, "BIGINT"):
+		return "Edm.Int64"
+	case strings.Contains(t, "BOOLEAN"):
+		return "Edm.Boolean"
+	case strings.Contains(t, "DATETIME"), strings.Contains(t, "TIMESTAMP"):
+		return "Edm.DateTimeOffset"
+	case strings.Contains(t, "DATE"):
+		return "Edm.Date"
+	case strings.Contains(t, "DECIMAL"), strings.Contains(t, "NUMERIC"):
+		return "Edm.Decimal"
+	case strings.Contains(t, "FLOAT"), strings.Contains(t, "DOUBLE"):
+		return "Edm.Double"
+	default:
+		return "Edm.String"
+	}
+}
+
+func BuildODataMetadata(rows []map[string]any) (string, error) {
+	type Column struct {
+		Name     string
+		Type     string
+		Nullable bool
+		IsPK     bool
+	}
+	type Entity struct {
+		Name    string
+		Columns []Column
+		PKs     []string
+	}
+	schemas := map[string]map[string]*Entity{}
+	for _, r := range rows {
+		if r["excluded"] == true {
+			continue
+		}
+		db := r["db"].(string)
+		table := r["table"].(string)
+		field := r["field"].(string)
+		sqlType := r["type"].(string)
+		nullable := r["nullable"] != false
+		isPK := r["pk"] == true || r["pk"] == 1
+		if schemas[db] == nil {
+			schemas[db] = map[string]*Entity{}
+		}
+		if schemas[db][table] == nil {
+			schemas[db][table] = &Entity{Name: table}
+		}
+		col := Column{
+			Name:     field,
+			Type:     sqlToEdmType(sqlType),
+			Nullable: nullable,
+			IsPK:     isPK,
+		}
+		e := schemas[db][table]
+		e.Columns = append(e.Columns, col)
+		if isPK {
+			e.PKs = append(e.PKs, field)
+		}
+	}
+	var b strings.Builder
+	b.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
+	b.WriteString(`
+<edmx:Edmx Version="4.0"
+ xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+ xmlns="http://docs.oasis-open.org/odata/ns/edm">
+ <edmx:DataServices>`)
+	for db, tables := range schemas {
+		b.WriteString(fmt.Sprintf(`<Schema Namespace="%s">`, db))
+		for _, e := range tables {
+			b.WriteString(fmt.Sprintf(`<EntityType Name="%s">`, e.Name))
+			if len(e.PKs) > 0 {
+				b.WriteString(`<Key>`)
+				for _, pk := range e.PKs {
+					b.WriteString(fmt.Sprintf(`<PropertyRef Name="%s"/>`, pk))
+				}
+				b.WriteString(`</Key>`)
+			}
+			for _, c := range e.Columns {
+				b.WriteString(fmt.Sprintf(
+					`<Property Name="%s" Type="%s" Nullable="%t"/>`,
+					c.Name, c.Type, c.Nullable,
+				))
+			}
+			b.WriteString(`</EntityType>`)
+		}
+		b.WriteString(`<EntityContainer Name="Container">`)
+		for _, e := range tables {
+			b.WriteString(fmt.Sprintf(
+				`<EntitySet Name="%s" EntityType="%s.%s"/>`,
+				e.Name, db, e.Name,
+			))
+		}
+		b.WriteString(`</EntityContainer>`)
+		b.WriteString(`</Schema>`)
+	}
+	b.WriteString(`
+ </edmx:DataServices>
+</edmx:Edmx>`)
+	return b.String(), nil
+}
+func BuildODataMetadataJSON(rows []map[string]any) (map[string]any, error) {
+	type Entity struct {
+		Props map[string]any
+		Keys  []string
+	}
+	model := map[string]any{
+		"@odata.context": "$metadata",
+	}
+	namespaces := map[string]map[string]*Entity{}
+	for _, r := range rows {
+		if r["excluded"] == true {
+			continue
+		}
+		db := r["db"].(string)
+		table := r["table"].(string)
+		field := r["field"].(string)
+		sqlType := r["type"].(string)
+		nullable := r["nullable"] != false
+		isPK := r["pk"] == true || r["pk"] == 1
+		if namespaces[db] == nil {
+			namespaces[db] = map[string]*Entity{}
+		}
+		if namespaces[db][table] == nil {
+			namespaces[db][table] = &Entity{
+				Props: map[string]any{
+					"$Kind": "EntityType",
+				},
+			}
+		}
+		prop := map[string]any{
+			"$Type": sqlToEdmType(sqlType),
+		}
+		if !nullable {
+			prop["$Nullable"] = false
+		}
+		namespaces[db][table].Props[field] = prop
+		if isPK {
+			namespaces[db][table].Keys = append(
+				namespaces[db][table].Keys,
+				field,
+			)
+		}
+	}
+	for db, tables := range namespaces {
+		ns := map[string]any{}
+		// entity types
+		for name, e := range tables {
+			if len(e.Keys) > 0 {
+				e.Props["$Key"] = e.Keys
+			}
+			ns[name] = e.Props
+		}
+		// entity container
+		container := map[string]any{
+			"$Kind": "EntityContainer",
+		}
+		for name := range tables {
+			container[name] = map[string]any{
+				"$Collection": true,
+				"$Type":       db + "." + name,
+			}
+		}
+		ns["Container"] = container
+		model[db] = ns
+	}
+	return model, nil
+}
+func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("METADATA ONLY!")
+	db := r.PathValue("db")
+	w.Header().Set("OData-Version", "4.0")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	sql := `select * from table_schema where db = ? and excluded = false`
+	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db})
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_res := map[string]any{
+			"error": map[string]any{
+				"code":    "GeneralError",
+				"message": "MetadataErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	xml, err := BuildODataMetadata(_table_schema)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_res := map[string]any{
+			"error": map[string]any{
+				"code":    "GeneralError",
+				"message": "BuildMetadataErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	//fmt.Println(xml)
+	w.Header().Set("Content-Type", "application/xml")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(xml))
+	/*model, err := BuildODataMetadataJSON(_table_schema)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_res := map[string]any{
+			"error": map[string]any{
+				"code":    "GeneralError",
+				"message": "BuildMetadataErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(model)*/
+}
+func isXMLMetadataRequest(r *http.Request) bool {
+	accept := r.Header.Get("Accept")
+	return strings.Contains(accept, "application/xml") ||
+		strings.Contains(accept, "application/atom+xml")
+}
 func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	db := r.PathValue("db")
 	table := r.PathValue("table")
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("OData-Version", "4.0")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	//w.Header().Set("Content-Type", "application/json")
+	if table == "$metadata" {
+		sql := `select * from table_schema where db = ? and excluded = false`
+		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db, table})
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_res := map[string]any{
+				"error": map[string]any{
+					"code":    "GeneralError",
+					"message": "MetadataErr: " + err.Error(),
+				},
+			}
+			json.NewEncoder(w).Encode(_res)
+			return
+		}
+		xml, err := BuildODataMetadata(_table_schema)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_res := map[string]any{
+				"error": map[string]any{
+					"code":    "GeneralError",
+					"message": "BuildDBMetadataErr: " + err.Error(),
+				},
+			}
+			json.NewEncoder(w).Encode(_res)
+			return
+		}
+		//fmt.Println(xml)
+		w.Header().Set("Content-Type", "application/xml")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(xml))
+		/*model, err := BuildODataMetadataJSON(_table_schema)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_res := map[string]any{
+				"error": map[string]any{
+					"code":    "GeneralError",
+					"message": "BuildMetadataErr: " + err.Error(),
+				},
+			}
+			json.NewEncoder(w).Encode(_res)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(model)*/
+		return
+	} else if isXMLMetadataRequest(r) {
+		sql := `select * from "table_schema" where "db" = ? and "table" = ? and "excluded" = false`
+		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db, table})
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_res := map[string]any{
+				"error": map[string]any{
+					"code":    "GeneralError",
+					"message": "MetadataErr: " + err.Error(),
+				},
+			}
+			json.NewEncoder(w).Encode(_res)
+			return
+		}
+		xml, err := BuildODataMetadata(_table_schema)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_res := map[string]any{
+				"error": map[string]any{
+					"code":    "GeneralError",
+					"message": "BuildTableMetadataErr: " + err.Error(),
+				},
+			}
+			json.NewEncoder(w).Encode(_res)
+			return
+		}
+		/*/fmt.Println(xml)
+		url := "http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery)
+		xml = fmt.Sprintf(`<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom"
+		      xmlns:d="http://docs.oasis-open.org/odata/ns/data"
+		      xmlns:m="http://docs.oasis-open.org/odata/ns/metadata">
+		  <title type="text">%s</title>
+		  <id>%s</id>
+		</feed>`, table, url)*/
+		w.Header().Set("Content-Type", "application/xml")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(xml))
+		return
+	}
 	sql := `select * from app where (app = ? or db = ?) and excluded = false`
 	_app, err := app.AdminGetRowByFilter(sql, []any{db, table})
 	if err != nil {
@@ -351,7 +665,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		_log["user_id"] = params["user"].(Dict)["user_id"]
 	}
 	if !token["success"].(bool) {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusForbidden)
 		response = map[string]any{
 			"error": map[string]any{
 				"code":    "GeneralError",
@@ -431,11 +745,35 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response = map[string]any{
-		"@odata.context": "http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery),
-		"@odata.count":   data["total"], // optional: total count (when $count=true or $inlinecount)
+		"@odata.context": fmt.Sprintf("%s/odata/%s/$metadata#%s", r.Host, db, table), //"http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery),
+		"@odata.count":   data["total"],                                              // optional: total count (when $count=true or $inlinecount)
 		"value":          data["data"],
 		//"params":         params,
 		//"@odata.nextLink": "http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery), // optional: for paging
 	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
+
+/**
+INSTALL erpl_web FROM community;
+LOAD erpl_web;
+
+-- Usefull for debugging
+SET erpl_trace_enabled = TRUE;
+SET erpl_trace_level = 'DEBUG';
+
+-- Create Secret
+CREATE SECRET api_auth (
+  TYPE http_bearer,
+  TOKEN '...',
+  SCOPE 'http://localhost:4444/'
+);
+
+FROM HTTP_GET('http://localhost:4444/odata/ADMIN/app');
+
+FROM ODATA_READ('http://localhost:4444/odata/ADMIN/app?$filter=app_id gt 1');
+
+ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ADMIN' AS admin (TYPE odata);
+SELECT app_id, app, db, excluded FROM admin.app WHERE app_id = 1;
+**/

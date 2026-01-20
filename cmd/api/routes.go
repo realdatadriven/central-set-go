@@ -115,6 +115,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /upload", app.uploadHandler)
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
 	// ODATA HANDDLER
+	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}", app.odata_api)
 
 	// JOBS RUN ENDPOINTS
