@@ -138,7 +138,14 @@ featureGrid:
         Authenticate external services, scripts, and applications
         with fine-grained permissions and role-based control.
 
-
+    - title: OData v4 Query API
+      icon: hub
+      description: >
+        Query application data and metadata using a **standards-compliant
+        OData v4 API**. Supports filtering, projection, pagination,
+        and secure access via tokens — consumable directly from
+        **DuckDB, notebooks, BI tools, and data science pipelines**.
+        
 # =========================
 # Image Compare
 # =========================
