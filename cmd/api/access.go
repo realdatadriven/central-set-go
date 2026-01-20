@@ -10,15 +10,15 @@ import (
 func (app *application) table_access(params map[string]any, tables []any) map[string]any {
 	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
-		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
+		user_id = app.toInt(params["user"].(map[string]any)["user_id"])
 	}
 	var role_id int
 	if _, ok := params["app"].(map[string]any)["role_id"]; ok {
-		role_id = int(params["app"].(map[string]any)["role_id"].(float64))
+		role_id = app.toInt(params["app"].(map[string]any)["role_id"])
 	}
 	var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
 	}
 	_extra_conf := map[string]any{
 		"driverName": app.config.db.driverName,
@@ -159,15 +159,15 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 func (app *application) row_level_access(params map[string]any, tables []any, row_id []any) map[string]any {
 	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
-		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
+		user_id = app.toInt(params["user"].(map[string]any)["user_id"])
 	}
 	var role_id int
 	if _, ok := params["app"].(map[string]any)["role_id"]; ok {
-		role_id = int(params["app"].(map[string]any)["role_id"].(float64))
+		role_id = app.toInt(params["app"].(map[string]any)["role_id"])
 	}
 	var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
 	}
 	_extra_conf := map[string]any{
 		"driverName": app.config.db.driverName,
@@ -394,7 +394,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 func (app *application) row_level_tables(params map[string]any) map[string]any {
 	var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
 	}
 	tables := []string{}
 	queryParams := []any{app_id}

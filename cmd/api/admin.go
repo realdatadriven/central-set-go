@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -373,15 +374,38 @@ func (app *application) GetDBNameFromParams(params map[string]any) (string, stri
 	}
 }
 
+func (app *application) toInt(v any) int {
+	switch val := v.(type) {
+	case float32:
+		return int(val)
+	case float64:
+		return int(val)
+	case int64:
+		return int(val)
+	case int32:
+		return int(val)
+	case string:
+		i, err := strconv.Atoi(val)
+		if err != nil {
+			return 0 // Handle invalid strings as needed
+		}
+		return i
+	case int:
+		return val
+	default:
+		return 0 // or handle error
+	}
+}
+
 func (app *application) tables(params map[string]any, tables []any) map[string]any {
 	//fmt.Println(1, params)
 	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
-		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
+		user_id = app.toInt(params["user"].(map[string]any)["user_id"])
 	}
 	var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
 	}
 	// DATABASE
 	_extra_conf := map[string]any{
