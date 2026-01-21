@@ -423,7 +423,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	if err != nil {
 		println("Error geting the table query:", err)
 	}
-	//fmt.Println(query, args)
+	fmt.Println(query, args)
 	results := make([]map[string]any, 0)
 	data, _, err := db.QueryMultiRows(query, args...)
 	if err != nil {

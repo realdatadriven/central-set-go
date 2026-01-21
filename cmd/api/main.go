@@ -177,6 +177,16 @@ func run(logger *slog.Logger) error {
 		i18n:   i18n,
 		//admin:  admin{},
 	}
+	sql := `select * from "env" where "active" = ? and "excluded" = ?`
+	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{true, false})
+	if err != nil {
+		fmt.Printf("Error fetching tenant env vars: %v\n", err)
+	}
+	for _, v := range tenantEnv {
+		os.Setenv(v["env_name"].(string), v["env_value"].(string))
+		//fmt.Printf("Setting env var for admin %s=%s\n", v["env_name"], v["env_value"])
+	}
+	//fmt.Println("API_KEY_1:", os.Getenv("API_KEY_1"))
 	// err = db.Ping()
 	if *initdb /*&& err != nil*/ {
 		fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())

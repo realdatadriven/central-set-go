@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/hashicorp/terraform-exec/tfexec"
 )
 
@@ -55,7 +58,18 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     err.Error(),
 		}
 	}
-	// fmt.Println(deployment)
+	tenantID := _data["tenant_id"]
+	sql = `select * from "tenant" where "tenant_id" = ? and "active" = true and "excluded" = false`
+	tenant, err := app.GetRowsByFilter(sql, params, []any{tenantID})
+	if err != nil {
+		fmt.Println("tenant err:", err)
+	}
+	sql = `select * from "env" where "tenant_id" = ? and "active" = true and "excluded" = false`
+	tenantEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
+	if err != nil {
+		fmt.Println("env err:", err)
+	}
+	//fmt.Println(tenant, tenantEnv)
 	if _, ok := deployment["terraform_template"].(string); !ok {
 		msg, _ := app.i18n.T("unable-to-match-deployment-id", Dict{})
 		return Dict{
@@ -63,8 +77,15 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
-	tenantID := _data["tenant_id"]
-	run := &TerraformRun{Config: deployment["terraform_template"].(string)}
+	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "deployment": deployment, "tenant": tenant, "data": _data}
+	parsedTmpl, err := app.RenderTemplate(deployment["terraform_template"].(string), _tmpl_data)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     "terraform_template" + err.Error(),
+		}
+	}
+	run := &TerraformRun{Config: parsedTmpl}
 	if terraform_state, ok := _data["terraform_state"].(string); ok && terraform_state != "" {
 		// fmt.Println("State:", _data["terraform_state"])
 		run.State = json.RawMessage([]byte(terraform_state))
@@ -119,6 +140,7 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	workDir, _ := os.MkdirTemp("", "tf-*")
 	fmt.Println("Temp TF Dir:", workDir)
 	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
+	//return nil, fmt.Errorf("template_test: %s", workDir)
 	if len(run.State) > 0 {
 		if err := os.WriteFile(filepath.Join(workDir, "terraform.tfstate"), run.State, 0644); err != nil {
 			return nil, err
@@ -230,6 +252,22 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	//fmt.Printf("Terraform outputs: %v\n", result)
 	//fmt.Printf("Terraform state: %s\n", string(run.State))
 	return result, nil
+}
+
+func (etlx *application) RenderTemplate(tmplStr string, data map[string]any) (string, error) {
+	// Create a FuncMap with some common functions
+	// funcMap := sprig.FuncMap()
+	tmpl, err := template.New("tmpl").Funcs(sprig.FuncMap()).Parse(tmplStr)
+	//tmpl, err := template.New("email").Funcs(funcMap).Parse(tmplStr)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse template: %v", err)
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", fmt.Errorf("failed to execute template: %v", err)
+	}
+	//fmt.Println(buf.String())
+	return buf.String(), nil
 }
 
 func (app *application) DestroyTerraform(params Dict, tenantID any, run *TerraformRun) error {

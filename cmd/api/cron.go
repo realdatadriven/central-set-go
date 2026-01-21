@@ -114,12 +114,13 @@ func (app *application) GetRowByFilter(sql string, params Dict, filters []any) (
 
 func (app *application) GetRowsByFilter(sql string, params Dict, filters []any) ([]Dict, error) {
 	dsn, _, _ := app.GetDBNameFromParams(params)
+	//fmt.Println("GetRowsByFilter:", dsn)
 	db, err := etlx.GetDB(dsn)
 	if err != nil {
 		return nil, err
 	} else {
 		defer db.Close()
-		res, _, err := app.db.QueryMultiRows(sql, filters...)
+		res, _, err := db.QueryMultiRows(sql, filters...)
 		if err != nil {
 			return nil, err
 		}
