@@ -60,4 +60,12 @@ func (app *application) serveHTTP() error {
 	return nil
 }
 
+func (app *application) serveArrowFlight() error {
+	sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`
+	fligths, err := app.GetRowByFilter(sql, []any{true,false})
+	if err != nil {
+		return err
+	}
+}
+
 // air
