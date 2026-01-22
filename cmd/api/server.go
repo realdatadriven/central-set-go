@@ -61,10 +61,21 @@ func (app *application) serveHTTP() error {
 }
 
 func (app *application) serveArrowFlight() error {
+	// use crud.read to respect access control
 	sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`
 	fligths, err := app.GetRowByFilter(sql, []any{true,false})
 	if err != nil {
 		return err
+	}
+
+	db, err := duckdb.NewConnector("", nil)
+    if err != nil {
+        return nil, err
+    }
+    defer db.Close()
+	if _, err := db.Connect(context.Background()); err != nil {
+		_ = db.Close()
+		return nil, err
 	}
 }
 
