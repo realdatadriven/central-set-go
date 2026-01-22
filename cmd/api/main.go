@@ -197,6 +197,14 @@ func run(logger *slog.Logger) error {
 		return nil
 	}
 	app.CronJobs()
+	if env.GetBool("ENABLE_ARROW_FLIGHT", false) {
+		go func() {
+			err := app.serveArrowFlight()
+			if err != nil {
+				fmt.Printf("Error setting up arrow flight server: %v\n", err)
+			}
+		}()
+	}
 	return app.serveHTTP()
 }
 
