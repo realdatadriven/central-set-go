@@ -5,8 +5,6 @@
 It unifies **application management, databases, users, roles, ETL workflows, dashboards, and analytics**
 into a single system — driven by metadata instead of custom code.
 
-> 🚧 **Note**  
-> Central Set is production-ready, but documentation is still evolving and partially auto-generated.
 
 ---
 
@@ -45,12 +43,17 @@ All of this is defined using **configuration**, not hard-coded logic.
 
 👉 **https://realdatadriven.github.io/central-set-go/**
 
+> 🚧 **Note**  
+> Central Set is production-ready, but documentation is still evolving and partially auto-generated, under evaluation and may change.
+
 The docs cover:
 
 - Architecture & concepts
 - Quickstart guides
 - Configuration reference
 - ETLX workflows
+- API reference
+- Arrow Flight Supporte
 - OData v4 API
 - Security & access control
 - Dashboards & analytics

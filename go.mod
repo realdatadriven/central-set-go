@@ -34,7 +34,6 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.12
 	github.com/hashicorp/terraform-exec v0.24.0
 	github.com/hugr-lab/airport-go v0.1.5
-	github.com/realdatadriven/duck-flight v0.0.0-20251217173552-2ebb16997882
 	github.com/robfig/cron/v3 v3.0.1
 	google.golang.org/grpc v1.77.0
 )

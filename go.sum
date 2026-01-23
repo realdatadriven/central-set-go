@@ -265,8 +265,6 @@ github.com/pkg/sftp v1.13.10/go.mod h1:bJ1a7uDhrX/4OII+agvy28lzRvQrmIQuaHrcI1Hbe
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/realdatadriven/duck-flight v0.0.0-20251217173552-2ebb16997882 h1:99EbxiBa/94UIiXo0bceBuw28dn8P8l0UZsRZjsw9nA=
-github.com/realdatadriven/duck-flight v0.0.0-20251217173552-2ebb16997882/go.mod h1:r41Hbt3MJCCSUn0Ey4EbqalAqMVOBmXFwGI6v8c32uo=
 github.com/realdatadriven/etlx v1.4.16 h1:Zu6D0/xC3oCm3YxYXOVpqMkIKw5O6Gfkncm6Rx4FUSs=
 github.com/realdatadriven/etlx v1.4.16/go.mod h1:sfC2RIDtya9RV4tWHhfTfUcaiyaN9dtOIu3+zyoymDI=
 github.com/richardlehane/mscfb v1.0.6 h1:eN3bvvZCp00bs7Zf52bxNwAx5lJDBK1tCuH19qq5aC8=

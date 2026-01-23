@@ -17,8 +17,6 @@ import (
 
 	airport "github.com/hugr-lab/airport-go"
 	"github.com/hugr-lab/airport-go/catalog"
-	//"github.com/realdatadriven/central-set-go/internal/config"
-	//"github.com/realdatadriven/duck-flight/internal/ddb"
 	//duckarrow "github.com/duckdb/duckdb-go/v2/arrow"
 )
 
