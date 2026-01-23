@@ -115,7 +115,7 @@ func (app *application) serveArrowFlight() error {
 	}
 	// start server
 	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapter(db, fligths)
+	flightMgr := flight.NewAirportAdapter(app, db, fligths)
 
 	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
 	// Start the server (includes starting airport-go Flight server)

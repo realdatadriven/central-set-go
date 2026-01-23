@@ -28,6 +28,7 @@ type FlightManager interface {
 
 // AirportAdapter implements FlightManager using hugr-lab/airport-go.
 type AirportAdapter struct {
+	app	   *application
 	manager   *duckdb.Connector
 	grpcSrv   *grpc.Server
 	listener  net.Listener
@@ -38,14 +39,27 @@ type AirportAdapter struct {
 }
 
 // NewAirportAdapter constructs the adapter with the provided DDB.
-func NewAirportAdapter(manager *duckdb.Connector, config []map[string]any) *AirportAdapter {
+func NewAirportAdapter(app *application, manager *duckdb.Connector, config []map[string]any) *AirportAdapter {
 	return &AirportAdapter{
+		app:       app,
 		manager:   manager,
 		mem:       memory.DefaultAllocator,
 		cfg:       config,
 		shutdownc: make(chan struct{}),
 	}
 }
+
+auth := airport.BearerAuth(func(token string) (string, error) {
+    if token == "secret-api-key" {
+        return "user1", nil
+    }
+    return "", airport.ErrUnauthorized
+})
+
+airport.NewServer(grpcServer, airport.ServerConfig{
+    Catalog: cat,
+    Auth:    auth,
+})
 
 // Start builds an airport-go catalog from the DuckDB schemas and tables discovered via the manager.
 // It then creates a gRPC server and registers the airport server.
@@ -91,6 +105,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	a.grpcSrv = grpc.NewServer()
 	if err := airport.NewServer(a.grpcSrv, airport.ServerConfig{
 		Catalog: cat,
+    	Auth:    auth,
 		Address: listenAddr,
 	}); err != nil {
 		return fmt.Errorf("airport.NewServer failed: %w", err)
