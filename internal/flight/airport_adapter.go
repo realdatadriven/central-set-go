@@ -205,22 +205,39 @@ func discoverColumns(db *duckdb.Connector, schema, table string) ([]columnMeta, 
 	return cols, nil
 }
 
-/*func discoverColumns2(db *duckdb.Connector, schema, table string) (arrow.Schema, error) {
+func discoverColumns2(db *duckdb.Connector, schema, table string) (arrow.Schema, error) {
 	q := fmt.Sprintf(`SELECT * FROM "%s" LIMIT 0`, table)
 	var schem arrow.Schema
-	sqlConn, err := db.Conn(context.Background())
+	conn := sql.OpenDB(db)
+	defer conn.Close()
+	arrow, err := duckdb.NewArrowFromConn(conn)
 	if err != nil {
-		return schem, err
+		return nil, err
 	}
-	rawConn := sqlConn.Raw(func(driverConn any) error {
-		conn := driverConn.(*duckdb.Conn)
-		arrow, _ := duckdb.NewArrowFromConn(conn)
-		rdr, _ := arrow.QueryContext(context.Background(), q)
-		rdr.Schema()
-		return nil
-	})
-	return schem, nil
-}*/
+	rdr, err := arrow.QueryContext(context.Background(), q)
+	if err != nil {
+		return nil, err
+	}
+	defer rdr.Release()
+	return rdr.Schema(), nil
+}
+
+func makeScanFunc2(db *duckdb.Connector, mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, cols []columnMeta) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+	return // Good: Stream batches as you read
+	func streamScan(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+		query := fmt.Sprintf("SELECT * FROM \"%s\".\"%s\"", schemaName, tableName)
+		fmt.Println(query)
+		conn := sql.OpenDB(db)
+		defer conn.Close()
+		rows, err := conn.QueryContext(ctx, query)
+		if err != nil {
+			return nil, fmt.Errorf("query %s: %w", query, err)
+		}
+		// defer rows.Close()
+		// Create streaming reader that builds batches on-demand
+		return NewStreamingReader(rows, batchSize), nil
+	}
+}
 
 // buildArrowSchemaFromColumns converts discovered columns into an arrow.Schema following provided mapping.
 func buildArrowSchemaFromColumns(cols []columnMeta) *arrow.Schema {
