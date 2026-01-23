@@ -199,7 +199,7 @@ func run(logger *slog.Logger) error {
 	app.CronJobs()
 	if env.GetBool("ENABLE_ARROW_FLIGHT", false) {
 		go func() {
-			err := app.serveArrowFlight()
+			err := app.serveArrowFlightTmp()
 			if err != nil {
 				fmt.Printf("Error setting up arrow flight server: %v\n", err)
 			}
