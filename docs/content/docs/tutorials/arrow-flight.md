@@ -11,7 +11,7 @@ images: []
 
 ## Arrow Flight Support
 
-{{% alert context="warning" text="**Important** – Central-Set is production-ready, but this documentation is still under active development. Large parts are auto-generated and may change as features evolve / get documented." /%}}
+{{% alert context="warning" text="**Important** - Central-Set is production-ready, but this documentation is still under active development. Large parts are auto-generated and may change as features evolve / get documented." /%}}
 
 ### Overview
 
@@ -20,6 +20,24 @@ Central-Set provides [**Apache Arrow Flight**](https://arrow.apache.org/docs/for
 The goal is to make transformed data **immediately consumable by analytical engines, BI tools, and data science workflows**, without exporting files or duplicating storage.
 
 Arrow Flight endpoints are dynamically defined and managed through the **Admin UI**, backed by **in-memory DuckDB instances** that attach external datasources on demand.
+
+It takes the Arrow Flight configuration defined in the Admin database and uses **airport-go** to create a Flight server backed by **DuckDB**.
+
+At runtime, it initializes a DuckDB instance and serves the tables defined in the configuration using DuckDB's **Arrow integration**, exposing them through the Arrow Flight protocol.
+
+The lifecycle of each endpoint is fully driven by configuration:
+
+* `startup_sql` is executed to load extensions and initialize dependencies
+* `main_sql` attaches the underlying data sources and exposes tables
+* `shutdown_sql` is executed to clean up resources (for example, detaching databases)
+
+All requests are authenticated using the `validateToken` function, ensuring that Arrow Flight follows the same security and access rules as the rest of the platform.
+
+The original design aimed to reuse a **global `duckdb.Connector`** so multiple Flight clients could share the same DuckDB instance. However, due to concurrency issues when sharing connectors across goroutines, the current implementation creates a **new DuckDB connector per scan request**.
+
+While this approach introduces some overhead, real-world testing shows that performance remains acceptable for analytical workloads—especially when compared to the OData v4 API, which is better suited for smaller or transactional queries.
+
+Further optimizations around connector reuse and resource management are planned to improve performance and efficiency over time.
 
 ---
 
@@ -125,14 +143,19 @@ DETACH test;
 
 ### Connecting from DuckDB (Recommended)
 
-Use DuckDB’s **airport community extension**:
+Use DuckDB's **airport community extension**:
 
-```sql
+```sql {linenos=table}
 INSTALL airport FROM community;
 LOAD airport;
 
-ATTACH '' AS my_server
-  (TYPE AIRPORT, LOCATION 'grpc://127.0.0.1:50051');
+CREATE OR REPLACE PERSISTENT SECRET airport_auth_secret (
+    TYPE airport,
+    AUTH_TOKEN 'your_access_token_here',
+    SCOPE 'grpc://127.0.0.1:50051'
+);
+
+ATTACH '' AS my_server (TYPE AIRPORT, LOCATION 'grpc://127.0.0.1:50051');
 
 SELECT *
 FROM my_server.my_schema.orders

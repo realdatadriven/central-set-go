@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"log/slog"
 	"net"
 	"strings"
 	"time"
@@ -27,22 +28,24 @@ type FlightManagerTmp interface {
 
 // AirportAdapterTmp implements FlightManagerTmp using hugr-lab/airport-go.
 type AirportAdapterTmp struct {
-	manager   *sql.DB
-	grpcSrv   *grpc.Server
-	listener  net.Listener
-	mem       memory.Allocator
-	catalog   catalog.Catalog
-	cfg       []map[string]any
-	shutdownc chan struct{}
+	manager       *sql.DB
+	validateToken func(token string) (string, error)
+	grpcSrv       *grpc.Server
+	listener      net.Listener
+	mem           memory.Allocator
+	catalog       catalog.Catalog
+	cfg           []map[string]any
+	shutdownc     chan struct{}
 }
 
 // NewAirportAdapterTmp constructs the adapter with the provided DDB.
-func NewAirportAdapterTmp(manager *sql.DB, config []map[string]any) *AirportAdapterTmp {
+func NewAirportAdapterTmp(manager *sql.DB, config []map[string]any, validateToken func(token string) (string, error)) *AirportAdapterTmp {
 	return &AirportAdapterTmp{
-		manager:   manager,
-		mem:       memory.DefaultAllocator,
-		cfg:       config,
-		shutdownc: make(chan struct{}),
+		manager:       manager,
+		validateToken: validateToken,
+		mem:           memory.DefaultAllocator,
+		cfg:           config,
+		shutdownc:     make(chan struct{}),
 	}
 }
 
@@ -86,17 +89,16 @@ func (a *AirportAdapterTmp) Start(listenAddr string) error {
 	}
 	a.catalog = cat
 	// Create grpc server and register airport server
-	a.grpcSrv = grpc.NewServer()
-	if err := airport.NewServer(a.grpcSrv, airport.ServerConfig{
-		Catalog: cat,
-		Auth: airport.BearerAuth(func(token string) (string, error) {
-			if token == "secret-api-key" {
-				return "user1", nil
-			}
-			return "", airport.ErrUnauthorized
-		}),
-		Address: listenAddr,
-	}); err != nil {
+	debugLevel := slog.LevelDebug
+	config := airport.ServerConfig{
+		Catalog:  cat,
+		Auth:     airport.BearerAuth(a.validateToken),
+		Address:  listenAddr,
+		LogLevel: &debugLevel,
+	}
+	opts := airport.ServerOptions(config)
+	a.grpcSrv = grpc.NewServer(opts...)
+	if err := airport.NewServer(a.grpcSrv, config); err != nil {
 		return fmt.Errorf("airport.NewServer failed: %w", err)
 	}
 	lis, err := net.Listen("tcp", listenAddr)

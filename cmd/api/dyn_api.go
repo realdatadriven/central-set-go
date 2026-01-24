@@ -586,3 +586,29 @@ func (app *application) verifyToken(r *http.Request) Dict {
 		"msg":     "No token received!",
 	}
 }
+func (app *application) verifyTokenString(authorizationHeader string) (Dict, error) {
+	if authorizationHeader != "" {
+		token := authorizationHeader
+		claims, err := jwt.HMACCheck([]byte(token), []byte(app.config.jwt.secretKey))
+		if err != nil {
+			return nil, fmt.Errorf("Error validating token: %w", err)
+		}
+		if !claims.Valid(time.Now()) {
+			return nil, fmt.Errorf("Token has expired: %w", err)
+		}
+		if claims.Issuer != app.config.baseURL {
+			return nil, fmt.Errorf("Token Issuer is invalid: %w", app.config.baseURL)
+		}
+		if !claims.AcceptAudience(app.config.baseURL) {
+			return nil, fmt.Errorf("Token AcceptAudience is invalid: %w", app.config.baseURL)
+		}
+		var user Dict
+		// fmt.Println(claims.Subject)
+		err2 := json.Unmarshal([]byte(claims.Subject), &user)
+		if err2 != nil {
+			return nil, fmt.Errorf("Error unmarshaling token subject: %w", err)
+		}
+		return user, nil
+	}
+	return nil, fmt.Errorf("No token received: %w", "")
+}
