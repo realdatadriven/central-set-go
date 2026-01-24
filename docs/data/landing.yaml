@@ -22,7 +22,7 @@ hero:
 
   title: "Central Set (CS)"
   subtitle: >
-    A **configuration-driven data platform & Admin UI**
+    A **configuration-driven data app & Admin UI**
     built with **Golang**.
     Manage **applications, databases, users, roles, data pipelines,
     dashboards, and analytics** — all from one unified system.
