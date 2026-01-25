@@ -35,6 +35,7 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/memory"
 	"github.com/duckdb/duckdb-go/v2"
+	"github.com/realdatadriven/etlx"
 	"google.golang.org/grpc"
 
 	airport "github.com/hugr-lab/airport-go"
@@ -81,32 +82,43 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	defer db.Close()
 	conn := sql.OpenDB(db)
 	defer conn.Close()
+	_etlx := etlx.ETLX{}
 	// For each schema defined in config, discover its tables and add them as SimpleTable entries.
 	for _, s := range a.cfg {
 		schemaName := s["flight_schema"].(string)
 		// create a schema builder for this schema
 		sb := builder.Schema(schemaName)
 		// execute startup_sql
-		if _, ok := s["startup_sql"].(string); ok {
-			//fmt.Printf("%s: %s\n", s["arrow_flight"], s["startup_sql"])
-			_, err := conn.ExecContext(context.Background(), s["startup_sql"].(string))
+		var main_sql string
+		if startup_sql, ok := s["startup_sql"].(string); ok {
+			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
+			//fmt.Printf("%s: %s\n", s["arrow_flight"], startup_sql)
+			_, err := conn.ExecContext(context.Background(), startup_sql)
 			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], s["startup_sql"], err)
+				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], startup_sql, err)
 			}
-			//fmt.Printf("%s: %s\n", s["arrow_flight"], s["main_sql"])
-			_, err = conn.ExecContext(context.Background(), s["main_sql"].(string))
+			main_sql = _etlx.ReplaceEnvVariable(s["main_sql"].(string))
+			//fmt.Printf("%s: %s\n", s["arrow_flight"], main_sql)
+			_, err = conn.ExecContext(context.Background(), main_sql)
 			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], s["main_sql"], err)
+				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], main_sql, err)
 			}
 		}
-		_, err = conn.ExecContext(context.Background(), fmt.Sprintf("USE %s;", schemaName))
-		if err != nil {
-			return fmt.Errorf("use schema %s: %w", schemaName, err)
+		// check if main_sql has use <schema>; is not do use <schema>;
+		/*/ fmt.Println(strings.Contains(strings.ToLower(main_sql), fmt.Sprintf("use %s;", strings.ToLower(schemaName))), main_sql)
+		if !strings.Contains(strings.ToLower(main_sql), fmt.Sprintf("use %s;", strings.ToLower(schemaName))) {
+			_, err = conn.ExecContext(context.Background(), fmt.Sprintf("USE %s;", schemaName))
+			if err != nil {
+				return fmt.Errorf("use schema %s: %w", schemaName, err)
+			}
+		}*/
+		//q := `SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_type = 'BASE TABLE' ORDER BY table_name`
+		table_discover_sql := `select table_name from duckdb_tables`
+		if _table_discover_sql, ok := s["table_discover_sql"].(string); ok {
+			table_discover_sql = _etlx.ReplaceEnvVariable(_table_discover_sql)
+			//fmt.Println("table_discover_sql:", table_discover_sql)
 		}
-		//conn, _ := db.Connect(context.Background())
-		q := `SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_type = 'BASE TABLE' ORDER BY table_name`
-		q = `select table_name from duckdb_tables`
-		rows, err := conn.QueryContext(context.Background(), q, schemaName)
+		rows, err := conn.QueryContext(context.Background(), table_discover_sql, schemaName)
 		if err != nil {
 			return fmt.Errorf("query tables: %w", err)
 		}
@@ -116,6 +128,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			if err := rows.Scan(&tname); err != nil {
 				return fmt.Errorf("scan table name: %w", err)
 			}
+			fmt.Println(tname)
 			// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
 			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
 				found := false
@@ -123,11 +136,9 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 					found = true
 				}
 				if !found {
-					// fmt.Println("SKIP:", tname)
 					continue
 				}
 			}
-			//fmt.Println(tname)
 			// // if s["tables"].(map[string]any) exists and it length > 0 and tname is in s["tables"].(map[string]any), and s["tables"].(map[string]any)[tname].(map[string]any)[fields] has length > 0, filter arrowSchema to only include those fields
 			_fields := []string{}
 			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
@@ -142,7 +153,16 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			if len(_fields) == 0 {
 				_fields = []string{"*"}
 			}
-			q = fmt.Sprintf(`SELECT %s FROM "%s"."%s" LIMIT 0`, strings.Join(_fields, ","), schemaName, tname)
+			query := fmt.Sprintf(`SELECT %s FROM %s."%s" LIMIT 0`, strings.Join(_fields, ","), schemaName, tname)
+			// if s["table_scan_tmpl_sql"] exists use it to build the query
+			if table_scan_tmpl_sql, ok := s["table_scan_tmpl_sql"].(string); ok {
+				table_scan_tmpl_sql = _etlx.ReplaceEnvVariable(table_scan_tmpl_sql)
+				query = strings.ReplaceAll(table_scan_tmpl_sql, "{{table_name}}", tname)
+				query = strings.ReplaceAll(query, "{{schema_name}}", schemaName)
+				query = strings.ReplaceAll(query, "{{fields}}", strings.Join(_fields, ","))
+				query = fmt.Sprintf(query+" LIMIT 0", strings.Join(_fields, ","), schemaName, tname)
+				//fmt.Println("table_scan_tmpl_sql query:", query)
+			}
 			conn, err := db.Connect(context.Background())
 			if err != nil {
 				return err
@@ -152,14 +172,14 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			if err != nil {
 				return err
 			}
-			rdr, err := arrow.QueryContext(context.Background(), q)
+			rdr, err := arrow.QueryContext(context.Background(), query)
 			if err != nil {
 				return err
 			}
 			defer rdr.Release()
 			arrowSchema := rdr.Schema()
 			//fmt.Println(tname, arrowSchema)
-			scanFn := makeScanFunc( /*a.manager,*/ a.mem, schemaName, tname, arrowSchema, s)
+			scanFn := makeScanFunc(a.mem, schemaName, tname, arrowSchema, s)
 			// register simple table under current schema builder
 			sb.SimpleTable(airport.SimpleTableDef{
 				Name:     tname,
@@ -172,11 +192,12 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			return fmt.Errorf("tables rows err: %w", err)
 		}
 		// execute shutdown_sql
-		if _, ok := s["shutdown_sql"].(string); ok {
-			// fmt.Printf("%s: %s\n", s["arrow_flight"], s["shutdown_sql"])
-			_, err = conn.ExecContext(context.Background(), s["shutdown_sql"].(string))
+		if shutdown_sql, ok := s["shutdown_sql"].(string); ok {
+			shutdown_sql := _etlx.ReplaceEnvVariable(shutdown_sql)
+			//fmt.Printf("%s: %s\n", s["arrow_flight"], shutdown_sql)
+			_, err = conn.ExecContext(context.Background(), shutdown_sql)
 			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], s["shutdown_sql"], err)
+				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], shutdown_sql, err)
 			}
 		}
 		// conn.ExecContext(context.Background(), "USE memory;")
@@ -245,9 +266,9 @@ func (a *AirportAdapter) Stop(ctx context.Context) error {
 // for each scan request, so we can share the same DB across multiple
 // connections/flight clients.
 // but im im passing the all configuration and making the connection and initializing the sturup and shutdown
-// all over agin because of some problems with the shared connector across goroutines.
+// all over again because of some problems with the shared connector across goroutines.
 // This needs to be improved later for performance and resource usage.
-func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
@@ -256,10 +277,10 @@ func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, 
 				found = true
 			}
 			if !found {
-				// fmt.Println("SKIP:", tname)
 				return nil, fmt.Errorf("table %s not allowed", tableName)
 			}
 		}
+		// CHECK FIELDS ALLOWED
 		_fields := []string{}
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
 			if tableConf, ok := tables[tableName].(map[string]any); ok {
@@ -273,8 +294,17 @@ func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, 
 		if len(_fields) == 0 {
 			_fields = []string{"*"}
 		}
-		query := fmt.Sprintf("SELECT %s FROM \"%s\".\"%s\"", strings.Join(_fields, ","), schemaName, tableName)
-		fmt.Println(query)
+		_etlx := etlx.ETLX{}
+		query := fmt.Sprintf("SELECT %s FROM %s.\"%s\"", strings.Join(_fields, ","), schemaName, tableName)
+		if table_scan_tmpl_sql, ok := conf["table_scan_tmpl_sql"].(string); ok {
+			table_scan_tmpl_sql = _etlx.ReplaceEnvVariable(table_scan_tmpl_sql)
+			query = strings.ReplaceAll(table_scan_tmpl_sql, "{{table_name}}", tableName)
+			query = strings.ReplaceAll(query, "{{schema_name}}", schemaName)
+			query = strings.ReplaceAll(query, "{{fields}}", strings.Join(_fields, ","))
+			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
+			//fmt.Println("table_scan_tmpl_sql query:", query)
+		}
+		//fmt.Println(query)
 		//fmt.Println(_sql, fligths)
 		db, err := duckdb.NewConnector("", nil)
 		if err != nil {
@@ -283,11 +313,12 @@ func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, 
 		defer func() { // EXECUTE SHUTDOWN SQL ON EXIT
 			conn := sql.OpenDB(db)
 			defer conn.Close()
-			if _, ok := conf["shutdown_sql"].(string); ok {
-				fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
-				_, err := conn.ExecContext(context.Background(), conf["shutdown_sql"].(string))
+			if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
+				//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
+				shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
+				_, err := conn.ExecContext(context.Background(), shutdown_sql)
 				if err != nil {
-					fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], conf["shutdown_sql"], err)
+					fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
 				}
 			}
 			db.Close()
@@ -295,16 +326,18 @@ func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, 
 		// EXECUTE STARTUP SQL
 		conn := sql.OpenDB(db)
 		defer conn.Close()
-		if _, ok := conf["startup_sql"].(string); ok {
+		if startup_sql, ok := conf["startup_sql"].(string); ok {
 			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["startup_sql"])
-			_, err := conn.ExecContext(context.Background(), conf["startup_sql"].(string))
+			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
+			_, err := conn.ExecContext(context.Background(), startup_sql)
 			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], conf["startup_sql"], err)
+				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], startup_sql, err)
 			}
 			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
-			_, err = conn.ExecContext(context.Background(), conf["main_sql"].(string))
+			main_sql := _etlx.ReplaceEnvVariable(conf["main_sql"].(string))
+			_, err = conn.ExecContext(context.Background(), main_sql)
 			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], conf["main_sql"], err)
+				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], main_sql, err)
 			}
 		}
 		conn2, err := db.Connect(context.Background())
@@ -321,16 +354,19 @@ func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, 
 			conn2.Close()
 			return nil, err
 		}
-		/*if aSchema != nil && !arrow.SchemaEqual(aSchema, rdr.Schema()) {
-			rdr.Release()
-			conn.Close()
-			return nil, fmt.Errorf("arrow schema mismatch")
-		}*/
 		/*/defer rdr.Release()
 		for rdr.Next() {
 			rec := rdr.Record()
 			// rec is an Arrow RecordBatch
 			fmt.Println("rows:", rec.NumRows())
+		}*/
+		/*if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
+			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
+			shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
+			_, err := conn.ExecContext(context.Background(), shutdown_sql)
+			if err != nil {
+				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
+			}
 		}*/
 		//return nil, nil
 		return &connBoundRecordReader{
