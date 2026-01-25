@@ -22,7 +22,7 @@ ENV CGO_ENABLED=1
 RUN git clone --depth=1 https://github.com/realdatadriven/central-set-go.git .
 
 # Build the central-set-go binary with static linking to avoid GLIBC issues
-RUN go build -o central-set-go ./cmd/api
+RUN go build -tags="duckdb_arrow" -o central-set-go ./cmd/api
 RUN rm ./database/ADMIN.db
 
 # ============================================
