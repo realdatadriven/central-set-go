@@ -28,6 +28,8 @@ import (
 	"log"
 	"log/slog"
 	"net"
+	"os"
+	"strings"
 
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/array"
@@ -114,8 +116,33 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			if err := rows.Scan(&tname); err != nil {
 				return fmt.Errorf("scan table name: %w", err)
 			}
+			// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
+			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
+				found := false
+				if _, ok := tables[tname]; ok {
+					found = true
+				}
+				if !found {
+					// fmt.Println("SKIP:", tname)
+					continue
+				}
+			}
 			//fmt.Println(tname)
-			q = fmt.Sprintf(`SELECT * FROM "%s"."%s" LIMIT 0`, schemaName, tname)
+			// // if s["tables"].(map[string]any) exists and it length > 0 and tname is in s["tables"].(map[string]any), and s["tables"].(map[string]any)[tname].(map[string]any)[fields] has length > 0, filter arrowSchema to only include those fields
+			_fields := []string{}
+			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
+				if tableConf, ok := tables[tname].(map[string]any); ok {
+					if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
+						for field, _ := range fields {
+							_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+						}
+					}
+				}
+			}
+			if len(_fields) == 0 {
+				_fields = []string{"*"}
+			}
+			q = fmt.Sprintf(`SELECT %s FROM "%s"."%s" LIMIT 0`, strings.Join(_fields, ","), schemaName, tname)
 			conn, err := db.Connect(context.Background())
 			if err != nil {
 				return err
@@ -131,7 +158,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			}
 			defer rdr.Release()
 			arrowSchema := rdr.Schema()
-			fmt.Println(tname, arrowSchema)
+			//fmt.Println(tname, arrowSchema)
 			scanFn := makeScanFunc( /*a.manager,*/ a.mem, schemaName, tname, arrowSchema, s)
 			// register simple table under current schema builder
 			sb.SimpleTable(airport.SimpleTableDef{
@@ -162,7 +189,16 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	}
 	a.catalog = cat
 	// Create grpc server and register airport server
-	debugLevel := slog.LevelDebug
+	debugLevel := slog.LevelInfo
+	if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelInfo" {
+		debugLevel = slog.LevelInfo
+	} else if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelWarn" {
+		debugLevel = slog.LevelWarn
+	} else if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelError" {
+		debugLevel = slog.LevelError
+	} else if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelDebug" {
+		debugLevel = slog.LevelDebug
+	}
 	config := airport.ServerConfig{
 		Catalog:  cat,
 		Auth:     airport.BearerAuth(a.validateToken),
@@ -213,7 +249,31 @@ func (a *AirportAdapter) Stop(ctx context.Context) error {
 // This needs to be improved later for performance and resource usage.
 func makeScanFunc( /*db *duckdb.Connector, */ mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
-		query := fmt.Sprintf("SELECT * FROM \"%s\".\"%s\"", schemaName, tableName)
+		// CHECK IF TABLE IS ALLOWED
+		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
+			found := false
+			if _, ok := tables[tableName]; ok {
+				found = true
+			}
+			if !found {
+				// fmt.Println("SKIP:", tname)
+				return nil, fmt.Errorf("table %s not allowed", tableName)
+			}
+		}
+		_fields := []string{}
+		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
+			if tableConf, ok := tables[tableName].(map[string]any); ok {
+				if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
+					for field, _ := range fields {
+						_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+					}
+				}
+			}
+		}
+		if len(_fields) == 0 {
+			_fields = []string{"*"}
+		}
+		query := fmt.Sprintf("SELECT %s FROM \"%s\".\"%s\"", strings.Join(_fields, ","), schemaName, tableName)
 		fmt.Println(query)
 		//fmt.Println(_sql, fligths)
 		db, err := duckdb.NewConnector("", nil)

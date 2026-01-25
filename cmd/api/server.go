@@ -95,6 +95,33 @@ func (app *application) serveArrowFlight() error {
 	if err != nil {
 		return err
 	}
+	_sql = `SELECT * FROM "arrow_flight_table" WHERE active = ? AND excluded = ?`
+	fligths_tables, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	_sql = `SELECT * FROM "arrow_flight_table_field" WHERE active = ? AND excluded = ?`
+	fligths_tables_fields, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	// add tree tables and fields to flights, but with map[string]any like map[string]any{f["table"]: {"fields": map[string]any{"field": field}}}
+	for _, f := range fligths {
+		var tables Dict = make(Dict)
+		for _, t := range fligths_tables {
+			if t["arrow_flight_id"] == f["arrow_flight_id"] {
+				var fields Dict = make(Dict)
+				for _, tf := range fligths_tables_fields {
+					if tf["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
+						fields[tf["arrow_flight_table_field"].(string)] = tf
+					}
+				}
+				t["fields"] = fields
+				tables[t["arrow_flight_table"].(string)] = t
+			}
+		}
+		f["tables"] = tables
+	}
 	// start server
 	// Create Flight adapter (airport-go) backed by our manager.
 	flightMgr := flight.NewAirportAdapter(fligths, app.airportValidateToken)
