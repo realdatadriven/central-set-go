@@ -115,4 +115,5 @@ CMD [""]
 #podman login docker.io
 #podman push docker.io/realdatadriven/central-set-go:latest
 #podman push docker.io/realdatadriven/central-set-go:v1.1.6
+# docker exec -it c78f3f267461 bash
 

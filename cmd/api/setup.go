@@ -63,10 +63,13 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 	}*/
 	// DUCKDB STYLE
-	fmt.Println("Data File:", app.fileExists(csapp), csapp)
+	//fmt.Println("Data File:", app.fileExists(csapp), csapp)
 	if app.fileExists(csapp) {
-		fmt.Printf(`duckdb:%s`, csapp)
-		ddb, _ := etlx.GetDB(fmt.Sprintf(`duckdb:%s`, csapp))
+		//fmt.Printf(`duckdb:%s`, csapp)
+		ddb, err := etlx.GetDB(fmt.Sprintf(`duckdb:%s`, csapp))
+		if err != nil {
+			return err
+		}
 		defer ddb.Close()
 		// ADMIN
 		sql := `select * from "adm_query"`
@@ -119,7 +122,7 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 
 // Execute a single SQL query
 func (app *application) executeSQLQuery(query string, db etlx.DBInterface) error {
-	fmt.Println("Executing query...", query)
+	//fmt.Println("Executing query...", query)
 	_, err := db.ExecuteQuery(query)
 	if err != nil {
 		fmt.Println(query)
