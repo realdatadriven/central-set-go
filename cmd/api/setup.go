@@ -117,6 +117,7 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 
 // Execute a single SQL query
 func (app *application) executeSQLQuery(query string, db etlx.DBInterface) error {
+	fmt.Println("Executing query...", query)
 	_, err := db.ExecuteQuery(query)
 	if err != nil {
 		fmt.Println(query)
