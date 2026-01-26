@@ -47,6 +47,7 @@ COPY --from=builder /app/central-set-go /usr/local/bin/central-set-go
 # Copy static folder from the builder stage (if it exists)
 COPY --from=builder /app/static /app/static
 COPY --from=builder /app/database /app/database
+COPY --from=builder /app/database /app/database.defaults
 COPY --from=builder /app/locales /app/locales
 
 # Ensure the binary is executable
@@ -74,6 +75,16 @@ if [ -f "/app/.env" ]; then\n\
     set -a\n\
     source /app/.env\n\
     set +a\n\
+fi\n\
+# Bootstrap database directory if empty or missing files
+if [ -d "/app/database.defaults" ]; then\n\
+  for f in /app/database.defaults/*; do\n\
+    name=$(basename "$f")\n\
+    if [ ! -e "/app/database/$name" ]; then\n\
+      echo "Bootstrapping $name"\n\
+      cp -a "$f" "/app/database/$name"\n\
+    fi\n\
+  done\n\
 fi\n\
 \n\
 # Ensure database directory exists\n\
