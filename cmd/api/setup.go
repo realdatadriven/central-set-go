@@ -63,7 +63,9 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 	}*/
 	// DUCKDB STYLE
+	fmt.Println("Data File:", app.fileExists(csapp), csapp)
 	if app.fileExists(csapp) {
+		fmt.Printf(`duckdb:%s`, csapp)
 		ddb, _ := etlx.GetDB(fmt.Sprintf(`duckdb:%s`, csapp))
 		defer ddb.Close()
 		// ADMIN
