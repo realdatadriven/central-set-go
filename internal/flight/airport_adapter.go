@@ -128,7 +128,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			if err := rows.Scan(&tname); err != nil {
 				return fmt.Errorf("scan table name: %w", err)
 			}
-			fmt.Println(tname)
+			//fmt.Println(tname)
 			// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
 			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
 				found := false

@@ -237,6 +237,10 @@ func (app *application) Buckup(params Dict) Dict {
 			if strings.HasPrefix(table["table_name"].(string), "sqlite_") {
 				continue
 			}
+			sensitive_tables := strings.Split(os.Getenv("SENSITIVE_TABLES"), ",")
+			if app.contains(app.sliceStrs2SliceInterfaces(sensitive_tables), table) {
+				continue
+			}
 			_filter := []any{}
 			sql = fmt.Sprintf(`select * from "%s"`, table["table_name"])
 			//fmt.Println(table)

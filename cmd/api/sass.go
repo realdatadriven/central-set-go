@@ -21,6 +21,23 @@ type TerraformRun struct {
 	Lock   string
 }
 
+// func that checks if the link has not prefix http:// or https:// and adds http:// if missing
+func ensureHTTPPrefix(url string) string {
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		return "http://" + url
+	}
+	return url
+}
+
+// turn json.RawMessage like '"text"' into string text
+func rawMessageToString(raw json.RawMessage) string {
+	var str string
+	if err := json.Unmarshal(raw, &str); err != nil {
+		return ""
+	}
+	return str
+}
+
 func terraformCachePath() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -69,6 +86,10 @@ func (app *application) RunDeploy(params Dict) Dict {
 	if err != nil {
 		fmt.Println("env err:", err)
 	}
+	tenantEnvKeyPair := map[string]any{}
+	for _, v := range tenantEnv {
+		tenantEnvKeyPair[v["env_name"].(string)] = v["env_value"].(string)
+	}
 	//fmt.Println(tenant, tenantEnv)
 	if _, ok := deployment["terraform_template"].(string); !ok {
 		msg, _ := app.i18n.T("unable-to-match-deployment-id", Dict{})
@@ -77,7 +98,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
-	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "deployment": deployment, "tenant": tenant, "data": _data}
+	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "envKV": tenantEnvKeyPair, "deployment": deployment, "tenant": tenant, "data": _data}
 	parsedTmpl, err := app.RenderTemplate(deployment["terraform_template"].(string), _tmpl_data)
 	if err != nil {
 		return Dict{
@@ -85,6 +106,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     "terraform_template" + err.Error(),
 		}
 	}
+	// fmt.Printf(parsedTmpl)
 	run := &TerraformRun{Config: parsedTmpl}
 	if terraform_state, ok := _data["terraform_state"].(string); ok && terraform_state != "" {
 		// fmt.Println("State:", _data["terraform_state"])
@@ -99,9 +121,9 @@ func (app *application) RunDeploy(params Dict) Dict {
 	case "deploy":
 		res, err = app.DeployTerraformForTenant(params, tenantID, run)
 		_json_out, _ := json.Marshal(res)
-		_data["tf_public_ip"] = string(res["public_ip"])
-		_data["tf_public_dns"] = string(res["public_dns"])
-		_data["tf_public_url"] = string(res["url"])
+		_data["tf_public_ip"] = rawMessageToString(json.RawMessage(res["public_ip"]))
+		_data["tf_public_dns"] = ensureHTTPPrefix(rawMessageToString(json.RawMessage(res["public_dns"])))
+		_data["tf_public_url"] = ensureHTTPPrefix(rawMessageToString(json.RawMessage(res["url"])))
 		_data["terraform_outputs"] = string(_json_out)
 		_data["deployed"] = true
 	case "cancel", "destroy":
