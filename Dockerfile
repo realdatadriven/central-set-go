@@ -46,6 +46,7 @@ COPY --from=builder /app/central-set-go /usr/local/bin/central-set-go
 
 # Copy static folder from the builder stage (if it exists)
 COPY --from=builder /app/static /app/static
+RUN mkdir -p /app/static/uploads
 COPY --from=builder /app/database /app/database
 COPY --from=builder /app/database /app/database.defaults
 COPY --from=builder /app/locales /app/locales
