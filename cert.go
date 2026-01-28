@@ -1,0 +1,109 @@
+package main
+
+import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
+	"log"
+	"math/big"
+	"net"
+	"os"
+	"time"
+)
+
+func main() {
+	// 1️⃣ Create CA
+	caKey, err := rsa.GenerateKey(rand.Reader, 4096)
+	must(err)
+
+	caTemplate := &x509.Certificate{
+		SerialNumber: big.NewInt(1),
+		Subject: pkix.Name{
+			Organization: []string{"Local Dev CA"},
+			CommonName:   "Local Dev CA",
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().AddDate(10, 0, 0),
+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+		BasicConstraintsValid: true,
+		IsCA:                  true,
+	}
+
+	caCertDER, err := x509.CreateCertificate(
+		rand.Reader,
+		caTemplate,
+		caTemplate,
+		&caKey.PublicKey,
+		caKey,
+	)
+	must(err)
+
+	writeCert("ssl/ca-cert.pem", caCertDER)
+	writeKey("ssl/ca-key.pem", caKey)
+
+	// 2️⃣ Create server cert
+	serverKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	must(err)
+
+	serverTemplate := &x509.Certificate{
+		SerialNumber: big.NewInt(2),
+		Subject: pkix.Name{
+			Organization: []string{"Local Dev Server"},
+			CommonName:   "localhost",
+		},
+		NotBefore: time.Now(),
+		NotAfter:  time.Now().AddDate(1, 0, 0),
+
+		KeyUsage:    x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+
+		DNSNames: []string{"localhost"},
+		IPAddresses: []net.IP{
+			net.ParseIP("127.0.0.1"),
+		},
+	}
+
+	serverCertDER, err := x509.CreateCertificate(
+		rand.Reader,
+		serverTemplate,
+		caTemplate,
+		&serverKey.PublicKey,
+		caKey,
+	)
+	must(err)
+
+	writeCert("ssl/server-cert.pem", serverCertDER)
+	writeKey("ssl/server-key.pem", serverKey)
+
+	log.Println("✅ CA and server certificates generated")
+}
+
+func writeCert(path string, der []byte) {
+	f, err := os.Create(path)
+	must(err)
+	defer f.Close()
+
+	pem.Encode(f, &pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: der,
+	})
+}
+
+func writeKey(path string, key *rsa.PrivateKey) {
+	f, err := os.Create(path)
+	must(err)
+	defer f.Close()
+
+	pem.Encode(f, &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(key),
+	})
+}
+
+func must(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
