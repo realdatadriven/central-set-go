@@ -187,7 +187,6 @@ func run(logger *slog.Logger) error {
 			//fmt.Printf("Setting env var for admin %s=%s\n", v["env_name"], v["env_value"])
 		}
 	}
-	//fmt.Println("API_KEY_1:", os.Getenv("API_KEY_1"))
 	// err = db.Ping()
 	if *initdb /*&& err != nil*/ {
 		fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
