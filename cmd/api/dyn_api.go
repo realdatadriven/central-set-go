@@ -49,7 +49,6 @@ func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
-
 func (app *application) run_notebook(w http.ResponseWriter, r *http.Request) {
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
@@ -83,7 +82,6 @@ func (app *application) run_notebook(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
-
 func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Request) {
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
@@ -118,7 +116,6 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 		app.serverError(w, r, err)
 	}
 }
-
 func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	var params Dict
 	ctrl := r.PathValue("ctrl")
