@@ -81,7 +81,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	if err != nil {
 		fmt.Println("tenant err:", err)
 	}
-	sql = `select * from "env" where "tenant_id" = ?and "on_srv_start" = true and "active" = true and "excluded" = false`
+	sql = `select * from "env" where "tenant_id" = ? and "on_srv_start" = true and "active" = true and "excluded" = false`
 	tenantEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
 	if err != nil {
 		fmt.Println("env err:", err)
