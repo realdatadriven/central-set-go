@@ -111,11 +111,11 @@ WITH base AS (
         l.l_discount,
         l.l_quantity,
         l.l_shipmode
-    FROM orders o
-    JOIN customer c USING (c_custkey)
-    JOIN lineitem l USING (o_orderkey)
-    JOIN nation n ON c.c_nationkey = n.n_nationkey
-    JOIN region r ON n.n_regionkey = r.r_regionkey
+    FROM "sample.duckdb"."orders" o
+    JOIN "sample.duckdb"."customer" c USING (c_custkey)
+    JOIN "sample.duckdb"."lineitem" l USING (o_orderkey)
+    JOIN "sample.duckdb"."nation" n ON c.c_nationkey = n.n_nationkey
+    JOIN "sample.duckdb"."region" r ON n.n_regionkey = r.r_regionkey
     WHERE o.o_orderdate BETWEEN 'inputs.date_start.value' AND 'inputs.date_end.value'
         AND r.r_name LIKE 'inputs.region.value'
         AND l.l_shipmode LIKE 'inputs.ship_mode.value'
