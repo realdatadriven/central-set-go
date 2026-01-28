@@ -560,7 +560,7 @@ func (app *application) validateLicense() Dict {
 		if err != nil {
 			token = Dict{
 				"success": false,
-				"msg":fmt.Println("Error creating request to licensor:", err),
+				"msg":fmt.Println("Error creating request to licensor, please contact admin:", err),
 			}
 		} else {
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", licensorToken))
@@ -570,7 +570,7 @@ func (app *application) validateLicense() Dict {
 			if err != nil {
 				token = Dict{
 					"success": false,
-					"msg": fmt.Println("Error making request to licensor:", err),
+					"msg": fmt.Println("Error making request to licensor, please contact admin:", err),
 				}
 			} else {
 				defer resp.Body.Close()
@@ -579,7 +579,7 @@ func (app *application) validateLicense() Dict {
 				if err != nil {
 					token = Dict{
 						"success": false,
-						"msg":fmt.Println("Error decoding licensor response:", err),
+						"msg":fmt.Println("Error decoding licensor response, please contact admin:", err),
 					}
 				} else {
 					if success, ok := licensorResp["success"].(bool); ok {
