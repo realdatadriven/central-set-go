@@ -98,7 +98,7 @@ from "sample.duckdb"."lineitem"
      {/if}
 </Grid>
 
-<!--- DASHBOARD CONTENT SECTION --->
+<!--- DASHBOARD CONTENT SECTION 
 
 ```sql details
 WITH base AS (
@@ -125,3 +125,4 @@ SELECT *
 FROM base
 LIMIT 10
 ```
+--->

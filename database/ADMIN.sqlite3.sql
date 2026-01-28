@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS env (
 	user_id INTEGER, 
 	created_at DATETIME, 
 	updated_at DATETIME, 
-	excluded BOOLEAN, 
+	excluded BOOLEAN, on_srv_start boolean null, 
 	UNIQUE (env_name), 
 	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );

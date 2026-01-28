@@ -333,7 +333,7 @@ func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *a
 			query = fmt.Sprintf("%s WHERE %s", query, whereClause)
 			// Use whereClause with your database query
 		}
-		//fmt.Println(query)
+		fmt.Println(query)
 		//fmt.Println(_sql, fligths)
 		db, err := duckdb.NewConnector("", nil)
 		if err != nil {
