@@ -87,7 +87,7 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
 	name := r.PathValue("name")
-	fmt.Println("run_etlx_run_by_name: ", name)
+	// fmt.Println("run_etlx_run_by_name: ", name)
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
@@ -159,7 +159,38 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		params["user"] = *(contextGetAuthenticatedUser(r))
 		_log["user_id"] = params["user"].(Dict)["user_id"]
 	}
+	//check if app.appType is community, licensor, or licensee, if it is licensee check the enviromental varibales CS_LICENCOR_TOKEN and CS_LICENCOR_URL
+	//use the those to make a post request to the CS_LICENCOR_URL/dyn_api/license/verify_license endpoint with the token in the header Authorization
+	if app.config.app.appType == "licensee" {
+		// also i want the verifcation to be done only once per app.licenceVerificationPeriodicity in the app.lastLicenseValidation timestamp
+		if time.Since(app.lastLicenseValidation) >= app.licenceVerificationPeriodicity {
+			token = app.validateLicense()
+			// update the app.lastLicenseValidation timestamp if success
+			if token["success"].(bool) {
+				app.lastLicenseValidation = time.Now() // when this became older the app.licenceVerificationPeriodicity it will check again
+			}
+		} // else it will be verifyed untill the licence gets validated again
+	}
+	// ROUTES
 	switch ctrl {
+	// handle ctrl = license and act = verify_license that baically just checks the token sent in the header Authorization
+	case "license":
+		switch act {
+		case "verify_license": // this route just checks the license token validity and returns the token data in a licensee licensor setup
+			if !token["success"].(bool) {
+				data = Dict{
+					"success": false,
+					"msg":     "Lience token validation faild please contact the admin!",
+				}
+			} else {
+				data = token
+			}
+		default:
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
 	case "login":
 		switch act {
 		case "login":
@@ -518,6 +549,64 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, r, err)
 	}
+}
+func (app *application) validateLicense() Dict {
+	token := Dict{}
+	licensorToken := os.Getenv("CS_LICENSOR_TOKEN")
+	licensorURL := os.Getenv("CS_LICENSOR_URL")
+	if licensorToken != "" && licensorURL != "" {
+		client := &http.Client{Timeout: 10 * time.Second}
+		req, err := http.NewRequest("POST", fmt.Sprintf("%s/dyn_api/license/verify_license", licensorURL), nil)
+		if err != nil {
+			token = Dict{
+				"success": false,
+				"msg":fmt.Println("Error creating request to licensor:", err),
+			}
+		} else {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", licensorToken))
+			// is a aplication/json request
+			req.Header.Set("Content-Type", "application/json")
+			resp, err := client.Do(req)
+			if err != nil {
+				token = Dict{
+					"success": false,
+					"msg": fmt.Println("Error making request to licensor:", err),
+				}
+			} else {
+				defer resp.Body.Close()
+				var licensorResp Dict
+				err = json.NewDecoder(resp.Body).Decode(&licensorResp)
+				if err != nil {
+					token = Dict{
+						"success": false,
+						"msg":fmt.Println("Error decoding licensor response:", err),
+					}
+				} else {
+					if success, ok := licensorResp["success"].(bool); ok {
+						if success {
+							token = licensorResp
+						} else {
+							token = Dict{
+								"success": false,
+								"msg":     "License validation failed from licensor, please contact admin!",
+							}
+						}
+					} else {
+						token = Dict{
+							"success": false,
+							"msg":     "Invalid response from licensor, please contact admin!",
+						}
+					}
+				}
+			}
+		}
+	} else {
+		token = Dict{
+			"success": false,
+			"msg":     "Licensor token or URL not set, please contact admin!",
+		}
+	}
+	return token
 }
 func (app *application) getToken(r *http.Request) (string, error) {
 	authorizationHeader := r.Header.Get("Authorization")

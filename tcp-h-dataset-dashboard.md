@@ -119,6 +119,7 @@ WITH base AS (
     WHERE o.o_orderdate BETWEEN 'inputs.date_start.value' AND 'inputs.date_end.value'
         AND r.r_name LIKE 'inputs.region.value'
         AND l.l_shipmode LIKE 'inputs.ship_mode.value'
+    LIMIT 10
 )
 SELECT *
 FROM base
