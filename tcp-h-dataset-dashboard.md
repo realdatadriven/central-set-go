@@ -36,19 +36,14 @@ from "sample.duckdb"."lineitem"
         <Input type=date
             defaultValue={config?.moment()?.subtract(1, 'day').format('YYYY-MM-DD')}
             _class='input input-sm input-bordered'
-            list=dates 
-            data={_dts} 
-            name=date_ref 
-            options_value=ref 
-            options_label=ref
-            input_label="Reference Date"
+            name=date_start
         />
     </GridItem>
     <GridItem width='w-auto' _type='auto' _class='p-1'>
         <Input type=date
             defaultValue={config?.moment()?.subtract(2, 'day').format('YYYY-MM-DD')}
             _class='input input-sm input-bordered'
-            name=date_ref_n1
+            name=date_end
             input_label="Reference Date N-1"
         />
     </GridItem>
@@ -103,3 +98,29 @@ from "sample.duckdb"."lineitem"
      {/if}
 </Grid>
 
+<!--- DASHBOARD CONTENT SECTION --->
+
+```sql details
+WITH base AS (
+    SELECT o.o_orderdate,
+        o.o_orderkey,
+        o.o_orderpriority,
+        c.c_custkey,
+        r.r_region,
+        l.l_extendedprice,
+        l.l_discount,
+        l.l_quantity,
+        l.l_shipmode
+    FROM orders o
+    JOIN customer c USING (c_custkey)
+    JOIN lineitem l USING (o_orderkey)
+    JOIN nation n ON c.c_nationkey = n.n_nationkey
+    JOIN region r ON n.n_regionkey = r.r_regionkey
+    WHERE o.o_orderdate BETWEEN 'inputs.date_start.value' AND 'inputs.date_end.value'
+        AND r.r_name LIKE 'inputs.region.value'
+        AND l.l_shipmode LIKE 'inputs.ship_mode.value'
+)
+SELECT *
+FROM base
+LIMIT 10
+```
