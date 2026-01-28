@@ -240,6 +240,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	}
 	opts := airport.ServerOptions(config)
 	if creds != nil {
+		fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)
@@ -329,6 +330,7 @@ func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *a
 			enc := filter.NewDuckDBEncoder(nil)
 			whereClause := enc.EncodeFilters(fp)
 			fmt.Printf("Filter applied on %s.%s: %s\n", schemaName, tableName, whereClause)
+			query = fmt.Sprintf("%s WHERE %s", query, whereClause)
 			// Use whereClause with your database query
 		}
 		//fmt.Println(query)

@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -18,6 +21,7 @@ import (
 	"github.com/hugr-lab/airport-go"
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/flight"
+	"google.golang.org/grpc/credentials"
 )
 
 const (
@@ -27,7 +31,81 @@ const (
 	defaultShutdownPeriod = 30 * time.Second
 )
 
+func (app *application) loadTLSConfig() (*tls.Config, error) {
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	if enableTLS {
+		certFile := os.Getenv("TLS_CERT_FILE")
+		keyFile := os.Getenv("TLS_KEY_FILE")
+		caFile := os.Getenv("TLS_CA_CERT_FILE")
+		if certFile == "" || keyFile == "" || caFile == "" {
+			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
+		}
+		serverCert, err := tls.LoadX509KeyPair(
+			certFile,
+			keyFile,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("load server cert: %w", err)
+		}
+		// CA pool (for mTLS or client verification)
+		caCert, err := os.ReadFile(caFile)
+		if err != nil {
+			return nil, fmt.Errorf("read CA cert: %w", err)
+		}
+		certPool := x509.NewCertPool()
+		if !certPool.AppendCertsFromPEM(caCert) {
+			return nil, fmt.Errorf("append CA cert")
+		}
+		return &tls.Config{
+			Certificates: []tls.Certificate{serverCert},
+			// 👇 change this depending on your needs
+			ClientAuth: tls.VerifyClientCertIfGiven,
+			ClientCAs:  certPool,
+			MinVersion: tls.VersionTLS12,
+			// Good hygiene
+			PreferServerCipherSuites: true,
+		}, nil
+	}
+	return nil, nil
+}
+
+func (app *application) loadTLSCredentials() (credentials.TransportCredentials, error) {
+	// Load server certificate and key
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	if enableTLS {
+		certFile := os.Getenv("TLS_CERT_FILE")
+		keyFile := os.Getenv("TLS_KEY_FILE")
+		caFile := os.Getenv("TLS_CA_CERT_FILE")
+		if certFile == "" || keyFile == "" {
+			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
+		}
+		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load server cert: %w", err)
+		}
+		// Load CA certificate for mutual TLS (optional)
+		//if caFile != "" {
+		certPool := x509.NewCertPool()
+		if caCert, err := os.ReadFile(caFile); err == nil {
+			if !certPool.AppendCertsFromPEM(caCert) {
+				return nil, fmt.Errorf("failed to add CA cert to pool")
+			}
+		}
+		//}
+		// Configure TLS
+		tlsConfig := &tls.Config{
+			Certificates: []tls.Certificate{serverCert},
+			ClientAuth:   tls.NoClientCert, // Change to tls.RequireAndVerifyClientCert for mTLS
+			ClientCAs:    certPool,
+			MinVersion:   tls.VersionTLS12,
+		}
+		return credentials.NewTLS(tlsConfig), nil
+	}
+	return nil, nil
+}
+
 func (app *application) serveHTTP() error {
+	//tlsCredentials, err := app.loadTLSCredentials()
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.config.httpPort),
 		Handler:      app.routes(),
@@ -35,6 +113,12 @@ func (app *application) serveHTTP() error {
 		IdleTimeout:  defaultIdleTimeout,
 		ReadTimeout:  defaultReadTimeout,
 		WriteTimeout: defaultWriteTimeout,
+		//TLSConfig: ,
+	}
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	tlsConfig, err := app.loadTLSConfig()
+	if err != nil && enableTLS {
+		return err
 	}
 	shutdownErrorChan := make(chan error)
 	go func() {
@@ -48,15 +132,15 @@ func (app *application) serveHTTP() error {
 		shutdownErrorChan <- srv.Shutdown(ctx)
 	}()
 	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
 	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		if certFile == "" || keyFile == "" {
-			app.logger.Error("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE is not set")
+		srv.TLSConfig = tlsConfig
+		ln, err := net.Listen("tcp", srv.Addr)
+		if err != nil {
+			log.Fatal(err)
 		}
-		app.logger.Info("🔐 Starting HTTPS server on ", slog.Group("server", "addr", srv.Addr))
-		err := srv.ListenAndServeTLS(certFile, keyFile)
+		tlsListener := tls.NewListener(ln, srv.TLSConfig)
+		app.logger.Info("🔐 HTTPS server listening on", srv.Addr)
+		err = srv.Serve(tlsListener)
 		if !errors.Is(err, http.ErrServerClosed) {
 			return err
 		}
@@ -66,7 +150,7 @@ func (app *application) serveHTTP() error {
 			return err
 		}
 	}
-	err := <-shutdownErrorChan
+	err = <-shutdownErrorChan
 	if err != nil {
 		return err
 	}
