@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -46,7 +47,7 @@ func (app *application) serveHTTP() error {
 
 		shutdownErrorChan <- srv.Shutdown(ctx)
 	}()
-	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))	
+	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))
 	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
 	if enableTLS {
 		certFile := os.Getenv("TLS_CERT_FILE")
@@ -65,7 +66,7 @@ func (app *application) serveHTTP() error {
 			return err
 		}
 	}
-	err = <-shutdownErrorChan
+	err := <-shutdownErrorChan
 	if err != nil {
 		return err
 	}

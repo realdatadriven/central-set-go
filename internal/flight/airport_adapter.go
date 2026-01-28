@@ -41,11 +41,11 @@ import (
 	"google.golang.org/grpc"
 
 	airport "github.com/hugr-lab/airport-go"
-	"github.com/hugr-lab/airport-go/filter"
 	"github.com/hugr-lab/airport-go/catalog"
+	"github.com/hugr-lab/airport-go/filter"
+
 	//duckarrow "github.com/duckdb/duckdb-go/v2/arrow"
 
-	
 	"google.golang.org/grpc/credentials"
 )
 
@@ -232,8 +232,16 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 		Address:  listenAddr,
 		LogLevel: &debugLevel,
 	}
-	opts := airport.ServerOptions(config)
 	// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
+	// Load TLS credentials
+	creds, err := loadTLSCredentials()
+	if err != nil {
+		log.Fatalf("Failed to load TLS credentials: %v", err)
+	}
+	opts := airport.ServerOptions(config)
+	if creds != nil {
+		opts = append(opts, grpc.Creds(creds))
+	}
 	a.grpcSrv = grpc.NewServer(opts...)
 	if err := airport.NewServer(a.grpcSrv, config); err != nil {
 		return fmt.Errorf("airport.NewServer failed: %w", err)
@@ -311,7 +319,7 @@ func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *a
 			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
 			//fmt.Println("table_scan_tmpl_sql query:", query)
 		}
-		 if opts.Filter != nil {
+		if opts.Filter != nil {
 			// Parse filter JSON
 			fp, err := filter.Parse(opts.Filter)
 			if err != nil {
@@ -404,22 +412,23 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 	if enableTLS {
 		certFile := os.Getenv("TLS_CERT_FILE")
 		keyFile := os.Getenv("TLS_KEY_FILE")
+		caFile := os.Getenv("TLS_CA_CERT_FILE")
 		if certFile == "" || keyFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE is not set %s", "")
+			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
 		}
 		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load server cert: %w", err)
 		}
-
 		// Load CA certificate for mutual TLS (optional)
+		//if caFile != "" {
 		certPool := x509.NewCertPool()
-		if caCert, err := os.ReadFile("ca-cert.pem"); err == nil {
+		if caCert, err := os.ReadFile(caFile); err == nil {
 			if !certPool.AppendCertsFromPEM(caCert) {
 				return nil, fmt.Errorf("failed to add CA cert to pool")
 			}
 		}
-
+		//}
 		// Configure TLS
 		tlsConfig := &tls.Config{
 			Certificates: []tls.Certificate{serverCert},
@@ -427,7 +436,6 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 			ClientCAs:    certPool,
 			MinVersion:   tls.VersionTLS12,
 		}
-
 		return credentials.NewTLS(tlsConfig), nil
 	}
 	return nil, nil

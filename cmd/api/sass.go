@@ -8,18 +8,19 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hashicorp/terraform-exec/tfexec"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
 
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	cwtypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
 	cetypes "github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
@@ -394,16 +395,14 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 }
 
 type InstanceMetrics struct {
-	InstanceID   string
-	InstanceType string
-	State        string
-	LaunchTime   time.Time
-
-	CPUPercent   *float64        // CloudWatch
-	DiskSizeGB   int32           // EBS size
-	EstimatedCostUSD *float64    // Cost Explorer (best effort)
-
-	Limitations []string
+	InstanceID       string
+	InstanceType     string
+	State            string
+	LaunchTime       time.Time
+	CPUPercent       *float64 // CloudWatch
+	DiskSizeGB       int32    // EBS size
+	EstimatedCostUSD *float64 // Cost Explorer (best effort)
+	Limitations      []string
 }
 
 type TFState struct {
@@ -411,7 +410,7 @@ type TFState struct {
 		Type      string `json:"type"`
 		Instances []struct {
 			Attributes struct {
-				ID        string `json:"id"`
+				ID        string   `json:"id"`
 				VolumeIDs []string `json:"volume_ids"`
 			} `json:"attributes"`
 		} `json:"instances"`
@@ -423,26 +422,20 @@ func GetEC2MetricsFromTFState(
 	tfstateJSON []byte,
 	awsCfg aws.Config,
 ) ([]InstanceMetrics, error) {
-
 	var state TFState
 	if err := json.Unmarshal(tfstateJSON, &state); err != nil {
 		return nil, err
 	}
-
 	ec2c := ec2.NewFromConfig(awsCfg)
 	cwc := cloudwatch.NewFromConfig(awsCfg)
 	cec := costexplorer.NewFromConfig(awsCfg)
-
 	var results []InstanceMetrics
-
 	for _, res := range state.Resources {
 		if res.Type != "aws_instance" {
 			continue
 		}
-
 		for _, inst := range res.Instances {
 			instanceID := inst.Attributes.ID
-
 			// --------------------
 			// EC2 info
 			// --------------------
@@ -452,17 +445,14 @@ func GetEC2MetricsFromTFState(
 			if err != nil {
 				continue
 			}
-
 			ec2inst := di.Reservations[0].Instances[0]
-
 			m := InstanceMetrics{
 				InstanceID:   instanceID,
 				InstanceType: string(ec2inst.InstanceType),
 				State:        string(ec2inst.State.Name),
 				LaunchTime:   *ec2inst.LaunchTime,
-				Limitations: []string{},
+				Limitations:  []string{},
 			}
-
 			// --------------------
 			// CPU (CloudWatch)
 			// --------------------
@@ -474,19 +464,17 @@ func GetEC2MetricsFromTFState(
 				},
 				StartTime: aws.Time(time.Now().Add(-1 * time.Hour)),
 				EndTime:   aws.Time(time.Now()),
-				Period:   aws.Int32(300),
+				Period:    aws.Int32(300),
 				Statistics: []cwtypes.Statistic{
 					cwtypes.StatisticAverage,
 				},
 			})
-
 			if err == nil && len(cpu.Datapoints) > 0 {
 				val := *cpu.Datapoints[0].Average
 				m.CPUPercent = &val
 			} else {
 				m.Limitations = append(m.Limitations, "CPU data unavailable")
 			}
-
 			// --------------------
 			// Disk size (EBS)
 			// --------------------
@@ -503,7 +491,6 @@ func GetEC2MetricsFromTFState(
 				}
 			}
 			m.DiskSizeGB = totalDisk
-
 			// --------------------
 			// Cost (best effort)
 			// --------------------
@@ -521,7 +508,6 @@ func GetEC2MetricsFromTFState(
 					},
 				},
 			})
-
 			if err == nil && len(cost.ResultsByTime) > 0 {
 				amountStr := cost.ResultsByTime[0].Total["UnblendedCost"].Amount
 				if v, err := strconv.ParseFloat(*amountStr, 64); err == nil {
@@ -530,7 +516,6 @@ func GetEC2MetricsFromTFState(
 			} else {
 				m.Limitations = append(m.Limitations, "Cost data delayed or unavailable")
 			}
-
 			// --------------------
 			// Known hard limitations
 			// --------------------
@@ -538,10 +523,8 @@ func GetEC2MetricsFromTFState(
 				"Memory usage unavailable without CloudWatch Agent",
 				"Filesystem usage unavailable without SSH or SSM",
 			)
-
 			results = append(results, m)
 		}
 	}
-
 	return results, nil
 }

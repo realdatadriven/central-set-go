@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime/debug"
 	"sync"
+	"time"
 
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
@@ -92,14 +93,14 @@ type app_config struct {
 }*/
 
 type application struct {
-	config app_config
-	db     etlx.DBInterface //*etlx.DB
-	logger *slog.Logger
-	mailer *smtp.Mailer
-	wg     sync.WaitGroup
-	i18n   i18next.I18n
-	appType string // can be community, licensor or licensee
-	lastLicenseValidation time.Time // time of last license validation
+	config                         app_config
+	db                             etlx.DBInterface //*etlx.DB
+	logger                         *slog.Logger
+	mailer                         *smtp.Mailer
+	wg                             sync.WaitGroup
+	i18n                           i18next.I18n
+	appType                        string        // can be community, licensor or licensee
+	lastLicenseValidation          time.Time     // time of last license validation
 	licenceVerificationPeriodicity time.Duration // periodicity of license validation
 	//user user
 	//admin  admin
@@ -179,8 +180,8 @@ func run(logger *slog.Logger) error {
 		mailer: mailer,
 		i18n:   i18n,
 		// CS_LICENCOR_TOKEN and CS_LICENCOR_URL env variables must be set for licensee appType
-		appType: "community", // can be community, licensor or licensee
-		lastLicenseValidation: time.Now().Add(-24 * time.Hour), // in a licencee app, we will validate the license on startup and, as its by default 24 hours periodicity, we set last validation to 24 hours ago
+		appType:                        "community",                     // can be community, licensor or licensee
+		lastLicenseValidation:          time.Now().Add(-24 * time.Hour), // in a licencee app, we will validate the license on startup and, as its by default 24 hours periodicity, we set last validation to 24 hours ago
 		licenceVerificationPeriodicity: 24 * time.Hour,
 		//admin:  admin{},
 	}

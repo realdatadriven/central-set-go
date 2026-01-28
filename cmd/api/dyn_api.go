@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -161,7 +162,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	}
 	//check if app.appType is community, licensor, or licensee, if it is licensee check the enviromental varibales CS_LICENCOR_TOKEN and CS_LICENCOR_URL
 	//use the those to make a post request to the CS_LICENCOR_URL/dyn_api/license/verify_license endpoint with the token in the header Authorization
-	if app.config.app.appType == "licensee" {
+	if app.appType == "licensee" {
 		// also i want the verifcation to be done only once per app.licenceVerificationPeriodicity in the app.lastLicenseValidation timestamp
 		if time.Since(app.lastLicenseValidation) >= app.licenceVerificationPeriodicity {
 			token = app.validateLicense()
@@ -560,7 +561,7 @@ func (app *application) validateLicense() Dict {
 		if err != nil {
 			token = Dict{
 				"success": false,
-				"msg":fmt.Sprintf("Error creating request to licensor, please contact admin: %s", err),
+				"msg":     fmt.Sprintf("Error creating request to licensor, please contact admin: %s", err),
 			}
 		} else {
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", licensorToken))
@@ -570,7 +571,7 @@ func (app *application) validateLicense() Dict {
 			if err != nil {
 				token = Dict{
 					"success": false,
-					"msg": fmt.Sprintf("Error making request to licensor, please contact admin: %s", err),
+					"msg":     fmt.Sprintf("Error making request to licensor, please contact admin: %s", err),
 				}
 			} else {
 				defer resp.Body.Close()
@@ -579,7 +580,7 @@ func (app *application) validateLicense() Dict {
 				if err != nil {
 					token = Dict{
 						"success": false,
-						"msg":fmt.Sprintf("Error decoding licensor response, please contact admin: %s", err),
+						"msg":     fmt.Sprintf("Error decoding licensor response, please contact admin: %s", err),
 					}
 				} else {
 					if success, ok := licensorResp["success"].(bool); ok {
