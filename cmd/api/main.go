@@ -177,8 +177,8 @@ func run(logger *slog.Logger) error {
 		i18n:   i18n,
 		//admin:  admin{},
 	}
-	sql := `select * from "env" where "active" = ? and "excluded" = ?`
-	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{true, false})
+	sql := `select * from "env" where "active" = ? and "on_srv_start" = ? and "excluded" = ?`
+	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{true, true, false})
 	if err != nil {
 		fmt.Printf("Error fetching tenant env vars: %v\n", err)
 	} else {
