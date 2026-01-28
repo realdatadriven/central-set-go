@@ -178,6 +178,7 @@ func run(logger *slog.Logger) error {
 		logger: logger,
 		mailer: mailer,
 		i18n:   i18n,
+		// CS_LICENCOR_TOKEN and CS_LICENCOR_URL env variables must be set for licensee appType
 		appType: "community", // can be community, licensor or licensee
 		lastLicenseValidation: time.Now().Add(-24 * time.Hour), // in a licencee app, we will validate the license on startup and, as its by default 24 hours periodicity, we set last validation to 24 hours ago
 		licenceVerificationPeriodicity: 24 * time.Hour,
