@@ -27,6 +27,7 @@ const (
 )
 
 func (app *application) serveHTTP() error {
+
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.config.httpPort),
 		Handler:      app.routes(),
@@ -50,10 +51,25 @@ func (app *application) serveHTTP() error {
 	}()
 
 	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))
+	
+	if enableTLS {
+		certFile := os.Getenv("TLS_CERT_FILE")
+		keyFile := os.Getenv("TLS_KEY_FILE")
 
-	err := srv.ListenAndServe()
-	if !errors.Is(err, http.ErrServerClosed) {
-		return err
+		if certFile == "" || keyFile == "" {
+			app.logger.Error("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE is not set")
+		}
+
+		app.logger.Info("🔐 Starting HTTPS server on ", slog.Group("server", "addr", srv.Addr))
+		err := srv.ListenAndServeTLS()
+		if !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
+	} else {
+		err := srv.ListenAndServe()
+		if !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
 	}
 
 	err = <-shutdownErrorChan
