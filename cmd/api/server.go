@@ -35,9 +35,7 @@ func (app *application) serveHTTP() error {
 		ReadTimeout:  defaultReadTimeout,
 		WriteTimeout: defaultWriteTimeout,
 	}
-
 	shutdownErrorChan := make(chan error)
-
 	go func() {
 		quitChan := make(chan os.Signal, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -48,21 +46,30 @@ func (app *application) serveHTTP() error {
 
 		shutdownErrorChan <- srv.Shutdown(ctx)
 	}()
-
-	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))
-
-	err := srv.ListenAndServe()
-	if !errors.Is(err, http.ErrServerClosed) {
-		return err
+	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))	
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	if enableTLS {
+		certFile := os.Getenv("TLS_CERT_FILE")
+		keyFile := os.Getenv("TLS_KEY_FILE")
+		if certFile == "" || keyFile == "" {
+			app.logger.Error("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE is not set")
+		}
+		app.logger.Info("🔐 Starting HTTPS server on ", slog.Group("server", "addr", srv.Addr))
+		err := srv.ListenAndServeTLS(certFile, keyFile)
+		if !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
+	} else {
+		err := srv.ListenAndServe()
+		if !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
 	}
-
 	err = <-shutdownErrorChan
 	if err != nil {
 		return err
 	}
-
 	app.logger.Info("stopped server", slog.Group("server", "addr", srv.Addr))
-
 	app.wg.Wait()
 	return nil
 }

@@ -9,33 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-/*/ S3Handler serves files from an S3 bucket
-func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
-	// Get the S3 bucket and key from the environment or request
-	bucket := app.config.s3Bucket
-	key := r.URL.Path[len("/uploads/"):]
-	sess, err := app.awsConfig(context.Background())
-	if err != nil {
-		http.Error(w, "Failed to create AWS session", http.StatusInternalServerError)
-		return
-	}
-	// Create an S3 service client
-	svc := s3.New(sess)
-	// Get the file from S3
-	result, err := svc.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
-	})
-	if err != nil {
-		http.Error(w, "Failed to get file from S3", http.StatusNotFound)
-		return
-	}
-	defer result.Body.Close()
-	// Set the correct content type and serve the file
-	w.Header().Set("Content-Type", *result.ContentType)
-	io.Copy(w, result.Body)
-}*/
-
 func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
 	bucket := app.config.s3Bucket
 	key := r.URL.Path[len("/uploads/"):]
@@ -114,6 +87,7 @@ func (app *application) routes() http.Handler {
 	//mux.HandleFunc("POST /dyn_api/login/login", app.dyn_api)
 	mux.HandleFunc("POST /upload", app.uploadHandler)
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
+	
 	// ODATA HANDDLER
 	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}", app.odata_api)

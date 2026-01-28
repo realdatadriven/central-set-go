@@ -22,6 +22,8 @@ package flight
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
@@ -39,8 +41,12 @@ import (
 	"google.golang.org/grpc"
 
 	airport "github.com/hugr-lab/airport-go"
+	"github.com/hugr-lab/airport-go/filter"
 	"github.com/hugr-lab/airport-go/catalog"
 	//duckarrow "github.com/duckdb/duckdb-go/v2/arrow"
+
+	
+	"google.golang.org/grpc/credentials"
 )
 
 // FlightManager is the interface the server uses to start/stop the FlightSQL server.
@@ -227,6 +233,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 		LogLevel: &debugLevel,
 	}
 	opts := airport.ServerOptions(config)
+	// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
 	a.grpcSrv = grpc.NewServer(opts...)
 	if err := airport.NewServer(a.grpcSrv, config); err != nil {
 		return fmt.Errorf("airport.NewServer failed: %w", err)
@@ -304,6 +311,18 @@ func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *a
 			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
 			//fmt.Println("table_scan_tmpl_sql query:", query)
 		}
+		 if opts.Filter != nil {
+			// Parse filter JSON
+			fp, err := filter.Parse(opts.Filter)
+			if err != nil {
+				return nil, err
+			}
+			// Encode to SQL WHERE clause
+			enc := filter.NewDuckDBEncoder(nil)
+			whereClause := enc.EncodeFilters(fp)
+			fmt.Printf("Filter applied on %s.%s: %s\n", schemaName, tableName, whereClause)
+			// Use whereClause with your database query
+		}
 		//fmt.Println(query)
 		//fmt.Println(_sql, fligths)
 		db, err := duckdb.NewConnector("", nil)
@@ -374,6 +393,44 @@ func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *a
 			conn:         conn2,
 		}, nil
 	}
+}
+
+// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
+// loadTLSCredentials loads TLS credentials from files.
+// In production, use proper certificate management.
+func loadTLSCredentials() (credentials.TransportCredentials, error) {
+	// Load server certificate and key
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	if enableTLS {
+		certFile := os.Getenv("TLS_CERT_FILE")
+		keyFile := os.Getenv("TLS_KEY_FILE")
+		if certFile == "" || keyFile == "" {
+			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE is not set %s", "")
+		}
+		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load server cert: %w", err)
+		}
+
+		// Load CA certificate for mutual TLS (optional)
+		certPool := x509.NewCertPool()
+		if caCert, err := os.ReadFile("ca-cert.pem"); err == nil {
+			if !certPool.AppendCertsFromPEM(caCert) {
+				return nil, fmt.Errorf("failed to add CA cert to pool")
+			}
+		}
+
+		// Configure TLS
+		tlsConfig := &tls.Config{
+			Certificates: []tls.Certificate{serverCert},
+			ClientAuth:   tls.NoClientCert, // Change to tls.RequireAndVerifyClientCert for mTLS
+			ClientCAs:    certPool,
+			MinVersion:   tls.VersionTLS12,
+		}
+
+		return credentials.NewTLS(tlsConfig), nil
+	}
+	return nil, nil
 }
 
 type connBoundRecordReader struct {
