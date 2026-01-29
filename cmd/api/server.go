@@ -197,6 +197,12 @@ func (app *application) serveArrowFlight() error {
 	if err != nil {
 		return err
 	}
+	rla_tables := app.row_level_tables(Dict{"app": Dict{"app_id": 1, "db": app.config.db.dsn}})
+	//fmt.Println(rla_tables)
+	if !rla_tables["success"].(bool) {
+		return fmt.Errorf("Error listing tables that requires RLA: %s", rla_tables["msg"])
+	}
+
 	// add tree tables and fields to flights, but with map[string]any like map[string]any{f["table"]: {"fields": map[string]any{"field": field}}}
 	for _, f := range fligths {
 		var tables Dict = make(Dict)
@@ -213,10 +219,12 @@ func (app *application) serveArrowFlight() error {
 			}
 		}
 		f["tables"] = tables
+		f["rla_tables"] = rla_tables["tables"]
+		//fmt.Println(f["rla_tables"])
 	}
 	// start server
 	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapter(fligths, app.airportValidateToken)
+	flightMgr := flight.NewAirportAdapter(fligths, app.airportValidateToken, app.table_access, app.row_level_access)
 	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
 	// Start the server (includes starting airport-go Flight server)
 	if err := flightMgr.Start(addr); err != nil {

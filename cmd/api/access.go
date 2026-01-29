@@ -162,8 +162,8 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		user_id = app.toInt(params["user"].(map[string]any)["user_id"])
 	}
 	var role_id int
-	if _, ok := params["app"].(map[string]any)["role_id"]; ok {
-		role_id = app.toInt(params["app"].(map[string]any)["role_id"])
+	if _, ok := params["user"].(map[string]any)["role_id"]; ok {
+		role_id = app.toInt(params["user"].(map[string]any)["role_id"])
 	}
 	var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
@@ -311,6 +311,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		if err != nil {
 			println("Error geting the table query:", err)
 		}
+		fmt.Println(query, args)
 		result, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			return map[string]any{

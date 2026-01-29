@@ -26,6 +26,7 @@ import (
 	"crypto/x509"
 	"database/sql"
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"log"
 	"log/slog"
@@ -58,6 +59,8 @@ type FlightManager interface {
 // AirportAdapter implements FlightManager using hugr-lab/airport-go.
 type AirportAdapter struct {
 	validateToken func(token string) (string, error)
+	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case arrow_flight_table mapping tables
+	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in arrow_flight_table is accessible to the user
 	grpcSrv       *grpc.Server
 	listener      net.Listener
 	mem           memory.Allocator
@@ -67,9 +70,16 @@ type AirportAdapter struct {
 }
 
 // NewAirportAdapter constructs the adapter with the provided DDB.
-func NewAirportAdapter(config []map[string]any, validateToken func(token string) (string, error)) *AirportAdapter {
+func NewAirportAdapter(
+	config []map[string]any,
+	validateToken func(token string) (string, error),
+	table_access func(params map[string]any, tables []any) map[string]any,
+	rla_access func(params map[string]any, tables []any, row_id []any) map[string]any,
+) *AirportAdapter {
 	return &AirportAdapter{
 		validateToken: validateToken,
+		table_access:  table_access,
+		rla_access:    rla_access,
 		mem:           memory.DefaultAllocator,
 		cfg:           config,
 		shutdownc:     make(chan struct{}),
@@ -140,6 +150,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 				found := false
 				if _, ok := tables[tname]; ok {
 					found = true
+					//rla = a.rla_tables(map[string]any{}, []any{tname})
 				}
 				if !found {
 					continue
@@ -185,7 +196,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			defer rdr.Release()
 			arrowSchema := rdr.Schema()
 			//fmt.Println(tname, arrowSchema)
-			scanFn := makeScanFunc(a.mem, schemaName, tname, arrowSchema, s)
+			scanFn := a.makeScanFunc(a.mem, schemaName, tname, arrowSchema, s)
 			// register simple table under current schema builder
 			sb.SimpleTable(airport.SimpleTableDef{
 				Name:     tname,
@@ -278,13 +289,29 @@ func (a *AirportAdapter) Stop(ctx context.Context) error {
 	return nil
 }
 
+func (a *AirportAdapter) contains(slice []string, element string) bool {
+	for _, v := range slice {
+		if v == element {
+			return true
+		}
+	}
+	return false
+}
+func IdentityJSONToMap(identity string) (map[string]any, error) {
+	var m map[string]any
+	if err := json.Unmarshal([]byte(identity), &m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // The idea is the use the global duckdb.Connector to create connections
 // for each scan request, so we can share the same DB across multiple
 // connections/flight clients.
 // but im im passing the all configuration and making the connection and initializing the sturup and shutdown
 // all over again because of some problems with the shared connector across goroutines.
 // This needs to be improved later for performance and resource usage.
-func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
@@ -296,6 +323,68 @@ func makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *a
 				return nil, fmt.Errorf("table %s not allowed", tableName)
 			}
 		}
+		user, err := IdentityJSONToMap(airport.IdentityFromContext(ctx))
+		if err != nil {
+			return nil, fmt.Errorf("Error getting Identity From Context %v", err)
+		}
+		//fmt.Println(user)
+		// CHECK IF USER HAS ASSCESS TO THE SCHEMA
+		rla_tables := []string{}
+		if _, ok := conf["rla_tables"].([]string); ok {
+			rla_tables = conf["rla_tables"].([]string)
+		}
+		// check if arrow_flight is in rla_tables
+		//fmt.Printf("%T", conf["rla_tables"])
+		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
+		schema_permissions := map[string]any{}
+		schema_table_permissions := map[string]any{}
+		if a.contains(rla_tables, "arrow_flight") || a.contains(rla_tables, "arrow_flight_table") {
+			/*schema_access := a.table_access(
+				map[string]any{
+					"app":  map[string]any{"app_id": 1},
+					"data": map[string]any{},
+					"user": user,
+				}, []any{"arrow_flight", "arrow_flight_table"})
+			if !schema_access["success"].(bool) {
+				fmt.Println("schema_access:", tableName, schema_access["msg"])
+			} else if _, ok := schema_access["data"]; ok {
+				_permissions := schema_access["data"].(map[string]any)
+				if _, ok := _permissions["arrow_flight"]; ok {
+					schema_permissions = _permissions["arrow_flight"].(map[string]any)
+				} else {
+					return nil, fmt.Errorf("Access denied access to the schema %s!", schemaName)
+				}
+				if _, ok := _permissions["arrow_flight_table"]; ok {
+					schema_table_permissions = _permissions["arrow_flight_table"].(map[string]any)
+				} else {
+					return nil, fmt.Errorf("Access denied access to the table %s from schema %s!", schemaName, tableName)
+				}
+			}*/
+			rla_access := a.rla_access(
+				map[string]any{
+					"app":  map[string]any{"app_id": 1},
+					"data": map[string]any{},
+					"user": user,
+				}, []any{"arrow_flight", "arrow_flight_table"}, []any{})
+			fmt.Println("rla_access:", tableName, rla_access)
+			if !rla_access["success"].(bool) {
+				fmt.Println("rla_access:", tableName, rla_access["msg"])
+			} else if _, ok := rla_access["data"]; ok {
+				_permissions := rla_access["data"].(map[string]any)
+				if _, ok := _permissions["arrow_flight"]; ok {
+					schema_permissions = _permissions["arrow_flight"].(map[string]any)
+				} else {
+					return nil, fmt.Errorf("Access denied access to the schema \"%s\"!", schemaName)
+				}
+				if _, ok := _permissions["arrow_flight_table"]; ok {
+					schema_table_permissions = _permissions["arrow_flight_table"].(map[string]any)
+				} else {
+					return nil, fmt.Errorf("Access denied access to the table \"%s\" from schema \"%s\"!", schemaName, tableName)
+				}
+			}
+			fmt.Println(schema_permissions, schema_table_permissions)
+		}
+		// CHECK IF USER HAS ACCESS TO SPECIFC TABLE
 		// CHECK FIELDS ALLOWED
 		_fields := []string{}
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
