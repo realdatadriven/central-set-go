@@ -103,6 +103,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /nb/{name}", app.run_notebook)
 	mux.HandleFunc("GET /notebook", app.run_notebook)
 	mux.HandleFunc("GET /notebook/{name}", app.run_notebook)
+	mux.HandleFunc("GET /env", app.refreshEnv)
 	mux.HandleFunc("GET /env/update", app.refreshEnv)
 	mux.HandleFunc("GET /env/sync", app.refreshEnv)
 	mux.HandleFunc("GET /env/refresh", app.refreshEnv)
