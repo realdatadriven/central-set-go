@@ -593,7 +593,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+// syncEnv loads environment variables from the database and sets them in the OS environment
 func (app *application) syncEnv() Dict {
+	// load the .env file
 	_err := godotenv.Load()
 	if _err != nil {
 		fmt.Println("Error loading .env file")
