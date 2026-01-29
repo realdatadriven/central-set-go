@@ -14,6 +14,7 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/response"
 
 	"github.com/pascaldekloe/jwt"
+	"github.com/joho/godotenv"
 )
 
 func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +44,36 @@ func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
 	} else {
 		params["data"] = Dict{"name": name}
 		data = app.Buckup(params)
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+func (app *application) refreshEnv(w http.ResponseWriter, r *http.Request) {
+	params := Dict{}
+	request.DecodeJSON(w, r, &params)
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	if _, ok := params["data"]; !ok {
+		params["data"] = Dict{}
+	}
+	if _, ok := params["app"]; !ok {
+		params["app"] = Dict{}
+	}
+	err := app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := app.verifyToken(r)
+	params["user"] = *(contextGetAuthenticatedUser(r))
+	var data Dict
+	if !token["success"].(bool) {
+		data = token
+	} else {
+		data = app.syncEnv()
 	}
 	err = response.JSON(w, http.StatusOK, data)
 	if err != nil {
@@ -182,6 +213,20 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				}
 			} else {
 				data = token
+			}
+		default:
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
+	case "env", "environment":
+		switch act {
+		case "refresh", "update", "sync":
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.syncEnv()
 			}
 		default:
 			data = Dict{
@@ -546,6 +591,26 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	err = response.JSON(w, http.StatusOK, data)
 	if err != nil {
 		app.serverError(w, r, err)
+	}
+}
+func (app *application) syncEnv() Dict {
+	_err := godotenv.Load()
+	if _err != nil {
+		fmt.Println("Error loading .env file")
+	}
+	sql := `select * from "env" where "active" = ? and "on_srv_start" = ? and "excluded" = ?`
+	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{true, true, false})
+	if err != nil {
+		fmt.Printf("Error fetching tenant env vars: %v\n", err)
+	} else {
+		for _, v := range tenantEnv {
+			os.Setenv(v["env_name"].(string), v["env_value"].(string))
+			fmt.Printf("Setting env var for admin %s=%s\n", v["env_name"], v["env_value"])
+		}
+	}
+	return Dict{
+		"success": true,
+		"msg":     "Environment variables synchronized successfully",
 	}
 }
 func (app *application) validateLicense() Dict {
