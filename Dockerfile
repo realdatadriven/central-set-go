@@ -120,7 +120,7 @@ CMD [""]
 # ============================================
 # 📝 Usage Instructions
 #docker build --no-cache -t central-set-go:latest .
-#docker run central-set-go:latest
+#docker run -v ./database:/app/database central-set-go:latest --init
 #docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
 #podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:latest
 #podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.1.6

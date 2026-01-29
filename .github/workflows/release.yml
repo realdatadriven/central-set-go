@@ -38,7 +38,7 @@ jobs:
       - name: Build Linux Binaries
         run: |
           go mod tidy
-          CGO_ENABLED=1 go build -o dist/central-set-linux-amd64/central-set-linux-amd64 ./cmd/api
+          CGO_ENABLED=1 go build -tags="duckdb_arrow" -o dist/central-set-linux-amd64/central-set-linux-amd64 ./cmd/api
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -92,10 +92,10 @@ jobs:
       # Step 7: Build the Application
       - name: Build Windows Binary
         run: |
-          go build -o dist/central-set-windows-amd64/central-set-windows-amd64.exe ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-windows-amd64/central-set-windows-amd64.exe ./cmd/api
           echo "GOARCH=arm64" >> $env:GITHUB_ENV
-          go build -o dist/central-set-windows-arm64/central-set-windows-arm64.exe ./cmd/api
-      #go build -tags=duckdb_use_lib -o dist/central-set-windows-amd64.exe ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-windows-arm64/central-set-windows-arm64.exe ./cmd/api
+      #go build -tags="duckdb_arrow" -tags=duckdb_use_lib -o dist/central-set-windows-amd64.exe ./cmd/api
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -141,7 +141,7 @@ jobs:
       # Step 3: Download DuckDB Precompiled Library
       - name: Download DuckDB Library
         run: |
-          $version = "v1.4.3"
+          $version = "v1.4.4"
           $duckdb_url = "https://github.com/duckdb/duckdb/releases/download/$version/libduckdb-windows-amd64.zip"
           $destinationPath = "$(Get-Location)\duckdb"
           Invoke-WebRequest -Uri $duckdb_url -OutFile "duckdb.zip"
@@ -177,13 +177,13 @@ jobs:
       - name: Build Windows Binary
         run: |
           go mod tidy
-          go build -o dist/central-set-windows-linking-amd64/central-set-windows-linking-amd64.exe ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-windows-linking-amd64/central-set-windows-linking-amd64.exe ./cmd/api
           echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
           echo "CGO_CFLAGS=-I$(Get-Location)\duckdbarm64\" >> $env:GITHUB_ENV
           echo "CGO_LDFLAGS=-L$(Get-Location)\duckdbarm64\ -lduckdb" >> $env:GITHUB_ENV
           echo "GOARCH=arm64" >> $env:GITHUB_ENV
-          go build -o dist/central-set-windows-linking-arm64/central-set-windows-linking-arm64.exe ./cmd/api
-      #go build -tags=duckdb_use_lib -o dist/central-set-windows-linking-amd64.exe ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-windows-linking-arm64/central-set-windows-linking-arm64.exe ./cmd/api
+      #go build -tags="duckdb_arrow" -tags=duckdb_use_lib -o dist/central-set-windows-linking-amd64.exe ./cmd/api
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -244,8 +244,8 @@ jobs:
       - name: Build MacOS Binary
         run: |
           go mod tidy
-          go build -o dist/central-set-macos-amd64/central-set-macos-amd64 ./cmd/api
-          GOARCH=arm64 go build -o dist/central-set-macos-arm64/central-set-macos-arm64 ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-macos-amd64/central-set-macos-amd64 ./cmd/api
+          GOARCH=arm64 go build -tags="duckdb_arrow" -o dist/central-set-macos-arm64/central-set-macos-arm64 ./cmd/api
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
