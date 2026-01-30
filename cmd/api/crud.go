@@ -84,6 +84,7 @@ func (app *application) read(params map[string]any) map[string]any {
 	params["row_level_tables"] = []string{}
 	if _, ok := _row_level_tables["tables"]; ok {
 		params["row_level_tables"] = _row_level_tables["tables"].([]string)
+		fmt.Println("row_level_tables:", params["row_level_tables"])
 	}
 	data := map[string]any{}
 	for _, table := range tables {
