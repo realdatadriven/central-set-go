@@ -3,12 +3,53 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/realdatadriven/etlx"
 )
 
+func (app *application) containsInt(slice []any, element any) bool {
+	for _, v := range slice {
+		if v.(int64) == element.(int64) {
+			return true
+		}
+	}
+	return false
+}
+func (app *application) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
+	data := []any{}
+	for _, v := range rla_access {
+		_access := false
+		switch v[access_type].(type) {
+		case bool:
+			_access = v[access_type].(bool)
+		case int:
+			_access = v[access_type].(int) == 1
+		case float32:
+			_access = v[access_type].(float32) == 1
+		case float64:
+			_access = v[access_type].(float64) == 1
+		case int64:
+			_access = v[access_type].(int64) == 1
+		case int32:
+			_access = v[access_type].(int32) == 1
+		case string:
+			i, err := strconv.Atoi(v[access_type].(string))
+			if err != nil {
+				_access = false
+			}
+			_access = i == 1
+		default:
+			_access = false // or handle error
+		}
+		if v["table"].(string) == table && _access {
+			data = append(data, v["row_id"])
+		}
+	}
+	return data
+}
 func (app *application) CrudRead(params map[string]any, table string, db etlx.DBInterface) map[string]any {
 	/*var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
@@ -211,14 +252,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			}
 		}
 	}
-	
+
 	// CHECK ROW LEVEL ACCESS, IF SO UPDATE FILTERS field_id in (?) ? = row_id allowed
 	_row_level_tables := []string{}
 	if _, ok := params["row_level_tables"]; ok {
 		_row_level_tables = params["row_level_tables"].([]string)
 		fmt.Println("row_level_tables:", _row_level_tables, fk_tables_fields)
 	}
-	
+
 	// FILTERS
 	queryParams := []any{}
 	filters := []any{}

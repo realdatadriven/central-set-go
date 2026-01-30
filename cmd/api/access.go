@@ -181,6 +181,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
+	fmt.Println(tables)
 	defer newDB.Close()
 	allTables := false
 	if app.IsEmpty(tables) {
@@ -288,15 +289,15 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		}
 		_get_row_id_lists := ""
 		if !app.IsEmpty(row_id) {
-			_get_row_id_lists = `AND role_row_level_access.row_id IN (?)`
+			_get_row_id_lists = `AND role_row_level_access."row_id" IN (?)`
 			queryParams = append(queryParams, row_id)
 		}
 		query = fmt.Sprintf(`SELECT role_row_level_access.*
 		FROM role_row_level_access
 		JOIN (
-			SELECT "table", role_id, app_id, row_id, MAX("updated_at") AS "max_updated_at"
+			SELECT "table", role_id, app_id, "row_id", MAX("updated_at") AS "max_updated_at"
 			FROM role_row_level_access
-			GROUP BY "table", role_id, app_id, row_id
+			GROUP BY "table", role_id, app_id, "row_id"
 		) AS "T" ON (
 			"T"."table" = role_row_level_access."table"
 			AND "T"."role_id" = role_row_level_access."role_id"
@@ -314,6 +315,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		fmt.Println(query, args)
 		result, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
+			fmt.Printf("1: %s", err)
 			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
@@ -321,6 +323,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		}
 		for _, row := range *result {
 			if _, ok := data[row["table"].(string)]; !ok {
+				fmt.Println("RLA", row["table"].(string))
 				data[row["table"].(string)] = []map[string]any{}
 			}
 			_aux := row
@@ -330,9 +333,11 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		// row_level_access
 		queryParams = []any{app_id, user_id}
 		if allTables {
+			_get_table_lists = `AND row_level_access."table" IN (?)`
 			queryParams = append(queryParams, tables)
 		}
 		if !app.IsEmpty(row_id) {
+			_get_row_id_lists = `AND row_level_access."row_id" IN (?)`
 			queryParams = append(queryParams, row_id)
 		}
 		query = fmt.Sprintf(`SELECT row_level_access.*
@@ -357,6 +362,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		}
 		result, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
+			fmt.Printf("1: %s", err)
 			return map[string]any{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),

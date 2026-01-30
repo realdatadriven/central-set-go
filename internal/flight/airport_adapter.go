@@ -32,6 +32,7 @@ import (
 	"log/slog"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/apache/arrow-go/v18/arrow"
@@ -304,6 +305,46 @@ func IdentityJSONToMap(identity string) (map[string]any, error) {
 	}
 	return m, nil
 }
+func (a *AirportAdapter) containsInt(slice []any, element any) bool {
+	for _, v := range slice {
+		if v.(int64) == element.(int64) {
+			return true
+		}
+	}
+	return false
+}
+func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
+	data := []any{}
+	for _, v := range rla_access {
+		_access := false
+		switch v[access_type].(type) {
+		case bool:
+			_access = v[access_type].(bool)
+		case int:
+			_access = v[access_type].(int) == 1
+		case float32:
+			_access = v[access_type].(float32) == 1
+		case float64:
+			_access = v[access_type].(float64) == 1
+		case int64:
+			_access = v[access_type].(int64) == 1
+		case int32:
+			_access = v[access_type].(int32) == 1
+		case string:
+			i, err := strconv.Atoi(v[access_type].(string))
+			if err != nil {
+				_access = false
+			}
+			_access = i == 1
+		default:
+			_access = false // or handle error
+		}
+		if v["table"].(string) == table && _access {
+			data = append(data, v["row_id"])
+		}
+	}
+	return data
+}
 
 // The idea is the use the global duckdb.Connector to create connections
 // for each scan request, so we can share the same DB across multiple
@@ -326,7 +367,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				return nil, fmt.Errorf("table %s not allowed", tableName)
 			}
 		}
-		fmt.Println("arrow_flight_id:", arrow_flight_id, "arrow_flight_table_id:", arrow_flight_table_id)
+		// fmt.Println("arrow_flight_id:", arrow_flight_id, "arrow_flight_table_id:", arrow_flight_table_id)
 		user, err := IdentityJSONToMap(airport.IdentityFromContext(ctx))
 		if err != nil {
 			return nil, fmt.Errorf("Error getting Identity From Context %v", err)
@@ -340,8 +381,8 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		// check if arrow_flight is in rla_tables
 		//fmt.Printf("%T", conf["rla_tables"])
 		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
-		schema_permissions := map[string]any{}
-		schema_table_permissions := map[string]any{}
+		//schema_permissions := map[string]any{}
+		//schema_table_permissions := map[string]any{}
 		if a.contains(rla_tables, "arrow_flight") || a.contains(rla_tables, "arrow_flight_table") {
 			/*schema_access := a.table_access(
 				map[string]any{
@@ -370,23 +411,33 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 					"data": map[string]any{},
 					"user": user,
 				}, []any{"arrow_flight", "arrow_flight_table"}, []any{arrow_flight_id, arrow_flight_table_id})
-			fmt.Println("rla_access:", tableName, rla_access)
+			//fmt.Println("rla_access:", tableName, rla_access)
 			if !rla_access["success"].(bool) {
 				fmt.Println("rla_access:", tableName, rla_access["msg"])
 			} else if _, ok := rla_access["data"]; ok {
 				_permissions := rla_access["data"].(map[string]any)
 				if _, ok := _permissions["arrow_flight"]; ok {
-					schema_permissions = _permissions["arrow_flight"].([]map[string]any)
-				} else {
-					return nil, fmt.Errorf("Access denied access to the schema \"%s\"!", schemaName)
+					_schema := _permissions["arrow_flight"].([]map[string]any)
+					ids := a.getRLAIds(_schema, "arrow_flight", "read")
+					//fmt.Println("arrow_flight row ids:", ids)
+					if !a.containsInt(ids, arrow_flight_id) {
+						return nil, fmt.Errorf("Access denied to the schema \"%s\"!", schemaName)
+					}
+				} else if a.contains(rla_tables, "arrow_flight") {
+					return nil, fmt.Errorf("Access denied to the schema \"%s\"!", schemaName)
 				}
 				if _, ok := _permissions["arrow_flight_table"]; ok {
-					schema_table_permissions = _permissions["arrow_flight_table"].([]map[string]any)
-				} else {
-					return nil, fmt.Errorf("Access denied access to the table \"%s\" from schema \"%s\"!", schemaName, tableName)
+					_schema_table := _permissions["arrow_flight_table"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table, "arrow_flight_table", "read")
+					//fmt.Println("arrow_flight_table row ids:", _schema_table, ids)
+					if !a.containsInt(ids, arrow_flight_table_id) {
+						return nil, fmt.Errorf("Access denied to the table \"%s\" from schema \"%s\"!", tableName, schemaName)
+					}
+				} else if a.contains(rla_tables, "arrow_flight_table") {
+					return nil, fmt.Errorf("Access denied to the table \"%s\" from schema \"%s\"!", tableName, schemaName)
 				}
 			}
-			fmt.Println(schema_permissions, schema_table_permissions)
+			//fmt.Println(schema_permissions, schema_table_permissions)
 		}
 		// CHECK IF USER HAS ACCESS TO SPECIFC TABLE
 		// CHECK FIELDS ALLOWED
@@ -423,7 +474,9 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			enc := filter.NewDuckDBEncoder(nil)
 			whereClause := enc.EncodeFilters(fp)
 			fmt.Printf("Filter applied on %s.%s: %s\n", schemaName, tableName, whereClause)
-			query = fmt.Sprintf("%s WHERE %s", query, whereClause)
+			if whereClause != "" {
+				query = fmt.Sprintf("%s WHERE %s", query, whereClause)
+			}
 			// Use whereClause with your database query
 		}
 		fmt.Println(query)
