@@ -313,16 +313,20 @@ func IdentityJSONToMap(identity string) (map[string]any, error) {
 // This needs to be improved later for performance and resource usage.
 func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
-		// CHECK IF TABLE IS ALLOWED
+		// CHECK IF TABLE IS ALLOWED MEANING IF THERE IS TABLE MAPPING, ONLLY THOSE ARE EXPOSED
+		arrow_flight_id := conf["arrow_flight_id"]
+		var arrow_flight_table_id any
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
 			found := false
-			if _, ok := tables[tableName]; ok {
+			if _, ok := tables[tableName].(map[string]any); ok {
 				found = true
+				arrow_flight_table_id = tables[tableName].(map[string]any)["arrow_flight_table_id"]
 			}
 			if !found {
 				return nil, fmt.Errorf("table %s not allowed", tableName)
 			}
 		}
+		fmt.Println("arrow_flight_id:", arrow_flight_id, "arrow_flight_table_id:", arrow_flight_table_id)
 		user, err := IdentityJSONToMap(airport.IdentityFromContext(ctx))
 		if err != nil {
 			return nil, fmt.Errorf("Error getting Identity From Context %v", err)
@@ -365,19 +369,19 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 					"app":  map[string]any{"app_id": 1},
 					"data": map[string]any{},
 					"user": user,
-				}, []any{"arrow_flight", "arrow_flight_table"}, []any{})
+				}, []any{"arrow_flight", "arrow_flight_table"}, []any{arrow_flight_id, arrow_flight_table_id})
 			fmt.Println("rla_access:", tableName, rla_access)
 			if !rla_access["success"].(bool) {
 				fmt.Println("rla_access:", tableName, rla_access["msg"])
 			} else if _, ok := rla_access["data"]; ok {
 				_permissions := rla_access["data"].(map[string]any)
 				if _, ok := _permissions["arrow_flight"]; ok {
-					schema_permissions = _permissions["arrow_flight"].(map[string]any)
+					schema_permissions = _permissions["arrow_flight"].([]map[string]any)
 				} else {
 					return nil, fmt.Errorf("Access denied access to the schema \"%s\"!", schemaName)
 				}
 				if _, ok := _permissions["arrow_flight_table"]; ok {
-					schema_table_permissions = _permissions["arrow_flight_table"].(map[string]any)
+					schema_table_permissions = _permissions["arrow_flight_table"].([]map[string]any)
 				} else {
 					return nil, fmt.Errorf("Access denied access to the table \"%s\" from schema \"%s\"!", schemaName, tableName)
 				}
