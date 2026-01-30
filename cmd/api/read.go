@@ -53,11 +53,6 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			}
 		}
 	}
-	/*_row_level_tables := []string{}
-	if _, ok := params["row_level_tables"]; ok {
-		_row_level_tables = params["row_level_tables"].([]string)
-	}*/
-	// CHECK ROW LEVEL ACCESS AND OR UPDATE FILTERS WITH IT
 	limit := 10
 	if _, ok := params["data"].(map[string]any)["limit"].(float64); ok {
 		limit = int(params["data"].(map[string]any)["limit"].(float64))
@@ -216,6 +211,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			}
 		}
 	}
+	
+	// CHECK ROW LEVEL ACCESS, IF SO UPDATE FILTERS field_id in (?) ? = row_id allowed
+	_row_level_tables := []string{}
+	if _, ok := params["row_level_tables"]; ok {
+		_row_level_tables = params["row_level_tables"].([]string)
+		fmt.Println("row_level_tables:", _row_level_tables, fk_tables_fields)
+	}
+	
 	// FILTERS
 	queryParams := []any{}
 	filters := []any{}
