@@ -70,9 +70,11 @@ func (app *application) read(params map[string]any) map[string]any {
 	}
 	_permissions := app.table_access(params, tables)
 	if !_permissions["success"].(bool) {
+		//fmt.Println("Table Access:", tables)
 		return _permissions
 	}
 	if _, ok := _permissions["data"]; ok {
+		//fmt.Println("table_access:", _permissions["data"])
 		_permissions = _permissions["data"].(map[string]any)
 	} else {
 		_permissions = map[string]any{}
@@ -84,7 +86,7 @@ func (app *application) read(params map[string]any) map[string]any {
 	params["row_level_tables"] = []string{}
 	if _, ok := _row_level_tables["tables"]; ok {
 		params["row_level_tables"] = _row_level_tables["tables"].([]string)
-		fmt.Println("row_level_tables:", params["row_level_tables"])
+		//fmt.Println("row_level_tables:", params["row_level_tables"])
 	}
 	data := map[string]any{}
 	for _, table := range tables {

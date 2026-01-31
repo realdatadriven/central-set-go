@@ -663,6 +663,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		params["user"] = *(contextGetAuthenticatedUser(r))
 		_log["user_id"] = params["user"].(Dict)["user_id"]
 	}
+	//fmt.Println(params["user"])
 	if !token["success"].(bool) {
 		w.WriteHeader(http.StatusForbidden)
 		response = map[string]any{

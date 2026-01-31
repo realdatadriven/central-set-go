@@ -51,10 +51,10 @@ func (app *application) getRLAIds(rla_access []map[string]any, table, access_typ
 	return data
 }
 func (app *application) CrudRead(params map[string]any, table string, db etlx.DBInterface) map[string]any {
-	/*var user_id int
+	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
 		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
-	}*/
+	}
 	var role_id int
 	if _, ok := params["user"].(map[string]any)["role_id"]; ok {
 		role_id = int(params["user"].(map[string]any)["role_id"].(float64))
@@ -68,6 +68,10 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	if _, ok := params["schema"]; ok {
 		_schema = params["schema"].(map[string]any)
 	}
+	pk := ""
+	if _, ok := _schema["pk"]; ok {
+		pk = _schema["pk"].(string)
+	}
 	//fmt.Println("READ SCHEMA:", _schema["fields"])
 	_permissions := map[string]any{}
 	if _, ok := params["permissions"]; ok {
@@ -75,6 +79,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	}
 	roles := []any{role_id}
 	if !app.contains(roles, 1) {
+		//fmt.Println(_permissions)
 		if _, ok := _permissions["read"]; !ok {
 			msg, _ := app.i18n.T("no-table-access", map[string]any{
 				"table": table,
@@ -127,6 +132,24 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	}
 	fk_tables_fields := map[string]any{}
 	fk_tables_added := []any{}
+	fk_tables_pk := Dict{}
+	if _, ok := _schema["fields"]; ok {
+		for _, field_data := range _schema["fields"].(map[string]any) {
+			//fmt.Println(field_data.(map[string]any)["name"], field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"].(bool), field_data.(map[string]any)["fk"] == any(1))
+			if _, ok := field_data.(map[string]any)["fk"]; !ok {
+			} else if field_data.(map[string]any)["fk"].(bool) || field_data.(map[string]any)["fk"] == any(1) {
+				referred_table := ""
+				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
+					referred_table = field_data.(map[string]any)["referred_table"].(string)
+				}
+				referred_column := field_data.(map[string]any)["referred_column"]
+				fk_tables_pk[referred_table] = referred_column
+				//fmt.Println("referred_table:", referred_table, "referred_column:", referred_column)
+			}
+		}
+	} else {
+		fmt.Println("NO SCHEMA FIELDS (READ)")
+	}
 	if _, ok := _schema["fields"]; !ok {
 		// pass
 		_schema["fields"] = map[string]any{}
@@ -135,7 +158,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else if join == "all" {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) {
+			} else if field_data.(map[string]any)["fk"].(bool) || field_data.(map[string]any)["fk"] == any(1) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -187,7 +210,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) {
+			} else if field_data.(map[string]any)["fk"].(bool) || field_data.(map[string]any)["fk"] == any(1) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -255,30 +278,64 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 
 	// CHECK ROW LEVEL ACCESS, IF SO UPDATE FILTERS field_id in (?) ? = row_id allowed
 	_row_level_tables := []string{}
-	if _, ok := params["row_level_tables"]; ok {
-		_row_level_tables = params["row_level_tables"].([]string)
-		_tables_to_chk := []any{}
-		for _, v := range append(fk_tables_added, table) {
-			if app.contains(app.sliceStrs2SliceInterfaces(_row_level_tables), v) {
-				_tables_to_chk = append(_tables_to_chk, v)
-			}
-		}
-		fmt.Println("row_level_tables:", _row_level_tables, fk_tables_added, "_tables_to_chk:", _tables_to_chk)
-		if len(_tables_to_chk) > 0 {
-			rla_access := app.row_level_access(params, _tables_to_chk, []any{})
-			//fmt.Println("rla_access:", tableName, rla_access)
-			if !rla_access["success"].(bool) {
-				return rla_access
-			} else if _rla_access_data, ok := rla_access["data"].(map[string]any); ok {
-				for key, val := range _rla_access_data {
-					fmt.Println(key, val)
+	rla_tables_ids := Dict{}
+	if !app.contains(roles, 1) {
+		if _, ok := params["row_level_tables"]; ok {
+			_row_level_tables = params["row_level_tables"].([]string)
+			_tables_to_chk := []any{}
+			for _, v := range append(fk_tables_added, table) {
+				if app.contains(app.sliceStrs2SliceInterfaces(_row_level_tables), v) {
+					_tables_to_chk = append(_tables_to_chk, v)
 				}
-			} else {
-				fmt.Println(rla_access["data"])
+			}
+			//fmt.Println("row_level_tables:", _row_level_tables, fk_tables_added, "_tables_to_chk:", _tables_to_chk)
+			if len(_tables_to_chk) > 0 {
+				rla_access := app.row_level_access(params, _tables_to_chk, []any{})
+				//fmt.Println("rla_access:", _tables_to_chk, rla_access)
+				if !rla_access["success"].(bool) {
+					return rla_access
+				} else if _rla_access_data, ok := rla_access["data"].(map[string]any); ok {
+					for key, val := range _rla_access_data {
+						//fmt.Println(key, val.([]map[string]any))
+						rla_tables_ids[key] = app.getRLAIds(val.([]map[string]any), key, "read")
+					}
+				} else {
+					fmt.Println("DEBUG THIS SOMETHING WORONG WITH RLA(READ):", rla_access)
+				}
+				for _, t := range _tables_to_chk {
+					if _, ok := rla_tables_ids[t.(string)].([]any); !ok {
+						rla_tables_ids[t.(string)] = []any{}
+					}
+				}
+				//fmt.Println(fk_tables_pk, rla_tables_ids)
+				if _, ok := params["data"].(map[string]any)["filters"]; !ok {
+					params["data"].(map[string]any)["filters"] = []any{}
+				}
+				fk_tables_pk[table] = pk
+				_filters := params["data"].(map[string]any)["filters"].([]any)
+				for rla_t, ids := range rla_tables_ids {
+					/*/fmt.Println(rla_t, fk_tables_pk[rla_t])
+					if rla_t != table {
+						_aux := map[string]any{"field": fk_tables_pk[rla_t], "cond": "IN", "value": app.joinSlice(ids.([]any), ",")}
+						_filters = append(_filters, _aux)
+					} else {*/
+					_aux := map[string]any{
+						"field":     fk_tables_pk[rla_t],
+						"cond":      "IN",
+						"value":     app.joinSlice(ids.([]any), ","),
+						"glue_cond": "OR",
+						"field2":    "user_id",
+						"cond2":     "=",
+						"value2":    user_id,
+					}
+					_filters = append(_filters, _aux)
+					//}
+				}
+				//fmt.Println("RLA Filters Added:", _filters)
+				params["data"].(map[string]any)["filters"] = _filters
 			}
 		}
 	}
-
 	// FILTERS
 	queryParams := []any{}
 	filters := []any{}
@@ -291,13 +348,29 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		_filters := params["data"].(map[string]any)["filters"].([]any)
 		for _, filter := range _filters {
 			_field := filter.(map[string]any)["field"].(string)
+			_field2 := ""
+			if _, ok := filter.(map[string]any)["field2"]; ok {
+				_field2 = filter.(map[string]any)["field2"].(string)
+			}
 			_cond := "="
 			if _, ok := filter.(map[string]any)["cond"]; ok {
 				_cond = filter.(map[string]any)["cond"].(string)
 			}
+			_glue_cond := "OR"
+			if _, ok := filter.(map[string]any)["glue_cond"]; ok {
+				_glue_cond = filter.(map[string]any)["glue_cond"].(string)
+			}
+			_cond2 := "="
+			if _, ok := filter.(map[string]any)["cond2"]; ok {
+				_cond2 = filter.(map[string]any)["cond2"].(string)
+			}
 			var _value any
 			if _, ok := filter.(map[string]any)["value"]; ok {
 				_value = filter.(map[string]any)["value"]
+			}
+			var _value2 any
+			if _, ok := filter.(map[string]any)["value2"]; ok {
+				_value2 = filter.(map[string]any)["value2"]
 			}
 			if _, ok := params["data"].(map[string]any)["ignore_filter"]; ok {
 				ignore_filter := params["data"].(map[string]any)["ignore_filter"] //.(map[string]any)
@@ -359,8 +432,17 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 				filters = append(filters, fmt.Sprintf(`"%s"."%s" %s ?`, _table, _field, _cond))
 				queryParams = append(queryParams, _value)
 			} else if app.contains([]any{"in", "not in"}, strings.ToLower(_cond)) {
-				filters = append(filters, fmt.Sprintf(`"%s"."%s" %s (?)`, _table, _field, _cond))
+				_aux2 := ""
+				if _glue_cond != "" && _cond2 != "" && _field2 != "" && _value2 != "" {
+					_aux2 = fmt.Sprintf(` %s "%s"."%s" %s ?`, _glue_cond, _table, _field2, _cond2)
+				}
+				filters = append(filters, fmt.Sprintf(`("%s"."%s" %s (?)%s)`, _table, _field, _cond, _aux2))
 				queryParams = append(queryParams, strings.Split(_value.(string), ","))
+				if _aux2 != "" && _value2 != "" && strings.ToLower(_cond2) != "in" {
+					queryParams = append(queryParams, _value2)
+				} else if _aux2 != "" && _value2 != "" && strings.ToLower(_cond2) == "in" {
+					queryParams = append(queryParams, strings.Split(_value2.(string), ","))
+				}
 			} else if app.contains([]any{"between", "not between"}, strings.ToLower(_cond)) {
 				filters = append(filters, fmt.Sprintf(`"%s"."%s" %s ? AND ?`, _table, _field, _cond))
 				queryParams = append(queryParams, strings.Split(_value.(string), ","))
