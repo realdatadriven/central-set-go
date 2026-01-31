@@ -2,7 +2,7 @@
 Overview</a></li><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/quickstart/><i class="material-icons me-2">rocket_launch</i>
 Quickstart</a></li><li class="sidebar-dropdown current active"><button class=btn>
 <i class="material-icons me-2">auto_awesome</i>
-Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested current active"><button class=btn>
+Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested current active"><button class=btn>
 ETLX & Data Pipelines</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li class=current><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li></ul></div></li><li class="sidebar-dropdown nested"><button class=btn>
 Analytics & Dashboards</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/>OData v4 API</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/config/>Configuration</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
 <i class="material-icons me-2">heart_plus</i>
@@ -391,6 +391,13 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     
     
     
+    
+    
+    
+    
+    
+    
+    
 
 
     
@@ -535,6 +542,15 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     index.add(
             {
                 id:  15 ,
+                href: "\/central-set-go\/docs\/tutorials\/integrations\/",
+                title: "Integrations",
+                description: "Learn how to connect Central Set with multiple databases, data sources, and data platforms using ETLX to integrate, transform, and securely expose data.",
+                content: " warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. Overview linkCentral Set uses ETLX as its data integration and transformation engine.\nWhen used as recommended — with DuckDB as the query engine — ETLX gives Central Set the ability to integrate data from a vast ecosystem of data sources, normalize and transform it in a secure and reproducible way, and expose it through standardized consumption protocols such as Apache Arrow Flight or OData v4.\nThe result is a unified, secure, analytics-ready data layer that can sit in front of operational systems, data lakes, files, APIs, and cloud platforms.\nETLX + DuckDB: The Integration Core linkETLX is designed around declarative, SQL-first data integration, using DuckDB as its execution engine.\nDuckDB provides:\nHigh-performance analytical execution Native support for Apache Arrow A rich extension ecosystem Embedded, serverless-friendly deployment ETLX builds on top of this by:\nManaging connections and credentials securely Orchestrating ingestion, transformation, and exposure Making integrations reproducible and environment-safe 🔗 ETLX: https://github.com/realdatadriven/etlx\n🔗 DuckDB: https://duckdb.org\nSupported Data Sources linkThrough DuckDB core extensions and community extensions, Central Set can integrate data from many (and growing) sources.\nFile-Based Sources linkNative or extension-based support for:\nParquet CSV JSON Avro Spreadsheets (Excel / Sheets-like formats) Vortex 🔗 DuckDB File Formats:\nhttps://duckdb.org/docs/data/overview\nRelational Databases linkSupported via native connectors and extensions:\nPostgreSQL MySQL SQLite ODBC (planned / evolving) 🔗 DuckDB PostgreSQL Extension:\nhttps://duckdb.org/docs/extensions/postgres\n🔗 DuckDB MySQL Extension:\nhttps://duckdb.org/docs/extensions/mysql\n🔗 DuckDB SQLite Scanner:\nhttps://duckdb.org/docs/extensions/sqlite\nOpen Table \u0026 Lakehouse Formats linkModern analytics and lakehouse integrations:\nApache Iceberg Delta Lake Unity Catalog 🔗 DuckDB Iceberg Extension:\nhttps://duckdb.org/docs/extensions/iceberg\n🔗 DuckDB Delta Extension:\nhttps://duckdb.org/docs/extensions/delta\nArrow, Flight \u0026 ADBC Ecosystem linkDeep integration with the Arrow ecosystem:\nApache Arrow Apache Arrow Flight ADBC Drivers These are foundational for how Central Set exposes data efficiently and safely.\n🔗 Apache Arrow:\nhttps://arrow.apache.org\n🔗 Arrow Flight:\nhttps://arrow.apache.org/docs/format/Flight.html\n🔗 ADBC:\nhttps://arrow.apache.org/adbc/\nCommunity \u0026 Advanced Integrations linkThrough DuckDB community extensions and ETLX adapters, the ecosystem expands almost endlessly:\nWeb APIs OData BigQuery Snowflake Google Sheets Microsoft SQL Server SSH-based sources Web scraping XML / HTML Custom connectors This allows Central Set to act as a data unification layer, even across heterogeneous, non-traditional sources.\n🔗 DuckDB Community Extensions:\nhttps://duckdb.org/docs/extensions/overview\nSecure Credential Management linkAll integrations are designed with security-first principles.\nETLX supports:\nEnvironment variable injection (@ENV_VAR_NAME) DuckDB CREATE SECRET syntax Token- and key-based authentication No hardcoded credentials in configs or SQL This makes configurations safe to:\nCommit to version control Share across environments Deploy in containerized or cloud setups Transform Once, Expose Anywhere linkOnce data is integrated and transformed, Central Set can expose it in multiple standardized ways.\nApache Arrow Flight link High-performance, columnar transport Language-agnostic (Python, Go, Java, Rust, etc.) Ideal for analytics, ML, and large-scale consumers Secure, token-authenticated access Arrow Flight is the primary and recommended exposure protocol.\nOData v4 link REST-based, standards-compliant API Ideal for BI tools, dashboards, and lightweight consumers Supports filtering, projection, and pagination Best suited for smaller or interactive workloads Access Control \u0026 Data Scoping linkAll exposed data respects Central Set’s access rules:\nAuthorization header is required Access tokens are created in: Admin → Access Keys Tokens are scoped to users Users must have access to the underlying resources Row-level access rules, when defined, are enforced This allows Central Set to:\nSecurely expose shared datasets Scope data per tenant, team, or user Reuse the same integrations safely across consumers Why This Matters linkBy combining:\nETLX for integration and orchestration DuckDB for execution Arrow Flight and OData for exposure Strong access control and security Central Set becomes a single, unified gateway between raw data sources and final consumers — without forcing data duplication, fragile pipelines, or vendor lock-in.\n👉 For hands-on examples, configuration files, and real-world setups, see the documentation site:\nhttps://realdatadriven.github.io/central-set-go/\n"
+            }
+        );
+    index.add(
+            {
+                id:  16 ,
                 href: "\/central-set-go\/docs\/tutorials\/users-roles\/",
                 title: "Security \u0026 Permissions",
                 description: "Security \u0026 Permissions",
@@ -543,7 +559,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  16 ,
+                id:  17 ,
                 href: "\/central-set-go\/docs\/tutorials\/jobs\/",
                 title: "Automation \u0026 Jobs",
                 description: "Automation \u0026 Jobs",
@@ -552,7 +568,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  17 ,
+                id:  18 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/",
                 title: "ETLX \u0026 Data Pipelines",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -561,7 +577,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  18 ,
+                id:  19 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/overview\/",
                 title: "Overview",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -570,7 +586,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  19 ,
+                id:  20 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/example\/",
                 title: "Example",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -579,7 +595,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  20 ,
+                id:  21 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/",
                 title: "Analytics \u0026 Dashboards",
                 description: "Analytics \u0026 Dashboards",
@@ -588,7 +604,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  21 ,
+                id:  22 ,
                 href: "\/central-set-go\/docs\/tutorials\/api\/",
                 title: "Dynamic API Reference",
                 description: "Dynamic API Reference",
@@ -597,7 +613,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  22 ,
+                id:  23 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/overview\/",
                 title: "Overview",
                 description: "Overview",
@@ -606,7 +622,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  23 ,
+                id:  24 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/example\/",
                 title: "Example",
                 description: "Analytics \u0026 Dashboards — Logs Dashboard Example",
@@ -615,7 +631,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  24 ,
+                id:  25 ,
                 href: "\/central-set-go\/docs\/tutorials\/arrow-flight\/",
                 title: "Arrow Flight",
                 description: "Apache Arrow Flight Support API",
@@ -624,7 +640,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  25 ,
+                id:  26 ,
                 href: "\/central-set-go\/docs\/tutorials\/odata-v4\/",
                 title: "OData v4 API",
                 description: "OData v4 API",
@@ -633,7 +649,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  26 ,
+                id:  27 ,
                 href: "\/central-set-go\/docs\/tutorials\/config\/",
                 title: "Configuration",
                 description: "Configuration options for Central Set",
