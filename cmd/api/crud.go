@@ -169,6 +169,7 @@ func (app *application) create_update(params map[string]any) map[string]any {
 	}
 	//fmt.Println("TABLES TO CREATE:", tables, _schemas)
 	_permissions := app.table_access(params, tables)
+	//fmt.Println("1 PERMISSIONS:", _permissions)
 	if !_permissions["success"].(bool) {
 		return _permissions
 	}
@@ -177,6 +178,7 @@ func (app *application) create_update(params map[string]any) map[string]any {
 	} else {
 		_permissions = map[string]any{}
 	}
+	//fmt.Println("2 PERMISSIONS:", _permissions)
 	_row_level_tables := app.row_level_tables(params)
 	if !_row_level_tables["success"].(bool) {
 		return _row_level_tables
@@ -221,7 +223,7 @@ func (app *application) create_update(params map[string]any) map[string]any {
 			}
 			params["data"].(map[string]any)["data"] = d
 			data[fmt.Sprintf(`row-%s-%d`, tbl, i)] = app.CrudCreateUpdte(params, tbl, newDB)
-			fmt.Println(fmt.Sprintf(`row-%s-%d`, tbl, i), data[fmt.Sprintf(`row-%s-%d`, tbl, i)].(map[string]any)["msg"])
+			//fmt.Println(fmt.Sprintf(`row-%s-%d`, tbl, i), data[fmt.Sprintf(`row-%s-%d`, tbl, i)].(map[string]any)["msg"])
 		}
 	case map[string]any:
 		params["schema"] = map[string]any{}

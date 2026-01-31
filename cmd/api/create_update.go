@@ -76,7 +76,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	}
 	roles := []any{role_id}
 	if !app.contains(roles, 1) {
-		if _, ok := _permissions["read"]; !ok {
+		//fmt.Println("3 PERMISSIONS:", _permissions)
+		if _, ok := _permissions[crud_aciton]; !ok {
 			msg, _ := app.i18n.T("no-table-access", Dict{
 				"table": table,
 			})
@@ -84,7 +85,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"success": false,
 				"msg":     msg,
 			}
-		} else if !app.contains([]any{true, 1}, _permissions["read"]) {
+		} else if !app.contains([]any{true, 1}, _permissions[crud_aciton]) {
 			msg, _ := app.i18n.T("no-table-action-access", Dict{
 				"table":  table,
 				"action": strings.ToUpper(crud_aciton),
@@ -222,6 +223,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 			}
 		}
+		fk_tables_pk[table] = pk
 		_row_level_tables := []string{}
 		rla_tables_ids := Dict{}
 		if _, ok := params["row_level_tables"]; ok {

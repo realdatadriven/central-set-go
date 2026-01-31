@@ -403,25 +403,30 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		}
 		if len(tables) > 0 && get_users_owned_id == true && len(fk_tables_pk) > 0 {
 			_sql := ""
-			for i, t := range tables {
+			i := 0
+			for _, t := range tables {
+				//fmt.Println(i, t)
 				_union := ""
 				if i > 0 {
 					_union = "\nUNION\n"
 				}
 				if _, ok := fk_tables_pk[t.(string)]; ok {
+					i += 1
 					_sql += fmt.Sprintf(`%sSELECT '%s' as "table", "%s" as "row_id" from "%s" where "user_id" = %d`, _union, t, fk_tables_pk[t.(string)], t, user_id)
 				}
 			}
-			fmt.Println(_sql)
-			result, _, err = app.db.QueryMultiRows(_sql, []any{}...)
-			if err != nil {
-				fmt.Printf("3: %s", err)
-			} else {
-				for _, row := range *result {
-					if _, ok := users_owned_ids[row["table"].(string)]; !ok {
-						users_owned_ids[row["table"].(string)] = []any{}
+			//fmt.Println("get_users_owned_id:", tables, fk_tables_pk, _sql)
+			if _sql != "" {
+				result, _, err = newDB.QueryMultiRows(_sql, []any{}...)
+				if err != nil {
+					fmt.Printf("3: %s", err)
+				} else {
+					for _, row := range *result {
+						if _, ok := users_owned_ids[row["table"].(string)]; !ok {
+							users_owned_ids[row["table"].(string)] = []any{}
+						}
+						users_owned_ids[row["table"].(string)] = append(users_owned_ids[row["table"].(string)].([]any), row["row_id"])
 					}
-					users_owned_ids[row["table"].(string)] = append(users_owned_ids[row["table"].(string)].([]any), row["row_id"])
 				}
 			}
 		}
