@@ -11,31 +11,31 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) CrudCreateUpdte(params map[string]any, table string, db etlx.DBInterface) map[string]any {
-	/*var user_id int
-	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
-		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
-	}*/
+func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInterface) Dict {
+	var user_id int
+	if _, ok := params["user"].(Dict)["user_id"]; ok {
+		user_id = int(params["user"].(Dict)["user_id"].(float64))
+	}
 	var role_id int
-	if _, ok := params["user"].(map[string]any)["role_id"]; ok {
-		role_id = int(params["user"].(map[string]any)["role_id"].(float64))
+	if _, ok := params["user"].(Dict)["role_id"]; ok {
+		role_id = int(params["user"].(Dict)["role_id"].(float64))
 	}
 	/*var app_id int
-	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+	if _, ok := params["app"].(Dict)["app_id"]; ok {
+		app_id = int(params["app"].(Dict)["app_id"].(float64))
 	}*/
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
 	}
 	//fmt.Println(user_id, role_id, app_id)
-	_schema := map[string]any{}
+	_schema := Dict{}
 	if _, ok := params["schema"]; ok {
-		_schema = params["schema"].(map[string]any)
+		_schema = params["schema"].(Dict)
 	}
-	_permissions := map[string]any{}
+	_permissions := Dict{}
 	if _, ok := params["permissions"]; ok {
-		_permissions = params["permissions"].(map[string]any)
+		_permissions = params["permissions"].(Dict)
 	}
 	// fmt.Println("PK", _schema["pk"])
 	pk := ""
@@ -43,9 +43,9 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		pk = _schema["pk"].(string)
 	}
 	crud_aciton := "create"
-	_data := map[string]any{}
-	if _, ok := params["data"].(map[string]any)["data"]; ok {
-		_data = params["data"].(map[string]any)["data"].(map[string]any)
+	_data := Dict{}
+	if _, ok := params["data"].(Dict)["data"]; ok {
+		_data = params["data"].(Dict)["data"].(Dict)
 	}
 	if _, ok := _data[pk]; ok {
 		_to_delete := false
@@ -77,19 +77,19 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 	roles := []any{role_id}
 	if !app.contains(roles, 1) {
 		if _, ok := _permissions["read"]; !ok {
-			msg, _ := app.i18n.T("no-table-access", map[string]any{
+			msg, _ := app.i18n.T("no-table-access", Dict{
 				"table": table,
 			})
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     msg,
 			}
 		} else if !app.contains([]any{true, 1}, _permissions["read"]) {
-			msg, _ := app.i18n.T("no-table-action-access", map[string]any{
+			msg, _ := app.i18n.T("no-table-action-access", Dict{
 				"table":  table,
 				"action": strings.ToUpper(crud_aciton),
 			})
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     msg,
 			}
@@ -101,11 +101,11 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		_row_level_tables = params["row_level_tables"].([]string)
 	}*/
 	// FIELDS
-	if _, ok := _schema["fields"].(map[string]any); ok {
-		for field, field_data := range _schema["fields"].(map[string]any) {
-			_type := field_data.(map[string]any)["type"].(string)
+	if _, ok := _schema["fields"].(Dict); ok {
+		for field, field_data := range _schema["fields"].(Dict) {
+			_type := field_data.(Dict)["type"].(string)
 			_nullable := true
-			if null, ok := field_data.(map[string]any)["nullable"]; ok {
+			if null, ok := field_data.(Dict)["nullable"]; ok {
 				if app.contains([]any{0, false, "0", "false", "False", "FALSE"}, null) {
 					_nullable = false
 				}
@@ -135,7 +135,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 				} else if _, ok := _data[pk]; !ok || crud_aciton == "create" {
 					hashedPassword, err := password.Hash(_data[field].(string))
 					if err != nil {
-						return map[string]any{
+						return Dict{
 							"success": true,
 							"msg":     "Error hashing password!",
 						}
@@ -144,7 +144,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 				} else if len(_data[field].(string)) < 20 {
 					hashedPassword, err := password.Hash(_data[field].(string))
 					if err != nil {
-						return map[string]any{
+						return Dict{
 							"success": true,
 							"msg":     "Error hashing password!",
 						}
@@ -153,31 +153,31 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 				}
 			} else if app.contains([]any{"app", "app_id"}, field) && !app.contains([]any{"app", "users", "role_app", "role_app_menu", "role_app_menu_table"}, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
-					_data[field] = params["app"].(map[string]any)[field]
+					_data[field] = params["app"].(Dict)[field]
 				}
 			} else if app.contains([]any{"user", "user_id"}, field) && !app.contains([]any{"user", "users", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
-					_data[field] = params["user"].(map[string]any)[field]
+					_data[field] = params["user"].(Dict)[field]
 				}
 			} else if !_nullable && field != pk && crud_aciton != "delete" {
 				if !app.IsEmpty(_data[field]) {
 				} else if field == "lang" {
 					_data[field] = lang
 				} else if app.contains([]any{"db", "database"}, field) {
-					_data[field] = params["app"].(map[string]any)["db"]
+					_data[field] = params["app"].(Dict)["db"]
 				} else {
-					msg, _ := app.i18n.T("field-required", map[string]any{"field": field})
+					msg, _ := app.i18n.T("field-required", Dict{"field": field})
 					_errs = append(_errs, msg)
 				}
 			} else {
 				switch _value.(type) {
-				case map[string]any:
+				case Dict:
 					_json, err := json.Marshal(_value)
 					if err != nil {
 						fmt.Println(field, "unable to convert to JSON!", err)
 					}
 					_data[field] = _json
-				case []map[string]any:
+				case []Dict:
 					_json, err := json.Marshal(_value)
 					if err != nil {
 						fmt.Println(field, "unable to convert to JSON!", err)
@@ -197,19 +197,104 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		}
 	}
 	if len(_errs) > 0 {
-		msg, _ := app.i18n.T("validation-errors", map[string]any{"n": len(_errs)})
-		return map[string]any{
+		msg, _ := app.i18n.T("validation-errors", Dict{"n": len(_errs)})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 			"errors":  _errs,
+		}
+	}
+	// CHECK ROW LEVEL ACCESS
+	if !app.contains(roles, 1) {
+		fk_tables_added := []any{}
+		fk_tables_pk := Dict{}
+		if _, ok := _schema["fields"]; ok {
+			for _, field_data := range _schema["fields"].(Dict) {
+				if _, ok := field_data.(Dict)["fk"]; !ok {
+				} else if field_data.(Dict)["fk"].(bool) || field_data.(Dict)["fk"] == any(1) {
+					referred_table := ""
+					if _, ok := field_data.(Dict)["referred_table"]; ok {
+						referred_table = field_data.(Dict)["referred_table"].(string)
+					}
+					referred_column := field_data.(Dict)["referred_column"]
+					fk_tables_pk[referred_table] = referred_column
+					fk_tables_added = append(fk_tables_added, referred_table)
+				}
+			}
+		}
+		_row_level_tables := []string{}
+		rla_tables_ids := Dict{}
+		if _, ok := params["row_level_tables"]; ok {
+			_row_level_tables = params["row_level_tables"].([]string)
+			_tables_to_chk := []any{}
+			for _, v := range append(fk_tables_added, table) {
+				if app.contains(app.sliceStrs2SliceInterfaces(_row_level_tables), v) {
+					_tables_to_chk = append(_tables_to_chk, v)
+				}
+			}
+			// fmt.Println("row_level_tables:", _row_level_tables, fk_tables_added, "_tables_to_chk:", _tables_to_chk)
+			if len(_tables_to_chk) > 0 {
+				params["fk_tables_pk"] = fk_tables_pk
+				params["get_users_owned_id"] = true
+				rla_access := app.row_level_access(params, _tables_to_chk, []any{})
+				params["get_users_owned_id"] = false
+				users_owned_ids := Dict{}
+				if _, ok := rla_access["data"].(Dict); ok {
+					users_owned_ids = rla_access["data"].(Dict)
+				}
+				//fmt.Println("rla_access:", _tables_to_chk, rla_access)
+				if !rla_access["success"].(bool) {
+					return rla_access
+				} else if _rla_access_data, ok := rla_access["data"].(Dict); ok {
+					for key, val := range _rla_access_data {
+						//fmt.Println(key, val.([]Dict))
+						my_ids := []any{}
+						if _, ok := users_owned_ids[key].([]any); ok {
+							my_ids = users_owned_ids[key].([]any)
+						}
+						rla_tables_ids[key] = app.getRLAIds(val.([]Dict), key, crud_aciton, my_ids)
+					}
+				} else {
+					fmt.Println("DEBUG THIS SOMETHING WORONG WITH RLA(READ):", rla_access)
+				}
+				for _, t := range _tables_to_chk {
+					if _, ok := rla_tables_ids[t.(string)].([]any); !ok {
+						rla_tables_ids[t.(string)] = []any{}
+					}
+				}
+				//fmt.Println(fk_tables_pk, rla_tables_ids)
+				if _, ok := params["data"].(Dict)["filters"]; !ok {
+					params["data"].(Dict)["filters"] = []any{}
+				}
+				fk_tables_pk[table] = pk
+				for rla_t, ids := range rla_tables_ids {
+					row_id_field := fk_tables_pk[rla_t].(string)
+					if _, ok := _data[pk]; rla_t == table && ok && any(user_id) == _data["user_id"] { // VERIFY LATER ON
+						continue
+					}
+					if row_id, ok := _data[row_id_field]; ok {
+						if !app.containsInt(ids.([]any), row_id) {
+							msg, _ := app.i18n.T("no-row-level-access", Dict{
+								"table":  rla_t,
+								"row_id": row_id,
+								"action": crud_aciton,
+							})
+							return Dict{
+								"success": false,
+								"msg":     msg,
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	// fmt.Println(crud_aciton)
 	// REMOVE FIELDS THAT IS NOT IN THE TABLE SCHEMA
 	_aux_data := _data
 	for key := range _aux_data {
-		if _, ok := _schema["fields"].(map[string]any); ok {
-			if _, ok := _schema["fields"].(map[string]any)[key]; !ok {
+		if _, ok := _schema["fields"].(Dict); ok {
+			if _, ok := _schema["fields"].(Dict)[key]; !ok {
 				delete(_data, key)
 			}
 		}
@@ -240,7 +325,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 					permanently = true
 				}
 			}
-			if _, ok := _schema["fields"].(map[string]any)["excluded"]; ok && !permanently {
+			if _, ok := _schema["fields"].(Dict)["excluded"]; ok && !permanently {
 				query = fmt.Sprintf(`UPDATE "%s" SET "excluded" = TRUE WHERE "%s" = :%s`, table, pk, pk)
 			} else {
 				query = fmt.Sprintf(`DELETE FROM "%s" WHERE "%s" = :%s`, table, pk, pk)
@@ -262,7 +347,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 				}
 				_id, err = db.ExecuteQueryPGInsertWithLastInsertId(query, _data)
 				if err != nil {
-					return map[string]any{
+					return Dict{
 						"success": false,
 						"table":   table,
 						"pk":      pk,
@@ -270,7 +355,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 					}
 				}
 			} else {
-				return map[string]any{
+				return Dict{
 					"success": false,
 					"table":   table,
 					"pk":      pk,
@@ -284,7 +369,7 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		//fmt.Println(query)
 		if err != nil {
 			fmt.Println(crud_aciton, pk, _data[pk], query, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"table":   table,
 				"pk":      pk,
@@ -295,8 +380,8 @@ func (app *application) CrudCreateUpdte(params map[string]any, table string, db 
 		}
 		id = _id
 	}
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success":              true,
 		"msg":                  msg,
 		"pk":                   pk,

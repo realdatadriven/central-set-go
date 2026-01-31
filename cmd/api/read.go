@@ -18,7 +18,7 @@ func (app *application) containsInt(slice []any, element any) bool {
 	}
 	return false
 }
-func (app *application) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
+func (app *application) getRLAIds(rla_access []map[string]any, table, access_type string, my_ids []any) []any {
 	data := []any{}
 	for _, v := range rla_access {
 		_access := false
@@ -46,6 +46,11 @@ func (app *application) getRLAIds(rla_access []map[string]any, table, access_typ
 		}
 		if v["table"].(string) == table && _access {
 			data = append(data, v["row_id"])
+		}
+	}
+	if len(my_ids) > 0 {
+		for _, v := range my_ids {
+			data = append(data, v)
 		}
 	}
 	return data
@@ -297,7 +302,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 				} else if _rla_access_data, ok := rla_access["data"].(map[string]any); ok {
 					for key, val := range _rla_access_data {
 						//fmt.Println(key, val.([]map[string]any))
-						rla_tables_ids[key] = app.getRLAIds(val.([]map[string]any), key, "read")
+						rla_tables_ids[key] = app.getRLAIds(val.([]map[string]any), key, "read", []any{})
 					}
 				} else {
 					fmt.Println("DEBUG THIS SOMETHING WORONG WITH RLA(READ):", rla_access)
