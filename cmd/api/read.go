@@ -257,7 +257,26 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	_row_level_tables := []string{}
 	if _, ok := params["row_level_tables"]; ok {
 		_row_level_tables = params["row_level_tables"].([]string)
-		fmt.Println("row_level_tables:", _row_level_tables, fk_tables_fields)
+		_tables_to_chk := []any{}
+		for _, v := range append(fk_tables_added, table) {
+			if app.contains(app.sliceStrs2SliceInterfaces(_row_level_tables), v) {
+				_tables_to_chk = append(_tables_to_chk, v)
+			}
+		}
+		fmt.Println("row_level_tables:", _row_level_tables, fk_tables_added, "_tables_to_chk:", _tables_to_chk)
+		if len(_tables_to_chk) > 0 {
+			rla_access := app.row_level_access(params, _tables_to_chk, []any{})
+			//fmt.Println("rla_access:", tableName, rla_access)
+			if !rla_access["success"].(bool) {
+				return rla_access
+			} else if _rla_access_data, ok := rla_access["data"].(map[string]any); ok {
+				for key, val := range _rla_access_data {
+					fmt.Println(key, val)
+				}
+			} else {
+				fmt.Println(rla_access["data"])
+			}
+		}
 	}
 
 	// FILTERS
