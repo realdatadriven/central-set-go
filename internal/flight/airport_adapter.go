@@ -755,10 +755,7 @@ func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 		if certFile == "" || keyFile == "" || caFile == "" {
 			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
 		}
-		serverCert, err := tls.LoadX509KeyPair(
-			certFile,
-			keyFile,
-		)
+		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
 			return nil, fmt.Errorf("load server cert: %w", err)
 		}
@@ -774,8 +771,8 @@ func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 		return credentials.NewTLS(&tls.Config{
 			Certificates: []tls.Certificate{serverCert},
 			ClientAuth:   tls.NoClientCert, //tls.RequestClientCert, ////tls.RequireAndVerifyClientCert, // Enable mTLS
-			ClientCAs:    certPool,
-			MinVersion:   tls.VersionTLS13, // Use TLS 1.3
+			// ClientCAs:    certPool,
+			MinVersion: tls.VersionTLS13, // Use TLS 1.3
 		}), nil
 	}
 	return nil, nil
