@@ -1,5 +1,5 @@
 ---
-weight: 7090
+weight: 7091
 title: "Arrow Flight"
 description: "Apache Arrow Flight Support API"
 icon: arrow
@@ -11,7 +11,7 @@ images: []
 
 ## Arrow Flight Support
 
-{{% alert context="warning" text="**Important** – Central-Set is production-ready, but this documentation is still under active development. Parts of the Arrow Flight subsystem are configuration-driven and evolve as access-control and governance features mature." /%}}
+{{% alert context="warning" text="**Important** - Central-Set is production-ready, but this documentation is still under active development. Parts of the Arrow Flight subsystem are configuration-driven and evolve as access-control and governance features mature." /%}}
 
 ### Overview
 
@@ -24,7 +24,7 @@ Arrow Flight is primarily designed to serve:
 - **DuckDB-backed analytical views**
 - **Externally attached datasources**
 
-…while enforcing the **same security, access control, and multi-tenant rules** used throughout Central-Set.
+While enforcing the **same security, access control, and multi-tenant rules** used throughout Central-Set.
 
 Unlike static Flight servers, Central-Set builds Arrow Flight endpoints **entirely from configuration stored in the Admin database**, allowing schemas, tables, fields, and scopes to be enabled, restricted, or revoked at runtime — without redeploying the service.
 
@@ -175,3 +175,117 @@ ENABLE_TLS=false
 TLS_CERT_FILE=ssl/server-cert.pem
 TLS_KEY_FILE=ssl/server-key.pem
 TLS_CA_CERT_FILE=ssl/ca-cert.pem
+````
+
+* When `ENABLE_TLS=true`, Arrow Flight serves **gRPC over TLS**
+* Clients must trust the configured CA
+* Strongly recommended for production and remote access
+
+---
+
+## Enabling Arrow Flight
+
+```env
+ENABLE_ARROW_FLIGHT=true
+ARROW_FLIGHT_ADDR=0.0.0.0:50051
+```
+
+Arrow Flight runs **inside the same binary** as the REST API and shares:
+
+* Authentication
+* Configuration
+* Access control
+* Application context
+
+---
+
+## Defining an Arrow Flight Schema
+
+Create a schema via:
+
+**Admin → Expose Arrow Flight**
+
+Example:
+
+```yaml
+name: my_schema
+description: Example analytical schema
+db_schema: main
+
+startup_sql: |
+  INSTALL SQLITE;
+  LOAD SQLITE;
+
+main_sql: |
+  ATTACH 'database/test.db' AS my_schema (TYPE SQLITE);
+  USE my_schema;
+
+shutdown_sql: |
+  USE memory;
+  DETACH my_schema;
+```
+
+Each schema represents **one logical Arrow Flight endpoint**.
+
+---
+
+## Client Access (DuckDB - Recommended)
+
+Using DuckDB's **airport** extension:
+
+```sql
+INSTALL airport FROM community;
+LOAD airport;
+
+CREATE OR REPLACE PERSISTENT SECRET airport_auth_secret (
+    TYPE airport,
+    AUTH_TOKEN 'your_access_token_here',
+    SCOPE 'grpc://127.0.0.1:50051'
+);
+
+ATTACH '' AS my_server (
+    TYPE AIRPORT,
+    LOCATION 'grpc://127.0.0.1:50051'
+);
+
+SELECT *
+FROM my_server.my_schema.orders
+LIMIT 10;
+```
+
+### What Happens Internally
+
+* Token is validated
+* Accessible tables are resolved
+* Unauthorized fields are masked
+* Scopes are applied
+* RLA filters rows
+* Data is streamed as Arrow batches
+
+---
+
+## Current Limitations & Roadmap
+
+Current focus is **read-optimized analytical access**.
+
+Planned improvements:
+
+* Explicit DML support (INSERT / UPDATE / DELETE)
+* Scope composition strategies
+* Better schema introspection
+* Cached connector reuse
+* Declarative exposure policies
+
+---
+
+## Why Arrow Flight in Central-Set?
+
+Arrow Flight allows Central-Set to function as a **governed data serving layer**:
+
+* ETLX outputs become instantly queryable
+* No file exports
+* No duplication
+* Strong access control
+* Works with modern analytics stacks
+
+It bridges **data engineering, governance, and analytics** — cleanly and safely.

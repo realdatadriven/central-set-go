@@ -1,99 +1,124 @@
 package main
 
+/*
+# Generate CA
+openssl genrsa -out ca-key.pem 4096
+openssl req -new -x509 -days 365 -key ssl/ca-key.pem -out ssl/ca-cert.pem -subj "/CN=Test CA"
+
+# Generate server certificate
+openssl genrsa -out ssl/server-key.pem 4096
+openssl req -new -key ssl/server-key.pem -out ssl/server.csr -subj "/CN=localhost"
+openssl x509 -req -days 365 -in ssl/server.csr -CA ssl/ca-cert.pem -CAkey ssl/ca-key.pem -CAcreateserial -out ssl/server-cert.pem
+*/
+
 import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"fmt"
 	"log"
 	"math/big"
-	"net"
 	"os"
 	"time"
 )
 
 func main() {
-	// 1️⃣ Create CA
+	// ───────────────────────────────────────────────
+	//  1. Generate CA key + self-signed CA certificate
+	// ───────────────────────────────────────────────
 	caKey, err := rsa.GenerateKey(rand.Reader, 4096)
-	must(err)
+	if err != nil {
+		log.Fatal("failed to generate CA key:", err)
+	}
 
 	caTemplate := &x509.Certificate{
-		SerialNumber: big.NewInt(1),
-		Subject: pkix.Name{
-			Organization: []string{"Local Dev CA"},
-			CommonName:   "Local Dev CA",
-		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(10, 0, 0),
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
-		BasicConstraintsValid: true,
+		SerialNumber:          randomSerial(),
+		Subject:               pkix.Name{CommonName: "Test CA"},
+		NotBefore:             time.Now().Add(-24 * time.Hour),
+		NotAfter:              time.Now().Add(365 * 24 * time.Hour),
 		IsCA:                  true,
+		BasicConstraintsValid: true,
+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 	}
 
 	caCertDER, err := x509.CreateCertificate(
 		rand.Reader,
 		caTemplate,
-		caTemplate,
+		caTemplate, // self-signed
 		&caKey.PublicKey,
 		caKey,
 	)
-	must(err)
+	if err != nil {
+		log.Fatal("failed to create CA cert:", err)
+	}
 
-	writeCert("ssl/ca-cert.pem", caCertDER)
-	writeKey("ssl/ca-key.pem", caKey)
+	// Save CA key
+	saveKey("ssl/ca-key.pem", caKey)
+	// Save CA cert
+	saveCert("ssl/ca-cert.pem", caCertDER)
 
-	// 2️⃣ Create server cert
-	serverKey, err := rsa.GenerateKey(rand.Reader, 2048)
-	must(err)
+	fmt.Println("Created CA certificate and key")
+
+	// ───────────────────────────────────────────────
+	//  2. Generate server key + certificate signed by CA
+	// ───────────────────────────────────────────────
+	serverKey, err := rsa.GenerateKey(rand.Reader, 4096)
+	if err != nil {
+		log.Fatal("failed to generate server key:", err)
+	}
 
 	serverTemplate := &x509.Certificate{
-		SerialNumber: big.NewInt(2),
-		Subject: pkix.Name{
-			Organization: []string{"Local Dev Server"},
-			CommonName:   "localhost",
-		},
-		NotBefore: time.Now(),
-		NotAfter:  time.Now().AddDate(1, 0, 0),
+		SerialNumber: randomSerial(),
+		Subject:      pkix.Name{CommonName: "localhost"},
+		NotBefore:    time.Now().Add(-24 * time.Hour),
+		NotAfter:     time.Now().Add(365 * 24 * time.Hour),
 
-		KeyUsage:    x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: true,
+		IsCA:                  false,
 
-		DNSNames: []string{"localhost"},
-		IPAddresses: []net.IP{
-			net.ParseIP("127.0.0.1"),
-		},
+		// You can add these if needed:
+		// DNSNames:       []string{"localhost", "127.0.0.1"},
+		// IPAddresses:    []net.IP{net.ParseIP("127.0.0.1")},
 	}
 
 	serverCertDER, err := x509.CreateCertificate(
 		rand.Reader,
 		serverTemplate,
-		caTemplate,
-		&serverKey.PublicKey,
-		caKey,
+		caTemplate,           // signed by CA
+		&serverKey.PublicKey, // public key of server
+		caKey,                // CA private key
 	)
-	must(err)
+	if err != nil {
+		log.Fatal("failed to create server cert:", err)
+	}
 
-	writeCert("ssl/server-cert.pem", serverCertDER)
-	writeKey("ssl/server-key.pem", serverKey)
+	// Save server key + cert
+	saveKey("ssl/server-key.pem", serverKey)
+	saveCert("ssl/server-cert.pem", serverCertDER)
 
-	log.Println("✅ CA and server certificates generated")
+	fmt.Println("Created server certificate and key")
+	fmt.Println("Done. Files written to ssl/ directory")
 }
 
-func writeCert(path string, der []byte) {
-	f, err := os.Create(path)
-	must(err)
-	defer f.Close()
+// Helpers ────────────────────────────────────────────────
 
-	pem.Encode(f, &pem.Block{
-		Type:  "CERTIFICATE",
-		Bytes: der,
-	})
+func randomSerial() *big.Int {
+	serial, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), 159))
+	if err != nil {
+		log.Fatal("failed to generate serial:", err)
+	}
+	return serial
 }
 
-func writeKey(path string, key *rsa.PrivateKey) {
-	f, err := os.Create(path)
-	must(err)
+func saveKey(filename string, key *rsa.PrivateKey) {
+	f, err := os.Create(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer f.Close()
 
 	pem.Encode(f, &pem.Block{
@@ -102,8 +127,15 @@ func writeKey(path string, key *rsa.PrivateKey) {
 	})
 }
 
-func must(err error) {
+func saveCert(filename string, derBytes []byte) {
+	f, err := os.Create(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer f.Close()
+
+	pem.Encode(f, &pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: derBytes,
+	})
 }

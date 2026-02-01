@@ -246,13 +246,13 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	}
 	// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
 	// Load TLS credentials
-	creds, err := loadTLSCredentials()
+	creds, err := loadTLSCredentialsV2() //loadTLSCredentials()
 	if err != nil {
 		log.Fatalf("Failed to load TLS credentials: %v", err)
 	}
 	opts := airport.ServerOptions(config)
 	if creds != nil {
-		fmt.Println("TLS CREDS:", creds)
+		// fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)
@@ -742,6 +742,41 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 			MinVersion:   tls.VersionTLS12,
 		}
 		return credentials.NewTLS(tlsConfig), nil
+	}
+	return nil, nil
+}
+
+func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	if enableTLS {
+		certFile := os.Getenv("TLS_CERT_FILE")
+		keyFile := os.Getenv("TLS_KEY_FILE")
+		caFile := os.Getenv("TLS_CA_CERT_FILE")
+		if certFile == "" || keyFile == "" || caFile == "" {
+			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
+		}
+		serverCert, err := tls.LoadX509KeyPair(
+			certFile,
+			keyFile,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("load server cert: %w", err)
+		}
+		// CA pool (for mTLS or client verification)
+		caCert, err := os.ReadFile(caFile)
+		if err != nil {
+			return nil, fmt.Errorf("read CA cert: %w", err)
+		}
+		certPool := x509.NewCertPool()
+		if !certPool.AppendCertsFromPEM(caCert) {
+			return nil, fmt.Errorf("append CA cert")
+		}
+		return credentials.NewTLS(&tls.Config{
+			Certificates: []tls.Certificate{serverCert},
+			ClientAuth:   tls.NoClientCert, //tls.RequireAndVerifyClientCert, // Enable mTLS
+			ClientCAs:    certPool,
+			MinVersion:   tls.VersionTLS13, // Use TLS 1.3
+		}), nil
 	}
 	return nil, nil
 }
