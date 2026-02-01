@@ -367,6 +367,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				return nil, fmt.Errorf("table %s not allowed", tableName)
 			}
 		}
+		// CHECK IF USER HAS ACCESS TO SPECIFC TABLE
 		// fmt.Println("arrow_flight_id:", arrow_flight_id, "arrow_flight_table_id:", arrow_flight_table_id)
 		user, err := IdentityJSONToMap(airport.IdentityFromContext(ctx))
 		if err != nil {
@@ -383,7 +384,8 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
 		//schema_permissions := map[string]any{}
 		//schema_table_permissions := map[string]any{}
-		if a.contains(rla_tables, "arrow_flight") || a.contains(rla_tables, "arrow_flight_table") {
+		fields_access := map[string]any{}
+		if a.contains(rla_tables, "arrow_flight") || a.contains(rla_tables, "arrow_flight_table") || a.contains(rla_tables, "arrow_flight_table_field") {
 			/*schema_access := a.table_access(
 				map[string]any{
 					"app":  map[string]any{"app_id": 1},
@@ -405,12 +407,31 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 					return nil, fmt.Errorf("Access denied access to the table %s from schema %s!", schemaName, tableName)
 				}
 			}*/
+			// setup for fields access
+			arrow_flight_table_field_ids := []any{}
+			_field_id_map := map[string]any{}
+			if a.contains(rla_tables, "arrow_flight_table_field") {
+				if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
+					if tableConf, ok := tables[tableName].(map[string]any); ok {
+						if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
+							for field := range fields {
+								arrow_flight_table_field_ids = append(arrow_flight_table_field_ids, fields[field].(map[string]any)["arrow_flight_table_field_id"])
+								_field_id_map[field] = fields[field].(map[string]any)["arrow_flight_table_field_id"]
+							}
+						}
+					}
+				}
+			}
+			// RUN THE ACCESSS
 			rla_access := a.rla_access(
 				map[string]any{
 					"app":  map[string]any{"app_id": 1},
 					"data": map[string]any{},
 					"user": user,
-				}, []any{"arrow_flight", "arrow_flight_table"}, []any{arrow_flight_id, arrow_flight_table_id})
+				},
+				[]any{"arrow_flight", "arrow_flight_table", "arrow_flight_table_field"},
+				append([]any{arrow_flight_id, arrow_flight_table_id}, arrow_flight_table_field_ids...),
+			)
 			//fmt.Println("rla_access:", tableName, rla_access)
 			if !rla_access["success"].(bool) {
 				fmt.Println("rla_access:", tableName, rla_access["msg"])
@@ -436,17 +457,108 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				} else if a.contains(rla_tables, "arrow_flight_table") {
 					return nil, fmt.Errorf("Access denied to the table \"%s\" from schema \"%s\"!", tableName, schemaName)
 				}
+				if _, ok := _permissions["arrow_flight_table_field"]; ok {
+					_schema_table := _permissions["arrow_flight_table_field"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table, "arrow_flight_table_field", "read")
+					//fmt.Println("arrow_flight_table_field row ids:", _schema_table, ids)
+					for field, arrow_flight_table_field_id := range _field_id_map {
+						if a.containsInt(ids, arrow_flight_table_field_id) {
+							fields_access[field] = true
+							//return nil, fmt.Errorf("Access denied to the field \"%s\" in the table \"%s\" from schema \"%s\"!", field, tableName, schemaName)
+						} else {
+							fields_access[field] = false
+						}
+					}
+				} else if a.contains(rla_tables, "arrow_flight_table_field") {
+					return nil, fmt.Errorf("Access denied to the fields on table \"%s\" from schema \"%s\"!", tableName, schemaName)
+				}
 			}
 			//fmt.Println(schema_permissions, schema_table_permissions)
 		}
-		// CHECK IF USER HAS ACCESS TO SPECIFC TABLE
-		// CHECK FIELDS ALLOWED
+		// CONNECTION
+		_etlx := etlx.ETLX{}
+		db, err := duckdb.NewConnector("", nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := sql.OpenDB(db)
+		defer conn.Close()
+		//fmt.Println(_sql, fligths)
+		defer func() { // EXECUTE SHUTDOWN SQL ON EXIT
+			conn := sql.OpenDB(db)
+			defer conn.Close()
+			if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
+				//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
+				shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
+				_, err := conn.ExecContext(context.Background(), shutdown_sql)
+				if err != nil {
+					fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
+				}
+			}
+			db.Close()
+		}()
+		// EXECUTE STARTUP SQL
+		if startup_sql, ok := conf["startup_sql"].(string); ok {
+			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["startup_sql"])
+			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
+			_, err := conn.ExecContext(context.Background(), startup_sql)
+			if err != nil {
+				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], startup_sql, err)
+			}
+			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
+			main_sql := _etlx.ReplaceEnvVariable(conf["main_sql"].(string))
+			_, err = conn.ExecContext(context.Background(), main_sql)
+			if err != nil {
+				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], main_sql, err)
+			}
+		}
+		// MAP FIELD TYPES
+		_fields_type := map[string]any{}
+		if len(fields_access) > 0 {
+			query := fmt.Sprintf("DESC %s.\"%s\"", schemaName, tableName)
+			query = fmt.Sprintf(`SELECT column_name, data_type FROM duckdb_columns WHERE database_name = '%s' AND table_name = '%s'`, schemaName, tableName)
+			//query = `SELECT column_name, data_type FROM duckdb_columns WHERE database_name = ? AND table_name = ?`
+			//fmt.Println(query)
+			rows, err := conn.QueryContext(context.Background(), query, schemaName, tableName)
+			if err != nil {
+				return nil, fmt.Errorf("query tables: %w", err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+				var name, dtype string
+				if err := rows.Scan(&name, &dtype); err != nil {
+					return nil, fmt.Errorf("scan column: %w", err)
+				}
+				_fields_type[name] = dtype
+			}
+			if err := rows.Err(); err != nil {
+				return nil, fmt.Errorf("tables rows err: %w", err)
+			}
+		}
+		// PREPARE THE FIELDS TO USE
 		_fields := []string{}
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
 			if tableConf, ok := tables[tableName].(map[string]any); ok {
 				if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
-					for field, _ := range fields {
-						_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+					for field := range fields {
+						if len(fields_access) > 0 {
+							if _access, ok := fields_access[field].(bool); ok {
+								if _access {
+									_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+								} else if _, ok := _fields_type[field]; ok {
+									_fields = append(_fields, fmt.Sprintf(`NULL::%s AS "%s"`, _fields_type[field], field))
+								} else {
+									_fields = append(_fields, fmt.Sprintf(`NULL AS "%s"`, field))
+								}
+							} else if _, ok := _fields_type[field]; ok {
+								_fields = append(_fields, fmt.Sprintf(`NULL::%s AS "%s"`, _fields_type[field], field))
+							} else {
+								_fields = append(_fields, fmt.Sprintf(`NULL AS "%s"`, field))
+							}
+						} else {
+							_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+						}
+
 					}
 				}
 			}
@@ -454,7 +566,6 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		if len(_fields) == 0 {
 			_fields = []string{"*"}
 		}
-		_etlx := etlx.ETLX{}
 		query := fmt.Sprintf("SELECT %s FROM %s.\"%s\"", strings.Join(_fields, ","), schemaName, tableName)
 		if table_scan_tmpl_sql, ok := conf["table_scan_tmpl_sql"].(string); ok {
 			table_scan_tmpl_sql = _etlx.ReplaceEnvVariable(table_scan_tmpl_sql)
@@ -479,42 +590,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			}
 			// Use whereClause with your database query
 		}
-		fmt.Println(query)
-		//fmt.Println(_sql, fligths)
-		db, err := duckdb.NewConnector("", nil)
-		if err != nil {
-			return nil, err
-		}
-		defer func() { // EXECUTE SHUTDOWN SQL ON EXIT
-			conn := sql.OpenDB(db)
-			defer conn.Close()
-			if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
-				//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
-				shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
-				_, err := conn.ExecContext(context.Background(), shutdown_sql)
-				if err != nil {
-					fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
-				}
-			}
-			db.Close()
-		}()
-		// EXECUTE STARTUP SQL
-		conn := sql.OpenDB(db)
-		defer conn.Close()
-		if startup_sql, ok := conf["startup_sql"].(string); ok {
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["startup_sql"])
-			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
-			_, err := conn.ExecContext(context.Background(), startup_sql)
-			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], startup_sql, err)
-			}
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
-			main_sql := _etlx.ReplaceEnvVariable(conf["main_sql"].(string))
-			_, err = conn.ExecContext(context.Background(), main_sql)
-			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], main_sql, err)
-			}
-		}
+		fmt.Println(query, _fields_type, fields_access)
 		conn2, err := db.Connect(context.Background())
 		if err != nil {
 			return nil, err

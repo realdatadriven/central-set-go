@@ -178,7 +178,7 @@ func discoverTables(db *sql.DB, schema string) ([]tableMeta, error) {
 }
 
 func discoverColumns(db *sql.DB, schema, table string) ([]columnMeta, error) {
-	q := `SELECT column_name, data_type FROM duckdb_columns WHERE /*schema_name = ? AND*/ table_name = ? ORDER BY numeric_precision`
+	q := `SELECT column_name, data_type FROM duckdb_columns WHERE /*database_name = ? AND*/ table_name = ? ORDER BY numeric_precision`
 	//rows, err := db.Query(q, schema, table)d
 	rows, err := db.QueryContext(context.Background(), q, table)
 	if err != nil {
