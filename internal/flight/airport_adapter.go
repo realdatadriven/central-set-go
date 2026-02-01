@@ -496,6 +496,9 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 						}
 					}
 				} else if a.contains(rla_tables, "arrow_flight_table_field") {
+					for field := range _field_id_map {
+						fields_access[field] = false
+					}
 					return nil, fmt.Errorf("Access denied to the fields on table \"%s\" from schema \"%s\"!", tableName, schemaName)
 				}
 				// SCOPE ACCESS
@@ -513,6 +516,9 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 						}
 					}
 				} else if a.contains(rla_tables, "arrow_flight_table_scope") {
+					for scope := range _scope_id_map {
+						scopes_access[scope] = false
+					}
 					return nil, fmt.Errorf("Access denied, scopes are required on table \"%s\" from schema \"%s\", and you have access to none!", tableName, schemaName)
 				}
 			}
