@@ -59,7 +59,7 @@ enableGitInfo = true # N.B. .GitInfo does not currently function with submodule 
         version   = true # include git commit info in footer
 
     [params.social]
-        github = "realdatadriven/etlx" # github.com/YOUR_GITHUB_ID
+        github = "realdatadriven/central-set-go" # github.com/YOUR_GITHUB_ID
         # twitter = "lotusdocs"            # twitter.com/YOUR_TWITTER_ID
         # bluesky = "colinwilson.uk"       # bsky.app/profile/YOUR_BLUESKY_ID
         # instagram = "colinwilson"      # instagram.com/YOUR_INSTAGRAM_ID
