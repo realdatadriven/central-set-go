@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on Central Set</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/</link><description>Recent content in Tutorials on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Thu, 29 Jan 2026 10:02:41 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Authentication &amp; Access</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/</guid><description>&lt;h2 id="-authentication--access"&gt;🔐 Authentication &amp;amp; Access &lt;a href="#-authentication--access" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on Central Set</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/</link><description>Recent content in Tutorials on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Sun, 01 Feb 2026 17:58:44 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Authentication &amp; Access</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/</guid><description>&lt;h2 id="-authentication--access"&gt;🔐 Authentication &amp;amp; Access &lt;a href="#-authentication--access" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
  &lt;div class="flex-shrink-1 alert-icon"&gt;
  &lt;span class="material-icons size-20 me-2"&gt;
  warning
@@ -68,7 +68,56 @@
  &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
  &lt;/div&gt;
 &lt;p&gt;Central Set Go exposes a &lt;strong&gt;dynamic, context-driven API&lt;/strong&gt;.
-All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt; requests to allow rich payloads, permissions, and future extensibility.&lt;/p&gt;</description></item><item><title>Arrow Flight</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/</guid><description>&lt;h2 id="arrow-flight-support"&gt;Arrow Flight Support &lt;a href="#arrow-flight-support" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt; requests to allow rich payloads, permissions, and future extensibility.&lt;/p&gt;</description></item><item><title>Dynamic API Reference</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/api-v2/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/api-v2/</guid><description>&lt;h1 id="dynamic-api-reference"&gt;Dynamic API Reference &lt;a href="#dynamic-api-reference" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;
+&lt;p&gt;&lt;strong&gt;Important&lt;/strong&gt; — Central-Set uses a &lt;strong&gt;dynamic API router&lt;/strong&gt;. Endpoints are not statically defined at compile time like traditional REST APIs. This document represents the &lt;strong&gt;authoritative contract&lt;/strong&gt; for all supported dynamic routes and is derived from the internal &lt;code&gt;dyn_api.go&lt;/code&gt; dispatcher.&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central-Set exposes a single dynamic entrypoint:&lt;/p&gt;
+
+
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ &lt;div class="prism-codeblock "&gt;
+ &lt;pre id="eb7fc7d" class="language- "&gt;
+ &lt;code&gt;POST /dyn_api/{ctrl}/{act}&lt;/code&gt;
+ &lt;/pre&gt;
+ &lt;/div&gt;
+&lt;p&gt;Where:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Parameter&lt;/th&gt;
+ &lt;th&gt;Description&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;ctrl&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Logical namespace (similar to a class or controller)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;act&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Action or method executed within that namespace&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Internally, each &lt;code&gt;{ctrl}/{act}&lt;/code&gt; pair is mapped to a Go function via a &lt;code&gt;switch&lt;/code&gt; statement. All requests and responses follow a &lt;strong&gt;strict, uniform envelope&lt;/strong&gt;, enabling:&lt;/p&gt;</description></item><item><title>Arrow Flight</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/</guid><description>&lt;h2 id="arrow-flight-support"&gt;Arrow Flight Support &lt;a href="#arrow-flight-support" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
  &lt;div class="flex-shrink-1 alert-icon"&gt;
  &lt;span class="material-icons size-20 me-2"&gt;
  warning
@@ -135,7 +184,15 @@ All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt
 &lt;li&gt;Query options follow &lt;strong&gt;OData v4&lt;/strong&gt; conventions&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h2 id="supported-odata-query-options"&gt;Supported OData Query Options &lt;a href="#supported-odata-query-options" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The API supports the most commonly used OData v4 operators:&lt;/p&gt;</description></item><item><title>Configuration</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/config/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/config/</guid><description>&lt;h2 id="configuration"&gt;Configuration &lt;a href="#configuration" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+&lt;h2 id="supported-odata-query-options"&gt;Supported OData Query Options &lt;a href="#supported-odata-query-options" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The API supports the most commonly used OData v4 operators:&lt;/p&gt;</description></item><item><title>Arrow Flight</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight-v2/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight-v2/</guid><description>&lt;h2 id="arrow-flight-support"&gt;Arrow Flight Support &lt;a href="#arrow-flight-support" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Important&lt;/strong&gt; - Central-Set is production-ready, but this documentation is still under active development. Parts of the Arrow Flight subsystem are configuration-driven and evolve as access-control and governance features mature.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;h3 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Central-Set provides &lt;strong&gt;Apache Arrow Flight&lt;/strong&gt; support through&lt;br&gt;
+&lt;a href="https://github.com/hugr-lab/airport-go" rel="external" target="_blank"&gt;airport-go&lt;svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path fill="currentColor" d="M14 5c-.552 0-1-.448-1-1s.448-1 1-1h6c.552 0 1 .448 1 1v6c0 .552-.448 1-1 1s-1-.448-1-1v-3.586l-7.293 7.293c-.391.39-1.024.39-1.414 0-.391-.391-.391-1.024 0-1.414l7.293-7.293h-3.586zm-9 2c-.552 0-1 .448-1 1v11c0 .552.448 1 1 1h11c.552 0 1-.448 1-1v-4.563c0-.552.448-1 1-1s1 .448 1 1v4.563c0 1.657-1.343 3-3 3h-11c-1.657 0-3-1.343-3-3v-11c0-1.657 1.343-3 3-3h4.563c.552 0 1 .448 1 1s-.448 1-1 1h-4.563z"/&gt;&lt;/svg&gt;&lt;/a&gt;, exposing analytical datasets via a &lt;strong&gt;high-performance, governed, and dynamically scoped interface&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>Configuration</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/config/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/config/</guid><description>&lt;h2 id="configuration"&gt;Configuration &lt;a href="#configuration" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
  &lt;div class="flex-shrink-1 alert-icon"&gt;
  &lt;span class="material-icons size-20 me-2"&gt;
  warning

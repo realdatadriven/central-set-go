@@ -4,7 +4,7 @@ Quickstart</a></li><li class="sidebar-dropdown current active"><button class=btn
 <i class="material-icons me-2">auto_awesome</i>
 Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested current active"><button class=btn>
 ETLX & Data Pipelines</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li class=current><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li></ul></div></li><li class="sidebar-dropdown nested"><button class=btn>
-Analytics & Dashboards</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/>OData v4 API</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/config/>Configuration</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
+Analytics & Dashboards</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api-v2/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/>OData v4 API</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight-v2/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/config/>Configuration</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
 <i class="material-icons me-2">heart_plus</i>
 Contributing</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/contributing/how-to-contribute/>How to Contribute</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/contributing/code-of-conduct/>Code of Conduct</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
 <i class="material-icons me-2">help</i>
@@ -200,6 +200,20 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     
 
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -614,6 +628,15 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     index.add(
             {
                 id:  23 ,
+                href: "\/central-set-go\/docs\/tutorials\/api-v2\/",
+                title: "Dynamic API Reference",
+                description: "Dynamic API Reference",
+                content: "Dynamic API Reference link warning Important — Central-Set uses a dynamic API router. Endpoints are not statically defined at compile time like traditional REST APIs. This document represents the authoritative contract for all supported dynamic routes and is derived from the internal dyn_api.go dispatcher.\nOverview linkCentral-Set exposes a single dynamic entrypoint:\nPOST /dyn_api/{ctrl}/{act} Where:\nParameter Description ctrl Logical namespace (similar to a class or controller) act Action or method executed within that namespace Internally, each {ctrl}/{act} pair is mapped to a Go function via a switch statement. All requests and responses follow a strict, uniform envelope, enabling:\nDynamic routing Consistent authentication \u0026 authorization Language-agnostic clients Easier UI auto-generation Authentication \u0026 Context Injection linkAll dynamic API endpoints:\n🔐 Require Authorization (JWT access token) 📌 Use the Authorization: Bearer header 👤 Automatically inject the authenticated user identity 🧠 Automatically resolve the active app context If no app is explicitly selected, Central-Set defaults to:\n{ \"app_id\": 1, \"app\": \"ADMIN\", \"db\": \"ADMIN\" } Row-level access, column-level access, and role-based permissions are enforced transparently.\nRequest Envelope (Standard) link { \"lang\": \"en\", \"app\": \"ADMIN\", \"data\": { } } Field Description lang Response language (i18n aware) app Target application context data Action-specific payload Response Envelope (Standard) link { \"success\": true, \"msg\": \"Operation completed\", \"data\": { } } Field Description success Indicates request outcome msg Human-readable status message data Action-specific response payload Auth Controller linkPOST /dyn_api/auth/login linkAuthenticates a user and returns an access token.\nRequest data link { \"username\": \"admin\", \"password\": \"secret\" } Behavior link Validates credentials Issues a JWT token Binds token to user identity and roles Response data link { \"token\": \"\", \"user\": { \"id\": 1, \"username\": \"admin\", \"roles\": [\"admin\"] } } POST /dyn_api/auth/refresh_token linkRefreshes an existing access token.\nRequest data link { \"token\": \"\" } Behavior link Validates refresh eligibility Issues a new token Response data link { \"token\": \"\" } User Controller linkPOST /dyn_api/user/list linkReturns a paginated list of users visible to the caller.\nRequest data link { \"page\": 1, \"page_size\": 50, \"filters\": { \"active\": true } } Behavior link Applies role-based visibility Applies row-level access rules Response data link { \"items\": [ { \"id\": 1, \"username\": \"admin\" } ], \"total\": 1 } POST /dyn_api/user/create linkCreates a new user.\nRequest data link { \"username\": \"new_user\", \"password\": \"secret\", \"roles\": [\"viewer\"] } Behavior link Hashes password Assigns roles Validates permissions Response data link { \"id\": 42 } Table Controller linkPOST /dyn_api/table/list linkLists registered tables for the active app.\nRequest data link { \"schema\": \"main\" } Behavior link Applies table-level permissions Filters hidden or restricted tables Response data link { \"tables\": [\"orders\", \"customers\"] } POST /dyn_api/table/query linkExecutes a controlled query against a table.\nRequest data link { \"table\": \"orders\", \"limit\": 100 } Behavior link Enforces column-level access Enforces row-level access Executes via DuckDB Response data link { \"rows\": [ { \"order_id\": 1 } ] } ETLX Controller linkPOST /dyn_api/etlx/run linkExecutes an ETLX pipeline.\nRequest data link { \"pipeline_id\": 7, \"params\": { \"date\": \"2025-01-01\" } } Behavior link Resolves pipeline definition Injects secrets via environment variables Executes inside DuckDB Response data link { \"run_id\": \"etl-20250101-001\" } Arrow Flight Controller linkPOST /dyn_api/arrow_flight/list linkLists exposed Arrow Flight schemas.\nResponse data link { \"schemas\": [\"analytics\", \"sales\"] } POST /dyn_api/arrow_flight/expose linkCreates or updates an Arrow Flight schema exposure.\nRequest data link { \"name\": \"analytics\", \"startup_sql\": \"INSTALL parquet;\", \"main_sql\": \"ATTACH 'data.db';\", \"shutdown_sql\": \"DETACH analytics;\" } Behavior link Validates SQL lifecycle Registers schema Response data link { \"success\": true } Notes on Dynamic API Design link All endpoints are POST-only by design\nURL defines behavior, body defines intent\nStrong typing is enforced at runtime\nThe same contract powers:\nREST clients UI auto-forms CLI tooling This design allows Central-Set to evolve rapidly without breaking clients, while maintaining strong governance and security guarantees.\n"
+            }
+        );
+    index.add(
+            {
+                id:  24 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/overview\/",
                 title: "Overview",
                 description: "Overview",
@@ -622,7 +645,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  24 ,
+                id:  25 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/example\/",
                 title: "Example",
                 description: "Analytics \u0026 Dashboards — Logs Dashboard Example",
@@ -631,7 +654,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  25 ,
+                id:  26 ,
                 href: "\/central-set-go\/docs\/tutorials\/arrow-flight\/",
                 title: "Arrow Flight",
                 description: "Apache Arrow Flight Support API",
@@ -640,7 +663,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  26 ,
+                id:  27 ,
                 href: "\/central-set-go\/docs\/tutorials\/odata-v4\/",
                 title: "OData v4 API",
                 description: "OData v4 API",
@@ -649,7 +672,16 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  27 ,
+                id:  28 ,
+                href: "\/central-set-go\/docs\/tutorials\/arrow-flight-v2\/",
+                title: "Arrow Flight",
+                description: "Apache Arrow Flight Support API",
+                content: "Arrow Flight Support link warning Important - Central-Set is production-ready, but this documentation is still under active development. Parts of the Arrow Flight subsystem are configuration-driven and evolve as access-control and governance features mature. Overview linkCentral-Set provides Apache Arrow Flight support through\nairport-go, exposing analytical datasets via a high-performance, governed, and dynamically scoped interface.\nArrow Flight is primarily designed to serve:\nETLX outputs DuckDB-backed analytical views Externally attached datasources While enforcing the same security, access control, and multi-tenant rules used throughout Central-Set.\nUnlike static Flight servers, Central-Set builds Arrow Flight endpoints entirely from configuration stored in the Admin database, allowing schemas, tables, fields, and scopes to be enabled, restricted, or revoked at runtime — without redeploying the service.\nArchitecture Summary linkAt runtime, Central-Set:\nLoads Arrow Flight configuration from the Admin database Initializes an in-memory DuckDB instance Executes lifecycle SQL blocks: startup_sql main_sql shutdown_sql Exposes only authorized tables, fields, and scopes Serves data via the Arrow Flight protocol Each request is authenticated and authorized using the same JWT and access-key system as the REST API.\nArrow Flight Configuration Model linkArrow Flight exposure is defined using three core entities, allowing fine-grained governance.\nArrowFlightTable linkDefines which tables may be exposed via Arrow Flight.\nField Description arrow_flight_table Logical table name exposed to clients arrow_flight_table_desc Description arrow_flight_id Parent Arrow Flight schema active Enables / disables the table user_id Owner app_id Application scope excluded Soft-delete flag If table-level access is defined, only tables explicitly granted to the role or access token are visible.\nArrowFlightTableField linkDefines field-level visibility per table.\nField Description arrow_flight_table_field Column name arrow_flight_table_field_desc Description arrow_flight_table_id Parent table arrow_flight_id Arrow Flight schema active Enables / disables the field excluded Soft-delete flag Field-Level Access Behavior link If field access rules exist: Fields without access are still present But their values are returned as NULL / empty This preserves: Schema compatibility Stable BI / analytical queries Controlled data masking This design is intentional and avoids breaking downstream consumers.\nArrowFlightTableScope linkDefines data scopes using SQL predicates.\nField Description arrow_flight_table_scope Scope name arrow_flight_table_scope_desc Description arrow_flight_table_scope_sql SQL condition arrow_flight_table_id Target table arrow_flight_id Arrow Flight schema active Enables / disables scope excluded Soft-delete flag Scope Enforcement Rules link If no scopes are defined → all rows are eligible (subject to RLA) If one or more scopes exist: The token must have access to at least one scope Otherwise no data is returned Multiple scopes are OR-combined Scopes act as a hard gate for data visibility.\nSecurity \u0026 Access Control linkArrow Flight follows exactly the same security model as the REST API.\nAuthentication link ✅ Authorization: Bearer is mandatory ✅ Tokens are created via: Admin → Admin → Access Keys ✅ Tokens may belong to: A user A service account An automation pipeline Authorization Layers linkArrow Flight access is evaluated in the following order:\nToken validity App access Schema access Table access Field access (masking) Scope access (gating) Row-Level Access (RLA) All layers must pass for data to be returned.\nThis makes Arrow Flight safe for:\nMulti-tenant analytics External BI tools Cross-team data sharing Zero-trust environments TLS / Secure Transport linkArrow Flight can run with or without TLS.\nRequired Environment Variables link ENABLE_TLS=false TLS_CERT_FILE=ssl/server-cert.pem TLS_KEY_FILE=ssl/server-key.pem TLS_CA_CERT_FILE=ssl/ca-cert.pem When ENABLE_TLS=true, Arrow Flight serves gRPC over TLS Clients must trust the configured CA Strongly recommended for production and remote access Enabling Arrow Flight link ENABLE_ARROW_FLIGHT=true ARROW_FLIGHT_ADDR=0.0.0.0:50051 Arrow Flight runs inside the same binary as the REST API and shares:\nAuthentication Configuration Access control Application context Defining an Arrow Flight Schema linkCreate a schema via:\nAdmin → Expose Arrow Flight\nExample:\nname: my_schema description: Example analytical schema db_schema: main startup_sql: | INSTALL SQLITE; LOAD SQLITE; main_sql: | ATTACH 'database/test.db' AS my_schema (TYPE SQLITE); USE my_schema; shutdown_sql: | USE memory; DETACH my_schema; Each schema represents one logical Arrow Flight endpoint.\nClient Access (DuckDB - Recommended) linkUsing DuckDB’s airport extension:\nINSTALL airport FROM community; LOAD airport; CREATE OR REPLACE PERSISTENT SECRET airport_auth_secret ( TYPE airport, AUTH_TOKEN 'your_access_token_here', SCOPE 'grpc://127.0.0.1:50051' ); ATTACH '' AS my_server ( TYPE AIRPORT, LOCATION 'grpc://127.0.0.1:50051' ); SELECT * FROM my_server.my_schema.orders LIMIT 10; What Happens Internally link Token is validated Accessible tables are resolved Unauthorized fields are masked Scopes are applied RLA filters rows Data is streamed as Arrow batches Current Limitations \u0026 Roadmap linkCurrent focus is read-optimized analytical access.\nPlanned improvements:\nExplicit DML support (INSERT / UPDATE / DELETE) Scope composition strategies Better schema introspection Cached connector reuse Declarative exposure policies Why Arrow Flight in Central-Set? linkArrow Flight allows Central-Set to function as a governed data serving layer:\nETLX outputs become instantly queryable No file exports No duplication Strong access control Works with modern analytics stacks It bridges data engineering, governance, and analytics — cleanly and safely.\n"
+            }
+        );
+    index.add(
+            {
+                id:  29 ,
                 href: "\/central-set-go\/docs\/tutorials\/config\/",
                 title: "Configuration",
                 description: "Configuration options for Central Set",
