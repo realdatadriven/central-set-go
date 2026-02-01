@@ -773,7 +773,7 @@ func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 		}
 		return credentials.NewTLS(&tls.Config{
 			Certificates: []tls.Certificate{serverCert},
-			ClientAuth:   tls.NoClientCert, //tls.RequireAndVerifyClientCert, // Enable mTLS
+			ClientAuth:   tls.NoClientCert, //tls.RequestClientCert, ////tls.RequireAndVerifyClientCert, // Enable mTLS
 			ClientCAs:    certPool,
 			MinVersion:   tls.VersionTLS13, // Use TLS 1.3
 		}), nil
