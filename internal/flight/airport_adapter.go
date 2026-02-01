@@ -384,8 +384,12 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
 		//schema_permissions := map[string]any{}
 		//schema_table_permissions := map[string]any{}
+		scopes_access := map[string]any{}
 		fields_access := map[string]any{}
-		if a.contains(rla_tables, "arrow_flight") || a.contains(rla_tables, "arrow_flight_table") || a.contains(rla_tables, "arrow_flight_table_field") {
+		if user["role_id"] != any(1) && (a.contains(rla_tables, "arrow_flight") ||
+			a.contains(rla_tables, "arrow_flight_table") ||
+			a.contains(rla_tables, "arrow_flight_table_field") ||
+			a.contains(rla_tables, "arrow_flight_table_scope")) {
 			/*schema_access := a.table_access(
 				map[string]any{
 					"app":  map[string]any{"app_id": 1},
@@ -422,15 +426,33 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 					}
 				}
 			}
+			// SCOPE ACCESS
+			arrow_flight_table_scope_ids := []any{}
+			_scope_id_map := map[string]any{}
+			if a.contains(rla_tables, "arrow_flight_table_scope") {
+				if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
+					if tableConf, ok := tables[tableName].(map[string]any); ok {
+						if scopes, ok := tableConf["scopes"].(map[string]any); ok && len(scopes) > 0 {
+							for scope := range scopes {
+								arrow_flight_table_scope_ids = append(arrow_flight_table_scope_ids, scopes[scope].(map[string]any)["arrow_flight_table_scope_id"])
+								_scope_id_map[scope] = scopes[scope].(map[string]any)["arrow_flight_table_scope_id"]
+							}
+							fmt.Println("SCOPES:", arrow_flight_table_scope_ids, _scope_id_map)
+						}
+					}
+				}
+			}
 			// RUN THE ACCESSS
+			_ids := append([]any{arrow_flight_id, arrow_flight_table_id}, arrow_flight_table_field_ids...)
+			_ids = append(_ids, arrow_flight_table_scope_ids...)
 			rla_access := a.rla_access(
 				map[string]any{
 					"app":  map[string]any{"app_id": 1},
 					"data": map[string]any{},
 					"user": user,
 				},
-				[]any{"arrow_flight", "arrow_flight_table", "arrow_flight_table_field"},
-				append([]any{arrow_flight_id, arrow_flight_table_id}, arrow_flight_table_field_ids...),
+				[]any{"arrow_flight", "arrow_flight_table", "arrow_flight_table_field", "arrow_flight_table_scope"},
+				_ids,
 			)
 			//fmt.Println("rla_access:", tableName, rla_access)
 			if !rla_access["success"].(bool) {
@@ -457,9 +479,13 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				} else if a.contains(rla_tables, "arrow_flight_table") {
 					return nil, fmt.Errorf("Access denied to the table \"%s\" from schema \"%s\"!", tableName, schemaName)
 				}
+				// FIELDS ACCESS
 				if _, ok := _permissions["arrow_flight_table_field"]; ok {
-					_schema_table := _permissions["arrow_flight_table_field"].([]map[string]any)
-					ids := a.getRLAIds(_schema_table, "arrow_flight_table_field", "read")
+					_schema_table_field := _permissions["arrow_flight_table_field"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table_field, "arrow_flight_table_field", "read")
+					if len(ids) == 0 {
+						return nil, fmt.Errorf("Access denied, fileds level access are required on table \"%s\" from schema \"%s\", and you have access to none!", tableName, schemaName)
+					}
 					//fmt.Println("arrow_flight_table_field row ids:", _schema_table, ids)
 					for field, arrow_flight_table_field_id := range _field_id_map {
 						if a.containsInt(ids, arrow_flight_table_field_id) {
@@ -471,6 +497,23 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 					}
 				} else if a.contains(rla_tables, "arrow_flight_table_field") {
 					return nil, fmt.Errorf("Access denied to the fields on table \"%s\" from schema \"%s\"!", tableName, schemaName)
+				}
+				// SCOPE ACCESS
+				if _, ok := _permissions["arrow_flight_table_scope"]; ok {
+					_schema_table_scope := _permissions["arrow_flight_table_scope"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table_scope, "arrow_flight_table_scope", "read")
+					if len(ids) == 0 {
+						return nil, fmt.Errorf("Access denied, scopes are required on table \"%s\" from schema \"%s\", and you have access to none!", tableName, schemaName)
+					}
+					for scope, arrow_flight_table_scope_id := range _scope_id_map {
+						if a.containsInt(ids, arrow_flight_table_scope_id) {
+							scopes_access[scope] = true
+						} else {
+							scopes_access[scope] = false
+						}
+					}
+				} else if a.contains(rla_tables, "arrow_flight_table_scope") {
+					return nil, fmt.Errorf("Access denied, scopes are required on table \"%s\" from schema \"%s\", and you have access to none!", tableName, schemaName)
 				}
 			}
 			//fmt.Println(schema_permissions, schema_table_permissions)
@@ -566,6 +609,28 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		if len(_fields) == 0 {
 			_fields = []string{"*"}
 		}
+		// PREPARE THE scopes TO USE
+		_scopes := []string{}
+		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
+			if tableConf, ok := tables[tableName].(map[string]any); ok {
+				if scopes, ok := tableConf["scopes"].(map[string]any); ok && len(scopes) > 0 {
+					for scope := range scopes {
+						scope_sql := scopes[scope].(map[string]any)["arrow_flight_table_scope_sql"].(string)
+						scope_sql = _etlx.ReplaceEnvVariable(scope_sql)
+						if len(scopes_access) > 0 {
+							if _access, ok := scopes_access[scope].(bool); ok {
+								if _access {
+									_scopes = append(_scopes, fmt.Sprintf(`%s`, scope_sql))
+								}
+							}
+						} else {
+							_scopes = append(_scopes, fmt.Sprintf(`%s`, scope_sql))
+						}
+					}
+				}
+			}
+		}
+		// BUILD THE FINAL QUERY
 		query := fmt.Sprintf("SELECT %s FROM %s.\"%s\"", strings.Join(_fields, ","), schemaName, tableName)
 		if table_scan_tmpl_sql, ok := conf["table_scan_tmpl_sql"].(string); ok {
 			table_scan_tmpl_sql = _etlx.ReplaceEnvVariable(table_scan_tmpl_sql)
@@ -575,6 +640,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
 			//fmt.Println("table_scan_tmpl_sql query:", query)
 		}
+		hasFilters := false
 		if opts.Filter != nil {
 			// Parse filter JSON
 			fp, err := filter.Parse(opts.Filter)
@@ -584,13 +650,22 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			// Encode to SQL WHERE clause
 			enc := filter.NewDuckDBEncoder(nil)
 			whereClause := enc.EncodeFilters(fp)
-			fmt.Printf("Filter applied on %s.%s: %s\n", schemaName, tableName, whereClause)
+			//fmt.Printf("Filter applied on %s.%s: %s\n", schemaName, tableName, whereClause)
 			if whereClause != "" {
-				query = fmt.Sprintf("%s WHERE %s", query, whereClause)
+				hasFilters = true
+				query = fmt.Sprintf("%s WHERE (%s)", query, whereClause)
 			}
 			// Use whereClause with your database query
 		}
-		fmt.Println(query, _fields_type, fields_access)
+		if len(_scopes) > 0 {
+			_scopes_cond := strings.Join(_scopes, " AND ")
+			if !hasFilters {
+				query = fmt.Sprintf("%s WHERE (%s)", query, _scopes_cond)
+			} else {
+				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
+			}
+		}
+		fmt.Println(query, scopes_access)
 		conn2, err := db.Connect(context.Background())
 		if err != nil {
 			return nil, err

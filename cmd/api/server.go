@@ -197,6 +197,12 @@ func (app *application) serveArrowFlight() error {
 	if err != nil {
 		return err
 	}
+	// arrow_flight_table_scope
+	_sql = `SELECT * FROM "arrow_flight_table_scope" WHERE active = ? AND excluded = ?`
+	fligths_tables_scopes, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
 	rla_tables := app.row_level_tables(Dict{"app": Dict{"app_id": 1, "db": app.config.db.dsn}})
 	//fmt.Println(rla_tables)
 	if !rla_tables["success"].(bool) {
@@ -215,6 +221,13 @@ func (app *application) serveArrowFlight() error {
 					}
 				}
 				t["fields"] = fields
+				var scopes Dict = make(Dict)
+				for _, ts := range fligths_tables_scopes {
+					if ts["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
+						scopes[ts["arrow_flight_table_scope"].(string)] = ts
+					}
+				}
+				t["scopes"] = scopes
 				tables[t["arrow_flight_table"].(string)] = t
 			}
 		}
