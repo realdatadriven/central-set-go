@@ -28,19 +28,19 @@ import (
 // Custom Catalog, Schema, and Table Implementations
 // =============================================================================
 
-// MergedCatalog implements catalog.DynamicCatalog for both DDL and DML operations.
+// AFCatalog implements catalog.DynamicCatalog for both DDL and DML operations.
 // It integrates with DuckDB for actual schema/table discovery and data scanning,
 // but DDL/DML operations are currently stubbed.
-type MergedCatalog struct {
+type AFCatalog struct {
 	mu      sync.RWMutex
-	schemas map[string]*MergedSchema
+	schemas map[string]*AFSchema
 	config  []map[string]any // Configuration for DuckDB connections and queries
 	mem     memory.Allocator
 }
 
-func NewMergedCatalog(config []map[string]any) *MergedCatalog {
-	return &MergedCatalog{
-		schemas: make(map[string]*MergedSchema),
+func NewAFCatalog(config []map[string]any) *AFCatalog {
+	return &AFCatalog{
+		schemas: make(map[string]*AFSchema),
 		config:  config,
 		mem:     memory.DefaultAllocator,
 	}
@@ -48,7 +48,7 @@ func NewMergedCatalog(config []map[string]any) *MergedCatalog {
 
 // GetOrCreateSchema returns an existing schema or creates a new one.
 // This is primarily for internal management; external DDL is stubbed.
-func (c *MergedCatalog) GetOrCreateSchema(name string) *MergedSchema {
+func (c *AFCatalog) GetOrCreateSchema(name string) *AFSchema {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -56,13 +56,13 @@ func (c *MergedCatalog) GetOrCreateSchema(name string) *MergedSchema {
 		return s
 	}
 
-	s := NewMergedSchema(name, "", c.config, c.mem)
+	s := NewAFSchema(name, "", c.config, c.mem)
 	c.schemas[name] = s
 	return s
 }
 
 // Schemas implements catalog.Catalog.
-func (c *MergedCatalog) Schemas(ctx context.Context) ([]catalog.Schema, error) {
+func (c *AFCatalog) Schemas(ctx context.Context) ([]catalog.Schema, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
@@ -79,7 +79,7 @@ func (c *MergedCatalog) Schemas(ctx context.Context) ([]catalog.Schema, error) {
 }
 
 // Schema implements catalog.Catalog.
-func (c *MergedCatalog) Schema(ctx context.Context, name string) (catalog.Schema, error) {
+func (c *AFCatalog) Schema(ctx context.Context, name string) (catalog.Schema, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
@@ -97,42 +97,42 @@ func (c *MergedCatalog) Schema(ctx context.Context, name string) (catalog.Schema
 }
 
 // CreateSchema implements catalog.DynamicCatalog.
-func (c *MergedCatalog) CreateSchema(_ context.Context, name string, opts catalog.CreateSchemaOptions) (catalog.Schema, error) {
+func (c *AFCatalog) CreateSchema(_ context.Context, name string, opts catalog.CreateSchemaOptions) (catalog.Schema, error) {
 	log.Printf("[DDL Not Supported] Attempted to CREATE SCHEMA: %s (Comment: %s)", name, opts.Comment)
 	return nil, catalog.ErrNotSupported
 }
 
 // DropSchema implements catalog.DynamicCatalog.
-func (c *MergedCatalog) DropSchema(_ context.Context, name string, opts catalog.DropSchemaOptions) error {
+func (c *AFCatalog) DropSchema(_ context.Context, name string, opts catalog.DropSchemaOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to DROP SCHEMA: %s (IgnoreNotFound: %t)", name, opts.IgnoreNotFound)
 	return catalog.ErrNotSupported
 }
 
-// MergedSchema implements catalog.DynamicSchema for table management operations.
-type MergedSchema struct {
+// AFSchema implements catalog.DynamicSchema for table management operations.
+type AFSchema struct {
 	mu      sync.RWMutex
 	name    string
 	comment string
-	tables  map[string]*MergedTable
+	tables  map[string]*AFTable
 	config  []map[string]any // Configuration for DuckDB connections and queries
 	mem     memory.Allocator
 }
 
-func NewMergedSchema(name, comment string, config []map[string]any, mem memory.Allocator) *MergedSchema {
-	return &MergedSchema{
+func NewAFSchema(name, comment string, config []map[string]any, mem memory.Allocator) *AFSchema {
+	return &AFSchema{
 		name:    name,
 		comment: comment,
-		tables:  make(map[string]*MergedTable),
+		tables:  make(map[string]*AFTable),
 		config:  config,
 		mem:     mem,
 	}
 }
 
-func (s *MergedSchema) Name() string    { return s.name }
-func (s *MergedSchema) Comment() string { return s.comment }
+func (s *AFSchema) Name() string    { return s.name }
+func (s *AFSchema) Comment() string { return s.comment }
 
 // Tables implements catalog.Schema.
-func (s *MergedSchema) Tables(ctx context.Context) ([]catalog.Table, error) {
+func (s *AFSchema) Tables(ctx context.Context) ([]catalog.Table, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -226,8 +226,8 @@ func (s *MergedSchema) Tables(ctx context.Context) ([]catalog.Table, error) {
 				rdr.Release()
 				duckdbConn.Close()
 
-				// Create and store MergedTable
-				table := NewMergedTable(s.name, tname, arrowSchema, cfg, s.mem)
+				// Create and store AFTable
+				table := NewAFTable(s.name, tname, arrowSchema, cfg, s.mem)
 				s.tables[tname] = table
 				result = append(result, table)
 			}
@@ -237,7 +237,7 @@ func (s *MergedSchema) Tables(ctx context.Context) ([]catalog.Table, error) {
 }
 
 // Table implements catalog.Schema.
-func (s *MergedSchema) Table(ctx context.Context, name string) (catalog.Table, error) {
+func (s *AFSchema) Table(ctx context.Context, name string) (catalog.Table, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -253,30 +253,30 @@ func (s *MergedSchema) Table(ctx context.Context, name string) (catalog.Table, e
 }
 
 // ScalarFunctions, TableFunctions, TableFunctionsInOut are not supported in this example.
-func (s *MergedSchema) ScalarFunctions(ctx context.Context) ([]catalog.ScalarFunction, error)     { return nil, nil }
-func (s *MergedSchema) TableFunctions(ctx context.Context) ([]catalog.TableFunction, error)       { return nil, nil }
-func (s *MergedSchema) TableFunctionsInOut(ctx context.Context) ([]catalog.TableFunctionInOut, error) { return nil, nil }
+func (s *AFSchema) ScalarFunctions(ctx context.Context) ([]catalog.ScalarFunction, error)     { return nil, nil }
+func (s *AFSchema) TableFunctions(ctx context.Context) ([]catalog.TableFunction, error)       { return nil, nil }
+func (s *AFSchema) TableFunctionsInOut(ctx context.Context) ([]catalog.TableFunctionInOut, error) { return nil, nil }
 
 // CreateTable implements catalog.DynamicSchema.
-func (s *MergedSchema) CreateTable(_ context.Context, name string, schema *arrow.Schema, opts catalog.CreateTableOptions) (catalog.Table, error) {
+func (s *AFSchema) CreateTable(_ context.Context, name string, schema *arrow.Schema, opts catalog.CreateTableOptions) (catalog.Table, error) {
 	log.Printf("[DDL Not Supported] Attempted to CREATE TABLE %s.%s (Comment: %s, OnConflict: %v)", s.name, name, opts.Comment, opts.OnConflict)
 	return nil, catalog.ErrNotSupported
 }
 
 // DropTable implements catalog.DynamicSchema.
-func (s *MergedSchema) DropTable(_ context.Context, name string, opts catalog.DropTableOptions) error {
+func (s *AFSchema) DropTable(_ context.Context, name string, opts catalog.DropTableOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to DROP TABLE %s.%s (IgnoreNotFound: %t)", s.name, name, opts.IgnoreNotFound)
 	return catalog.ErrNotSupported
 }
 
 // RenameTable implements catalog.DynamicSchema.
-func (s *MergedSchema) RenameTable(_ context.Context, oldName, newName string, opts catalog.RenameTableOptions) error {
+func (s *AFSchema) RenameTable(_ context.Context, oldName, newName string, opts catalog.RenameTableOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to RENAME TABLE %s.%s to %s (IgnoreNotFound: %t)", s.name, oldName, newName, opts.IgnoreNotFound)
 	return catalog.ErrNotSupported
 }
 
-// MergedTable implements catalog.DynamicTable, catalog.InsertableTable, catalog.UpdatableTable, catalog.DeletableTable.
-type MergedTable struct {
+// AFTable implements catalog.DynamicTable, catalog.InsertableTable, catalog.UpdatableTable, catalog.DeletableTable.
+type AFTable struct {
 	mu      sync.RWMutex
 	schemaName string
 	name    string
@@ -285,8 +285,8 @@ type MergedTable struct {
 	mem     memory.Allocator
 }
 
-func NewMergedTable(schemaName, name string, arrowSchema *arrow.Schema, config map[string]any, mem memory.Allocator) *MergedTable {
-	return &MergedTable{
+func NewAFTable(schemaName, name string, arrowSchema *arrow.Schema, config map[string]any, mem memory.Allocator) *AFTable {
+	return &AFTable{
 		schemaName: schemaName,
 		name:    name,
 		arrowSchema:  arrowSchema,
@@ -295,14 +295,14 @@ func NewMergedTable(schemaName, name string, arrowSchema *arrow.Schema, config m
 	}
 }
 
-func (t *MergedTable) Name() string    { return t.name }
-func (t *MergedTable) Comment() string { return fmt.Sprintf("Table %s.%s from DuckDB", t.schemaName, t.name) }
-func (t *MergedTable) ArrowSchema(columns []string) *arrow.Schema {
+func (t *AFTable) Name() string    { return t.name }
+func (t *AFTable) Comment() string { return fmt.Sprintf("Table %s.%s from DuckDB", t.schemaName, t.name) }
+func (t *AFTable) ArrowSchema(columns []string) *arrow.Schema {
 	return catalog.ProjectSchema(t.arrowSchema, columns)
 }
 
 // Scan implements catalog.Table.
-func (t *MergedTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func (t *AFTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	log.Printf("[Scan Request] Scanning table %s.%s with options: %+v", t.schemaName, t.name, opts)
 
 	_etlx := etlx.ETLX{}
@@ -388,61 +388,61 @@ func (t *MergedTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (arra
 }
 
 // AddField implements catalog.DynamicTable.
-func (t *MergedTable) AddField(_ context.Context, _ *arrow.Schema, _ catalog.AddFieldOptions) error {
+func (t *AFTable) AddField(_ context.Context, _ *arrow.Schema, _ catalog.AddFieldOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to ADD FIELD to table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // RemoveField implements catalog.DynamicTable.
-func (t *MergedTable) RemoveField(_ context.Context, _ []string, _ catalog.RemoveFieldOptions) error {
+func (t *AFTable) RemoveField(_ context.Context, _ []string, _ catalog.RemoveFieldOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to REMOVE FIELD from table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // RenameField implements catalog.DynamicTable.
-func (t *MergedTable) RenameField(_ context.Context, _ []string, _ string, _ catalog.RenameFieldOptions) error {
+func (t *AFTable) RenameField(_ context.Context, _ []string, _ string, _ catalog.RenameFieldOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to RENAME FIELD in table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // ChangeColumnType implements catalog.DynamicTable.
-func (t *MergedTable) ChangeColumnType(_ context.Context, _ *arrow.Schema, _ string, _ catalog.ChangeColumnTypeOptions) error {
+func (t *AFTable) ChangeColumnType(_ context.Context, _ *arrow.Schema, _ string, _ catalog.ChangeColumnTypeOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to CHANGE COLUMN TYPE in table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // SetNotNull implements catalog.DynamicTable.
-func (t *MergedTable) SetNotNull(_ context.Context, _ string, _ catalog.SetNotNullOptions) error {
+func (t *AFTable) SetNotNull(_ context.Context, _ string, _ catalog.SetNotNullOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to SET NOT NULL on column in table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // DropNotNull implements catalog.DynamicTable.
-func (t *MergedTable) DropNotNull(_ context.Context, _ string, _ catalog.DropNotNullOptions) error {
+func (t *AFTable) DropNotNull(_ context.Context, _ string, _ catalog.DropNotNullOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to DROP NOT NULL on column in table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // SetDefault implements catalog.DynamicTable.
-func (t *MergedTable) SetDefault(_ context.Context, _ string, _ string, _ catalog.SetDefaultOptions) error {
+func (t *AFTable) SetDefault(_ context.Context, _ string, _ string, _ catalog.SetDefaultOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to SET DEFAULT on column in table %s.%s", t.schemaName, t.name)
 	return catalog.ErrNotSupported
 }
 
 // Insert implements catalog.InsertableTable.
-func (t *MergedTable) Insert(ctx context.Context, rows array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
+func (t *AFTable) Insert(ctx context.Context, rows array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
 	log.Printf("[DML Not Supported] Attempted to INSERT into table %s.%s", t.schemaName, t.name)
 	return nil, catalog.ErrNotSupported
 }
 
 // Update implements catalog.UpdatableTable.
-func (t *MergedTable) Update(ctx context.Context, rowIDs []int64, rows array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
+func (t *AFTable) Update(ctx context.Context, rowIDs []int64, rows array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
 	log.Printf("[DML Not Supported] Attempted to UPDATE table %s.%s", t.schemaName, t.name)
 	return nil, catalog.ErrNotSupported
 }
 
 // Delete implements catalog.DeletableTable.
-func (t *MergedTable) Delete(ctx context.Context, rowIDs []int64, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
+func (t *AFTable) Delete(ctx context.Context, rowIDs []int64, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
 	log.Printf("[DML Not Supported] Attempted to DELETE from table %s.%s", t.schemaName, t.name)
 	return nil, catalog.ErrNotSupported
 }
@@ -451,7 +451,7 @@ func (t *MergedTable) Delete(ctx context.Context, rowIDs []int64, opts *catalog.
 // Main Server Setup (adapted from user's provided code)
 // =============================================================================
 
-type AirportAdapter struct {
+type AFAirportAdapter struct {
 	validateToken func(token string) (string, error)
 	table_access  func(params map[string]any, tables []any) map[string]any
 	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any
@@ -463,13 +463,13 @@ type AirportAdapter struct {
 	shutdownc     chan struct{}
 }
 
-func NewAirportAdapter(
+func NewAFAirportAdapter(
 	config []map[string]any,
 	validateToken func(token string) (string, error),
 	table_access func(params map[string]any, tables []any) map[string]any,
 	rla_access func(params map[string]any, tables []any, row_id []any) map[string]any,
-) *AirportAdapter {
-	return &AirportAdapter{
+) *AFAirportAdapter {
+	return &AFAirportAdapter{
 		validateToken: validateToken,
 		table_access:  table_access,
 		rla_access:    rla_access,
@@ -479,10 +479,10 @@ func NewAirportAdapter(
 	}
 }
 
-func (a *AirportAdapter) Start(listenAddr string) error {
-	// Use our custom MergedCatalog
-	mergedCatalog := NewMergedCatalog(a.cfg)
-	a.catalog = mergedCatalog
+func (a *AFAirportAdapter) Start(listenAddr string) error {
+	// Use our custom AFCatalog
+	AFCatalog := NewAFCatalog(a.cfg)
+	a.catalog = AFCatalog
 
 	// Create grpc server and register airport server
 	debugLevel := slog.LevelInfo
@@ -496,7 +496,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 		debugLevel = slog.LevelDebug
 	}
 	config := airport.ServerConfig{
-		Catalog:  mergedCatalog,
+		Catalog:  AFCatalog,
 		Auth:     airport.BearerAuth(a.validateToken),
 		Address:  listenAddr,
 		LogLevel: &debugLevel,
@@ -526,7 +526,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	return nil
 }
 
-func (a *AirportAdapter) Stop(ctx context.Context) error {
+func (a *AFAirportAdapter) Stop(ctx context.Context) error {
 	if a.grpcSrv != nil {
 		a.grpcSrv.GracefulStop()
 		log.Println("Airport server stopped.")
