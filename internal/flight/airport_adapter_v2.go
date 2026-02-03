@@ -57,6 +57,7 @@ func (c *AFCatalog) GetOrCreateSchema(name string) *AFSchema {
 	}
 
 	s := NewAFSchema(name, "", c.config, c.mem)
+	s.Tables()
 	c.schemas[name] = s
 	return s
 }
@@ -73,6 +74,7 @@ func (c *AFCatalog) Schemas(ctx context.Context) ([]catalog.Schema, error) {
 		schemaName := cfg["flight_schema"].(string)
 		// Ensure schema exists in our internal map
 		schema := c.GetOrCreateSchema(schemaName)
+		//schema.Tables()
 		result = append(result, schema)
 	}
 	return result, nil
@@ -481,8 +483,8 @@ func NewAFAirportAdapter(
 
 func (a *AFAirportAdapter) Start(listenAddr string) error {
 	// Use our custom AFCatalog
-	AFCatalog := NewAFCatalog(a.cfg)
-	a.catalog = AFCatalog
+	Catalog:= NewAFCatalog(a.cfg)
+	a.catalog = Catalog
 
 	// Create grpc server and register airport server
 	debugLevel := slog.LevelInfo
@@ -496,40 +498,53 @@ func (a *AFAirportAdapter) Start(listenAddr string) error {
 		debugLevel = slog.LevelDebug
 	}
 	config := airport.ServerConfig{
-		Catalog:  AFCatalog,
+		Catalog:  Catalog,
 		Auth:     airport.BearerAuth(a.validateToken),
 		Address:  listenAddr,
 		LogLevel: &debugLevel,
 	}
 
-	// TLS configuration (simplified, assuming no TLS for this example)
-	opts := airport.ServerOptions(config)
-	a.grpcSrv = grpc.NewServer(opts...)
-
-	if err := airport.NewServer(a.grpcSrv, config); err != nil {
-		return fmt.Errorf("failed to register Airport server: %w", err)
+	// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
+	// Load TLS credentials
+	creds, err := loadTLSCredentialsV2() //loadTLSCredentials()
+	if err != nil {
+		log.Fatalf("Failed to load TLS credentials: %v", err)
 	}
-
+	opts := airport.ServerOptions(config)
+	if creds != nil {
+		// fmt.Println("TLS CREDS:", creds)
+		opts = append(opts, grpc.Creds(creds))
+	}
+	a.grpcSrv = grpc.NewServer(opts...)
+	if err := airport.NewServer(a.grpcSrv, config); err != nil {
+		return fmt.Errorf("airport.NewServer failed: %w", err)
+	}
 	lis, err := net.Listen("tcp", listenAddr)
 	if err != nil {
-		return fmt.Errorf("failed to listen: %w", err)
+		return fmt.Errorf("listen %s: %w", listenAddr, err)
 	}
 	a.listener = lis
-
-	log.Printf("Airport server listening on %s", listenAddr)
+	// Serve in a goroutine
 	go func() {
-		if err := a.grpcSrv.Serve(lis); err != nil && err != grpc.ErrServerStopped {
-			log.Fatalf("Failed to serve: %v", err)
+		log.Printf("[flight] Airport server listening on %s", listenAddr)
+		if err := a.grpcSrv.Serve(lis); err != nil {
+			log.Printf("[flight] grpc serve error: %v", err)
 		}
+		close(a.shutdownc)
 	}()
-
 	return nil
 }
 
 func (a *AFAirportAdapter) Stop(ctx context.Context) error {
 	if a.grpcSrv != nil {
 		a.grpcSrv.GracefulStop()
-		log.Println("Airport server stopped.")
+		// wait until serve goroutine exits or context times out
+		select {
+		case <-a.shutdownc:
+			return nil
+		case <-ctx.Done():
+			return ctx.Err()
+		}
 	}
 	return nil
 }
