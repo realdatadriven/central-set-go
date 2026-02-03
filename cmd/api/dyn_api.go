@@ -236,10 +236,28 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		}
 	case "login":
 		switch act {
-		case "login":
+		case "login", "sign_in", "signin", "auth", "authenticate", "log_in", "logon", "log_on", "index":
 			//app.login(w, r)
 			data = app._login(params)
-		case "chk_token":
+		// dynamic_login
+		case "dynamic_login", "dynamic_auth", "dynamic_authenticate":
+			params["login_table"] = os.Getenv("DYN_LOGIN_TABLE")
+			params["username_field"] = os.Getenv("DYN_LOGIN_USERNAME_FIELD")
+			params["email_field"] = os.Getenv("DYN_LOGIN_EMAIL_FIELD")
+			params["password_field"] = os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
+			params["active_field"] = os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
+			data = app.dynamic_login(params)
+		// social_login
+		//case "social_login", "social_auth", "social_authenticate":
+		//	data = app.social_login(params)
+		// recover_pass
+		case "recover_pass", "recover_password":
+			data = app.recover_pass(params)
+		// reset_pass
+		case "reset_pass", "reset_password":
+			data = app.reset_pass(params)
+		// verify_token
+		case "chk_token", "verify_token":
 			data = app.verifyToken(r)
 		case "alter_pass":
 			if !token["success"].(bool) {

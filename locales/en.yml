@@ -85,3 +85,14 @@ user-incorrect: Incorrect User!
 incorret-expiration-dt: 'Incorrect expiration date "{{.dt}}" shoud be something like YYYY-MM-DD HH:MM!'
 unable-to-match-deployment-id: Unable to match Deployment ID!
 no-row-level-access: No access to {{.action}} in the record {{.row_id}} for the table "{{.table}}", please contact the admin!
+recover-pass-email-sent: 'An email to recover your password has been sent to {{.email}}!'
+recover-pass-invalid-email: 'The email {{.email}} is not valid!'
+recover-pass-no-user-email: 'No user found with the email {{.email}}!'
+recover-pass-email-fail: 'Failed to send recover password email to {{.email}} ({{.err}})!'
+recover-pass-token-invalid: 'The recover password token is not valid ({{.err}})!'
+recover-pass-token-expired: 'The recover password token has expired!'
+recover-pass-success: 'Password recovered successfully!'
+email-change-success: 'Email changed successfully to {{.email}}!'
+email-change-invalid-token: 'The email change token is not valid ({{.err}})!'
+email-change-token-expired: 'The email change token has expired!'
+user-incorrect-or-inactive: 'User incorrect or inactive!'

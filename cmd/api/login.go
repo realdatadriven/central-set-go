@@ -13,6 +13,7 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/password"
 
 	"github.com/pascaldekloe/jwt"
+	"github.com/realdatadriven/etlx"
 )
 
 // AuthenticateAD connects to AD and validates a user's credentials.
@@ -89,6 +90,156 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 	userInfo["groups"] = entry.GetAttributeValues("memberOf")
 	return true, userInfo, nil
 }
+
+// dynamic login function where a table cudo be set, the username / email is set and the passwor field to like for exemple, i have a table with name tennant, has field tennant = username and has email = email and has field password = password
+func (app *application) dynamic_login(params Dict) Dict {
+	login_table := "users"
+	if _, ok := params["login_table"].(string); ok {
+		login_table = params["login_table"].(string)
+	}
+	if login_table == "" {
+		msg, _ := app.i18n.T("login-table-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	username_field := "username"
+	if _, ok := params["username_field"].(string); ok {
+		username_field = params["username_field"].(string)
+	}
+	if username_field == "" {
+		msg, _ := app.i18n.T("username-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	password_field := "password"
+	if _, ok := params["password_field"].(string); ok {
+		password_field = params["password_field"].(string)
+	}
+	if password_field == "" {
+		msg, _ := app.i18n.T("password-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	email_field := "email"
+	if _, ok := params["email_field"].(string); ok {
+		email_field = params["email_field"].(string)
+	}
+	if email_field == "" {
+		msg, _ := app.i18n.T("email-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	active_field := "active"
+	if _, ok := params["active_field"].(string); ok {
+		active_field = params["active_field"].(string)
+	}
+	_data := Dict{}
+	if _, ok := params["data"]; ok {
+		_data = params["data"].(Dict)
+	}
+	if app.IsEmpty(_data) {
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	username := ""
+	if _, ok := _data[username_field].(string); ok {
+		username = _data[username_field].(string)
+	} else if _, ok := _data[email_field].(string); ok {
+		email = _data[email_field].(string)
+	}
+	password := ""
+	if _, ok := _data[password_field].(string); ok {
+		password = _data[password_field].(string)
+	}
+	var user Dict
+	var found bool
+	var err error
+	sql := fmt.Sprintf(`select * from "%s" where ("%s" = ? OR "%s" = ?) and "%s" = true and excluded = false`, login_table, username_field, email_field, active_field)
+	user, err := app.GetRowByFilter(sql, params, []any{username, username})
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	} else if len(user) == 0 {
+		msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	if len(user) > 0 {
+		//_hash, _ := password.Hash(pass)
+		//fmt.Println(pass, _hash, user["password"].(string))
+		match, err := password.Matches(password, user[password_field].(string))
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     err.Error(),
+			}
+		}
+		if !match {
+			msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
+			return Dict{
+				"success": false,
+				"msg":     msg,
+			}
+		}
+	}
+	delete(user, password_field)
+	var claims jwt.Claims
+	json_user, err := json.Marshal(user)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	claims.Subject = string(json_user)
+	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now())
+	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Expires = jwt.NewNumericTime(expiry)
+	claims.Issuer = app.config.baseURL
+	claims.Audiences = []string{app.config.baseURL}
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	data := Dict{
+		"success": true,
+		"msg":     "Loged in successfully!",
+		"data":    user,
+		"token":   string(jwtBytes),
+		"expiry":  expiry.Format(time.RFC3339),
+	}
+	return data
+}
+
+// signup function, gets username/email and password from params, creates a new user
+func (app *application) signup(params Dict) Dict {
+	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
+	return Dict{
+		"success": false,
+		"msg":     msg,
+	}
+}
+
+// login function, gets username/email and password from params, validates user and returns JWT token
 
 func (app *application) _login(params Dict) Dict {
 	_data := Dict{}
@@ -417,3 +568,182 @@ func (app *application) access_key(params Dict) Dict {
 		"expiry":  expiry.Format(time.RFC3339),
 	}
 }
+
+// recover password, gets params with email, checks if is a valid user, creates a token and send email with link to reset password
+func (app *application) recover_pass(params Dict) Dict {
+	_data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		_data = params["data"].(Dict)
+	}
+	email := ""
+	if _, ok := _data["email"].(string); ok {
+		email = _data["email"].(string)
+	}
+	if email == "" {
+		msg, _ := app.i18n.T("email-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	user, found, err := app.db.GetUserByNameOrEmail(email)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	if !found || len(user) == 0 {
+		msg, _ := app.i18n.T("user-not-found", Dict{"email": email})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	delete(user, "password")
+	delete(user, "created_at")
+	delete(user, "updated_at")
+	delete(user, "phone")
+	delete(user, "timezone")
+	delete(user, "attach_profile_pic")
+	var claims jwt.Claims
+	json_user, err := json.Marshal(user)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	claims.Subject = string(json_user)
+	expiry := time.Now().Add(1 * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now())
+	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Expires = jwt.NewNumericTime(expiry)
+	claims.Issuer = app.config.baseURL
+	claims.Audiences = []string{app.config.frontend_url}
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	resetLink := fmt.Sprintf("%s/reset-password?token=%s", app.config.frontend_url, string(jwtBytes))
+	_etlx := etlx.ETLX{}
+	bodyTemplate := `
+		<p>Hi {{.first_name}},</p>
+		<p>You have requested to reset your password. Please click the link below to reset your password:</p>
+		<p><a href="{{.reset_link}}">{{.reset_link}}</a></p>
+		<p>This link will expire in 1 hour.</p>
+		<p>If you did not request a password reset, please ignore this email.</p>
+		<p>Best regards,<br/>The Team</p>
+	`
+	emailParams := Dict{
+		"to":      user["email"],
+		"subject": "Password Recovery",
+		"body":    bodyTemplate,
+		"data": Dict{
+			"first_name": user["first_name"],
+			"reset_link": resetLink,
+		},
+	}
+	err = _etlx.SendEmail(emailParams)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	msg, _ := app.i18n.T("recover-pass-email-sent", Dict{"email": email})
+	return Dict{
+		"success": true,
+		"msg":     msg,
+	}
+}
+
+// reset password, gets params with token and new_password, validates token and updates user password
+func (app *application) reset_pass(params Dict) Dict {
+	_data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		_data = params["data"].(Dict)
+	}
+	tokenStr := ""
+	if _, ok := _data["token"].(string); ok {
+		tokenStr = _data["token"].(string)
+	}
+	newPassword := ""
+	if _, ok := _data["new_password"].(string); ok {
+		newPassword = _data["new_password"].(string)
+	}
+	if tokenStr == "" || newPassword == "" {
+		msg, _ := app.i18n.T("token-and-new-pass-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	token, err := jwt.HMACVerify([]byte(tokenStr), []byte(app.config.jwt.secretKey))
+	if err != nil {
+		msg, _ := app.i18n.T("invalid-token", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	if token.Expires.Time().Before(time.Now()) {
+		msg, _ := app.i18n.T("token-expired", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	subject := token.Subject
+	var user Dict
+	err = json.Unmarshal([]byte(subject), &user)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	if _, ok := user["username"]; !ok {
+		msg, _ := app.i18n.T("invalid-token-no-username", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	query := `UPDATE users 
+			SET password = :password 
+		WHERE email = :username
+			OR username = :username`
+	pass, err := password.Hash(newPassword)
+	if err != nil {
+		msg, _ := app.i18n.T("password-hash-error", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	data := Dict{"username": user["username"], "password": pass}
+	_, err = app.db.ExecuteNamedQuery(query, data)
+	if err != nil {
+		msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	msg, _ := app.i18n.T("reset-pass-success", Dict{})
+	return Dict{
+		"success": true,
+		"msg":     msg,
+	}
+}
+
+// oauth_login handles  google, github, etc. oauth login
+func (app *application) oauth_login(params Dict) Dict {
+	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
+	return Dict{
+		"success": false,
+		"msg":     msg,
+	}
+}	
+
