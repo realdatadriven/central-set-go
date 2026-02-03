@@ -54,7 +54,8 @@ func (t *DynamicTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (arr
 }
 
 // DML stubs
-func (t *DynamicTable) Insert(_ context.Context, _ array.RecordReader, _ *catalog.DMLOptions) (*catalog.DMLResult, error) {
+func (t *DynamicTable) Insert(ctx context.Context, rec array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
+	fmt.Println("INSERT OPTS:", ctx, rec, opts)
 	return nil, fmt.Errorf("INSERT not supported yet")
 }
 

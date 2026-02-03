@@ -139,7 +139,7 @@ func (a *AirportAdapterV3) Start(listenAddr string) error {
 			if err := rows.Scan(&tname); err != nil {
 				return fmt.Errorf("scan table name: %w", err)
 			}
-			fmt.Println(tname)
+			//fmt.Println(tname)
 			// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
 			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
 				found := false
@@ -190,14 +190,9 @@ func (a *AirportAdapterV3) Start(listenAddr string) error {
 			}
 			defer rdr.Release()
 			arrowSchema := rdr.Schema()
-			fmt.Println(tname, arrowSchema)
-			scanFn := a.makeScanFunc(a.mem, schemaName, tname, arrowSchema, s)
-			_table := NewDynamicTable(
-				tname,
-				arrowSchema,
-				tname,
-				scanFn,
-			)
+			//fmt.Println(tname, arrowSchema)
+			scanFn := a.scanFunc(a.mem, schemaName, tname, arrowSchema, s)
+			_table := NewDynamicTable(tname, arrowSchema, tname, scanFn)
 			// register simple table under current schema builder
 			sb.Table(_table)
 		}
@@ -339,7 +334,7 @@ func (a *AirportAdapterV3) getRLAIds(rla_access []map[string]any, table, access_
 // but im im passing the all configuration and making the connection and initializing the sturup and shutdown
 // all over again because of some problems with the shared connector across goroutines.
 // This needs to be improved later for performance and resource usage.
-func (a *AirportAdapterV3) makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED MEANING IF THERE IS TABLE MAPPING, ONLLY THOSE ARE EXPOSED
 		arrow_flight_id := conf["arrow_flight_id"]
@@ -657,6 +652,14 @@ func (a *AirportAdapterV3) makeScanFunc(mem memory.Allocator, schemaName, tableN
 			} else {
 				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
 			}
+		}
+		fmt.Println("opts.Limit:", opts.Limit)
+		if opts.Limit > 0 {
+			query = fmt.Sprintf("%s LIMIT %d", query, opts.Limit)
+		}
+		if opts.Columns != nil && len(opts.Columns) > 0 {
+			// to be analized later, because returning different columns then already defined in the tables definition generates errors
+			fmt.Println("Requested columns: opts.Columns", opts.Columns)
 		}
 		fmt.Println("V3:", query)
 		conn2, err := db.Connect(context.Background())
