@@ -258,7 +258,84 @@ func (app *application) serveArrowFlight() error {
 	log.Println("goodbye")
 	return nil
 }
+func (app *application) serveArrowFlightV3() error {
+	// use crud.read to respect access control
+	_sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`
+	fligths, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	_sql = `SELECT * FROM "arrow_flight_table" WHERE active = ? AND excluded = ?`
+	fligths_tables, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	_sql = `SELECT * FROM "arrow_flight_table_field" WHERE active = ? AND excluded = ?`
+	fligths_tables_fields, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	// arrow_flight_table_scope
+	_sql = `SELECT * FROM "arrow_flight_table_scope" WHERE active = ? AND excluded = ?`
+	fligths_tables_scopes, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	rla_tables := app.row_level_tables(Dict{"app": Dict{"app_id": 1, "db": app.config.db.dsn}})
+	//fmt.Println(rla_tables)
+	if !rla_tables["success"].(bool) {
+		return fmt.Errorf("Error listing tables that requires RLA: %s", rla_tables["msg"])
+	}
 
+	// add tree tables and fields to flights, but with map[string]any like map[string]any{f["table"]: {"fields": map[string]any{"field": field}}}
+	for _, f := range fligths {
+		var tables Dict = make(Dict)
+		for _, t := range fligths_tables {
+			if t["arrow_flight_id"] == f["arrow_flight_id"] {
+				var fields Dict = make(Dict)
+				for _, tf := range fligths_tables_fields {
+					if tf["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
+						fields[tf["arrow_flight_table_field"].(string)] = tf
+					}
+				}
+				t["fields"] = fields
+				var scopes Dict = make(Dict)
+				for _, ts := range fligths_tables_scopes {
+					if ts["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
+						scopes[ts["arrow_flight_table_scope"].(string)] = ts
+					}
+				}
+				t["scopes"] = scopes
+				tables[t["arrow_flight_table"].(string)] = t
+			}
+		}
+		f["tables"] = tables
+		f["rla_tables"] = rla_tables["tables"]
+		//fmt.Println(f["rla_tables"])
+	}
+	// start server
+	// Create Flight adapter (airport-go) backed by our manager.
+	flightMgr := flight.NewAirportAdapterV3(fligths, app.airportValidateToken, app.table_access, app.row_level_access)
+	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
+	// Start the server (includes starting airport-go Flight server)
+	if err := flightMgr.Start(addr); err != nil {
+		return err
+	}
+	fmt.Printf("server v3 started at %s", addr)
+	// Wait for signal
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+	<-sigCh
+	log.Print("shutting down...")
+	// give Flight manager a chance to stop
+	if err := flightMgr.Stop(context.Background()); err != nil {
+		log.Printf("error during shutdown: %v", err)
+	}
+	// ensure manager shutdown (deferred previously) -- allow small wait
+	_ = context.Background()
+	log.Println("goodbye")
+	return nil
+}
 func (app *application) serveArrowFlightTmp() error {
 	// use crud.read to respect access control
 	_sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`

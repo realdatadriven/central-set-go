@@ -671,6 +671,13 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
 			}
 		}
+		if opts.Limit > 0 {
+			query = fmt.Sprintf("%s LIMIT %d", query, opts.Limit)
+		}
+		if opts.Columns != nil && len(opts.Columns) > 0 {
+			// to be analized later, because returning different columns then already defined in the tables definition generates errors
+			fmt.Println("Requested columns: opts.Columns", opts.Columns)
+		}
 		fmt.Println(query, scopes_access)
 		conn2, err := db.Connect(context.Background())
 		if err != nil {

@@ -83,7 +83,7 @@ type app_config struct {
 	s3DisableSSL          bool
 	s3SkipSSLVerify       bool
 	s3Endpoint            string
-	frontend_url         string
+	frontend_url          string
 }
 
 //type admin struct{}
@@ -212,7 +212,7 @@ func run(logger *slog.Logger) error {
 	app.CronJobs()
 	if env.GetBool("ENABLE_ARROW_FLIGHT", false) {
 		go func() {
-			err := app.serveArrowFlight()
+			err := app.serveArrowFlightV3()
 			if err != nil {
 				fmt.Printf("Error setting up arrow flight server: %v\n", err)
 			}

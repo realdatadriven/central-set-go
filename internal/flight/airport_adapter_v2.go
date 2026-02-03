@@ -3,7 +3,6 @@ package flight
 import (
 	"context"
 	"database/sql"
-	"database/sql/driver"
 	"fmt"
 	"log"
 	"log/slog"
@@ -57,7 +56,7 @@ func (c *AFCatalog) GetOrCreateSchema(name string) *AFSchema {
 	}
 
 	s := NewAFSchema(name, "", c.config, c.mem)
-	s.Tables()
+	//s.Tables()
 	c.schemas[name] = s
 	return s
 }
@@ -101,13 +100,13 @@ func (c *AFCatalog) Schema(ctx context.Context, name string) (catalog.Schema, er
 // CreateSchema implements catalog.DynamicCatalog.
 func (c *AFCatalog) CreateSchema(_ context.Context, name string, opts catalog.CreateSchemaOptions) (catalog.Schema, error) {
 	log.Printf("[DDL Not Supported] Attempted to CREATE SCHEMA: %s (Comment: %s)", name, opts.Comment)
-	return nil, catalog.ErrNotSupported
+	return nil, catalog.ErrNotFound
 }
 
 // DropSchema implements catalog.DynamicCatalog.
 func (c *AFCatalog) DropSchema(_ context.Context, name string, opts catalog.DropSchemaOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to DROP SCHEMA: %s (IgnoreNotFound: %t)", name, opts.IgnoreNotFound)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // AFSchema implements catalog.DynamicSchema for table management operations.
@@ -255,50 +254,58 @@ func (s *AFSchema) Table(ctx context.Context, name string) (catalog.Table, error
 }
 
 // ScalarFunctions, TableFunctions, TableFunctionsInOut are not supported in this example.
-func (s *AFSchema) ScalarFunctions(ctx context.Context) ([]catalog.ScalarFunction, error)     { return nil, nil }
-func (s *AFSchema) TableFunctions(ctx context.Context) ([]catalog.TableFunction, error)       { return nil, nil }
-func (s *AFSchema) TableFunctionsInOut(ctx context.Context) ([]catalog.TableFunctionInOut, error) { return nil, nil }
+func (s *AFSchema) ScalarFunctions(ctx context.Context) ([]catalog.ScalarFunction, error) {
+	return nil, nil
+}
+func (s *AFSchema) TableFunctions(ctx context.Context) ([]catalog.TableFunction, error) {
+	return nil, nil
+}
+func (s *AFSchema) TableFunctionsInOut(ctx context.Context) ([]catalog.TableFunctionInOut, error) {
+	return nil, nil
+}
 
 // CreateTable implements catalog.DynamicSchema.
 func (s *AFSchema) CreateTable(_ context.Context, name string, schema *arrow.Schema, opts catalog.CreateTableOptions) (catalog.Table, error) {
 	log.Printf("[DDL Not Supported] Attempted to CREATE TABLE %s.%s (Comment: %s, OnConflict: %v)", s.name, name, opts.Comment, opts.OnConflict)
-	return nil, catalog.ErrNotSupported
+	return nil, catalog.ErrNotFound
 }
 
 // DropTable implements catalog.DynamicSchema.
 func (s *AFSchema) DropTable(_ context.Context, name string, opts catalog.DropTableOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to DROP TABLE %s.%s (IgnoreNotFound: %t)", s.name, name, opts.IgnoreNotFound)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // RenameTable implements catalog.DynamicSchema.
 func (s *AFSchema) RenameTable(_ context.Context, oldName, newName string, opts catalog.RenameTableOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to RENAME TABLE %s.%s to %s (IgnoreNotFound: %t)", s.name, oldName, newName, opts.IgnoreNotFound)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // AFTable implements catalog.DynamicTable, catalog.InsertableTable, catalog.UpdatableTable, catalog.DeletableTable.
 type AFTable struct {
-	mu      sync.RWMutex
-	schemaName string
-	name    string
-	arrowSchema  *arrow.Schema
-	config  map[string]any // Specific config for this table's schema
-	mem     memory.Allocator
+	mu          sync.RWMutex
+	schemaName  string
+	name        string
+	arrowSchema *arrow.Schema
+	config      map[string]any // Specific config for this table's schema
+	mem         memory.Allocator
 }
 
 func NewAFTable(schemaName, name string, arrowSchema *arrow.Schema, config map[string]any, mem memory.Allocator) *AFTable {
 	return &AFTable{
-		schemaName: schemaName,
-		name:    name,
-		arrowSchema:  arrowSchema,
-		config:  config,
-		mem:     mem,
+		schemaName:  schemaName,
+		name:        name,
+		arrowSchema: arrowSchema,
+		config:      config,
+		mem:         mem,
 	}
 }
 
-func (t *AFTable) Name() string    { return t.name }
-func (t *AFTable) Comment() string { return fmt.Sprintf("Table %s.%s from DuckDB", t.schemaName, t.name) }
+func (t *AFTable) Name() string { return t.name }
+func (t *AFTable) Comment() string {
+	return fmt.Sprintf("Table %s.%s from DuckDB", t.schemaName, t.name)
+}
 func (t *AFTable) ArrowSchema(columns []string) *arrow.Schema {
 	return catalog.ProjectSchema(t.arrowSchema, columns)
 }
@@ -347,7 +354,7 @@ func (t *AFTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (array.Re
 		query = fmt.Sprintf(query, strings.Join(_fields, ","), t.schemaName, t.name)
 	}
 
-	hasFilters := false
+	//hasFilters := false
 	if opts.Filter != nil {
 		fp, err := filter.Parse(opts.Filter)
 		if err != nil {
@@ -356,7 +363,7 @@ func (t *AFTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (array.Re
 		enc := filter.NewDuckDBEncoder(nil)
 		whereClause := enc.EncodeFilters(fp)
 		if whereClause != "" {
-			hasFilters = true
+			//hasFilters = true
 			query = fmt.Sprintf("%s WHERE (%s)", query, whereClause)
 		}
 	}
@@ -392,61 +399,61 @@ func (t *AFTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (array.Re
 // AddField implements catalog.DynamicTable.
 func (t *AFTable) AddField(_ context.Context, _ *arrow.Schema, _ catalog.AddFieldOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to ADD FIELD to table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // RemoveField implements catalog.DynamicTable.
 func (t *AFTable) RemoveField(_ context.Context, _ []string, _ catalog.RemoveFieldOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to REMOVE FIELD from table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // RenameField implements catalog.DynamicTable.
 func (t *AFTable) RenameField(_ context.Context, _ []string, _ string, _ catalog.RenameFieldOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to RENAME FIELD in table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // ChangeColumnType implements catalog.DynamicTable.
 func (t *AFTable) ChangeColumnType(_ context.Context, _ *arrow.Schema, _ string, _ catalog.ChangeColumnTypeOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to CHANGE COLUMN TYPE in table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // SetNotNull implements catalog.DynamicTable.
 func (t *AFTable) SetNotNull(_ context.Context, _ string, _ catalog.SetNotNullOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to SET NOT NULL on column in table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // DropNotNull implements catalog.DynamicTable.
 func (t *AFTable) DropNotNull(_ context.Context, _ string, _ catalog.DropNotNullOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to DROP NOT NULL on column in table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // SetDefault implements catalog.DynamicTable.
 func (t *AFTable) SetDefault(_ context.Context, _ string, _ string, _ catalog.SetDefaultOptions) error {
 	log.Printf("[DDL Not Supported] Attempted to SET DEFAULT on column in table %s.%s", t.schemaName, t.name)
-	return catalog.ErrNotSupported
+	return catalog.ErrNotFound
 }
 
 // Insert implements catalog.InsertableTable.
 func (t *AFTable) Insert(ctx context.Context, rows array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
 	log.Printf("[DML Not Supported] Attempted to INSERT into table %s.%s", t.schemaName, t.name)
-	return nil, catalog.ErrNotSupported
+	return nil, catalog.ErrNotFound
 }
 
 // Update implements catalog.UpdatableTable.
 func (t *AFTable) Update(ctx context.Context, rowIDs []int64, rows array.RecordReader, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
 	log.Printf("[DML Not Supported] Attempted to UPDATE table %s.%s", t.schemaName, t.name)
-	return nil, catalog.ErrNotSupported
+	return nil, catalog.ErrNotFound
 }
 
 // Delete implements catalog.DeletableTable.
 func (t *AFTable) Delete(ctx context.Context, rowIDs []int64, opts *catalog.DMLOptions) (*catalog.DMLResult, error) {
 	log.Printf("[DML Not Supported] Attempted to DELETE from table %s.%s", t.schemaName, t.name)
-	return nil, catalog.ErrNotSupported
+	return nil, catalog.ErrNotFound
 }
 
 // =============================================================================
@@ -483,7 +490,7 @@ func NewAFAirportAdapter(
 
 func (a *AFAirportAdapter) Start(listenAddr string) error {
 	// Use our custom AFCatalog
-	Catalog:= NewAFCatalog(a.cfg)
+	Catalog := NewAFCatalog(a.cfg)
 	a.catalog = Catalog
 
 	// Create grpc server and register airport server
@@ -547,16 +554,4 @@ func (a *AFAirportAdapter) Stop(ctx context.Context) error {
 		}
 	}
 	return nil
-}
-
-// connBoundRecordReader wraps an arrow.RecordReader and closes the underlying
-// database connection when Release() is called.
-type connBoundRecordReader struct {
-	array.RecordReader
-	conn driver.Conn
-}
-
-func (r *connBoundRecordReader) Release() {
-	r.RecordReader.Release()
-	_ = r.conn.Close()
 }

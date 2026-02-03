@@ -156,17 +156,17 @@ func (app *application) dynamic_login(params Dict) Dict {
 	if _, ok := _data[username_field].(string); ok {
 		username = _data[username_field].(string)
 	} else if _, ok := _data[email_field].(string); ok {
-		email = _data[email_field].(string)
+		username = _data[email_field].(string)
 	}
-	password := ""
+	pass := ""
 	if _, ok := _data[password_field].(string); ok {
-		password = _data[password_field].(string)
+		pass = _data[password_field].(string)
 	}
 	var user Dict
-	var found bool
+	//var found bool
 	var err error
 	sql := fmt.Sprintf(`select * from "%s" where ("%s" = ? OR "%s" = ?) and "%s" = true and excluded = false`, login_table, username_field, email_field, active_field)
-	user, err := app.GetRowByFilter(sql, params, []any{username, username})
+	user, err = app.GetRowByFilter(sql, params, []any{username, username})
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -182,7 +182,7 @@ func (app *application) dynamic_login(params Dict) Dict {
 	if len(user) > 0 {
 		//_hash, _ := password.Hash(pass)
 		//fmt.Println(pass, _hash, user["password"].(string))
-		match, err := password.Matches(password, user[password_field].(string))
+		match, err := password.Matches(pass, user[password_field].(string))
 		if err != nil {
 			return Dict{
 				"success": false,
@@ -682,7 +682,7 @@ func (app *application) reset_pass(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
-	token, err := jwt.HMACVerify([]byte(tokenStr), []byte(app.config.jwt.secretKey))
+	token, err := jwt.HMACCheck([]byte(tokenStr), []byte(app.config.jwt.secretKey))
 	if err != nil {
 		msg, _ := app.i18n.T("invalid-token", Dict{})
 		return Dict{
@@ -745,5 +745,4 @@ func (app *application) oauth_login(params Dict) Dict {
 		"success": false,
 		"msg":     msg,
 	}
-}	
-
+}

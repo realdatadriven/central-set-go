@@ -22,11 +22,7 @@ package flight
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"database/sql"
-	"database/sql/driver"
-	"encoding/json"
 	"fmt"
 	"log"
 	"log/slog"
@@ -45,39 +41,36 @@ import (
 	airport "github.com/hugr-lab/airport-go"
 	"github.com/hugr-lab/airport-go/catalog"
 	"github.com/hugr-lab/airport-go/filter"
-
 	//duckarrow "github.com/duckdb/duckdb-go/v2/arrow"
-
-	"google.golang.org/grpc/credentials"
 )
 
-// FlightManager is the interface the server uses to start/stop the FlightSQL server.
-type FlightManager interface {
+// FlightManagerV3 is the interface the server uses to start/stop the FlightSQL server.
+type FlightManagerV3 interface {
 	Start(listenAddr string) error
 	Stop(ctx context.Context) error
 }
 
-// AirportAdapter implements FlightManager using hugr-lab/airport-go.
-type AirportAdapter struct {
+// AirportAdapterV3 implements FlightManagerV3 using hugr-lab/airport-go.
+type AirportAdapterV3 struct {
 	validateToken func(token string) (string, error)
 	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case arrow_flight_table mapping tables
 	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in arrow_flight_table is accessible to the user
 	grpcSrv       *grpc.Server
 	listener      net.Listener
 	mem           memory.Allocator
-	catalog       catalog.Catalog
+	catalog       *DynamicCatalog
 	cfg           []map[string]any
 	shutdownc     chan struct{}
 }
 
-// NewAirportAdapter constructs the adapter with the provided DDB.
-func NewAirportAdapter(
+// NewAirportAdapterV3 constructs the adapter with the provided DDB.
+func NewAirportAdapterV3(
 	config []map[string]any,
 	validateToken func(token string) (string, error),
 	table_access func(params map[string]any, tables []any) map[string]any,
 	rla_access func(params map[string]any, tables []any, row_id []any) map[string]any,
-) *AirportAdapter {
-	return &AirportAdapter{
+) *AirportAdapterV3 {
+	return &AirportAdapterV3{
 		validateToken: validateToken,
 		table_access:  table_access,
 		rla_access:    rla_access,
@@ -89,7 +82,7 @@ func NewAirportAdapter(
 
 // Start builds an airport-go catalog from the DuckDB schemas and tables discovered via the manager.
 // It then creates a gRPC server and registers the airport server.
-func (a *AirportAdapter) Start(listenAddr string) error {
+func (a *AirportAdapterV3) Start(listenAddr string) error {
 	// Build catalog using airport.NewCatalogBuilder()
 	//builder := airport.NewCatalogBuilder()
 	builder := NewCatalogBuilder().Dynamic()
@@ -105,8 +98,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	for _, s := range a.cfg {
 		schemaName := s["flight_schema"].(string)
 		// create a schema builder for this schema
-		sb := builder.Schema(schemaName)
-				.Comment("Main application schema")
+		sb := builder.Schema(schemaName).Comment("Main application schema")
 		// execute startup_sql
 		var main_sql string
 		if startup_sql, ok := s["startup_sql"].(string); ok {
@@ -147,7 +139,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			if err := rows.Scan(&tname); err != nil {
 				return fmt.Errorf("scan table name: %w", err)
 			}
-			//fmt.Println(tname)
+			fmt.Println(tname)
 			// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
 			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
 				found := false
@@ -198,15 +190,16 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			}
 			defer rdr.Release()
 			arrowSchema := rdr.Schema()
-			//fmt.Println(tname, arrowSchema)
+			fmt.Println(tname, arrowSchema)
 			scanFn := a.makeScanFunc(a.mem, schemaName, tname, arrowSchema, s)
+			_table := NewDynamicTable(
+				tname,
+				arrowSchema,
+				tname,
+				scanFn,
+			)
 			// register simple table under current schema builder
-			sb.SimpleTable(airport.SimpleTableDef{
-				Name:     tname,
-				Comment:  tname,
-				Schema:   arrowSchema,
-				ScanFunc: scanFn,
-			})
+			sb.Table(_table)
 		}
 		if err := rows.Err(); err != nil {
 			return fmt.Errorf("tables rows err: %w", err)
@@ -278,7 +271,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 }
 
 // Stop gracefully stops the airport-go server.
-func (a *AirportAdapter) Stop(ctx context.Context) error {
+func (a *AirportAdapterV3) Stop(ctx context.Context) error {
 	if a.grpcSrv != nil {
 		a.grpcSrv.GracefulStop()
 		// wait until serve goroutine exits or context times out
@@ -291,8 +284,7 @@ func (a *AirportAdapter) Stop(ctx context.Context) error {
 	}
 	return nil
 }
-
-func (a *AirportAdapter) contains(slice []string, element string) bool {
+func (a *AirportAdapterV3) contains(slice []string, element string) bool {
 	for _, v := range slice {
 		if v == element {
 			return true
@@ -300,14 +292,7 @@ func (a *AirportAdapter) contains(slice []string, element string) bool {
 	}
 	return false
 }
-func IdentityJSONToMap(identity string) (map[string]any, error) {
-	var m map[string]any
-	if err := json.Unmarshal([]byte(identity), &m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-func (a *AirportAdapter) containsInt(slice []any, element any) bool {
+func (a *AirportAdapterV3) containsInt(slice []any, element any) bool {
 	for _, v := range slice {
 		if v.(int64) == element.(int64) {
 			return true
@@ -315,7 +300,7 @@ func (a *AirportAdapter) containsInt(slice []any, element any) bool {
 	}
 	return false
 }
-func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
+func (a *AirportAdapterV3) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
 	data := []any{}
 	for _, v := range rla_access {
 		_access := false
@@ -354,7 +339,7 @@ func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_ty
 // but im im passing the all configuration and making the connection and initializing the sturup and shutdown
 // all over again because of some problems with the shared connector across goroutines.
 // This needs to be improved later for performance and resource usage.
-func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func (a *AirportAdapterV3) makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED MEANING IF THERE IS TABLE MAPPING, ONLLY THOSE ARE EXPOSED
 		arrow_flight_id := conf["arrow_flight_id"]
@@ -673,7 +658,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
 			}
 		}
-		fmt.Println(query, scopes_access)
+		fmt.Println("V3:", query)
 		conn2, err := db.Connect(context.Background())
 		if err != nil {
 			return nil, err
@@ -688,104 +673,9 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			conn2.Close()
 			return nil, err
 		}
-		/*/defer rdr.Release()
-		for rdr.Next() {
-			rec := rdr.Record()
-			// rec is an Arrow RecordBatch
-			fmt.Println("rows:", rec.NumRows())
-		}*/
-		/*if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
-			shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
-			_, err := conn.ExecContext(context.Background(), shutdown_sql)
-			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
-			}
-		}*/
-		//return nil, nil
 		return &connBoundRecordReader{
 			RecordReader: rdr,
 			conn:         conn2,
 		}, nil
 	}
-}
-
-// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
-// loadTLSCredentials loads TLS credentials from files.
-// In production, use proper certificate management.
-func loadTLSCredentials() (credentials.TransportCredentials, error) {
-	// Load server certificate and key
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
-	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		caFile := os.Getenv("TLS_CA_CERT_FILE")
-		if certFile == "" || keyFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
-		}
-		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
-		if err != nil {
-			return nil, fmt.Errorf("failed to load server cert: %w", err)
-		}
-		// Load CA certificate for mutual TLS (optional)
-		//if caFile != "" {
-		certPool := x509.NewCertPool()
-		if caCert, err := os.ReadFile(caFile); err == nil {
-			if !certPool.AppendCertsFromPEM(caCert) {
-				return nil, fmt.Errorf("failed to add CA cert to pool")
-			}
-		}
-		//}
-		// Configure TLS
-		tlsConfig := &tls.Config{
-			Certificates: []tls.Certificate{serverCert},
-			ClientAuth:   tls.NoClientCert, // Change to tls.RequireAndVerifyClientCert for mTLS
-			ClientCAs:    certPool,
-			MinVersion:   tls.VersionTLS12,
-		}
-		return credentials.NewTLS(tlsConfig), nil
-	}
-	return nil, nil
-}
-
-func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
-	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		caFile := os.Getenv("TLS_CA_CERT_FILE")
-		if certFile == "" || keyFile == "" || caFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
-		}
-		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
-		if err != nil {
-			return nil, fmt.Errorf("load server cert: %w", err)
-		}
-		// CA pool (for mTLS or client verification)
-		caCert, err := os.ReadFile(caFile)
-		if err != nil {
-			return nil, fmt.Errorf("read CA cert: %w", err)
-		}
-		certPool := x509.NewCertPool()
-		if !certPool.AppendCertsFromPEM(caCert) {
-			return nil, fmt.Errorf("append CA cert")
-		}
-		return credentials.NewTLS(&tls.Config{
-			Certificates: []tls.Certificate{serverCert},
-			ClientAuth:   tls.NoClientCert, //tls.RequestClientCert, ////tls.RequireAndVerifyClientCert, // Enable mTLS
-			// ClientCAs:    certPool,
-			MinVersion: tls.VersionTLS13, // Use TLS 1.3
-		}), nil
-	}
-	return nil, nil
-}
-
-type connBoundRecordReader struct {
-	array.RecordReader
-	conn driver.Conn
-}
-
-func (r *connBoundRecordReader) Release() {
-	r.RecordReader.Release()
-	_ = r.conn.Close()
 }

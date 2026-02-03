@@ -3,17 +3,11 @@ package flight
 import (
 	"context"
 	"fmt"
-	"log"
-	"net"
 	"sync"
 
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/array"
-	"github.com/apache/arrow-go/v18/arrow/memory"
 
-	"google.golang.org/grpc"
-
-	"github.com/hugr-lab/airport-go"
 	"github.com/hugr-lab/airport-go/catalog"
 )
 
@@ -80,7 +74,8 @@ func (t *DynamicTable) AddColumn(_ context.Context, _ *arrow.Field, _ catalog.Ad
 // ─────────────────────────────────────────────────────────────────────────────
 // Dynamic Catalog & Schema
 // ─────────────────────────────────────────────────────────────────────────────
-
+// DynamicCatalog implements a catalog that can change at runtime.
+// This demonstrates permission-based filtering and live schema updates.
 type DynamicCatalog struct {
 	mu      sync.RWMutex
 	schemas map[string]*DynamicSchema
@@ -92,27 +87,47 @@ func NewDynamicCatalog() *DynamicCatalog {
 	}
 }
 
+// AddSchema adds a schema to the dynamic catalog (safe for concurrent use).
+func (c *DynamicCatalog) AddSchema(name string, schema *DynamicSchema) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.schemas[name] = schema
+}
+
 func (c *DynamicCatalog) Schemas(ctx context.Context) ([]catalog.Schema, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	res := make([]catalog.Schema, 0, len(c.schemas))
-	for _, s := range c.schemas {
-		res = append(res, s)
+	var result []catalog.Schema
+	for _, schema := range c.schemas {
+		// Filter based on permissions
+		//if schema.canAccess(identity) {
+		result = append(result, schema)
+		//}
 	}
-	return res, nil
+
+	return result, nil
 }
 
+// Schema implements catalog.Catalog.
 func (c *DynamicCatalog) Schema(ctx context.Context, name string) (catalog.Schema, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	s, ok := c.schemas[name]
+
+	schema, ok := c.schemas[name]
 	if !ok {
-		return nil, nil // airport-go often returns nil instead of error for "not found"
+		return nil, nil
 	}
-	return s, nil
+
+	/*/ Check permissions
+	identity := airport.IdentityFromContext(ctx)
+	if !schema.canAccess(identity) {
+		return nil, nil // Act as if schema doesn't exist
+	}*/
+
+	return schema, nil
 }
 
-func (c *DynamicCatalog) CreateSchema(_ context.Context, name string, opts catalog.CreateSchemaOptions) (catalog.Schema, error) {
+func (c *DynamicCatalog) CreateSchema(_ context.Context, name string, opts catalog.CreateSchemaOptions) (*DynamicSchema, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if _, exists := c.schemas[name]; exists {
@@ -140,19 +155,28 @@ type DynamicSchema struct {
 	mu      sync.RWMutex
 	name    string
 	comment string
-	tables  map[string]*DynamicTable
+	tables  map[string]catalog.Table
+	//tables  map[string]*DynamicTable // catalog.Table
 }
 
 func NewDynamicSchema(name, comment string) *DynamicSchema {
 	return &DynamicSchema{
 		name:    name,
 		comment: comment,
-		tables:  make(map[string]*DynamicTable),
+		//tables:  make(map[string]*DynamicTable), // catalog.Table
+		tables: make(map[string]catalog.Table),
 	}
 }
 
 func (s *DynamicSchema) Name() string    { return s.name }
 func (s *DynamicSchema) Comment() string { return s.comment }
+
+// AddTable adds a table to the schema (safe for concurrent use).
+func (s *DynamicSchema) AddTable(table catalog.Table) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.tables[table.Name()] = table
+}
 
 func (s *DynamicSchema) Tables(ctx context.Context) ([]catalog.Table, error) {
 	s.mu.RLock()
@@ -206,6 +230,21 @@ func (s *DynamicSchema) DropTable(_ context.Context, name string, opts catalog.D
 	return nil
 }
 
+// ScalarFunctions implements catalog.Schema.
+func (s *DynamicSchema) ScalarFunctions(ctx context.Context) ([]catalog.ScalarFunction, error) {
+	return nil, nil
+}
+
+// TableFunctions implements catalog.Schema.
+func (s *DynamicSchema) TableFunctions(ctx context.Context) ([]catalog.TableFunction, error) {
+	return nil, nil
+}
+
+// TableFunctionsInOut implements catalog.Schema.
+func (s *DynamicSchema) TableFunctionsInOut(ctx context.Context) ([]catalog.TableFunctionInOut, error) {
+	return nil, nil
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Builder (only uses DynamicTable)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -240,7 +279,7 @@ func (cb *CatalogBuilder) Schema(name string) *SchemaBuilder {
 	return &SchemaBuilder{builder: sb}
 }
 
-func (cb *CatalogBuilder) Build() (catalog.Catalog, error) {
+func (cb *CatalogBuilder) Build() (*DynamicCatalog, error) {
 	if cb.built {
 		return nil, fmt.Errorf("catalog already built")
 	}
@@ -278,7 +317,8 @@ func (cb *CatalogBuilder) Build() (catalog.Catalog, error) {
 		s := &DynamicSchema{
 			name:    sb.name,
 			comment: sb.comment,
-			tables:  make(map[string]*DynamicTable),
+			//tables:  make(map[string]*DynamicTable),
+			tables: make(map[string]catalog.Table),
 		}
 
 		for _, t := range sb.tables {
@@ -312,7 +352,7 @@ func (sb *SchemaBuilder) Table(t *DynamicTable) *SchemaBuilder {
 	return sb
 }
 
-func (sb *SchemaBuilder) Build() (catalog.Catalog, error) {
+func (sb *SchemaBuilder) Build() (*DynamicCatalog, error) {
 	return sb.builder.catalogBuilder.Build()
 }
 
