@@ -417,6 +417,18 @@ type TFState struct {
 	} `json:"resources"`
 }
 
+// ResourceMetrics - Common fields for any AWS resource + EC2-specific
+type ResourceMetrics struct {
+	Type                 string // e.g., "aws_instance", "aws_s3_bucket"
+	ID                   string
+	State                string     // if available (e.g., EC2 state)
+	LaunchTime           *time.Time // if applicable
+	CPUUtilizationAvgPct *float64   // EC2 only, last hour
+	DiskSizeGB           int64      // EC2 only
+	EstimatedCostUSD     *float64   // last ~30 days, best effort
+	Limitations          []string
+}
+
 func GetEC2MetricsFromTFState(
 	ctx context.Context,
 	tfstateJSON []byte,
@@ -529,8 +541,7 @@ func GetEC2MetricsFromTFState(
 	return results, nil
 }
 
-
-func GetResourceMetricsFromTFStateV2(
+/*func GetResourceMetricsFromTFStateV2(
 	ctx context.Context,
 	tfstateJSON []byte,
 	cfg aws.Config,
@@ -557,7 +568,7 @@ func GetResourceMetricsFromTFStateV2(
 
 		for _, inst := range res.Instances {
 			attrs := inst.Attributes
-			idVal, ok := attrs["id"].(string)
+			idVal, ok := attrs.ID
 			if !ok || idVal == "" {
 				continue // No usable ID
 			}
@@ -628,7 +639,7 @@ func GetResourceMetricsFromTFStateV2(
 					}
 
 					// Disk (EBS total size)
-					var totalDisk int64
+					var totalDisk int32
 					for _, bd := range ec2Inst.BlockDeviceMappings {
 						if bd.Ebs == nil || bd.Ebs.VolumeId == nil {
 							continue
@@ -658,4 +669,4 @@ func GetResourceMetricsFromTFStateV2(
 	}
 
 	return results, nil
-}
+}*/

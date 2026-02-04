@@ -77,7 +77,7 @@ func (app *application) routes() http.Handler {
 	})
 
 	// AI ASSISTANT ENDPOINTS
-	mux.HandleFunc("/etlx-assist", etlxAssistHandler)
+	//mux.HandleFunc("/etlx-assist", etlxAssistHandler)
 
 	//mux.NotFound = http.HandlerFunc(app.notFound)
 	//mux.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowed)
@@ -90,7 +90,7 @@ func (app *application) routes() http.Handler {
 	//mux.HandleFunc("POST /dyn_api/login/login", app.dyn_api)
 	mux.HandleFunc("POST /upload", app.uploadHandler)
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
-	
+
 	// ODATA HANDDLER
 	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}", app.odata_api)

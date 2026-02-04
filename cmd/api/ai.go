@@ -1,12 +1,15 @@
+package main
 
-/** ### HTTP Endpoint for Your Application
+/*
+* ### HTTP Endpoint for Your Application
 Here is a complete, production-ready Go server example using `net/http` and `http.NewServeMux()`. It exposes a POST `/etlx-assist` endpoint that accepts an array of messages (OpenAI-compatible format for multi-turn conversations) and returns the assistant's response.
 
 - **Input JSON**: `{"messages": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}, ...]}`
 - The server prepends the system prompt if missing.
 - It maintains multi-turn by letting the client send full history each time (stateless, simple).
 - Uses Google AI Gemini 1.5 Flash by default (fast & capable); swap to Ollama for local.
-- Add your API key via env (e.g., `GOOGLE_GENAI_API_KEY`). */
+- Add your API key via env (e.g., `GOOGLE_GENAI_API_KEY`).
+
 package main
 
 import (
@@ -15,9 +18,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/firebase/genkit/go"
 	"github.com/firebase/genkit/go/ai"
+	"github.com/firebase/genkit/go/genkit"
 	"github.com/firebase/genkit/go/plugins/googlegenai" // swap to ollama if preferred
 )
 
@@ -25,7 +29,6 @@ var (
 	g         *genkit.Genkit
 	modelName = "googleai/gemini-1.5-flash" // or "ollama/llama3.1" etc.
 )
-
 
 type Message struct {
 	Role    string `json:"role"`
@@ -45,7 +48,7 @@ func initGenkit() {
 	var err error
 	g, err = genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}), // or ollama.Ollama{ServerAddress: "http://localhost:11434"}
-		genkit.WithLogLevel("debug"), // optional
+		genkit.WithLogLevel("debug"),                // optional
 	)
 	if err != nil {
 		log.Fatalf("Failed to init Genkit: %v", err)
@@ -86,7 +89,7 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 	var systemPrompt string
 	// load systemPrompt from file llm.txt
 	systemPrompt = "You are ETLX Assist, an expert ETL and data engineering assistant. Help the user with their ETL tasks."
-	// Prepend system prompt if missing	
+	// Prepend system prompt if missing
 	// append from file llm.txt
 	data, err := os.ReadFile("etlxllm.txt")
 	if err != nil {
@@ -115,3 +118,4 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(Response{Content: resp.Text()})
 }
+*/

@@ -10,8 +10,8 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
-	github.com/lib/pq v1.10.9 // indirect
-	github.com/lmittmann/tint v1.1.2
+	github.com/lib/pq v1.11.1 // indirect
+	github.com/lmittmann/tint v1.1.3
 	github.com/mattn/go-sqlite3 v1.14.33 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
 	github.com/realdatadriven/etlx v1.4.17
@@ -31,13 +31,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.7
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.53.1
 	github.com/aws/aws-sdk-go-v2/service/costexplorer v1.63.2
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.284.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.285.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.96.0
 	github.com/duckdb/duckdb-go/v2 v2.5.5
 	github.com/go-ldap/ldap/v3 v3.4.12
 	github.com/hashicorp/terraform-exec v0.24.0
 	github.com/hugr-lab/airport-go v0.1.5
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/stripe/stripe-go/v84 v84.3.0
 	google.golang.org/grpc v1.78.0
 )
 
@@ -108,10 +109,10 @@ require (
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260128140115-fcf36f686977 // indirect
+	golang.org/x/telemetry v0.0.0-20260203154110-aaaaaa54ba6b // indirect
 	golang.org/x/tools v0.41.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260128011058-8636f8732409 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260203192932-546029d2fa20 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

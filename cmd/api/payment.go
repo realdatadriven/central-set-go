@@ -7,24 +7,25 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"time"
 
-	"github.com/robfig/cron/v3" // go get github.com/robfig/cron/v3
+	// go get github.com/robfig/cron/v3
 	"github.com/stripe/stripe-go/v84"
+	//"github.com/stripe/stripe-go/v84/billingmeterevent"
 	"github.com/stripe/stripe-go/v84/customer"
-	"github.com/stripe/stripe-go/v84/event"
 	"github.com/stripe/stripe-go/v84/invoice"
+	"github.com/stripe/stripe-go/v84/invoiceitem"
 	"github.com/stripe/stripe-go/v84/price"
 	"github.com/stripe/stripe-go/v84/product"
 	"github.com/stripe/stripe-go/v84/subscription"
 	"github.com/stripe/stripe-go/v84/webhook"
-	"github.com/stripe/stripe-go/v84/billingmeterevent"
 )
 
 func init() {
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 	if stripe.Key == "" {
-		log.Fatal("STRIPE_SECRET_KEY not set")
+		//log.Fatal("STRIPE_SECRET_KEY not set")
 	}
 }
 
@@ -86,7 +87,7 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 	if stripeProductID == "" {
 		params := &stripe.ProductParams{
 			Name:     stripe.String(name),
-			Metadata: stripe.StringMap{"internal_id": internalID},
+			Metadata: map[string]string{"internal_id": internalID},
 		}
 		prod, err = product.New(params)
 		if err != nil {
@@ -116,7 +117,7 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 			Product:    stripe.String(prod.ID),
 			Currency:   stripe.String(currency),
 			UnitAmount: stripe.Int64(amount),
-			Recurring:  &stripe.PriceRecurringParams{
+			Recurring: &stripe.PriceRecurringParams{
 				Interval: stripe.String(interval),
 			},
 		}
@@ -195,7 +196,7 @@ func CreateOrSyncCustomer(data map[string]any) (*stripe.Customer, error) {
 	params := &stripe.CustomerParams{
 		Name:  stripe.String(name),
 		Email: stripe.String(email),
-		Metadata: stripe.StringMap{
+		Metadata: map[string]string{
 			"tenant_id": tenantID,
 		},
 	}
@@ -215,7 +216,7 @@ func CreateOrSyncCustomer(data map[string]any) (*stripe.Customer, error) {
 // CreateOrUpdateSubscription
 // data should include tenant_id (or stripe_customer_id), price_id (Stripe or internal), etc.
 func CreateOrUpdateSubscription(data map[string]any) (*stripe.Subscription, error) {
-	tenantID, _ := data["tenant_id"].(string)
+	//tenantID, _ := data["tenant_id"].(string)
 	stripeCustomerID, _ := data["stripe_customer_id"].(string)
 	stripePriceID, _ := data["stripe_price_id"].(string)
 	stripeSubscriptionID, _ := data["stripe_subscription_id"].(string) // already have?
@@ -289,14 +290,14 @@ func processStripeEvent(evt *stripe.Event) error {
 			return err
 		}
 		// Update DB: mark paid, update next billing date, activate tenant access
-		log.Printf("Invoice paid: %s for sub %s", inv.ID, inv.Subscription.ID)
+		//log.Printf("Invoice paid: %s for sub %s", inv.ID, inv.Subscription.ID)
 
 	case "invoice.payment_failed":
 		var inv stripe.Invoice
 		if err := json.Unmarshal(evt.Data.Raw, &inv); err != nil {
 			return err
 		}
-		log.Printf("Payment failed: %s (attempt %d), sub %s", inv.ID, inv.AttemptCount, inv.Subscription.ID)
+		//log.Printf("Payment failed: %s (attempt %d), sub %s", inv.ID, inv.AttemptCount, inv.Subscription.ID)
 		// Notify tenant, mark delayed in DB
 
 	case "customer.subscription.updated":
@@ -349,7 +350,7 @@ func ReconcileRecentIssues() error {
 	// Example: Check for past_due or unpaid subscriptions
 	params := &stripe.SubscriptionListParams{
 		Status: stripe.String("past_due"),
-		Limit:  stripe.Int64(100),
+		//Limit:  stripe.Int64(100),
 	}
 	iter := subscription.List(params)
 	for iter.Next() {
@@ -362,16 +363,18 @@ func ReconcileRecentIssues() error {
 
 	// Also check open invoices past due
 	invParams := &stripe.InvoiceListParams{
-		Status: stripe.String("open"),
-		DueDate: &stripe.InvoiceListDueDateParams{
-			Lt: stripe.Int64(time.Now().Unix()),
+		Status:  stripe.String("open"),
+		DueDate: stripe.Int64(time.Now().Unix()),
+		DueDateRange: &stripe.RangeQueryParams{
+			GreaterThanOrEqual: *stripe.Int64(2), //stripe.Int64(time.Now().Unix()),
+
 		},
-		Limit: stripe.Int64(50),
+		//Limit: stripe.Int64(50),
 	}
 	invIter := invoice.List(invParams)
 	for invIter.Next() {
 		inv := invIter.Invoice()
-		log.Printf("Reconcile: overdue invoice %s for sub %s", inv.ID, inv.Subscription.ID)
+		log.Printf("Reconcile: overdue invoice %s for sub %s", inv.ID, inv.Status)
 		// Handle: notify, mark in DB, etc.
 	}
 
@@ -382,18 +385,18 @@ func ReconcileRecentIssues() error {
 type FuturePayment struct {
 	ExpectedDate   time.Time `json:"expected_date"`
 	AmountCents    int64     `json:"amount_cents"`
-	AmountDisplay  string    `json:"amount_display"`  // e.g. "19.99 USD"
-	CustomerName   string    `json:"customer_name"`   // or tenant name if you add lookup
+	AmountDisplay  string    `json:"amount_display"` // e.g. "19.99 USD"
+	CustomerName   string    `json:"customer_name"`  // or tenant name if you add lookup
 	SubscriptionID string    `json:"subscription_id"`
 	Currency       string    `json:"currency"`
 	Interval       string    `json:"interval"` // month / year
 }
 
 type FuturePayments struct {
-	Payments       []FuturePayment `json:"payments"`
-	TotalCount     int             `json:"total_count"`
-	NextNMonths    int             `json:"next_n_months"`
-	AsOf           time.Time       `json:"as_of"`
+	Payments    []FuturePayment `json:"payments"`
+	TotalCount  int             `json:"total_count"`
+	NextNMonths int             `json:"next_n_months"`
+	AsOf        time.Time       `json:"as_of"`
 }
 
 // ListFuturePayments returns a sorted list of expected future charges for the next nMonths
@@ -408,7 +411,9 @@ func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, err
 
 	// List active (and trialing) subscriptions
 	params := &stripe.SubscriptionListParams{
-		Limit: stripe.Int64(100), // paginate in production if >100
+		Status: stripe.String("all"),
+
+		//Limit: stripe.Int64(100), // paginate in production if >100
 	}
 	iter := subscription.List(params)
 
@@ -444,7 +449,7 @@ func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, err
 			intervalCount = 1
 		}
 
-		nextBill := time.Unix(sub.CurrentPeriodEnd, 0)
+		nextBill := time.Unix(sub.EndedAt, 0)
 
 		// For trialing subs: first real bill is at trial end
 		if sub.Status == stripe.SubscriptionStatusTrialing {
@@ -460,7 +465,7 @@ func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, err
 					CustomerName:   sub.Customer.Name, // fallback; better to lookup from your DB
 					SubscriptionID: sub.ID,
 					Currency:       string(price.Currency),
-					Interval:       interval,
+					//Interval:       interval,
 				})
 			}
 
@@ -504,7 +509,7 @@ func ReportCloudUsage(data map[string]any) error {
 	if !ok || eventName == "" {
 		return fmt.Errorf("meter_event_name required (e.g., 'cloud_compute_hours')")
 	}
-	value, ok := data["value"].(float64) // or int64, must be number
+	_, ok = data["value"].(float64) // or int64, must be number value
 	if !ok {
 		return fmt.Errorf("value required (numeric usage amount)")
 	}
@@ -513,7 +518,7 @@ func ReportCloudUsage(data map[string]any) error {
 		ts = time.Now().Unix()
 	}
 
-	params := &stripe.BillingMeterEventParams{
+	/*params := &stripe.BillingMeterEventParams{
 		EventName: stripe.String(eventName),
 		Payload: stripe.Map{
 			"stripe_customer_id": customerID,
@@ -525,12 +530,12 @@ func ReportCloudUsage(data map[string]any) error {
 	// Optional: IdempotencyKey: stripe.String("usage-" + tenantID + "-" + time.Now().Format("20060102")),
 	params.SetIdempotencyKey(fmt.Sprintf("usage-%s-%d", customerID, ts))
 
-	_, err := billingmeterevent.New(params)
+	/_, err := billingmeterevent.New(params)
 	if err != nil {
 		return fmt.Errorf("failed to report meter event: %w", err)
 	}
 
-	log.Printf("Reported %f %s for customer %s", value, eventName, customerID)
+	log.Printf("Reported %f %s for customer %s", value, eventName, customerID)*/
 	return nil
 }
 
@@ -551,10 +556,10 @@ func AddVariableInvoiceItem(data map[string]any) (*stripe.InvoiceItem, error) {
 	}
 
 	params := &stripe.InvoiceItemParams{
-		Customer:    stripe.String(customerID),
-		Amount:      stripe.Int64(amount),
-		Currency:    stripe.String(currency),
-		Description: stripe.String(desc),
+		Customer:     stripe.String(customerID),
+		Amount:       stripe.Int64(amount),
+		Currency:     stripe.String(currency),
+		Description:  stripe.String(desc),
 		Subscription: stripe.String(subID), // attaches to this sub's pending invoice
 		// Optional: Period: &stripe.InvoiceItemPeriodParams{Start: ..., End: ...} for display
 	}
@@ -569,75 +574,76 @@ func AddVariableInvoiceItem(data map[string]any) (*stripe.InvoiceItem, error) {
 
 // AddOrUpdateResourceBilling - Attaches/updates metered prices for enabled resources
 // data example:
-// {
-//   "stripe_customer_id": "cus_...",
-//   "stripe_subscription_id": "sub_...",  // optional if already exists
-//   "resources": []map[string]any{
-//     {"type": "storage", "enabled": true},   // will use price_storage
-//     {"type": "compute", "enabled": true},
-//   }
-// }
+//
+//	{
+//	  "stripe_customer_id": "cus_...",
+//	  "stripe_subscription_id": "sub_...",  // optional if already exists
+//	  "resources": []map[string]any{
+//	    {"type": "storage", "enabled": true},   // will use price_storage
+//	    {"type": "compute", "enabled": true},
+//	  }
+//	}
 func AddOrUpdateResourceBilling(data map[string]any) (*stripe.Subscription, error) {
-    custID := data["stripe_customer_id"].(string)
-    subID, _ := data["stripe_subscription_id"].(string)
+	custID := data["stripe_customer_id"].(string)
+	subID, _ := data["stripe_subscription_id"].(string)
 
-    // Fetch your DB-mapped price IDs (example helper)
-    priceMap := map[string]string{
-        "storage": "price_abc123_storage",   // your fixed price IDs
-        "compute": "price_def456_compute",
-        // ...
-    }
+	// Fetch your DB-mapped price IDs (example helper)
+	priceMap := map[string]string{
+		"storage": "price_abc123_storage", // your fixed price IDs
+		"compute": "price_def456_compute",
+		// ...
+	}
 
-    items := []*stripe.SubscriptionItemsParams{}
-    for _, res := range data["resources"].([]map[string]any) {
-        typ := res["type"].(string)
-        enabled := res["enabled"].(bool)
+	items := []*stripe.SubscriptionItemsParams{}
+	for _, res := range data["resources"].([]map[string]any) {
+		typ := res["type"].(string)
+		enabled := res["enabled"].(bool)
 
-        if !enabled {
-            continue
-        }
+		if !enabled {
+			continue
+		}
 
-        priceID, ok := priceMap[typ]
-        if !ok {
-            return nil, fmt.Errorf("no price for resource type: %s", typ)
-        }
+		priceID, ok := priceMap[typ]
+		if !ok {
+			return nil, fmt.Errorf("no price for resource type: %s", typ)
+		}
 
-        items = append(items, &stripe.SubscriptionItemsParams{
-            Price: stripe.String(priceID),
-            // Optional: Quantity: stripe.Int64(1), but for metered usually leave as-is or use metadata
-        })
-    }
+		items = append(items, &stripe.SubscriptionItemsParams{
+			Price: stripe.String(priceID),
+			// Optional: Quantity: stripe.Int64(1), but for metered usually leave as-is or use metadata
+		})
+	}
 
-    if len(items) == 0 {
-        return nil, fmt.Errorf("no resources enabled")
-    }
+	if len(items) == 0 {
+		return nil, fmt.Errorf("no resources enabled")
+	}
 
-    var sub *stripe.Subscription
-    var err error
+	var sub *stripe.Subscription
+	var err error
 
-    if subID != "" {
-        // Update existing sub (add/remove items)
-        params := &stripe.SubscriptionParams{
-            Items: items, // This will REPLACE existing items → be careful!
-            // To add without replacing: fetch current items first, merge, then update
-            ProrationBehavior: stripe.String("create_prorations"),
-        }
-        sub, err = subscription.Update(subID, params)
-    } else {
-        // Create new sub with fixed plan + resources
-        params := &stripe.SubscriptionParams{
-            Customer: stripe.String(custID),
-            Items:    items, // add your fixed monthly price here too if needed
-        }
-        sub, err = subscription.New(params)
-    }
+	if subID != "" {
+		// Update existing sub (add/remove items)
+		params := &stripe.SubscriptionParams{
+			Items: items, // This will REPLACE existing items → be careful!
+			// To add without replacing: fetch current items first, merge, then update
+			ProrationBehavior: stripe.String("create_prorations"),
+		}
+		sub, err = subscription.Update(subID, params)
+	} else {
+		// Create new sub with fixed plan + resources
+		params := &stripe.SubscriptionParams{
+			Customer: stripe.String(custID),
+			Items:    items, // add your fixed monthly price here too if needed
+		}
+		sub, err = subscription.New(params)
+	}
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    // Save sub.ID back to your subscriptions or tenants table if new
-    return sub, nil
+	// Save sub.ID back to your subscriptions or tenants table if new
+	return sub, nil
 }
 
 /*func main() {
