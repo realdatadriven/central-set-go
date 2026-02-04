@@ -328,6 +328,19 @@ func (app *application) Buckup(params Dict) Dict {
 			fmt.Printf("could not delete %s: %v", filename, err)
 			//continue
 		}
+		// upload to s3
+		if app.config.useS3 {
+			// Upload to S3
+			fname, err := app.uploadToS3(filename, fmt.Sprintf("%s.%s.csapp", _app["app"], app.config.db.driverName))
+			if err != nil {
+				fmt.Println(err.Error())
+				/*return Dict{
+					"success": false,
+					"msg":     "Failed to upload to S3: " + err.Error(),
+				}*/
+			}
+			fmt.Printf("Uploaded to S3: %s\n", fname)
+		}
 		attch := fmt.Sprintf(`attach '%s' as %s`, filename, _app["app"])
 		memDB.ExecuteQuery(attch)
 		memDB.ExecuteQuery(fmt.Sprintf(`copy from database memory to %s`, _app["app"]))
