@@ -528,3 +528,134 @@ func GetEC2MetricsFromTFState(
 	}
 	return results, nil
 }
+
+
+func GetResourceMetricsFromTFStateV2(
+	ctx context.Context,
+	tfstateJSON []byte,
+	cfg aws.Config,
+) ([]ResourceMetrics, error) {
+	var state TFState
+	if err := json.Unmarshal(tfstateJSON, &state); err != nil {
+		return nil, fmt.Errorf("failed to parse terraform state: %w", err)
+	}
+
+	ec2Client := ec2.NewFromConfig(cfg)
+	cwClient := cloudwatch.NewFromConfig(cfg)
+	ceClient := costexplorer.NewFromConfig(cfg)
+
+	var results []ResourceMetrics
+
+	now := time.Now().UTC()
+	ceStart := now.AddDate(0, -1, 0).Format("2006-01-02") // ~last 30 days
+	ceEnd := now.Format("2006-01-02")
+
+	for _, res := range state.Resources {
+		if !strings.HasPrefix(res.Type, "aws_") {
+			continue // Only AWS resources
+		}
+
+		for _, inst := range res.Instances {
+			attrs := inst.Attributes
+			idVal, ok := attrs["id"].(string)
+			if !ok || idVal == "" {
+				continue // No usable ID
+			}
+
+			m := ResourceMetrics{
+				Type:        res.Type,
+				ID:          idVal,
+				Limitations: []string{},
+			}
+
+			// Common: Attempt cost for ANY resource
+			costOut, err := ceClient.GetCostAndUsage(ctx, &costexplorer.GetCostAndUsageInput{
+				TimePeriod: &cetypes.DateInterval{
+					Start: aws.String(ceStart),
+					End:   aws.String(ceEnd),
+				},
+				Granularity: cetypes.GranularityMonthly,
+				Metrics:     []string{"UnblendedCost"},
+				Filter: &cetypes.Expression{
+					Dimensions: &cetypes.DimensionValues{
+						Key:    cetypes.DimensionResourceId,
+						Values: []string{idVal},
+					},
+				},
+			})
+			if err == nil && len(costOut.ResultsByTime) > 0 && len(costOut.ResultsByTime[0].Total) > 0 {
+				amountStr := costOut.ResultsByTime[0].Total["UnblendedCost"].Amount
+				if amountStr != nil {
+					if v, err := strconv.ParseFloat(*amountStr, 64); err == nil && v > 0 {
+						m.EstimatedCostUSD = &v
+					}
+				}
+			}
+			if m.EstimatedCostUSD == nil {
+				m.Limitations = append(m.Limitations, "Cost data unavailable (enable resource-level granularity in Cost Explorer prefs, or data delayed/no usage)")
+			}
+
+			// EC2-specific metrics if applicable
+			if res.Type == "aws_instance" {
+				// DescribeInstances
+				di, err := ec2Client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
+					InstanceIds: []string{idVal},
+				})
+				if err == nil && len(di.Reservations) > 0 && len(di.Reservations[0].Instances) > 0 {
+					ec2Inst := di.Reservations[0].Instances[0]
+					m.State = string(ec2Inst.State.Name)
+					if ec2Inst.LaunchTime != nil {
+						lt := *ec2Inst.LaunchTime
+						m.LaunchTime = &lt
+					}
+
+					// CPU
+					start := now.Add(-1 * time.Hour)
+					cpuStats, err := cwClient.GetMetricStatistics(ctx, &cloudwatch.GetMetricStatisticsInput{
+						Namespace:  aws.String("AWS/EC2"),
+						MetricName: aws.String("CPUUtilization"),
+						Dimensions: []cwtypes.Dimension{{Name: aws.String("InstanceId"), Value: aws.String(idVal)}},
+						StartTime:  &start,
+						EndTime:    &now,
+						Period:     aws.Int32(300),
+						Statistics: []cwtypes.Statistic{cwtypes.StatisticAverage},
+					})
+					if err == nil && len(cpuStats.Datapoints) > 0 {
+						avg := *cpuStats.Datapoints[len(cpuStats.Datapoints)-1].Average
+						m.CPUUtilizationAvgPct = &avg
+					} else {
+						m.Limitations = append(m.Limitations, "CPU data unavailable")
+					}
+
+					// Disk (EBS total size)
+					var totalDisk int64
+					for _, bd := range ec2Inst.BlockDeviceMappings {
+						if bd.Ebs == nil || bd.Ebs.VolumeId == nil {
+							continue
+						}
+						volOut, err := ec2Client.DescribeVolumes(ctx, &ec2.DescribeVolumesInput{
+							VolumeIds: []string{*bd.Ebs.VolumeId},
+						})
+						if err == nil && len(volOut.Volumes) > 0 {
+							totalDisk += *volOut.Volumes[0].Size
+						}
+					}
+					m.DiskSizeGB = totalDisk
+				} else {
+					m.Limitations = append(m.Limitations, "EC2 details unavailable")
+				}
+			}
+
+			// Always add common limitations
+			m.Limitations = append(m.Limitations,
+				"Costs are best-effort; enable resource-level data in Cost Explorer for better accuracy",
+				"Use tags or CUR+Athena for precise per-resource breakdown (especially S3)",
+				"Memory/disk usage % requires agents/SSM",
+			)
+
+			results = append(results, m)
+		}
+	}
+
+	return results, nil
+}
