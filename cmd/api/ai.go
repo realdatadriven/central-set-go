@@ -85,8 +85,14 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var systemPrompt string
 	// load systemPrompt from file llm.txt
-	
-
+	systemPrompt = "You are ETLX Assist, an expert ETL and data engineering assistant. Help the user with their ETL tasks."
+	// Prepend system prompt if missing	
+	// append from file llm.txt
+	data, err := os.ReadFile("llm.txt")
+	if err != nil {
+		return fmt.Errorf("failed to read file: %w", err)
+	}
+	systemPrompt = systemPrompt + string(data)
 	if !hasSystem {
 		msgs = append([]ai.Message{
 			{
