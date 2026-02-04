@@ -784,3 +784,76 @@ func (app *application) verifyTokenString(authorizationHeader string) (Dict, err
 	}
 	return nil, fmt.Errorf("No token received: %w", "")
 }
+// stripe payment webhook handler
+/*func (app *application) stripeWebhookHandler(w http.ResponseWriter, r *http.Request) {
+	const MaxBodyBytes = int64(65536)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodyBytes)
+	payload, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintf(w, "Error reading request body: %v", err)
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+	endpointSecret := os.Getenv("STRIPE_ENDPOINT_SECRET")
+	sigHeader := r.Header.Get("Stripe-Signature")
+	event, err := stripe.WebhookConstructEvent(payload, sigHeader, endpointSecret)
+	if err != nil {
+		fmt.Fprintf(w, "Error verifying webhook signature: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	// Handle the event
+	switch event.Type {
+	case "payment_intent.succeeded":
+		paymentIntent := event.Data.Object.(*stripe.PaymentIntent)
+		fmt.Printf("PaymentIntent was successful! %s\n", paymentIntent.ID)
+		// Then define and call a method to handle the successful payment intent.
+		// handlePaymentIntentSucceeded(paymentIntent)
+	default:
+		fmt.Printf("Unhandled event type: %s\n", event.Type)
+	}
+	w.WriteHeader(http.StatusOK)
+}*/ 
+
+// stripe create a product and price endpoint
+/*func (app *application) createStripeProductAndPrice(w http.ResponseWriter, r *http.Request) {
+	params := Dict{}
+	request.DecodeJSON(w, r, &params)
+	name := params["name"].(string)
+	description := params["description"].(string)
+	unitAmount := int64(params["unit_amount"].(float64)) // in cents
+	currency := params["currency"].(string)
+	// Create a new product
+	productParams := &stripe.ProductParams{
+		Name:        stripe.String(name),
+		Description: stripe.String(description),
+	}
+	product, err := product.New(productParams)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	// Create a new price for the product
+	priceParams := &stripe.PriceParams{
+		Product:    stripe.String(product.ID),
+		UnitAmount: stripe.Int64(unitAmount),
+		Currency:   stripe.String(currency),
+	}
+	price, err := price.New(priceParams)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	data := Dict{
+		"success": true,
+		"msg":     "Product and price created successfully",
+		"data": Dict{
+			"product": product,
+			"price":   price,
+		},
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}*/
