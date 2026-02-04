@@ -595,6 +595,7 @@ func (app *application) recover_pass(params Dict) Dict {
 	}
 	if !found || len(user) == 0 {
 		msg, _ := app.i18n.T("user-not-found", Dict{"email": email})
+		fmt.Println("USER NOT FOUND!", msg, email)
 		return Dict{
 			"success": false,
 			"msg":     msg,
@@ -639,7 +640,7 @@ func (app *application) recover_pass(params Dict) Dict {
 		<p>Best regards,<br/>The Team</p>
 	`
 	emailParams := Dict{
-		"to":      user["email"],
+		"to":      []any{user["email"]},
 		"subject": "Password Recovery",
 		"body":    bodyTemplate,
 		"data": Dict{

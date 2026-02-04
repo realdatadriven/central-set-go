@@ -13,8 +13,8 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/request"
 	"github.com/realdatadriven/central-set-go/internal/response"
 
-	"github.com/pascaldekloe/jwt"
 	"github.com/joho/godotenv"
+	"github.com/pascaldekloe/jwt"
 )
 
 func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
@@ -252,7 +252,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		//	data = app.social_login(params)
 		// recover_pass
 		case "recover_pass", "recover_password":
+			//fmt.Println(ctrl, act, params)
 			data = app.recover_pass(params)
+			fmt.Println("recover_pass data:", data)
 		// reset_pass
 		case "reset_pass", "reset_password":
 			data = app.reset_pass(params)
@@ -611,6 +613,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+
 // syncEnv loads environment variables from the database and sets them in the OS environment
 func (app *application) syncEnv() Dict {
 	// load the .env file
@@ -784,6 +787,7 @@ func (app *application) verifyTokenString(authorizationHeader string) (Dict, err
 	}
 	return nil, fmt.Errorf("No token received: %w", "")
 }
+
 // stripe payment webhook handler
 /*func (app *application) stripeWebhookHandler(w http.ResponseWriter, r *http.Request) {
 	const MaxBodyBytes = int64(65536)
@@ -813,7 +817,7 @@ func (app *application) verifyTokenString(authorizationHeader string) (Dict, err
 		fmt.Printf("Unhandled event type: %s\n", event.Type)
 	}
 	w.WriteHeader(http.StatusOK)
-}*/ 
+}*/
 
 // stripe create a product and price endpoint
 /*func (app *application) createStripeProductAndPrice(w http.ResponseWriter, r *http.Request) {

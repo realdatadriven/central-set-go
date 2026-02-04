@@ -88,6 +88,7 @@ no-row-level-access: No access to {{.action}} in the record {{.row_id}} for the 
 recover-pass-email-sent: 'An email to recover your password has been sent to {{.email}}!'
 recover-pass-invalid-email: 'The email {{.email}} is not valid!'
 recover-pass-no-user-email: 'No user found with the email {{.email}}!'
+user-not-found: 'No user found with the email {{.email}}!'
 recover-pass-email-fail: 'Failed to send recover password email to {{.email}} ({{.err}})!'
 recover-pass-token-invalid: 'The recover password token is not valid ({{.err}})!'
 recover-pass-token-expired: 'The recover password token has expired!'
