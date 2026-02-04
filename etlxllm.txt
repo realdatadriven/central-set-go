@@ -1,0 +1,162 @@
+
+
+# Context for AI Application: ETLX Pipeline Generation
+
+## Introduction to ETLX
+
+ETLX is a modern, composable ETL/ELT framework designed for data engineers. Its goal is to simplify, accelerate, and enhance the maintainability of data pipelines, eliminating the need for heavy orchestration platforms or vendor lock-in. It is open-source, MIT-licensed, and powered by DuckDB [1].
+
+### Philosophy and Design Principles
+
+ETLX emphasizes **clarity, composability, and observability** [1]. It treats configuration as **executable documentation**, where the same pipeline definition drives execution, observability, lineage, and reporting. Its design principles ensure that pipelines are [1]:
+
+*   **Reproducible**
+*   **Inspectable**
+*   **Auditable**
+*   **Portable** across environments
+*   Easy to **maintain and evolve**
+
+## Key Components of an ETLX Pipeline
+
+An ETLX pipeline is defined using **structured Markdown** and consists of [1]:
+
+*   A **root block** describing the pipeline.
+*   One or more **execution units** (inputs, transformations, outputs).
+*   **Explicit SQL blocks** defining the logic.
+*   Optional **error handling** and **lifecycle hooks**.
+
+### Pipeline Definition
+
+Pipelines are declared using a level-one Markdown heading (`#`) combined with metadata. The execution mode is defined by the `runs_as` key, which can be `ETL` or `ELT` [1].
+
+```yaml
+name: PIPELINE_NAME
+description: Pipeline description
+runs_as: ETL # or ELT
+active: true
+```
+
+### Execution Units (Steps)
+
+Each level-two heading (`##`) represents an **execution unit** (e.g., `## INPUT_1`, `## TRANSFORM_X`). Each unit can define one or more steps, depending on the execution model (`extract`, `transform`, `load`) [1].
+
+#### Step Lifecycle Hooks
+
+For each step, ETLX supports consistent lifecycle hooks [1]:
+
+| Hook                  | Purpose                                         |
+| :-------------------- | :---------------------------------------------- |
+| `<step>_before_sql`   | Setup (e.g., attach databases, prepare schemas) |
+| `<step>_sql`          | Main execution logic                            |
+| `<step>_after_sql`    | Cleanup (detach, finalize, release resources)   |
+
+#### SQL Resolution Rules
+
+Each SQL hook can be defined as `null`, a `string` (reference to a named SQL block), an *inline* SQL string, or a `list/array` of SQL strings [1].
+
+### Connection Handling
+
+Each step can specify a connection using `<step>_conn`. If defined, it is used for that step; otherwise, ETLX defaults to the pipeline's default connection. This enables multi-engine pipelines (DuckDB, Postgres, ODBC, etc.) [1].
+
+### Error Handling and Recovery
+
+ETLX offers **pattern-based error handling**, allowing pipelines to dynamically recover from known failure conditions. The keys `<step>_on_err_match_patt` (regular expression for the database error message) and `<step>_on_err_match_sql` (SQL to be executed when the pattern matches) are used for this purpose [1].
+
+## Data Quality
+
+ETLX integrates **data quality validation as metadata**, making it a first-class concern in ETL/ELT execution. Validations are executed as part of the pipeline lifecycle [2].
+
+### Declaring Validations
+
+Validations are defined using the metadata key `<step>_validation`, where `<step>` can be `extract`, `transform`, or `load` [2].
+
+```yaml
+load_validation:
+  - type: throw_if_empty
+    sql: validate_data_not_empty
+    msg: "Data for the specified date is not available in the source!"
+    active: true
+  - type: throw_if_not_empty
+    sql: validate_date_exists_in_destination
+    msg: "This date has already been imported; check to avoid duplicates!"
+    active: true
+```
+
+### Supported Validation Types
+
+| Type                 | Behavior                                      |
+| :------------------- | :-------------------------------------------- |
+| `throw_if_empty`     | Fails if the query returns zero rows          |
+| `throw_if_not_empty` | Fails if the query returns one or more rows   |
+
+## Logs and Observability
+
+Every ETLX execution is **fully observable by design**. For each pipeline, step, and sub-step, ETLX records [1, 3]:
+
+*   Start and end timestamps
+*   Execution duration
+*   Connection used
+*   SQL executed
+*   Affected rows
+*   Errors, warnings, and retries
+*   Memory and resource usage
+
+This metadata can be logged, stored, queried via SQL, and used to generate reports and documentation [1, 3]. ETLX provides a logging mechanism to save logs into a database, with `AUTO_LOGS` enabled by default if no specific `LOGS` block is defined [3].
+
+## Scripts
+
+The `SCRIPTS` section allows the execution of SQL statements that do not naturally fit into other ETLX blocks (like `ETL`, `DATA_QUALITY`, `EXPORTS`, or `MULTI_QUERIES`). It is designed for operational, maintenance, and orchestration-style SQL, where the goal is execution rather than producing datasets [4].
+
+Typical use cases include cleanup operations, database maintenance, schema adjustments, or any SQL that should run as part of a pipeline but does not produce query results [4].
+
+```yaml metadata
+name: DailyScripts
+runs_as: SCRIPTS
+description: "Daily Scripts"
+connection: "duckdb:"
+active: true
+```
+
+## Notifications
+
+The `NOTIFY` section enables sending notifications (e.g., email via SMTP) with dynamic templates populated from SQL query results. This is useful for monitoring ETL processes and sending status reports [5].
+
+Key features include [5]:
+
+*   Dynamic email content populated from SQL queries.
+*   Support for `to`, `cc`, `bcc`, `attachments`, and templated bodies.
+*   Execution of SQL before and after sending notifications.
+*   Ensures ETL monitoring and alerting.
+
+## DuckDB Engine and Extensions
+
+ETLX is built around **DuckDB** as its core execution engine, embracing a SQL-first philosophy for in-process analytics and transformations [6]. DuckDB offers [6]:
+
+*   **Embedded & In-process**: No external service to manage.
+*   **Columnar execution**: High performance for analytical queries.
+*   **Rich SQL support**: Window functions, CTEs, complex joins.
+*   **Extensible**: Load extensions (SQLite, Postgres, Excel, JSON, HTTP, Parquet, etc.).
+*   **Portable**: Same SQL runs locally, in CI, or in production.
+
+While DuckDB is the recommended engine, ETLX is **engine-agnostic** and can execute pipelines across multiple database engines within the same workflow, including PostgreSQL, SQLite, MySQL, SQL Server, and any database supported by `sqlx` or ODBC [7]. This allows for broad data source connectivity.
+
+Regarding the term "vasta" as an extension, my research did not find any direct mention of a "vasta" extension within the ETLX or DuckDB documentation. It appears to be a general term or possibly a misunderstanding. ETLX's extensibility comes from DuckDB's ability to load various extensions and its multi-engine support via `sqlx` and ODBC [6, 7].
+
+## Advanced Features
+
+ETLX includes advanced features such as [8]:
+
+*   **Dynamic Query Generation (`get_dyn_queries[...]`)**: Automatically generates SQL queries based on metadata or schema differences, useful for schema flexibility and self-evolving workflows.
+*   **Conditional Execution**: Allows skipping operations dynamically based on query results, enabling flexible workflows (e.g., `load_condition`, `condition`).
+*   **`runs_as` Override**: Enables treating any Level 1 section as a specific built-in block (e.g., `ETL`, `EXPORTS`), allowing for advanced chaining of processes within the same configuration file.
+
+## References
+
+[1] [ETLX | ETL / ELT Framework for Data Engineering](https://realdatadriven.github.io/etlxdocs/)
+[2] [ETL | ELT - Validation Rules | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/validation/)
+[3] [Logs / Observability | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/logs/)
+[4] [Scripts | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/scripts/)
+[5] [Notifications | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/notify/)
+[6] [DuckDB at the Core | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/ddb-at-the-core/)
+[7] [Multi-Engine Execution | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/multi-engine-execution/)
+[8] [Advanced Features | ETLX](https://realdatadriven.github.io/etlxdocs/docs/features/advanced/)
