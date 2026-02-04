@@ -378,6 +378,120 @@ func ReconcileRecentIssues() error {
 	return nil
 }
 
+type FuturePayment struct {
+	ExpectedDate   time.Time `json:"expected_date"`
+	AmountCents    int64     `json:"amount_cents"`
+	AmountDisplay  string    `json:"amount_display"`  // e.g. "19.99 USD"
+	CustomerName   string    `json:"customer_name"`   // or tenant name if you add lookup
+	SubscriptionID string    `json:"subscription_id"`
+	Currency       string    `json:"currency"`
+	Interval       string    `json:"interval"` // month / year
+}
+
+type FuturePayments struct {
+	Payments       []FuturePayment `json:"payments"`
+	TotalCount     int             `json:"total_count"`
+	NextNMonths    int             `json:"next_n_months"`
+	AsOf           time.Time       `json:"as_of"`
+}
+
+// ListFuturePayments returns a sorted list of expected future charges for the next nMonths
+// includeTrialing: count trials that will start billing soon
+// You can later enhance with customer/tenant name lookup from your DB using metadata or stored stripe_customer_id
+func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, error) {
+	if nMonths < 1 || nMonths > 36 {
+		return nil, fmt.Errorf("nMonths should be 1–36")
+	}
+
+	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
+
+	// List active (and trialing) subscriptions
+	params := &stripe.SubscriptionListParams{
+		Limit: stripe.Int64(100), // paginate in production if >100
+	}
+	iter := subscription.List(params)
+
+	var payments []FuturePayment
+	now := time.Now()
+	endHorizon := now.AddDate(0, nMonths+1, 0) // a bit extra to catch edge cases
+
+	for iter.Next() {
+		sub := iter.Subscription()
+
+		if sub.Status != stripe.SubscriptionStatusActive &&
+			!(includeTrialing && sub.Status == stripe.SubscriptionStatusTrialing) {
+			continue
+		}
+
+		if len(sub.Items.Data) == 0 || sub.Items.Data[0].Price == nil {
+			continue // skip weird/empty subs
+		}
+
+		price := sub.Items.Data[0].Price
+		if price.Recurring == nil {
+			continue // not recurring
+		}
+
+		amount := price.UnitAmount
+		if amount <= 0 {
+			continue
+		}
+
+		interval := price.Recurring.Interval
+		intervalCount := price.Recurring.IntervalCount
+		if intervalCount == 0 {
+			intervalCount = 1
+		}
+
+		nextBill := time.Unix(sub.CurrentPeriodEnd, 0)
+
+		// For trialing subs: first real bill is at trial end
+		if sub.Status == stripe.SubscriptionStatusTrialing {
+			nextBill = time.Unix(sub.TrialEnd, 0)
+		}
+
+		for nextBill.Before(endHorizon) {
+			if nextBill.After(now) {
+				payments = append(payments, FuturePayment{
+					ExpectedDate:   nextBill,
+					AmountCents:    amount,
+					AmountDisplay:  fmt.Sprintf("%.2f %s", float64(amount)/100, price.Currency),
+					CustomerName:   sub.Customer.Name, // fallback; better to lookup from your DB
+					SubscriptionID: sub.ID,
+					Currency:       string(price.Currency),
+					Interval:       interval,
+				})
+			}
+
+			// Advance to next cycle
+			switch interval {
+			case "month":
+				nextBill = nextBill.AddDate(0, int(intervalCount), 0)
+			case "year":
+				nextBill = nextBill.AddDate(int(intervalCount), 0, 0)
+			default:
+				break // unsupported → stop projecting
+			}
+		}
+	}
+
+	if err := iter.Err(); err != nil {
+		return nil, fmt.Errorf("subscription list error: %w", err)
+	}
+
+	// Sort by date ascending
+	sort.Slice(payments, func(i, j int) bool {
+		return payments[i].ExpectedDate.Before(payments[j].ExpectedDate)
+	})
+
+	return &FuturePayments{
+		Payments:    payments,
+		TotalCount:  len(payments),
+		NextNMonths: nMonths,
+		AsOf:        now,
+	}, nil
+}
+
 /*func main() {
 	// HTTP routes
 	http.HandleFunc("/webhook", WebhookHandler)
