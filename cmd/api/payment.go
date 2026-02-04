@@ -18,6 +18,7 @@ import (
 	"github.com/stripe/stripe-go/v84/product"
 	"github.com/stripe/stripe-go/v84/subscription"
 	"github.com/stripe/stripe-go/v84/webhook"
+	"github.com/stripe/stripe-go/v84/billingmeterevent"
 )
 
 func init() {
@@ -490,6 +491,153 @@ func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, err
 		NextNMonths: nMonths,
 		AsOf:        now,
 	}, nil
+}
+
+// ReportCloudUsage - Reports consumption to Stripe Meter for variable billing
+// data map example: {"stripe_customer_id": "cus_...", "meter_event_name": "cloud_compute_hours", "value": 150, "timestamp": unixTime, "description": "VM usage March"}
+func ReportCloudUsage(data map[string]any) error {
+	customerID, ok := data["stripe_customer_id"].(string)
+	if !ok || customerID == "" {
+		return fmt.Errorf("stripe_customer_id required")
+	}
+	eventName, ok := data["meter_event_name"].(string)
+	if !ok || eventName == "" {
+		return fmt.Errorf("meter_event_name required (e.g., 'cloud_compute_hours')")
+	}
+	value, ok := data["value"].(float64) // or int64, must be number
+	if !ok {
+		return fmt.Errorf("value required (numeric usage amount)")
+	}
+	ts, _ := data["timestamp"].(int64) // optional Unix timestamp, defaults to now
+	if ts == 0 {
+		ts = time.Now().Unix()
+	}
+
+	params := &stripe.BillingMeterEventParams{
+		EventName: stripe.String(eventName),
+		Payload: stripe.Map{
+			"stripe_customer_id": customerID,
+			"value":              value,
+			// optional: add dimensions e.g. "region": "eu", "resource_id": "vm_123"
+		},
+		Timestamp: stripe.Int64(ts),
+	}
+	// Optional: IdempotencyKey: stripe.String("usage-" + tenantID + "-" + time.Now().Format("20060102")),
+	params.SetIdempotencyKey(fmt.Sprintf("usage-%s-%d", customerID, ts))
+
+	_, err := billingmeterevent.New(params)
+	if err != nil {
+		return fmt.Errorf("failed to report meter event: %w", err)
+	}
+
+	log.Printf("Reported %f %s for customer %s", value, eventName, customerID)
+	return nil
+}
+
+// AddVariableInvoiceItem - Adds a monthly variable charge (e.g., cloud usage)
+// data map example: {"stripe_customer_id": "cus_...", "stripe_subscription_id": "sub_...", "amount_cents": 1500, "description": "Cloud storage March: 75 GB", "currency": "usd"}
+func AddVariableInvoiceItem(data map[string]any) (*stripe.InvoiceItem, error) {
+	customerID, _ := data["stripe_customer_id"].(string)
+	subID, _ := data["stripe_subscription_id"].(string) // optional: attach to sub's next invoice
+	amount, _ := data["amount_cents"].(int64)
+	desc, _ := data["description"].(string)
+	currency, _ := data["currency"].(string)
+	if currency == "" {
+		currency = "usd"
+	}
+
+	if customerID == "" || amount <= 0 || desc == "" {
+		return nil, fmt.Errorf("required: stripe_customer_id, amount_cents >0, description")
+	}
+
+	params := &stripe.InvoiceItemParams{
+		Customer:    stripe.String(customerID),
+		Amount:      stripe.Int64(amount),
+		Currency:    stripe.String(currency),
+		Description: stripe.String(desc),
+		Subscription: stripe.String(subID), // attaches to this sub's pending invoice
+		// Optional: Period: &stripe.InvoiceItemPeriodParams{Start: ..., End: ...} for display
+	}
+	item, err := invoiceitem.New(params)
+	if err != nil {
+		return nil, fmt.Errorf("failed to add invoice item: %w", err)
+	}
+
+	log.Printf("Added variable charge %d %s to customer %s: %s", amount, currency, customerID, desc)
+	return item, nil
+}
+
+// AddOrUpdateResourceBilling - Attaches/updates metered prices for enabled resources
+// data example:
+// {
+//   "stripe_customer_id": "cus_...",
+//   "stripe_subscription_id": "sub_...",  // optional if already exists
+//   "resources": []map[string]any{
+//     {"type": "storage", "enabled": true},   // will use price_storage
+//     {"type": "compute", "enabled": true},
+//   }
+// }
+func AddOrUpdateResourceBilling(data map[string]any) (*stripe.Subscription, error) {
+    custID := data["stripe_customer_id"].(string)
+    subID, _ := data["stripe_subscription_id"].(string)
+
+    // Fetch your DB-mapped price IDs (example helper)
+    priceMap := map[string]string{
+        "storage": "price_abc123_storage",   // your fixed price IDs
+        "compute": "price_def456_compute",
+        // ...
+    }
+
+    items := []*stripe.SubscriptionItemsParams{}
+    for _, res := range data["resources"].([]map[string]any) {
+        typ := res["type"].(string)
+        enabled := res["enabled"].(bool)
+
+        if !enabled {
+            continue
+        }
+
+        priceID, ok := priceMap[typ]
+        if !ok {
+            return nil, fmt.Errorf("no price for resource type: %s", typ)
+        }
+
+        items = append(items, &stripe.SubscriptionItemsParams{
+            Price: stripe.String(priceID),
+            // Optional: Quantity: stripe.Int64(1), but for metered usually leave as-is or use metadata
+        })
+    }
+
+    if len(items) == 0 {
+        return nil, fmt.Errorf("no resources enabled")
+    }
+
+    var sub *stripe.Subscription
+    var err error
+
+    if subID != "" {
+        // Update existing sub (add/remove items)
+        params := &stripe.SubscriptionParams{
+            Items: items, // This will REPLACE existing items → be careful!
+            // To add without replacing: fetch current items first, merge, then update
+            ProrationBehavior: stripe.String("create_prorations"),
+        }
+        sub, err = subscription.Update(subID, params)
+    } else {
+        // Create new sub with fixed plan + resources
+        params := &stripe.SubscriptionParams{
+            Customer: stripe.String(custID),
+            Items:    items, // add your fixed monthly price here too if needed
+        }
+        sub, err = subscription.New(params)
+    }
+
+    if err != nil {
+        return nil, err
+    }
+
+    // Save sub.ID back to your subscriptions or tenants table if new
+    return sub, nil
 }
 
 /*func main() {
