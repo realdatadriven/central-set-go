@@ -52,7 +52,7 @@ Choose the option that best fits your workflow.
 
 Download the **latest CS release** for your platform:
 
-👉 https://github.com/realdatadriven/central-set-go/releases
+👉 https://github.com/realdatadriven/central-set-go/releases/latest
 
 Make it executable (Linux/macOS):
 
