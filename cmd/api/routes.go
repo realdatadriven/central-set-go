@@ -76,6 +76,9 @@ func (app *application) routes() http.Handler {
 		http.ServeFile(w, r, "static/index.html")
 	})
 
+	// AI ASSISTANT ENDPOINTS
+	mux.HandleFunc("/etlx-assist", etlxAssistHandler)
+
 	//mux.NotFound = http.HandlerFunc(app.notFound)
 	//mux.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowed)
 
