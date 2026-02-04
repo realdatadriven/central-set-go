@@ -1,5 +1,12 @@
 
+/** ### HTTP Endpoint for Your Application
+Here is a complete, production-ready Go server example using `net/http` and `http.NewServeMux()`. It exposes a POST `/etlx-assist` endpoint that accepts an array of messages (OpenAI-compatible format for multi-turn conversations) and returns the assistant's response.
 
+- **Input JSON**: `{"messages": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}, ...]}`
+- The server prepends the system prompt if missing.
+- It maintains multi-turn by letting the client send full history each time (stateless, simple).
+- Uses Google AI Gemini 1.5 Flash by default (fast & capable); swap to Ollama for local.
+- Add your API key via env (e.g., `GOOGLE_GENAI_API_KEY`). */
 package main
 
 import (
@@ -17,8 +24,8 @@ import (
 var (
 	g         *genkit.Genkit
 	modelName = "googleai/gemini-1.5-flash" // or "ollama/llama3.1" etc.
-	systemPrompt = `...paste the full improved prompt from above...`
 )
+
 
 type Message struct {
 	Role    string `json:"role"`
@@ -76,6 +83,9 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 			Content: []ai.Part{ai.NewTextPart(m.Content)},
 		})
 	}
+	var systemPrompt string
+	// load systemPrompt from file llm.txt
+	
 
 	if !hasSystem {
 		msgs = append([]ai.Message{
