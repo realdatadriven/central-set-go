@@ -82,6 +82,25 @@ CREATE TABLE IF NOT EXISTS arrow_flight_table_field (
 	FOREIGN KEY(user_id) REFERENCES users (user_id), 
 	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
+CREATE TABLE IF NOT EXISTS arrow_flight_table_scope (
+	arrow_flight_table_scope_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	arrow_flight_table_scope VARCHAR(200) NOT NULL, 
+	arrow_flight_table_scope_desc TEXT, 
+	arrow_flight_table_scope_sql TEXT NOT NULL, 
+	arrow_flight_table_id INTEGER, 
+	arrow_flight_id INTEGER, 
+	active BOOLEAN, 
+	user_id INTEGER, 
+	app_id INTEGER, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	excluded BOOLEAN, 
+	UNIQUE (arrow_flight_table_scope), 
+	FOREIGN KEY(arrow_flight_table_id) REFERENCES arrow_flight_table (arrow_flight_table_id), 
+	FOREIGN KEY(arrow_flight_id) REFERENCES arrow_flight (arrow_flight_id), 
+	FOREIGN KEY(user_id) REFERENCES users (user_id), 
+	FOREIGN KEY(app_id) REFERENCES app (app_id)
+);
 CREATE TABLE IF NOT EXISTS calendar (
 	calendar_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
 	calendar VARCHAR(100) NOT NULL, 
