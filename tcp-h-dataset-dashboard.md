@@ -21,14 +21,17 @@ limit 10
 ```sql r_region
 select * from (values ('%', 'ALL')) t ("val", "desc")
 union
-select r_name as "val", r_name as "desc"
+select distinct r_name as "val", r_name as "desc"
 from "sample.duckdb"."region"
 ```
 
 <!-- SHIP MODE -->
 ```sql l_shipmode
-select l_shipmode  as "val", l_shipmode  as "desc"
+select * from (values ('%', 'ALL')) t ("val", "desc")
+union
+select distinct l_shipmode  as "val", l_shipmode  as "desc"
 from "sample.duckdb"."lineitem"
+limit 10
 ```
 
 <Grid>
@@ -37,6 +40,7 @@ from "sample.duckdb"."lineitem"
             defaultValue={config?.moment()?.subtract(1, 'day').format('YYYY-MM-DD')}
             _class='input input-sm input-bordered'
             name=date_start
+            input_label="Reference Date"
         />
     </GridItem>
     <GridItem width='w-auto' _type='auto' _class='p-1'>
