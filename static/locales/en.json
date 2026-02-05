@@ -343,7 +343,12 @@
         "access-key-no-expires-dt": "No expiration date provided!",
         "access-key-no-user": "No user provided!",
         "readonly": "Read Only",
-        "deploy": "Deploy"
+        "deploy": "Deploy",
+        "recover_password": "Recover",
+        "email": "Email",
+        "reset_password": "Reset Password",
+        "new_password": "New Password",
+        "confirm_password": "Confirm New Password"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",

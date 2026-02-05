@@ -97,3 +97,5 @@ email-change-success: 'Email changed successfully to {{.email}}!'
 email-change-invalid-token: 'The email change token is not valid ({{.err}})!'
 email-change-token-expired: 'The email change token has expired!'
 user-incorrect-or-inactive: 'User incorrect or inactive!'
+new_pass_diff_confirm_pass: New Password and Confirm New Password must match!
+token-expired: 'The token has expired!'

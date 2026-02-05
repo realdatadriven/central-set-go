@@ -665,6 +665,7 @@ func (app *application) recover_pass(params Dict) Dict {
 // reset password, gets params with token and new_password, validates token and updates user password
 func (app *application) reset_pass(params Dict) Dict {
 	_data := Dict{}
+	//fmt.Println("reset_pass params:", params)
 	if _, ok := params["data"].(Dict); ok {
 		_data = params["data"].(Dict)
 	}
@@ -676,6 +677,34 @@ func (app *application) reset_pass(params Dict) Dict {
 	if _, ok := _data["new_password"].(string); ok {
 		newPassword = _data["new_password"].(string)
 	}
+	confirmPassword := ""
+	if _, ok := _data["confirm_password"].(string); ok {
+		confirmPassword = _data["confirm_password"].(string)
+	}
+	if newPassword != confirmPassword {
+		msg, _ := app.i18n.T("new_pass_diff_confirm_pass", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	if len(newPassword) < 8 {
+		msg, _ := app.i18n.T("password_min_length", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	hasUpper, _ := regexp.MatchString(`[A-Z]`, newPassword)
+	if !hasUpper {
+		msg, _ := app.i18n.T("pass_must_have_upper", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	hasNumber, _ := regexp.MatchString(`[0-9]`, newPassword)
+	if !hasNumber {
+		msg, _ := app.i18n.T("pass_must_have_number", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	hasSpecial, _ := regexp.MatchString(`[$&+,:;=?@#!*ªº.-]`, newPassword)
+	if !hasSpecial {
+		msg, _ := app.i18n.T("pass_must_have_special", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	//fmt.Println(tokenStr)
 	if tokenStr == "" || newPassword == "" {
 		msg, _ := app.i18n.T("token-and-new-pass-required", Dict{})
 		return Dict{
