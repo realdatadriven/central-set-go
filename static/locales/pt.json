@@ -341,7 +341,8 @@
         "email": "Email",
         "reset_password": "Resetar Password",
         "new_password": "Nova Password",
-        "confirm_password": "Confirmar Nova Password"
+        "confirm_password": "Confirmar Nova Password",
+        "confirm_pass": "Confirmar Password"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",
