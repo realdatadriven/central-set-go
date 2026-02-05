@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"time"
 
 	"github.com/realdatadriven/etlx"
 )
@@ -34,10 +33,10 @@ func (app *application) CrudRunQuery(params map[string]any, query string, db etl
 			query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
 		}
 	}
-	query_started_at := time.Now()
-	fmt.Println("final query:", query, "started_at:", query_started_at)
+	//query_started_at := time.Now()
+	//fmt.Println("final query:", query, "started_at:", query_started_at)
 	results, cols, _, err := db.QueryMultiRowsWithCols(query, []any{}...)
-	fmt.Println("final query:", query, "started_at:", query_started_at, "ended_at:", time.Now(), "duration:", time.Since(query_started_at).Seconds())
+	//fmt.Println("final query:", query, "started_at:", query_started_at, "ended_at:", time.Now(), "duration:", time.Since(query_started_at).Seconds())
 	if err != nil {
 		return map[string]any{
 			"success": false,
