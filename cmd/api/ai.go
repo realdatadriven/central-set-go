@@ -10,7 +10,6 @@ Here is a complete, production-ready Go server example using `net/http` and `htt
 - Uses Google AI Gemini 1.5 Flash by default (fast & capable); swap to Ollama for local.
 - Add your API key via env (e.g., `GOOGLE_GENAI_API_KEY`).
 
-package main
 
 import (
 	"context"
