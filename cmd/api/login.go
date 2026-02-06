@@ -168,10 +168,20 @@ func (app *application) dynamic_login(params Dict) Dict {
 		username = _data[username_field].(string)
 	} else if _, ok := _data[email_field].(string); ok {
 		username = _data[email_field].(string)
+	} else if _, ok := _data["username"].(string); ok {
+		username = _data["username"].(string)
+	} else if _, ok := _data["user"].(string); ok {
+		username = _data["user"].(string)
+	} else if _, ok := _data["email"].(string); ok {
+		username = _data["email"].(string)
 	}
 	pass := ""
 	if _, ok := _data[password_field].(string); ok {
 		pass = _data[password_field].(string)
+	} else if _, ok := _data["password"].(string); ok {
+		pass = _data["password"].(string)
+	} else if _, ok := _data["pass"].(string); ok {
+		pass = _data["pass"].(string)
 	}
 	var user Dict
 	//var found bool
