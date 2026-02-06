@@ -104,6 +104,17 @@ func (app *application) dynamic_login(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
+	user_id_field := "user_id"
+	if _, ok := params["user_id_field"].(string); ok {
+		user_id_field = params["user_id_field"].(string)
+	}
+	if user_id_field == "" {
+		msg, _ := app.i18n.T("user-id-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
 	username_field := "username"
 	if _, ok := params["username_field"].(string); ok {
 		username_field = params["username_field"].(string)
@@ -198,6 +209,13 @@ func (app *application) dynamic_login(params Dict) Dict {
 		}
 	}
 	delete(user, password_field)
+	user["user_id"] = user[user_id_field]
+	user["username"] = user[username_field]
+	user["email"] = user[email_field]
+	user["role_id"] = params["dyn_login_role_id"]
+	user["is_dynamic"] = true
+	delete(user, "created_at")
+	delete(user, "updated_at")
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {

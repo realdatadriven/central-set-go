@@ -242,6 +242,8 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		// dynamic_login
 		case "dynamic_login", "dynamic_auth", "dynamic_authenticate":
 			params["login_table"] = os.Getenv("DYN_LOGIN_TABLE")
+			params["user_id_field"] = os.Getenv("DYN_LOGIN_USER_ID_FIELD")
+			params["dyn_login_role_id"] = os.Getenv("DYN_LOGIN_ROLE_ID")
 			params["username_field"] = os.Getenv("DYN_LOGIN_USERNAME_FIELD")
 			params["email_field"] = os.Getenv("DYN_LOGIN_EMAIL_FIELD")
 			params["password_field"] = os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
