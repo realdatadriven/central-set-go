@@ -927,3 +927,11 @@ func (app *application) oauth_login(params Dict) Dict {
 		"msg":     msg,
 	}
 }
+
+func (app *application) oauth_signup(params Dict) Dict
+	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
+	return Dict{
+		"success": false,
+		"msg":     msg,
+	}
+}
