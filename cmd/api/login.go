@@ -223,6 +223,11 @@ func (app *application) dynamic_login(params Dict) Dict {
 	user["username"] = user[username_field]
 	user["email"] = user[email_field]
 	user["role_id"] = params["dyn_login_role_id"]
+	user["login_table"] = login_table
+	user["user_id_field"] = user_id_field
+	user["username_field"] = username_field
+	user["password_field"] = password_field
+	user["email_field"] = email_field
 	user["is_dynamic"] = true
 	delete(user, "created_at")
 	delete(user, "updated_at")
