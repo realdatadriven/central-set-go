@@ -264,10 +264,128 @@ func (app *application) dynamic_login(params Dict) Dict {
 }
 
 // signup function, gets username/email and password from params, creates a new user
-func (app *application) signup(params Dict) Dict {
-	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
+func (app *application) dynamic_signup(params Dict) Dict {
+	login_table := "users"
+	if _, ok := params["login_table"].(string); ok {
+		login_table = params["login_table"].(string)
+	}
+	if login_table == "" {
+		msg, _ := app.i18n.T("login-table-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	user_id_field := "user_id"
+	if _, ok := params["user_id_field"].(string); ok {
+		user_id_field = params["user_id_field"].(string)
+	}
+	if user_id_field == "" {
+		msg, _ := app.i18n.T("user-id-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	username_field := "username"
+	if _, ok := params["username_field"].(string); ok {
+		username_field = params["username_field"].(string)
+	}
+	if username_field == "" {
+		msg, _ := app.i18n.T("username-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	password_field := "password"
+	if _, ok := params["password_field"].(string); ok {
+		password_field = params["password_field"].(string)
+	}
+	if password_field == "" {
+		msg, _ := app.i18n.T("password-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	email_field := "email"
+	if _, ok := params["email_field"].(string); ok {
+		email_field = params["email_field"].(string)
+	}
+	if email_field == "" {
+		msg, _ := app.i18n.T("email-field-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	active_field := "active"
+	if _, ok := params["active_field"].(string); ok {
+		active_field = params["active_field"].(string)
+	}
+	_data := Dict{}
+	if _, ok := params["data"]; ok {
+		_data = params["data"].(Dict)
+	}
+	if app.IsEmpty(_data) {
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	username := ""
+	if _, ok := _data[username_field].(string); ok {
+		username = _data[username_field].(string)
+	} else if _, ok := _data[email_field].(string); ok {
+
+		username = _data[email_field].(string)
+	} else if _, ok := _data["username"].(string); ok {
+		username = _data["username"].(string)
+	} else if _, ok := _data["user"].(string); ok {
+		username = _data["user"].(string)
+	} else if _, ok := _data["email"].(string); ok {
+		username = _data["email"].(string)
+	}
+	email := ""	
+	if _, ok := _data[email_field].(string); ok {	
+		email = _data[email_field].(string)
+	} else if _, ok := _data["email"].(string); ok {	
+		email = _data["email"].(string)
+	}
+	pass := ""
+	if _, ok := _data[password_field].(string); ok {
+		pass = _data[password_field].(string)
+	} else if _, ok := _data["password"].(string); ok {
+		pass = _data["password"].(string)
+	} else if _, ok := _data["pass"].(string); ok {	
+		pass = _data["pass"].(string)	
+	}
+	query := `INSERT INTO %s (%s, %s, %s) VALUES (:username, :email, :password)`
+	password_hashed, err := password.Hash(newPassword)
+	if err != nil {
+		msg, _ := app.i18n.T("password-hash-error", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	data := Dict{}
+	data[username_field] = username
+	data[email_field] = email
+	data[password_field] = password_hashed
+	data[active_field] = true
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
+	_, err = app.db.ExecuteNamedQuery(query, data)
+	if err != nil {
+		msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	msg, _ := app.i18n.T("reset-pass-success", Dict{})
 	return Dict{
-		"success": false,
+		"success": true,
 		"msg":     msg,
 	}
 }
