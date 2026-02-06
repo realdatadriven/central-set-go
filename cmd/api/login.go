@@ -348,10 +348,10 @@ func (app *application) dynamic_signup(params Dict) Dict {
 	} else if _, ok := _data["email"].(string); ok {
 		username = _data["email"].(string)
 	}
-	email := ""	
-	if _, ok := _data[email_field].(string); ok {	
+	email := ""
+	if _, ok := _data[email_field].(string); ok {
 		email = _data[email_field].(string)
-	} else if _, ok := _data["email"].(string); ok {	
+	} else if _, ok := _data["email"].(string); ok {
 		email = _data["email"].(string)
 	}
 	pass := ""
@@ -359,11 +359,11 @@ func (app *application) dynamic_signup(params Dict) Dict {
 		pass = _data[password_field].(string)
 	} else if _, ok := _data["password"].(string); ok {
 		pass = _data["password"].(string)
-	} else if _, ok := _data["pass"].(string); ok {	
-		pass = _data["pass"].(string)	
+	} else if _, ok := _data["pass"].(string); ok {
+		pass = _data["pass"].(string)
 	}
 	query := `INSERT INTO %s (%s, %s, %s) VALUES (:username, :email, :password)`
-	password_hashed, err := password.Hash(newPassword)
+	password_hashed, err := password.Hash(pass)
 	if err != nil {
 		msg, _ := app.i18n.T("password-hash-error", Dict{})
 		return Dict{"success": false, "msg": msg}
@@ -575,7 +575,9 @@ func (app *application) alter_pass(params Dict) Dict {
 			return Dict{"success": false, "msg": msg}
 		}
 		query := `UPDATE users 
-			SET password = :password 
+			SET password = :password
+				, alter_pass_nxt_login = false
+				, updated_at = :updated_at
 		WHERE email = :username
 			OR username = :username`
 		pass, err := password.Hash(newPassword)
@@ -591,7 +593,7 @@ func (app *application) alter_pass(params Dict) Dict {
 		} else if _, ok := _data["u"].(string); ok {
 			username = _data["u"].(string)
 		}
-		_data = Dict{"username": username, "password": pass}
+		_data = Dict{"username": username, "password": pass, "updated_at": time.Now()}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
 			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
@@ -896,6 +898,8 @@ func (app *application) reset_pass(params Dict) Dict {
 	}
 	query := `UPDATE users 
 			SET password = :password 
+				, alter_pass_nxt_login = false
+				, updated_at = :updated_at
 		WHERE email = :username
 			OR username = :username`
 	pass, err := password.Hash(newPassword)
@@ -903,7 +907,7 @@ func (app *application) reset_pass(params Dict) Dict {
 		msg, _ := app.i18n.T("password-hash-error", Dict{})
 		return Dict{"success": false, "msg": msg}
 	}
-	data := Dict{"username": user["username"], "password": pass}
+	data := Dict{"username": user["username"], "password": pass, "updated_at": time.Now()}
 	_, err = app.db.ExecuteNamedQuery(query, data)
 	if err != nil {
 		msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
@@ -928,7 +932,7 @@ func (app *application) oauth_login(params Dict) Dict {
 	}
 }
 
-func (app *application) oauth_signup(params Dict) Dict
+func (app *application) oauth_signup(params Dict) Dict {
 	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
 	return Dict{
 		"success": false,

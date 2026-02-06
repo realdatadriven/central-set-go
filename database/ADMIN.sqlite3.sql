@@ -902,7 +902,7 @@ CREATE TABLE IF NOT EXISTS users (
 	active BOOLEAN, 
 	created_at DATETIME, 
 	updated_at DATETIME, 
-	excluded BOOLEAN, 
+	excluded BOOLEAN, alter_pass_nxt_login boolean null, 
 	UNIQUE (username), 
 	UNIQUE (email), 
 	UNIQUE (phone), 
