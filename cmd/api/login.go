@@ -810,8 +810,102 @@ func (app *application) recover_pass(params Dict) Dict {
 	}
 	msg, _ := app.i18n.T("recover-pass-email-sent", Dict{"email": email})
 	return Dict{
-		"success": true,
-		"msg":     msg,
+		"success":      true,
+		"msg":          msg,
+		"recover_pass": true,
+	}
+}
+
+func (app *application) confirm_emmail(params Dict) Dict {
+	_data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		_data = params["data"].(Dict)
+	}
+	email := ""
+	if _, ok := _data["email"].(string); ok {
+		email = _data["email"].(string)
+	}
+	if email == "" {
+		msg, _ := app.i18n.T("email-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	user, found, err := app.db.GetUserByNameOrEmail(email)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	if !found || len(user) == 0 {
+		msg, _ := app.i18n.T("user-not-found", Dict{"email": email})
+		fmt.Println("USER NOT FOUND!", msg, email)
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	delete(user, "password")
+	delete(user, "created_at")
+	delete(user, "updated_at")
+	delete(user, "phone")
+	delete(user, "timezone")
+	delete(user, "attach_profile_pic")
+	var claims jwt.Claims
+	json_user, err := json.Marshal(user)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	claims.Subject = string(json_user)
+	expiry := time.Now().Add(1 * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now())
+	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Expires = jwt.NewNumericTime(expiry)
+	claims.Issuer = app.config.baseURL
+	claims.Audiences = []string{app.config.frontend_url}
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	resetLink := fmt.Sprintf("%s/confirm-email?token=%s", app.config.frontend_url, string(jwtBytes))
+	_etlx := etlx.ETLX{}
+	bodyTemplate := `
+		<p>Hi {{.first_name}},</p>
+		<p>You have requested to confirm your email. Please click the link below to confirm your email:</p>
+		<p><a href="{{.reset_link}}">{{.reset_link}}</a></p>
+		<p>This link will expire in 1 hour.</p>
+		<p>If you did not request a user account, please ignore this email.</p>
+		<p>Best regards,<br/>The Team</p>
+	`
+	emailParams := Dict{
+		"to":      []any{user["email"]},
+		"subject": "Confirm Email",
+		"body":    bodyTemplate,
+		"data": Dict{
+			"first_name": user["first_name"],
+			"reset_link": resetLink,
+		},
+	}
+	err = _etlx.SendEmail(emailParams)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	msg, _ := app.i18n.T("confirm-email-sent", Dict{"email": email})
+	return Dict{
+		"success":       true,
+		"msg":           msg,
+		"confirm_email": true,
 	}
 }
 

@@ -241,14 +241,21 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			data = app._login(params)
 		// dynamic_login
 		case "dynamic_login", "dynamic_auth", "dynamic_authenticate":
-			params["login_table"] = os.Getenv("DYN_LOGIN_TABLE")
-			params["user_id_field"] = os.Getenv("DYN_LOGIN_USER_ID_FIELD")
-			params["dyn_login_role_id"] = os.Getenv("DYN_LOGIN_ROLE_ID")
-			params["username_field"] = os.Getenv("DYN_LOGIN_USERNAME_FIELD")
-			params["email_field"] = os.Getenv("DYN_LOGIN_EMAIL_FIELD")
-			params["password_field"] = os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
-			params["active_field"] = os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
-			data = app.dynamic_login(params)		
+			if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" {
+				data = Dict{
+					"success": false,
+					"msg":     "Dynamic login is not allowed, contatt the admin to enable it if you think it is needed for your use case!",
+				}
+			} else {
+				params["login_table"] = os.Getenv("DYN_LOGIN_TABLE")
+				params["user_id_field"] = os.Getenv("DYN_LOGIN_USER_ID_FIELD")
+				params["dyn_login_role_id"] = os.Getenv("DYN_LOGIN_ROLE_ID")
+				params["username_field"] = os.Getenv("DYN_LOGIN_USERNAME_FIELD")
+				params["email_field"] = os.Getenv("DYN_LOGIN_EMAIL_FIELD")
+				params["password_field"] = os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
+				params["active_field"] = os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
+				data = app.dynamic_login(params)
+			}
 		case "signup", "sign_up", "dynamic_signup", "dyn_signup", "dynamic_sign_up", "dynamic_register", "dyn_register", "dynamic_registration":
 			params["login_table"] = os.Getenv("DYN_LOGIN_TABLE")
 			params["user_id_field"] = os.Getenv("DYN_LOGIN_USER_ID_FIELD")

@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -10,6 +12,16 @@ import (
 
 	"github.com/realdatadriven/etlx"
 )
+
+//const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func (app *application) randomString(length int) string {
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
 
 func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInterface) Dict {
 	var user_id int
@@ -381,6 +393,91 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			}
 		}
 		id = _id
+	}
+	if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" {
+		login_table := os.Getenv("DYN_LOGIN_TABLE")
+		if login_table == table {
+			user_id_field := os.Getenv("DYN_LOGIN_USER_ID_FIELD")
+			dyn_login_role_id := os.Getenv("DYN_LOGIN_ROLE_ID")
+			username_field := os.Getenv("DYN_LOGIN_USERNAME_FIELD")
+			email_field := os.Getenv("DYN_LOGIN_EMAIL_FIELD")
+			//password_field := os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
+			active_field := os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
+			login_table = params["login_table"].(string)
+			if login_table == "" {
+				msg, _ := app.i18n.T("login-table-required", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+			if user_id_field == "" {
+				msg, _ := app.i18n.T("user-id-field-required", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+			if username_field == "" {
+				msg, _ := app.i18n.T("username-field-required", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+			/*if password_field == "" {
+				msg, _ := app.i18n.T("password-field-required", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}*/
+			if email_field == "" {
+				msg, _ := app.i18n.T("email-field-required", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+			if dyn_login_role_id == "" {
+				msg, _ := app.i18n.T("role-id-required", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+			// generate random password
+			pass, err := password.Hash(app.randomString(8))
+			if err != nil {
+				msg, _ := app.i18n.T("password-hash-error", Dict{})
+				return Dict{"success": false, "msg": msg}
+			}
+			_data_user := Dict{
+				"username":   _data[username_field],
+				"first_name": _data[username_field],
+				"last_name":  _data[username_field],
+				"email":      _data[email_field],
+				"role_id":    dyn_login_role_id,
+				"password":   pass,
+				"active":     _data[active_field],
+				"created_at": time.Now(),
+				"updated_at": time.Now(),
+				"excluded":   false,
+			}
+			query_user := fmt.Sprintf(`INSERT INTO "users" ("username", "first_name", "last_name", "email", "role_id", "password", "active", "created_at", "updated_at", "excluded") 
+			VALUES (:username, :first_name, :last_name, :email, :role_id, :password, :active, :created_at, :updated_at, :excluded)`)
+			_, err = app.db.ExecuteNamedQuery(query_user, _data_user)
+			if err != nil {
+				fmt.Println("Error creating user for login table mapping:", table, err)
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error creating user for login: %s", err),
+				}
+			} else {
+				params["data"] = _data_user
+				return app.confirm_emmail(params)
+			}
+		}
 	}
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
