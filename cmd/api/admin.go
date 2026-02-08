@@ -635,10 +635,10 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		}
 		// fmt.Println(translate_table_field)
 		// GET THE TABLES DATA IN table_schema
-		query = `SELECT * FROM table_schema WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
+		query = `SELECT * FROM table_schema WHERE db = ? AND "table" IN (?) AND excluded = FALSE order by field_order`
 		queryParams = []any{_database}
 		if allTables {
-			query = `SELECT * FROM table_schema WHERE db = ? AND excluded = FALSE`
+			query = `SELECT * FROM table_schema WHERE db = ? AND excluded = FALSE order by field_order`
 		} else {
 			queryParams = append(queryParams, tables)
 		}
