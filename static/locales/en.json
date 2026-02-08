@@ -348,8 +348,8 @@
         "email": "Email",
         "reset_password": "Reset Password",
         "new_password": "New Password",
-        "confirm_password": "Confirm New Password",
-        "confirm_pass": "Confirm Password"
+        "confirm_pass": "Confirm Password",
+        "new_pass_again_match": "New Password and Confirm New Password must match"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",

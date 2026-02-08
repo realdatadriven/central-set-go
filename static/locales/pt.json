@@ -340,9 +340,9 @@
         "recover_password": "Recuperar Password",
         "email": "Email",
         "reset_password": "Resetar Password",
+        "confirm_pass": "Confirmar Password",
         "new_password": "Nova Password",
-        "confirm_password": "Confirmar Nova Password",
-        "confirm_pass": "Confirmar Password"
+        "new_pass_again_match": "Nova Password e Confirmar Nova Password devem ser iguais!"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",
