@@ -560,6 +560,13 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				app.PaymentInit()
 				data = app.CreateOrSyncCustomer(params)
 			}
+		} else if app.contains([]any{"syncsub", "syncsubscription", "sync_subs", "sync_subscription"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				app.PaymentInit()
+				data = app.CreateOrUpdateSubscription(params)
+			}
 		} else {
 			data = Dict{
 				"success": false,
