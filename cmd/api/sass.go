@@ -77,9 +77,9 @@ func (app *application) RunDeploy(params Dict) Dict {
 		return Dict{"success": false, "msg": msg}
 	}
 	action := params["data"].(Dict)["action"].(string)
-	sql := `select * from "deployment" where "deployment_id" = ? and "active" = true and "excluded" = false`
-	// fmt.Println(sql, _data["deployment_id"])
-	deployment, err := app.GetRowByFilter(sql, params, []any{_data["deployment_id"]})
+	sql := `select * from "plan" where "plan_id" = ? and "active" = true and "excluded" = false`
+	// fmt.Println(sql, _data["plan_id"])
+	plan, err := app.GetRowByFilter(sql, params, []any{_data["plan_id"]})
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -102,15 +102,15 @@ func (app *application) RunDeploy(params Dict) Dict {
 		tenantEnvKeyPair[v["env_name"].(string)] = v["env_value"].(string)
 	}
 	//fmt.Println(tenant, tenantEnv)
-	if _, ok := deployment["terraform_template"].(string); !ok {
-		msg, _ := app.i18n.T("unable-to-match-deployment-id", Dict{})
+	if _, ok := plan["terraform_template"].(string); !ok {
+		msg, _ := app.i18n.T("unable-to-match-plan-id", Dict{})
 		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	}
-	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "envKV": tenantEnvKeyPair, "deployment": deployment, "tenant": tenant, "data": _data}
-	parsedTmpl, err := app.RenderTemplate(deployment["terraform_template"].(string), _tmpl_data)
+	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "envKV": tenantEnvKeyPair, "plan": plan, "tenant": tenant, "data": _data}
+	parsedTmpl, err := app.RenderTemplate(plan["terraform_template"].(string), _tmpl_data)
 	if err != nil {
 		return Dict{
 			"success": false,

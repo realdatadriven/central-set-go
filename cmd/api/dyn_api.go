@@ -544,6 +544,21 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
+	case "pay", "payment", "stripe":
+		if app.contains([]any{"syncprod", "syncproduct", "sync_prod", "sync_product"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				app.PaymentInit()
+				// fmt.Println("SyncOrCreateProduct:", params["data"])
+				data = app.SyncOrCreateProduct(params)
+			}
+		} else {
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
 	default:
 		data = Dict{
 			"success": false,

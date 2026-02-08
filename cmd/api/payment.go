@@ -25,26 +25,39 @@ import (
 func init() {
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 	if stripe.Key == "" {
-		//log.Fatal("STRIPE_SECRET_KEY not set")
+		fmt.Println("STRIPE_SECRET_KEY not set")
+	} else {
+		fmt.Println("Stripe initialized with secret key", stripe.Key)
+	}
+}
+
+func (app *application) PaymentInit() {
+	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
+	if stripe.Key == "" {
+		fmt.Println("STRIPE_SECRET_KEY not set")
+	} else {
+		fmt.Println("Stripe initialized with secret key", stripe.Key)
 	}
 }
 
 // ------------------- DB Update Placeholders -------------------
 // Replace these with your actual DB operations (e.g., SQL UPDATE or GORM Save)
 
-func updateProductStripeIDs(internalProductID string, stripeProductID, stripeMonthlyPriceID, stripeAnnualPriceID string) error {
-	// e.g., UPDATE products SET stripe_product_id = ?, monthly_price_id = ?, annual_price_id = ? WHERE id = ?
-	log.Printf("DB: Updated product %s with Stripe IDs: prod=%s, monthly=%s, annual=%s", internalProductID, stripeProductID, stripeMonthlyPriceID, stripeAnnualPriceID)
+func (app *application) updateProductStripeIDs(internalProductID string, stripeProductID, stripeMonthlyPriceID, stripeAnnualPriceID string) error {
+	// e.g., UPDATE products SET payment_product_id = ?, monthly_price_id = ?, annual_price_id = ? WHERE id = ?
+	//query := "UPDATE plan SET payment_product_id = ? WHERE plan_id = ?"
+	//newDB, err := app.GetDBNameFromParams(params)
+	//log.Printf("DB: Updated product %s with Stripe IDs: prod=%s, monthly=%s, annual=%s", internalProductID, stripeProductID, stripeMonthlyPriceID, stripeAnnualPriceID)
 	return nil // return real error
 }
 
-func updateTenantStripeCustomerID(tenantID, stripeCustomerID string) error {
+func (app *application) updateTenantStripeCustomerID(tenantID, stripeCustomerID string) error {
 	// e.g., UPDATE tenants SET stripe_customer_id = ? WHERE tenant_id = ?
 	log.Printf("DB: Updated tenant %s with stripe_customer_id=%s", tenantID, stripeCustomerID)
 	return nil
 }
 
-func updateSubscriptionStripeIDs(subInternalID, stripeSubID, stripePriceID string, status string) error {
+func (app *application) updateSubscriptionStripeIDs(subInternalID, stripeSubID, stripePriceID string, status string) error {
 	// e.g., UPDATE subscriptions SET stripe_subscription_id = ?, stripe_price_id = ?, status = ? WHERE id = ?
 	log.Printf("DB: Updated subscription %s: subID=%s, priceID=%s, status=%s", subInternalID, stripeSubID, stripePriceID, status)
 	return nil
@@ -55,15 +68,32 @@ func updateSubscriptionStripeIDs(subInternalID, stripeSubID, stripePriceID strin
 // SyncOrCreateProduct takes map data from your products + subscription tables
 // Returns created/updated product and prices; updates DB with Stripe IDs
 // SyncOrCreateProduct — idempotent version
-func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price, error) {
+func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	// Extract identifiers from your DB
-	internalID, _ := data["product_id"].(string)
-	stripeProductID, _ := data["stripe_product_id"].(string) // already saved?
-
-	name, _ := data["name"].(string)
-	monthlyAmount, _ := data["monthly_amount"].(int64)
-	annualAmount, _ := data["annual_amount"].(int64)
-	currency, _ := data["currency"].(string)
+	data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		data = params["data"].(Dict)
+	}
+	internalID, _ := data["plan_id"].(string)
+	stripeProductID, _ := data["payment_product_id"].(string)                            // already saved?
+	params["data"].(Dict)["table"] = "price"                                             // ensure we know which table to update
+	params["data"].(Dict)["filters"] = []Dict{{"field": "plan_id", "value": internalID}} // for DB update
+	_prices := app.read(params)                                                          // read existing data for price updates if needed
+	if _, ok := _prices["success"].(bool); !ok {
+		return _prices
+	}
+	priceData := Dict{}
+	if _, ok := _prices["data"].([]Dict); !ok {
+		return Dict{"success": false, "msg": "No price data found"}
+	} else if len(_prices["data"].([]Dict)) == 0 {
+		return Dict{"success": false, "msg": "Empty price data"}
+	} else {
+		priceData = _prices["data"].([]Dict)[0]
+	}
+	name, _ := data["plan"].(string)
+	monthlyAmount, _ := priceData["monthly_amount"].(float64)
+	annualAmount, _ := priceData["annual_amount"].(float64)
+	currency, _ := priceData["currency"].(string)
 	if currency == "" {
 		currency = "usd"
 	}
@@ -71,7 +101,7 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 	var prod *stripe.Product
 	var err error
 
-	// 1. If we already have stripe_product_id → retrieve it
+	// 1. If we already have payment_product_id → retrieve it
 	if stripeProductID != "" {
 		prod, err = product.Get(stripeProductID, nil)
 		if err != nil {
@@ -85,27 +115,42 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 
 	// 2. Create if not found
 	if stripeProductID == "" {
-		params := &stripe.ProductParams{
+		sparams := &stripe.ProductParams{
 			Name:     stripe.String(name),
 			Metadata: map[string]string{"internal_id": internalID},
 		}
-		prod, err = product.New(params)
+		prod, err = product.New(sparams)
 		if err != nil {
-			return nil, nil, fmt.Errorf("failed to create product: %w", err)
+			return Dict{"success": false, "msg": fmt.Errorf("failed to create product: %w", err)}
 		}
 		stripeProductID = prod.ID
-
-		// Immediately save to DB
-		if err := updateProductStripeIDs(internalID, stripeProductID, "", ""); err != nil {
-			log.Printf("Warning: failed to save product ID to DB: %v", err)
+		params["data"].(Dict)["table"] = "plan" // update params for DB save
+		_data := data
+		payment_product_metadata, err := json.Marshal(prod)
+		if err != nil {
+			return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
 		}
+		_data["payment_product_id"] = stripeProductID
+		_data["payment_product_metadata"] = payment_product_metadata
+		_data["payment_product_last_sync_at"] = time.Now() //.Format(time.RFC3339)
+		params["data"].(Dict)["data"] = _data
+		res := app.create_update(params)
+		if _, ok := res["success"].(bool); ok {
+			return res
+		}
+	} else {
+		prod.Name = name // Optional: update name if changed
+		prod, err = product.Update(stripeProductID, &stripe.ProductParams{
+			Name: stripe.String(name),
+		})
+		stripeProductID = prod.ID
 	}
 
 	// Now handle prices (we'll check existing prices later if needed)
 	var prices []*stripe.Price
 
 	// Helper to create or get price
-	createOrGetPrice := func(interval string, amount int64) (*stripe.Price, error) {
+	createOrGetPrice := func(interval string, amount float64) (*stripe.Price, error) {
 		if amount <= 0 {
 			return nil, nil
 		}
@@ -113,15 +158,15 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 		// In real world, you might also store stripe_price_monthly_id etc. in DB
 		// For simplicity here we create new if not matching — in production you'd list prices
 
-		params := &stripe.PriceParams{
-			Product:    stripe.String(prod.ID),
-			Currency:   stripe.String(currency),
-			UnitAmount: stripe.Int64(amount),
+		sparams := &stripe.PriceParams{
+			Product:           stripe.String(prod.ID),
+			Currency:          stripe.String(currency),
+			UnitAmountDecimal: stripe.Float64(amount),
 			Recurring: &stripe.PriceRecurringParams{
 				Interval: stripe.String(interval),
 			},
 		}
-		p, err := price.New(params)
+		p, err := price.New(sparams)
 		if err != nil {
 			return nil, err
 		}
@@ -130,7 +175,7 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 
 	monthly, err := createOrGetPrice("month", monthlyAmount)
 	if err != nil {
-		return nil, nil, err
+		return Dict{"success": false, "msg": fmt.Errorf("failed to create/get monthly price: %w", err)}
 	}
 	if monthly != nil {
 		prices = append(prices, monthly)
@@ -138,7 +183,7 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 
 	annual, err := createOrGetPrice("year", annualAmount)
 	if err != nil {
-		return nil, nil, err
+		return Dict{"success": false, "msg": fmt.Errorf("failed to create/get annual price: %w", err)}
 	}
 	if annual != nil {
 		prices = append(prices, annual)
@@ -152,15 +197,31 @@ func SyncOrCreateProduct(data map[string]any) (*stripe.Product, []*stripe.Price,
 	if len(prices) > 1 {
 		annualID = prices[1].ID
 	}
-	if err := updateProductStripeIDs(internalID, stripeProductID, monthlyID, annualID); err != nil {
-		log.Printf("Warning: failed to save price IDs: %v", err)
+	params["data"].(Dict)["table"] = "price" // update params for DB save
+	_data := data
+	payment_price_metadata, err := json.Marshal(prices)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
 	}
+	_data["payment_price_id"] = Dict{"monthly": monthlyID, "annual": annualID}
+	_data["payment_monthly_id"] = monthlyID
+	_data["payment_annual_id"] = annualID
+	_data["payment_price_metadata"] = payment_price_metadata
+	_data["payment_price_last_sync_at"] = time.Now() //.Format(time.RFC3339)
+	params["data"].(Dict)["data"] = _data
+	res := app.create_update(params)
+	if _, ok := res["success"].(bool); ok {
+		return res
+	}
+	//if err := app.updateProductStripeIDs(internalID, stripeProductID, monthlyID, annualID); err != nil {
+	//	log.Printf("Warning: failed to save price IDs: %v", err)
+	//}
 
-	return prod, prices, nil
+	return Dict{"success": true, "msg": "Product and prices created/updated", "product": prod, "prices": prices}
 }
 
 // CreateOrSyncCustomer
-func CreateOrSyncCustomer(data map[string]any) (*stripe.Customer, error) {
+func (app *application) CreateOrSyncCustomer(data map[string]any) (*stripe.Customer, error) {
 	tenantID, _ := data["tenant_id"].(string)
 	stripeCustomerID, _ := data["stripe_customer_id"].(string) // already saved?
 	name, _ := data["name"].(string)
@@ -206,7 +267,7 @@ func CreateOrSyncCustomer(data map[string]any) (*stripe.Customer, error) {
 	}
 
 	// Save to DB
-	if err := updateTenantStripeCustomerID(tenantID, cust.ID); err != nil {
+	if err := app.updateTenantStripeCustomerID(tenantID, cust.ID); err != nil {
 		log.Printf("Warning: failed to save customer ID: %v", err)
 	}
 
@@ -215,7 +276,7 @@ func CreateOrSyncCustomer(data map[string]any) (*stripe.Customer, error) {
 
 // CreateOrUpdateSubscription
 // data should include tenant_id (or stripe_customer_id), price_id (Stripe or internal), etc.
-func CreateOrUpdateSubscription(data map[string]any) (*stripe.Subscription, error) {
+func (app *application) CreateOrUpdateSubscription(data map[string]any) (*stripe.Subscription, error) {
 	//tenantID, _ := data["tenant_id"].(string)
 	stripeCustomerID, _ := data["stripe_customer_id"].(string)
 	stripePriceID, _ := data["stripe_price_id"].(string)
@@ -273,7 +334,7 @@ func CreateOrUpdateSubscription(data map[string]any) (*stripe.Subscription, erro
 	}
 
 	// 3. Save to DB
-	if err := updateSubscriptionStripeIDs(subInternalID, sub.ID, stripePriceID, string(sub.Status)); err != nil {
+	if err := app.updateSubscriptionStripeIDs(subInternalID, sub.ID, stripePriceID, string(sub.Status)); err != nil {
 		log.Printf("Warning: failed to save subscription ID: %v", err)
 	}
 
@@ -282,7 +343,7 @@ func CreateOrUpdateSubscription(data map[string]any) (*stripe.Subscription, erro
 
 // ------------------- Webhook & Event Processing -------------------
 
-func processStripeEvent(evt *stripe.Event) error {
+func (app *application) processStripeEvent(evt *stripe.Event) error {
 	switch evt.Type {
 	case "invoice.paid":
 		var inv stripe.Invoice
@@ -315,7 +376,7 @@ func processStripeEvent(evt *stripe.Event) error {
 	return nil
 }
 
-func WebhookHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) WebhookHandler(w http.ResponseWriter, r *http.Request) {
 	const MaxBody = 65536
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBody)
 	payload, err := io.ReadAll(r.Body)
@@ -333,7 +394,7 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := processStripeEvent(&evt); err != nil {
+	if err := app.processStripeEvent(&evt); err != nil {
 		log.Printf("Event processing error: %v", err)
 		http.Error(w, "Processing error", http.StatusInternalServerError)
 		return
@@ -344,7 +405,7 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------- Cron Reconciliation (Regular Checks) -------------------
 
-func ReconcileRecentIssues() error {
+func (app *application) ReconcileRecentIssues() error {
 	log.Println("Running Stripe reconciliation...")
 
 	// Example: Check for past_due or unpaid subscriptions
@@ -402,7 +463,7 @@ type FuturePayments struct {
 // ListFuturePayments returns a sorted list of expected future charges for the next nMonths
 // includeTrialing: count trials that will start billing soon
 // You can later enhance with customer/tenant name lookup from your DB using metadata or stored stripe_customer_id
-func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, error) {
+func (app *application) ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, error) {
 	if nMonths < 1 || nMonths > 36 {
 		return nil, fmt.Errorf("nMonths should be 1–36")
 	}
@@ -500,7 +561,7 @@ func ListFuturePayments(nMonths int, includeTrialing bool) (*FuturePayments, err
 
 // ReportCloudUsage - Reports consumption to Stripe Meter for variable billing
 // data map example: {"stripe_customer_id": "cus_...", "meter_event_name": "cloud_compute_hours", "value": 150, "timestamp": unixTime, "description": "VM usage March"}
-func ReportCloudUsage(data map[string]any) error {
+func (app *application) ReportCloudUsage(data map[string]any) error {
 	customerID, ok := data["stripe_customer_id"].(string)
 	if !ok || customerID == "" {
 		return fmt.Errorf("stripe_customer_id required")
@@ -541,7 +602,7 @@ func ReportCloudUsage(data map[string]any) error {
 
 // AddVariableInvoiceItem - Adds a monthly variable charge (e.g., cloud usage)
 // data map example: {"stripe_customer_id": "cus_...", "stripe_subscription_id": "sub_...", "amount_cents": 1500, "description": "Cloud storage March: 75 GB", "currency": "usd"}
-func AddVariableInvoiceItem(data map[string]any) (*stripe.InvoiceItem, error) {
+func (app *application) AddVariableInvoiceItem(data map[string]any) (*stripe.InvoiceItem, error) {
 	customerID, _ := data["stripe_customer_id"].(string)
 	subID, _ := data["stripe_subscription_id"].(string) // optional: attach to sub's next invoice
 	amount, _ := data["amount_cents"].(int64)
@@ -583,7 +644,7 @@ func AddVariableInvoiceItem(data map[string]any) (*stripe.InvoiceItem, error) {
 //	    {"type": "compute", "enabled": true},
 //	  }
 //	}
-func AddOrUpdateResourceBilling(data map[string]any) (*stripe.Subscription, error) {
+func (app *application) AddOrUpdateResourceBilling(data map[string]any) (*stripe.Subscription, error) {
 	custID := data["stripe_customer_id"].(string)
 	subID, _ := data["stripe_subscription_id"].(string)
 
@@ -646,7 +707,7 @@ func AddOrUpdateResourceBilling(data map[string]any) (*stripe.Subscription, erro
 	return sub, nil
 }
 
-/*func main() {
+/*func (app *application) main() {
 	// HTTP routes
 	http.HandleFunc("/webhook", WebhookHandler)
 	// Add admin routes, e.g.:
