@@ -147,7 +147,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	_data["payment_product_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
 	res := app.create_update(params)
-	if _, ok := res["success"].(bool); ok {
+	if _, ok := res["success"].(bool); !ok {
 		return res
 	}
 	// Now handle prices (we'll check existing prices later if needed)
@@ -177,10 +177,11 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 				}
 				return p, nil
 			}
-			p, err = price.Update(id, sparams)
+			_, err = price.Update(id, sparams)
 			if err != nil {
 				return nil, err
 			}
+			p, _ = price.Get(id, nil)
 			return p, nil
 		} else {
 			p, err := price.New(sparams)
@@ -215,6 +216,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	params["data"].(Dict)["table"] = "price" // update params for DB save
 	_data = priceData
 	payment_price_metadata, err := json.Marshal(prices)
+	fmt.Println("PRICE: ", stripePriceMonthlyID, stripePriceAnnualID, string(payment_price_metadata), prices)
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
 	}
@@ -225,7 +227,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	_data["payment_price_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
 	res = app.create_update(params)
-	if _, ok := res["success"].(bool); ok {
+	if _, ok := res["success"].(bool); !ok {
 		return res
 	}
 	//if err := app.updateProductStripeIDs(internalID, stripeProductID, monthlyID, annualID); err != nil {
@@ -293,7 +295,7 @@ func (app *application) CreateOrSyncCustomer(params map[string]any) Dict {
 	_data["payment_tenant_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
 	res := app.create_update(params)
-	if _, ok := res["success"].(bool); ok {
+	if _, ok := res["success"].(bool); !ok {
 		return res
 	}
 	return Dict{"success": true, "msg": "Customer created", "customer": cust}
@@ -404,7 +406,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 	_data["payment_subs_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
 	res := app.create_update(params)
-	if _, ok := res["success"].(bool); ok {
+	if _, ok := res["success"].(bool); !ok {
 		return res
 	}
 	return Dict{"success": true, "msg": "Subscription created", "subscription": sub}
