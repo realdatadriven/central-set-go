@@ -129,26 +129,26 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 			return Dict{"success": false, "msg": fmt.Errorf("failed to create product: %w", err)}
 		}
 		stripeProductID = prod.ID
-		params["data"].(Dict)["table"] = "plan" // update params for DB save
-		_data := data
-		payment_product_metadata, err := json.Marshal(prod)
-		if err != nil {
-			return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
-		}
-		_data["payment_product_id"] = stripeProductID
-		_data["payment_product_metadata"] = payment_product_metadata
-		_data["payment_product_last_sync_at"] = time.Now() //.Format(time.RFC3339)
-		params["data"].(Dict)["data"] = _data
-		res := app.create_update(params)
-		if _, ok := res["success"].(bool); ok {
-			return res
-		}
 	} else {
 		prod.Name = name // Optional: update name if changed
 		prod, err = product.Update(stripeProductID, &stripe.ProductParams{
 			Name: stripe.String(name),
 		})
 		stripeProductID = prod.ID
+	}
+	params["data"].(Dict)["table"] = "plan" // update params for DB save
+	_data := data
+	payment_product_metadata, err := json.Marshal(prod)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
+	}
+	_data["payment_product_id"] = stripeProductID
+	_data["payment_product_metadata"] = string(payment_product_metadata)
+	_data["payment_product_last_sync_at"] = time.Now() //.Format(time.RFC3339)
+	params["data"].(Dict)["data"] = _data
+	res := app.create_update(params)
+	if _, ok := res["success"].(bool); ok {
+		return res
 	}
 	// Now handle prices (we'll check existing prices later if needed)
 	var prices []*stripe.Price
@@ -213,7 +213,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 		annualID = prices[1].ID
 	}
 	params["data"].(Dict)["table"] = "price" // update params for DB save
-	_data := priceData
+	_data = priceData
 	payment_price_metadata, err := json.Marshal(prices)
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
@@ -221,10 +221,10 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	_data["payment_price_id"] = Dict{"monthly": monthlyID, "annual": annualID}
 	_data["payment_monthly_id"] = monthlyID
 	_data["payment_annual_id"] = annualID
-	_data["payment_price_metadata"] = payment_price_metadata
+	_data["payment_price_metadata"] = string(payment_price_metadata)
 	_data["payment_price_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
-	res := app.create_update(params)
+	res = app.create_update(params)
 	if _, ok := res["success"].(bool); ok {
 		return res
 	}
@@ -288,7 +288,7 @@ func (app *application) CreateOrSyncCustomer(params map[string]any) Dict {
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal tenant metadata: %w", err)}
 	}
-	_data["payment_tenant_metadata"] = payment_tenant_metadata
+	_data["payment_tenant_metadata"] = string(payment_tenant_metadata)
 	_data["payment_tenant_id"] = cust.ID
 	_data["payment_tenant_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
@@ -399,7 +399,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal subscription metadata: %w", err)}
 	}
-	_data["payment_subs_metadata"] = payment_subscription_metadata
+	_data["payment_subs_metadata"] = string(payment_subscription_metadata)
 	_data["payment_subs_id"] = sub.ID
 	_data["payment_subs_last_sync_at"] = time.Now() //.Format(time.RFC3339)
 	params["data"].(Dict)["data"] = _data
