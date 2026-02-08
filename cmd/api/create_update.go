@@ -394,7 +394,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		}
 		id = _id
 	}
-	if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" {
+	if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" && crud_aciton == "create" {
 		login_table := os.Getenv("DYN_LOGIN_TABLE")
 		if login_table == table {
 			user_id_field := os.Getenv("DYN_LOGIN_USER_ID_FIELD")
@@ -403,7 +403,6 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			email_field := os.Getenv("DYN_LOGIN_EMAIL_FIELD")
 			//password_field := os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
 			active_field := os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
-			login_table = params["login_table"].(string)
 			if login_table == "" {
 				msg, _ := app.i18n.T("login-table-required", Dict{})
 				return Dict{

@@ -459,7 +459,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				tables = append(tables, params["data"].(map[string]any)["table"].(string))
 			}
 		}
-		fmt.Println("TABLES:", tables)
+		//fmt.Println("TABLES:", tables)
 		if app.IsEmpty(tables) {
 			// fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)

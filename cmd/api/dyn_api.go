@@ -553,6 +553,13 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				// fmt.Println("SyncOrCreateProduct:", params["data"])
 				data = app.SyncOrCreateProduct(params)
 			}
+		} else if app.contains([]any{"synccust", "synccustomer", "sync_cust", "sync_customer"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				app.PaymentInit()
+				data = app.CreateOrSyncCustomer(params)
+			}
 		} else {
 			data = Dict{
 				"success": false,
