@@ -112,5 +112,5 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /env/refresh", app.refreshEnv)
 
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
-	return app.compress(app.cors(app.logAccess(app.recoverPanic(app.authenticate(mux)))))
+	return app.rateLimit(app.compress(app.cors(app.logAccess(app.recoverPanic(app.authenticate(mux))))))
 }
