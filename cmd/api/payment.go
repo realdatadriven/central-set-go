@@ -310,7 +310,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 	}
 	//subInternalID, _ := data["subscription_id"].(string)
 	params["data"].(Dict)["table"] = "price"                                                   // ensure we know which table to update
-	params["data"].(Dict)["filters"] = []Dict{{"field": "plan_id", "value": data["price_id"]}} // for DB update
+	params["data"].(Dict)["filters"] = []Dict{{"field": "price_id", "value": data["price_id"]}} // for DB update
 	_prices := app.read(params)                                                                // read existing data for price updates if needed
 	if _, ok := _prices["success"].(bool); !ok {
 		return _prices
@@ -326,7 +326,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 	stripePriceMonthlyID := priceData["payment_monthly_id"].(string)
 	stripePriceAnnualID := priceData["payment_annual_id"].(string)
 	params["data"].(Dict)["table"] = "tenant"                                                   // ensure we know which table to update
-	params["data"].(Dict)["filters"] = []Dict{{"field": "plan_id", "value": data["tenant_id"]}} // for DB update
+	params["data"].(Dict)["filters"] = []Dict{{"field": "tenant_id", "value": data["tenant_id"]}} // for DB update
 	tenant := app.read(params)                                                                  // read existing data for price updates if needed
 	if _, ok := tenant["success"].(bool); !ok {
 		return tenant
