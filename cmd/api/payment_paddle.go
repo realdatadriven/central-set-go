@@ -1,87 +1,44 @@
 package main
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"os"
 	"time"
 
-	"github.com/stripe/stripe-go/v84" // still needed if you want to keep both
-
-	// Paddle doesn't have an official Go SDK (as of 2025), so we use HTTP
-	// You can also use community SDKs like github.com/PaddleHQ/paddle-sdk-go (if available)
+	"github.com/PaddleHQ/paddle-go-sdk/v2"
+	"github.com/PaddleHQ/paddle-go-sdk/v2/client"
+	"github.com/PaddleHQ/paddle-go-sdk/v2/models"
 )
 
 // PaddleConfig holds your Paddle credentials
 type PaddleConfig struct {
-	VendorID     string // or Team ID
-	APIKey       string // Paddle API key (from Developer Tools → Authentication)
-	WebhookSecret string // for webhook verification
-	BaseURL      string // "https://api.paddle.com" (production) or "https://sandbox-api.paddle.com"
+	APIKey   string
+	Env      client.Environment // client.Sandbox or client.Production
 }
 
-var paddleConfig PaddleConfig
+var paddleClient *client.Client
 
-func init() {
-	paddleConfig = PaddleConfig{
-		VendorID:     os.Getenv("PADDLE_VENDOR_ID"),
-		APIKey:       os.Getenv("PADDLE_API_KEY"),
-		WebhookSecret: os.Getenv("PADDLE_WEBHOOK_SECRET"),
-		BaseURL:      "https://api.paddle.com", // change to sandbox for testing
+func initPaddle() {
+	apiKey := os.Getenv("PADDLE_API_KEY")
+	if apiKey == "" {
+		log.Fatal("PADDLE_API_KEY not set")
 	}
-	if paddleConfig.APIKey == "" {
-		log.Println("Warning: PADDLE_API_KEY not set")
-	}
+
+	paddleClient = client.NewClient(
+		apiKey,
+		client.WithEnvironment(client.Production), // or client.Sandbox
+		// client.WithHTTPClient(&http.Client{Timeout: 30 * time.Second}),
+	)
 }
 
-// paddleRequest is a helper to make authenticated requests to Paddle API
-func paddleRequest(method, path string, body any) (map[string]any, error) {
-	url := paddleConfig.BaseURL + path
-
-	var bodyBytes []byte
-	var err error
-	if body != nil {
-		bodyBytes, err = json.Marshal(body)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(bodyBytes))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "Bearer "+paddleConfig.APIKey)
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-
-	client := &http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode >= 400 {
-		return nil, fmt.Errorf("paddle error %d: %s", resp.StatusCode, string(respBody))
-	}
-
-	var result map[string]any
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+// Helper to convert any struct to Dict (map[string]any)
+func toDict(v any) Dict {
+	b, _ := json.Marshal(v)
+	var m Dict
+	json.Unmarshal(b, &m)
+	return m
 }
 
 // ====================================================================
@@ -118,41 +75,51 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 
 	existingProductID := priceData["pay_provider_product_id"].(string)
 
-	var productID string
-	var productData map[string]any
+	ctx := context.Background()
+	var product *models.Product
+	var err error
 
 	// 1. Try to get existing product
 	if existingProductID != "" {
-		resp, err := paddleRequest("GET", "/products/"+existingProductID, nil)
+		product, err = paddleClient.Products.Get(ctx, existingProductID)
 		if err == nil {
-			productData = resp["data"].(map[string]any)
-			productID = productData["id"].(string)
-			log.Printf("Using existing Paddle product: %s", productID)
+			log.Printf("Using existing Paddle product: %s", product.Id)
 		} else {
 			log.Printf("Paddle product not found: %v - will create new", err)
 		}
 	}
 
 	// 2. Create or update product
-	if productID == "" {
-		createBody := map[string]any{
-			"name":        name,
-			"description": data["description"],
-			"custom_data": map[string]any{
+	if product == nil {
+		createReq := &models.CreateProductRequest{
+			Name:        name,
+			Description: data["description"].(string),
+			CustomData: map[string]any{
 				"internal_plan_id": planID,
 			},
 		}
 
-		resp, err := paddleRequest("POST", "/products", createBody)
+		created, err := paddleClient.Products.Create(ctx, createReq)
 		if err != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("Failed to create Paddle product: %v", err)}
 		}
-
-		productData = resp["data"].(map[string]any)
-		productID = productData["id"].(string)
+		product = created
+	} else {
+		// Optional: update if name changed
+		if product.Name != name {
+			updateReq := &models.UpdateProductRequest{
+				Name: &name,
+			}
+			product, err = paddleClient.Products.Update(ctx, product.Id, updateReq)
+			if err != nil {
+				return Dict{"success": false, "msg": fmt.Sprintf("Failed to update Paddle product: %v", err)}
+			}
+		}
 	}
 
-	// 3. Handle prices (Paddle calls them prices, similar to Stripe)
+	productID := product.Id
+
+	// 3. Handle prices
 	var monthlyPriceID, annualPriceID string
 
 	createOrUpdatePrice := func(interval string, amount float64, existingID string) (string, error) {
@@ -160,35 +127,39 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 			return "", nil
 		}
 
-		priceBody := map[string]any{
-			"product_id":  productID,
-			"unit_price": map[string]any{
-				"amount": amount * 100, // Paddle uses minor units (cents)
-				"currency_code": currency,
+		unitPrice := float64(int64(amount * 100)) // Paddle uses minor units
+
+		priceReq := &models.CreatePriceRequest{
+			ProductId: productID,
+			UnitPrice: models.Money{
+				Amount:       unitPrice,
+				CurrencyCode: currency,
 			},
-			"billing_cycle": map[string]any{
-				"interval": interval,
-				"frequency": 1,
+			BillingCycle: models.BillingCycle{
+				Interval:  interval,
+				Frequency: 1,
 			},
-			"custom_data": map[string]any{
+			CustomData: map[string]any{
 				"interval": interval,
 			},
 		}
 
-		var resp map[string]any
+		var price *models.Price
 		var err error
 
 		if existingID != "" {
-			resp, err = paddleRequest("PATCH", "/prices/"+existingID, priceBody)
+			// Paddle doesn't have direct update for price — you usually create new versions
+			// For simplicity, we'll create a new one if needed
+			price, err = paddleClient.Prices.Create(ctx, priceReq)
 		} else {
-			resp, err = paddleRequest("POST", "/prices", priceBody)
+			price, err = paddleClient.Prices.Create(ctx, priceReq)
 		}
 
 		if err != nil {
 			return "", err
 		}
 
-		return resp["data"].(map[string]any)["id"].(string), nil
+		return price.Id, nil
 	}
 
 	monthlyPriceID, _ = createOrUpdatePrice("month", monthlyAmount, priceData["pay_provider_monthly_id"].(string))
@@ -196,20 +167,17 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 
 	// 4. Save back to your database
 	updateData := Dict{
-		"pay_provider_product_id": productID,
-		"pay_provider_product_metadata": toJSON(productData),
-		"pay_provider_monthly_id": monthlyPriceID,
-		"pay_provider_annual_id": annualPriceID,
-		"pay_provider_price_metadata": toJSON(Dict{
-			"monthly": monthlyPriceID,
-			"annual":  annualPriceID,
-		}),
-		"pay_provider_last_sync_at": time.Now(),
+		"pay_provider_product_id":        productID,
+		"pay_provider_product_metadata":  toDict(product),
+		"pay_provider_monthly_id":        monthlyPriceID,
+		"pay_provider_annual_id":         annualPriceID,
+		"pay_provider_price_metadata":    toDict(Dict{"monthly": monthlyPriceID, "annual": annualPriceID}),
+		"pay_provider_last_sync_at":      time.Now(),
 	}
 
 	params["data"] = Dict{
-		"table": "plan",
-		"data":  updateData,
+		"table":   "plan",
+		"data":    updateData,
 		"filters": []Dict{{"field": "plan_id", "value": planID}},
 	}
 
@@ -219,11 +187,11 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 	}
 
 	return Dict{
-		"success": true,
-		"msg":     "Paddle product and prices synced",
-		"product_id": productID,
+		"success":          true,
+		"msg":              "Paddle product and prices synced",
+		"product_id":       productID,
 		"monthly_price_id": monthlyPriceID,
-		"annual_price_id": annualPriceID,
+		"annual_price_id":  annualPriceID,
 	}
 }
 
@@ -242,41 +210,40 @@ func (app *application) PaddleCreateOrSyncCustomer(params map[string]any) Dict {
 
 	existingCustomerID := data["pay_provider_customer_id"].(string)
 
-	var customerID string
-	var customerData map[string]any
+	ctx := context.Background()
+	var customer *models.Customer
+	var err error
 
 	if existingCustomerID != "" {
-		resp, err := paddleRequest("GET", "/customers/"+existingCustomerID, nil)
+		customer, err = paddleClient.Customers.Get(ctx, existingCustomerID)
 		if err == nil {
-			customerData = resp["data"].(map[string]any)
-			customerID = customerData["customer_id"].(string)
-			log.Printf("Using existing Paddle customer: %s", customerID)
+			log.Printf("Using existing Paddle customer: %s", customer.CustomerId)
 		}
 	}
 
-	if customerID == "" {
-		createBody := map[string]any{
-			"name":  name,
-			"email": email,
-			"custom_data": map[string]any{
+	if customer == nil {
+		createReq := &models.CreateCustomerRequest{
+			Name:  name,
+			Email: email,
+			CustomData: map[string]any{
 				"tenant_id": tenantID,
 			},
 		}
 
-		resp, err := paddleRequest("POST", "/customers", createBody)
+		created, err := paddleClient.Customers.Create(ctx, createReq)
 		if err != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("Failed to create Paddle customer: %v", err)}
 		}
-
-		customerData = resp["data"].(map[string]any)
-		customerID = customerData["customer_id"].(string)
+		customer = created
 	}
+
+	customerID := customer.CustomerId
 
 	// Save back to DB
 	updateData := Dict{
-		"pay_provider_customer_id": customerID,
-		"pay_provider_customer_metadata": toJSON(customerData),
-		"pay_provider_last_sync_at": time.Now(),
+		"pay_provider_customer_id":       customerID,
+		"pay_provider_customer_metadata": toDict(customer),
+		"pay_provider_last_sync_at":      time.Now(),
 	}
 
 	params["data"] = Dict{
@@ -291,8 +258,8 @@ func (app *application) PaddleCreateOrSyncCustomer(params map[string]any) Dict {
 	}
 
 	return Dict{
-		"success": true,
-		"msg":     "Paddle customer synced",
+		"success":     true,
+		"msg":         "Paddle customer synced",
 		"customer_id": customerID,
 	}
 }
@@ -307,7 +274,7 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 	}
 
 	tenantID := data["tenant_id"].(string)
-	priceID := data["price_id"].(string)
+	planID := data["plan_id"].(string)
 
 	// Get tenant's Paddle customer ID
 	tenantResp := app.read(Dict{
@@ -320,66 +287,65 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 	tenantData := tenantResp["data"].([]Dict)[0]
 	customerID := tenantData["pay_provider_customer_id"].(string)
 
-	// Get price IDs from plan/prices
+	// Get price ID from plan/prices
 	priceResp := app.read(Dict{
 		"table":   "price",
-		"filters": []Dict{{"field": "price_id", "value": priceID}},
+		"filters": []Dict{{"field": "plan_id", "value": planID}},
 	})
 	if !priceResp["success"].(bool) {
 		return priceResp
 	}
 	priceData := priceResp["data"].([]Dict)[0]
-
 	priceID := priceData["pay_provider_price_id"].(string)
+
 	if priceID == "" {
 		return Dict{"success": false, "msg": "No Paddle price ID found for plan"}
 	}
 
 	existingSubID := data["pay_provider_subscription_id"].(string)
 
-	var subID string
-	var subData map[string]any
+	ctx := context.Background()
+	var sub *models.Subscription
+	var err error
 
 	if existingSubID != "" {
-		resp, err := paddleRequest("GET", "/subscriptions/"+existingSubID, nil)
+		sub, err = paddleClient.Subscriptions.Get(ctx, existingSubID)
 		if err == nil {
-			subData = resp["data"].(map[string]any)
-			subID = subData["subscription_id"].(string)
-			log.Printf("Using existing Paddle subscription: %s", subID)
+			log.Printf("Using existing Paddle subscription: %s", sub.SubscriptionId)
 		}
 	}
 
-	if subID == "" {
-		createBody := map[string]any{
-			"customer_id": customerID,
-			"items": []map[string]any{
+	if sub == nil {
+		createReq := &models.CreateSubscriptionRequest{
+			CustomerId: customerID,
+			Items: []models.SubscriptionItem{
 				{
-					"price_id": priceID,
-					"quantity": 1,
+					PriceId:  priceID,
+					Quantity: 1,
 				},
 			},
-			"custom_data": map[string]any{
+			CustomData: map[string]any{
 				"tenant_id": tenantID,
 				"plan_id":   planID,
 			},
 		}
 
-		resp, err := paddleRequest("POST", "/subscriptions", createBody)
+		created, err := paddleClient.Subscriptions.Create(ctx, createReq)
 		if err != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("Failed to create Paddle subscription: %v", err)}
 		}
-
-		subData = resp["data"].(map[string]any)
-		subID = subData["subscription_id"].(string)
+		sub = created
 	}
+
+	subID := sub.SubscriptionId
 
 	// Save back to DB
 	updateData := Dict{
-		"pay_provider_subscription_id": subID,
-		"pay_provider_subscription_metadata": toJSON(subData),
-		"pay_provider_last_sync_at": time.Now(),
-		"status": subData["status"], // e.g. active, past_due, canceled
-		"next_billing_at": subData["next_billed_at"],
+		"pay_provider_subscription_id":       subID,
+		"pay_provider_subscription_metadata": toDict(sub),
+		"pay_provider_last_sync_at":          time.Now(),
+		"status":                             sub.Status,
+		"next_billing_at":                    sub.NextBilledAt,
 	}
 
 	params["data"] = Dict{
@@ -394,23 +360,8 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 	}
 
 	return Dict{
-		"success": true,
-		"msg":     "Paddle subscription created/updated",
+		"success":         true,
+		"msg":             "Paddle subscription created/updated",
 		"subscription_id": subID,
 	}
-}
-
-// Helper functions
-func extractData(params map[string]any) Dict {
-	if d, ok := params["data"].(Dict); ok {
-		if inner, ok := d["data"].(Dict); ok {
-			return inner
-		}
-	}
-	return nil
-}
-
-func toJSON(v any) string {
-	b, _ := json.Marshal(v)
-	return string(b)
 }
