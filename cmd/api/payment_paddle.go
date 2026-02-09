@@ -365,3 +365,73 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 		"subscription_id": subID,
 	}
 }
+
+// PaddleSyncAllSubscriptionStatuses – batch job example
+func (app *application) PaddleSyncAllSubscriptionStatuses() Dict {
+    // Get all active/known subscriptions from your DB
+    params := map[string]any{
+        "data": Dict{
+            "table": "subscription",
+            "filters": []Dict{
+                {"field": "payment_provider", "value": "paddle"},
+                {"field": "excluded", "value": false},
+            },
+            "limit": 100, // paginate if many tenants
+        },
+    }
+
+    subsResp := app.read(params)
+    if !subsResp["success"].(bool) {
+        return subsResp
+    }
+
+    subscriptions := subsResp["data"].([]Dict)
+    if len(subscriptions) == 0 {
+        return Dict{"success": true, "msg": "No Paddle subscriptions to sync"}
+    }
+
+    ctx := context.Background()
+    updatedCount := 0
+
+    for _, sub := range subscriptions {
+        subID := sub["pay_provider_subscription_id"].(string)
+        if subID == "" {
+            continue
+        }
+
+        paddleSub, err := paddleClient.Subscriptions.Get(ctx, subID)
+        if err != nil {
+            log.Printf("Failed to get Paddle sub %s: %v", subID, err)
+            continue
+        }
+
+        newStatus := string(paddleSub.Status) // e.g. "active", "past_due", ...
+        nextBilling := paddleSub.NextBilledAt // *time.Time
+
+        updateParams := map[string]any{
+            "data": Dict{
+                "table": "subscription",
+                "filters": []Dict{{"field": "pay_provider_subscription_id", "value": subID}},
+                "data": Dict{
+                    "status": newStatus,
+                    "next_billing_at": nextBilling,
+                    "pay_provider_last_sync_at": time.Now(),
+                    "pay_provider_subscription_metadata": toDict(paddleSub),
+                },
+            },
+        }
+
+        result := app.create_update(updateParams)
+        if result["success"].(bool) {
+            updatedCount++
+            log.Printf("Synced Paddle sub %s → status: %s", subID, newStatus)
+        } else {
+            log.Printf("Failed to update sub %s: %v", subID, result["msg"])
+        }
+    }
+
+    return Dict{
+        "success": true,
+        "msg": fmt.Sprintf("Synced status for %d subscriptions", updatedCount),
+    }
+}
