@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -94,12 +95,12 @@ type app_config struct {
 }*/
 
 type application struct {
-	config                         app_config
-	db                             etlx.DBInterface //*etlx.DB
+	config app_config
+	db     etlx.DBInterface //*etlx.DB
 	//memdb                          etlx.DBInterface //*etlx.DB
-	rateLimitingEnabled                bool
-	memdb *sql.DB
-	rtRequestLimit int
+	rateLimitingEnabled bool
+	memdb               *sql.DB
+	rtRequestLimit      int
 
 	logger                         *slog.Logger
 	mailer                         *smtp.Mailer
@@ -193,11 +194,11 @@ func run(logger *slog.Logger) error {
 		//admin:  admin{},
 	}
 	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)
-	if app.rateLimitingEnabled  {
+	if app.rateLimitingEnabled {
 		app.rtRequestLimit = env.GetInt("RATE_LIMITING_REQUEST_LIMIT", 100)
-		fmrt.Printf("Rate limiting is enabled with request limit: %d\n", app.rtRequestLimit)
+		fmt.Printf("Rate limiting is enabled with request limit: %d\n", app.rtRequestLimit)
 		//app.memdb, err = etlx.New("duckdb:", ":memory:")
-		rtLimitPath = os.Getenv("RATE_LIMITING_REQUEST_LIMIT_PATH", ":memory:")
+		rtLimitPath := env.GetString("RATE_LIMITING_REQUEST_LIMIT_PATH", ":memory:")
 		app.memdb, err = sql.Open("duckdb:", rtLimitPath)
 		if err != nil {
 			return err

@@ -2,6 +2,7 @@ package main
 
 import (
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -209,7 +210,7 @@ func (app *application) compress(next http.Handler) http.Handler {
 
 func (app *application) rateLimit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if app.rateLimitingEnabled  {
+		if app.rateLimitingEnabled {
 			ip := realip.FromRequest(r)
 			// Check if the IP has exceeded the rate limit
 			if app.IsRateLimited(ip) {
@@ -221,7 +222,7 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 			// Increment the request count for the IP
 			_, err := app.Increment(ip)
 			if err != nil {
-				log.Println("Error incrementing rate limit:", err)
+				fmt.Println("Error incrementing rate limit:", err)
 			}
 		}
 		next.ServeHTTP(w, r)
@@ -235,7 +236,7 @@ func (app *application) IsRateLimited(ip string) bool {
 	var lastRequestTime time.Time
 	err := app.memdb.QueryRow("SELECT request_count, last_request_time FROM rate_limits WHERE ip = ?", ip).Scan(&requestCount, &lastRequestTime)
 	if err != nil && err != sql.ErrNoRows {
-		log.Println("Error checking rate limit:", err)
+		fmt.Println("Error checking rate limit:", err)
 		return false
 	}
 	if time.Since(lastRequestTime) > time.Minute {
@@ -245,7 +246,7 @@ USING (SELECT '%s' as ip, 1 as request_count, CURRENT_TIMESTAMP as last_request_
 ON rate_limits.ip = upserts.ip
 WHEN MATCHED THEN UPDATE SET request_count = 0, last_request_time = CURRENT_TIMESTAMP
 WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.last_request_time);`, ip)
-		_, err := rl.db.Exec(query)
+		_, err := app.memdb.Exec(query)
 		if err != nil {
 			fmt.Println("Error resetting rate limit:", err, query)
 		}
@@ -254,13 +255,13 @@ WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.
 	return requestCount >= app.rtRequestLimit // Example limit: 100 requests per minute
 }
 
-func (app *application) Increment(ip string) (int, error) {
-    query := fmt.Sprintf(`MERGE INTO rate_limits
+func (app *application) Increment(ip string) (sql.Result, error) {
+	query := fmt.Sprintf(`MERGE INTO rate_limits
 USING (SELECT '%s' as ip, 1 as request_count, CURRENT_TIMESTAMP as last_request_time) AS upserts
 ON rate_limits.ip = upserts.ip
 WHEN MATCHED THEN UPDATE SET 
     request_count = rate_limits.request_count + 1,
     last_request_time = CURRENT_TIMESTAMP
 WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.last_request_time);`, ip)
-	return rl.db.Exec(query)
+	return app.memdb.Exec(query)
 }
