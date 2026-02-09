@@ -73,7 +73,7 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 		currency = "USD"
 	}
 
-	existingProductID := priceData["pay_provider_product_id"].(string)
+	existingProductID := data["pay_provider_product_id"].(string)
 
 	ctx := context.Background()
 	var product *models.Product
