@@ -197,7 +197,8 @@ func run(logger *slog.Logger) error {
 		app.rtRequestLimit = env.GetInt("RATE_LINTING_REQUEST_LIMIT", 100)
 		fmrt.Printf("Rate limiting is enabled with request limit: %d\n", app.rtRequestLimit)
 		//app.memdb, err = etlx.New("duckdb:", ":memory:")
-		app.memdb, err = sql.Open("duckdb:", ":memory:")
+		rtLimitPath = os.Getenv("RATE_LINTING_REQUEST_LIMIT_PATH", ":memory:")
+		app.memdb, err = sql.Open("duckdb:", rtLimitPath)
 		if err != nil {
 			return err
 		}
@@ -214,13 +215,7 @@ func run(logger *slog.Logger) error {
 		if err != nil {
 			fmt.Printf("Error setting duckdb memory limit: %v\n", err)
 		}
-		_, err := app.memdb.Exec(`
-			CREATE TABLE IF NOT EXISTS rate_limits (
-				ip TEXT PRIMARY KEY,
-				request_count INTEGER,
-				last_request_time TIMESTAMP
-			)
-		`)
+		_, err := app.memdb.Exec(`CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT PRIMARY KEY, request_count INTEGER, last_request_time TIMESTAMP)`)
 		return err
 	}
 	// golang get current time - 24 hours

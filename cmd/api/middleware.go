@@ -219,7 +219,10 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 				return
 			}
 			// Increment the request count for the IP
-			app.Increment(ip)
+			_, err := app.Increment(ip)
+			if err != nil {
+				log.Println("Error incrementing rate limit:", err)
+			}
 		}
 		next.ServeHTTP(w, r)
 	})
@@ -236,6 +239,16 @@ func (app *application) IsRateLimited(ip string) bool {
 		return false
 	}
 	if time.Since(lastRequestTime) > time.Minute {
+		// reset request count after 1 minute
+		query := fmt.Sprintf(`MERGE INTO rate_limits
+USING (SELECT '%s' as ip, 1 as request_count, CURRENT_TIMESTAMP as last_request_time) AS upserts
+ON rate_limits.ip = upserts.ip
+WHEN MATCHED THEN UPDATE SET request_count = 0, last_request_time = CURRENT_TIMESTAMP
+WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.last_request_time);`, ip)
+		_, err := rl.db.Exec(query)
+		if err != nil {
+			fmt.Println("Error resetting rate limit:", err, query)
+		}
 		return false
 	}
 	return requestCount >= app.rtRequestLimit // Example limit: 100 requests per minute
