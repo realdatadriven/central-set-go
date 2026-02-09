@@ -1,0 +1,259 @@
+// rate_limit_test.go
+package main
+
+import (
+	"bufio"
+	"context"
+	"flag"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"syscall"
+	"time"
+)
+
+func main() {
+	url := flag.String("url", "", "target URL (required)")
+	method := flag.String("method", "GET", "HTTP method (GET, POST, PUT, etc.)")
+	n := flag.Int("n", 300, "total number of requests to send")
+	c := flag.Int("c", 50, "max concurrent requests")
+	timeout := flag.Duration("timeout", 8*time.Second, "request timeout")
+	delay := flag.Duration("delay", 0, "delay between starting each request (e.g. 50ms)")
+	data := flag.String("data", "", "request body as string (for POST/PUT)")
+	dataFile := flag.String("data-file", "", "file to read request body from")
+	csvOut := flag.Bool("csv", false, "output per-request results as CSV to stdout")
+	flag.Var(&headers{}, "H", "custom header (can be repeated, format: Key: Value)")
+
+	flag.Parse()
+
+	if *url == "" {
+		log.Fatal("missing required flag: -url")
+	}
+
+	fmt.Printf("Rate limit test → %s %s\n", *method, *url)
+	fmt.Printf("→ Total requests : %d   Concurrency: %d   Delay: %v\n", *n, *c, *delay)
+	fmt.Printf("→ Timeout        : %v\n", *timeout)
+	if *data != "" || *dataFile != "" {
+		fmt.Printf("→ Body           : %s\n", bodyInfo(*data, *dataFile))
+	}
+	if len(headers) > 0 {
+		fmt.Printf("→ Headers        : %d custom\n", len(headers))
+	}
+	if *csvOut {
+		fmt.Println("\nreq_id,timestamp_ms,status_code,duration_ms,error")
+	}
+
+	client := &http.Client{Timeout: *timeout}
+
+	var (
+		success     uint32
+		rateLimited uint32 // 429
+		clientError uint32 // other 4xx
+		serverError uint32 // 5xx
+		other       uint32
+		total       uint32
+	)
+
+	start := time.Now()
+
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, *c) // concurrency limiter
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Ctrl+C graceful stop
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigChan
+		fmt.Println("\nInterrupt received → stopping early...")
+		cancel()
+	}()
+
+	// Pre-read body if from file
+	var bodyContent []byte
+	if *dataFile != "" {
+		var err error
+		bodyContent, err = os.ReadFile(*dataFile)
+		if err != nil {
+			log.Fatalf("failed to read data-file: %v", err)
+		}
+	} else if *data != "" {
+		bodyContent = []byte(*data)
+	}
+
+	for i := 0; i < *n; i++ {
+		select {
+		case <-ctx.Done():
+			goto done
+		default:
+		}
+
+		if *delay > 0 {
+			time.Sleep(*delay)
+		}
+
+		wg.Add(1)
+		sem <- struct{}{}
+
+		go func(reqID int) {
+			defer wg.Done()
+			defer func() { <-sem }()
+
+			var body io.Reader
+			if len(bodyContent) > 0 {
+				body = strings.NewReader(string(bodyContent))
+			}
+
+			req, err := http.NewRequestWithContext(ctx, *method, *url, body)
+			if err != nil {
+				atomic.AddUint32(&other, 1)
+				if *csvOut {
+					fmt.Printf("%d,%d,ERROR,%d,NewRequest failed: %v\n", reqID, time.Now().UnixMilli(), 0, err)
+				}
+				return
+			}
+
+			// Apply custom headers
+			for _, h := range headers {
+				parts := strings.SplitN(h, ":", 2)
+				if len(parts) == 2 {
+					req.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+				}
+			}
+
+			// Auto-set Content-Type if body present and not already set
+			if len(bodyContent) > 0 && req.Header.Get("Content-Type") == "" {
+				req.Header.Set("Content-Type", "application/json")
+			}
+
+			reqStart := time.Now()
+			resp, err := client.Do(req)
+			dur := time.Since(reqStart).Milliseconds()
+
+			atomic.AddUint32(&total, 1)
+
+			status := 0
+			errMsg := ""
+			if err != nil {
+				if strings.Contains(err.Error(), "context canceled") {
+					return
+				}
+				errMsg = err.Error()
+				atomic.AddUint32(&other, 1)
+			} else {
+				defer resp.Body.Close()
+				_, _ = io.Copy(io.Discard, resp.Body) // drain
+				status = resp.StatusCode
+
+				switch {
+				case status >= 200 && status < 300:
+					atomic.AddUint32(&success, 1)
+				case status == 429:
+					atomic.AddUint32(&rateLimited, 1)
+				case status >= 400 && status < 500:
+					atomic.AddUint32(&clientError, 1)
+				case status >= 500:
+					atomic.AddUint32(&serverError, 1)
+				default:
+					atomic.AddUint32(&other, 1)
+				}
+			}
+
+			// Live feedback for failures
+			if status >= 400 || err != nil {
+				log.Printf("[req %4d] %s  dur=%3dms  %v", reqID, statusStr(status), dur, errMsg)
+			}
+
+			// CSV line
+			if *csvOut {
+				ts := reqStart.UnixMilli()
+				codeStr := fmt.Sprintf("%d", status)
+				if status == 0 {
+					codeStr = "ERR"
+				}
+				errOut := ""
+				if err != nil {
+					errOut = fmt.Sprintf("%q", err.Error())
+				}
+				fmt.Printf("%d,%d,%s,%d,%s\n", reqID, ts, codeStr, dur, errOut)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+
+done:
+	duration := time.Since(start)
+
+	fmt.Println("\n┌──────────────────────────────────────────────┐")
+	fmt.Printf("  Duration           : %v\n", duration.Round(time.Millisecond))
+	fmt.Printf("  Requests attempted : %d\n", atomic.LoadUint32(&total))
+	fmt.Printf("  Success (2xx)      : %d\n", atomic.LoadUint32(&success))
+	fmt.Printf("  Rate limited (429) : %d\n", atomic.LoadUint32(&rateLimited))
+	fmt.Printf("  Other client err   : %d\n", atomic.LoadUint32(&clientError))
+	fmt.Printf("  Server err (5xx)   : %d\n", atomic.LoadUint32(&serverError))
+	fmt.Printf("  Failed/other       : %d\n", atomic.LoadUint32(&other))
+	fmt.Println("└──────────────────────────────────────────────┘")
+
+	if atomic.LoadUint32(&rateLimited) > 0 {
+		fmt.Printf("→ YES, rate limiting detected (%d × 429)\n", atomic.LoadUint32(&rateLimited))
+	} else if atomic.LoadUint32(&success) == atomic.LoadUint32(&total) && atomic.LoadUint32(&total) > 50 {
+		fmt.Println("→ All requests succeeded → no rate limit hit (or very high limit)")
+	} else {
+		fmt.Println("→ Mixed results — check logs / CSV for details (no 429 seen)")
+	}
+}
+
+type headers []string
+
+func (h *headers) String() string     { return strings.Join(*h, ", ") }
+func (h *headers) Set(v string) error { *h = append(*h, v); return nil }
+
+func statusStr(code int) string {
+	if code == 0 {
+		return "ERR"
+	}
+	return fmt.Sprintf("%d", code)
+}
+
+func bodyInfo(data, file string) string {
+	if file != "" {
+		return fmt.Sprintf("from file %s (%d bytes)", file, len(data))
+	}
+	if data != "" {
+		trunc := data
+		if len(trunc) > 60 {
+			trunc = trunc[:57] + "..."
+		}
+		return fmt.Sprintf("%d bytes inline: %q", len(data), trunc)
+	}
+	return "none"
+}
+
+/*
+# Basic GET burst
+go run rate_limit_test.go -url=http://localhost:8080/api -n=400 -c=100
+
+# POST with JSON body + auth header + delay
+go run rate_limit_test.go -url=https://api.example.com/v1/items \
+  -method=POST \
+  -data='{"name":"test","value":42}' \
+  -H "Authorization: Bearer abc123xyz" \
+  -H "X-App-Version: 2.1" \
+  -n=200 -c=20 -delay=50ms
+
+# Body from file + CSV output
+go run rate_limit_test.go -url=http://your-server.com/upload \
+  -method=POST \
+  -data-file=request.json \
+  -H "Content-Type: application/json" \
+  -n=150 -c=30 -csv > results.csv
+*/
