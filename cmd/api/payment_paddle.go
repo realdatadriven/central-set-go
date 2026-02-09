@@ -8,9 +8,9 @@ import (
 	"time"
 	
 	 paddle "github.com/PaddleHQ/paddle-go-sdk/v3"
-	"github.com/PaddleHQ/paddle-go-sdk/v2"
-	"github.com/PaddleHQ/paddle-go-sdk/v2/client"
-	"github.com/PaddleHQ/paddle-go-sdk/v2/models"
+	//"github.com/PaddleHQ/paddle-go-sdk/v2"
+	//"github.com/PaddleHQ/paddle-go-sdk/v2/client"
+	//"github.com/PaddleHQ/paddle-go-sdk/v2/models"
 )
 
 // PaddleConfig holds your Paddle credentials
