@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"log"
 	"time"
-
+	
+	 paddle "github.com/PaddleHQ/paddle-go-sdk/v3"
 	"github.com/PaddleHQ/paddle-go-sdk/v2"
 	"github.com/PaddleHQ/paddle-go-sdk/v2/client"
 	"github.com/PaddleHQ/paddle-go-sdk/v2/models"
@@ -20,17 +21,30 @@ type PaddleConfig struct {
 
 var paddleClient *client.Client
 
-func initPaddle() {
+func (app *application) initPaddle() {
 	apiKey := os.Getenv("PADDLE_API_KEY")
 	if apiKey == "" {
 		log.Fatal("PADDLE_API_KEY not set")
 	}
 
-	paddleClient = client.NewClient(
+	/*paddleClient = client.NewClient(
 		apiKey,
 		client.WithEnvironment(client.Production), // or client.Sandbox
 		// client.WithHTTPClient(&http.Client{Timeout: 30 * time.Second}),
-	)
+	)*/
+	paddleEnv := paddle.SandboxBaseURL
+	if os.Getenv("PADDLE_ENV") == "production" {
+		paddleEnv := paddle.ProductionBaseURL
+	}
+	if paddleClient == nil {
+		paddleClient, err := paddle.New(
+			os.Getenv("PADDLE_API_KEY"),
+			paddle.WithBaseURL(paddleEnv) // or paddle.ProductionBaseURL for accessing live API
+		)
+		if err != nil {
+			log.Fatalf("Failed to initialize Paddle client: %v", err)
+		}
+	}
 }
 
 // Helper to convert any struct to Dict (map[string]any)
