@@ -192,25 +192,25 @@ func run(logger *slog.Logger) error {
 		licenceVerificationPeriodicity: 24 * time.Hour,
 		//admin:  admin{},
 	}
-	app.rateLimitingEnabled = env.GetBool("RATE_LINTING", false)
+	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)
 	if app.rateLimitingEnabled  {
-		app.rtRequestLimit = env.GetInt("RATE_LINTING_REQUEST_LIMIT", 100)
+		app.rtRequestLimit = env.GetInt("RATE_LIMITING_REQUEST_LIMIT", 100)
 		fmrt.Printf("Rate limiting is enabled with request limit: %d\n", app.rtRequestLimit)
 		//app.memdb, err = etlx.New("duckdb:", ":memory:")
-		rtLimitPath = os.Getenv("RATE_LINTING_REQUEST_LIMIT_PATH", ":memory:")
+		rtLimitPath = os.Getenv("RATE_LIMITING_REQUEST_LIMIT_PATH", ":memory:")
 		app.memdb, err = sql.Open("duckdb:", rtLimitPath)
 		if err != nil {
 			return err
 		}
 		defer app.memdb.Close()
 		// set tread number to 1 for duckdb to avoid concurrency issues as it's used as in-memory db for license validation and other operations that are not performance critical
-		rtThreads := env.GetInt("RATE_LINTING_DUCKDB_THREADS", 1)
+		rtThreads := env.GetInt("RATE_LIMITING_DUCKDB_THREADS", 1)
 		_, err = app.memdb.Exec(fmt.Sprintf("SET threads=%d;", rtThreads))
 		if err != nil {
 			fmt.Printf("Error setting duckdb threads to 1: %v\n", err)
 		}
 		// set duckdb memory limit to 1GB to avoid it consuming too much memory as it's used as in-memory db for license validation and other operations that are not performance critical
-		memLimit := env.GetString("RATE_LINTING_DUCKDB_MEMORY_LIMIT", "1GB")
+		memLimit := env.GetString("RATE_LIMITING_DUCKDB_MEMORY_LIMIT", "1GB")
 		_, err = app.memdb.Exec(fmt.Sprintf("SET memory_limit = '%s';", memLimit))
 		if err != nil {
 			fmt.Printf("Error setting duckdb memory limit: %v\n", err)
