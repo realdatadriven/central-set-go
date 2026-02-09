@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-	url := flag.String("url", "", "target URL (required)")
+	url := flag.String("url", "http://localhost:4444/dyn_api", "target URL (required)")
 	method := flag.String("method", "GET", "HTTP method (GET, POST, PUT, etc.)")
 	n := flag.Int("n", 300, "total number of requests to send")
 	c := flag.Int("c", 50, "max concurrent requests")
@@ -240,7 +240,7 @@ func bodyInfo(data, file string) string {
 
 /*
 # Basic GET burst
-go run rate_limit_test.go -url=http://localhost:8080/api -n=400 -c=100
+go run rate_limit_test.go -url=http://localhost:4444/dyn_api -n=400 -c=100
 
 # POST with JSON body + auth header + delay
 go run rate_limit_test.go -url=https://api.example.com/v1/items \
