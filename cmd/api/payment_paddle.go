@@ -296,6 +296,14 @@ func toJSON(v any) string {
 	return string(b)
 }
 
+func (app *application) Merge[M ~map[K]V, K comparable, V any](dst M, srcs ...M) {
+	for _, src := range srcs {
+		for k, v := range src {
+			dst[k] = v
+		}
+	}
+}
+
 // ====================================================================
 // Paddle: Create or Update Subscription
 // ====================================================================
