@@ -183,14 +183,13 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 	annualPriceID, _ = createOrUpdatePrice("year", annualAmount, priceData["pay_provider_annual_id"].(string))
 
 	// 4. Save back to your database
-	updateData := Dict{
-		"pay_provider_product_id":       productID,
-		"pay_provider_product_metadata": toDict(product),
-		"pay_provider_monthly_id":       monthlyPriceID,
-		"pay_provider_annual_id":        annualPriceID,
-		"pay_provider_price_metadata":   toDict(Dict{"monthly": monthlyPriceID, "annual": annualPriceID}),
-		"pay_provider_last_sync_at":     time.Now(),
-	}
+	updateData := data
+	updateData["pay_provider_product_id"] = productID
+	updateData["pay_provider_product_metadata"] = toDict(product)
+	updateData["pay_provider_monthly_id"] = monthlyPriceID
+	updateData["pay_provider_annual_id"] = annualPriceID
+	updateData["pay_provider_price_metadata"] = toDict(Dict{"monthly": monthlyPriceID, "annual": annualPriceID})
+	updateData["pay_provider_last_sync_at"] = time.Now()
 
 	params["data"] = Dict{
 		"table":   "plan",
@@ -259,11 +258,10 @@ func (app *application) PaddleCreateOrSyncCustomer(params map[string]any) Dict {
 	customerID := customer.ID
 
 	// Save back to DB
-	updateData := Dict{
-		"pay_provider_customer_id":       customerID,
-		"pay_provider_customer_metadata": toDict(customer),
-		"pay_provider_last_sync_at":      time.Now(),
-	}
+	updateData := data
+	updateData["pay_provider_customer_id"] = customerID
+	updateData["pay_provider_customer_metadata"] = toDict(customer)
+	updateData["pay_provider_last_sync_at"] = time.Now()
 
 	params["data"] = Dict{
 		"table":   "tenant",
@@ -300,21 +298,21 @@ func toJSON(v any) string {
 
 // ====================================================================
 // Paddle: Create or Update Subscription
-/*/ ====================================================================
+// ====================================================================
 func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) Dict {
 	data := extractData(params)
 	if data == nil {
 		return Dict{"success": false, "msg": "invalid params"}
 	}
-
 	tenantID := data["tenant_id"].(string)
-	planID := data["plan_id"].(string)
+	priceID := data["price_id"].(string)
 
 	// Get tenant's Paddle customer ID
-	tenantResp := app.read(Dict{
+	params["data"] = Dict{
 		"table":   "tenant",
 		"filters": []Dict{{"field": "tenant_id", "value": tenantID}},
-	})
+	}
+	tenantResp := app.read(params)
 	if !tenantResp["success"].(bool) {
 		return tenantResp
 	}
@@ -322,10 +320,11 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 	customerID := tenantData["pay_provider_customer_id"].(string)
 
 	// Get price ID from plan/prices
-	priceResp := app.read(Dict{
+	params["data"] = Dict{
 		"table":   "price",
-		"filters": []Dict{{"field": "plan_id", "value": planID}},
-	})
+		"filters": []Dict{{"field": "price_id", "value": priceID}},
+	}
+	priceResp := app.read(params)
 	if !priceResp["success"].(bool) {
 		return priceResp
 	}
@@ -375,18 +374,17 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 	subID := sub.ID
 
 	// Save back to DB
-	updateData := Dict{
-		"pay_provider_subscription_id":       subID,
-		"pay_provider_subscription_metadata": toDict(sub),
-		"pay_provider_last_sync_at":          time.Now(),
-		"status":                             sub.Status,
-		"next_billing_at":                    sub.NextBilledAt,
-	}
+	updateData := data
+	updateData["pay_provider_subscription_id"] = subID
+	updateData["pay_provider_subscription_metadata"] = toDict(sub)	
+	updateData["pay_provider_last_sync_at"] = time.Now()
+	updateData["status"] = sub.Status
+	updateData["next_billing_at"] = sub.NextBilledAt
 
 	params["data"] = Dict{
 		"table":   "subscription",
 		"data":    updateData,
-		"filters": []Dict{{"field": "tenant_id", "value": tenantID}},
+		//"filters": []Dict{{"field": "tenant_id", "value": tenantID}},
 	}
 
 	updateResult := app.create_update(params)
@@ -399,7 +397,7 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 		"msg":             "Paddle subscription created/updated",
 		"subscription_id": subID,
 	}
-}*/
+}
 
 /*/ PaddleSyncAllSubscriptionStatuses – batch job example
 func (app *application) PaddleSyncAllSubscriptionStatuses() Dict {
