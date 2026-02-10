@@ -132,9 +132,9 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 
 		var billingInterval *paddle.Duration
 		if interval == "month" {
-			billingInterval = &paddle.Duration{Interval: "month", Frequency: 1}
+			billingInterval = &paddle.Duration{Interval: paddle.IntervalMonth, Frequency: 1}
 		} else if interval == "year" {
-			billingInterval = &paddle.Duration{Interval: "year", Frequency: 1}
+			billingInterval = &paddle.Duration{Interval: paddle.IntervalYear, Frequency: 1}
 		}
 
 		var price *paddle.Price
