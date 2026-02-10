@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	paddle "github.com/PaddleHQ/paddle-go-sdk/v3"
+	paddle "github.com/PaddleHQ/paddle-go-sdk/v4"
 	//"github.com/PaddleHQ/paddle-go-sdk/v2"
 	//"github.com/PaddleHQ/paddle-go-sdk/v2/client"
 	//"github.com/PaddleHQ/paddle-go-sdk/v2/models"
