@@ -49,27 +49,14 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 	planID, _ := data["plan_id"].(string)
 	name, _ := data["plan"].(string)
 
-	// Read existing prices from your DB
-	params["data"] = Dict{"table": "price", "filters": []Dict{{"field": "plan_id", "value": planID}}}
-	pricesResp := app.read(params)
-	if !pricesResp["success"].(bool) {
-		return pricesResp
-	}
-
-	priceDataList := pricesResp["data"].([]Dict)
-	if len(priceDataList) == 0 {
-		return Dict{"success": false, "msg": "No price data found for plan"}
-	}
-	priceData := priceDataList[0]
-
-	monthlyAmount := priceData["monthly_amount"].(float64)
-	annualAmount := priceData["annual_amount"].(float64)
-	currency := priceData["currency"].(string)
+	monthlyAmount := data["monthly_amount"].(float64)
+	annualAmount := data["annual_amount"].(float64)
+	currency := data["currency"].(string)
 	if currency == "" {
 		currency = "USD"
 	}
 
-	existingProductID := data["pay_provider_product_id"].(string)
+	existingProductID := data["payment_provider_product_id"].(string)
 
 	ctx := context.Background()
 	var product *paddle.Product
@@ -177,17 +164,17 @@ func (app *application) PaddleSyncOrCreateProduct(params map[string]any) Dict {
 		return price.ID, nil
 	}
 
-	monthlyPriceID, _ = createOrUpdatePrice("month", monthlyAmount, priceData["pay_provider_monthly_id"].(string))
-	annualPriceID, _ = createOrUpdatePrice("year", annualAmount, priceData["pay_provider_annual_id"].(string))
+	monthlyPriceID, _ = createOrUpdatePrice("month", monthlyAmount, data["payment_price_monthly_id"].(string))
+	annualPriceID, _ = createOrUpdatePrice("year", annualAmount, data["payment_price_annual_id"].(string))
 
 	// 4. Save back to your database
 	updateData := data
-	updateData["pay_provider_product_id"] = productID
-	updateData["pay_provider_product_metadata"] = toDict(product)
-	updateData["pay_provider_monthly_id"] = monthlyPriceID
-	updateData["pay_provider_annual_id"] = annualPriceID
-	updateData["pay_provider_price_metadata"] = toDict(Dict{"monthly": monthlyPriceID, "annual": annualPriceID})
-	updateData["pay_provider_last_sync_at"] = time.Now()
+	updateData["payment_provider_product_id"] = productID
+	updateData["payment_product_metadata"] = toDict(product)
+	updateData["payment_price_monthly_id"] = monthlyPriceID
+	updateData["payment_price_annual_id"] = annualPriceID
+	//updateData["payment_provider_price_metadata"] = toDict(Dict{"monthly": monthlyPriceID, "annual": annualPriceID})
+	updateData["payment_provider_last_sync_at"] = time.Now()
 
 	params["data"] = Dict{
 		"table":   "plan",
@@ -222,7 +209,7 @@ func (app *application) PaddleCreateOrSyncCustomer(params map[string]any) Dict {
 	name, _ := data["name"].(string)
 	email, _ := data["email"].(string)
 
-	existingCustomerID := data["pay_provider_customer_id"].(string)
+	existingCustomerID := data["payment_provider_customer_id"].(string)
 
 	ctx := context.Background()
 	var customer *paddle.Customer
@@ -257,9 +244,9 @@ func (app *application) PaddleCreateOrSyncCustomer(params map[string]any) Dict {
 
 	// Save back to DB
 	updateData := data
-	updateData["pay_provider_customer_id"] = customerID
-	updateData["pay_provider_customer_metadata"] = toDict(customer)
-	updateData["pay_provider_last_sync_at"] = time.Now()
+	updateData["payment_provider_customer_id"] = customerID
+	updateData["payment_provider_customer_metadata"] = toDict(customer)
+	updateData["payment_provider_last_sync_at"] = time.Now()
 
 	params["data"] = Dict{
 		"table":   "tenant",
@@ -294,15 +281,15 @@ func toJSON(v any) string {
 	return string(b)
 }
 
-func (app *application) Merge[M ~map[K]V, K comparable, V any](dst M, srcs ...M) {
+/*func (app *application) Merge[M ~map[K]V, K comparable, V any](dst M, srcs ...M) {
 	for _, src := range srcs {
 		for k, v := range src {
 			dst[k] = v
 		}
 	}
-}
+}*/
 
-// ====================================================================
+/*/ ====================================================================
 // Paddle: Create or Update Subscription
 // ====================================================================
 func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) Dict {
@@ -311,8 +298,7 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 		return Dict{"success": false, "msg": "invalid params"}
 	}
 	tenantID := data["tenant_id"].(string)
-	priceID := data["price_id"].(string)
-
+	planID := data["price_id"].(string)
 	// Get tenant's Paddle customer ID
 	params["data"] = Dict{
 		"table":   "tenant",
@@ -323,26 +309,23 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 		return tenantResp
 	}
 	tenantData := tenantResp["data"].([]Dict)[0]
-	customerID := tenantData["pay_provider_customer_id"].(string)
+	customerID := tenantData["payment_provider_customer_id"].(string)
 
 	// Get price ID from plan/prices
 	params["data"] = Dict{
-		"table":   "price",
-		"filters": []Dict{{"field": "price_id", "value": priceID}},
+		"table":   "plan",
+		"filters": []Dict{{"field": "plan_id", "value": planID}},
 	}
-	priceResp := app.read(params)
-	if !priceResp["success"].(bool) {
-		return priceResp
+	planResp := app.read(params)
+	if !planResp["success"].(bool) {
+		return planResp
 	}
-	priceData := priceResp["data"].([]Dict)[0]
-	priceID := priceData["pay_provider_price_id"].(string)
-
+	planData := planResp["data"].([]Dict)[0]
+	priceID := planData["payment_provider_price_id"].(string)
 	if priceID == "" {
 		return Dict{"success": false, "msg": "No Paddle price ID found for plan"}
 	}
-
-	existingSubID := data["pay_provider_subscription_id"].(string)
-
+	existingSubID := data["payment_provider_subscription_id"].(string)
 	ctx := context.Background()
 	var sub *paddle.Subscription
 	var err error
@@ -381,7 +364,7 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 			SubscriptionID: sub.ID,
 			Items: []paddle.SubscriptionItemUpdateRequest{
 				{
-					PriceID:  priceID,	
+					PriceID:  priceID,
 					Quantity: 1,
 				},
 			},
@@ -396,15 +379,15 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 
 	// Save back to DB
 	updateData := data
-	updateData["pay_provider_subscription_id"] = subID
-	updateData["pay_provider_subscription_metadata"] = toDict(sub)	
-	updateData["pay_provider_last_sync_at"] = time.Now()
+	updateData["payment_provider_subscription_id"] = subID
+	updateData["payment_provider_subscription_metadata"] = toDict(sub)
+	updateData["payment_provider_last_sync_at"] = time.Now()
 	updateData["status"] = sub.Status
 	updateData["next_billing_at"] = sub.NextBilledAt
 
 	params["data"] = Dict{
-		"table":   "subscription",
-		"data":    updateData,
+		"table": "subscription",
+		"data":  updateData,
 		//"filters": []Dict{{"field": "tenant_id", "value": tenantID}},
 	}
 
@@ -419,7 +402,7 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 		"subscription_id": subID,
 	}
 }
-
+*/
 /*/ PaddleSyncAllSubscriptionStatuses – batch job example
 func (app *application) PaddleSyncAllSubscriptionStatuses() Dict {
 	// Get all active/known subscriptions from your DB
@@ -448,7 +431,7 @@ func (app *application) PaddleSyncAllSubscriptionStatuses() Dict {
 	updatedCount := 0
 
 	for _, sub := range subscriptions {
-		subID := sub["pay_provider_subscription_id"].(string)
+		subID := sub["payment_provider_subscription_id"].(string)
 		if subID == "" {
 			continue
 		}
@@ -465,12 +448,12 @@ func (app *application) PaddleSyncAllSubscriptionStatuses() Dict {
 		updateParams := map[string]any{
 			"data": Dict{
 				"table":   "subscription",
-				"filters": []Dict{{"field": "pay_provider_subscription_id", "value": subID}},
+				"filters": []Dict{{"field": "payment_provider_subscription_id", "value": subID}},
 				"data": Dict{
 					"status":                             newStatus,
 					"next_billing_at":                    nextBilling,
-					"pay_provider_last_sync_at":          time.Now(),
-					"pay_provider_subscription_metadata": toDict(paddleSub),
+					"payment_provider_last_sync_at":          time.Now(),
+					"payment_provider_subscription_metadata": toDict(paddleSub),
 				},
 			},
 		}
