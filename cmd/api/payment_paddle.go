@@ -14,8 +14,6 @@ import (
 	//"github.com/PaddleHQ/paddle-go-sdk/v2/models"
 )
 
-// PaddleConfig holds your Paddle credentials and settings
-
 func (app *application) initPaddle() (*paddle.SDK, error) {
 	paddleEnv := paddle.SandboxBaseURL
 	if os.Getenv("PADDLE_ENV") == "production" {
@@ -356,7 +354,7 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 			log.Printf("Using existing Paddle subscription: %s", sub.ID)
 		}
 	}
-
+	// client
 	if sub == nil {
 		createReq := &paddle.CreateSubscriptionRequest{
 			CustomerID: customerID,
@@ -377,6 +375,21 @@ func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) 
 			return Dict{"success": false, "msg": fmt.Sprintf("Failed to create Paddle subscription: %v", err)}
 		}
 		sub = created
+	} else {
+		// Optional: update subscription if needed (e.g. change price)
+		updateReq := &paddle.UpdateSubscriptionRequest{
+			SubscriptionID: sub.ID,
+			Items: []paddle.SubscriptionItemUpdateRequest{
+				{
+					PriceID:  priceID,	
+					Quantity: 1,
+				},
+			},
+		}
+		sub, err = client.Update(ctx, updateReq)
+		if err != nil {
+			return Dict{"success": false, "msg": fmt.Sprintf("Failed to update Paddle subscription: %v", err)}
+		}
 	}
 
 	subID := sub.ID
