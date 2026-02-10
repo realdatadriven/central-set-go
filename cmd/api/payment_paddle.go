@@ -244,9 +244,9 @@ func (app *application) PaddleCreateOrSyncCustomer(params map[string]any) Dict {
 
 	// Save back to DB
 	updateData := data
-	updateData["payment_provider_customer_id"] = customerID
-	updateData["payment_provider_customer_metadata"] = toDict(customer)
-	updateData["payment_provider_last_sync_at"] = time.Now()
+	updateData["payment_customer_id"] = customerID
+	updateData["payment_customer_metadata"] = toDict(customer)
+	updateData["payment_customer_last_sync_at"] = time.Now()
 
 	params["data"] = Dict{
 		"table":   "tenant",
