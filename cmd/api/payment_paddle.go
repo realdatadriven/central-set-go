@@ -9,9 +9,6 @@ import (
 	"time"
 
 	paddle "github.com/PaddleHQ/paddle-go-sdk/v4"
-	//"github.com/PaddleHQ/paddle-go-sdk/v2"
-	//"github.com/PaddleHQ/paddle-go-sdk/v2/client"
-	//"github.com/PaddleHQ/paddle-go-sdk/v2/models"
 )
 
 func (app *application) initPaddle() (*paddle.SDK, error) {
@@ -283,7 +280,6 @@ func toJSON(v any) string {
 
 // adds / syncs subscription to paddle github.com/PaddleHQ/paddle-go-sdk/v4
 
-
 /*func (app *application) Merge[M ~map[K]V, K comparable, V any](dst M, srcs ...M) {
 	for _, src := range srcs {
 		for k, v := range src {
@@ -291,126 +287,6 @@ func toJSON(v any) string {
 		}
 	}
 }*/
-func (app *application) PaddleCreateOrUpdateSubscription(params map[string]any) Dict {
-	data := extractData(params)
-	if data == nil {
-		return Dict{"success": false, "msg": "invalid params"}
-	}
-	tenantID := data["tenant_id"].(string)
-	planID := data["price_id"].(string)
-
-	// Get tenant's Paddle customer ID
-	params["data"] = Dict{
-		"table":   "tenant",
-		"filters": []Dict{{"field": "tenant_id", "value": tenantID}},
-	}
-	tenantResp := app.read(params)
-	if !tenantResp["success"].(bool) {
-		return tenantResp
-	}
-	tenantData := tenantResp["data"].([]Dict)[0]
-	customerID := tenantData["payment_customer_id"].(string)
-
-	// Get price ID from plan/prices
-	params["data"] = Dict{
-		"table":   "plan",
-		"filters": []Dict{{"field": "plan_id", "value": planID}},
-	}
-	planResp := app.read(params)
-	if !planResp["success"].(bool) {
-		return planResp
-	}
-	planData := planResp["data"].([]Dict)[0]
-	priceID := planData["payment_price_monthly_id"].(string)
-	if priceID == "" {
-		return Dict{"success": false, "msg": "No Paddle price ID found for plan"}
-	}
-
-	existingSubID := data["payment_subs_id"].(string)
-	ctx := context.Background()
-	var sub *paddle.Subscription
-	var err error
-	client, err := app.initPaddle()
-	if err != nil {
-		return Dict{"success": false, "msg": fmt.Sprintf("Failed to initialize Paddle client: %v", err)}
-	}
-
-	if existingSubID != "" {
-		// In v4, GetSubscription takes a GetSubscriptionRequest
-		sub, err = client.GetSubscription(ctx, &paddle.GetSubscriptionRequest{
-			SubscriptionID: existingSubID,
-		})
-		if err == nil {
-			log.Printf("Using existing Paddle subscription: %s", sub.ID)
-		}
-	}
-
-	if sub == nil {
-		// Create a new subscription
-		// In v4, CreateSubscription takes a CreateSubscriptionRequest
-		// Items use NewCreateSubscriptionItemsSubscriptionItemFromCatalog for catalog prices
-		created, err := client.CreateSubscription(ctx, &paddle.CreateSubscriptionRequest{
-			CustomerID: customerID,
-			Items: []paddle.CreateSubscriptionItems{
-				*paddle.NewCreateSubscriptionItemsSubscriptionItemFromCatalog(&paddle.SubscriptionItemFromCatalog{
-					PriceID:  priceID,
-					Quantity: 1,
-				}),
-			},
-			CustomData: paddle.CustomData{
-				"tenant_id": tenantID,
-				"plan_id":   planID,
-			},
-		})
-		if err != nil {
-			return Dict{"success": false, "msg": fmt.Sprintf("Failed to create Paddle subscription: %v", err)}
-		}
-		sub = created
-	} else {
-		// Update existing subscription
-		// In v4, UpdateSubscription takes an UpdateSubscriptionRequest
-		// Fields use PatchField for partial updates
-		updated, err := client.UpdateSubscription(ctx, &paddle.UpdateSubscriptionRequest{
-			SubscriptionID: sub.ID,
-			Items: paddle.NewPatchField([]paddle.UpdateSubscriptionItems{
-				*paddle.NewUpdateSubscriptionItemsSubscriptionItemFromCatalog(&paddle.SubscriptionItemFromCatalog{
-					PriceID:  priceID,
-					Quantity: 1,
-				}),
-			}),
-		})
-		if err != nil {
-			return Dict{"success": false, "msg": fmt.Sprintf("Failed to update Paddle subscription: %v", err)}
-		}
-		sub = updated
-	}
-
-	subID := sub.ID
-
-	// Save back to DB
-	updateData := data
-	updateData["payment_subs_id"] = subID
-	updateData["payment_subs_metadata"] = toDict(sub)
-	updateData["payment_provider_last_sync_at"] = time.Now()
-	updateData["status"] = string(sub.Status) // Status is a typed string in v4
-	updateData["next_billing_at"] = sub.NextBilledAt
-
-	params["data"] = Dict{
-		"table": "subscription",
-		"data":  updateData,
-	}
-
-	updateResult := app.create_update(params)
-	if !updateResult["success"].(bool) {
-		return updateResult
-	}
-
-	return Dict{
-		"success":         true,
-		"msg":             "Paddle subscription created/updated",
-		"subscription_id": subID,
-	}
-}
 /*/ ====================================================================
 // Paddle: Create or Update Subscription
 // ====================================================================
