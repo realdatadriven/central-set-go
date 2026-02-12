@@ -278,22 +278,22 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 		data = params["data"].(Dict)["data"].(Dict) // adjust based on your actual params structure
 	}
 	//subInternalID, _ := data["subscription_id"].(string)
-	params["data"].(Dict)["table"] = "price"                                                    // ensure we know which table to update
-	params["data"].(Dict)["filters"] = []Dict{{"field": "price_id", "value": data["price_id"]}} // for DB update
-	_prices := app.read(params)                                                                 // read existing data for price updates if needed
-	if _, ok := _prices["success"].(bool); !ok {
-		return _prices
+	params["data"].(Dict)["table"] = "plan"                                                   // ensure we know which table to update
+	params["data"].(Dict)["filters"] = []Dict{{"field": "plan_id", "value": data["plan_id"]}} // for DB update
+	_plan := app.read(params)                                                                 // read existing data for price updates if needed
+	if _, ok := _plan["success"].(bool); !ok {
+		return _plan
 	}
-	priceData := Dict{}
-	if _, ok := _prices["data"].([]Dict); !ok {
+	planData := Dict{}
+	if _, ok := _plan["data"].([]Dict); !ok {
 		return Dict{"success": false, "msg": "No price data found"}
-	} else if len(_prices["data"].([]Dict)) == 0 {
+	} else if len(_plan["data"].([]Dict)) == 0 {
 		return Dict{"success": false, "msg": "Empty price data"}
 	} else {
-		priceData = _prices["data"].([]Dict)[0]
+		planData = _plan["data"].([]Dict)[0]
 	}
-	stripePriceMonthlyID := priceData["payment_monthly_id"].(string)
-	stripePriceAnnualID := priceData["payment_annual_id"].(string)
+	stripePriceMonthlyID := planData["payment_price_monthly_id"].(string)
+	stripePriceAnnualID := planData["payment_price_annual_id"].(string)
 	params["data"].(Dict)["table"] = "tenant"                                                     // ensure we know which table to update
 	params["data"].(Dict)["filters"] = []Dict{{"field": "tenant_id", "value": data["tenant_id"]}} // for DB update
 	tenant := app.read(params)                                                                    // read existing data for price updates if needed
@@ -321,7 +321,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 		return Dict{"success": false, "msg": "payment_customer_id is required"}
 	}
 	if stripePriceID == "" {
-		return Dict{"success": false, "msg": "stripe_price_id is required"}
+		return Dict{"success": false, "msg": "payment_price_id is required"}
 	}
 	var sub *stripe.Subscription
 	var err error
