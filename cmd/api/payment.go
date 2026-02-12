@@ -79,15 +79,15 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	internalID, _ := data["plan_id"].(string)
 	name, _ := data["plan"].(string)
 	stripeProductID, _ := data["payment_product_id"].(string) // already saved?
-	//fmt.Println(name, data["plan"], data["plan_id"])
+	//fmt.Println(name, data["plan"], data["plan_id"], data["currency"])
 	monthlyAmount, _ := data["monthly_amount"].(float64)
 	annualAmount, _ := data["annual_amount"].(float64)
 	currency, _ := data["currency"].(string)
 	if currency == "" {
 		currency = "usd"
 	}
-	stripePriceMonthlyID := data["payment_price_monthly_id"].(string)
-	stripePriceAnnualID := data["payment_annual_id"].(string)
+	stripePriceMonthlyID, _ := data["payment_price_monthly_id"].(string)
+	stripePriceAnnualID, _ := data["payment_annual_id"].(string)
 	var prod *stripe.Product
 	var err error
 	// 1. If we already have payment_product_id → retrieve it
@@ -109,7 +109,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 		}
 		prod, err = product.New(sparams)
 		if err != nil {
-			return Dict{"success": false, "msg": fmt.Errorf("failed to create product: %w", err)}
+			return Dict{"success": false, "msg": fmt.Sprintf("failed to create product: %w", err)}
 		}
 		stripeProductID = prod.ID
 	} else {
@@ -129,10 +129,10 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 		// In real world, you might also store stripe_price_monthly_id etc. in DB
 		// For simplicity here we create new if not matching — in production you'd list prices
 		sparams := &stripe.PriceParams{
-			Product:           stripe.String(prod.ID),
-			Currency:          stripe.String(currency),
-			UnitAmount:        stripe.Int64(int64(amount)),
-			UnitAmountDecimal: stripe.Float64(0),
+			Product:  stripe.String(prod.ID),
+			Currency: stripe.String(currency),
+			//UnitAmount:        stripe.Int64(int64(amount)),
+			UnitAmountDecimal: stripe.Float64(amount * 100),
 			Recurring: &stripe.PriceRecurringParams{
 				Interval: stripe.String(interval),
 			},
@@ -155,6 +155,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 		} else {
 			p, err := price.New(sparams)
 			if err != nil {
+				fmt.Printf(id, interval, amount)
 				return nil, err
 			}
 			return p, nil
@@ -162,14 +163,14 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	}
 	monthly, err := createOrGetPrice(stripePriceMonthlyID, "month", monthlyAmount)
 	if err != nil {
-		return Dict{"success": false, "msg": fmt.Errorf("failed to create/get monthly price: %w", err)}
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to create/get monthly price: %w", err)}
 	}
 	if monthly != nil {
 		prices = append(prices, monthly)
 	}
 	annual, err := createOrGetPrice(stripePriceAnnualID, "year", annualAmount)
 	if err != nil {
-		return Dict{"success": false, "msg": fmt.Errorf("failed to create/get annual price: %w", err)}
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to create/get annual price: %w", err)}
 	}
 	if annual != nil {
 		prices = append(prices, annual)
@@ -186,7 +187,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 	_data := data
 	payment_product_metadata, err := json.Marshal(prod)
 	if err != nil {
-		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal product metadata: %w", err)}
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to marshal product metadata: %w", err)}
 	}
 	_data["payment_product_id"] = stripeProductID
 	_data["payment_price_monthly_id"] = monthlyID
@@ -232,7 +233,7 @@ func (app *application) CreateOrSyncCustomer(params map[string]any) Dict {
 				}
 				cust, err = customer.Update(stripeCustomerID, updateParams)
 				if err != nil {
-					return Dict{"success": false, "msg": fmt.Errorf("failed to update customer: %w", err)}
+					return Dict{"success": false, "msg": fmt.Sprintf("failed to update customer: %w", err)}
 				}
 			}
 			log.Printf("Using existing customer: %s", cust.ID)
@@ -249,14 +250,14 @@ func (app *application) CreateOrSyncCustomer(params map[string]any) Dict {
 		}
 		cust, err = customer.New(cparams)
 		if err != nil {
-			return Dict{"success": false, "msg": fmt.Errorf("failed to create customer: %w", err)}
+			return Dict{"success": false, "msg": fmt.Sprintf("failed to create customer: %w", err)}
 		}
 	}
 	params["data"].(Dict)["table"] = "tenant" // update params for DB save
 	_data := data
 	payment_customer_metadata, err := json.Marshal(cust)
 	if err != nil {
-		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal tenant metadata: %w", err)}
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to marshal tenant metadata: %w", err)}
 	}
 	_data["payment_customer_metadata"] = string(payment_customer_metadata)
 	_data["payment_customer_id"] = cust.ID
@@ -343,7 +344,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 				}
 				sub, err = subscription.Update(stripeSubscriptionID, updateParams)
 				if err != nil {
-					return Dict{"success": false, "msg": fmt.Errorf("failed to update subscription: %w", err)}
+					return Dict{"success": false, "msg": fmt.Sprintf("failed to update subscription: %w", err)}
 				}
 			}
 			log.Printf("Using existing subscription: %s (status: %s)", sub.ID, sub.Status)
@@ -360,14 +361,14 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 		}
 		sub, err = subscription.New(sparams)
 		if err != nil {
-			return Dict{"success": false, "msg": fmt.Errorf("failed to create subscription: %w", err)}
+			return Dict{"success": false, "msg": fmt.Sprintf("failed to create subscription: %w", err)}
 		}
 	}
 	params["data"].(Dict)["table"] = "subscription" // update params for DB save
 	_data := data
 	payment_subscription_metadata, err := json.Marshal(sub)
 	if err != nil {
-		return Dict{"success": false, "msg": fmt.Errorf("failed to marshal subscription metadata: %w", err)}
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to marshal subscription metadata: %w", err)}
 	}
 	_data["payment_subs_metadata"] = string(payment_subscription_metadata)
 	_data["payment_subs_id"] = sub.ID
