@@ -142,12 +142,14 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 			if err != nil {
 				p, err = price.New(sparams)
 				if err != nil {
+					fmt.Printf("PRICE:", id, interval, amount)
 					return nil, err
 				}
 				return p, nil
 			}
 			_, err = price.Update(id, sparams)
 			if err != nil {
+				fmt.Printf("PRICE:", id, interval, amount)
 				return nil, err
 			}
 			p, _ = price.Get(id, nil)
@@ -155,7 +157,7 @@ func (app *application) SyncOrCreateProduct(params map[string]any) Dict {
 		} else {
 			p, err := price.New(sparams)
 			if err != nil {
-				fmt.Printf(id, interval, amount)
+				fmt.Printf("PRICE:", id, interval, amount)
 				return nil, err
 			}
 			return p, nil
@@ -352,6 +354,7 @@ func (app *application) CreateOrUpdateSubscription(params map[string]any) Dict {
 		}
 	} else {
 		// 2. Create new subscription
+		fmt.Printf("SUBS:", stripeCustomerID, stripePriceID)
 		sparams := &stripe.SubscriptionParams{
 			Customer: stripe.String(stripeCustomerID),
 			Items: []*stripe.SubscriptionItemsParams{
