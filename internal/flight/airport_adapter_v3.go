@@ -652,7 +652,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 				"schema":   schemaName,
 				"table":    tableName,
 				"join":     "none",
-				"sql_only": any(true),
+				"sql_only": any(true), // uses the crud that read, but only return the sql, need to run it using arrow api, also crud/read is not high performant
 				"limit":    any(limit),
 			}
 			_read := a.read(_params)
@@ -693,7 +693,6 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
 			}
 		}
-
 		// LIMIT
 		// fmt.Println("opts.Limit:", opts.Limit)
 		if opts.Limit > 0 {
