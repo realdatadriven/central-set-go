@@ -574,6 +574,20 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	if err != nil {
 		println("Error geting the table query:", err)
 	}
+	sqlOnly := false
+	if _, ok := params["data"].(map[string]any)["sql_only"]; !ok {
+	} else if _, ok := params["data"].(map[string]any)["sql_only"].(bool); ok {
+		sqlOnly = params["data"].(map[string]any)["sql_only"].(bool)
+	}
+	if sqlOnly {
+		msg, _ := app.i18n.T("success", map[string]any{})
+		return map[string]any{
+			"success": true,
+			"msg":     msg,
+			"sql":     query,
+			"args":    args,
+		}
+	}
 	//fmt.Println(query, args)
 	results := make([]map[string]any, 0)
 	data, _, err := db.QueryMultiRows(query, args...)
