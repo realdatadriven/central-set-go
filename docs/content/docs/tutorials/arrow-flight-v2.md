@@ -114,7 +114,7 @@ Defines **data scopes** using SQL predicates.
 
 #### Scope Enforcement Rules
 
-- If **no scopes are defined** → all rows are eligible (subject to RLA)
+- If **no scopes are defined** → all rows are eligible <!--(subject to RLA)-->
 - If **one or more scopes exist**:
   - The token **must have access to at least one scope**
   - Otherwise **no data is returned**
@@ -150,7 +150,7 @@ Arrow Flight access is evaluated in the following order:
 4. **Table access**
 5. **Field access (masking)**
 6. **Scope access (gating)**
-7. **Row-Level Access (RLA)**
+<!--7. **Row-Level Access (RLA)**-->
 
 All layers must pass for data to be returned.
 
@@ -207,7 +207,7 @@ Create a schema via:
 
 Example:
 
-```yaml
+```yaml {linenos=table}
 name: my_schema
 description: Example analytical schema
 db_schema: main
@@ -233,11 +233,11 @@ Each schema represents **one logical Arrow Flight endpoint**.
 
 Using DuckDB's **airport** extension:
 
-```sql
+```sql {linenos=table}
 INSTALL airport FROM community;
 LOAD airport;
 
-CREATE OR REPLACE PERSISTENT SECRET airport_auth_secret (
+CREATE OR REPLACE [PERSISTENT] SECRET airport_auth_secret (
     TYPE airport,
     AUTH_TOKEN 'your_access_token_here',
     SCOPE 'grpc://127.0.0.1:50051'
@@ -259,7 +259,7 @@ LIMIT 10;
 * Accessible tables are resolved
 * Unauthorized fields are masked
 * Scopes are applied
-* RLA filters rows
+<!--* RLA filters rows-->
 * Data is streamed as Arrow batches
 
 ---
