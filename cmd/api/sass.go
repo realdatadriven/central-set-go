@@ -541,6 +541,8 @@ func GetEC2MetricsFromTFState(
 	return results, nil
 }
 
+// DYNAMIC ROUTE 
+
 /*func GetResourceMetricsFromTFStateV2(
 	ctx context.Context,
 	tfstateJSON []byte,
@@ -670,3 +672,95 @@ func GetEC2MetricsFromTFState(
 
 	return results, nil
 }*/
+
+// In your traefik.yml (or equivalent static config):
+/*```YAML
+providers:
+  file:
+    directory: "/etc/traefik/dynamic/tenants"   # or any path you like
+    watch: true
+```*/
+
+// Create a template file (e.g. templates/customer-router.yaml.tmpl):
+
+/*
+```yaml
+# templates/customer-router.yaml.tmpl
+
+http:
+  routers:
+    {{ .Slug }}-router:
+      rule: "Host(`{{ .Slug }}.yourdomain.com`)"   # or Host(`yourdomain.com`) && PathPrefix(`/{{ .Slug }}`)
+      service: {{ .Slug }}-service
+      entryPoints:
+        - websecure
+      tls: {}                                      # or tls: { certResolver: myresolver } for Let's Encrypt
+
+  services:
+    {{ .Slug }}-service:
+      loadBalancer:
+        servers:
+          - url: "{{ .CloudURL }}"                 # full https://... from your DB
+```
+*/
+
+// Customer holds the data for templating
+type Customer struct {
+	Slug    string
+	CloudURL string
+	// add more fields as needed: Domain, Middlewares, etc.
+}
+
+func generateCustomerConfig(customer Customer) error {
+	tmplPath := "templates/customer-router.yaml.tmpl"
+	outputDir := os.Getenv("TRAEFIK_DYNAMIC_DIR") //"/etc/traefik/dynamic/tenants" // must be writable by your app
+	// or use os.Getenv("TRAEFIK_DYNAMIC_DIR") for flexibility
+
+	// Ensure directory exists
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return err
+	}
+
+	outputPath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", customer.Slug))
+
+	// Parse template
+	tmpl, err := template.ParseFiles(tmplPath)
+	if err != nil {
+		return fmt.Errorf("parse template: %w", err)
+	}
+
+	// Create / overwrite file
+	file, err := os.Create(outputPath)
+	if err != nil {
+		return fmt.Errorf("create file %s: %w", outputPath, err)
+	}
+	defer file.Close()
+
+	// Execute template
+	if err := tmpl.Execute(file, customer); err != nil {
+		return fmt.Errorf("execute template: %w", err)
+	}
+
+	fmt.Printf("Generated Traefik config for %s → %s\n", customer.Slug, outputPath)
+	return nil
+}
+
+// Example usage — call this right after successful deployment & DB save
+func onDeploymentSuccess(slug, cloudURL string) error {
+	cust := Customer{
+		Slug:    slug,
+		CloudURL: cloudURL, // e.g. "https://customer-123.cloud-provider.com"
+	}
+	return generateCustomerConfig(cust)
+}
+
+func deleteCustomerConfig(slug string) error {
+	outputDir := "/etc/traefik/dynamic/tenants"
+	filePath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", slug))
+	
+	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	fmt.Printf("Removed Traefik config for %s\n", slug)
+	return nil
+}
