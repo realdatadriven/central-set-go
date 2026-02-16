@@ -650,9 +650,9 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			if !_read["success"].(bool) {
 				return nil, fmt.Errorf("%s!", _read["msg"])
 			}
-			read_sql := _read["sql"].(string)
-			args := _read["args"].(Dict)
-			query := fmt.Sprintf("SELECT %s FROM (%s) AS T", strings.Join(_fields, ","), read_sql)
+			read_sql = _read["sql"].(string)
+			args = _read["args"].(Dict)
+			query = fmt.Sprintf("SELECT %s FROM (%s) AS T", strings.Join(_fields, ","), read_sql)
 			fmt.Println("READ_SQL:", query, read_sql, args)
 		}
 		// FILTERS
