@@ -24,6 +24,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
 	cetypes "github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
+
+	"github.com/realdatadriven/central-set-go/assets"
 )
 
 type TerraformRun struct {
@@ -712,7 +714,17 @@ type Customer struct {
 }
 
 func generateCustomerConfig(customer Customer) error {
-	tmplPath := "templates/customer-router.yaml.tmpl"
+	tmplPath := "templates/customer-router.yaml"
+	if os.Getenv("TRAEFIK_TMPL_PATH") != "" {
+		tmplPath = os.Getenv("TRAEFIK_TMPL_PATH")
+	}
+	content, err = os.ReadFile(tmplPath)
+	if embedded && err != nil {
+		content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
+	}
+	if err != nil {
+		return fmt.Errorf("failed to read file: %w", err)
+	}
 	outputDir := os.Getenv("TRAEFIK_DYNAMIC_DIR") //"/etc/traefik/dynamic/tenants" // must be writable by your app
 	// or use os.Getenv("TRAEFIK_DYNAMIC_DIR") for flexibility
 	if outputDir == "" {

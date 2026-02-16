@@ -1,0 +1,16 @@
+# templates/customer-router.yaml.tmpl
+
+http:
+  routers:
+    {{ .Slug }}-router:
+      rule: "Host(`{{ .Slug }}.yourdomain.com`)"   # or Host(`yourdomain.com`) && PathPrefix(`/{{ .Slug }}`)
+      service: {{ .Slug }}-service
+      entryPoints:
+        - websecure
+      tls: {}                                      # or tls: { certResolver: myresolver } for Let's Encrypt
+
+  services:
+    {{ .Slug }}-service:
+      loadBalancer:
+        servers:
+          - url: "{{ .CloudURL }}"                 # full https://... from your DB

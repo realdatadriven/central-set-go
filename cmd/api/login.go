@@ -792,6 +792,17 @@ func (app *application) recover_pass(params Dict) Dict {
 		<p>If you did not request a password reset, please ignore this email.</p>
 		<p>Best regards,<br/>The Team</p>
 	`
+	tmplPath := "templates/recover-pass.html"
+	if os.Getenv("RECOVER_PASS_TMPL_PATH") != "" {
+		tmplPath = os.Getenv("RECOVER_PASS_TMPL_PATH")
+	}
+	content, err = os.ReadFile(tmplPath)
+	if embedded && err != nil {
+		content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
+	}
+	if content != nil {
+		bodyTemplate = string(content)
+	}
 	emailParams := Dict{
 		"to":      []any{user["email"]},
 		"subject": "Password Recovery",
@@ -885,6 +896,17 @@ func (app *application) confirm_emmail(params Dict) Dict {
 		<p>If you did not request a user account, please ignore this email.</p>
 		<p>Best regards,<br/>The Team</p>
 	`
+	tmplPath := "templates/confirm-email.html"
+	if os.Getenv("CONFIRM_EMAIL_TMPL_PATH") != "" {
+		tmplPath = os.Getenv("CONFIRM_EMAIL_TMPL_PATH")
+	}
+	content, err = os.ReadFile(tmplPath)
+	if embedded && err != nil {
+		content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
+	}
+	if content != nil {
+		bodyTemplate = string(content)
+	}
 	emailParams := Dict{
 		"to":      []any{user["email"]},
 		"subject": "Confirm Email",
