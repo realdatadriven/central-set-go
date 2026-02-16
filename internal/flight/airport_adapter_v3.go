@@ -628,6 +628,25 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
 			//fmt.Println("table_scan_tmpl_sql query:", query)
 		}
+		// CHECK IF THE CONFIG HAS AN APP IF SO DO READ TO GET ONLY THE SQL AND ARGS
+		args := Dict{}
+		if _, ok := conf["arrow_flight_conf"]; ok {
+			params := Dict{
+				"lang": "en",
+				"app": app
+			}
+			params["data"] = Dict{
+				"table":   tableName,
+				"sql_only": true,
+			}
+			read := a.read(params)
+			if !read["success"].(bool) {
+				return nil, fmt.Errorf("%s!", read["msg"])
+			}
+			_sql := read["sql"].(string)
+			args := read["args"].(Dict)
+		}
+		// FILTERS
 		hasFilters := false
 		if opts.Filter != nil {
 			// Parse filter JSON
