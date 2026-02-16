@@ -118,7 +118,7 @@ Defines **data scopes** using SQL predicates.
 - If **one or more scopes exist**:
   - The token **must have access to at least one scope**
   - Otherwise **no data is returned**
-- Multiple scopes are **OR-combined**
+- Multiple scopes are **AND-combined**
 
 Scopes act as a **hard gate** for data visibility.
 
