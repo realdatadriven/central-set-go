@@ -630,7 +630,9 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			query = strings.ReplaceAll(query, "{{fields}}", strings.Join(_fields, ","))
 			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
 			//fmt.Println("table_scan_tmpl_sql query:", query)
+			// ADD USER CONTENT SCOPE ...
 		}
+		// 
 		// RLA: CHECK IF THE CONFIG HAS AN APP IF SO DO READ TO GET ONLY THE SQL AND ARGS
 		args := Dict{}
 		read_sql := ""
@@ -644,7 +646,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			}
 			_params["data"] = Dict{
 				"table":   tableName,
-				"sql_only": true,
+				"sql_only": any(true),
 			}
 			_read := a.read(_params)
 			if !_read["success"].(bool) {
@@ -673,6 +675,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			}
 			// Use whereClause with your database query
 		}
+		// ARROW FLIGHT SCOPES
 		if len(_scopes) > 0 {
 			_scopes_cond := strings.Join(_scopes, " AND ")
 			if !hasFilters {
@@ -681,7 +684,9 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
 			}
 		}
-		fmt.Println("opts.Limit:", opts.Limit)
+
+		// LIMIT
+		//fmt.Println("opts.Limit:", opts.Limit)
 		if opts.Limit > 0 {
 			query = fmt.Sprintf("%s LIMIT %d", query, opts.Limit)
 		}
@@ -689,7 +694,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			// to be analized later, because returning different columns then already defined in the tables definition generates errors
 			fmt.Println("Requested columns: opts.Columns", opts.Columns)
 		}
-		fmt.Println("V3:", query)
+		//fmt.Println("V3:", query)
 		conn2, err := db.Connect(context.Background())
 		if err != nil {
 			return nil, err
