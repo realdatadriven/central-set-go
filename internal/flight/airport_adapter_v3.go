@@ -55,7 +55,7 @@ type AirportAdapterV3 struct {
 	validateToken func(token string) (string, error)
 	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case arrow_flight_table mapping tables
 	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in arrow_flight_table is accessible to the user
-	read          func(params map[string]any) map[string]any // use CS internal read mechanism instead of raw query
+	read          func(params map[string]any) map[string]any                             // use CS internal read mechanism instead of raw query
 	grpcSrv       *grpc.Server
 	listener      net.Listener
 	mem           memory.Allocator
@@ -364,6 +364,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 		if _, ok := conf["rla_tables"].([]string); ok {
 			rla_tables = conf["rla_tables"].([]string)
 		}
+		//fmt.Println(user["role_id"] != 1, user["role_id"] != any(1.0), user)
 		// check if arrow_flight is in rla_tables
 		//fmt.Printf("%T", conf["rla_tables"])
 		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
@@ -371,7 +372,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 		//schema_table_permissions := map[string]any{}
 		scopes_access := map[string]any{}
 		fields_access := map[string]any{}
-		if user["role_id"] != any(1) && (a.contains(rla_tables, "arrow_flight") ||
+		if user["role_id"] != any(1.0) && (a.contains(rla_tables, "arrow_flight") ||
 			a.contains(rla_tables, "arrow_flight_table") ||
 			a.contains(rla_tables, "arrow_flight_table_field") ||
 			a.contains(rla_tables, "arrow_flight_table_scope")) {
@@ -539,7 +540,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			if err != nil {
 				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], startup_sql, err)
 			}
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
+			// fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
 			main_sql := _etlx.ReplaceEnvVariable(conf["main_sql"].(string))
 			_, err = conn.ExecContext(context.Background(), main_sql)
 			if err != nil {
@@ -632,30 +633,38 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 			//fmt.Println("table_scan_tmpl_sql query:", query)
 			// ADD USER CONTENT SCOPE ...
 		}
-		// 
+		//
 		// RLA: CHECK IF THE CONFIG HAS AN APP IF SO DO READ TO GET ONLY THE SQL AND ARGS
-		args := Dict{}
+		args := []any{}
 		read_sql := ""
-		if _, ok := conf["arrow_flight_conf"].(map[string]any); !ok {
-		} if app, ok := conf["arrow_flight_conf"].(map[string]any)["app"]; ok {
-			fmt.Println("IS READ:", read_sql, args)
-			_params := Dict{
+		if _, ok := conf["conf"].(map[string]any); !ok {
+		} else if app, ok := conf["conf"].(map[string]any)["app"]; ok {
+			limit := -1.0
+			if opts.Limit > 0 {
+				limit = float64(opts.Limit)
+			}
+			_params := map[string]any{
 				"lang": "en",
-				"app": app,
+				"app":  app,
 				"user": user,
 			}
-			_params["data"] = Dict{
-				"table":   tableName,
+			_params["data"] = map[string]any{
+				"schema":   schemaName,
+				"table":    tableName,
+				"join":     "none",
 				"sql_only": any(true),
+				"limit":    any(limit),
 			}
 			_read := a.read(_params)
 			if !_read["success"].(bool) {
 				return nil, fmt.Errorf("%s!", _read["msg"])
 			}
 			read_sql = _read["sql"].(string)
-			args = _read["args"].(Dict)
+			args = _read["args"].([]any)
 			query = fmt.Sprintf("SELECT %s FROM (%s) AS T", strings.Join(_fields, ","), read_sql)
-			fmt.Println("READ_SQL:", query, read_sql, args)
+			// fmt.Println("READ_SQL:", read_sql, args)
+		} else {
+			//fmt.Println(3, conf["conf"])
 		}
 		// FILTERS
 		hasFilters := false
@@ -686,7 +695,7 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 		}
 
 		// LIMIT
-		//fmt.Println("opts.Limit:", opts.Limit)
+		// fmt.Println("opts.Limit:", opts.Limit)
 		if opts.Limit > 0 {
 			query = fmt.Sprintf("%s LIMIT %d", query, opts.Limit)
 		}

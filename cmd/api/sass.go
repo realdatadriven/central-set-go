@@ -543,7 +543,7 @@ func GetEC2MetricsFromTFState(
 	return results, nil
 }
 
-// DYNAMIC ROUTE 
+// DYNAMIC ROUTE
 
 /*func GetResourceMetricsFromTFStateV2(
 	ctx context.Context,
@@ -708,18 +708,18 @@ http:
 
 // Customer holds the data for templating
 type Customer struct {
-	Slug    string
+	Slug     string
 	CloudURL string
 	// add more fields as needed: Domain, Middlewares, etc.
 }
 
-func generateCustomerConfig(customer Customer) error {
+func (app *application) generateCustomerConfig(customer Dict) error {
 	tmplPath := "templates/customer-router.yaml"
 	if os.Getenv("TRAEFIK_TMPL_PATH") != "" {
 		tmplPath = os.Getenv("TRAEFIK_TMPL_PATH")
 	}
-	content, err = os.ReadFile(tmplPath)
-	if embedded && err != nil {
+	content, err := os.ReadFile(tmplPath)
+	if err != nil {
 		content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
 	}
 	if err != nil {
@@ -735,10 +735,12 @@ func generateCustomerConfig(customer Customer) error {
 		return err
 	}
 
-	outputPath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", customer.Slug))
+	outputPath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", customer["slug"]))
+
+	tmpl, err := app.RenderTemplate(string(content), customer)
 
 	// Parse template
-	tmpl, err := template.ParseFiles(tmplPath)
+	//tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
 	}
@@ -751,30 +753,24 @@ func generateCustomerConfig(customer Customer) error {
 	defer file.Close()
 
 	// Execute template
-	if err := tmpl.Execute(file, customer); err != nil {
-		return fmt.Errorf("execute template: %w", err)
+	//if err := tmpl.Execute(file, customer); err != nil {
+	//	return fmt.Errorf("execute template: %w", err)
+	//}
+	_, err = file.WriteString(tmpl)
+	if err != nil {
+		return fmt.Errorf("write file %s: %w", outputPath, err)
 	}
-
-	fmt.Printf("Generated Traefik config for %s → %s\n", customer.Slug, outputPath)
+	fmt.Printf("Generated Traefik config for %s → %s\n", customer["slug"], outputPath)
 	return nil
 }
 
-// Example usage — call this right after successful deployment & DB save
-func onDeploymentSuccess(slug, cloudURL string) error {
-	cust := Customer{
-		Slug:    slug,
-		CloudURL: cloudURL, // e.g. "https://customer-123.cloud-provider.com"
-	}
-	return generateCustomerConfig(cust)
-}
-
-func deleteCustomerConfig(slug string) error {
+func (app *application) deleteCustomerConfig(slug string) error {
 	outputDir := os.Getenv("TRAEFIK_DYNAMIC_DIR") // "/etc/traefik/dynamic/tenants"
 	if outputDir == "" {
 		return fmt.Errorf("No TRAEFIK_DYNAMIC_DIR found in your enviromental variables|")
 	}
 	filePath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", slug))
-	
+
 	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
 		return err
 	}

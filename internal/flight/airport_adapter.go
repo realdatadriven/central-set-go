@@ -386,7 +386,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		//schema_table_permissions := map[string]any{}
 		scopes_access := map[string]any{}
 		fields_access := map[string]any{}
-		if user["role_id"] != any(1) && (a.contains(rla_tables, "arrow_flight") ||
+		if (user["role_id"] != any(1) && user["role_id"] != any(1.0)) && (a.contains(rla_tables, "arrow_flight") ||
 			a.contains(rla_tables, "arrow_flight_table") ||
 			a.contains(rla_tables, "arrow_flight_table_field") ||
 			a.contains(rla_tables, "arrow_flight_table_scope")) {

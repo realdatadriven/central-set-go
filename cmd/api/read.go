@@ -112,6 +112,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	if _, ok := params["data"].(map[string]any)["offset"].(float64); ok {
 		offset = int(params["data"].(map[string]any)["offset"].(float64))
 	}
+	table_schema := ""
+	if _, ok := params["data"].(Dict)["schema"]; ok {
+		table_schema = params["data"].(Dict)["schema"].(string)
+	}
+	schm := ""
+	if table_schema != "" {
+		schm = fmt.Sprintf(`%s.`, table_schema)
+	}
 	// FIELDS
 	_flds := []any{fmt.Sprintf(`"%s".*`, table)}
 	//fields := []any{}
@@ -140,9 +148,9 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	fk_tables_pk := Dict{}
 	if _, ok := _schema["fields"]; ok {
 		for _, field_data := range _schema["fields"].(map[string]any) {
-			//fmt.Println(field_data.(map[string]any)["name"], field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"].(bool), field_data.(map[string]any)["fk"] == any(1))
+			//fmt.Println(field_data.(map[string]any)["name"], field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"].(bool), (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)))
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) || field_data.(map[string]any)["fk"] == any(1) {
+			} else if field_data.(map[string]any)["fk"].(bool) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
 				referred_table := ""
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
 					referred_table = field_data.(map[string]any)["referred_table"].(string)
@@ -163,7 +171,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else if join == "all" {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) || field_data.(map[string]any)["fk"] == any(1) {
+			} else if field_data.(map[string]any)["fk"].(bool) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -201,7 +209,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					field_sufix = fmt.Sprintf("%d", level)
 				}
 				if referred_table != "" && referred_column != "" && len(_referred_table_schema) > 0 {
-					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN "%s" "%s" ON "%s"."%s" = "%s"."%s"`, referred_table, alias, alias, referred_column, table, field))
+					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN %s"%s" "%s" ON "%s"."%s" = "%s"."%s"`, schm, referred_table, alias, alias, referred_column, table, field))
 					for key := range _referred_table_schema["fields"].(map[string]any) {
 						//if _, ok := _schema["fields"].(map[string]any)[key]; !ok {
 						_flds = append(_flds, fmt.Sprintf(`"%s"."%s" AS "%s_%s%s"`, alias, key, referred_table, key, field_sufix))
@@ -215,7 +223,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) || field_data.(map[string]any)["fk"] == any(1) {
+			} else if field_data.(map[string]any)["fk"].(bool) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -256,7 +264,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					if _, ok := _schema["fields"].(map[string]any)[referred_column.(string)]; !ok {
 						continue
 					}
-					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN "%s" "%s" ON "%s"."%s" = "%s"."%s"`, referred_table, alias, alias, referred_column, table, field))
+					joins = append(joins, fmt.Sprintf(`LEFT OUTER JOIN %s"%s" "%s" ON "%s"."%s" = "%s"."%s"`, schm, referred_table, alias, alias, referred_column, table, field))
 					keys := make([]any, len(_referred_table_schema["fields"].(map[string]any)))
 					if _, ok := _referred_table_schema["fields_order"]; ok {
 						keys = _referred_table_schema["fields_order"].([]any)
@@ -549,7 +557,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			}
 		}
 	}
-	query := fmt.Sprintf(`SELECT %s %s FROM "%s"`, distinct, app.joinSlice(_flds, ","), table)
+	query := fmt.Sprintf(`SELECT %s %s FROM %s"%s"`, distinct, app.joinSlice(_flds, ","), schm, table)
 	if len(joins) > 0 {
 		query = fmt.Sprintf(`%s %s`, query, app.joinSlice(joins, "\n"))
 	}
@@ -580,12 +588,12 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		sqlOnly = params["data"].(map[string]any)["sql_only"].(bool)
 	}
 	if sqlOnly {
-		fmt.Println("SQL ONLY!")
+		//fmt.Println("SQL ONLY!")
 		msg, _ := app.i18n.T("success", map[string]any{})
 		return map[string]any{
 			"success": true,
 			"msg":     msg,
-			"data": Dict{},
+			"data":    Dict{},
 			"sql":     query,
 			"args":    args,
 		}
@@ -594,7 +602,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	results := make([]map[string]any, 0)
 	data, _, err := db.QueryMultiRows(query, args...)
 	if err != nil {
-		fmt.Println("READ ERR:", args, query, err)
+		// fmt.Println("READ ERR:", args, query, err)
 		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),

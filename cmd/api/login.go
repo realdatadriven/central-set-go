@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-ldap/ldap/v3"
+	"github.com/realdatadriven/central-set-go/assets"
 	"github.com/realdatadriven/central-set-go/internal/password"
 
 	"github.com/pascaldekloe/jwt"
@@ -796,8 +797,8 @@ func (app *application) recover_pass(params Dict) Dict {
 	if os.Getenv("RECOVER_PASS_TMPL_PATH") != "" {
 		tmplPath = os.Getenv("RECOVER_PASS_TMPL_PATH")
 	}
-	content, err = os.ReadFile(tmplPath)
-	if embedded && err != nil {
+	content, err := os.ReadFile(tmplPath)
+	if err != nil {
 		content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
 	}
 	if content != nil {
@@ -900,8 +901,8 @@ func (app *application) confirm_emmail(params Dict) Dict {
 	if os.Getenv("CONFIRM_EMAIL_TMPL_PATH") != "" {
 		tmplPath = os.Getenv("CONFIRM_EMAIL_TMPL_PATH")
 	}
-	content, err = os.ReadFile(tmplPath)
-	if embedded && err != nil {
+	content, err := os.ReadFile(tmplPath)
+	if err != nil {
 		content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
 	}
 	if content != nil {
