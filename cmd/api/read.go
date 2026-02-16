@@ -580,10 +580,12 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		sqlOnly = params["data"].(map[string]any)["sql_only"].(bool)
 	}
 	if sqlOnly {
+		fmt.Println("SQL ONLY!")
 		msg, _ := app.i18n.T("success", map[string]any{})
 		return map[string]any{
 			"success": true,
 			"msg":     msg,
+			"data": Dict{},
 			"sql":     query,
 			"args":    args,
 		}
