@@ -715,7 +715,9 @@ func generateCustomerConfig(customer Customer) error {
 	tmplPath := "templates/customer-router.yaml.tmpl"
 	outputDir := os.Getenv("TRAEFIK_DYNAMIC_DIR") //"/etc/traefik/dynamic/tenants" // must be writable by your app
 	// or use os.Getenv("TRAEFIK_DYNAMIC_DIR") for flexibility
-
+	if outputDir == "" {
+		return fmt.Errorf("No TRAEFIK_DYNAMIC_DIR found in your enviromental variables|")
+	}
 	// Ensure directory exists
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		return err
@@ -755,7 +757,10 @@ func onDeploymentSuccess(slug, cloudURL string) error {
 }
 
 func deleteCustomerConfig(slug string) error {
-	outputDir := "/etc/traefik/dynamic/tenants"
+	outputDir := os.Getenv("TRAEFIK_DYNAMIC_DIR") // "/etc/traefik/dynamic/tenants"
+	if outputDir == "" {
+		return fmt.Errorf("No TRAEFIK_DYNAMIC_DIR found in your enviromental variables|")
+	}
 	filePath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", slug))
 	
 	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
