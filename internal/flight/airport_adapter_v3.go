@@ -55,6 +55,7 @@ type AirportAdapterV3 struct {
 	validateToken func(token string) (string, error)
 	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case arrow_flight_table mapping tables
 	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in arrow_flight_table is accessible to the user
+	read          func(params map[string]any) map[string]any // use CS internal read mechanism instead of raw query
 	grpcSrv       *grpc.Server
 	listener      net.Listener
 	mem           memory.Allocator
@@ -69,11 +70,13 @@ func NewAirportAdapterV3(
 	validateToken func(token string) (string, error),
 	table_access func(params map[string]any, tables []any) map[string]any,
 	rla_access func(params map[string]any, tables []any, row_id []any) map[string]any,
+	read func(params map[string]any) map[string]any,
 ) *AirportAdapterV3 {
 	return &AirportAdapterV3{
 		validateToken: validateToken,
 		table_access:  table_access,
 		rla_access:    rla_access,
+		read:    read,
 		mem:           memory.DefaultAllocator,
 		cfg:           config,
 		shutdownc:     make(chan struct{}),
@@ -630,7 +633,8 @@ func (a *AirportAdapterV3) scanFunc(mem memory.Allocator, schemaName, tableName 
 		}
 		// CHECK IF THE CONFIG HAS AN APP IF SO DO READ TO GET ONLY THE SQL AND ARGS
 		args := Dict{}
-		if _, ok := conf["arrow_flight_conf"]; ok {
+		if _, ok := conf["arrow_flight_conf"].(map[string]any); !ok {
+		} if app, ok := conf["arrow_flight_conf"].(map[string]any)["app"]; ok {
 			params := Dict{
 				"lang": "en",
 				"app": app

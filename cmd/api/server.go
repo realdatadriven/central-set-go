@@ -311,11 +311,19 @@ func (app *application) serveArrowFlightV3() error {
 		}
 		f["tables"] = tables
 		f["rla_tables"] = rla_tables["tables"]
+		if _conf, ok := f["arrow_flight_conf"].(string); ok {
+			var conf map[string]any
+			err := json.Unmarshal([]byte(_conf), &conf)
+			if err != nil {
+				fmt.Printf("failed to parse arrow_flight_conf JSON: %v\n", err)
+			}
+			f["conf"] = conf
+		}
 		//fmt.Println(f["rla_tables"])
 	}
 	// start server
 	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapterV3(fligths, app.airportValidateToken, app.table_access, app.row_level_access)
+	flightMgr := flight.NewAirportAdapterV3(fligths, app.airportValidateToken, app.table_access, app.row_level_access, app.read)
 	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
 	// Start the server (includes starting airport-go Flight server)
 	if err := flightMgr.Start(addr); err != nil {
