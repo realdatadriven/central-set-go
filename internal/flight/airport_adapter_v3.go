@@ -76,7 +76,7 @@ func NewAirportAdapterV3(
 		validateToken: validateToken,
 		table_access:  table_access,
 		rla_access:    rla_access,
-		read:    read,
+		read:          read,
 		mem:           memory.DefaultAllocator,
 		cfg:           config,
 		shutdownc:     make(chan struct{}),
