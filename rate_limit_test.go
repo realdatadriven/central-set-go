@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"flag"
 	"fmt"
@@ -28,7 +27,8 @@ func main() {
 	data := flag.String("data", "", "request body as string (for POST/PUT)")
 	dataFile := flag.String("data-file", "", "file to read request body from")
 	csvOut := flag.Bool("csv", false, "output per-request results as CSV to stdout")
-	flag.Var(&headers{}, "H", "custom header (can be repeated, format: Key: Value)")
+	var hdrs headers
+	flag.Var(&hdrs, "H", "custom header (can be repeated, format: Key: Value)")
 
 	flag.Parse()
 
@@ -42,8 +42,8 @@ func main() {
 	if *data != "" || *dataFile != "" {
 		fmt.Printf("→ Body           : %s\n", bodyInfo(*data, *dataFile))
 	}
-	if len(headers) > 0 {
-		fmt.Printf("→ Headers        : %d custom\n", len(headers))
+	if len(hdrs) > 0 {
+		fmt.Printf("→ Headers        : %d custom\n", len(hdrs))
 	}
 	if *csvOut {
 		fmt.Println("\nreq_id,timestamp_ms,status_code,duration_ms,error")
@@ -122,7 +122,7 @@ func main() {
 			}
 
 			// Apply custom headers
-			for _, h := range headers {
+			for _, h := range hdrs {
 				parts := strings.SplitN(h, ":", 2)
 				if len(parts) == 2 {
 					req.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))

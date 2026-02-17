@@ -22,7 +22,7 @@ import (
 	"github.com/stripe/stripe-go/v84/webhook"
 )
 
-func init() {
+func _init() {
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 	if stripe.Key == "" {
 		fmt.Println("STRIPE_SECRET_KEY not set")
