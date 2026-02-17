@@ -324,7 +324,7 @@ Instead of exposing tables directly from attached DuckDB sources, Arrow Flight:
 3. Applies the same internal logic used by:
 
 ```
-POST /dyn_api/crud/read
+/dyn_api/crud/read
 ```
 
 This means:
@@ -341,16 +341,16 @@ This means:
 
 Application-Aware Mode adds **another layer of security**:
 
-| Layer                      | Direct DuckDB Mode | Application-Aware Mode |
-| -------------------------- | ------------------ | ---------------------- |
-| Token validation           | ✅                  | ✅                      |
-| Schema access              | ✅                  | ✅                      |
-| Table access               | ✅                  | ✅                      |
-| Field masking              | ✅                  | ✅                      |
-| Scope filtering            | ✅                  | ✅                      |
-| Row-Level Access (RLA)     | ❌                  | ✅                      |
-| App-level permission model | ❌                  | ✅                      |
-| CRUD business rules        | ❌                  | ✅                      |
+| Layer                      | Direct DuckDB Mode  | Application-Aware Mode |
+| -------------------------- | ------------------- | ---------------------- |
+| Token validation           | ✅                  | ✅                    |
+| Schema access              | ✅                  | ✅                    |
+| Table access               | ✅                  | ✅                    |
+| Field masking              | ✅                  | ✅                    |
+| Scope filtering            | ✅                  | ✅                    |
+| Row-Level Access (RLA)     | ❌                  | ✅                    |
+| App-level permission model | ❌                  | ✅                    |
+| CRUD business rules        | ❌                  | ✅                    |
 
 Because only the database declared in the application configuration is accessible at this level:
 
