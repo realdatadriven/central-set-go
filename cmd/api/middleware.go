@@ -223,6 +223,8 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 			_, err := app.Increment(ip)
 			if err != nil {
 				fmt.Println("Error incrementing rate limit:", err)
+			} else {
+				fmt.Println("Incriment Successfull")
 			}
 		}
 		next.ServeHTTP(w, r)
@@ -234,11 +236,20 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 func (app *application) IsRateLimited(ip string) bool {
 	var requestCount int
 	var lastRequestTime time.Time
-	err := app.memdb.QueryRow("SELECT request_count, last_request_time FROM rate_limits WHERE ip = ?", ip).Scan(&requestCount, &lastRequestTime)
+	err := app.memdb.QueryRow("SELECT request_count, last_request_time FROM rate_limits WHERE ip = ? LIMIT 1", ip).Scan(&requestCount, &lastRequestTime)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println("Error checking rate limit:", err)
 		return false
+	} else if err == sql.ErrNoRows {
+		lastRequestTime = time.Now()
+		query := fmt.Sprintf(`INSERT INTO rate_limits VALUES ('%s', 1, CURRENT_TIMESTAMP);`, ip)
+		_, err := app.memdb.Exec(query)
+		if err != nil {
+			fmt.Println("Error resetting rate limit:", err, query)
+		}
 	}
+	//fmt.Println("RATE Limiting lastRequestTime:", requestCount, lastRequestTime, time.Since(lastRequestTime), time.Minute, time.Since(lastRequestTime) > time.Minute)
+	//fmt.Println("RATE Limiting lastRequestTime CHECKING:", requestCount, lastRequestTime, time.Since(time.Now()), time.Minute, time.Since(time.Now()) > time.Minute)
 	if time.Since(lastRequestTime) > time.Minute {
 		// reset request count after 1 minute
 		query := fmt.Sprintf(`MERGE INTO rate_limits
@@ -246,12 +257,15 @@ USING (SELECT '%s' as ip, 1 as request_count, CURRENT_TIMESTAMP as last_request_
 ON rate_limits.ip = upserts.ip
 WHEN MATCHED THEN UPDATE SET request_count = 0, last_request_time = CURRENT_TIMESTAMP
 WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.last_request_time);`, ip)
+		// reset request count after 1 minute
+		query = fmt.Sprintf(`UPDATE rate_limits SET request_count = 0, last_request_time = CURRENT_TIMESTAMP WHERE ip='%s';`, ip)
 		_, err := app.memdb.Exec(query)
 		if err != nil {
 			fmt.Println("Error resetting rate limit:", err, query)
 		}
 		return false
 	}
+	//fmt.Println("REQUEST vs LIMIT:", requestCount, app.rtRequestLimit, requestCount >= app.rtRequestLimit)
 	return requestCount >= app.rtRequestLimit // Example limit: 100 requests per minute
 }
 
@@ -263,5 +277,6 @@ WHEN MATCHED THEN UPDATE SET
     request_count = rate_limits.request_count + 1,
     last_request_time = CURRENT_TIMESTAMP
 WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.last_request_time);`, ip)
+	query = fmt.Sprintf(`UPDATE rate_limits SET request_count = request_count + 1, last_request_time = CURRENT_TIMESTAMP WHERE ip='%s';`, ip)
 	return app.memdb.Exec(query)
 }
