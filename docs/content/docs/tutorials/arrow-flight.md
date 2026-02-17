@@ -348,7 +348,7 @@ Application-Aware Mode adds **another layer of security**:
 | Table access               | ✅                  | ✅                      |
 | Field masking              | ✅                  | ✅                      |
 | Scope filtering            | ✅                  | ✅                      |
-| Row-Level Access (RLA)     | ✅                  | ✅                      |
+| Row-Level Access (RLA)     | ❌                  | ✅                      |
 | App-level permission model | ❌                  | ✅                      |
 | CRUD business rules        | ❌                  | ✅                      |
 
