@@ -107,6 +107,10 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	limit := 10
 	if _, ok := params["data"].(map[string]any)["limit"].(float64); ok {
 		limit = int(params["data"].(map[string]any)["limit"].(float64))
+	} else if _, ok := params["data"].(map[string]any)["limit"].(float32); ok {
+		limit = int(params["data"].(map[string]any)["limit"].(float32))
+	} else if _, ok := params["data"].(map[string]any)["limit"].(int); ok {
+		limit = params["data"].(map[string]any)["limit"].(int)
 	}
 	offset := 0
 	if _, ok := params["data"].(map[string]any)["offset"].(float64); ok {
