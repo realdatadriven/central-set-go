@@ -13,40 +13,55 @@ toc: true
 
 ## General Questions
 
-### What is ETLX?
+### What is Central-Set?
 
-**ETLX** is an **open-source, SQL-first data workflow engine** and an **evolving open specification** for describing complete data workflows as **executable documentation**.
+**Central-Set** is a **dynamic, SQL-driven application platform and data governance layer** designed to build secure data APIs, manage metadata, enforce access control, and expose analytical interfaces — all from configuration.
 
-ETLX lets you define ETL, analytics, reporting, exports, etc using **Markdown + YAML + SQL**, where the pipeline itself becomes the documentation, governance artifact, and execution plan.
+It combines:
 
+- Dynamic REST APIs  
+- ETLX-powered data workflows  
+- OData v4 endpoints  
+- Apache Arrow Flight support  
+- Fine-grained access control (RLA / field-level security)  
 
-
-### What problem does ETLX solve?
-
-ETLX addresses common problems in modern data workflows:
-
-* Hidden logic spread across code, SQL, and orchestration tools
-* Poor documentation and weak data governance
-* Tight coupling between pipelines and execution engines
-* Difficult auditing, reproducibility, and compliance
-
-ETLX makes **all logic explicit**, **self-documenting**, and **auditable by design**.
+All managed through a unified Admin interface.
 
 
 
-### Who is ETLX for?
+### What problem does Central-Set solve?
 
-ETLX is designed for:
+Central-Set addresses common challenges in modern data platforms:
 
-* **Data engineers** building ETL / ELT pipelines
-* **Analytics engineers** working SQL-first
-* **Data scientists** needing reproducible / automated data workflows
-* **Data analysts** creating reports and dashboards
-* **Platform and data architects**
-* **Governance, compliance, and data quality teams**
-* **Organizations** that value transparency and reproducibility
+* Hard-coded APIs that are difficult to evolve  
+* Poorly governed data access  
+* Fragmented authentication and authorization  
+* Limited metadata visibility  
+* Complex integration between transformation engines and APIs  
+* Inconsistent security enforcement across services  
 
-If you believe *SQL should be the transformation language and documentation should not be an afterthought*, ETLX is for you.
+Central-Set provides:
+
+* A **dynamic API layer**
+* Centralized **governance and access control**
+* Built-in **multi-tenant security**
+* Unified analytical data exposure
+
+
+
+### Who is Central-Set for?
+
+Central-Set is designed for:
+
+* **Data platform engineers**
+* **Backend engineers building data APIs**
+* **Analytics engineers**
+* **Data architects**
+* **SaaS builders**
+* **Governance and compliance teams**
+* **Organizations building internal data platforms**
+
+If you want to build **secure, metadata-driven, SQL-first APIs without hardcoding every endpoint**, Central-Set is for you.
 
 
 
@@ -54,116 +69,183 @@ If you believe *SQL should be the transformation language and documentation shou
 
 Start with the documentation:
 
-👉 **Getting Started & Concepts**
-[https://realdatadriven.github.io/etlxdocs](https://realdatadriven.github.io/etlxdocs)
+👉 https://realdatadriven.github.io/central-set-go/
 
 You can:
 
-* Run ETLX via the CLI
-* Embed it as a Go library
-* Start with a single Markdown file and grow from there
+* Run it as a standalone server
+* Use SQLite for quick local setup
+* Connect PostgreSQL or other databases
+* Enable ETLX workflows
+* Expose data via OData or Arrow Flight
 
 
 
 ## Technical Questions
 
-### What technologies does ETLX use?
+### What technologies does Central-Set use?
 
-ETLX is built primarily in **Go** and is:
+Central-Set is built primarily in **Go** and uses:
 
-* **SQL-first**
-* **Markdown-driven**
-* **DBMS Engine-agnostic**
+* SQL databases (SQLite, PostgreSQL, MySQL, SQL Server)
+* DuckDB (for ETLX and analytical workloads)
+* Apache Arrow Flight
+* OData v4
+* JWT-based authentication
+* Dynamic routing engine (`/dyn_api/{ctrl}/{act}`)
 
-It is powered by **DuckDB** for in-process analytics, but also supports:
+It is designed to be:
 
-* PostgreSQL
-* SQLite
-* MySQL
-* SQL Server
-* ODBC-compatible databases
-
-ETLX does **not** introduce a proprietary DSL.
-
+* Engine-agnostic
+* Metadata-driven
+* Configurable via environment variables
 
 
-### Is ETLX tied to DuckDB?
+
+### What is the Dynamic API (`/dyn_api`)?
+
+Central-Set exposes a dynamic endpoint:
+
+```
+
+POST /dyn_api/{ctrl}/{act}
+
+````
+
+Where:
+
+- `ctrl` acts like a namespace (similar to a class)
+- `act` acts like a method
+
+Requests follow a standard structure:
+
+```json
+{
+  "lang": "en",
+  "app": { ... },
+  "data": { ... }
+}
+````
+
+Responses follow a standard format:
+
+```json
+{
+  "success": true,
+  "msg": "message",
+  "data": { ... }
+}
+```
+
+This allows new capabilities to be added without hardcoding new REST routes.
+
+### Does Central-Set support fine-grained access control?
+
+Yes.
+
+Central-Set supports:
+
+* Role-based access control
+* Application-level access
+* Table-level access
+* Field-level access
+* Row-Level Access (RLA)
+* Scope-based filtering
+* Token-based access keys
+
+These rules apply consistently across:
+
+* REST APIs
+* OData v4
+* Arrow Flight
+
+### How does Central-Set integrate with ETLX?
+
+Central-Set uses **ETLX** as its data integration engine.
+
+ETLX allows:
+
+* SQL-first data transformations
+* Multi-source integration
+* Metadata-driven workflows
+* Governance artifact generation
+
+ETLX outputs can be:
+
+* Queried internally
+* Exposed via OData
+* Exposed via Arrow Flight
+* Governed by Central-Set access rules
+
+### Can Central-Set expose analytical data?
+
+Yes.
+
+Central-Set supports:
+
+#### OData v4
+
+* HTTP-based
+* Filterable (`$filter`)
+* Good for transactional and moderate workloads
+
+#### Apache Arrow Flight
+
+* High-performance
+* Columnar
+* Ideal for BI and data science tools
+* Backed by DuckDB
+* Supports schema/table/field/scope-level restrictions
+
+### Is Arrow Flight secure?
+
+Yes.
+
+Arrow Flight requires:
+
+* Authorization header
+* Valid access token
+* Proper role permissions
+* Optional Row-Level Access
+
+It can also run in:
+
+* Direct DuckDB mode
+* Application-aware mode (CRUD-layer enforced)
+
+TLS is supported via:
+
+```env
+ENABLE_TLS=true
+TLS_CERT_FILE=ssl/server-cert.pem
+TLS_KEY_FILE=ssl/server-key.pem
+TLS_CA_CERT_FILE=ssl/ca-cert.pem
+```
+
+### Can Central-Set be multi-tenant?
+
+Yes.
+
+Multi-tenancy is supported through:
+
+* App isolation
+* Database isolation
+* Role-based permissions
+* Row-Level Access
+* Scoped tokens
+
+### Is Central-Set just an API server?
 
 No.
 
-DuckDB is the default and recommended engine due to its:
+Central-Set is:
 
-* In-process execution
-* Multi-source querying
-* Performance
-
-However, ETLX is designed to support **multiple SQL engines** and execution backends. DuckDB is a strength — not a lock-in.
-
-
-
-### Is ETLX just a runtime?
-
-No.
-
-ETLX is:
-
-* A **runtime**
-* A **configuration model**
-* An **specification**
-
-The same configuration can be used to:
-
-* Execute workflows
-* Generate documentation
-* Produce governance artifacts like data dictionaries, data lineage, data quality rules, reports, ...
-
-
-
-### How does ETLX handle documentation and governance?
-
-ETLX parses Markdown into a structured model (`map[string]any` in Go), which includes:
-
-* Dataset metadata
-* Column-level definitions
-* Ownership and lineage
-* Validation rules
-* Execution semantics
-
-This enables automatic generation of:
-
-* Data dictionaries
-* Governance documentation
-* Audit reports
-* Quality checks
-
-Without duplicating logic.
-
-
-
-### How can I contribute?
-
-ETLX is community-driven.
-
-You can contribute by:
-
-* Improving documentation
-* Adding examples
-* Submitting bug reports
-* Proposing specification improvements
-* Contributing code
-
-👉 **Contribution Guide**
-[https://realdatadriven.github.io/etlxdocs/docs/contributing/](https://realdatadriven.github.io/etlxdocs/docs/contributing/)
-
-
-
-### Where is the source code?
-
-The source code is hosted on GitHub:
-
-👉 [https://github.com/realdatadriven/etlx](https://github.com/realdatadriven/etlx)
-
-
+* A dynamic API engine
+* A governance layer
+* A metadata manager
+* A data integration orchestrator (via ETLX)
+* An analytical data server (via Arrow Flight)
+* An OData provider
 
 ## Support Questions
 
@@ -175,44 +257,40 @@ You can get support by:
 * Opening GitHub issues
 * Participating in discussions
 
-The community is encouraged to help shape ETLX’s evolution.
+👉 [https://github.com/realdatadriven/central-set-go](https://github.com/realdatadriven/central-set-go)
 
-
-
-### Are there tutorials or examples?
+### Are there examples?
 
 Yes.
 
 The documentation includes:
 
-* Quickstart guides
-* Core concepts
-* Advanced examples
-* Real-world patterns
+* Configuration examples
+* OData usage examples
+* Arrow Flight examples
+* ETLX integration examples
+* Dynamic API templates
 
-👉 [https://realdatadriven.github.io/etlxdocs](https://realdatadriven.github.io/etlxdocs)
-
-
+👉 [https://realdatadriven.github.io/central-set-go/](https://realdatadriven.github.io/central-set-go/)
 
 ### How do I report a bug?
 
-Please open an issue on GitHub:
+Please open an issue:
 
-👉 [https://github.com/realdatadriven/etlx/issues](https://github.com/realdatadriven/etlx/issues)
+👉 [https://github.com/realdatadriven/central-set-go/issues](https://github.com/realdatadriven/central-set-go/issues)
 
 Include:
 
-* A minimal example
-* The ETLX version
+* Version
+* Environment details
+* Minimal reproduction
 * Expected vs actual behavior
-
-
 
 ## Licensing Questions
 
-### What license does ETLX use?
+### What license does Central-Set use?
 
-ETLX is licensed under the **Apache License 2.0**.
+Central-Set is licensed under the **Apache License 2.0**.
 
 This allows:
 
@@ -222,61 +300,55 @@ This allows:
 
 With proper attribution.
 
-
-
-### Can ETLX be used commercially?
+### Can Central-Set be used commercially?
 
 Yes.
 
-ETLX is explicitly designed to be usable in **commercial and enterprise environments**.
+Central-Set is designed for:
 
+* SaaS platforms
+* Internal enterprise data platforms
+* Data product architectures
+* Regulated environments
 
-
-### How should ETLX be attributed?
+### How should Central-Set be attributed?
 
 Please reference the project as:
 
-**ETLX** — [https://github.com/realdatadriven/etlx](https://github.com/realdatadriven/etlx)
+**Central-Set** — [https://github.com/realdatadriven/central-set-go](https://github.com/realdatadriven/central-set-go)
 by **RealDataDriven**
-
-
 
 ## Future & Roadmap Questions
 
-### Is ETLX stable?
+### Is Central-Set stable?
 
-ETLX is actively developed.
+Yes.
 
-The **core ideas are stable**, while the **specification is evolving** with community feedback.
+Central-Set is **production-ready and actively used**, although the documentation is still evolving.
 
+### What is currently evolving?
 
+Ongoing work includes:
 
-### Are there upcoming features?
-
-Planned and ongoing work includes:
-
-* Expanded open specification
-* More advanced examples
-* Additional export and governance templates
-* Improved observability and validation primitives
-
-
+* Enhanced Arrow Flight governance
+* Improved schema introspection
+* Expanded ETLX integration
+* Performance optimizations
+* Better dynamic API documentation generation
 
 ### How can I suggest features?
-
-Feature suggestions are welcome.
 
 You can:
 
 * Open a GitHub issue
 * Start a discussion
-* Propose changes to the specification
+* Propose architectural improvements
+* Contribute documentation
 
-
-
-### Will ETLX receive regular updates?
+### Will Central-Set receive regular updates?
 
 Yes.
 
-ETLX follows an incremental, transparent development approach.
-Changes and improvements are tracked openly in GitHub. 
+Central-Set follows an incremental, transparent development approach.
+Changes and improvements are tracked publicly in GitHub.
+
