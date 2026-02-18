@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/realdatadriven/central-set-go/internal/auth"
 )
 
 func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
@@ -110,6 +111,9 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /env/update", app.refreshEnv)
 	mux.HandleFunc("GET /env/sync", app.refreshEnv)
 	mux.HandleFunc("GET /env/refresh", app.refreshEnv)
+
+	mux.HandleFunc("GET /auth/{provider}/login", auth.GothLoginHandler)
+	mux.HandleFunc("GET /auth/{provider}/callback", auth.GothCallbackHandler)
 
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
