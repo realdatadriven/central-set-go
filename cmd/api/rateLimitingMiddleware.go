@@ -59,15 +59,17 @@ func (cl *ClientLimiter) Cleanup() {
 
 var globalLimiter = NewClientLimiter(5, 20) // 5 req/s, burst 20 per user
 
-func rateLimitMiddleware(next http.Handler) http.Handler {
+func (app *application) rateLimitMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// In real app: get user from auth header, JWT, session, etc.
 		// Here we use IP as example
-		userKey := r.RemoteAddr // or r.Header.Get("X-API-Key") or userID from context
-		limiter := globalLimiter.GetLimiter(userKey)
-		if !limiter.Allow() {
-			http.Error(w, "Too many requests", http.StatusTooManyRequests)
-			return
+		if app.rateLimitingEnabled {
+			userKey := r.RemoteAddr // or r.Header.Get("X-API-Key") or userID from context
+			limiter := globalLimiter.GetLimiter(userKey)
+			if !limiter.Allow() {
+				http.Error(w, "Too many requests", http.StatusTooManyRequests)
+				return
+			}
 		}
 		next.ServeHTTP(w, r)
 	})
