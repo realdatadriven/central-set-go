@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/realdatadriven/central-set-go/internal/auth"
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
 	"github.com/realdatadriven/central-set-go/internal/version"
@@ -221,6 +222,11 @@ func run(logger *slog.Logger) error {
 		if err != nil {
 			return err
 		}
+	}
+	// OAUTH INIT IF ENABLED
+	if env.GetBool("ENABLE_OAUTH", false) {
+		fmt.Println("ENABLE_OAUTH:", true)
+		auth.InitGoth()
 	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)

@@ -1,11 +1,12 @@
 package auth
 
 import (
-	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
-	"net/http"
 	"os"
 
+	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/github"
@@ -13,10 +14,18 @@ import (
 	"github.com/markbates/goth/providers/openidConnect"
 )
 
+// generateState – simple secure random state (you can also add PKCE here)
+func generateState() (string, error) {
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(b), nil
+}
+
 // InitGoth loads all configured providers from env vars
 func InitGoth() error {
 	var providers []goth.Provider
-
 	// Example: load Google if env vars present
 	if cid := os.Getenv("OAUTH_GOOGLE_CLIENT_ID"); cid != "" {
 		providers = append(providers,
@@ -72,75 +81,14 @@ func InitGoth() error {
 
 	// Session store setup (required!)
 	// Use secure random key in production (32+ bytes)
-	/*store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET") + "fallback-secret-very-long"))
+	fall_back_secret, _ := generateState()
+	// println("fall_back_secret:", fall_back_secret)
+	store := sessions.NewCookieStore([]byte(os.Getenv("OAUTH_SESSION_SECRET") + fall_back_secret))
 	store.Options.HttpOnly = true
 	store.Options.Secure = os.Getenv("ENV") == "production" // only HTTPS in prod
-	store.Options.SameSite = http.SameSiteLaxMode
+	//store.Options.Domain = http.SameSiteLaxMode
 	store.Options.Path = "/"
-	//gothic.Store = store // gothic is goth's session helper*/
+	gothic.Store = store // gothic is goth's session helper*/
 
 	return nil
-}
-
-func GothLoginHandler(w http.ResponseWriter, r *http.Request) {
-	provider := r.PathValue("provider")
-	if provider == "" {
-		http.Error(w, "provider required", http.StatusBadRequest)
-		return
-	}
-
-	// Goth handles state, redirect, PKCE (for supported providers), etc.
-	// You can pass extra oauth2 options if needed
-	q := r.URL.Query()
-	if q.Get("prompt") != "" {
-		// example: force consent screen
-		//r = gothic.SetState(r, "state-with-prompt") // optional custom state
-	}
-
-	url, err := gothic.GetAuthURL(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-}
-
-func GothCallbackHandler(w http.ResponseWriter, r *http.Request) {
-	provider := r.PathValue("provider")
-	if provider == "" {
-		http.Error(w, "provider missing from path", http.StatusBadRequest)
-		return
-	}
-
-	// Completes the flow: exchanges code, fetches user info
-	_, err := gothic.CompleteUserAuth(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// gu is goth.User – rich struct with:
-	//   - Provider
-	//   - UserID / Email / Name / NickName
-	//   - AccessToken, RefreshToken, ExpiresAt
-	//   - RawData (map[string]interface{} for extra claims)
-
-	// Now: create/link your user in DB, issue your own JWT/session
-	// Example:
-	/*sessionToken, err := yourCreateJWTOrSession(gu)
-	if err != nil {
-		// ...
-	}*/
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
-		Value:    "", //sessionToken,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-		Path:     "/",
-	})
-
-	http.Redirect(w, r, "/", http.StatusFound)
 }

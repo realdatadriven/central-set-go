@@ -1,16 +1,20 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/go-ldap/ldap/v3"
+	"github.com/markbates/goth/gothic"
 	"github.com/realdatadriven/central-set-go/assets"
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/password"
 
 	"github.com/pascaldekloe/jwt"
@@ -1040,19 +1044,163 @@ func (app *application) reset_pass(params Dict) Dict {
 	}
 }
 
-// oauth_login handles  google, github, etc. oauth login
-func (app *application) oauth_login(params Dict) Dict {
-	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
-	return Dict{
-		"success": false,
-		"msg":     msg,
+// OAUTH 2
+func (app *application) GothLoginHandler(w http.ResponseWriter, r *http.Request) {
+	provider := r.PathValue("provider")
+	if provider == "" {
+		http.Error(w, "provider required", http.StatusBadRequest)
+		return
 	}
+
+	// Goth handles state, redirect, PKCE (for supported providers), etc.
+	// You can pass extra oauth2 options if needed
+	q := r.URL.Query()
+	if q.Get("prompt") != "" {
+		// example: force consent screen
+		//r = gothic.SetState(r, "state-with-prompt") // optional custom state
+	}
+
+	url, err := gothic.GetAuthURL(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func (app *application) oauth_signup(params Dict) Dict {
-	msg, _ := app.i18n.T("not-implemented-yet", Dict{})
-	return Dict{
-		"success": false,
-		"msg":     msg,
+func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Request) {
+	provider := r.PathValue("provider")
+	if provider == "" {
+		http.Error(w, "provider missing from path", http.StatusBadRequest)
+		return
 	}
+	//fmt.Println("CALLBACK PROVIDER:", provider)
+	// Completes the flow: exchanges code, fetches user info
+	gu, err := gothic.CompleteUserAuth(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//fmt.Println(gu.Name, gu.Email, gu.FirstName, gu.LastName, gu.ExpiresAt)
+
+	user, found, err := app.db.GetUserByNameOrEmail(gu.Email)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusTooManyRequests)
+		json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+		return
+	}
+	if !found || len(user) == 0 {
+		query := `INSERT INTO 
+		"users" ("username", "first_name" , "last_name", "email", "password", "role_id", "lang_id", "active", "created_at", "updated_at", "excluded") 
+		VALUES (:username, :first_name, :last_name, :email, :password, :role_id, :lang_id, :active, :created_at, :updated_at, :excluded)`
+		pass, err := password.Hash(app.randomString(8))
+		if err != nil {
+			msg, _ := app.i18n.T("password-hash-error", Dict{})
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": msg})
+			return
+		}
+		role_id := env.GetInt("OAUTH_DEFAULT_ROLE_ID", 2)
+		username := gu.Email
+		if len(strings.Split(gu.Email, "@")) > 1 {
+			username = strings.Split(gu.Email, "@")[0]
+		}
+		first_name := gu.FirstName
+		if first_name == "" && len(strings.Split(gu.Name, " ")) > 1 {
+			first_name = strings.Split(gu.Name, " ")[0]
+		} else if first_name == "" {
+			first_name = gu.Name
+		}
+		last_name := gu.LastName
+		if last_name == "" && len(strings.Split(gu.Name, " ")) > 1 {
+			last_name = strings.Split(gu.Name, " ")[1]
+		} else if last_name == "" {
+			last_name = gu.Name
+		}
+		data := Dict{
+			"username":   username,
+			"first_name": first_name,
+			"last_name":  last_name,
+			"email":      gu.Email,
+			"password":   pass,
+			"role_id":    role_id,
+			"lang_id":    1,
+			"active":     true,
+			"created_at": time.Now(),
+			"updated_at": time.Now(),
+			"excluded":   false,
+		}
+		_, err = app.db.ExecuteNamedQuery(query, data)
+		if err != nil {
+			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": msg})
+			return
+		}
+		user, found, err = app.db.GetUserByNameOrEmail(gu.Email)
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+			return
+		} else if !found || len(user) == 0 {
+			msg, _ := app.i18n.T("user-not-found", Dict{"email": gu.Name})
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": msg})
+			return
+		}
+	}
+
+	user["oauth"] = true
+	user["provider"] = provider
+	delete(user, "password")
+	delete(user, "created_at")
+	delete(user, "updated_at")
+	delete(user, "phone")
+	delete(user, "timezone")
+	delete(user, "attach_profile_pic")
+	var claims jwt.Claims
+	json_user, err := json.Marshal(user)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusTooManyRequests)
+		json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+		return
+	}
+	claims.Subject = string(json_user)
+	//expiry := time.Now().Add(8 * time.Hour)
+	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	if !gu.ExpiresAt.IsZero() {
+		expiry = gu.ExpiresAt
+	}
+	claims.Issued = jwt.NewNumericTime(time.Now())
+	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Expires = jwt.NewNumericTime(expiry)
+	claims.Issuer = app.config.baseURL
+	claims.Audiences = []string{app.config.frontend_url}
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusTooManyRequests)
+		json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session",
+		Value:    string(jwtBytes),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+	})
+	w.Header().Set("X-Auth-Provider", "google")      // ← optional
+	w.Header().Set("X-Auth-Token", string(jwtBytes)) // ← optional
+	http.Redirect(w, r, "/", http.StatusFound)
 }
