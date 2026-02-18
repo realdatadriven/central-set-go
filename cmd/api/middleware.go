@@ -216,15 +216,13 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 			if app.IsRateLimited(ip) {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusTooManyRequests)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Too many requests"})
+				json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": "Too many requests"})
 				return
 			}
 			// Increment the request count for the IP
 			_, err := app.Increment(ip)
 			if err != nil {
 				fmt.Println("Error incrementing rate limit:", err)
-			} else {
-				fmt.Println("Incriment Successfull")
 			}
 		}
 		next.ServeHTTP(w, r)
