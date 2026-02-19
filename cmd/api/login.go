@@ -548,10 +548,11 @@ func (app *application) _login(params Dict) Dict {
 				, code_2f_expires_at = :code_2f_expires_at
 				, updated_at = :updated_at
 		WHERE user_id = :user_id`
+		min_2_expire = env.GetInt("TWO_FACTOR_CODE_EXP_IN_MIN", 5)
 		_data = Dict{
 			"user_id": user["user_id"], 
 			"nxt_code_2f_auth": nxt_code_2f_auth, 
-			"code_2f_expires_at": time.Now().Add(5 * time.Minute), 
+			"code_2f_expires_at": time.Now().Add(min_2_expire * time.Minute), 
 			"updated_at": time.Now()
 		}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
