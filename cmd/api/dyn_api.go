@@ -763,11 +763,11 @@ func (app *application) getToken(r *http.Request) (string, error) {
 }
 func (app *application) verifyToken(r *http.Request) Dict {
 	authorizationHeader := r.Header.Get("Authorization")
-	// USE COOKIE PROVIDED IN THE OAUTH AS IF Authorization HEADER
+	/*/ USE COOKIE PROVIDED IN THE OAUTH AS IF Authorization HEADER
 	cookie, err := r.Cookie("session")
 	if err == nil && authorizationHeader == "" {
 		authorizationHeader = "Bearer " + cookie.Value
-	}
+	}*/
 	if authorizationHeader != "" {
 		headerParts := strings.Split(authorizationHeader, " ")
 		if len(headerParts) == 2 && headerParts[0] == "Bearer" {

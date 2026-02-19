@@ -532,7 +532,7 @@ func (app *application) _login(params Dict) Dict {
 			"body":    bodyTemplate,
 			"data": Dict{
 				"first_name": user["first_name"],
-				"code": code,
+				"code":       code,
 			},
 		}
 		err = _etlx.SendEmail(emailParams)
@@ -547,12 +547,12 @@ func (app *application) _login(params Dict) Dict {
 			  , code_2f_expires_at = :code_2f_expires_at
 			  , updated_at = :updated_at
 		WHERE user_id = :user_id`
-		min_2_expire = env.GetInt("TWO_FACTOR_CODE_EXP_IN_MIN", 5)
+		min_2_expire := env.GetInt("TWO_FACTOR_CODE_EXP_IN_MIN", 5)
 		_data = Dict{
-			"user_id": user["user_id"], 
-			"nxt_code_2f_auth": nxt_code_2f_auth, 
-			"code_2f_expires_at": time.Now().Add(min_2_expire * time.Minute), 
-			"updated_at": time.Now()
+			"user_id":            user["user_id"],
+			"nxt_code_2f_auth":   nxt_code_2f_auth,
+			"code_2f_expires_at": time.Now().Add(time.Duration(min_2_expire) * time.Minute),
+			"updated_at":         time.Now(),
 		}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
@@ -562,7 +562,7 @@ func (app *application) _login(params Dict) Dict {
 				"msg":     msg,
 			}
 		}
-		msg, _ := app.i18n.T("two-factor-code-email-sent", Dict{"email": email})
+		msg, _ := app.i18n.T("two-factor-code-email-sent", Dict{"email": user["email"]})
 		return Dict{
 			"success":    true,
 			"msg":        msg,
@@ -635,16 +635,16 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 	}
 	var user Dict
 	var found bool
-	var err Error
-	user, found, err = app.db.GetUserByNameOrEmail(username)
+	//var err Error
+	user, found, err := app.db.GetUserByNameOrEmail(username)
 	if err != nil || len(user) == 0 {
 		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
-	} 
+	}
 	if !found || len(user) == 0 {
-		msg, _ := app.i18n.T("user-not-found", Dict{"email": email})
+		msg, _ := app.i18n.T("user-not-found", Dict{"email": user["email"]})
 		return Dict{
 			"success": false,
 			"msg":     msg,
@@ -668,7 +668,7 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 			}
 		}
 		code_2f_expires_at, _ := user["code_2f_expires_at"].(time.Time)
-		if code_2f_expires_at < time.Now() {
+		if code_2f_expires_at.Before(time.Now()) {
 			msg, _ := app.i18n.T("two-factor-code-expired", Dict{})
 			return Dict{
 				"success": false,
@@ -681,10 +681,10 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 			  , updated_at = :updated_at
 		WHERE user_id = :user_id`
 		_data = Dict{
-			"user_id": user["user_id"], 
-			"nxt_code_2f_auth": nil, 
-			"code_2f_expires_at": nil, 
-			"updated_at": time.Now()
+			"user_id":            user["user_id"],
+			"nxt_code_2f_auth":   nil,
+			"code_2f_expires_at": nil,
+			"updated_at":         time.Now(),
 		}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
@@ -694,7 +694,7 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 				"msg":     msg,
 			}
 		}
-	}	
+	}
 	delete(user, "password")
 	delete(user, "created_at")
 	delete(user, "updated_at")

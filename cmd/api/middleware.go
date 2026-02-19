@@ -58,11 +58,11 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 
 		authorizationHeader := r.Header.Get("Authorization")
 
-		// USE COOKIE PROVIDED IN THE OAUTH AS IF Authorization HEADER
+		/*/ USE COOKIE PROVIDED IN THE OAUTH AS IF Authorization HEADER
 		cookie, err := r.Cookie("session")
 		if err == nil && authorizationHeader == "" {
 			authorizationHeader = "Bearer " + cookie.Value
-		}
+		}*/
 
 		if authorizationHeader != "" {
 			headerParts := strings.Split(authorizationHeader, " ")
