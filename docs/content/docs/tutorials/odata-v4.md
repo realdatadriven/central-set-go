@@ -144,13 +144,10 @@ CREATE SECRET api_auth (
 FROM HTTP_GET('http://localhost:4444/odata/ADMIN/app');
 
 -- OData query
-FROM ODATA_READ(
-  'http://localhost:4444/odata/ADMIN/app?$filter=app_id gt 1'
-);
+FROM ODATA_READ('http://localhost:4444/odata/ADMIN/app?$filter=app_id gt 1');
 
 -- Attach as a database
-ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ADMIN'
-AS admin (TYPE odata);
+ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ADMIN' AS admin (TYPE odata);
 
 SELECT app_id, app, db, excluded
 FROM admin.app
