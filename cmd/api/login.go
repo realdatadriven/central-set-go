@@ -396,7 +396,6 @@ func (app *application) dynamic_signup(params Dict) Dict {
 }
 
 // login function, gets username/email and password from params, validates user and returns JWT token
-
 func (app *application) _login(params Dict) Dict {
 	_data := Dict{}
 	if _, ok := params["data"]; ok {
@@ -504,6 +503,198 @@ func (app *application) _login(params Dict) Dict {
 			}
 		}
 	}
+	// TWO FACTOR
+	if enable_2f_auth, ok := user["enable_2f_auth"].(bool); ok && enable_2f_auth {
+		code := app.randomString(8)
+		nxt_code_2f_auth, _ := password.Hash(code)
+		_etlx := etlx.ETLX{}
+		bodyTemplate := `
+			<p>Hi {{.first_name}},</p>
+			<p>You here is the two factor code generate in your login:</p>
+			<p><a href="{{.reset_link}}">{{.code}}</a></p>
+			<p>It will expire in 5 min.</p>
+			<p>If you did not request a login, please ignore this email.</p>
+			<p>Best regards,<br/>The Team</p>
+		`
+		tmplPath := "templates/two-factor-code.html"
+		if os.Getenv("TWO_FACTOR_CODE_TMPL_PATH") != "" {
+			tmplPath = os.Getenv("TWO_FACTOR_CODE_TMPL_PATH")
+		}
+		content, err := os.ReadFile(tmplPath)
+		if err != nil {
+			content, err = assets.EmbeddedFiles.ReadFile(tmplPath)
+		}
+		if content != nil {
+			bodyTemplate = string(content)
+		}
+		emailParams := Dict{
+			"to":      []any{user["email"]},
+			"subject": "Two Factor Auth",
+			"body":    bodyTemplate,
+			"data": Dict{
+				"first_name": user["first_name"],
+				"code": code,
+			},
+		}
+		err = _etlx.SendEmail(emailParams)
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     err.Error(),
+			}
+		}
+		query := `UPDATE users 
+			SET nxt_code_2f_auth = :nxt_code_2f_auth
+				, code_2f_expires_at = :code_2f_expires_at
+				, updated_at = :updated_at
+		WHERE user_id = :user_id`
+		_data = Dict{
+			"user_id": user["user_id"], 
+			"nxt_code_2f_auth": nxt_code_2f_auth, 
+			"code_2f_expires_at": time.Now().Add(5 * time.Minute), 
+			"updated_at": time.Now()
+		}
+		_, err = app.db.ExecuteNamedQuery(query, _data)
+		if err != nil {
+			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+			return Dict{
+				"success": false,
+				"msg":     msg,
+			}
+		}
+		msg, _ := app.i18n.T("two-factor-code-email-sent", Dict{"email": email})
+		return Dict{
+			"success":    true,
+			"msg":        msg,
+			"two_factor": true,
+		}
+	}
+	delete(user, "password")
+	delete(user, "created_at")
+	delete(user, "updated_at")
+	delete(user, "phone")
+	delete(user, "email")
+	delete(user, "timezone")
+	delete(user, "attach_profile_pic")
+	var claims jwt.Claims
+	json_user, err := json.Marshal(user)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	claims.Subject = string(json_user)
+	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now())
+	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Expires = jwt.NewNumericTime(expiry)
+	claims.Issuer = app.config.baseURL
+	claims.Audiences = []string{app.config.baseURL}
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	data := Dict{
+		"success": true,
+		"msg":     "Loged in successfully!",
+		"data":    user,
+		"token":   string(jwtBytes),
+		"expiry":  expiry.Format(time.RFC3339),
+	}
+	return data
+}
+
+// login function, gets username/email and password from params, validates user and returns JWT token
+func (app *application) two_factor_code_valid(params Dict) Dict {
+	_data := Dict{}
+	if _, ok := params["data"]; ok {
+		_data = params["data"].(Dict)
+	}
+	if app.IsEmpty(_data) {
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	username := ""
+	if _, ok := _data["username"].(string); ok {
+		username = _data["username"].(string)
+	} else if _, ok := _data["user"].(string); ok {
+		username = _data["user"].(string)
+	} else if _, ok := _data["u"].(string); ok {
+		username = _data["u"].(string)
+	}
+	pass := ""
+	if _, ok := _data["code"].(string); ok {
+		pass = _data["code"].(string)
+	}
+	var user Dict
+	var found bool
+	var err Error
+	user, found, err = app.db.GetUserByNameOrEmail(username)
+	if err != nil || len(user) == 0 {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	} 
+	if !found || len(user) == 0 {
+		msg, _ := app.i18n.T("user-not-found", Dict{"email": email})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	if found {
+		//_hash, _ := password.Hash(pass)
+		//fmt.Println(pass, _hash, user["password"].(string))
+		match, err := password.Matches(pass, user["nxt_code_2f_auth"].(string))
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     err.Error(),
+			}
+		}
+		if !match {
+			msg, _ := app.i18n.T("two-factor-code-incorrect", Dict{})
+			return Dict{
+				"success": false,
+				"msg":     msg,
+			}
+		}
+		code_2f_expires_at, _ := user["code_2f_expires_at"].(time.Time)
+		if code_2f_expires_at < time.Now() {
+			msg, _ := app.i18n.T("two-factor-code-expired", Dict{})
+			return Dict{
+				"success": false,
+				"msg":     msg,
+			}
+		}
+		query := `UPDATE users 
+			SET nxt_code_2f_auth = :nxt_code_2f_auth
+				, code_2f_expires_at = :code_2f_expires_at
+				, updated_at = :updated_at
+		WHERE user_id = :user_id`
+		_data = Dict{
+			"user_id": user["user_id"], 
+			"nxt_code_2f_auth": nil, 
+			"code_2f_expires_at": nil, 
+			"updated_at": time.Now()
+		}
+		_, err = app.db.ExecuteNamedQuery(query, _data)
+		if err != nil {
+			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+			return Dict{
+				"success": false,
+				"msg":     msg,
+			}
+		}
+	}	
 	delete(user, "password")
 	delete(user, "created_at")
 	delete(user, "updated_at")
@@ -753,7 +944,7 @@ func (app *application) recover_pass(params Dict) Dict {
 	}
 	if !found || len(user) == 0 {
 		msg, _ := app.i18n.T("user-not-found", Dict{"email": email})
-		fmt.Println("USER NOT FOUND!", msg, email)
+		// fmt.Println("USER NOT FOUND!", msg, email)
 		return Dict{
 			"success": false,
 			"msg":     msg,
@@ -1094,8 +1285,8 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 	}
 	if !found || len(user) == 0 {
 		query := `INSERT INTO 
-		"users" ("username", "first_name" , "last_name", "email", "password", "role_id", "lang_id", "active", "created_at", "updated_at", "excluded") 
-		VALUES (:username, :first_name, :last_name, :email, :password, :role_id, :lang_id, :active, :created_at, :updated_at, :excluded)`
+		"users" ("username", "first_name" , "last_name", "email", "password", "role_id", "lang_id", "active", "alter_pass_nxt_login", "created_at", "updated_at", "excluded") 
+		VALUES (:username, :first_name, :last_name, :email, :password, :role_id, :lang_id, :active, :alter_pass_nxt_login, :created_at, :updated_at, :excluded)`
 		pass, err := password.Hash(app.randomString(8))
 		if err != nil {
 			msg, _ := app.i18n.T("password-hash-error", Dict{})
@@ -1156,7 +1347,6 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 			return
 		}
 	}
-
 	user["oauth"] = true
 	user["provider"] = provider
 	delete(user, "password")
