@@ -1196,7 +1196,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 		Name:     "session",
 		Value:    string(jwtBytes),
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   false, // true
 		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 	})
