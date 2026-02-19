@@ -510,8 +510,7 @@ func (app *application) _login(params Dict) Dict {
 		_etlx := etlx.ETLX{}
 		bodyTemplate := `
 			<p>Hi {{.first_name}},</p>
-			<p>You here is the two factor code generate in your login:</p>
-			<p><a href="{{.reset_link}}">{{.code}}</a></p>
+			<p>You here is the two factor code generate in your login: {{.code}}</p>
 			<p>It will expire in 5 min.</p>
 			<p>If you did not request a login, please ignore this email.</p>
 			<p>Best regards,<br/>The Team</p>
@@ -545,8 +544,8 @@ func (app *application) _login(params Dict) Dict {
 		}
 		query := `UPDATE users 
 			SET nxt_code_2f_auth = :nxt_code_2f_auth
-				, code_2f_expires_at = :code_2f_expires_at
-				, updated_at = :updated_at
+			  , code_2f_expires_at = :code_2f_expires_at
+			  , updated_at = :updated_at
 		WHERE user_id = :user_id`
 		min_2_expire = env.GetInt("TWO_FACTOR_CODE_EXP_IN_MIN", 5)
 		_data = Dict{
@@ -678,8 +677,8 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 		}
 		query := `UPDATE users 
 			SET nxt_code_2f_auth = :nxt_code_2f_auth
-				, code_2f_expires_at = :code_2f_expires_at
-				, updated_at = :updated_at
+			  , code_2f_expires_at = :code_2f_expires_at
+			  , updated_at = :updated_at
 		WHERE user_id = :user_id`
 		_data = Dict{
 			"user_id": user["user_id"], 
