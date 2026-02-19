@@ -290,7 +290,12 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
-				data["user"] = params["user"]
+				msg, _ := app.i18n.T("success", Dict{})
+				data = Dict{
+					"success": true,
+					"msg":     msg,
+					"data":    params["user"],
+				}
 			}
 		case "access_key", "access_token", "credentials":
 			if !token["success"].(bool) {

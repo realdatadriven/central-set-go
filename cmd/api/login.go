@@ -1385,7 +1385,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    string(jwtBytes),
-		HttpOnly: true,
+		HttpOnly: false,
 		Secure:   false, // true
 		SameSite: http.SameSiteLaxMode,
 		Path:     "/",

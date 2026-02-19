@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Central Set</title><link>https://realdatadriven.github.io/central-set-go/</link><description>Recent content on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Tue, 17 Feb 2026 08:49:29 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/overview/</link><pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/overview/</guid><description>&lt;hr&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Central Set</title><link>https://realdatadriven.github.io/central-set-go/</link><description>Recent content on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Thu, 19 Feb 2026 15:19:35 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/overview/</link><pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/overview/</guid><description>&lt;hr&gt;
 &lt;h2 id="welcome-to-the-central-set-cs-documentation"&gt;Welcome to the &lt;strong&gt;Central Set (CS) documentation&lt;/strong&gt; &lt;a href="#welcome-to-the-central-set-cs-documentation" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This documentation explains &lt;strong&gt;what CS is&lt;/strong&gt;, &lt;strong&gt;how it works&lt;/strong&gt;, and &lt;strong&gt;how to think about it&lt;/strong&gt; before diving into applications, databases, security, APIs, pipelines, and dashboards.&lt;/p&gt;
 &lt;p&gt;If you want to get running quickly, start here:
 👉 &lt;a href="https://realdatadriven.github.io/central-set-go/docs/quickstart/"&gt;Quickstart&lt;/a&gt;&lt;/p&gt;
@@ -149,56 +149,7 @@ If it did &lt;em&gt;nothing&lt;/em&gt;, the reason is almost always visible in l
  &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently.&lt;/div&gt;
  &lt;/div&gt;
 &lt;p&gt;Central Set Go exposes a &lt;strong&gt;dynamic, context-driven API&lt;/strong&gt;.
-All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt; requests to allow rich payloads, permissions, and future extensibility.&lt;/p&gt;</description></item><item><title>Dynamic API Reference</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/api-v2/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/api-v2/</guid><description>&lt;h1 id="dynamic-api-reference"&gt;Dynamic API Reference &lt;a href="#dynamic-api-reference" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
- &lt;div class="flex-shrink-1 alert-icon"&gt;
- &lt;span class="material-icons size-20 me-2"&gt;
- warning
- &lt;/span&gt;&lt;/div&gt;
- &lt;div class="w-100"&gt;
-&lt;p&gt;&lt;strong&gt;Important&lt;/strong&gt; — Central-Set uses a &lt;strong&gt;dynamic API router&lt;/strong&gt;. Endpoints are not statically defined at compile time like traditional REST APIs. This document represents the &lt;strong&gt;authoritative contract&lt;/strong&gt; for all supported dynamic routes and is derived from the internal &lt;code&gt;dyn_api.go&lt;/code&gt; dispatcher.&lt;/p&gt;
- &lt;/div&gt;
- &lt;/div&gt;
-&lt;hr&gt;
-&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central-Set exposes a single dynamic entrypoint:&lt;/p&gt;
-
-
-
- 
- 
- 
-
- 
- 
- 
- 
-
- 
-
- &lt;div class="prism-codeblock "&gt;
- &lt;pre id="eb7fc7d" class="language- "&gt;
- &lt;code&gt;POST /dyn_api/{ctrl}/{act}&lt;/code&gt;
- &lt;/pre&gt;
- &lt;/div&gt;
-&lt;p&gt;Where:&lt;/p&gt;
-&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Parameter&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;code&gt;ctrl&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;Logical namespace (similar to a class or controller)&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;code&gt;act&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;Action or method executed within that namespace&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Internally, each &lt;code&gt;{ctrl}/{act}&lt;/code&gt; pair is mapped to a Go function via a &lt;code&gt;switch&lt;/code&gt; statement. All requests and responses follow a &lt;strong&gt;strict, uniform envelope&lt;/strong&gt;, enabling:&lt;/p&gt;</description></item><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set provides a &lt;strong&gt;first-class analytics and dashboarding layer&lt;/strong&gt; by embedding and extending
+All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt; requests to allow rich payloads, permissions, and future extensibility.&lt;/p&gt;</description></item><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set provides a &lt;strong&gt;first-class analytics and dashboarding layer&lt;/strong&gt; by embedding and extending
 &lt;a href="https://docs.evidence.dev" rel="external" target="_blank"&gt;evidence.dev&lt;svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path fill="currentColor" d="M14 5c-.552 0-1-.448-1-1s.448-1 1-1h6c.552 0 1 .448 1 1v6c0 .552-.448 1-1 1s-1-.448-1-1v-3.586l-7.293 7.293c-.391.39-1.024.39-1.414 0-.391-.391-.391-1.024 0-1.414l7.293-7.293h-3.586zm-9 2c-.552 0-1 .448-1 1v11c0 .552.448 1 1 1h11c.552 0 1-.448 1-1v-4.563c0-.552.448-1 1-1s1 .448 1 1v4.563c0 1.657-1.343 3-3 3h-11c-1.657 0-3-1.343-3-3v-11c0-1.657 1.343-3 3-3h4.563c.552 0 1 .448 1 1s-.448 1-1 1h-4.563z"/&gt;&lt;/svg&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This allows you to build &lt;strong&gt;interactive analytical dashboards&lt;/strong&gt; directly on top of:&lt;/p&gt;</description></item><item><title>Example</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/</guid><description>&lt;h2 id="analytics--dashboards--logs-dashboard-example"&gt;Analytics &amp;amp; Dashboards — Logs Dashboard Example &lt;a href="#analytics--dashboards--logs-dashboard-example" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This page walks through a real dashboard definition and explains &lt;strong&gt;how configuration, filters, metrics, charts, and tables work together&lt;/strong&gt; to produce the final analytics UI.&lt;/p&gt;
 &lt;p&gt;This dashboard uses:&lt;/p&gt;
