@@ -203,9 +203,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	// ROUTES
 	switch ctrl {
 	// handle ctrl = license and act = verify_license that baically just checks the token sent in the header Authorization
-	case "license":
+	case "license", "lic":
 		switch act {
-		case "verify_license": // this route just checks the license token validity and returns the token data in a licensee licensor setup
+		case "verify_license", "verify_lic", "verify": // this route just checks the license token validity and returns the token data in a licensee licensor setup
 			if !token["success"].(bool) {
 				data = Dict{
 					"success": false,
@@ -285,6 +285,12 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			} else {
 				data = app.alter_pass(params)
 			}
+		case "user", "user-from-token", "token-user", "usr":
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data["user"] = params["user"]
+			}
 		case "access_key", "access_token", "credentials":
 			if !token["success"].(bool) {
 				data = token
@@ -297,7 +303,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
-	case "admin":
+	case "admin", "adm":
 		if act == "apps" {
 			if !token["success"].(bool) {
 				data = token
@@ -756,6 +762,11 @@ func (app *application) getToken(r *http.Request) (string, error) {
 }
 func (app *application) verifyToken(r *http.Request) Dict {
 	authorizationHeader := r.Header.Get("Authorization")
+	// USE COOKIE PROVIDED IN THE OAUTH AS IF Authorization HEADER
+	cookie, err := r.Cookie("session")
+	if err == nil && authorizationHeader == "" {
+		authorizationHeader = "Bearer " + cookie.Value
+	}
 	if authorizationHeader != "" {
 		headerParts := strings.Split(authorizationHeader, " ")
 		if len(headerParts) == 2 && headerParts[0] == "Bearer" {
