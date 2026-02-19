@@ -237,8 +237,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	case "login":
 		switch act {
 		case "login", "sign_in", "signin", "auth", "authenticate", "log_in", "logon", "log_on", "index":
-			//app.login(w, r)
 			data = app._login(params)
+		case "validate_code", "validate_2f_code", "valid_code", "valid_2f_code", "2f_code", "two_factor_code":
+			data = app.two_factor_code_valid(params)
 		// dynamic_login
 		case "dynamic_login", "dynamic_auth", "dynamic_authenticate":
 			if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" {
