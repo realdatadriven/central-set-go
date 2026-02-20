@@ -104,3 +104,8 @@ user-id-field-required: 'User ID field is required!'
 username-field-required: 'Username field is required!'
 password-field-required: 'Password field is required!'
 email-field-required: 'Email field is required!'
+confirm-email-sent: 'An email to confirm your email has been sent to {{.email}}!'
+two-factor-code-email-sent: 'Login code has been sent to {{.email}}!'
+two-factor-code-incorrect: Two factor auth code incorrect!
+two-factor-code-expired: Two factor auth code expired!
+code-not-saved-or-already-used: Code not set or already used!

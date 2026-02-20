@@ -567,6 +567,7 @@ func (app *application) _login(params Dict) Dict {
 			"success":    true,
 			"msg":        msg,
 			"two_factor": true,
+			"username":   username,
 		}
 	}
 	delete(user, "password")
@@ -645,6 +646,19 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 	}
 	if !found || len(user) == 0 {
 		msg, _ := app.i18n.T("user-not-found", Dict{"email": user["email"]})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	if _, ok := user["nxt_code_2f_auth"].(string); !ok {
+		msg, _ := app.i18n.T("code-not-saved-or-already-used", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	} else if cd, ok := user["nxt_code_2f_auth"].(string); ok && cd == "" {
+		msg, _ := app.i18n.T("code-not-saved-or-already-used", Dict{})
 		return Dict{
 			"success": false,
 			"msg":     msg,
@@ -1367,7 +1381,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 	//expiry := time.Now().Add(8 * time.Hour)
 	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
 	if !gu.ExpiresAt.IsZero() {
-		expiry = gu.ExpiresAt
+		// expiry = gu.ExpiresAt
 	}
 	claims.Issued = jwt.NewNumericTime(time.Now())
 	claims.NotBefore = jwt.NewNumericTime(time.Now())
