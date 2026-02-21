@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 )
 
@@ -74,7 +75,7 @@ func anyToStrings(input []any) []string {
 	return result
 }
 
-func (app *application) etlxRun(params Dict) Dict {
+func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	if app.IsEmpty(params["data"]) {
 		msg, _ := app.i18n.T("no-data", Dict{})
 		return Dict{
@@ -87,6 +88,19 @@ func (app *application) etlxRun(params Dict) Dict {
 		return Dict{
 			"success": false,
 			"msg":     "Check the data passed, possible mal-formated!",
+		}
+	}
+	if env.GetBool("ETLX_VALIDATE_ETLX_ACCESS", false) && !ignore {
+		x := app.getEtlxByID(params)
+		if _, ok := x["success"]; !ok {
+			return x
+		} else if !x["success"].(bool) {
+			return x
+		} else if len(x["data"].([]Dict)) == 0 {
+			return Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("ETLX ID %s does not exists or you don have access to it!", x["etlx_id"]),
+			}
 		}
 	}
 	config := make(Dict)
@@ -397,8 +411,54 @@ func (app *application) etlxParseRun(params Dict) Dict {
 	res := app.etlxMdParse(params)
 	if res["success"].(bool) {
 		params["data"].(Dict)["conf"] = res["data"]
-		return app.etlxRun(params)
+		return app.etlxRun(params, false)
 	}
+	return res
+}
+
+func (app *application) getEtlxByID(params Dict) Dict {
+	table := "etlx"
+	if _, ok := params["table"].(string); ok {
+		table, _ = params["table"].(string)
+	} else if _, ok := params["data"].(Dict)["table"].(string); ok {
+		table, _ = params["data"].(Dict)["table"].(string)
+	}
+	database := "ETLX"
+	if _, ok := params["db"].(string); ok {
+		database, _ = params["db"].(string)
+	} else if _, ok := params["data"].(Dict)["db"].(string); ok {
+		database, _ = params["data"].(Dict)["db"].(string)
+	} else if _, ok := params["database"].(string); ok {
+		database, _ = params["database"].(string)
+	} else if _, ok := params["data"].(Dict)["database"].(string); ok {
+		database, _ = params["data"].(Dict)["database"].(string)
+	}
+	etlx_id := any(nil)
+	if _, ok := params["data"].(Dict)["etlx_id"]; ok {
+		etlx_id = params["data"].(Dict)["etlx_id"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		etlx_id = params["data"].(Dict)["data"].(Dict)["etlx_id"]
+	} else if _, ok := params["data"].(Dict)["etlx"].(Dict); ok {
+		etlx_id = params["data"].(Dict)["etlx"].(Dict)["etlx_id"]
+	}
+	if etlx_id == nil || etlx_id == any(nil) {
+		return Dict{
+			"success": false,
+			"msg":     "No ETLX ID found!",
+		}
+	}
+	_aux_params := params
+	_aux_params["data"].(Dict)["table"] = table
+	_aux_params["data"].(Dict)["db"] = database
+	_aux_params["data"].(Dict)["limit"] = any(1.0)
+	_aux_params["data"].(Dict)["offset"] = any(0.0)
+	_aux_params["data"].(Dict)["filters"] = []any{Dict{
+		"field": "etlx_id",
+		"cond":  "=",
+		"value": etlx_id,
+	}}
+	res := app.read(_aux_params)
+	res["etlx_id"] = etlx_id
 	return res
 }
 
@@ -428,23 +488,11 @@ func (app *application) etlxRunByName(params Dict) Dict {
 	_aux_params["data"].(Dict)["db"] = database
 	_aux_params["data"].(Dict)["limit"] = any(1.0)
 	_aux_params["data"].(Dict)["offset"] = any(0.0)
-	_aux_params["data"].(Dict)["filters"] = []any{}
-	_aux_params["data"].(Dict)["filters"] = append(
-		_aux_params["data"].(Dict)["filters"].([]any),
-		Dict{
-			"field": "etl",
-			"cond":  "=",
-			"value": name,
-		},
-	)
-	_aux_params["data"].(Dict)["order_by"] = []any{}
-	_aux_params["data"].(Dict)["order_by"] = append(
-		_aux_params["data"].(Dict)["order_by"].([]any),
-		Dict{
-			"field": "etlx_id",
-			"order": "desc",
-		},
-	)
+	_aux_params["data"].(Dict)["filters"] = []any{Dict{
+		"field": "etl",
+		"cond":  "=",
+		"value": name,
+	}}
 	etlx_get_conf := app.read(_aux_params)
 	//fmt.Println(len(etlx_get_conf["data"].([]Dict)), etlx_get_conf["data"])
 	if _, ok := etlx_get_conf["success"]; !ok {
@@ -461,7 +509,7 @@ func (app *application) etlxRunByName(params Dict) Dict {
 	res := app.etlxParseRun(params)
 	if res["success"].(bool) {
 		params["data"].(Dict)["conf"] = res["data"]
-		return app.etlxRun(params)
+		return app.etlxRun(params, true)
 	}
 	return res
 }

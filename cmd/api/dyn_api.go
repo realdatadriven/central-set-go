@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/request"
 	"github.com/realdatadriven/central-set-go/internal/response"
 
@@ -466,13 +467,27 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
-				data = app.etlxRun(params)
+				if !env.GetBool("ETLX_ALLOW_CLI_CONFIG", false) {
+					data = Dict{
+						"success": false,
+						"msg":     "Executing ETLX with cliente config is not allowed, ETLX_ALLOW_CLI_CONFIG must be true, please contact the Admin!",
+					}
+				} else {
+					data = app.etlxRun(params, false)
+				}
 			}
 		} else if app.contains([]any{"parserun", "parse_run", "parse&run"}, act) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
-				data = app.etlxParseRun(params)
+				if !env.GetBool("ETLX_ALLOW_CLI_CONFIG", false) {
+					data = Dict{
+						"success": false,
+						"msg":     "Executing ETLX with cliente config is not allowed, ETLX_ALLOW_CLI_CONFIG must be true, please contact the Admin!",
+					}
+				} else {
+					data = app.etlxParseRun(params)
+				}
 			}
 		} else if app.contains([]any{"run_by_name", "run_name", "name", "by_name", "byName", "byname"}, act) {
 			if !token["success"].(bool) {

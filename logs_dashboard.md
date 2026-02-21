@@ -14,6 +14,10 @@
     },
     "query_datasource": {
         "ds_name": "ds_"
+    },
+    "export_template": {
+        "etlx_id": 1,
+        "app": {"app_id": 2, "app": "ETLX", "db": "ETLX"}
     }
 ```
 
