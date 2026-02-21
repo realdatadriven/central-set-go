@@ -103,6 +103,12 @@ from (values
     </GridItem>
     {/if}
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Export" name = "export_template" action = "fill-template" label="" icon = "document-arrow-down" _class='btn-sm btn-gost' />
+    </GridItem>
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Print" name = "print" action = "print" label="" icon = "printer" _class='btn-sm btn-gost' />
+    </GridItem>
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
         <Button tooltip="Update" name = "refresh" action = "refresh" label="" icon = "refresh" _class='btn-sm btn-gost' />
     </GridItem>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
@@ -305,3 +311,56 @@ order by "start_at" asc
 	<Column id=msg title=Message/> 
 	<Column id=success title=Success/>
 </DataTable>
+
+<!-- ETLX CODE BLOCK - NORMALLY EXPORTS TO BE FILLED WITH DASHBOARD DATA -->
+
+````markdown export_template
+# EXPORT_TEMPLATE
+```yaml
+name: ExportLogsToXlsxTempl
+description: Exports logs to xlsx template
+runs_as: EXPORTS
+connection: "duckdb:"
+path: "static/uploads/"
+active: true
+```
+## TEMPLATE
+```yaml
+name: ExportLogsToXlsxTempl
+description: Exports logs to xlsx template
+connection: "duckdb:"
+before_sql: add_logs_table
+template: logs_template.xlsx
+path: tmp/logs_template_YYYYMMDD.xlsx
+mapping:
+  - sheet: summary
+    range: A1
+    sql: big_numbers
+    type: value
+    key: total
+  - sheet: details
+    range: B2
+    sql: details
+    type: range
+    table: details
+    table_style: TableStyleLight1
+    header: true
+    if_exists: delete
+after_sql: null
+active: true
+```
+```sql
+-- add_logs_table
+CREATE OR REPLACE TABLE "LOGS" AS 
+SELECT * 
+FROM 'static/uploads/tmp/[dash.pre_prepared_parquets.LOGS]'
+```
+```sql
+-- details
+[dash.compiled_queries._logs]
+```
+```sql
+-- big_numbers
+[dash.compiled_queries.big_numbers_query]
+```
+````

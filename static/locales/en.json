@@ -349,7 +349,9 @@
         "reset_password": "Reset Password",
         "new_password": "New Password",
         "confirm_pass": "Confirm Password",
-        "new_pass_again_match": "New Password and Confirm New Password must match"
+        "new_pass_again_match": "New Password and Confirm New Password must match",
+        "2f_code": "Two factor code",
+        "submit_2f_code": "Submit code"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",

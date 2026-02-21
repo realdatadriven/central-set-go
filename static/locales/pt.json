@@ -342,7 +342,9 @@
         "reset_password": "Resetar Password",
         "confirm_pass": "Confirmar Password",
         "new_password": "Nova Password",
-        "new_pass_again_match": "Nova Password e Confirmar Nova Password devem ser iguais!"
+        "new_pass_again_match": "Nova Password e Confirmar Nova Password devem ser iguais!",
+        "2f_code": "Two factor code",
+        "submit_2f_code": "Submit code"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",

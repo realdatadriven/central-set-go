@@ -95,6 +95,12 @@ limit 10
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
         <Button tooltip="Update" name = "refresh" action = "refresh" label="" icon = "refresh" _class='btn-sm btn-gost' />
     </GridItem>
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Export" name = "fill-template" action = "fill-template" label="" icon = "document-arrow-down" _class='btn-sm btn-gost' />
+    </GridItem>
+    <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Print" name = "print" action = "print" label="" icon = "printer" _class='btn-sm btn-gost' />
+    </GridItem>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
         <Button tooltip="Details" name = "details" action = "details" label="" icon = "ellipsis-vertical" _class='btn-sm btn-gost' />
