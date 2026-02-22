@@ -16,7 +16,7 @@ This page walks through a real dashboard definition and explains **how configura
 This dashboard uses:
 
 * **Evidence.dev components** (Charts, Stats, DataTable, Inputs)
-* **CentralSet runtime** instead of Evidence’s native data layer
+* **CentralSet runtime** instead of Evidence's native data layer
 * **ETLX-generated datasets and Parquet files**
 * **DuckDB WASM** for in-browser analytics
 
