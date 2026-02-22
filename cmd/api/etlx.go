@@ -27,23 +27,20 @@ func DeepCompare(input, config map[string]any, path string) (bool, string) {
 		"tmp":            true,
 		"temp":           true,
 	}
-
 	// Check all keys in input against config
 	for key, inputVal := range input {
 		if ignoreKeys[key] {
 			continue
 		}
-
 		fullPath := key
 		if path != "" {
 			fullPath = path + "." + key
 		}
-
 		configVal, exists := config[key]
 		if !exists {
+			// fmt.Println(key, inputVal, configVal)
 			return false, fmt.Sprintf("Key %s missing in config", fullPath)
 		}
-
 		// Compare based on type
 		switch iv := inputVal.(type) {
 		case string:
@@ -85,7 +82,6 @@ func DeepCompare(input, config map[string]any, path string) (bool, string) {
 			}
 		}
 	}
-
 	/*/ Check for extra keys in config that are not in input (ignoring ignored keys)
 	for key := range config {
 		if ignoreKeys[key] {
@@ -99,7 +95,6 @@ func DeepCompare(input, config map[string]any, path string) (bool, string) {
 			return false, fmt.Sprintf("Extra key %s in config", fullPath)
 		}
 	}*/
-
 	return true, ""
 }
 
@@ -108,6 +103,7 @@ func deepCompareAny(a, b any, path string) (bool, string) {
 	switch av := a.(type) {
 	case string:
 		if bv, ok := b.(string); !ok || av != bv {
+			//fmt.Println("rdeepCompareAny string:", a, b)
 			return false, fmt.Sprintf("Mismatch at %s: input '%v' != config '%v'", path, av, b)
 		}
 	case bool:
@@ -137,6 +133,7 @@ func deepCompareAny(a, b any, path string) (bool, string) {
 	default:
 		// Fallback for other types
 		if !reflect.DeepEqual(a, b) {
+			//fmt.Println("reflect.DeepEqual:", a, b)
 			return false, fmt.Sprintf("Mismatch at %s: input %v != config %v", path, a, b)
 		}
 	}
@@ -224,7 +221,6 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 		}
 	}
 	// CONFIG
-
 	config := make(Dict)
 	etlxlib := &etlx.ETLX{Config: config}
 	config, ok = _data["conf"].(Dict)
@@ -266,12 +262,12 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 			}
 		}
 		if env.GetBool("ETLX_VALIDATE_CLI_CONF_WITH_DB", true) {
+			// CONF
 			_conf, _ := x["data"].([]Dict)[0]["etlx_conf"]
 			res := app.etlxMdParse(Dict{"data": Dict{"conf": _conf}})
 			if !res["success"].(bool) {
 				return res
 			}
-			// CONF
 			db_cnf, ok := res["data"].(Dict)
 			if !ok {
 				return Dict{
@@ -279,12 +275,9 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 					"msg":     "Unable to parse the database config!",
 				}
 			}
-			//fmt.Println("CONF:", db_cnf)
+			etlxlib.PrintConfigAsJSON(config)
+			etlxlib.PrintConfigAsJSON(db_cnf)
 			// VALIDATE
-			// LLM Q: I have an input nested map[string]any, and and same config from db, i want to deeply compare them, and check if thei are the same
-			// i want to look trou each key case the any parte is a string check if its the same , if its boolean is mostly toggle true false that is expected
-			// but if its is an array or another map[string]any it call the traverse (recursive function again til the end), when a missmacth is foudit breaks the loop and says the level1.level2 != from source level1.level2 string
-			// also keys like file, date,date_ref shoud be ignored from the compareson, because its user input
 			equal, msg := DeepCompare(config, db_cnf, "")
 			if !equal {
 				fmt.Println("DeepCompare:", msg)
@@ -292,8 +285,6 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 					"success": false,
 					"msg":     msg,
 				}
-			} else {
-				fmt.Println("Maps are equal (ignoring specified keys)")
 			}
 		}
 	}
