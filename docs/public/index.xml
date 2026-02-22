@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Central Set</title><link>https://realdatadriven.github.io/central-set-go/</link><description>Recent content on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Thu, 19 Feb 2026 15:19:35 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/overview/</link><pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/overview/</guid><description>&lt;hr&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Central Set</title><link>https://realdatadriven.github.io/central-set-go/</link><description>Recent content on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Sun, 22 Feb 2026 16:48:47 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/overview/</link><pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/overview/</guid><description>&lt;hr&gt;
 &lt;h2 id="welcome-to-the-central-set-cs-documentation"&gt;Welcome to the &lt;strong&gt;Central Set (CS) documentation&lt;/strong&gt; &lt;a href="#welcome-to-the-central-set-cs-documentation" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This documentation explains &lt;strong&gt;what CS is&lt;/strong&gt;, &lt;strong&gt;how it works&lt;/strong&gt;, and &lt;strong&gt;how to think about it&lt;/strong&gt; before diving into applications, databases, security, APIs, pipelines, and dashboards.&lt;/p&gt;
 &lt;p&gt;If you want to get running quickly, start here:
 👉 &lt;a href="https://realdatadriven.github.io/central-set-go/docs/quickstart/"&gt;Quickstart&lt;/a&gt;&lt;/p&gt;
@@ -155,11 +155,28 @@ All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt
 &lt;p&gt;This dashboard uses:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Evidence.dev components&lt;/strong&gt; (Charts, Stats, DataTable, Inputs)&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;CentralSet runtime&lt;/strong&gt; instead of Evidence’s native data layer&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;CentralSet runtime&lt;/strong&gt; instead of Evidence&amp;rsquo;s native data layer&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;ETLX-generated datasets and Parquet files&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;DuckDB WASM&lt;/strong&gt; for in-browser analytics&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id="getting-started-with-dashboard"&gt;Getting Started With Dashboard &lt;a href="#getting-started-with-dashboard" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;By default, a newly created dashboard is &lt;strong&gt;empty&lt;/strong&gt; and displays only a basic layout with an &lt;strong&gt;Edit&lt;/strong&gt; button.&lt;/p&gt;</description></item><item><title>OData v4 API</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</guid><description>&lt;h1 id="odata-v4-api"&gt;OData v4 API &lt;a href="#odata-v4-api" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+&lt;h3 id="getting-started-with-dashboard"&gt;Getting Started With Dashboard &lt;a href="#getting-started-with-dashboard" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;By default, a newly created dashboard is &lt;strong&gt;empty&lt;/strong&gt; and displays only a basic layout with an &lt;strong&gt;Edit&lt;/strong&gt; button.&lt;/p&gt;</description></item><item><title>Exporting Dashboard Data to Excel Templates</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/export-dashboard/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/export-dashboard/</guid><description>&lt;h2 id="exporting-dashboard-data-to-excel-templates"&gt;Exporting Dashboard Data to Excel Templates &lt;a href="#exporting-dashboard-data-to-excel-templates" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central-Set dashboards are not limited to visualization.&lt;/p&gt;
+&lt;p&gt;They can also:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;📊 Render analytics interactively&lt;/li&gt;
+&lt;li&gt;📁 Generate structured Excel files&lt;/li&gt;
+&lt;li&gt;🏛️ Produce regulatory reports&lt;/li&gt;
+&lt;li&gt;🔁 Reuse the exact same dashboard filters and queries&lt;/li&gt;
+&lt;li&gt;🔐 Enforce the same access control and row-level security&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is achieved by combining:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dashboard compiled queries&lt;/li&gt;
+&lt;li&gt;ETLX export templates&lt;/li&gt;
+&lt;li&gt;A dashboard action button (&lt;code&gt;fill-template&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Optional backend validation against ETLX app configuration&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="why-this-matters"&gt;Why This Matters &lt;a href="#why-this-matters" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Many organizations must:&lt;/p&gt;</description></item><item><title>OData v4 API</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</guid><description>&lt;h1 id="odata-v4-api"&gt;OData v4 API &lt;a href="#odata-v4-api" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
  &lt;div class="flex-shrink-1 alert-icon"&gt;
  &lt;span class="material-icons size-20 me-2"&gt;
  warning
