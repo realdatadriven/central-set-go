@@ -13,9 +13,19 @@ import (
 
 func DeepCompare(input, config map[string]any, path string) (bool, string) {
 	ignoreKeys := map[string]bool{
-		"file":     true,
-		"date":     true,
-		"date_ref": true,
+		"file":           true,
+		"date":           true,
+		"date_ref":       true,
+		"loading":        true,
+		"open":           true,
+		"__order":        true,
+		"__lakes":        true,
+		"num_rows":       true,
+		"skip_extract":   true,
+		"skip_load":      true,
+		"skip_transform": true,
+		"tmp":            true,
+		"temp":           true,
 	}
 
 	// Check all keys in input against config
@@ -76,7 +86,7 @@ func DeepCompare(input, config map[string]any, path string) (bool, string) {
 		}
 	}
 
-	// Check for extra keys in config that are not in input (ignoring ignored keys)
+	/*/ Check for extra keys in config that are not in input (ignoring ignored keys)
 	for key := range config {
 		if ignoreKeys[key] {
 			continue
@@ -88,7 +98,7 @@ func DeepCompare(input, config map[string]any, path string) (bool, string) {
 			}
 			return false, fmt.Sprintf("Extra key %s in config", fullPath)
 		}
-	}
+	}*/
 
 	return true, ""
 }
