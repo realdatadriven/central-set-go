@@ -275,8 +275,8 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 					"msg":     "Unable to parse the database config!",
 				}
 			}
-			etlxlib.PrintConfigAsJSON(config)
-			etlxlib.PrintConfigAsJSON(db_cnf)
+			//etlxlib.PrintConfigAsJSON(config)
+			//etlxlib.PrintConfigAsJSON(db_cnf)
 			// VALIDATE
 			equal, msg := DeepCompare(config, db_cnf, "")
 			if !equal {
