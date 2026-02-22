@@ -41,14 +41,12 @@ import (
 	"github.com/duckdb/duckdb-go/v2"
 	"github.com/realdatadriven/etlx"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	airport "github.com/hugr-lab/airport-go"
 	"github.com/hugr-lab/airport-go/catalog"
 	"github.com/hugr-lab/airport-go/filter"
-
 	//duckarrow "github.com/duckdb/duckdb-go/v2/arrow"
-
-	"google.golang.org/grpc/credentials"
 )
 
 // FlightManager is the interface the server uses to start/stop the FlightSQL server.
@@ -62,10 +60,11 @@ type AirportAdapter struct {
 	validateToken func(token string) (string, error)
 	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case arrow_flight_table mapping tables
 	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in arrow_flight_table is accessible to the user
+	read          func(params map[string]any) map[string]any                             // use CS internal read mechanism instead of raw query
 	grpcSrv       *grpc.Server
 	listener      net.Listener
 	mem           memory.Allocator
-	catalog       catalog.Catalog
+	catalog       *DynamicCatalog
 	cfg           []map[string]any
 	shutdownc     chan struct{}
 }
@@ -76,11 +75,13 @@ func NewAirportAdapter(
 	validateToken func(token string) (string, error),
 	table_access func(params map[string]any, tables []any) map[string]any,
 	rla_access func(params map[string]any, tables []any, row_id []any) map[string]any,
+	read func(params map[string]any) map[string]any,
 ) *AirportAdapter {
 	return &AirportAdapter{
 		validateToken: validateToken,
 		table_access:  table_access,
 		rla_access:    rla_access,
+		read:          read,
 		mem:           memory.DefaultAllocator,
 		cfg:           config,
 		shutdownc:     make(chan struct{}),
@@ -91,7 +92,8 @@ func NewAirportAdapter(
 // It then creates a gRPC server and registers the airport server.
 func (a *AirportAdapter) Start(listenAddr string) error {
 	// Build catalog using airport.NewCatalogBuilder()
-	builder := airport.NewCatalogBuilder()
+	//builder := airport.NewCatalogBuilder()
+	builder := NewCatalogBuilder().Dynamic()
 	db, err := duckdb.NewConnector("", nil)
 	if err != nil {
 		return err
@@ -104,7 +106,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	for _, s := range a.cfg {
 		schemaName := s["flight_schema"].(string)
 		// create a schema builder for this schema
-		sb := builder.Schema(schemaName)
+		sb := builder.Schema(schemaName).Comment("Main application schema")
 		// execute startup_sql
 		var main_sql string
 		if startup_sql, ok := s["startup_sql"].(string); ok {
@@ -197,14 +199,10 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 			defer rdr.Release()
 			arrowSchema := rdr.Schema()
 			//fmt.Println(tname, arrowSchema)
-			scanFn := a.makeScanFunc(a.mem, schemaName, tname, arrowSchema, s)
+			scanFn := a.scanFunc(a.mem, schemaName, tname, arrowSchema, s)
+			_table := NewDynamicTable(tname, arrowSchema, tname, scanFn)
 			// register simple table under current schema builder
-			sb.SimpleTable(airport.SimpleTableDef{
-				Name:     tname,
-				Comment:  tname,
-				Schema:   arrowSchema,
-				ScanFunc: scanFn,
-			})
+			sb.Table(_table)
 		}
 		if err := rows.Err(); err != nil {
 			return fmt.Errorf("tables rows err: %w", err)
@@ -289,7 +287,6 @@ func (a *AirportAdapter) Stop(ctx context.Context) error {
 	}
 	return nil
 }
-
 func (a *AirportAdapter) contains(slice []string, element string) bool {
 	for _, v := range slice {
 		if v == element {
@@ -297,13 +294,6 @@ func (a *AirportAdapter) contains(slice []string, element string) bool {
 		}
 	}
 	return false
-}
-func IdentityJSONToMap(identity string) (map[string]any, error) {
-	var m map[string]any
-	if err := json.Unmarshal([]byte(identity), &m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 func (a *AirportAdapter) containsInt(slice []any, element any) bool {
 	for _, v := range slice {
@@ -352,7 +342,7 @@ func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_ty
 // but im im passing the all configuration and making the connection and initializing the sturup and shutdown
 // all over again because of some problems with the shared connector across goroutines.
 // This needs to be improved later for performance and resource usage.
-func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED MEANING IF THERE IS TABLE MAPPING, ONLLY THOSE ARE EXPOSED
 		arrow_flight_id := conf["arrow_flight_id"]
@@ -379,6 +369,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		if _, ok := conf["rla_tables"].([]string); ok {
 			rla_tables = conf["rla_tables"].([]string)
 		}
+		//fmt.Println(user["role_id"] != 1, user["role_id"] != any(1.0), user)
 		// check if arrow_flight is in rla_tables
 		//fmt.Printf("%T", conf["rla_tables"])
 		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
@@ -386,7 +377,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		//schema_table_permissions := map[string]any{}
 		scopes_access := map[string]any{}
 		fields_access := map[string]any{}
-		if (user["role_id"] != any(1) && user["role_id"] != any(1.0)) && (a.contains(rla_tables, "arrow_flight") ||
+		if user["role_id"] != any(1.0) && (a.contains(rla_tables, "arrow_flight") ||
 			a.contains(rla_tables, "arrow_flight_table") ||
 			a.contains(rla_tables, "arrow_flight_table_field") ||
 			a.contains(rla_tables, "arrow_flight_table_scope")) {
@@ -554,7 +545,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			if err != nil {
 				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], startup_sql, err)
 			}
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
+			// fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
 			main_sql := _etlx.ReplaceEnvVariable(conf["main_sql"].(string))
 			_, err = conn.ExecContext(context.Background(), main_sql)
 			if err != nil {
@@ -645,7 +636,42 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			query = strings.ReplaceAll(query, "{{fields}}", strings.Join(_fields, ","))
 			query = fmt.Sprintf(query, strings.Join(_fields, ","), schemaName, tableName)
 			//fmt.Println("table_scan_tmpl_sql query:", query)
+			// ADD USER CONTENT SCOPE ...
 		}
+		//
+		// RLA: CHECK IF THE CONFIG HAS AN APP IF SO DO READ TO GET ONLY THE SQL AND ARGS
+		args := []any{}
+		read_sql := ""
+		if _, ok := conf["conf"].(map[string]any); !ok {
+		} else if app, ok := conf["conf"].(map[string]any)["app"]; ok {
+			limit := -1.0
+			if opts.Limit > 0 {
+				limit = float64(opts.Limit)
+			}
+			_params := map[string]any{
+				"lang": "en",
+				"app":  app,
+				"user": user,
+			}
+			_params["data"] = map[string]any{
+				"schema":   schemaName,
+				"table":    tableName,
+				"join":     "none",
+				"sql_only": any(true), // uses the crud that read, but only return the sql, need to run it using arrow api, also crud/read is not high performant
+				"limit":    any(limit),
+			}
+			_read := a.read(_params)
+			if !_read["success"].(bool) {
+				return nil, fmt.Errorf("%s!", _read["msg"])
+			}
+			read_sql = _read["sql"].(string)
+			args = _read["args"].([]any)
+			query = fmt.Sprintf("SELECT %s FROM (%s) AS T", strings.Join(_fields, ","), read_sql)
+			// fmt.Println("READ_SQL:", read_sql, args)
+		} else {
+			//fmt.Println(3, conf["conf"])
+		}
+		// FILTERS
 		hasFilters := false
 		if opts.Filter != nil {
 			// Parse filter JSON
@@ -663,6 +689,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			}
 			// Use whereClause with your database query
 		}
+		// ARROW FLIGHT SCOPES
 		if len(_scopes) > 0 {
 			_scopes_cond := strings.Join(_scopes, " AND ")
 			if !hasFilters {
@@ -671,6 +698,8 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 				query = fmt.Sprintf("%s AND (%s)", query, _scopes_cond)
 			}
 		}
+		// LIMIT
+		// fmt.Println("opts.Limit:", opts.Limit)
 		if opts.Limit > 0 {
 			query = fmt.Sprintf("%s LIMIT %d", query, opts.Limit)
 		}
@@ -678,7 +707,7 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 			// to be analized later, because returning different columns then already defined in the tables definition generates errors
 			fmt.Println("Requested columns: opts.Columns", opts.Columns)
 		}
-		fmt.Println(query, scopes_access)
+		//fmt.Println("V3:", query)
 		conn2, err := db.Connect(context.Background())
 		if err != nil {
 			return nil, err
@@ -688,26 +717,11 @@ func (a *AirportAdapter) makeScanFunc(mem memory.Allocator, schemaName, tableNam
 		if err != nil {
 			return nil, err
 		}
-		rdr, err := arrow.QueryContext(context.Background(), query)
+		rdr, err := arrow.QueryContext(context.Background(), query, args...)
 		if err != nil {
 			conn2.Close()
 			return nil, err
 		}
-		/*/defer rdr.Release()
-		for rdr.Next() {
-			rec := rdr.Record()
-			// rec is an Arrow RecordBatch
-			fmt.Println("rows:", rec.NumRows())
-		}*/
-		/*if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
-			shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
-			_, err := conn.ExecContext(context.Background(), shutdown_sql)
-			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
-			}
-		}*/
-		//return nil, nil
 		return &connBoundRecordReader{
 			RecordReader: rdr,
 			conn:         conn2,
@@ -783,6 +797,13 @@ func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 		}), nil
 	}
 	return nil, nil
+}
+func IdentityJSONToMap(identity string) (map[string]any, error) {
+	var m map[string]any
+	if err := json.Unmarshal([]byte(identity), &m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 type connBoundRecordReader struct {

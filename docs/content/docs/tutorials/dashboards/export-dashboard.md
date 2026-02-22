@@ -58,7 +58,7 @@ Central-Set allows you to:
 
 Inside your dashboard filter bar:
 
-```html 
+```html {linenos=table}
 <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
     <Button 
         tooltip="Export" 

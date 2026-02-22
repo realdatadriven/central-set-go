@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -233,84 +232,6 @@ func (app *application) serveArrowFlight() error {
 		}
 		f["tables"] = tables
 		f["rla_tables"] = rla_tables["tables"]
-		//fmt.Println(f["rla_tables"])
-	}
-	// start server
-	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapter(fligths, app.airportValidateToken, app.table_access, app.row_level_access)
-	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
-	// Start the server (includes starting airport-go Flight server)
-	if err := flightMgr.Start(addr); err != nil {
-		return err
-	}
-	fmt.Printf("server started at %s", addr)
-	// Wait for signal
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
-	<-sigCh
-	log.Print("shutting down...")
-	// give Flight manager a chance to stop
-	if err := flightMgr.Stop(context.Background()); err != nil {
-		log.Printf("error during shutdown: %v", err)
-	}
-	// ensure manager shutdown (deferred previously) -- allow small wait
-	_ = context.Background()
-	log.Println("goodbye")
-	return nil
-}
-func (app *application) serveArrowFlightV3() error {
-	// use crud.read to respect access control
-	_sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`
-	fligths, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
-	if err != nil {
-		return err
-	}
-	_sql = `SELECT * FROM "arrow_flight_table" WHERE active = ? AND excluded = ?`
-	fligths_tables, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
-	if err != nil {
-		return err
-	}
-	_sql = `SELECT * FROM "arrow_flight_table_field" WHERE active = ? AND excluded = ?`
-	fligths_tables_fields, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
-	if err != nil {
-		return err
-	}
-	// arrow_flight_table_scope
-	_sql = `SELECT * FROM "arrow_flight_table_scope" WHERE active = ? AND excluded = ?`
-	fligths_tables_scopes, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
-	if err != nil {
-		return err
-	}
-	rla_tables := app.row_level_tables(Dict{"app": Dict{"app_id": 1, "db": app.config.db.dsn}})
-	//fmt.Println(rla_tables)
-	if !rla_tables["success"].(bool) {
-		return fmt.Errorf("Error listing tables that requires RLA: %s", rla_tables["msg"])
-	}
-
-	// add tree tables and fields to flights, but with map[string]any like map[string]any{f["table"]: {"fields": map[string]any{"field": field}}}
-	for _, f := range fligths {
-		var tables Dict = make(Dict)
-		for _, t := range fligths_tables {
-			if t["arrow_flight_id"] == f["arrow_flight_id"] {
-				var fields Dict = make(Dict)
-				for _, tf := range fligths_tables_fields {
-					if tf["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
-						fields[tf["arrow_flight_table_field"].(string)] = tf
-					}
-				}
-				t["fields"] = fields
-				var scopes Dict = make(Dict)
-				for _, ts := range fligths_tables_scopes {
-					if ts["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
-						scopes[ts["arrow_flight_table_scope"].(string)] = ts
-					}
-				}
-				t["scopes"] = scopes
-				tables[t["arrow_flight_table"].(string)] = t
-			}
-		}
-		f["tables"] = tables
-		f["rla_tables"] = rla_tables["tables"]
 		if _conf, ok := f["arrow_flight_conf"].(string); ok {
 			var conf map[string]any
 			err := json.Unmarshal([]byte(_conf), &conf)
@@ -323,7 +244,7 @@ func (app *application) serveArrowFlightV3() error {
 	}
 	// start server
 	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapterV3(fligths, app.airportValidateToken, app.table_access, app.row_level_access, app.read)
+	flightMgr := flight.NewAirportAdapter(fligths, app.airportValidateToken, app.table_access, app.row_level_access, app.read)
 	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
 	// Start the server (includes starting airport-go Flight server)
 	if err := flightMgr.Start(addr); err != nil {
@@ -344,74 +265,3 @@ func (app *application) serveArrowFlightV3() error {
 	log.Println("goodbye")
 	return nil
 }
-func (app *application) serveArrowFlightTmp() error {
-	// use crud.read to respect access control
-	_sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`
-	fligths, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
-	if err != nil {
-		return err
-	}
-	//fmt.Println(_sql, fligths)
-	db, err := sql.Open("duckdb", "")
-	if err != nil {
-		return err
-	}
-	defer func() { // EXECUTE SHUTDOWN SQL ON EXIT
-		fmt.Println("SHUTING DOWN FLIGHT SERVER")
-		for _, f := range fligths { // execute shutdown_sql
-			if _, ok := f["shutdown_sql"].(string); !ok {
-				continue
-			}
-			fmt.Printf("%s: %s\n", f["arrow_flight"], f["shutdown_sql"])
-			_, err := db.ExecContext(context.Background(), f["shutdown_sql"].(string))
-			if err != nil {
-				fmt.Printf("%s: %s: %s\n", f["arrow_flight"], f["shutdown_sql"], err)
-			}
-		}
-		db.Close()
-	}()
-	// EXECUTE STARTUP SQL ON START
-	fmt.Println("STARTING UP FLIGHT SERVER")
-	for _, f := range fligths { // execute startup_sql
-		if _, ok := f["startup_sql"].(string); !ok {
-			continue
-		}
-		fmt.Printf("%s: %s\n", f["arrow_flight"], f["startup_sql"])
-		_, err := db.ExecContext(context.Background(), f["startup_sql"].(string))
-		if err != nil {
-			fmt.Printf("%s: %s: %s\n", f["arrow_flight"], f["startup_sql"], err)
-		}
-		fmt.Printf("%s: %s\n", f["arrow_flight"], f["main_sql"])
-		_, err = db.ExecContext(context.Background(), f["main_sql"].(string))
-		if err != nil {
-			fmt.Printf("%s: %s: %s\n", f["arrow_flight"], f["main_sql"], err)
-		}
-	}
-	// start server
-	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapterTmp(db, fligths, app.airportValidateToken)
-
-	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
-	// Start the server (includes starting airport-go Flight server)
-	if err := flightMgr.Start(addr); err != nil {
-		return err
-	}
-	fmt.Printf("server started at %s", addr)
-
-	// Wait for signal
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
-	<-sigCh
-
-	log.Print("shutting down...")
-	// give Flight manager a chance to stop
-	if err := flightMgr.Stop(context.Background()); err != nil {
-		log.Printf("error during shutdown: %v", err)
-	}
-	// ensure manager shutdown (deferred previously) -- allow small wait
-	_ = context.Background()
-	log.Println("goodbye")
-	return nil
-}
-
-// air
