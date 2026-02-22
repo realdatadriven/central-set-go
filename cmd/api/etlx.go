@@ -3,12 +3,135 @@ package main
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 )
+
+func DeepCompare(input, config map[string]any, path string) (bool, string) {
+	ignoreKeys := map[string]bool{
+		"file":     true,
+		"date":     true,
+		"date_ref": true,
+	}
+
+	// Check all keys in input against config
+	for key, inputVal := range input {
+		if ignoreKeys[key] {
+			continue
+		}
+
+		fullPath := key
+		if path != "" {
+			fullPath = path + "." + key
+		}
+
+		configVal, exists := config[key]
+		if !exists {
+			return false, fmt.Sprintf("Key %s missing in config", fullPath)
+		}
+
+		// Compare based on type
+		switch iv := inputVal.(type) {
+		case string:
+			if cv, ok := configVal.(string); !ok || iv != cv {
+				return false, fmt.Sprintf("Mismatch at %s: input '%v' != config '%v'", fullPath, iv, configVal)
+			}
+		case bool:
+			/*if cv, ok := configVal.(bool); !ok || iv != cv {
+				return false, fmt.Sprintf("Mismatch at %s: input %v != config %v", fullPath, iv, configVal)
+			}*/
+			continue
+		case map[string]any:
+			if cv, ok := configVal.(map[string]any); !ok {
+				return false, fmt.Sprintf("Type mismatch at %s: expected map", fullPath)
+			} else {
+				equal, msg := DeepCompare(iv, cv, fullPath)
+				if !equal {
+					return false, msg
+				}
+			}
+		case []any:
+			if cv, ok := configVal.([]any); !ok {
+				return false, fmt.Sprintf("Type mismatch at %s: expected array", fullPath)
+			} else if len(iv) != len(cv) {
+				return false, fmt.Sprintf("Array length mismatch at %s: input %d != config %d", fullPath, len(iv), len(cv))
+			} else {
+				for i := range iv {
+					arrayPath := fmt.Sprintf("%s[%d]", fullPath, i)
+					equal, msg := deepCompareAny(iv[i], cv[i], arrayPath)
+					if !equal {
+						return false, msg
+					}
+				}
+			}
+		default:
+			// For other types, use reflect.DeepEqual as fallback
+			if !reflect.DeepEqual(inputVal, configVal) {
+				return false, fmt.Sprintf("Mismatch at %s: input %v != config %v", fullPath, inputVal, configVal)
+			}
+		}
+	}
+
+	// Check for extra keys in config that are not in input (ignoring ignored keys)
+	for key := range config {
+		if ignoreKeys[key] {
+			continue
+		}
+		if _, exists := input[key]; !exists {
+			fullPath := key
+			if path != "" {
+				fullPath = path + "." + key
+			}
+			return false, fmt.Sprintf("Extra key %s in config", fullPath)
+		}
+	}
+
+	return true, ""
+}
+
+// Helper function to compare any types (for array elements)
+func deepCompareAny(a, b any, path string) (bool, string) {
+	switch av := a.(type) {
+	case string:
+		if bv, ok := b.(string); !ok || av != bv {
+			return false, fmt.Sprintf("Mismatch at %s: input '%v' != config '%v'", path, av, b)
+		}
+	case bool:
+		if bv, ok := b.(bool); !ok || av != bv {
+			return false, fmt.Sprintf("Mismatch at %s: input %v != config %v", path, av, b)
+		}
+	case map[string]any:
+		if bv, ok := b.(map[string]any); !ok {
+			return false, fmt.Sprintf("Type mismatch at %s: expected map", path)
+		} else {
+			return DeepCompare(av, bv, path)
+		}
+	case []any:
+		if bv, ok := b.([]any); !ok {
+			return false, fmt.Sprintf("Type mismatch at %s: expected array", path)
+		} else if len(av) != len(bv) {
+			return false, fmt.Sprintf("Array length mismatch at %s: input %d != config %d", path, len(av), len(bv))
+		} else {
+			for i := range av {
+				arrayPath := fmt.Sprintf("%s[%d]", path, i)
+				equal, msg := deepCompareAny(av[i], bv[i], arrayPath)
+				if !equal {
+					return false, msg
+				}
+			}
+		}
+	default:
+		// Fallback for other types
+		if !reflect.DeepEqual(a, b) {
+			return false, fmt.Sprintf("Mismatch at %s: input %v != config %v", path, a, b)
+		}
+	}
+	return true, ""
+}
 
 func (app *application) etlxMdParse(params Dict) Dict {
 	if app.IsEmpty(params["data"]) {
@@ -90,19 +213,8 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
-	if env.GetBool("ETLX_VALIDATE_ETLX_ACCESS", false) && !ignore {
-		x := app.getEtlxByID(params)
-		if _, ok := x["success"]; !ok {
-			return x
-		} else if !x["success"].(bool) {
-			return x
-		} else if len(x["data"].([]Dict)) == 0 {
-			return Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("ETLX ID %s does not exists or you don have access to it!", x["etlx_id"]),
-			}
-		}
-	}
+	// CONFIG
+
 	config := make(Dict)
 	etlxlib := &etlx.ETLX{Config: config}
 	config, ok = _data["conf"].(Dict)
@@ -128,6 +240,51 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 		_logs, err := etlxlib.LoadREQUIRES(nil)
 		if err != nil {
 			fmt.Printf("REQUIRES ERR: %v %v", err, _logs)
+		}
+	}
+	// VALIDATE
+	if env.GetBool("ETLX_VALIDATE_ETLX_ACCESS", false) && !ignore {
+		x := app.getEtlxByID(params)
+		if _, ok := x["success"]; !ok {
+			return x
+		} else if !x["success"].(bool) {
+			return x
+		} else if len(x["data"].([]Dict)) == 0 {
+			return Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("ETLX ID %s does not exists or you don have access to it!", x["etlx_id"]),
+			}
+		}
+		if env.GetBool("ETLX_VALIDATE_CLI_CONF_WITH_DB", true) {
+			_conf, _ := x["data"].([]Dict)[0]["etlx_conf"]
+			res := app.etlxMdParse(Dict{"data": Dict{"conf": _conf}})
+			if !res["success"].(bool) {
+				return res
+			}
+			// CONF
+			db_cnf, ok := res["data"].(Dict)
+			if !ok {
+				return Dict{
+					"success": false,
+					"msg":     "Unable to parse the database config!",
+				}
+			}
+			//fmt.Println("CONF:", db_cnf)
+			// VALIDATE
+			// LLM Q: I have an input nested map[string]any, and and same config from db, i want to deeply compare them, and check if thei are the same
+			// i want to look trou each key case the any parte is a string check if its the same , if its boolean is mostly toggle true false that is expected
+			// but if its is an array or another map[string]any it call the traverse (recursive function again til the end), when a missmacth is foudit breaks the loop and says the level1.level2 != from source level1.level2 string
+			// also keys like file, date,date_ref shoud be ignored from the compareson, because its user input
+			equal, msg := DeepCompare(config, db_cnf, "")
+			if !equal {
+				fmt.Println("DeepCompare:", msg)
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			} else {
+				fmt.Println("Maps are equal (ignoring specified keys)")
+			}
 		}
 	}
 	// DATE REF
