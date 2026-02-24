@@ -25,6 +25,13 @@ In a cenário where you might need to slice / scope your dataset by user or tenn
 ```
 2. In config custom ds points to a update_custom_ds like:
 ```config
+"all_query_run_locally_in_ddb_wasm": true,
+"pre_prepared_parquets_logs_table": null,
+"pre_prepared_parquets_logs_sql": "",
+"pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
+"pre_prepared_parquets_for_ddb_wasm": {
+    "SALES": "sales_by_dep.parquet"
+},
 "update_custom_ds": {
   "my_custom_ds_ex": {
     "etlx_id": 1,
@@ -110,13 +117,29 @@ COPY (
 CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
     id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id    INTEGER NOT NULL,
+    table_name VARCHAR NOT NULL,
     fname      VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 ```sql
 -- insert_generated_file_into_logs
-INSERT INTO logs.dynamic_ds_logs (user_id, fname) VALUES ([dash.user.user_id], '<fname>');
+INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'SALES', '<fname>');
+```
+```sql  x
+with _logs as (
+  select * 
+  from dynamic_ds_logs 
+  where fname is not null
+    and user_id = [dash.user.user_id]
+    and (user_id, table_name, created_at) in (
+      select user_id, table_name, max(created_at) 
+      from dynamic_ds_logs 
+      group by user_id, table_name
+    )
+) 
+select user_id, table_name as name, replace(fname, 'tmp/', '') as file 
+FROM _logs
 ```
 ````
 `````
