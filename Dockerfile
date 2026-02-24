@@ -118,7 +118,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 # Default command (can be overridden)
 CMD [""]
 # ============================================
-# 📝 Usage Instructions
+# Usage Instructions
 #docker build --no-cache -t central-set-go:latest .
 #docker run -v ./database:/app/database central-set-go:latest --init
 #docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest

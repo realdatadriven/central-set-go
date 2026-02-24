@@ -225,7 +225,7 @@ func run(logger *slog.Logger) error {
 	}
 	// OAUTH INIT IF ENABLED
 	if env.GetBool("ENABLE_OAUTH", false) {
-		fmt.Println("ENABLE_OAUTH:", true)
+		//fmt.Println("ENABLE_OAUTH:", true)
 		auth.InitGoth()
 	}
 	// golang get current time - 24 hours
