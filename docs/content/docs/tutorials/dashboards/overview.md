@@ -390,11 +390,14 @@ Could all be filtered by the `cs` result
 Example:
 
 ````markdown
+<!-- getting the departments to be added to a multi-select filter, where selected values will be pushed to all the sql blocks with `inputs.departments.value` -->
 ```cs departments
 "table": "departments",
+"fields": ["department_id", "department"]
 "limit": -1
 ```
 
+<!-- this way each user will see exactlly the department that he/shee can access -->
 ```sql total_by_department
 SELECT department_id, COUNT(*) total
 FROM "LOGS"
