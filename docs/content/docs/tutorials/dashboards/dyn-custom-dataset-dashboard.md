@@ -127,7 +127,7 @@ In your dashboard config:
 "pre_prepared_parquets_logs_sql": "with _logs as (select *  from dynamic_ds_logs  where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in ( select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name ) ) select user_id, table_name as name, replace(fname, 'tmp/', '') as file from _logs",
 "pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
 "pre_prepared_parquets_for_ddb_wasm": {
-  "SALES": "sales_by_dep.parquet"
+  "ORDERS": "orders.parquet"
 },
 "update_custom_ds": {
   "my_custom_ds_ex": {
@@ -167,14 +167,14 @@ So:
 
 ```json
 "pre_prepared_parquets_for_ddb_wasm": {
-    "SALES": "sales_by_dep.parquet"
+    "ORDERS": "orders.parquet"
 }
 ```
 
 This makes:
 
 ```sql
-FROM "SALES"
+FROM "ORDERS"
 ```
 
 Available inside DuckDB WASM.
@@ -198,10 +198,10 @@ connection: "duckdb:"
 path: static/uploads/ # in case of a s3endpoint it can be passed directlly in the export query
 active: true
 ```
-## SALES
+## ORDERS
 ```yaml
-name: GenerateSALESData
-description: Exports custom SALES data
+name: GenerateORDERSData
+description: Exports custom ORDERS data
 connection: "duckdb:"
 before_sql:
   - INSTALL erpl_web FROM community
@@ -218,7 +218,7 @@ after_sql:
   - DETACH scopes
   - DETACH dl
   - DETACH logs
-path: tmp/sales_by_dep.[dash.user.user_id].{YYYYMMDD}.{TSTAMP}.parquet
+path: tmp/orders.[dash.user.user_id].{YYYYMMDD}.{TSTAMP}.parquet
 tmp_prefix: tmp
 active: true
 ```
@@ -232,7 +232,7 @@ CREATE SECRET api_auth (
 ```
 ```sql
 -- attach_odata_endpoint_with_users_copes
-ATTACH IF NOT EXISTS 'http://localhost:4444/odata/rla_tables' AS scopes (TYPE ODATA);
+ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ETLX' AS scopes (TYPE ODATA);
 ```
 ```sql
 -- attach_ex_sales_datalake
@@ -245,9 +245,9 @@ ATTACH 'database/logs_for_dyn_gen_ds.db' AS logs (TYPE SQLITE);
 ```sql
 -- generate_my_sales_data
 COPY (
-  SELECT sales_by_dep.*
-  FROM dl.sales.sales_by_dep
-  WHERE sales_by_dep.department_id IN (
+  SELECT orders.*
+  FROM dl.orders
+  WHERE orders.department_id IN (
     -- OData API Will use CS crud/read by the user in the <JWT_TOKEN> given by its session
     SELECT department_id
     FROM scopes.department
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
 ```
 ```sql
 -- insert_generated_file_into_logs
-INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'SALES', '<fname>');
+INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', '<fname>');
 ```
 ```sql  x
 with _logs as (
@@ -293,7 +293,7 @@ FROM _logs
 Your datalake:
 
 ```
-dl.sales.sales_by_dep
+dl.sales.orders
 ```
 
 Is **unfiltered**.
@@ -306,9 +306,9 @@ It has no Row-Level Access.
 
 ```sql
 COPY (
-  SELECT sales_by_dep.*
-  FROM dl.sales.sales_by_dep
-  WHERE sales_by_dep.department_id IN (
+  SELECT orders.*
+  FROM dl.sales.orders
+  WHERE orders.department_id IN (
     SELECT department_id
     FROM scopes.department
   )
@@ -348,7 +348,7 @@ CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
 And then:
 
 ```sql
-INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'SALES', '<fname>');
+INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', '<fname>');
 ```
 
 This enables:
@@ -366,7 +366,7 @@ Now your dashboard queries run like normal:
 
 ```sql
 SELECT department_id, SUM(amount)
-FROM "SALES"
+FROM "ORDERS"
 GROUP BY department_id
 ```
 
