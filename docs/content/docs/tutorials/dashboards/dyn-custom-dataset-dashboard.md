@@ -1,7 +1,7 @@
 ---
 weight: 7084
-title: "Dashboard With Dynamic Dataset"
-description: "Dashboard With Dynamic Dataset For Each user / profile"
+title: "Dynamic Dataset"
+description: "Dashboard With Dynamic Dataset For Each User / Profile"
 icon: description
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
@@ -9,10 +9,88 @@ draft: false
 images: []
 ---
 
-In a cenário where you might need to slice / scope your dataset by user or tennant or dashboard, and dont want still want to use pre-chshed parquet and run queries the browser, this exemple coud be perfect, you can define an etlx that export you tranforma data for a especifc cenario defined by the user RLA by the scoped tables, for that you need to have your scope table in an cs app with RLA, and and in your dashboard etlx section (that runs in the backend) scope your main query on the id fields of the RLA table.
-Remeber that this can also be achived by using your coped tables as filter loaded with data from `cs` method instead of `sql` but, that way every individual query runs in the backend, this way only when you update the dataset your data is cahed of delivered via cdn, blob storage etc. that is the best way for live data, but for data periodilly changes like once a day on a overnight sql the dynamic datset is better, specially if there is cost associated with queries.
+## Dashboard With Dynamic Dataset
 
-1. Add a buttom update my ds with action `update_custom_ds` and give it a name that will be used in the cofig for metadata and in the markdwon block as its id like this:
+### Overview
+
+In scenarios where datasets must be:
+
+- Scoped by **user**
+- Scoped by **tenant**
+- Scoped by **department**
+- Scoped by **vendor**
+- Or any Row-Level Access (RLA) domain
+
+…and you still want:
+
+- Pre-cached Parquet files  
+- Browser-side DuckDB execution  
+- High performance  
+- Low query cost  
+
+This pattern is ideal.
+
+Instead of running every query through `crud/read` in the backend, you:
+
+1. Generate a **custom dataset per user** and Export it as Parquet via ETLX
+2. Cache it (local disk, S3, blob storage, CDN)
+3. Load it in the browser via DuckDB WASM
+
+This allows:
+
+> Secure scoping + high-performance local analytics.
+
+---
+
+## Why This Pattern Exists
+
+You could scope everything using `cs` blocks (secured CRUD).
+
+But that means:
+
+- Every query runs in backend
+- Every filter hits the database
+- Costs may increase (DB compute / cloud egress)
+
+For datasets that:
+
+- Change once per day
+- Update overnight
+- Have compute cost
+- Are expensive to query repeatedly
+
+It is better to:
+
+> Generate a scoped dataset once  
+> Cache it  
+> Serve it many times  
+
+---
+
+## Architecture
+
+```
+User → Dashboard → Click "Update Dataset"
+│
+▼
+ETLX Backend
+│
+▼
+Generate User-Scoped Parquet
+│
+▼
+Store + Log File
+│
+▼
+Dashboard Loads Parquet in Browser
+```
+
+---
+
+## Step 1 — Add Update Button
+
+Add a button to trigger dataset regeneration:
+
 ```html {linenos=table}
 <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
     <Button 
@@ -25,26 +103,103 @@ Remeber that this can also be achived by using your coped tables as filter loade
     />
 </GridItem>
 ```
-2. In config custom ds points to a update_custom_ds like:
-```config
-"all_query_run_locally_in_ddb_wasm": true,
-"pre_prepared_parquets_logs_table": null,
-"pre_prepared_parquets_logs_sql": "with _logs as (select * from dynamic_ds_logs where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in (select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name)) select user_id, table_name as name, replace(fname, 'tmp/', '') as file from _logs",
-"pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
-"pre_prepared_parquets_for_ddb_wasm": {
-    "SALES": "sales_by_dep.parquet"
-},
-"update_custom_ds": {
-  "my_custom_ds_ex": {
-    "etlx_id": 1,
-    "app": {"app_id": 2,"app": "ETLX","db": "ETLX"},
-    "map_files_2_tables": {
-        "SALES": "sales_by_dep.parquet"
+
+### Important
+
+* `name="my_custom_ds_ex"`
+  → Must match:
+
+  * Config block key
+  * ETLX markdown block ID
+
+* `action="update_custom_ds"`
+  → Triggers backend ETLX execution
+
+---
+
+## Step 2 — Dashboard Configuration
+
+In your dashboard config:
+
+```config {linenos=table}
+  "all_query_run_locally_in_ddb_wasm": true,
+  "pre_prepared_parquets_logs_table": null,
+  "pre_prepared_parquets_logs_sql": "
+    with _logs as (
+      select * 
+      from dynamic_ds_logs 
+      where fname is not null 
+        and user_id = [dash.user.user_id]
+        and (user_id, table_name, created_at) in (
+          select user_id, table_name, max(created_at)
+          from dynamic_ds_logs 
+          group by user_id, table_name
+        )
+    )
+    select user_id, table_name as name, 
+           replace(fname, 'tmp/', '') as file 
+    from _logs
+  ",
+  "pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
+  "pre_prepared_parquets_for_ddb_wasm": {
+      "SALES": "sales_by_dep.parquet"
+  },
+  "update_custom_ds": {
+    "my_custom_ds_ex": {
+      "etlx_id": 1,
+      "app": { "app_id": 2, "app": "ETLX", "db": "ETLX"}
     }
   }
+```
+
+---
+
+## What This Configuration Does
+
+### 1️⃣ Detect Latest File Per User
+
+Uses:
+
+```
+dynamic_ds_logs
+```
+
+Filtered by:
+
+```
+user_id = [dash.user.user_id]
+```
+
+So:
+
+* Each user loads only their dataset
+* Fully isolated
+* No cross-tenant leakage
+
+---
+
+### 2️⃣ Map File to Logical Table
+
+```json
+"pre_prepared_parquets_for_ddb_wasm": {
+    "SALES": "sales_by_dep.parquet"
 }
 ```
-3. The config itsel that will be some traformation and also generates the files for the dashboard the will be custom to each user role, this is to be used where dashboard will ned to be user scoped, or any other scope like
+
+This makes:
+
+```sql
+FROM "SALES"
+```
+
+Available inside DuckDB WASM.
+
+---
+
+## Step 3 — ETLX Dataset Generator
+
+Inside your dashboard markdown:
+
 `````markdown {linenos=table}
 <!-- ETLX CODE BLOCK - EXPORT DATASET -->
 
@@ -146,5 +301,148 @@ FROM _logs
 ````
 `````
 
-in this exemple the etlx block genertes a parquet file (coud be many) and return the generated file name that is maped to a table in the global configuration, making that table avaliable for nomal dashboard query, mut that dataset was dynamically genearted by users onlly access, this is the best way to scope data by departments, vendors, tenants when needed to be done
-as you ca se the datalake has ulfiltered data nad by itsel it does not apply row level security, but in the CS ETLX app, evry one of my users is scoped departments  one or more, and the query generate_my_sales_data
+---
+
+## How Security Is Applied
+
+Your datalake:
+
+```
+dl.sales.sales_by_dep
+```
+
+Is **unfiltered**.
+
+It has no Row-Level Access.
+
+---
+
+## RLA Is Applied Here
+
+```sql
+COPY (
+  SELECT sales_by_dep.*
+  FROM dl.sales.sales_by_dep
+  WHERE sales_by_dep.department_id IN (
+    SELECT department_id
+    FROM scopes.department
+  )
+) TO '<fname>';
+```
+
+Where:
+
+```
+scopes.department
+```
+
+Is an OData endpoint backed by:
+
+* Central Set `crud/read`
+* User JWT token
+* RLA enforcement
+
+Meaning:
+
+> The dataset is generated already scoped by the user's allowed departments.
+
+---
+
+# Logging Generated Files
+
+```sql
+CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
+    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id    INTEGER NOT NULL,
+    table_name VARCHAR NOT NULL,
+    fname      VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+And then:
+
+```sql
+INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'SALES', '<fname>');
+```
+
+This enables:
+
+* Version control
+* File history
+* Regeneration tracking
+* Cleanup strategies
+
+---
+
+# Final Result
+
+Now your dashboard queries run like normal:
+
+```sql
+SELECT department_id, SUM(amount)
+FROM "SALES"
+GROUP BY department_id
+```
+
+But:
+
+* Data is already scoped
+* Loaded from user-specific Parquet
+* Executed in browser
+* Zero backend queries for analytics
+
+---
+
+# When To Use This Pattern
+
+Use Dynamic Dataset when:
+
+✔ Data must be scoped by RLA
+✔ Dataset is expensive to compute
+✔ Dataset updates periodically (daily / monthly)
+✔ You want minimal backend calls
+✔ You want analytics fully client-side and fast
+
+---
+
+# When NOT To Use This
+
+If:
+
+* Data changes constantly (real-time)
+* You need live transactional accuracy
+* User scoping changes frequently
+
+Then prefer:
+
+* `cs` blocks
+* Direct secured backend queries
+
+---
+
+# Comparison
+
+| Approach        | Security       | Performance | Backend Load | Best For              |
+| --------------- | -------------- | ----------- | ------------ | --------------------- |
+| `cs` blocks     | Live RLA       | Medium      | High         | Real-time             |
+| SQL only        | No RLA         | Very High   | None         | Public data           |
+| Dynamic Dataset | Pre-scoped RLA | Very High   | Low          | Periodic secured data |
+
+---
+
+# Key Takeaway
+
+Dynamic Dataset combines:
+
+* ETLX execution power
+* Central Set RLA security
+* Parquet performance
+* DuckDB WASM execution
+* User isolation
+* Cost control
+
+It is the most scalable way to deliver:
+
+> Secure multi-tenant analytics at scale.
+
