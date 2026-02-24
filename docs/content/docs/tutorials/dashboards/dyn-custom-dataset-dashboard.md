@@ -1,13 +1,16 @@
 ---
 weight: 7084
-title: "Exporting Dashboard Data to Excel Templates"
-description: "Generate spreadsheet files from dashboard filters and queries using ETLX export templates."
+title: "Dashboard With Dynamic Dataset"
+description: "Dashboard With Dynamic Dataset For Each user / profile"
 icon: description
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
 draft: false
 images: []
 ---
+
+In a cenário where you might need to slice / scope your dataset by user or tennant or dashboard, and dont want still want to use pre-chshed parquet and run queries the browser, this exemple coud be perfect, you can define an etlx that export you tranforma data for a especifc cenario defined by the user RLA by the scoped tables, for that you need to have your scope table in an cs app with RLA, and and in your dashboard etlx section (that runs in the backend) scope your main query on the id fields of the RLA table.
+
 1. Add a buttom update my ds with action `update_custom_ds` and give it a name that will be used in the cofig for metadata and in the markdwon block as its id like this:
 ```html {linenos=table}
 <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
