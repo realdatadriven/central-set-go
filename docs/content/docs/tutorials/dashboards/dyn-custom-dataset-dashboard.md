@@ -122,34 +122,19 @@ Add a button to trigger dataset regeneration:
 In your dashboard config:
 
 ```config {linenos=table}
-  "all_query_run_locally_in_ddb_wasm": true,
-  "pre_prepared_parquets_logs_table": null,
-  "pre_prepared_parquets_logs_sql": "
-    with _logs as (
-      select * 
-      from dynamic_ds_logs 
-      where fname is not null 
-        and user_id = [dash.user.user_id]
-        and (user_id, table_name, created_at) in (
-          select user_id, table_name, max(created_at)
-          from dynamic_ds_logs 
-          group by user_id, table_name
-        )
-    )
-    select user_id, table_name as name, 
-           replace(fname, 'tmp/', '') as file 
-    from _logs
-  ",
-  "pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
-  "pre_prepared_parquets_for_ddb_wasm": {
-      "SALES": "sales_by_dep.parquet"
-  },
-  "update_custom_ds": {
-    "my_custom_ds_ex": {
-      "etlx_id": 1,
-      "app": { "app_id": 2, "app": "ETLX", "db": "ETLX"}
-    }
+"all_query_run_locally_in_ddb_wasm": true,
+"pre_prepared_parquets_logs_table": null,
+"pre_prepared_parquets_logs_sql": "with _logs as (select *  from dynamic_ds_logs  where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in ( select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name ) ) select user_id, table_name as name, replace(fname, 'tmp/', '') as file from _logs",
+"pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
+"pre_prepared_parquets_for_ddb_wasm": {
+  "SALES": "sales_by_dep.parquet"
+},
+"update_custom_ds": {
+  "my_custom_ds_ex": {
+    "etlx_id": 1,
+    "app": { "app_id": 2, "app": "ETLX", "db": "ETLX"}
   }
+}
 ```
 
 ---
@@ -233,15 +218,15 @@ after_sql:
   - DETACH scopes
   - DETACH dl
   - DETACH logs
-path: tmp/sales_by_dep.[dash.user.user_id].{YYYYMMDD}.{TSTAMP}.parquet'
-tmp_prefix: 'tmp'
+path: tmp/sales_by_dep.[dash.user.user_id].{YYYYMMDD}.{TSTAMP}.parquet
+tmp_prefix: tmp
 active: true
 ```
 ```sql
 -- create_api_auth_secrete
 CREATE SECRET api_auth (
   TYPE http_bearer,
-  TOKEN '<JWT_TOKEN>',
+  TOKEN '[dash.user.jwt_token]',
   SCOPE 'http://localhost:4444/'
 );
 ```
@@ -251,7 +236,7 @@ ATTACH IF NOT EXISTS 'http://localhost:4444/odata/rla_tables' AS scopes (TYPE OD
 ```
 ```sql
 -- attach_ex_sales_datalake
-ATTACH 'ducklake:sqlite:database/dl_metadata.sqlite' AS dl (DATA_PATH 'dl/');
+ATTACH 'ducklake:sqlite:database/dl_metadata.sqlite' AS dl (DATA_PATH 'database/dl/');
 ```
 ```sql
 -- attach_logs_db
