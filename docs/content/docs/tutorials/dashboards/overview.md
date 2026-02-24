@@ -145,7 +145,7 @@ Central Set embeds the Evidence dashboard frontend directly into the UI.
 
 This means:
 
-* Dashboards appear as native Central Set pages
+* Dashboards appear as native Central Set menu
 * Navigation is unified
 * Authentication is shared
 * Permissions apply automatically
