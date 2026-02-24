@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Analytics &amp; Dashboards on Central Set</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/</link><description>Recent content in Analytics &amp; Dashboards on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Sun, 22 Feb 2026 16:48:47 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set provides a &lt;strong&gt;first-class analytics and dashboarding layer&lt;/strong&gt; by embedding and extending
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Analytics &amp; Dashboards on Central Set</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/</link><description>Recent content in Analytics &amp; Dashboards on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Tue, 24 Feb 2026 20:34:29 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set provides a &lt;strong&gt;first-class analytics and dashboarding layer&lt;/strong&gt; by embedding and extending
 &lt;a href="https://docs.evidence.dev" rel="external" target="_blank"&gt;evidence.dev&lt;svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path fill="currentColor" d="M14 5c-.552 0-1-.448-1-1s.448-1 1-1h6c.552 0 1 .448 1 1v6c0 .552-.448 1-1 1s-1-.448-1-1v-3.586l-7.293 7.293c-.391.39-1.024.39-1.414 0-.391-.391-.391-1.024 0-1.414l7.293-7.293h-3.586zm-9 2c-.552 0-1 .448-1 1v11c0 .552.448 1 1 1h11c.552 0 1-.448 1-1v-4.563c0-.552.448-1 1-1s1 .448 1 1v4.563c0 1.657-1.343 3-3 3h-11c-1.657 0-3-1.343-3-3v-11c0-1.657 1.343-3 3-3h4.563c.552 0 1 .448 1 1s-.448 1-1 1h-4.563z"/&gt;&lt;/svg&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This allows you to build &lt;strong&gt;interactive analytical dashboards&lt;/strong&gt; directly on top of:&lt;/p&gt;</description></item><item><title>Example</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/</guid><description>&lt;h2 id="analytics--dashboards--logs-dashboard-example"&gt;Analytics &amp;amp; Dashboards — Logs Dashboard Example &lt;a href="#analytics--dashboards--logs-dashboard-example" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This page walks through a real dashboard definition and explains &lt;strong&gt;how configuration, filters, metrics, charts, and tables work together&lt;/strong&gt; to produce the final analytics UI.&lt;/p&gt;
 &lt;p&gt;This dashboard uses:&lt;/p&gt;
@@ -25,4 +25,26 @@
 &lt;li&gt;Optional backend validation against ETLX app configuration&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h3 id="why-this-matters"&gt;Why This Matters &lt;a href="#why-this-matters" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Many organizations must:&lt;/p&gt;</description></item></channel></rss>
+&lt;h3 id="why-this-matters"&gt;Why This Matters &lt;a href="#why-this-matters" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Many organizations must:&lt;/p&gt;</description></item><item><title>Dynamic Dataset</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/dyn-custom-dataset-dashboard/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/dyn-custom-dataset-dashboard/</guid><description>&lt;h2 id="dashboard-with-dynamic-dataset"&gt;Dashboard With Dynamic Dataset &lt;a href="#dashboard-with-dynamic-dataset" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;h3 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;In scenarios where datasets must be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Scoped by &lt;strong&gt;user&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scoped by &lt;strong&gt;tenant&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scoped by &lt;strong&gt;department&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scoped by &lt;strong&gt;vendor&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Or any Row-Level Access (RLA) domain&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;…and you still want:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pre-cached Parquet files&lt;/li&gt;
+&lt;li&gt;Browser-side DuckDB execution&lt;/li&gt;
+&lt;li&gt;High performance&lt;/li&gt;
+&lt;li&gt;Low query cost&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This pattern is ideal.&lt;/p&gt;
+&lt;p&gt;Instead of running every query through &lt;code&gt;crud/read&lt;/code&gt; in the backend, you:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Generate a &lt;strong&gt;custom dataset per user&lt;/strong&gt; and Export it as Parquet via ETLX&lt;/li&gt;
+&lt;li&gt;Cache it (local disk, S3, blob storage, CDN)&lt;/li&gt;
+&lt;li&gt;Load it in the browser via DuckDB WASM&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This allows:&lt;/p&gt;</description></item></channel></rss>
