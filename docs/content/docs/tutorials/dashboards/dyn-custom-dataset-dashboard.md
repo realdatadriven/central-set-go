@@ -27,7 +27,7 @@ In a cenário where you might need to slice / scope your dataset by user or tenn
 ```config
 "all_query_run_locally_in_ddb_wasm": true,
 "pre_prepared_parquets_logs_table": null,
-"pre_prepared_parquets_logs_sql": "",
+"pre_prepared_parquets_logs_sql": "with _logs as (select * from dynamic_ds_logs where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in (select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name)) select user_id, table_name as name, replace(fname, 'tmp/', '') as file from _logs",
 "pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
 "pre_prepared_parquets_for_ddb_wasm": {
     "SALES": "sales_by_dep.parquet"
