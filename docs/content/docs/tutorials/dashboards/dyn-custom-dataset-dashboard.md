@@ -10,6 +10,7 @@ images: []
 ---
 
 In a cenário where you might need to slice / scope your dataset by user or tennant or dashboard, and dont want still want to use pre-chshed parquet and run queries the browser, this exemple coud be perfect, you can define an etlx that export you tranforma data for a especifc cenario defined by the user RLA by the scoped tables, for that you need to have your scope table in an cs app with RLA, and and in your dashboard etlx section (that runs in the backend) scope your main query on the id fields of the RLA table.
+Remeber that this can also be achived by using your coped tables as filter loaded with data from `cs` method instead of `sql` but, that way every individual query runs in the backend, this way only when you update the dataset your data is cahed of delivered via cdn, blob storage etc. that is the best way for live data, but for data periodilly changes like once a day on a overnight sql the dynamic datset is better, specially if there is cost associated with queries.
 
 1. Add a buttom update my ds with action `update_custom_ds` and give it a name that will be used in the cofig for metadata and in the markdwon block as its id like this:
 ```html {linenos=table}
@@ -18,7 +19,8 @@ In a cenário where you might need to slice / scope your dataset by user or tenn
         tooltip="Update Dashboard Data" 
         name="my_custom_ds_ex" 
         action="update_custom_ds"
-        icon="document-arrow-down" 
+        icon="cloud-arrow-down" 
+        _icon="arrow-path-rounded-square" 
         _class='btn-sm btn-gost' 
     />
 </GridItem>
