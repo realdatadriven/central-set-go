@@ -145,7 +145,7 @@ Central Set embeds the Evidence dashboard frontend directly into the UI.
 
 This means:
 
-* Dashboards appear as native Central Set pages
+* Dashboards appear as native Central Set menu
 * Navigation is unified
 * Authentication is shared
 * Permissions apply automatically
@@ -229,3 +229,256 @@ This aligns with Central Set's core philosophy:
 | ADMIN      | Metadata, permissions, structure |
 | Dashboards | Exploration & insight            |
 | Evidence   | Rendering engine                 |
+
+
+# Data Sources in Dashboards
+
+Dashboards in Central Set can load data in **two different ways**, depending on your needs:
+
+1. **SQL queries (`sql`)**
+2. **Central Set secured queries (`cs`)**
+
+Both approaches can coexist in the same dashboard.
+
+---
+
+## 1️⃣ SQL Blocks (Analytics Mode)
+
+The most common method is using SQL blocks:
+
+````markdown
+```sql my_query
+SELECT *
+FROM "LOGS"
+WHERE "ref" = 'inputs.date_ref.value'
+```
+````
+
+### How it works
+
+* Executed:
+
+  * In DuckDB WASM (browser)
+  * Or mapped database
+* Reads from:
+
+  * Parquet files
+  * ETLX outputs
+  * Registered data sources
+* Designed for:
+
+  * Analytics
+  * Aggregations
+  * KPIs
+  * Charts
+  * Time series
+
+This is ideal when:
+
+* You need fast analytics
+* You control the dataset
+* Data is already scoped at source level
+
+---
+
+## 2️⃣ `cs` Blocks (CRUD / Secured Mode)
+
+Dashboards can also execute **direct `crud/read` operations** using a `cs` block:
+
+````markdown
+```cs departments
+  "table": "departments",
+  "limit": -1,
+  "order_by": ["name asc"]
+```
+````
+
+This does **not** execute raw SQL.
+
+Instead, it:
+
+* Calls the internal `crud/read` API
+* Applies:
+
+  * Table permissions
+  * Role permissions
+  * Row Level Access (RLA)
+  * Tenant scoping or Department scoping
+  * App/database isolation
+* Returns only authorized records
+
+---
+
+## Why `cs` Blocks Matter
+
+Unlike `sql` blocks, `cs` blocks are:
+
+> Fully governed by Central Set security rules.
+
+This means:
+
+* Row-level security is enforced automatically
+* Multi-tenant isolation is respected
+* Scoped domains (e.g. departments) are enforced
+* Access keys and user tokens are validated
+
+You cannot bypass security using `cs`.
+
+---
+
+## When to Use `cs` Instead of SQL
+
+Use `cs` blocks when:
+
+✔ You need data scoped by tenant
+✔ You need department-level filtering
+✔ You need row-level security applied
+✔ You want filters driven by secured domain tables
+✔ You are building dashboards for multiple roles
+
+---
+
+## Example: Secure Department Filter
+
+Instead of:
+
+````markdown
+```sql departments
+SELECT id, name FROM departments
+```
+````
+
+You should use:
+
+````markdown
+```cs departments
+  "table": "departments",
+  "limit": -1
+```
+````
+
+Now:
+
+* A user from Department A only sees the A departments
+* A manager sees only their department scope
+* An admin sees all departments
+
+No extra SQL or dashboard required.
+
+---
+
+## Mixing SQL + CS in the Same Dashboard
+
+This is a powerful pattern:
+
+### Use `cs` for:
+
+* Filter domains
+* Secured lookup tables
+* Tenant-scoped dropdowns
+* User-specific data
+
+### Use `sql` for:
+
+* Aggregations
+* Metrics
+* Historical analysis
+* Parquet-based analytics
+
+Could all be filtered by the `cs` result
+
+Example:
+
+````markdown
+<!-- getting the departments to be added to a multi-select filter, where selected values will be pushed to all the sql blocks with `inputs.departments.value` -->
+```cs departments
+"table": "departments",
+"fields": ["department_id", "department"]
+"limit": -1
+```
+
+<!-- this way each user will see exactlly the department that he/shee can access -->
+```sql total_by_department
+SELECT department_id, COUNT(*) total
+FROM "LOGS"
+WHERE department_id IN (inputs.departments.value)
+GROUP BY department_id
+```
+````
+
+You can then bind:
+
+* `departments` → Dropdown
+* `total_by_department` → Chart
+
+Security + Analytics combined.
+
+---
+
+## Execution Model Comparison
+
+| Feature            | `sql` Block              | `cs` Block                 |
+| ------------------ | ------------------------ | -------------------------- |
+| Execution Engine   | DuckDB / DB              | Central Set API            |
+| Row Level Security | ❌ Only if encoded in SQL | ✅ Always enforced          |
+| Tenant Isolation   | ❌ Manual                 | ✅ Automatic                |
+| Performance        | Optimized for analytics  | Optimized for secured CRUD |
+| Best For           | KPIs / Charts            | Secured filters / domains  |
+
+---
+
+## Security Recommendation
+
+If your dashboard is:
+
+* Multi-tenant
+* Embedded in external apps
+* Used by different roles
+
+Then:
+
+> Use `cs` blocks for all domain filters and scoped datasets.
+
+Let SQL handle analytics,
+and let `crud/read` handle security.
+
+---
+
+## Advanced Use Case: Regulated Environments
+
+In regulated systems:
+
+* Departments
+* Cost centers
+* Business units
+* Tenants
+* Regulatory domains
+
+Should always be retrieved via `cs`.
+
+This guarantees:
+
+* Compliance with RLA
+* No accidental overexposure
+* No manual WHERE tenant_id = ...
+
+Security remains centralized in Central Set — not scattered across SQL.
+
+---
+
+## Architectural Principle
+
+Dashboards are not just analytics views.
+
+They are:
+
+> A controlled execution layer that can combine analytics performance with secured operational data.
+
+By supporting both `sql` and `cs`, Central Set enables:
+
+* Secure operational dashboards
+* Tenant-aware analytics
+* Embedded BI
+* Regulated data products
+
+All in the same markdown definition.
