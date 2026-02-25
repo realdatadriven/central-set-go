@@ -7,7 +7,7 @@
     "pre_prepared_parquets_logs_sql": "with _logs as (select *  from dynamic_ds_logs  where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in ( select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name ) ) select user_id, table_name as name, replace(fname, 'tmp/', '') as file, created_at as lst_dt from _logs",
     "pre_prepared_parquets_logs_db": "sqlite3:database/logs_for_dyn_gen_ds.db",
     "pre_prepared_parquets_for_ddb_wasm": {
-    "ORDERS": "orders.parquet"
+        "ORDERS": "orders.parquet"
     },
     "replace_source_name_in_sql": {
         "ds_name": "ds_x|ds_y"
@@ -99,7 +99,7 @@ name: GenerateDSs
 description: Exports custom ds
 runs_as: EXPORTS
 connection: "duckdb:"
-path: static/uploads/ # in case of a s3endpoint it can be passed directlly in the export query
+path: static/uploads # in case of a s3endpoint it can be passed directlly in the export query
 active: true
 ```
 ## ORDERS
@@ -112,7 +112,7 @@ before_sql:
   - LOAD erpl_web
   - create_api_auth_secrete
   - attach_odata_endpoint_with_users_copes
-  - attach_orders_datalake
+  - attach_ex_ecomerce_datalake
   - attach_logs_db
 export_sql: 
   - generate_my_orders_data
@@ -139,7 +139,7 @@ CREATE SECRET api_auth (
 ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ETLX' AS scopes (TYPE ODATA);
 ```
 ```sql
--- attach_ex_orders_datalake
+-- attach_ex_ecomerce_datalake
 ATTACH 'ducklake:sqlite:database/dl_metadata.sqlite' AS dl (DATA_PATH 'database/dl/');
 ```
 ```sql
@@ -161,7 +161,7 @@ COPY (
 ```sql
 -- create_logs_table_if_not_exists
 CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
-    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    --id         INTEGER PRIMARY KEY,
     user_id    INTEGER NOT NULL,
     table_name VARCHAR NOT NULL,
     fname      VARCHAR NOT NULL,
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
 ```
 ```sql
 -- insert_generated_file_into_logs
-INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', '<fname>');
+INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', PARSE_FILENAME('<fname>'));
 ```
 ```sql  x
 with _logs as (
@@ -184,7 +184,7 @@ with _logs as (
       group by user_id, table_name
     )
 ) 
-select user_id, table_name as name, replace(fname, 'tmp/', '') as file
+select user_id, table_name as name, replace(fname, 'tmp/', '') as file, created_at as lst_dt
 FROM _logs
 ```
 ````

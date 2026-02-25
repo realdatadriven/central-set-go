@@ -208,7 +208,7 @@ before_sql:
   - LOAD erpl_web
   - create_api_auth_secrete
   - attach_odata_endpoint_with_users_copes
-  - attach_sales_datalake
+  - attach_ex_ecomerce_datalake
   - attach_logs_db
 export_sql: 
   - generate_my_sales_data
@@ -235,7 +235,7 @@ CREATE SECRET api_auth (
 ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ETLX' AS scopes (TYPE ODATA);
 ```
 ```sql
--- attach_ex_sales_datalake
+-- attach_ex_ecomerce_datalake
 ATTACH 'ducklake:sqlite:database/dl_metadata.sqlite' AS dl (DATA_PATH 'database/dl/');
 ```
 ```sql
@@ -257,7 +257,7 @@ COPY (
 ```sql
 -- create_logs_table_if_not_exists
 CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
-    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    --id         INTEGER PRIMARY KEY,
     user_id    INTEGER NOT NULL,
     table_name VARCHAR NOT NULL,
     fname      VARCHAR NOT NULL,
