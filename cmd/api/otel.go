@@ -87,7 +87,6 @@ func newTracerProvider() (*trace.TracerProvider, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	tracerProvider := trace.NewTracerProvider(
 		// trace.WithSampler(trace.ParentBased(trace.TraceIDRatioBased(0.10))),
 		trace.WithBatcher(traceExporter,
@@ -116,7 +115,6 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	loggerProvider := log.NewLoggerProvider(
 		log.WithProcessor(log.NewBatchProcessor(logExporter)),
 	)
