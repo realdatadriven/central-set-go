@@ -17,6 +17,10 @@ import (
 	"go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/trace"
+
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 )
 
 // setupOTelSDK bootstraps the OpenTelemetry pipeline.
@@ -83,46 +87,95 @@ func newPropagator() propagation.TextMapPropagator {
 	)
 }
 
-func newTracerProvider() (*trace.TracerProvider, error) {
-	traceExporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
-	if err != nil {
-		return nil, err
-	}
+func newTracerProvider() (*trace.TracerProvider, error) {	
 	/* EXPORT LOGS
 	traceExporter, err := otlptracehttp.New(ctx,
 		otlptracehttp.WithEndpoint("localhost:4318"),  // or "host.docker.internal:4318" if Go runs outside Docker
 		otlptracehttp.WithInsecure(),
 	)*/
-	tracerProvider := trace.NewTracerProvider(
-		// trace.WithSampler(trace.ParentBased(trace.TraceIDRatioBased(0.10))),
-		trace.WithBatcher(traceExporter,
-			// Default is 5s. Set to 1s for demonstrative purposes.
-			trace.WithBatchTimeout(time.Second)),
-	)
-	return tracerProvider, nil
+	if env.GetBool("OTEL_EXPORTER_OTLP_ENDPOINT", false) {
+		ctx := context.Background()
+		exp, err := otlptracehttp.New(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		tracerProvider := trace.NewTracerProvider(trace.WithBatcher(exp))
+		defer func() {
+			if err := tracerProvider.Shutdown(ctx); err != nil {
+				return nil, err
+			}
+		}()
+		// otel.SetTracerProvider(tracerProvider)
+		return tracerProvider, nil
+	} else {
+		traceExporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
+		if err != nil {
+			return nil, err
+		}
+		tracerProvider := trace.NewTracerProvider(
+			// trace.WithSampler(trace.ParentBased(trace.TraceIDRatioBased(0.10))),
+			trace.WithBatcher(traceExporter,
+				// Default is 5s. Set to 1s for demonstrative purposes.
+				trace.WithBatchTimeout(time.Second)),
+		)
+		return tracerProvider, nil
+	}
 }
 
 func newMeterProvider() (*metric.MeterProvider, error) {
-	metricExporter, err := stdoutmetric.New(stdoutmetric.WithPrettyPrint())
-	if err != nil {
-		return nil, err
+	if env.GetBool("OTEL_EXPORTER_OTLP_ENDPOINT", false) {
+		ctx := context.Background()
+		exp, err := otlpmetrichttp.New(ctx)
+		if err != nil {
+			return nil, err
+		}
+		meterProvider := metric.NewMeterProvider(metric.WithReader(metric.NewPeriodicReader(exp)))
+		defer func() {
+			if err := meterProvider.Shutdown(ctx); err != nil {
+				return nil, err
+			}
+		}()
+		// otel.SetMeterProvider(meterProvider)
+		return meterProvider, nil
+	} else {
+		metricExporter, err := stdoutmetric.New(stdoutmetric.WithPrettyPrint())
+		if err != nil {
+			return nil, err
+		}
+		meterProvider := metric.NewMeterProvider(
+			metric.WithReader(metric.NewPeriodicReader(metricExporter,
+				// Default is 1m. Set to 3s for demonstrative purposes.
+				metric.WithInterval(3*time.Second))),
+		)
+		return meterProvider, nil
 	}
-
-	meterProvider := metric.NewMeterProvider(
-		metric.WithReader(metric.NewPeriodicReader(metricExporter,
-			// Default is 1m. Set to 3s for demonstrative purposes.
-			metric.WithInterval(3*time.Second))),
-	)
-	return meterProvider, nil
 }
 
-func newLoggerProvider() (*log.LoggerProvider, error) {
-	logExporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())
-	if err != nil {
-		return nil, err
+func newLoggerProvider() (*log.LoggerProvider, error) {	
+	if env.GetBool("OTEL_EXPORTER_OTLP_ENDPOINT", false) {
+		ctx := context.Background()
+		exp, err := otlploghttp.New(ctx)
+		if err != nil {
+			return nil, err
+		}
+		processor := log.NewBatchProcessor(exp)
+		provider := log.NewLoggerProvider(log.WithProcessor(processor))
+		defer func() {
+			if err := provider.Shutdown(ctx); err != nil {
+				return nil, err
+			}
+		}()
+		//global.SetLoggerProvider(provider)
+		return provider, nil
+	} else {
+		logExporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())
+		if err != nil {
+			return nil, err
+		}
+		loggerProvider := log.NewLoggerProvider(
+			log.WithProcessor(log.NewBatchProcessor(logExporter)),
+		)
+		return loggerProvider, nil
 	}
-	loggerProvider := log.NewLoggerProvider(
-		log.WithProcessor(log.NewBatchProcessor(logExporter)),
-	)
-	return loggerProvider, nil
 }
