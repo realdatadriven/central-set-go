@@ -13,7 +13,6 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 
-	//"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/log"
@@ -30,7 +29,6 @@ import (
 func setupOTelSDK(ctx context.Context) (func(context.Context) error, error) {
 	var shutdownFuncs []func(context.Context) error
 	var err error
-
 	// shutdown calls cleanup functions registered via shutdownFuncs.
 	// The errors from the calls are joined.
 	// Each registered cleanup will be invoked once.
@@ -42,16 +40,13 @@ func setupOTelSDK(ctx context.Context) (func(context.Context) error, error) {
 		shutdownFuncs = nil
 		return err
 	}
-
 	// handleErr calls shutdown for cleanup and makes sure that all errors are returned.
 	handleErr := func(inErr error) {
 		err = errors.Join(inErr, shutdown(ctx))
 	}
-
 	// Set up propagator.
 	prop := newPropagator()
 	otel.SetTextMapPropagator(prop)
-
 	// Set up trace provider.
 	tracerProvider, err := newTracerProvider()
 	if err != nil {
@@ -60,7 +55,6 @@ func setupOTelSDK(ctx context.Context) (func(context.Context) error, error) {
 	}
 	shutdownFuncs = append(shutdownFuncs, tracerProvider.Shutdown)
 	otel.SetTracerProvider(tracerProvider)
-
 	// Set up meter provider.
 	meterProvider, err := newMeterProvider()
 	if err != nil {
@@ -69,7 +63,6 @@ func setupOTelSDK(ctx context.Context) (func(context.Context) error, error) {
 	}
 	shutdownFuncs = append(shutdownFuncs, meterProvider.Shutdown)
 	otel.SetMeterProvider(meterProvider)
-
 	// Set up logger provider.
 	loggerProvider, err := newLoggerProvider()
 	if err != nil {
@@ -78,7 +71,6 @@ func setupOTelSDK(ctx context.Context) (func(context.Context) error, error) {
 	}
 	shutdownFuncs = append(shutdownFuncs, loggerProvider.Shutdown)
 	global.SetLoggerProvider(loggerProvider)
-
 	return shutdown, err
 }
 
@@ -97,9 +89,7 @@ func newTracerProvider() (*trace.TracerProvider, error) {
 			return nil, err
 		}
 		tracerProvider := trace.NewTracerProvider(trace.WithBatcher(exp))
-		defer func() {
-			tracerProvider.Shutdown(ctx)
-		}()
+		defer func() { tracerProvider.Shutdown(ctx) }()
 		return tracerProvider, nil
 	} else {
 		traceExporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
@@ -124,9 +114,7 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 			return nil, err
 		}
 		meterProvider := metric.NewMeterProvider(metric.WithReader(metric.NewPeriodicReader(exp)))
-		defer func() {
-			meterProvider.Shutdown(ctx)
-		}()
+		defer func() { meterProvider.Shutdown(ctx) }()
 		return meterProvider, nil
 	} else {
 		metricExporter, err := stdoutmetric.New(stdoutmetric.WithPrettyPrint())
@@ -151,9 +139,7 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 		}
 		processor := log.NewBatchProcessor(exp)
 		provider := log.NewLoggerProvider(log.WithProcessor(processor))
-		defer func() {
-			provider.Shutdown(ctx)
-		}()
+		defer func() { provider.Shutdown(ctx) }()
 		return provider, nil
 	} else {
 		logExporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())
