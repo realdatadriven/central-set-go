@@ -7,6 +7,9 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+
+	// OPEN TELEMETRY
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
@@ -114,16 +117,19 @@ func (app *application) routes() http.Handler {
 	// OAUTH2
 	mux.HandleFunc("GET /auth/{provider}/login", app.GothLoginHandler)
 	mux.HandleFunc("GET /auth/{provider}/callback", app.GothCallbackHandler)
-	// mux.HandleFunc("GET /auth/{provider}/callback/", auth.GothCallbackHandler)
 
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
+
+	// OPEN TELEMETRY
+	handler := otelhttp.NewHandler(mux, "/")
+	//
 	return app.rateLimit(
 		app.compress(
 			app.cors(
 				app.logAccess(
 					app.recoverPanic(
-						app.authenticate(mux),
+						app.authenticate(handler /*mux*/),
 					),
 				),
 			),

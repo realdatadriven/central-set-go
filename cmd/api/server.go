@@ -21,6 +21,9 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/flight"
 	"google.golang.org/grpc/credentials"
+	
+	// TELEMETRY
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 const (
@@ -105,8 +108,23 @@ func (app *application) loadTLSCredentials() (credentials.TransportCredentials, 
 
 func (app *application) serveHTTP() error {
 	//tlsCredentials, err := app.loadTLSCredentials()
+	// Handle SIGINT (CTRL+C) gracefully.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	// Set up OpenTelemetry.
+	otelShutdown, err := setupOTelSDK(ctx)
+	if err != nil {
+		return err
+	}
+	// Handle shutdown properly so nothing leaks.
+	defer func() {
+		err = errors.Join(err, otelShutdown(context.Background()))
+	}()
+
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.config.httpPort),
+		BaseContext:  func(net.Listener) context.Context { return ctx },
 		Handler:      app.routes(),
 		ErrorLog:     slog.NewLogLogger(app.logger.Handler(), slog.LevelWarn),
 		IdleTimeout:  defaultIdleTimeout,
@@ -125,8 +143,8 @@ func (app *application) serveHTTP() error {
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 		<-quitChan
 
-		ctx, cancel := context.WithTimeout(context.Background(), defaultShutdownPeriod)
-		defer cancel()
+		/*ctx, cancel := context.WithTimeout(context.Background(), defaultShutdownPeriod)
+		defer cancel()*/
 
 		shutdownErrorChan <- srv.Shutdown(ctx)
 	}()
@@ -157,6 +175,7 @@ func (app *application) serveHTTP() error {
 	app.wg.Wait()
 	return nil
 }
+
 func (app *application) airportValidateToken(token string) (string, error) {
 	// fmt.Println("TOKEN:", token)
 	identity, err := app.verifyTokenString(token)
