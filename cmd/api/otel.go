@@ -11,6 +11,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	//"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/log"
@@ -87,6 +88,11 @@ func newTracerProvider() (*trace.TracerProvider, error) {
 	if err != nil {
 		return nil, err
 	}
+	/* EXPORT LOGS
+	traceExporter, err := otlptracehttp.New(ctx,
+		otlptracehttp.WithEndpoint("localhost:4318"),  // or "host.docker.internal:4318" if Go runs outside Docker
+		otlptracehttp.WithInsecure(),
+	)*/
 	tracerProvider := trace.NewTracerProvider(
 		// trace.WithSampler(trace.ParentBased(trace.TraceIDRatioBased(0.10))),
 		trace.WithBatcher(traceExporter,
