@@ -138,9 +138,9 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 			return nil, err
 		}
 		processor := log.NewBatchProcessor(exp)
-		provider := log.NewLoggerProvider(log.WithProcessor(processor))
-		defer func() { provider.Shutdown(ctx) }()
-		return provider, nil
+		loggerProvider := log.NewLoggerProvider(log.WithProcessor(processor))
+		defer func() { loggerProvider.Shutdown(ctx) }()
+		return loggerProvider, nil
 	} else {
 		logExporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())
 		if err != nil {
@@ -152,3 +152,39 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 		return loggerProvider, nil
 	}
 }
+
+/*
+consider opentelemetry script (https://pkg.go.dev/go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp):
+
+package main
+
+import (
+	"context"
+
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
+	"go.opentelemetry.io/otel/log/global"
+	"go.opentelemetry.io/otel/sdk/log"
+)
+
+func main() {
+	ctx := context.Background()
+	exp, err := otlploghttp.New(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	processor := log.NewBatchProcessor(exp)
+	provider := log.NewLoggerProvider(log.WithProcessor(processor))
+	defer func() {
+		if err := provider.Shutdown(ctx); err != nil {
+			panic(err)
+		}
+	}()
+
+	global.SetLoggerProvider(provider)
+
+	// From here, the provider can be used by instrumentation to collect
+	// telemetry.
+}
+after thhis how do i can i use the provider in the instrumentation to collect telemetry data
+*/
