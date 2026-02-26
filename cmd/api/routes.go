@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/realdatadriven/central-set-go/internal/env"
 
 	// OPEN TELEMETRY
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
@@ -120,19 +121,32 @@ func (app *application) routes() http.Handler {
 
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
-
 	// OPEN TELEMETRY
-	handler := otelhttp.NewHandler(mux, "/")
-	//
-	return app.rateLimit(
-		app.compress(
-			app.cors(
-				app.logAccess(
-					app.recoverPanic(
-						app.authenticate(handler /*mux*/),
+	if env.GetBool("OTEL_ENABLED", false) {
+		handler := otelhttp.NewHandler(mux, "/")
+		return app.rateLimit(
+			app.compress(
+				app.cors(
+					app.logAccess(
+						app.recoverPanic(
+							app.authenticate(handler /*mux*/),
+						),
 					),
 				),
 			),
-		),
-	)
+		)
+	} else {
+		return app.rateLimit(
+			app.compress(
+				app.cors(
+					app.logAccess(
+						app.recoverPanic(
+							app.authenticate(mux),
+						),
+					),
+				),
+			),
+		)
+	}
+	//
 }

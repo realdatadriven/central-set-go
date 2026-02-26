@@ -7,10 +7,12 @@ import (
 	"errors"
 	"time"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+
 	//"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
@@ -19,8 +21,8 @@ import (
 	"go.opentelemetry.io/otel/sdk/trace"
 
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 )
 
 // setupOTelSDK bootstraps the OpenTelemetry pipeline.
@@ -87,26 +89,17 @@ func newPropagator() propagation.TextMapPropagator {
 	)
 }
 
-func newTracerProvider() (*trace.TracerProvider, error) {	
-	/* EXPORT LOGS
-	traceExporter, err := otlptracehttp.New(ctx,
-		otlptracehttp.WithEndpoint("localhost:4318"),  // or "host.docker.internal:4318" if Go runs outside Docker
-		otlptracehttp.WithInsecure(),
-	)*/
-	if env.GetBool("OTEL_EXPORTER_OTLP_ENDPOINT", false) {
+func newTracerProvider() (*trace.TracerProvider, error) {
+	if env.GetString("OTEL_EXPORTER_OTLP_ENDPOINT", "") != "" {
 		ctx := context.Background()
 		exp, err := otlptracehttp.New(ctx)
 		if err != nil {
 			return nil, err
 		}
-
 		tracerProvider := trace.NewTracerProvider(trace.WithBatcher(exp))
 		defer func() {
-			if err := tracerProvider.Shutdown(ctx); err != nil {
-				return nil, err
-			}
+			tracerProvider.Shutdown(ctx)
 		}()
-		// otel.SetTracerProvider(tracerProvider)
 		return tracerProvider, nil
 	} else {
 		traceExporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
@@ -124,7 +117,7 @@ func newTracerProvider() (*trace.TracerProvider, error) {
 }
 
 func newMeterProvider() (*metric.MeterProvider, error) {
-	if env.GetBool("OTEL_EXPORTER_OTLP_ENDPOINT", false) {
+	if env.GetString("OTEL_EXPORTER_OTLP_ENDPOINT", "") != "" {
 		ctx := context.Background()
 		exp, err := otlpmetrichttp.New(ctx)
 		if err != nil {
@@ -132,11 +125,8 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 		}
 		meterProvider := metric.NewMeterProvider(metric.WithReader(metric.NewPeriodicReader(exp)))
 		defer func() {
-			if err := meterProvider.Shutdown(ctx); err != nil {
-				return nil, err
-			}
+			meterProvider.Shutdown(ctx)
 		}()
-		// otel.SetMeterProvider(meterProvider)
 		return meterProvider, nil
 	} else {
 		metricExporter, err := stdoutmetric.New(stdoutmetric.WithPrettyPrint())
@@ -152,8 +142,8 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 	}
 }
 
-func newLoggerProvider() (*log.LoggerProvider, error) {	
-	if env.GetBool("OTEL_EXPORTER_OTLP_ENDPOINT", false) {
+func newLoggerProvider() (*log.LoggerProvider, error) {
+	if env.GetString("OTEL_EXPORTER_OTLP_ENDPOINT", "") != "" {
 		ctx := context.Background()
 		exp, err := otlploghttp.New(ctx)
 		if err != nil {
@@ -162,11 +152,8 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 		processor := log.NewBatchProcessor(exp)
 		provider := log.NewLoggerProvider(log.WithProcessor(processor))
 		defer func() {
-			if err := provider.Shutdown(ctx); err != nil {
-				return nil, err
-			}
+			provider.Shutdown(ctx)
 		}()
-		//global.SetLoggerProvider(provider)
 		return provider, nil
 	} else {
 		logExporter, err := stdoutlog.New(stdoutlog.WithPrettyPrint())

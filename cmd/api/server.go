@@ -21,9 +21,7 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/flight"
 	"google.golang.org/grpc/credentials"
-	
 	// TELEMETRY
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 const (
@@ -112,15 +110,17 @@ func (app *application) serveHTTP() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	// Set up OpenTelemetry.
-	otelShutdown, err := setupOTelSDK(ctx)
-	if err != nil {
-		return err
+	if env.GetBool("OTEL_ENABLED", false) {
+		// Set up OpenTelemetry.
+		otelShutdown, err := setupOTelSDK(ctx)
+		if err != nil {
+			return err
+		}
+		// Handle shutdown properly so nothing leaks.
+		defer func() {
+			err = errors.Join(err, otelShutdown(context.Background()))
+		}()
 	}
-	// Handle shutdown properly so nothing leaks.
-	defer func() {
-		err = errors.Join(err, otelShutdown(context.Background()))
-	}()
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.config.httpPort),
