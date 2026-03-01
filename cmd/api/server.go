@@ -183,6 +183,9 @@ func (app *application) serveSSE() error {
 	// SSE and notify endpoints
 	mux.HandleFunc("/events", app.SSE_Broker.SSEHandler)
 	mux.HandleFunc("/notify", app.SSE_Broker.NotifyHandler)
+	// WS
+	app.WS_ConnectionManager = app.NewConnectionManager()
+	mux.HandleFunc("/ws", app.websocketEndpoint(app.WS_ConnectionManager))
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", env.GetInt("SSE_SERVER_PORT", 5555)),
 		Handler:      app.cors(mux),

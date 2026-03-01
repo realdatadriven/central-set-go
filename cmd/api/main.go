@@ -111,6 +111,7 @@ type application struct {
 	lastLicenseValidation          time.Time     // time of last license validation
 	licenceVerificationPeriodicity time.Duration // periodicity of license validation
 	SSE_Broker                     *Broker
+	WS_ConnectionManager           *ConnectionManager
 	//user user
 	//admin  admin
 }

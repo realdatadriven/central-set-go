@@ -678,9 +678,12 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 					"database": _log["db"],
 					"table":    _log["table"],
 				}
-				/*/ WS
-				manager := app.NewConnectionManager()
-				app.broadcastTableChange(manager, _data)*/
+				// WS
+				if app.WS_ConnectionManager != nil {
+					//manager := app.NewConnectionManager()
+					app.broadcastTableChange(app.WS_ConnectionManager, _data)
+				}
+				// SSE
 				if env.GetBool("SSE_ENABLE", false) {
 					if app.SSE_Broker != nil {
 						app.SSE_Broker.NotifyAll(_data)

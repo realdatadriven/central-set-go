@@ -71,8 +71,13 @@ func (b *Broker) SSEHandler(w http.ResponseWriter, r *http.Request) {
 	if token == "" {
 		http.Error(w, "Missing token", http.StatusUnauthorized)
 		return
+	}*/
+	cookie, err := r.Cookie("session")
+	token := ""
+	if err == nil && cookie.Value != "" {
+		token = "Bearer " + cookie.Value
 	}
-	fmt.Println(token)*/
+	fmt.Println("TOKEN:", token)
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)

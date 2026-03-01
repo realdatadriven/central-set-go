@@ -58,7 +58,7 @@ func (app *application) routes() http.Handler {
 	//mux := httprouter.New()
 	mux := http.NewServeMux()
 
-	// Register the WebSocket endpoint
+	/*/ Register the WebSocket endpoint
 	manager := app.NewConnectionManager()
 	mux.HandleFunc("/ws", app.websocketEndpoint(manager))
 
@@ -66,7 +66,7 @@ func (app *application) routes() http.Handler {
 	broker := NewBroker()
 	mux.HandleFunc("/events", broker.SSEHandler)
 	mux.HandleFunc("/sse", broker.SSEHandler)
-	mux.HandleFunc("/notify", broker.NotifyHandler)
+	mux.HandleFunc("/notify", broker.NotifyHandler)*/
 
 	// Handler for static files
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

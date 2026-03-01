@@ -37,8 +37,8 @@ func (m *ConnectionManager) SendPersonalMessage(conn *websocket.Conn, message ma
 }
 
 func (m *ConnectionManager) Broadcast(message map[string]interface{}) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	//m.mu.Lock()
+	//defer m.mu.Unlock()
 	for conn := range m.activeConnections {
 		err := conn.WriteJSON(message)
 		if err != nil {

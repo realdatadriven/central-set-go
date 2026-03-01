@@ -5,7 +5,7 @@
     "url": "conf/conf.json",
     "api": "/dyn_api",
     "__root": "/",
-    "ws_api": "ws://localhost:4444/ws",
+    "ws_api": "ws://localhost:5555/ws",
     "sse_api": "http://localhost:5555/events",
     "_ws_api": "ws",
     "update_on_backend_change": true,
