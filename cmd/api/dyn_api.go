@@ -611,6 +611,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	}
 	// LOGS
 	actions_not_to_log := app.sliceStrs2SliceInterfaces(strings.Split(app.config.actions_not_to_log, ","))
+	// fmt.Println(actions_not_to_log)
 	if !app.contains(actions_not_to_log, act) {
 		_log["res_type"] = "success"
 		if _, ok := data["success"]; !ok {
@@ -639,7 +640,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			_log["app_id"] = params["app"].(Dict)["app_id"]
 		}
 		_log["excluded"] = false
-		//fmt.Println(_log)
+		// fmt.Println("LOGS:", _log)
 		_log_params := Dict{
 			"data": Dict{
 				"data":  _log,
@@ -670,14 +671,21 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		if _, ok := data["success"]; !ok {
 		} else if _, ok := data["success"].(bool); !ok {
 		} else if success, ok := data["success"].(bool); ok {
-			fmt.Println("BROADCAST CHAGE WS:", act, broadcast_changes)
+			fmt.Println("BROADCAST CHAGE WS:", success, act, broadcast_changes, _log)
 			if success {
-				manager := app.NewConnectionManager()
-				app.broadcastTableChange(manager, Dict{
+				_data := Dict{
 					"type":     "data_change",
 					"database": _log["db"],
 					"table":    _log["table"],
-				})
+				}
+				/*/ WS
+				manager := app.NewConnectionManager()
+				app.broadcastTableChange(manager, _data)*/
+				if env.GetBool("SSE_ENABLE", false) {
+					if app.SSE_Broker != nil {
+						app.SSE_Broker.NotifyAll(_data)
+					}
+				}
 			}
 		}
 	}

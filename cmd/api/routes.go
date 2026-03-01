@@ -64,8 +64,9 @@ func (app *application) routes() http.Handler {
 
 	// Server-Sent Events (SSE)
 	broker := NewBroker()
-	http.HandleFunc("/events", broker.SSEHandler)
-	http.HandleFunc("/notify", broker.NotifyHandler) // example use
+	mux.HandleFunc("/events", broker.SSEHandler)
+	mux.HandleFunc("/sse", broker.SSEHandler)
+	mux.HandleFunc("/notify", broker.NotifyHandler)
 
 	// Handler for static files
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

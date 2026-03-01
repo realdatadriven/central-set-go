@@ -3,16 +3,18 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 	"time"
 )
 
-type Client chan []byte // now sends JSON []byte
+// Client is a channel that receives JSON bytes to send to a browser
+type Client chan []byte
 
 type Broker struct {
 	clients map[Client]bool
-	lock    sync.Mutex
+	mu      sync.Mutex
 }
 
 func NewBroker() *Broker {
@@ -22,101 +24,123 @@ func NewBroker() *Broker {
 }
 
 func (b *Broker) AddClient(c Client) {
-	b.lock.Lock()
-	defer b.lock.Unlock()
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	b.clients[c] = true
 }
 
 func (b *Broker) RemoveClient(c Client) {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	delete(b.clients, c)
-	close(c)
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if _, ok := b.clients[c]; ok {
+		delete(b.clients, c)
+		close(c)
+	}
 }
 
-func (b *Broker) NotifyAll(data interface{}) {
-	b.lock.Lock()
-	defer b.lock.Unlock()
+// NotifyAll broadcasts the same message to all connected clients
+func (b *Broker) NotifyAll(data any) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
+		log.Printf("json marshal error: %v", err)
 		return
 	}
 
 	for c := range b.clients {
 		select {
 		case c <- jsonData:
+			// sent
 		default:
-			// Drop client if not reading
+			// client is slow or dead → drop it
 			delete(b.clients, c)
 			close(c)
 		}
 	}
 }
 
+// SSEHandler serves the /events stream
 func (b *Broker) SSEHandler(w http.ResponseWriter, r *http.Request) {
-	//token := r.URL.Query().Get("token")
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	flusher, ok := w.(http.Flusher)
-	if !ok {
-		http.Error(w, "Streaming unsupported", http.StatusInternalServerError)
+	w.Header().Set("Access-Control-Allow-Origin", "*") // adjust for production
+	/*token := r.URL.Query().Get("token")
+	if token == "" {
+		http.Error(w, "Missing token", http.StatusUnauthorized)
 		return
 	}
-
-	client := make(Client, 10)
+	fmt.Println(token)*/
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
+		return
+	}
+	client := make(Client, 10) // buffered → helps when browser is a bit slow
 	b.AddClient(client)
 	defer b.RemoveClient(client)
-
-	ctx := r.Context()
-
-	// Heartbeat goroutine
+	// Heartbeat goroutine (keeps nginx / proxies happy)
 	go func() {
 		ticker := time.NewTicker(15 * time.Second)
 		defer ticker.Stop()
 		for {
 			select {
-			case <-ctx.Done():
-				return
 			case <-ticker.C:
-				// Comment event to keep connection alive
 				fmt.Fprintf(w, ": ping\n\n")
 				flusher.Flush()
+			case <-r.Context().Done():
+				return
 			}
 		}
 	}()
-
+	// Main send loop
 	for {
 		select {
-		case msg := <-client:
+		case msg, ok := <-client:
+			if !ok {
+				return // channel closed → we're already removed
+			}
+			// msg is already []byte from json.Marshal
 			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
-		case <-ctx.Done():
+
+		case <-r.Context().Done():
 			return
 		}
 	}
 }
 
-// Example endpoint: notify with JSON
+// NotifyHandler – example way to trigger a broadcast (GET /notify?msg=hello)
 func (b *Broker) NotifyHandler(w http.ResponseWriter, r *http.Request) {
+	msg := r.URL.Query().Get("msg")
+	if msg == "" {
+		http.Error(w, "missing ?msg= parameter", http.StatusBadRequest)
+		return
+	}
+
+	event := map[string]any{
+		"event":   "message",
+		"content": msg,
+		"time":    time.Now().UTC().Format(time.RFC3339),
+		"sender":  "server",
+	}
+
+	b.NotifyAll(event)
+	w.Header().Set("Content-Type", "text/plain")
+	fmt.Fprintln(w, "Message broadcasted to all clients")
+}
+
+func (app *application) NotifyHandler(w http.ResponseWriter, r *http.Request) {
 	message := r.URL.Query().Get("msg")
 	if message == "" {
 		http.Error(w, "Missing msg param", http.StatusBadRequest)
 		return
 	}
-
-	// Example structured data
-	event := map[string]interface{}{
-		"event":   "update",
-		"message": message,
-		"time":    time.Now().Format(time.RFC3339),
-	}
-
-	b.NotifyAll(event)
-	fmt.Fprintln(w, "Message sent")
+	fmt.Println("SSE NotifyHandler Test:", message)
+	http.Error(w, message, http.StatusBadRequest)
+	return
 }
 
 /*func main() {

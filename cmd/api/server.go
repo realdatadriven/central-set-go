@@ -176,6 +176,63 @@ func (app *application) serveHTTP() error {
 	return nil
 }
 
+func (app *application) serveSSE() error {
+	//tlsCredentials, err := app.loadTLSCredentials()
+	app.SSE_Broker = NewBroker()
+	mux := http.NewServeMux()
+	// SSE and notify endpoints
+	mux.HandleFunc("/events", app.SSE_Broker.SSEHandler)
+	mux.HandleFunc("/notify", app.SSE_Broker.NotifyHandler)
+	srv := &http.Server{
+		Addr:         fmt.Sprintf(":%d", env.GetInt("SSE_SERVER_PORT", 5555)),
+		Handler:      app.cors(mux),
+		ErrorLog:     slog.NewLogLogger(app.logger.Handler(), slog.LevelWarn),
+		IdleTimeout:  defaultIdleTimeout,
+		ReadTimeout:  defaultReadTimeout,
+		WriteTimeout: defaultWriteTimeout,
+	}
+	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	tlsConfig, err := app.loadTLSConfig()
+	if err != nil && enableTLS {
+		return err
+	}
+	shutdownErrorChan := make(chan error)
+	go func() {
+		quitChan := make(chan os.Signal, 1)
+		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
+		<-quitChan
+		ctx, cancel := context.WithTimeout(context.Background(), defaultShutdownPeriod)
+		defer cancel()
+		shutdownErrorChan <- srv.Shutdown(ctx)
+	}()
+	app.logger.Info("starting SSE server", slog.Group("server", "addr", srv.Addr))
+	if enableTLS {
+		srv.TLSConfig = tlsConfig
+		ln, err := net.Listen("tcp", srv.Addr)
+		if err != nil {
+			log.Fatal(err)
+		}
+		tlsListener := tls.NewListener(ln, srv.TLSConfig)
+		app.logger.Info("🔐 HTTPS SSE server listening on", srv.Addr)
+		err = srv.Serve(tlsListener)
+		if !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
+	} else {
+		err := srv.ListenAndServe()
+		if !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
+	}
+	err = <-shutdownErrorChan
+	if err != nil {
+		return err
+	}
+	app.logger.Info("stopped SSE server", slog.Group("server", "addr", srv.Addr))
+	app.wg.Wait()
+	return nil
+}
+
 func (app *application) airportValidateToken(token string) (string, error) {
 	// fmt.Println("TOKEN:", token)
 	identity, err := app.verifyTokenString(token)

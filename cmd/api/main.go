@@ -110,6 +110,7 @@ type application struct {
 	appType                        string        // can be community, licensor or licensee
 	lastLicenseValidation          time.Time     // time of last license validation
 	licenceVerificationPeriodicity time.Duration // periodicity of license validation
+	SSE_Broker                     *Broker
 	//user user
 	//admin  admin
 }
@@ -256,6 +257,14 @@ func run(logger *slog.Logger) error {
 			err := app.serveArrowFlight()
 			if err != nil {
 				fmt.Printf("Error setting up arrow flight server: %v\n", err)
+			}
+		}()
+	}
+	if env.GetBool("SSE_ENABLE", false) {
+		go func() {
+			err := app.serveSSE()
+			if err != nil {
+				fmt.Printf("Error setting up SSE server: %v\n", err)
 			}
 		}()
 	}
