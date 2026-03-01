@@ -111,7 +111,7 @@ func (app *application) serveHTTP() error {
 	defer stop()
 
 	if env.GetBool("OTEL_ENABLED", false) {
-		// Set up OpenTelemetry.
+		/*/ Set up OpenTelemetry.
 		otelShutdown, err := setupOTelSDK(ctx)
 		if err != nil {
 			return err
@@ -119,7 +119,7 @@ func (app *application) serveHTTP() error {
 		// Handle shutdown properly so nothing leaks.
 		defer func() {
 			err = errors.Join(err, otelShutdown(context.Background()))
-		}()
+		}()*/
 	}
 
 	srv := &http.Server{
@@ -186,6 +186,7 @@ func (app *application) serveSSE() error {
 	// WS
 	app.WS_ConnectionManager = app.NewConnectionManager()
 	mux.HandleFunc("/ws", app.websocketEndpoint(app.WS_ConnectionManager))
+	// SERVER
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", env.GetInt("SSE_SERVER_PORT", 5555)),
 		Handler:      app.cors(mux),

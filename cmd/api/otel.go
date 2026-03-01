@@ -2,7 +2,7 @@
 
 package main
 
-import (
+/*import (
 	"context"
 	"errors"
 	"time"
@@ -151,7 +151,7 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 		)
 		return loggerProvider, nil
 	}
-}
+}*/
 
 /*
 consider opentelemetry script (https://pkg.go.dev/go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp):
