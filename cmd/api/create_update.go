@@ -168,7 +168,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
 					_data[field] = params["app"].(Dict)[field]
 				}
-			} else if app.contains([]any{"user", "user_id"}, field) && !app.contains([]any{"user", "users", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
+			} else if app.contains([]any{"user", "username", "user_id"}, field) && !app.contains([]any{"user", "users", "user_role", "column_level_access", "row_level_access"}, table) && !app.contains(enable_user, table) {
 				if _, ok := _data[field]; !ok && crud_aciton == "create" {
 					_data[field] = params["user"].(Dict)[field]
 				}
