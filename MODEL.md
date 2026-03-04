@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD022 -->
+<!-- markdownlint-disable MD031 -->
 # ADMMIN_MODEL
 ```yaml
 name: ADMIN
@@ -50,7 +52,7 @@ cs_app:
             - {table: cron_log, active: false}
 ```
 
-## LANGS
+## LANG
 ```yaml
 table: lang
 comment: Languages
@@ -65,7 +67,7 @@ data:
   - {lang_id: 1, lang: en, lang_desc: English, excluded: false}
 ```
 
-## ROLES
+## ROLE
 ```yaml
 table: role
 comment: Roles
@@ -111,7 +113,7 @@ data:
   - {user_id: 1, username: root, first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
 ```
 
-## USER_ROLES
+## USER_ROLE
 ```yaml
 table: user_role
 comment: User Roles
@@ -125,7 +127,7 @@ columns:
   excluded:     { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## APPS
+## APP
 ```yaml
 table: app
 comment: Applications
@@ -146,7 +148,7 @@ data:
   - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, user_id: 1, excluded: false}
 ```
 
-## MENUS
+## MENU
 ```yaml
 table: menu
 comment: Menus
@@ -168,7 +170,7 @@ data:
   - {menu_id: 2, menu: Params, menu_icon: adjustments, menu_order: 2, app_id: 1, user_id: 1, active: true, excluded: false}
 ```
 
-## TABLES
+## TABLE
 ```yaml
 table: table
 comment: Tables
@@ -184,7 +186,7 @@ columns:
   excluded:     { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## MENU_TABLES
+## MENU_TABLE
 ```yaml
 table: menu_table
 comment: Menu Tables
@@ -200,7 +202,7 @@ columns:
   excluded:       { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## ROLE_APPS
+## ROLE_APP
 ```yaml
 table: role_app
 comment: Role Apps
@@ -215,7 +217,7 @@ columns:
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## ROLE_APP_MENUS
+## ROLE_APP_MENU
 ```yaml
 table: role_app_menu
 comment: Role App Menus
@@ -231,7 +233,7 @@ columns:
   excluded:         { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## ROLE_APP_MENU_TABLES
+## ROLE_APP_MENU_TABLE
 ```yaml
 table: role_app_menu_table
 comment: Role App Menu Tables
@@ -251,7 +253,7 @@ columns:
   excluded:               { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## USER_LOGS
+## USER_LOG
 ```yaml
 table: user_log
 comment: User Logs
@@ -276,7 +278,7 @@ columns:
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## CUSTOM_TABLES
+## CUSTOM_TABLE
 ```yaml
 table: custom_table
 comment: Custom Table
@@ -292,7 +294,7 @@ columns:
   excluded:        { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## CUSTOM_FORMS
+## CUSTOM_FORM
 ```yaml
 table: custom_form
 comment: Custom Form
@@ -371,7 +373,7 @@ columns:
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## TRANSLATE_TABLES
+## TRANSLATE_TABLE
 ```yaml
 table: translate_table
 comment: Translate Table
@@ -388,7 +390,7 @@ columns:
   excluded:          { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## TRANSLATE_TABLE_FIELDS
+## TRANSLATE_TABLE_FIELD
 ```yaml
 table: translate_table_field
 comment: Translate Table Fields
@@ -407,7 +409,7 @@ columns:
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## TABLE_SCHEMAS
+## TABLE_SCHEMA
 ```yaml
 table: table_schema
 comment: Table Schema
@@ -433,7 +435,7 @@ columns:
   excluded:        { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## JOBS_SCHEDULING
+## CRON
 ```yaml
 table: cron
 comment: Jobs scheduling
@@ -455,7 +457,7 @@ data:
   - {cron_id: 3, cron: "0 0 * * *", cron_desc: "ETLX Example", api: "etlx/name/[etlx_name]", app_id: 1, db: ADMIN, active: false, excluded: false}
 ```
 
-## JOBS_SCHEDULING_LOGS
+## CRON_LOG
 ```yaml
 table: cron_log
 comment: Jobs scheduling logs
@@ -477,7 +479,7 @@ columns:
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## ACCESS_KEYS
+## ACCESS_KEY
 ```yaml
 table: access_key
 comment: Access Keys
@@ -535,7 +537,7 @@ data:
   - {arrow_flight_id: 1, arrow_flight: "Expose Admin DB", arrow_flight_desc: "Ex. Arrow Flight Schema using ADMIN app", flight_schema: adm, startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
 ```
 
-## ARROW_FLIGHT_TABLES
+## ARROW_FLIGHT_TABLE
 ```yaml
 table: arrow_flight_table
 comment: Arrow Flight - Tables
@@ -552,7 +554,7 @@ columns:
   excluded:                { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## ARROW_FLIGHT_TABLE_FIELDS
+## ARROW_FLIGHT_TABLE_FIELD
 ```yaml
 table: arrow_flight_table_field
 comment: Arrow Flight - Tables Fields
@@ -570,7 +572,7 @@ columns:
   excluded:                      { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## ARROW_FLIGHT_TABLE_SCOPES
+## ARROW_FLIGHT_TABLE_SCOPE
 ```yaml
 table: arrow_flight_table_scope
 comment: Arrow Flight - Tables Scopes
@@ -607,7 +609,7 @@ columns:
   excluded:       { type: boolean, default: false, comment: "Excluded" }
 ```
 
-## DASHBOARD_COMMENTS
+## DASHBOARD_COMMENT
 ```yaml
 table: dashboard_comment
 comment: Dashboards Comments
