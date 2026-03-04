@@ -268,21 +268,6 @@ CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs (
 -- insert_generated_file_into_logs
 INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', '<fname>');
 ```
-```sql  x
-with _logs as (
-  select * 
-  from dynamic_ds_logs 
-  where fname is not null
-    and user_id = [dash.user.user_id]
-    and (user_id, table_name, created_at) in (
-      select user_id, table_name, max(created_at) 
-      from dynamic_ds_logs 
-      group by user_id, table_name
-    )
-) 
-select user_id, table_name as name, replace(fname, 'tmp/', '') as file 
-FROM _logs
-```
 ````
 `````
 
