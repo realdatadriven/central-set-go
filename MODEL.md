@@ -6,8 +6,10 @@ name: ADMIN
 description: CS ADMIN Model
 runs_as: MODEL
 conn: 'sqlite3:database/ADMIN.db'
-screate_all: checkfirst
-drop_all: checkfirst
+#admin_conn: 'sqlite3:database/ADMIN.db'
+create_all: checkfirst
+_drop_all: checkfirst
+update_table_metadata: true
 active: true
 cs_app:
     Dashboards:
@@ -110,7 +112,7 @@ columns:
   updated_at:           { type: datetime, comment: "Updated at" }
   excluded:             { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {user_id: 1, username: root, first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
+  - {user_id: 1, username: root, password: '*****', first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
 ```
 
 ## USER_ROLE
@@ -145,7 +147,7 @@ columns:
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, user_id: 1, excluded: false}
+  - {app_id: 1, app: ADMIN, app_desc: Admin, db: ADMIN, version: 1.0.0, user_id: 1, excluded: false}
 ```
 
 ## MENU
@@ -193,6 +195,8 @@ comment: Menu Tables
 columns:
   menu_table_id:  { type: integer, pk: true, autoincrement: true, comment: "Menu Table ID" }
   menu_id:        { type: integer, fk: "menu.menu_id", comment: "Menu ID" }
+  table_id:       { type: integer, fk: "table.table_id", comment: "Table ID" }
+  app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
   active:         { type: boolean, default: true, comment: "Active" }
   requires_rla:   { type: boolean, default: false, comment: "Requires Row Level Access" }
@@ -247,6 +251,7 @@ columns:
   read:                   { type: boolean, default: false, comment: "Read" }
   update:                 { type: boolean, default: false, comment: "Update" }
   delete:                 { type: boolean, default: false, comment: "Delete" }
+  share:                  { type: boolean, default: false, comment: "Share" }
   user_id:                { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:             { type: datetime, comment: "Created at" }
   updated_at:             { type: datetime, comment: "Updated at" }
@@ -272,6 +277,7 @@ columns:
   db:          { type: varchar(200), comment: "Database" }
   row_id:      { type: integer, comment: "Database" }
   app_id:      { type: integer, fk: "app.app_id", comment: "App ID" }
+  old_data:    { type: text, comment: "Old Data" }
   new_data:    { type: text, comment: "New Data" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
@@ -378,6 +384,7 @@ columns:
 table: translate_table
 comment: Translate Table
 columns:
+  transl_tbl_id:     { type: integer, pk: true, autoincrement: true, comment: "Translate Table ID" }
   table_org_desc:    { type: varchar(200), nullable: false, comment: "Table Org. Desc" }
   table_transl_desc: { type: varchar(200), nullable: false, comment: "Table Transl. Desc" }
   table:             { type: varchar(200), nullable: false, comment: "Table" }
