@@ -1,8 +1,9 @@
 <!doctype html><html lang=en-GB><head><meta charset=utf-8><title>Exporting Dashboard Data to Excel Templates | CS</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Generate spreadsheet files from dashboard filters and queries using ETLX export templates."><meta name=keywords content="Documentation,Hugo,Hugo Theme,Bootstrap"><meta name=author content="Colin Wilson - Lotus Labs"><meta name=email content="support@aigis.uk"><meta name=website content="https://lotusdocs.dev"><meta name=Version content="v0.1.0"><link rel=icon href=https://realdatadriven.github.io/central-set-go/favicon.ico sizes=any><link rel=icon type=image/svg+xml href=https://realdatadriven.github.io/central-set-go/favicon.svg><link rel=apple-touch-icon sizes=180x180 href=https://realdatadriven.github.io/central-set-go/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://realdatadriven.github.io/central-set-go/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://realdatadriven.github.io/central-set-go/favicon-16x16.png><link rel=manifest crossorigin=use-credentials href=https://realdatadriven.github.io/central-set-go/site.webmanifest><meta property="og:title" content="Exporting Dashboard Data to Excel Templates"><meta property="og:description" content="Generate spreadsheet files from dashboard filters and queries using ETLX export templates."><meta property="og:type" content="article"><meta property="og:url" content="https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/export-dashboard/"><meta property="og:image" content="https://realdatadriven.github.io/central-set-go/opengraph/card-base-2_hu_34f54ded08fd7db9.png"><meta property="article:section" content="docs"><meta property="article:published_time" content="2025-12-16T01:04:15+00:00"><meta property="article:modified_time" content="2026-02-22T19:27:33-01:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://realdatadriven.github.io/central-set-go/opengraph/card-base-2_hu_34f54ded08fd7db9.png"><meta name=twitter:title content="Exporting Dashboard Data to Excel Templates"><meta name=twitter:description content="Generate spreadsheet files from dashboard filters and queries using ETLX export templates."><link rel=alternate type=application/atom+xml title="Atom feed for Central Set" href=/index.xml><script>(()=>{var t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,e=localStorage.getItem("theme");t&&e===null&&(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")),t&&e==="dark"&&document.documentElement.setAttribute("data-dark-mode",""),e==="dark"&&document.documentElement.setAttribute("data-dark-mode","")})()</script><script type=text/javascript src=https://realdatadriven.github.io/central-set-go/docs/js/flexsearch.bundle.min.f5159d5a2151ffbb653996ec17eaff7da4e04c286bd879fc41839d36a5586f3f20eaead0b6089de48f9adc669cdee771.js integrity=sha384-9RWdWiFR/7tlOZbsF+r/faTgTChr2Hn8QYOdNqVYbz8g6urQtgid5I+a3Gac3udx crossorigin=anonymous></script><link rel=preconnect href=https://fonts.gstatic.com/><link rel=preconnect href=https://fonts.gstatic.com/ crossorigin><link href="https://fonts.googleapis.com/css?family=Inter:300,400,600,700|Fira+Code:500,700&display=block" rel=stylesheet><link rel=stylesheet href=/central-set-go/docs/scss/style.min.93b06e2d57cb5edf8b41497b5d24c6ab05b46e842c1c19c5fa5a393124d8665baedcf1096ce698e1efed07a49bfde157.css integrity=sha384-k7BuLVfLXt+LQUl7XSTGqwW0boQsHBnF+lo5MSTYZluu3PEJbOaY4e/tB6Sb/eFX crossorigin=anonymous><script defer data-domain=realdatadriven.github.io/central-set-go data-api=/docs/s/api/event/ src=/docs/s/js/script.outbound-links.js></script><script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div class=content><div class="page-wrapper toggled"><nav id=sidebar class=sidebar-wrapper><div class=sidebar-brand><a href=https://realdatadriven.github.io/central-set-go/ aria-label=HomePage alt=HomePage><svg id="Layer_1" viewBox="0 0 250 250"><path d="m143 39.5c-18 0-18 18-18 18s0-18-18-18H22c-2.76.0-5 2.24-5 5v143c0 2.76 2.24 5 5 5h76c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h76c2.76.0 5-2.24 5-5V44.5c0-2.76-2.24-5-5-5h-85zM206 163c0 1.38-1.12 2.5-2.5 2.5H143c-18 0-18 18-18 18s0-18-18-18H46.5c-1.38.0-2.5-1.12-2.5-2.5V69c0-1.38 1.12-2.5 2.5-2.5H98c7.2.0 8.64 11.52 8.93 16.13.07 1.05.95 1.87 2 1.87h32.14c1.06.0 1.94-.82 2-1.87.29-4.61 1.73-16.13 8.93-16.13h51.5c1.38.0 2.5 1.12 2.5 2.5v94z" style="fill:#06f"/></svg></a></div><div class=sidebar-content style="height:calc(100% - 131px)"><ul class=sidebar-menu><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/overview/><i class="material-icons me-2">circle</i>
-Overview</a></li><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/quickstart/><i class="material-icons me-2">rocket_launch</i>
+Overview</a></li><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/why-markdown/><i class="material-icons me-2">file-text</i>
+Why Markdown?</a></li><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/quickstart/><i class="material-icons me-2">rocket_launch</i>
 Quickstart</a></li><li class="sidebar-dropdown current active"><button class=btn>
 <i class="material-icons me-2">auto_awesome</i>
-Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested"><button class=btn>
+Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-model/>Admin Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested"><button class=btn>
 ETLX & Data Pipelines</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li></ul></div></li><li class="sidebar-dropdown nested current active"><button class=btn>
 Analytics & Dashboards</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li><li class=current><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/export-dashboard/>Exporting Dashboard Data to Excel Templates</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/dyn-custom-dataset-dashboard/>Dynamic Dataset</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/>OData v4 API</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/config/>Configuration</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
 <i class="material-icons me-2">heart_plus</i>
@@ -446,6 +447,20 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
     
@@ -473,15 +488,24 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     index.add(
             {
                 id:  2 ,
-                href: "\/central-set-go\/docs\/quickstart\/",
-                title: "Quickstart",
-                description: "Get Central Set (CS) running in minutes with a connected database admin UI and optional ETLX support.",
-                content: "🚀 Quickstart linkThis guide will help you run Central Set (CS) locally in minutes — initialize the admin database, access the admin UI, and optionally set up the ETLX subsystem.\n✅ Requirements linkMinimum link Linux, macOS, or Windows A SQL database engine (SQLite, PostgreSQL, MySQL, etc.) CS treats the database itself as the data model Optional (for ETLX / ODBC features) link unixODBC (Linux/macOS) for ODBC-based ETL sources 🐙 Installation linkYou can run CS in three different ways:\nPrecompiled binary (recommended) Build from source Docker Choose the option that best fits your workflow.\n▶️ Option 1: Download a Precompiled Binary (Recommended) linkDownload the latest CS release for your platform:\n👉 https://github.com/realdatadriven/central-set-go/releases/latest\nMake it executable (Linux/macOS):\nchmod +x central-set Run it:\n./central-set --help 🛠️ Option 2: Build from Source (Git Clone) linkIf you want to build CS yourself:\nRequirements link Go ≥ 1.21 git Clone and build link git clone https://github.com/realdatadriven/central-set-go.git cd central-set-go go build -o central-set ./cmd/api Run it:\n./central-set --help This produces the same binary as the official releases.\n🐳 Option 3: Run with Docker linkCS can be run entirely via Docker.\nBuild the image link docker build -t central-set-go:latest . Run CS link docker run --rm -it \\ -p 4444:4444 \\ -v $(pwd)/database:/app/database \\ central-set-go:latest To initialize the admin database:\ndocker run --rm -it \\ -v $(pwd)/database:/app/database \\ central-set-go:latest --init 💡 Mounting the database/ directory ensures your admin DB persists between runs.\n🗄️ Initialize the Admin Database linkBefore first use, initialize the admin database:\n./central-set --init This will:\nCreate the internal admin database Create default configuration tables (apps, menus, tables, etc.) for the admin ui Create a default user Print credentials: Username: root Password: 1234 ▶️ Start CS link ./central-set CS will start a web server and expose the admin UI.\n🖥️ Open the Admin UI link👉 http://localhost:4444\nLogin using:\nUsername: root Password: 1234 🧬 Optional: Initialize ETLX Support linkTo enable ETLX pipelines, notebooks, and SQL tools, initialize an additional app database:\n./central-set --init --dbname ETLX This creates an ETLX-powered app that integrates with:\nPipeline execution Observability Dashboards ⚙️ Configure with .env linkCS ships with a sample environment file:\ncp dot-env-example.txt .env Edit .env to configure:\nDatabase driver \u0026 DSN HTTP port Authentication \u0026 security ETLX options Example link # Admin database DB_DRIVER_NAME=sqlite3 DB_DSN=database/ADMIN.db # HTTP server HTTP_PORT=4444 🧠 Any database supported by sqlx can be used by simply changing the driver and DSN.\n🧩 What Just Happened linkCS has now:\nInitialized its admin control database\nReflected database tables into:\nAuto-generated data tables CRUD forms APIs Enabled RBAC at table level\nExposed everything through a secure, API-first backend\nOptionally enabled ETLX-powered pipelines and analytics\nYou can now:\nManage applications, menus, and tables Customize UI layouts and forms Generate API keys and tokens Schedule ETL jobs Build dashboards and notebooks 🧠 Next Steps link 👉 Admin \u0026 UI — How Apps → Menus → Tables define the UI 👉 Security \u0026 API Access — Users, roles, access keys 👉 ETLX \u0026 Pipelines — Data workflows and scheduling 👉 Dashboards \u0026 Analytics — DuckDB-powered insights CS is MIT-licensed, open source, and designed to make the database the single source of truth.\nIf you believe admin UIs, APIs, pipelines, and analytics should all align around the schema — welcome aboard 🚀\n"
+                href: "\/central-set-go\/docs\/why-markdown\/",
+                title: "Why Markdown?",
+                description: "Why Central Set uses Markdown as a first-class citizen for documentation, dashboards, and ETLX workflows.",
+                content: "Why Markdown? linkCentral Set makes a deliberate choice:\nMarkdown is not just for documentation.\nIt is a first-class interface layer.\nMarkdown is:\nHuman-readable Version-control friendly Self-documenting Syntax-aware Multi-language capable And naturally LLM-compatible It bridges humans, systems, and AI.\n1. Self-Documenting by Design linkMarkdown forces clarity.\nUnlike proprietary dashboard builders or visual workflow tools, Markdown:\nIs readable without the platform Explains itself Travels with the project Lives inside version control Can be diffed, reviewed, and audited A Markdown dashboard or ETLX workflow is:\nNot hidden in a UI state Not buried in a database blob Not trapped inside a proprietary tool It is plain text.\nAnd plain text scales.\n2. Multiple Languages, One File linkMarkdown allows multiple languages to coexist in the same document.\nInside a single file, you can embed:\nSELECT * FROM contracts WHERE status = 'ACTIVE'; def transform(df): return df.groupby(\"segment\").sum() pipeline: source: postgres target: duckdb type Contract struct { ID int64 Amount float64 } This means:\nSQL YAML JSON HTML … Can all live in the same structured document.\nAnd each block has syntax highlighting.\n3. Syntax Highlighting = Structural Clarity linkSyntax highlighting is not cosmetic.\nIt gives:\nImmediate cognitive separation Visual parsing of logic Faster code reviews Better debugging Clear boundaries between execution layers In CS:\nSQL blocks define queries ETLX blocks define workflows Markdown structures define dashboards Code blocks remain readable and portable The document becomes both:\nExecutable reference Visual explanation 4. Markdown Dashboards linkIn CS, dashboards are Markdown-driven.\nThis means:\nLayout is structured using headings Data blocks embed SQL queries Visual components are defined declaratively Narrative explanation lives next to the query Example:\n### Revenue by Segment ```sql SELECT segment, SUM(amount) AS revenue FROM sales GROUP BY segment ``` This approach:\nKeeps analytics transparent Avoids hidden visual builders Makes dashboards auditable Keeps business logic visible The dashboard becomes documentation. The documentation becomes the dashboard.\n5. ETLX Workflows in Markdown linkETLX workflows can also be defined using Markdown-structured metadata.\nInstead of designing pipelines in drag-and-drop tools:\nThe pipeline is defined declaratively The steps are readable Transformations are explicit Inputs and outputs are visible Example:\nworkflow: name: revenue_aggregation schedule: daily steps: - extract: postgres.sales - transform: aggregate_by_segment - load: duckdb.analytics This makes workflows:\nTransparent Reviewable Version-controlled Reproducible No hidden state. No visual black boxes.\n6. Markdown is LLM-Friendly linkThis is where Markdown becomes strategic.\nLarge Language Models (LLMs):\nAre trained primarily on text Understand Markdown structure naturally Parse headings and code blocks cleanly Recognize language fences (sql, yaml, etc.) This means:\nLLMs can generate ETLX workflows LLMs can generate dashboards LLMs can refactor SQL inside Markdown LLMs can reproduce full analytics documents LLMs can reason about the structure of pipelines Because everything is text.\nNo proprietary binary format. No hidden UI metadata. No drag-and-drop artifacts.\nJust structured text.\n7. AI-Assisted Reproducibility linkBecause CS uses Markdown:\nAn LLM can:\nRead your dashboard Understand your SQL Suggest improvements Generate new workflows Refactor pipelines Create new ETLX definitions Translate business requirements into structured metadata This makes CS:\nAI-augmentable AI-generatable AI-reviewable AI-extensible Markdown becomes the shared language between:\nHuman ↔ Platform ↔ AI\n8. Version Control \u0026 Governance linkMarkdown works perfectly with:\nGit Pull requests Code reviews CI/CD Audit trails You can:\nReview a dashboard change like code Diff a pipeline modification Roll back transformations Track evolution over time Dashboards and workflows become:\nInfrastructure-as-text.\n9. Portability \u0026 Longevity linkMarkdown:\nIs not tied to CS Is not tied to a vendor Is not tied to a database Is not tied to a rendering engine If CS disappeared tomorrow:\nYour dashboards and workflows would still be readable.\nPlain text outlives platforms.\n10. Philosophy Alignment with Central Set linkCentral Set believes:\nThe database is the source of truth. Configuration defines behavior. Text defines structure.\nMarkdown fits this philosophy perfectly.\nIt is:\nTransparent Declarative Structured Extensible AI-native Why Not Visual Builders? linkVisual tools:\nHide logic Store metadata in opaque formats Make version control painful Break reproducibility Resist AI interpretation Markdown:\nMakes logic explicit Keeps structure visible Encourages documentation Enables automation Aligns with modern AI workflows Final Thought linkMarkdown is not just formatting.\nIt is:\nA documentation system A dashboard definition language A workflow definition language A version-controlled artifact An AI-compatible interface In Central Set:\nMarkdown is the connective tissue between:\nDatabase Admin API Pipelines Analytics AI\nIf you believe systems should be:\nReadable. Portable. Reproducible. AI-augmentable.\nThen Markdown is not optional.\nIt is foundational.\n"
             }
         );
     index.add(
             {
                 id:  3 ,
+                href: "\/central-set-go\/docs\/quickstart\/",
+                title: "Quickstart",
+                description: "Get Central Set (CS) running in minutes with a connected database admin UI and optional ETLX support.",
+                content: "🚀 Quickstart linkThis guide will help you run Central Set (CS) locally in minutes — initialize the admin database, access the admin UI, and optionally set up the ETLX subsystem.\n✅ Requirements linkMinimum link Linux, macOS, or Windows A SQL database engine (SQLite, PostgreSQL, MySQL, etc.) CS treats the database itself as the data model Optional (for ETLX / ODBC features) link unixODBC (Linux/macOS) for ODBC-based ETL sources 🐙 Installation linkYou can run CS in three different ways:\nPrecompiled binary (recommended) Build from source Docker Choose the option that best fits your workflow.\n▶️ Option 1: Download a Precompiled Binary (Recommended) linkDownload the latest CS release for your platform:\n👉 https://github.com/realdatadriven/central-set-go/releases/latest\nMake it executable (Linux/macOS):\nchmod +x central-set Run it:\n./central-set --help 🛠️ Option 2: Build from Source (Git Clone) linkIf you want to build CS yourself:\nRequirements link Go ≥ 1.21 git Clone and build link git clone https://github.com/realdatadriven/central-set-go.git cd central-set-go go build -o central-set ./cmd/api Run it:\n./central-set --help This produces the same binary as the official releases.\n🐳 Option 3: Run with Docker linkCS can be run entirely via Docker.\nBuild the image link docker build -t central-set-go:latest . Run CS link docker run --rm -it \\ -p 4444:4444 \\ -v $(pwd)/database:/app/database \\ central-set-go:latest To initialize the admin database:\ndocker run --rm -it \\ -v $(pwd)/database:/app/database \\ central-set-go:latest --init 💡 Mounting the database/ directory ensures your admin DB persists between runs.\n🗄️ Initialize the Admin Database linkBefore first use, initialize the admin database:\n./central-set --init --model admin_model.md This will:\nCreate the internal admin database Create default configuration tables (apps, menus, tables, etc.) for the admin ui Create a default user Print credentials: Username: root Password: 1234 🏦 Model-Based Initialization linkCentral Set follows a model-driven database approach, inspired by patterns commonly used.\nInstead of manually creating tables or running raw SQL migrations, the recommended workflow is to:\nDefine your application model in a Markdown model file Describe entities, fields, relationships, and metadata Let Central Set generate and manage the database structure This approach provides several advantages:\nConsistent database structures Self-documented schema Reproducible environments Tighter integration with Central Set APIs and metadata Safer schema evolution Although the example above initializes the Admin database, this approach is not limited to it.\nAny application database can — and ideally should — be initialized using the same model-based workflow.\nIn fact, new backend projects built with Central Set are recommended to start with a model file, allowing the platform to manage the database schema from the beginning.\nA dedicated page will explore the Model system and architecture in more detail.\n▶️ Start CS link ./central-set CS will start a web server and expose the admin UI.\n🖥️ Open the Admin UI link👉 http://localhost:4444\nLogin using:\nUsername: root Password: 1234 🧬 Optional: Initialize ETLX Support linkTo enable ETLX pipelines, notebooks, and SQL tools, initialize an additional app database:\n./central-set --init --model etlx_model.md This creates an ETLX-powered app that integrates with:\nPipeline execution Observability Dashboards ⚙️ Configure with .env linkCS ships with a sample environment file:\ncp dot-env-example.txt .env Edit .env to configure:\nDatabase driver \u0026 DSN HTTP port Authentication \u0026 security ETLX options Example link # Admin database DB_DRIVER_NAME=sqlite3 DB_DSN=database/ADMIN.db # HTTP server HTTP_PORT=4444 Any database supported by sqlx can be used by simply changing the driver and DSN.\n🧩 What Just Happened linkCS has now:\nInitialized its admin control database\nReflected database tables into:\nAuto-generated data tables CRUD forms APIs Enabled RBAC at table level\nExposed everything through a secure, API-first backend\nOptionally enabled ETLX-powered pipelines and analytics\nYou can now:\nManage applications, menus, and tables Customize UI layouts and forms Generate API keys and tokens Schedule ETL jobs Build dashboards and notebooks Steps link 👉 Admin \u0026 UI — How Apps → Menus → Tables define the UI 👉 Security \u0026 API Access — Users, roles, access keys 👉 ETLX \u0026 Pipelines — Data workflows and scheduling 👉 Dashboards \u0026 Analytics — DuckDB-powered insights CS is MIT-licensed, open source, and designed to make the database the single source of truth.\nIf you believe admin UIs, APIs, pipelines, and analytics should all align around the schema — welcome aboard 🚀\n"
+            }
+        );
+    index.add(
+            {
+                id:  4 ,
                 href: "\/central-set-go\/docs\/tutorials\/",
                 title: "Tutorials",
                 description: "Tutorials ...",
@@ -490,7 +514,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  4 ,
+                id:  5 ,
                 href: "\/central-set-go\/docs\/contributing\/",
                 title: "Contributing",
                 description: "How to contribute to Lotus Labs.",
@@ -499,7 +523,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  5 ,
+                id:  6 ,
                 href: "\/central-set-go\/docs\/contributing\/how-to-contribute\/",
                 title: "How to Contribute",
                 description: "Contribute to code, improve documentation, help others, submit to showcase, and contribute financially.",
@@ -508,7 +532,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  6 ,
+                id:  7 ,
                 href: "\/central-set-go\/docs\/contributing\/code-of-conduct\/",
                 title: "Code of Conduct",
                 description: "Contributor Covenant Code of Conduct.",
@@ -517,7 +541,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  7 ,
+                id:  8 ,
                 href: "\/central-set-go\/docs\/help\/",
                 title: "Help",
                 description: "Help using the ETLX.",
@@ -526,7 +550,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  8 ,
+                id:  9 ,
                 href: "\/central-set-go\/docs\/help\/troubleshooting\/",
                 title: "Troubleshooting",
                 description: "Solutions to common problems.",
@@ -535,7 +559,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  9 ,
+                id:  10 ,
                 href: "\/central-set-go\/docs\/help\/faqs\/",
                 title: "FAQ",
                 description: "Answers to frequently asked questions.",
@@ -544,7 +568,16 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  10 ,
+                id:  11 ,
+                href: "\/central-set-go\/docs\/tutorials\/admin-model\/",
+                title: "Admin Model",
+                description: "Understanding the Central Set Admin Model and how model-driven architecture defines applications, permissions, APIs, and metadata.",
+                content: " warning Caution — Central Set is production-ready and actively used, but this documentation is still under active development. Large parts of the docs are auto-generated, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently. The Admin Model defines the core metadata and system structure used by Central Set.\nIt is written as a Markdown + YAML model, which allows the platform to:\nInitialize databases Generate metadata Configure applications Manage permissions Define dashboards Control APIs and integrations All of this is done from a single model file.\n🧠 Model Philosophy linkCentral Set uses a model-driven architecture.\nInstead of manually creating:\ntables menus permissions APIs dashboards everything is defined inside a model file.\nThis model becomes the single source of truth for the application.\nAdvantages include:\nself-documenting database schema reproducible environments consistent deployments Git-versioned infrastructure LLM-friendly structure The model can initialize or update the database with:\ncentral-set --init --model admin_model.md 📦 Model Structure linkA model is composed of several parts.\nHigh-level structure:\nModel Metadata Applications (cs_app) Tables Security Metadata Tables Integrations Dashboards Jobs / Scheduling Each section is written in YAML blocks inside Markdown, which allows the model to remain both human readable and machine executable.\n⚙️ Model Metadata linkThe first section defines the model configuration.\nExample:\nname: ADMIN description: CS ADMIN Model runs_as: MODEL conn: '@DB_DRIVER_NAME:@DB_DSN' create_all: checkfirst _drop_all: checkfirst update_table_metadata: true active: true Important fields:\nField Description name Model name conn Database connection runs_as Execution mode create_all Controls schema creation update_table_metadata Updates metadata tables active Enables the model The connection usually references environment variables.\nExample:\n@DB_DRIVER_NAME @DB_DSN This keeps credentials outside the model file.\n🧩 Application Definition (cs_app) linkThe cs_app section defines the applications and menus that appear inside the Central Set UI.\nExample:\ncs_app: Dashboards: menu_icon: document-report menu_order: 1 tables: - dashboard Applications can define:\nmenus menu icons table mappings metadata configuration Example structure:\nApp ├── Menu │ ├── Tables │ └── Configuration From this, Central Set automatically generates:\nUI navigation CRUD APIs access control layers 🗄️ Table Definitions linkEach table is defined using a YAML block.\nExample:\ntable: users comment: Users columns: user_id: type: integer pk: true autoincrement: true Columns can define:\nProperty Description type SQL type pk Primary key fk Foreign key nullable Allow null values default Default value unique Unique constraint comment Field description Example FK definition:\nfk: \"role.role_id\" This automatically generates relational constraints.\n🔐 Security Model linkCentral Set implements multi-layer security directly inside the model.\nSecurity layers include:\nRole Based Access link role role_app role_app_menu role_app_menu_table Controls:\napplication access menu access table access CRUD permissions Row Level Access (RLA) linkTables:\nrow_level_access role_row_level_access RLA allows restricting records by:\ntenant department region customer Example concept:\nUser A → only sees rows belonging to Tenant A User B → only sees rows belonging to Tenant B Column Level Access linkTable:\ncolumn_level_access Controls which fields a user can:\nread create update 📊 Dashboard System linkThe model defines the dashboard engine.\nTables:\ndashboard dashboard_comment Dashboards are defined using Markdown configuration stored in the database.\nExample field:\ndashboard_conf This configuration can contain:\nSQL queries API calls ETLX pipelines visualization configuration Dashboards therefore become fully dynamic and programmable.\n🚀 Arrow Flight Integration linkThe Admin model also defines the Arrow Flight server configuration.\nTables:\narrow_flight arrow_flight_table arrow_flight_table_field arrow_flight_table_scope These allow exposing datasets through the Arrow Flight protocol.\nCapabilities include:\nschema definition table discovery scoped datasets dynamic SQL execution Example configuration fields:\nField Purpose startup_sql initialization SQL main_sql main execution query table_discover_sql dynamic table listing table_scan_tmpl_sql table scan template shutdown_sql cleanup logic This allows Central Set to act as a data service layer.\n🔑 Access Keys linkTable:\naccess_key Access keys allow:\nservice integrations external APIs programmatic access Each key includes:\ntoken expiration user association activation flag These keys can be used in the API:\nAuthorization: Bearer ⚙️ Environment Variables linkTable:\nenv Stores environment variables managed by Central Set.\nExample usage:\n@ENV_VAR_NAME These variables can be used in:\nETLX pipelines database connections integrations API configuration ⏱ Job Scheduling linkTables:\ncron cron_log This allows Central Set to run scheduled jobs.\nExample jobs:\nETLX pipelines backups environment sync maintenance tasks Example cron expression:\n0 0 * * * Jobs execute Central Set APIs.\nExample:\netlx/name/[pipeline_name] 📜 System Metadata linkSeveral tables store metadata used internally by Central Set:\ntable table_schema menu menu_table custom_table custom_form translate_table translate_table_field These allow the system to dynamically:\ngenerate CRUD APIs build UI forms create dashboards manage translations extend metadata 🧠 Why Everything Lives in the Model linkBy defining everything in a single Markdown model, Central Set achieves:\nInfrastructure as Code Self-documenting architecture Automated API generation Built-in security layers Dynamic UI generation The model becomes the foundation of the entire platform.\n🚀 Summary linkThe Admin Model defines the entire core system of Central Set, including:\nusers roles applications menus security layers dashboards data services integrations job scheduling All of this is controlled from a single Markdown model file.\nThis approach enables Central Set to function as a metadata-driven backend platform capable of dynamically generating:\nAPIs dashboards data pipelines integrations "
+            }
+        );
+    index.add(
+            {
+                id:  12 ,
                 href: "\/central-set-go\/docs\/tutorials\/auth\/",
                 title: "Authentication \u0026 Access",
                 description: "User authentication, password management, and API access in Central Set Go",
@@ -553,7 +586,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  11 ,
+                id:  13 ,
                 href: "\/central-set-go\/docs\/tutorials\/apps\/",
                 title: "Applications",
                 description: "Applications define how databases are exposed as admin interfaces in Central Set Go.",
@@ -562,7 +595,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  12 ,
+                id:  14 ,
                 href: "\/central-set-go\/docs\/tutorials\/admin-schema\/",
                 title: "Admin Schema (the DNA)",
                 description: "How Central Set defines applications, UI, permissions, and automation using database metadata.",
@@ -571,7 +604,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  13 ,
+                id:  15 ,
                 href: "\/central-set-go\/docs\/tutorials\/menus\/",
                 title: "Navigation \u0026 Menus",
                 description: "Navigation \u0026 Menus",
@@ -580,7 +613,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  14 ,
+                id:  16 ,
                 href: "\/central-set-go\/docs\/tutorials\/tables\/",
                 title: "CRUD",
                 description: "CRUD",
@@ -589,7 +622,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  15 ,
+                id:  17 ,
                 href: "\/central-set-go\/docs\/tutorials\/integrations\/",
                 title: "Integrations",
                 description: "Learn how to connect Central Set with multiple databases, data sources, and data platforms using ETLX to integrate, transform, and securely expose data.",
@@ -598,7 +631,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  16 ,
+                id:  18 ,
                 href: "\/central-set-go\/docs\/tutorials\/users-roles\/",
                 title: "Security \u0026 Permissions",
                 description: "Security \u0026 Permissions",
@@ -607,7 +640,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  17 ,
+                id:  19 ,
                 href: "\/central-set-go\/docs\/tutorials\/jobs\/",
                 title: "Automation \u0026 Jobs",
                 description: "Automation \u0026 Jobs",
@@ -616,7 +649,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  18 ,
+                id:  20 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/",
                 title: "ETLX \u0026 Data Pipelines",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -625,7 +658,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  19 ,
+                id:  21 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/overview\/",
                 title: "Overview",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -634,7 +667,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  20 ,
+                id:  22 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/example\/",
                 title: "Example",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -643,7 +676,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  21 ,
+                id:  23 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/",
                 title: "Analytics \u0026 Dashboards",
                 description: "Analytics \u0026 Dashboards",
@@ -652,7 +685,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  22 ,
+                id:  24 ,
                 href: "\/central-set-go\/docs\/tutorials\/api\/",
                 title: "Dynamic API Reference",
                 description: "Dynamic API Reference",
@@ -661,7 +694,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  23 ,
+                id:  25 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/overview\/",
                 title: "Overview",
                 description: "Overview",
@@ -670,7 +703,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  24 ,
+                id:  26 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/example\/",
                 title: "Example",
                 description: "Analytics \u0026 Dashboards — Logs Dashboard Example",
@@ -679,7 +712,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  25 ,
+                id:  27 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/export-dashboard\/",
                 title: "Exporting Dashboard Data to Excel Templates",
                 description: "Generate spreadsheet files from dashboard filters and queries using ETLX export templates.",
@@ -688,16 +721,16 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  26 ,
+                id:  28 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/dyn-custom-dataset-dashboard\/",
                 title: "Dynamic Dataset",
                 description: "Dashboard With Dynamic Dataset For Each User / Profile",
-                content: "Dashboard With Dynamic Dataset linkOverview linkIn scenarios where datasets must be:\nScoped by user Scoped by tenant Scoped by department Scoped by vendor Or any Row-Level Access (RLA) domain …and you still want:\nPre-cached Parquet files Browser-side DuckDB execution High performance Low query cost This pattern is ideal.\nInstead of running every query through crud/read in the backend, you:\nGenerate a custom dataset per user and Export it as Parquet via ETLX Cache it (local disk, S3, blob storage, CDN) Load it in the browser via DuckDB WASM This allows:\nSecure scoping + high-performance local analytics.\nWhy This Pattern Exists linkYou could scope everything using cs blocks (secured CRUD).\nBut that means:\nEvery query runs in backend Every filter hits the database Costs may increase (DB compute / cloud egress) For datasets that:\nChange once per day Update overnight Have compute cost Are expensive to query repeatedly It is better to:\nGenerate a scoped dataset once\nCache it\nServe it many times\nArchitecture link User → Dashboard → Click \"Update Dataset\" │ ▼ ETLX Backend │ ▼ Generate User-Scoped Parquet │ ▼ Store + Log File │ ▼ Dashboard Loads Parquet in Browser Step 1 — Add Update Button linkAdd a button to trigger dataset regeneration:\nImportant link name=\"my_custom_ds_ex\" → Must match:\nConfig block key ETLX markdown block ID action=\"update_custom_ds\" → Triggers backend ETLX execution\nStep 2 — Dashboard Configuration linkIn your dashboard config:\n\"all_query_run_locally_in_ddb_wasm\": true, \"pre_prepared_parquets_logs_table\": null, \"pre_prepared_parquets_logs_sql\": \"with _logs as (select * from dynamic_ds_logs where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in ( select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name ) ) select user_id, table_name as name, replace(fname, 'tmp/', '') as file from _logs\", \"pre_prepared_parquets_logs_db\": \"sqlite3:database/logs_for_dyn_gen_ds.db\", \"pre_prepared_parquets_for_ddb_wasm\": { \"ORDERS\": \"orders.parquet\" }, \"update_custom_ds\": { \"my_custom_ds_ex\": { \"etlx_id\": 1, \"app\": { \"app_id\": 2, \"app\": \"ETLX\", \"db\": \"ETLX\"} } } What This Configuration Does link1️⃣ Detect Latest File Per User linkUses:\ndynamic_ds_logs Filtered by:\nuser_id = [dash.user.user_id] So:\nEach user loads only their dataset Fully isolated No cross-tenant leakage 2️⃣ Map File to Logical Table link \"pre_prepared_parquets_for_ddb_wasm\": { \"ORDERS\": \"orders.parquet\" } This makes:\nFROM \"ORDERS\" Available inside DuckDB WASM.\nStep 3 — ETLX Dataset Generator linkInside your dashboard markdown:\n````markdown my_custom_ds_ex # GENERATE_DATA_SETS ```yaml name: GenerateDSs description: Exports custom ds runs_as: EXPORTS connection: \"duckdb:\" path: static/uploads/ # in case of a s3endpoint it can be passed directlly in the export query active: true ``` ## ORDERS ```yaml name: GenerateORDERSData description: Exports custom ORDERS data connection: \"duckdb:\" before_sql: - INSTALL erpl_web FROM community - LOAD erpl_web - create_api_auth_secrete - attach_odata_endpoint_with_users_copes - attach_sales_datalake - attach_logs_db export_sql: - generate_my_sales_data - create_logs_table_if_not_exists - insert_generated_file_into_logs after_sql: - DETACH scopes - DETACH dl - DETACH logs path: tmp/orders.[dash.user.user_id].{YYYYMMDD}.{TSTAMP}.parquet tmp_prefix: tmp active: true ``` ```sql -- create_api_auth_secrete CREATE SECRET api_auth ( TYPE http_bearer, TOKEN '[dash.user.jwt_token]', SCOPE 'http://localhost:4444/' ); ``` ```sql -- attach_odata_endpoint_with_users_copes ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ETLX' AS scopes (TYPE ODATA); ``` ```sql -- attach_ex_sales_datalake ATTACH 'ducklake:sqlite:database/dl_metadata.sqlite' AS dl (DATA_PATH 'database/dl/'); ``` ```sql -- attach_logs_db ATTACH 'database/logs_for_dyn_gen_ds.db' AS logs (TYPE SQLITE); ``` ```sql -- generate_my_sales_data COPY ( SELECT orders.* FROM dl.orders WHERE orders.department_id IN ( -- OData API Will use CS crud/read by the user in the given by its session SELECT department_id FROM scopes.department ) ) TO ''; ``` ```sql -- create_logs_table_if_not_exists CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs ( id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id INTEGER NOT NULL, table_name VARCHAR NOT NULL, fname VARCHAR NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ); ``` ```sql -- insert_generated_file_into_logs INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', ''); ``` ```sql x with _logs as ( select * from dynamic_ds_logs where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in ( select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name ) ) select user_id, table_name as name, replace(fname, 'tmp/', '') as file FROM _logs ``` ```` How Security Is Applied linkYour datalake:\ndl.sales.orders Is unfiltered.\nIt has no Row-Level Access.\nRLA Is Applied Here link COPY ( SELECT orders.* FROM dl.sales.orders WHERE orders.department_id IN ( SELECT department_id FROM scopes.department ) ) TO ''; Where:\nscopes.department Is an OData endpoint backed by:\nCentral Set crud/read User JWT token RLA enforcement Meaning:\nThe dataset is generated already scoped by the user’s allowed departments.\nLogging Generated Files link CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs ( id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id INTEGER NOT NULL, table_name VARCHAR NOT NULL, fname VARCHAR NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ); And then:\nINSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', ''); This enables:\nVersion control File history Regeneration tracking Cleanup strategies Final Result linkNow your dashboard queries run like normal:\nSELECT department_id, SUM(amount) FROM \"ORDERS\" GROUP BY department_id But:\nData is already scoped Loaded from user-specific Parquet Executed in browser Zero backend queries for analytics When To Use This Pattern linkUse Dynamic Dataset when:\n✔ Data must be scoped by RLA ✔ Dataset is expensive to compute ✔ Dataset updates periodically (daily / monthly) ✔ You want minimal backend calls ✔ You want analytics fully client-side and fast\nWhen NOT To Use This linkIf:\nData changes constantly (real-time) You need live transactional accuracy User scoping changes frequently Then prefer:\ncs blocks Direct secured backend queries Comparison link Approach Security Performance Backend Load Best For cs blocks Live RLA Medium High Real-time SQL only No RLA Very High None Public data Dynamic Dataset Pre-scoped RLA Very High Low Periodic secured data Key Takeaway linkDynamic Dataset combines:\nETLX execution power Central Set RLA security Parquet performance DuckDB WASM execution User isolation Cost control It is the most scalable way to deliver:\nSecure multi-tenant analytics at scale.\n"
+                content: "Dashboard With Dynamic Dataset linkOverview linkIn scenarios where datasets must be:\nScoped by user Scoped by tenant Scoped by department Scoped by vendor Or any Row-Level Access (RLA) domain …and you still want:\nPre-cached Parquet files Browser-side DuckDB execution High performance Low query cost This pattern is ideal.\nInstead of running every query through crud/read in the backend, you:\nGenerate a custom dataset per user and Export it as Parquet via ETLX Cache it (local disk, S3, blob storage, CDN) Load it in the browser via DuckDB WASM This allows:\nSecure scoping + high-performance local analytics.\nWhy This Pattern Exists linkYou could scope everything using cs blocks (secured CRUD).\nBut that means:\nEvery query runs in backend Every filter hits the database Costs may increase (DB compute / cloud egress) For datasets that:\nChange once per day Update overnight Have compute cost Are expensive to query repeatedly It is better to:\nGenerate a scoped dataset once\nCache it\nServe it many times\nArchitecture link User → Dashboard → Click \"Update Dataset\" │ ▼ ETLX Backend │ ▼ Generate User-Scoped Parquet │ ▼ Store + Log File │ ▼ Dashboard Loads Parquet in Browser Step 1 — Add Update Button linkAdd a button to trigger dataset regeneration:\nImportant link name=\"my_custom_ds_ex\" → Must match:\nConfig block key ETLX markdown block ID action=\"update_custom_ds\" → Triggers backend ETLX execution\nStep 2 — Dashboard Configuration linkIn your dashboard config:\n\"all_query_run_locally_in_ddb_wasm\": true, \"pre_prepared_parquets_logs_table\": null, \"pre_prepared_parquets_logs_sql\": \"with _logs as (select * from dynamic_ds_logs where fname is not null and user_id = [dash.user.user_id] and (user_id, table_name, created_at) in ( select user_id, table_name, max(created_at) from dynamic_ds_logs group by user_id, table_name ) ) select user_id, table_name as name, replace(fname, 'tmp/', '') as file from _logs\", \"pre_prepared_parquets_logs_db\": \"sqlite3:database/logs_for_dyn_gen_ds.db\", \"pre_prepared_parquets_for_ddb_wasm\": { \"ORDERS\": \"orders.parquet\" }, \"update_custom_ds\": { \"my_custom_ds_ex\": { \"etlx_id\": 1, \"app\": { \"app_id\": 2, \"app\": \"ETLX\", \"db\": \"ETLX\"} } } What This Configuration Does link1️⃣ Detect Latest File Per User linkUses:\ndynamic_ds_logs Filtered by:\nuser_id = [dash.user.user_id] So:\nEach user loads only their dataset Fully isolated No cross-tenant leakage 2️⃣ Map File to Logical Table link \"pre_prepared_parquets_for_ddb_wasm\": { \"ORDERS\": \"orders.parquet\" } This makes:\nFROM \"ORDERS\" Available inside DuckDB WASM.\nStep 3 — ETLX Dataset Generator linkInside your dashboard markdown:\n````markdown my_custom_ds_ex # GENERATE_DATA_SETS ```yaml name: GenerateDSs description: Exports custom ds runs_as: EXPORTS connection: \"duckdb:\" path: static/uploads/ # in case of a s3endpoint it can be passed directlly in the export query active: true ``` ## ORDERS ```yaml name: GenerateORDERSData description: Exports custom ORDERS data connection: \"duckdb:\" before_sql: - INSTALL erpl_web FROM community - LOAD erpl_web - create_api_auth_secrete - attach_odata_endpoint_with_users_copes - attach_ex_ecomerce_datalake - attach_logs_db export_sql: - generate_my_sales_data - create_logs_table_if_not_exists - insert_generated_file_into_logs after_sql: - DETACH scopes - DETACH dl - DETACH logs path: tmp/orders.[dash.user.user_id].{YYYYMMDD}.{TSTAMP}.parquet tmp_prefix: tmp active: true ``` ```sql -- create_api_auth_secrete CREATE SECRET api_auth ( TYPE http_bearer, TOKEN '[dash.user.jwt_token]', SCOPE 'http://localhost:4444/' ); ``` ```sql -- attach_odata_endpoint_with_users_copes ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ETLX' AS scopes (TYPE ODATA); ``` ```sql -- attach_ex_ecomerce_datalake ATTACH 'ducklake:sqlite:database/dl_metadata.sqlite' AS dl (DATA_PATH 'database/dl/'); ``` ```sql -- attach_logs_db ATTACH 'database/logs_for_dyn_gen_ds.db' AS logs (TYPE SQLITE); ``` ```sql -- generate_my_sales_data COPY ( SELECT orders.* FROM dl.orders WHERE orders.department_id IN ( -- OData API Will use CS crud/read by the user in the given by its session SELECT department_id FROM scopes.department ) ) TO ''; ``` ```sql -- create_logs_table_if_not_exists CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs ( --id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL, table_name VARCHAR NOT NULL, fname VARCHAR NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ); ``` ```sql -- insert_generated_file_into_logs INSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', ''); ``` ```` How Security Is Applied linkYour datalake:\ndl.sales.orders Is unfiltered.\nIt has no Row-Level Access.\nRLA Is Applied Here link COPY ( SELECT orders.* FROM dl.sales.orders WHERE orders.department_id IN ( SELECT department_id FROM scopes.department ) ) TO ''; Where:\nscopes.department Is an OData endpoint backed by:\nCentral Set crud/read User JWT token RLA enforcement Meaning:\nThe dataset is generated already scoped by the user’s allowed departments.\nLogging Generated Files link CREATE TABLE IF NOT EXISTS logs.dynamic_ds_logs ( id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id INTEGER NOT NULL, table_name VARCHAR NOT NULL, fname VARCHAR NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ); And then:\nINSERT INTO logs.dynamic_ds_logs (user_id, table_name, fname) VALUES ([dash.user.user_id], 'ORDERS', ''); This enables:\nVersion control File history Regeneration tracking Cleanup strategies Final Result linkNow your dashboard queries run like normal:\nSELECT department_id, SUM(amount) FROM \"ORDERS\" GROUP BY department_id But:\nData is already scoped Loaded from user-specific Parquet Executed in browser Zero backend queries for analytics When To Use This Pattern linkUse Dynamic Dataset when:\n✔ Data must be scoped by RLA ✔ Dataset is expensive to compute ✔ Dataset updates periodically (daily / monthly) ✔ You want minimal backend calls ✔ You want analytics fully client-side and fast\nWhen NOT To Use This linkIf:\nData changes constantly (real-time) You need live transactional accuracy User scoping changes frequently Then prefer:\ncs blocks Direct secured backend queries Comparison link Approach Security Performance Backend Load Best For cs blocks Live RLA Medium High Real-time SQL only No RLA Very High None Public data Dynamic Dataset Pre-scoped RLA Very High Low Periodic secured data Key Takeaway linkDynamic Dataset combines:\nETLX execution power Central Set RLA security Parquet performance DuckDB WASM execution User isolation Cost control It is the most scalable way to deliver:\nSecure multi-tenant analytics at scale.\n"
             }
         );
     index.add(
             {
-                id:  27 ,
+                id:  29 ,
                 href: "\/central-set-go\/docs\/tutorials\/odata-v4\/",
                 title: "OData v4 API",
                 description: "OData v4 API",
@@ -706,7 +739,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  28 ,
+                id:  30 ,
                 href: "\/central-set-go\/docs\/tutorials\/arrow-flight\/",
                 title: "Arrow Flight",
                 description: "Apache Arrow Flight Support API",
@@ -715,7 +748,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  29 ,
+                id:  31 ,
                 href: "\/central-set-go\/docs\/tutorials\/config\/",
                 title: "Configuration",
                 description: "Configuration options for Central Set",
