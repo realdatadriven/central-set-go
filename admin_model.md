@@ -602,17 +602,17 @@ columns:
 table: dashboard
 comment: Dashboards
 columns:
-  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true }
-  dashboard_desc: { type: text, comment: "Description", form_display: true }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_code: markdown}
-  order:          { type: integer, comment: "Order", form_display: true, form_sizelg: 3, form_sizexl: 3 }
-  active:         { type: boolean, default: true, comment: "Active", form_display: true, form_sizelg: 3, form_sizexl: 3}
-  user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:     { type: datetime, comment: "Created at" }
-  updated_at:     { type: datetime, comment: "Updated at" }
-  excluded:       { type: boolean, default: false, comment: "Excluded" }
+  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID", form_display: false, table_display: false }
+  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_code: markdown, table_display: true }
+  order:          { type: integer, comment: "Order", form_display: true, form_sizelg: 3, form_sizexl: 3, table_display: true }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, form_sizelg: 3, form_sizexl: 3, table_display: true }
+  user_id:        { type: integer, fk: "users.user_id", comment: "User ID", form_display: false, table_display: false }
+  app_id:         { type: integer, fk: "app.app_id", comment: "App ID", form_display: false, table_display: false }
+  created_at:     { type: datetime, comment: "Created at", form_display: false, table_display: false }
+  updated_at:     { type: datetime, comment: "Updated at", form_display: false, table_display: false }
+  excluded:       { type: boolean, default: false, comment: "Excluded", form_display: false, table_display: false }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
