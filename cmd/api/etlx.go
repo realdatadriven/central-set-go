@@ -224,6 +224,10 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	config := make(Dict)
 	etlxlib := &etlx.ETLX{Config: config}
 	etlxlib.MetadataOrder = false
+	if order_metadata, ok := _data["order_metadata"].(bool); ok {
+		fmt.Println("order_metadata:", order_metadata)
+		etlxlib.MetadataOrder = order_metadata
+	}
 	config, ok = _data["conf"].(Dict)
 	if !ok {
 		_conf, ok := _data["conf"].(string)
@@ -321,9 +325,6 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 		}
 		if drop, ok := _data["drop"].(bool); ok {
 			extraConf["drop"] = drop
-		}
-		if order_metadata, ok := _data["order_metadata"].(bool); ok {
-			etlxlib.MetadataOrder = order_metadata
 		}
 		if rows, ok := _data["rows"].(bool); ok {
 			extraConf["rows"] = rows

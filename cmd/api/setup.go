@@ -26,7 +26,7 @@ func (app *application) setupWithModel(model string) error {
 		"db": app.config.db.dsn,
 		"data": Dict{
 			"order_metadata": any(true),
-			"config":         string(content),
+			"conf":           any(string(content)),
 		},
 	}
 	res := app.etlxRun(params, true)
