@@ -25,6 +25,8 @@ jobs:
           cp -r ./database/*.sql dist/central-set-linux-amd64/database
           cp -r ./database/*.csapp dist/central-set-linux-amd64/database
           cp ./LICENSE dist/central-set-linux-amd64
+          cp ./admin_model.md dist/central-set-linux-amd64
+          cp ./etlx_model.md dist/central-set-linux-amd64
           cp ./README.md dist/central-set-linux-amd64
           cp ./.env-exemple.txt dist/central-set-linux-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-linux-amd64
@@ -62,6 +64,8 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-windows-amd64/database
           cp ./LICENSE dist/central-set-windows-amd64
           cp ./README.md dist/central-set-windows-amd64
+          cp ./admin_model.md dist/central-set-windows-amd64
+          cp ./etlx_model.md dist/central-set-windows-amd64
           cp ./.env-exemple.txt dist/central-set-windows-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-amd64
           cp -r ./locales dist/central-set-windows-amd64
@@ -71,6 +75,8 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-windows-arm64/database
           cp ./LICENSE dist/central-set-windows-arm64
           cp ./README.md dist/central-set-windows-arm64
+          cp ./admin_model.md dist/central-set-windows-arm64
+          cp ./etlx_model.md dist/central-set-windows-arm64
           cp ./.env-exemple.txt dist/central-set-windows-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-arm64
           cp -r ./locales dist/central-set-windows-arm64
@@ -103,7 +109,7 @@ jobs:
           name: windows-binary
           path: dist/**  
 
-  build-windows-linking:
+  build-windows-dyn-linked:
     runs-on: windows-latest
     steps:
       # Step 1: Checkout the code
@@ -113,24 +119,28 @@ jobs:
       - name: Prepare Dist Folder
         run: |
           mkdir -p dist
-          mkdir -p dist/central-set-windows-linking-amd64
-          mkdir -p dist/central-set-windows-linking-amd64/database
-          cp -r ./database/*.sql dist/central-set-windows-linking-amd64/database
-          cp -r ./database/*.csapp dist/central-set-windows-linking-amd64/database
-          cp ./LICENSE dist/central-set-windows-linking-amd64
-          cp ./README.md dist/central-set-windows-linking-amd64
-          cp ./.env-exemple.txt dist/central-set-windows-linking-amd64/dot-env-exemple.txt
-          cp -r ./static dist/central-set-windows-linking-amd64
-          cp -r ./locales dist/central-set-windows-linking-amd64
-          mkdir -p dist/central-set-windows-linking-arm64
-          mkdir -p dist/central-set-windows-linking-arm64/database
-          cp -r ./database/*.sql dist/central-set-windows-linking-arm64/database
-          cp -r ./database/*.csapp dist/central-set-windows-linking-arm64/database
-          cp ./LICENSE dist/central-set-windows-linking-arm64
-          cp ./README.md dist/central-set-windows-linking-arm64
-          cp ./.env-exemple.txt dist/central-set-windows-linking-arm64/dot-env-exemple.txt
-          cp -r ./static dist/central-set-windows-linking-arm64
-          cp -r ./locales dist/central-set-windows-linking-arm64
+          mkdir -p dist/central-set-windows-dyn-linked-amd64
+          mkdir -p dist/central-set-windows-dyn-linked-amd64/database
+          cp -r ./database/*.sql dist/central-set-windows-dyn-linked-amd64/database
+          cp -r ./database/*.csapp dist/central-set-windows-dyn-linked-amd64/database
+          cp ./LICENSE dist/central-set-windows-dyn-linked-amd64
+          cp ./README.md dist/central-set-windows-dyn-linked-amd64
+          cp ./admin_model.md dist/central-set-windows-dyn-linked-amd64
+          cp ./etlx_model.md dist/central-set-windows-dyn-linked-amd64
+          cp ./.env-exemple.txt dist/central-set-windows-dyn-linked-amd64/dot-env-exemple.txt
+          cp -r ./static dist/central-set-windows-dyn-linked-amd64
+          cp -r ./locales dist/central-set-windows-dyn-linked-amd64
+          mkdir -p dist/central-set-windows-dyn-linked-arm64
+          mkdir -p dist/central-set-windows-dyn-linked-arm64/database
+          cp -r ./database/*.sql dist/central-set-windows-dyn-linked-arm64/database
+          cp -r ./database/*.csapp dist/central-set-windows-dyn-linked-arm64/database
+          cp ./LICENSE dist/central-set-windows-dyn-linked-arm64
+          cp ./README.md dist/central-set-windows-dyn-linked-arm64
+          cp ./admin_model.md dist/central-set-windows-dyn-linked-arm64
+          cp ./etlx_model.md dist/central-set-windows-dyn-linked-arm64
+          cp ./.env-exemple.txt dist/central-set-windows-dyn-linked-arm64/dot-env-exemple.txt
+          cp -r ./static dist/central-set-windows-dyn-linked-arm64
+          cp -r ./locales dist/central-set-windows-dyn-linked-arm64
 
       # Step 2: Set up Go environment
       - name: Setup Go
@@ -177,18 +187,18 @@ jobs:
       - name: Build Windows Binary
         run: |
           go mod tidy
-          go build -tags="duckdb_arrow" -o dist/central-set-windows-linking-amd64/central-set-windows-linking-amd64.exe ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-windows-dyn-linked-amd64/central-set-windows-dyn-linked-amd64.exe ./cmd/api
           echo "CGO_ENABLED=1" >> $env:GITHUB_ENV
           echo "CGO_CFLAGS=-I$(Get-Location)\duckdbarm64\" >> $env:GITHUB_ENV
           echo "CGO_LDFLAGS=-L$(Get-Location)\duckdbarm64\ -lduckdb" >> $env:GITHUB_ENV
           echo "GOARCH=arm64" >> $env:GITHUB_ENV
-          go build -tags="duckdb_arrow" -o dist/central-set-windows-linking-arm64/central-set-windows-linking-arm64.exe ./cmd/api
-      #go build -tags="duckdb_arrow" -tags=duckdb_use_lib -o dist/central-set-windows-linking-amd64.exe ./cmd/api
+          go build -tags="duckdb_arrow" -o dist/central-set-windows-dyn-linked-arm64/central-set-windows-dyn-linked-arm64.exe ./cmd/api
+      #go build -tags="duckdb_arrow" -tags=duckdb_use_lib -o dist/central-set-windows-dyn-linked-amd64.exe ./cmd/api
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-binary-linking
+          name: windows-binary-dyn-linked
           path: dist/**
 
   build-darwin:
@@ -207,6 +217,8 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-macos-amd64/database
           cp ./LICENSE dist/central-set-macos-amd64
           cp ./README.md dist/central-set-macos-amd64
+          cp ./admin_model.md dist/central-set-macos-amd64
+          cp ./etlx_model.md dist/central-set-macos-amd64
           cp ./.env-exemple.txt dist/central-set-macos-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-macos-amd64
           cp -r ./locales dist/central-set-macos-amd64
@@ -216,6 +228,8 @@ jobs:
           cp -r ./database/*.csapp dist/central-set-macos-arm64/database
           cp ./LICENSE dist/central-set-macos-arm64
           cp ./README.md dist/central-set-macos-arm64
+          cp ./admin_model.md dist/central-set-macos-arm64
+          cp ./etlx_model.md dist/central-set-macos-arm64
           cp ./.env-exemple.txt dist/central-set-macos-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-macos-arm64
           cp -r ./locales dist/central-set-macos-arm64
@@ -256,17 +270,17 @@ jobs:
   release:
     permissions: write-all
     runs-on: ubuntu-latest
-    needs: [build-linux, build-windows, build-windows-linking, build-darwin]
+    needs: [build-linux, build-windows, build-windows-dyn-linked, build-darwin]
     steps:
       - name: Download Windows Binary
         uses: actions/download-artifact@v4
         with:
           name: windows-binary
           path: dist
-      - name: Download Windows Binary linking
+      - name: Download Windows Binary dyn-linked
         uses: actions/download-artifact@v4
         with:
-          name: windows-binary-linking
+          name: windows-binary-dyn-linked
           path: dist
       - name: Download MacOS Binary
         uses: actions/download-artifact@v4
@@ -288,10 +302,10 @@ jobs:
           cd dist/central-set-linux-amd64/ && zip -r ../central-set-linux-amd64.zip . && cd ../../
           cd dist/central-set-macos-amd64/ && zip -r ../central-set-macos-amd64.zip . && cd ../../
           cd dist/central-set-windows-amd64/ && zip -r ../central-set-windows-amd64.zip . && cd ../../
-          cd dist/central-set-windows-linking-amd64/ && zip -r ../central-set-windows-linking-amd64.zip . && cd ../../
+          cd dist/central-set-windows-dyn-linked-amd64/ && zip -r ../central-set-windows-dyn-linked-amd64.zip . && cd ../../
           cd dist/central-set-macos-arm64/ && zip -r ../central-set-macos-arm64.zip . && cd ../../
           cd dist/central-set-windows-arm64/ && zip -r ../central-set-windows-arm64.zip . && cd ../../
-          cd dist/central-set-windows-linking-arm64/ && zip -r ../central-set-windows-linking-arm64.zip . && cd ../../
+          cd dist/central-set-windows-dyn-linked-arm64/ && zip -r ../central-set-windows-dyn-linked-arm64.zip . && cd ../../
       #zip -j dist/central-set-linux-arm64.zip dist/central-set-linux-arm64
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -303,10 +317,10 @@ jobs:
             dist/central-set-linux-amd64.zip
             dist/central-set-macos-amd64.zip
             dist/central-set-windows-amd64.zip
-            dist/central-set-windows-linking-amd64.zip
+            dist/central-set-windows-dyn-linked-amd64.zip
             dist/central-set-macos-arm64.zip
             dist/central-set-windows-arm64.zip
-            dist/central-set-windows-linking-arm64.zip
+            dist/central-set-windows-dyn-linked-arm64.zip
       #      dist/central-set-linux-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
