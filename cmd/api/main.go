@@ -253,7 +253,7 @@ func run(logger *slog.Logger) error {
 				fmt.Printf("error setingup the DB: %v\n", err)
 			}
 		} else {
-			err := app.setupDB(*model, *dbname, *embedded)
+			err := app.setupWithModel(*model)
 			if err != nil {
 				fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
 			}
