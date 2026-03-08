@@ -131,7 +131,7 @@ docker run --rm -it \
 Before first use, initialize the admin database:
 
 ```bash
-./central-set --init
+./central-set --init --model admin_model.md
 ```
 
 This will:
@@ -145,6 +145,32 @@ This will:
 Username: root
 Password: 1234
 ```
+
+### 🏦 Model-Based Initialization
+
+Central Set follows a **model-driven database approach**, inspired by patterns commonly used.
+
+Instead of manually creating tables or running raw SQL migrations, the recommended workflow is to:
+
+1. Define your **application model** in a Markdown model file
+2. Describe entities, fields, relationships, and metadata
+3. Let Central Set **generate and manage the database structure**
+
+This approach provides several advantages:
+
+* **Consistent database structures**
+* **Self-documented schema**
+* **Reproducible environments**
+* **Tighter integration with Central Set APIs and metadata**
+* **Safer schema evolution**
+
+Although the example above initializes the **Admin database**, this approach is **not limited to it**.
+
+Any application database can — and ideally **should** — be initialized using the same **model-based workflow**.
+
+> In fact, new backend projects built with Central Set are **recommended to start with a model file**, allowing the platform to manage the database schema from the beginning.
+
+A dedicated page will explore the **Model system and architecture** in more detail.
 
 ---
 
@@ -176,7 +202,7 @@ Password: 1234
 To enable **ETLX pipelines, notebooks, and SQL tools**, initialize an additional app database:
 
 ```bash
-./central-set --init --dbname ETLX
+./central-set --init --model etlx_model.md
 ```
 
 This creates an ETLX-powered app that integrates with:
@@ -213,7 +239,7 @@ DB_DSN=database/ADMIN.db
 HTTP_PORT=4444
 ```
 
-> 🧠 Any database supported by **sqlx** can be used by simply changing the driver and DSN.
+> Any database supported by **sqlx** can be used by simply changing the driver and DSN.
 
 ---
 
@@ -241,7 +267,7 @@ You can now:
 
 ---
 
-## 🧠 Next Steps
+## Steps
 
 * 👉 **Admin & UI** — How Apps → Menus → Tables define the UI
 * 👉 **Security & API Access** — Users, roles, access keys
