@@ -9,6 +9,33 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
+func (app *application) setupWithModel(model string) error {
+	var content []byte
+	content, err := os.ReadFile(fmt.Sprintf(`%s`, model))
+	if err != nil {
+		content, err = os.ReadFile(fmt.Sprintf(`database/%s`, model))
+		if err != nil {
+			content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`setup/%s`, model))
+			if err != nil {
+				return err
+			}
+		}
+	}
+	// Process the model content as needed
+	params := Dict{
+		"db": app.config.db.dsn,
+		"data": Dict{
+			"order_metadata": any(true),
+			"config":         string(content),
+		},
+	}
+	res := app.etlxRun(params, true)
+	if res["success"].(bool) != true {
+		return fmt.Errorf("failed to setup with model: %s", res["msg"])
+	}
+	return nil
+}
+
 // Read SQL file and execute each query delimited by semicolon
 func (app *application) setupDB(filename string, dbname string, embedded bool) error {
 	var content []byte

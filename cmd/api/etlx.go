@@ -223,6 +223,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	// CONFIG
 	config := make(Dict)
 	etlxlib := &etlx.ETLX{Config: config}
+	etlxlib.MetadataOrder = false
 	config, ok = _data["conf"].(Dict)
 	if !ok {
 		_conf, ok := _data["conf"].(string)
@@ -321,6 +322,9 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 		if drop, ok := _data["drop"].(bool); ok {
 			extraConf["drop"] = drop
 		}
+		if order_metadata, ok := _data["order_metadata"].(bool); ok {
+			etlxlib.MetadataOrder = order_metadata
+		}
 		if rows, ok := _data["rows"].(bool); ok {
 			extraConf["rows"] = rows
 		}
@@ -352,7 +356,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	_keys := []any{"NOTIFY", "LOGS", "SCRIPTS", "MULTI_QUERIES", "EXPORTS", "DATA_QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES"}
+	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
@@ -536,6 +540,19 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 						}
 					case "REQUIRES", "IMPORTS":
 						_logs, err := etlxlib.LoadREQUIRES(nil, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					case "MODEL", "CSMODEL":
+						_logs, err := etlxlib.RunMODEL(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
 						} else {

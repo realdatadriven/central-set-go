@@ -155,6 +155,7 @@ func run(logger *slog.Logger) error {
 	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize the main db")
 	dbname := flag.String("dbname", "ADMIN", "initialize the main db")
+	model := flag.String("model", "admin_model.md", "initialize the db with the provided model (only used if init flag is set)")
 	embedded := flag.Bool("embedded", true, "use the embedded db")
 	flag.Parse()
 	if *showVersion {
@@ -245,10 +246,17 @@ func run(logger *slog.Logger) error {
 	}
 	// err = db.Ping()
 	if *initdb /*&& err != nil*/ {
-		fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
-		err := app.setupDB(fname, *dbname, *embedded)
-		if err != nil {
-			fmt.Printf("error setingup the DB: %v\n", err)
+		if *model == "" {
+			fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
+			err := app.setupDB(fname, *dbname, *embedded)
+			if err != nil {
+				fmt.Printf("error setingup the DB: %v\n", err)
+			}
+		} else {
+			err := app.setupDB(*model, *dbname, *embedded)
+			if err != nil {
+				fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
+			}
 		}
 		return nil
 	}
