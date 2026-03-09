@@ -493,17 +493,18 @@ columns:
 table: cron
 comment: Jobs scheduling
 columns:
-  cron_id:    { type: integer, pk: true, autoincrement: true, comment: "Cron ID" }
-  cron:       { type: varchar(50), nullable: false, comment: "Cron" }
-  cron_desc:  { type: varchar(200), nullable: false, comment: "Decription" }
-  api:        { type: varchar(200), nullable: false, comment: "API" }
-  app_id:     { type: integer, fk: "app.app_id", comment: "App ID" }
-  db:         { type: varchar(200), comment: "Database" }
-  table:      { type: varchar(50), comment: "Table" }
-  active:     { type: boolean, default: true, comment: "Active" }
-  created_at: { type: datetime, comment: "Created at" }
-  updated_at: { type: datetime, comment: "Updated at" }
-  excluded:   { type: boolean, default: false, comment: "Excluded" }
+  cron_id:      { type: integer, pk: true, autoincrement: true, comment: "Cron ID" }
+  cron:         { type: varchar(100), unique: true, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3 }
+  cron_desc:    { type: text, comment: "Description", form_display: true, table_display: true, form_size: 9 }
+  api:          { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 10 }
+  db:           { type: varchar(50), comment: "Database (if applicable)", form_display: false, table_display: false }
+  table:        { type: varchar(100), comment: "Table (if applicable)", form_display: false, table_display: false }
+  app_id:       { type: integer, fk: "app.app_id", comment: "Application ID", form_display: false, table_display: false }
+  active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2 }
+  user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", form_display: false, table_display: false }
+  created_at:   { type: datetime, comment: "Created at" }
+  updated_at:   { type: datetime, comment: "Updated at" }
+  excluded:     { type: boolean, default: false, comment: "Excluded" }
 data:
   - {cron_id: 1, cron: "0 0 * * *", cron_desc: Backup, api: buckup, app_id: 1, db: ADMIN, active: false, excluded: false}
   - {cron_id: 2, cron: "0 0 * * *", cron_desc: "Update Env", api: "env/sync", app_id: 1, db: ADMIN, active: false, excluded: false}
