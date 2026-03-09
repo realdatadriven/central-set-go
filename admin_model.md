@@ -549,18 +549,40 @@ columns:
 ## ACCESS_KEY
 ```yaml
 table: access_key
-comment: Access Keys
+comment: API / Access Tokens & Keys
 columns:
-  access_key_id:   { type: integer, pk: true, autoincrement: true, comment: "Access Key ID" }
-  access_key_desc: { type: varchar(200), nullable: false, comment: "Description" }
-  access_token:    { type: text, nullable: false, comment: "Token" }
-  expires_at:      { type: datetime, comment: "Expires at" }
-  active:          { type: boolean, default: true, comment: "Active" }
-  for_user_id:     { type: integer, fk: "users.user_id", comment: "Created For" }
-  user_id:         { type: integer, fk: "users.user_id", comment: "Created BY" }
-  created_at:      { type: datetime, comment: "Created at" }
-  updated_at:      { type: datetime, comment: "Updated at" }
-  excluded:        { type: boolean, default: false, comment: "Excluded" }
+  access_key_id:    { type: integer, pk: true, autoincrement: true, comment: "Access Key ID" }
+  access_key_desc:  { type: varchar(200), nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 12 }
+  access_token:     { type: text, nullable: false, comment: "Token / Secret", form_display: true, table_display: true, form_long_text: true, form_readonly: true }
+  expires_at:       { type: datetime, comment: "Expires at", form_display: true, table_display: true, form_size: 4 }
+  active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4 }
+  for_user_id:      { type: integer, fk: "users.user_id", comment: "Assigned to User", form_display: true, table_display: true, form_size: 4, form_fk_label: "username" }
+  user_id:          { type: integer, fk: "users.user_id", comment: "Created by", form_display: false, table_display: false }
+  app_id:           { type: integer, fk: "app.app_id", comment: "Application", form_display: false, table_display: false }
+  created_at:       { type: datetime, comment: "Created at" }
+  updated_at:       { type: datetime, comment: "Updated at" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+  sub_form_size: null
+  sub_form_limit: 5
+  allow_in_subform: {}
+  tabs_steps_conf: []
+table_layout:
+  allow_in_submenu: {}
+  default_order: []
+  allow_import: false
+table_extra_options:
+  - size: 6
+    component: AccessKey
+    label: accessKey
+    intercept_c: true
+    intercept_u: true
+    data: '{ "actions": [ {"type": "btn", "icon": "refresh", "name": "refresh", "class": "btn-sm text-info", "label": "crud.refresh", "action": null}, {"type": "btn", "icon": "save", "name": "save", "class": "btn-sm text-info", "label": "crud.save", "action": null }, {"type": "icon", "icon": "cog-8-tooth", "name": "form_customization", "label": "crud.form_customization", "action": null} ] }'
+    main: true
+    icon: key
 ```
 
 ## ENV
