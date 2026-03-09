@@ -189,23 +189,33 @@ table_extra_options:
 ## MENU
 ```yaml
 table: menu
-comment: Menus
+comment: Menu Items
 columns:
-  menu_id:     { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
-  menu:        { type: varchar(200), nullable: false, comment: "Menu" }
-  menu_desc:   { type: text, comment: "Description" }
-  menu_icon:   { type: varchar(20), comment: "Icon" }
-  menu_order:  { type: integer, comment: "Order" }
-  menu_config: { type: text, comment: "Config" }
-  app_id:      { type: integer, fk: "app.app_id", nullable: false, comment: "App ID" }
-  user_id:     { type: integer, fk: "users.user_id", nullable: false, comment: "User ID" }
-  active:      { type: boolean, default: true, comment: "Active" }
-  created_at:  { type: datetime, comment: "Created at" }
-  updated_at:  { type: datetime, comment: "Updated at" }
-  excluded:    { type: boolean, default: false, comment: "Excluded" }
-data:
-  - {menu_id: 1, menu: Admin, menu_desc: Admin, menu_icon: user-group, menu_order: 1, app_id: 1, user_id: 1, active: true, excluded: false}
-  - {menu_id: 2, menu: Params, menu_icon: adjustments, menu_order: 2, app_id: 1, user_id: 1, active: true, excluded: false}
+  menu_id:       { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
+  menu:          { type: varchar(20), unique: true, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 12 }
+  menu_desc:     { type: text, comment: "Description", form_display: true, table_display: true }
+  menu_icon:     { type: varchar(20), comment: "Icon", form_display: true, table_display: true, form_size: 6 }
+  menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 6 }
+  menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, table_display: true }
+  config:        { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true }
+  app_id:        { type: integer, fk: "app.app_id", comment: "App ID", form_display: false, table_display: true }
+  active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true }
+  user_id:       { type: integer, fk: "users.user_id", comment: "User ID", form_display: false, table_display: false }
+  created_at:    { type: datetime, comment: "Created at" }
+  updated_at:    { type: datetime, comment: "Updated at" }
+  excluded:      { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+  allow_in_subform: {}
+  tabs_steps_conf: []
+table_layout:
+  allow_in_submenu: {menu_table: true}
+  default_order: [{field: menu_order, order: ASC}]
+  allow_import: false
+  exec_button: {callApi: false, api: "", tooltip: "", icon: ""}
+table_extra_options: []
 ```
 
 ## TABLE
@@ -498,6 +508,19 @@ data:
   - {cron_id: 1, cron: "0 0 * * *", cron_desc: Backup, api: buckup, app_id: 1, db: ADMIN, active: false, excluded: false}
   - {cron_id: 2, cron: "0 0 * * *", cron_desc: "Update Env", api: "env/sync", app_id: 1, db: ADMIN, active: false, excluded: false}
   - {cron_id: 3, cron: "0 0 * * *", cron_desc: "ETLX Example", api: "etlx/name/[etlx_name]", app_id: 1, db: ADMIN, active: false, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
+  sub_form_size: null
+  sub_form_limit: 10
+  allow_in_subform: {cron_log: true}
+  tabs_steps_conf: []
+table_layout:
+  allow_in_submenu: {}
+  default_order: []
+  allow_import: false
+  exec_button: {callApi: true, api: cron/run, tooltip: Run Backup, icon: play}
 ```
 
 ## CRON_LOG
