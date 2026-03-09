@@ -3,7 +3,7 @@ weight: 130
 date: "2026-01-04T10:00:00+00:00"
 draft: false
 title: "Why Markdown?"
-icon: "file-text"
+icon: "code"
 toc: true
 description: "Why Central Set uses Markdown as a first-class citizen for documentation, dashboards, and ETLX workflows."
 tags: ["Concepts", "Markdown", "Dashboards", "ETLX", "LLM"]
@@ -64,7 +64,7 @@ Inside a single file, you can embed:
 SELECT *
 FROM contracts
 WHERE status = 'ACTIVE';
-````
+```
 
 ```python
 def transform(df):
