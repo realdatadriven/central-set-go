@@ -59,13 +59,17 @@ table: lang
 comment: Languages
 columns:
   lang_id:     { type: integer, pk: true, autoincrement: true, comment: "Lang ID" }
-  lang:        { type: varchar(4), unique: true, nullable: false, comment: "Language" }
-  lang_desc:   { type: varchar(200), comment: "Description" }
+  lang:        { type: varchar(4), unique: true, nullable: false, comment: "Language", form_display: true, table_display: true }
+  lang_desc:   { type: varchar(200), comment: "Description", form_display: true, table_display: true }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 data:
   - {lang_id: 1, lang: en, lang_desc: English, excluded: false}
+form_layout:
+  tabs_steps: deactivate
+  form_in_popup: true
+  size: 6
 ```
 
 ## ROLE
@@ -74,9 +78,9 @@ table: role
 comment: Roles
 columns:
   role_id:     { type: integer, pk: true, autoincrement: true, comment: "Role ID" }
-  role:        { type: varchar(20), nullable: false, unique: true, comment: "Role" }
-  role_desc:   { type: text, comment: "Description" }
-  config:      { type: text, comment: "Config" }
+  role:        { type: varchar(20), nullable: false, unique: true, comment: "Role", form_display: true, table_display: true }
+  role_desc:   { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true }
+  config:      { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
@@ -84,6 +88,13 @@ data:
   - {role_id: 1, role: root, role_desc: "Root role", excluded: false}
   - {role_id: 2, role: no-role, role_desc: "No role set", excluded: false}
   - {role_id: 3, role: tenant, role_desc: "Tenant Role", excluded: false}
+form_layout:
+  tabs_steps: tabs
+  size: 8
+  allow_in_subform: {}
+  tabs_steps_conf: []
+table_extra_options:
+  - {size: 12, component: AdminApps, label: permissions, data: '{ "profile": true, "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh", "action": null }, { "type": "btn", "icon": "save", "name": "SAVE", "class": "btn-sm text-info", "label": "crud.save", "action": null } ] }', icon: key, pop_up: true, main: true}
 ```
 
 ## USERS
@@ -92,19 +103,19 @@ table: users
 comment: Users
 columns:
   user_id:              { type: integer, pk: true, autoincrement: true, comment: "User ID" }
-  username:             { type: varchar(50), unique: true, nullable: false, comment: "Username" }
-  first_name:           { type: varchar(50), nullable: false, comment: "Fisrt Name" }
-  last_name:            { type: varchar(50), comment: "Last Name" }
-  email:                { type: varchar(50), unique: true, nullable: false, comment: "Email" }
-  phone:                { type: varchar(50), unique: true, comment: "Phone" }
-  password:             { type: varchar(200), nullable: false, comment: "Password" }
-  role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID" }
-  lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID" }
-  timezone:             { type: varchar(50), comment: "Timezone" }
-  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture" }
-  active:               { type: boolean, default: true, comment: "Active" }
-  alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login" }
-  enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth." }
+  username:             { type: varchar(50), unique: true, nullable: false, comment: "Username", form_display: true, table_display: true, form_size: 4 }
+  first_name:           { type: varchar(50), nullable: false, comment: "First Name", form_display: true, table_display: true, form_size: 4 }
+  last_name:            { type: varchar(50), comment: "Last Name", form_display: true, table_display: true, form_size: 4 }
+  email:                { type: varchar(50), unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 9 }
+  phone:                { type: varchar(50), unique: true, comment: "Phone", form_display: true, table_display: true, form_size: 3 }
+  password:             { type: varchar(200), nullable: false, comment: "Password", form_display: true, form_size: 3 }
+  role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 6 }
+  lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 3 }
+  timezone:             { type: varchar(50), comment: "Timezone", form_display: true, table_display: true, form_size: 12 }
+  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture", form_display: true, table_display: true, form_size: 9, form_att: true }
+  active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login", form_display: true }
+  enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth.", form_display: true }
   nxt_code_2f_auth:     { type: varchar(200), comment: "Next Two Factor Code" }
   code_2f_expires_at:   { type: datetime, comment: "2F Code Expires" }
   created_at:           { type: datetime, comment: "Created at" }
@@ -112,6 +123,14 @@ columns:
   excluded:             { type: boolean, default: false, comment: "Excluded" }
 data:
   - {user_id: 1, username: root, password: '*****', first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  sub_form_size: 9
+  allow_in_subform: {user_role: true}
+table_extra_options:
+  - {size: 12, component: AdminApps, label: permissions, data: '{ "profile": true, "user_rla": true, "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh", "action": null }, { "type": "btn", "icon": "save", "name": "SAVE", "class": "btn-sm text-info", "label": "crud.save", "action": null } ] }', pop_up: true, main: true, icon: key}
 ```
 
 ## USER_ROLE
@@ -120,12 +139,16 @@ table: user_role
 comment: User Roles
 columns:
   user_role_id: { type: integer, pk: true, autoincrement: true, comment: "User Role ID" }
-  user_id:      { type: integer, fk: "users.user_id", comment: "User ID" }
-  role_id:      { type: integer, fk: "role.role_id", comment: "Role ID" }
-  active:       { type: boolean, default: true, comment: "Active" }
+  user_id:      { type: integer, fk: "users.user_id", comment: "User ID", form_display: true, table_display: true }
+  role_id:      { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true }
+  active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true }
   created_at:   { type: datetime, comment: "Created at" }
   updated_at:   { type: datetime, comment: "Updated at" }
   excluded:     { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 4
 ```
 
 ## APP
@@ -134,19 +157,33 @@ table: app
 comment: Applications
 columns:
   app_id:      { type: integer, pk: true, autoincrement: true, comment: "App ID" }
-  app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name" }
-  app_desc:    { type: text, comment: "Description" }
-  version:     { type: varchar(10), nullable: false, comment: "Version" }
-  email:       { type: varchar(200), comment: "Email" }
-  db:          { type: varchar(200), nullable: false, comment: "Database" }
-  attach_logo: { type: varchar(200), comment: "Logo" }
-  config:      { type: text, comment: "Config" }
+  app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9 }
+  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true }
+  version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3 }
+  email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$" }
+  db:          { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3 }
+  attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true }
+  config:      { type: text, comment: "Config", form_display: false, form_long_text: true }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {app_id: 1, app: ADMIN, app_desc: Admin, db: ADMIN, version: 1.0.0, user_id: 1, excluded: false}
+  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, user_id: 1, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {menu: true, role_app: true}
+  tabs_steps_conf: []
+  sub_form_size: 9
+form_extra_options: []
+table_layout:
+  allow_in_submenu: {menu: true}
+  default_order: [{field: app_id, order: DESC}]
+  allow_import: false
+table_extra_options:
+  - {size: 12, component: AdminApps, label: admin_apps, data: "{ \"profile\": false, \"actions\": [ { \"type\": \"btn\", \"icon\": \"refresh\", \"name\": \"REFRESH\", \"class\": \"btn-sm text-info\", \"label\": \"crud.refresh\", \"action\": null }, { \"type\": \"btn\", \"icon\": \"save\", \"name\": \"SAVE\", \"class\": \"btn-sm text-info\", \"label\": \"crud.save\", \"action\": null } ] }", icon: cog, pop_up: false, main: true}
 ```
 
 ## MENU
@@ -602,17 +639,17 @@ columns:
 table: dashboard
 comment: Dashboards
 columns:
-  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID", form_display: false, table_display: false }
+  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
   dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true }
   dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true }
   dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_code: markdown, table_display: true }
   order:          { type: integer, comment: "Order", form_display: true, form_sizelg: 3, form_sizexl: 3, table_display: true }
   active:         { type: boolean, default: true, comment: "Active", form_display: true, form_sizelg: 3, form_sizexl: 3, table_display: true }
-  user_id:        { type: integer, fk: "users.user_id", comment: "User ID", form_display: false, table_display: false }
-  app_id:         { type: integer, fk: "app.app_id", comment: "App ID", form_display: false, table_display: false }
-  created_at:     { type: datetime, comment: "Created at", form_display: false, table_display: false }
-  updated_at:     { type: datetime, comment: "Updated at", form_display: false, table_display: false }
-  excluded:       { type: boolean, default: false, comment: "Excluded", form_display: false, table_display: false }
+  user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
