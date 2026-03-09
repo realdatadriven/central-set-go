@@ -183,7 +183,7 @@ table_layout:
   default_order: [{field: app_id, order: DESC}]
   allow_import: false
 table_extra_options:
-  - {size: 12, component: AdminApps, label: admin_apps, data: "{ \"profile\": false, \"actions\": [ { \"type\": \"btn\", \"icon\": \"refresh\", \"name\": \"REFRESH\", \"class\": \"btn-sm text-info\", \"label\": \"crud.refresh\", \"action\": null }, { \"type\": \"btn\", \"icon\": \"save\", \"name\": \"SAVE\", \"class\": \"btn-sm text-info\", \"label\": \"crud.save\", \"action\": null } ] }", icon: cog, pop_up: false, main: true}
+  - {size: 12, component: AdminApps, label: admin_apps, data: '{ "profile": false, "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh", "action": null }, { "type": "btn", "icon": "save", "name": "SAVE", "class": "btn-sm text-info", "label": "crud.save", "action": null } ] }', icon: cog, pop_up: false, main: true}
 ```
 
 ## MENU
