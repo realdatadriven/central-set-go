@@ -136,15 +136,15 @@ table_extra_options:
 ## USER_ROLE
 ```yaml
 table: user_role
-comment: User Roles
+comment: User-Role Assignments
 columns:
-  user_role_id: { type: integer, pk: true, autoincrement: true, comment: "User Role ID" }
-  user_id:      { type: integer, fk: "users.user_id", comment: "User ID", form_display: true, table_display: true }
-  role_id:      { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true }
-  active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true }
-  created_at:   { type: datetime, comment: "Created at" }
-  updated_at:   { type: datetime, comment: "Updated at" }
-  excluded:     { type: boolean, default: false, comment: "Excluded" }
+  user_role_id:  { type: integer, pk: true, autoincrement: true, comment: "User-Role Assignment ID" }
+  user_id:       { type: integer, fk: "users.user_id", nullable: false, comment: "User", form_display: false, table_display: true }
+  role_id:       { type: integer, fk: "role.role_id", nullable: false, comment: "Role / Profile", form_display: true, table_display: true }
+  active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 12 }
+  created_at:    { type: datetime, comment: "Created at" }
+  updated_at:    { type: datetime, comment: "Updated at" }
+  excluded:      { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -200,7 +200,7 @@ columns:
   config:        { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true }
   app_id:        { type: integer, fk: "app.app_id", comment: "App ID", form_display: false, table_display: true }
   active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true }
-  user_id:       { type: integer, fk: "users.user_id", comment: "User ID", form_display: false, table_display: false }
+  user_id:       { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:    { type: datetime, comment: "Created at" }
   updated_at:    { type: datetime, comment: "Updated at" }
   excluded:      { type: boolean, default: false, comment: "Excluded" }
@@ -223,15 +223,20 @@ table_extra_options: []
 table: table
 comment: Tables
 columns:
-  table_id:     { type: integer, pk: true, autoincrement: true, comment: "Table ID" }
-  table:        { type: varchar(50), nullable: false, comment: "Table" }
-  table_desc:   { type: varchar(200), comment: "Description" }
-  db:           { type: varchar(50), comment: "Database" }
-  requires_rla: { type: boolean, default: false, comment: "Requires Row Level Access" }
-  user_id:      { type: integer, fk: "users.user_id", comment: "User ID" }
-  created_at:   { type: datetime, comment: "Created at" }
-  updated_at:   { type: datetime, comment: "Updated at" }
-  excluded:     { type: boolean, default: false, comment: "Excluded" }
+  table_id:         { type: integer, pk: true, autoincrement: true, comment: "Table ID" }
+  table:            { type: varchar(100), unique: true, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12 }
+  table_desc:       { type: text, comment: "Description", form_display: true, table_display: true, form_size: 12 }
+  db:               { type: varchar(50), comment: "Database / Schema", form_display: true, table_display: true, form_size: 12 }
+  requires_rla:     { type: boolean, default: false, comment: "Requires Row Level Access (RLA)", form_display: true, table_display: true }
+  user_id:          { type: integer, fk: "users.user_id", comment: "Created/Updated by" }
+  app_id:           { type: integer, fk: "app.app_id", comment: "Application" }
+  created_at:       { type: datetime, comment: "Created at" }
+  updated_at:       { type: datetime, comment: "Updated at" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 12
 ```
 
 ## MENU_TABLE
@@ -240,16 +245,20 @@ table: menu_table
 comment: Menu Tables
 columns:
   menu_table_id:  { type: integer, pk: true, autoincrement: true, comment: "Menu Table ID" }
-  menu_id:        { type: integer, fk: "menu.menu_id", comment: "Menu ID" }
-  table_id:       { type: integer, fk: "table.table_id", comment: "Table ID" }
-  app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
+  menu_id:        { type: integer, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true }
+  table_id:       { type: integer, fk: "table.table_id", comment: "Table ID", form_display: true, table_display: true }
+  app_id:         { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
-  active:         { type: boolean, default: true, comment: "Active" }
-  requires_rla:   { type: boolean, default: false, comment: "Requires Row Level Access" }
-  menu_table_cnf: { type: text, comment: "Config" }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true }
+  requires_rla:   { type: boolean, default: false, comment: "Requires Row Level Access", form_display: true, table_display: true }
+  menu_table_cnf: { type: text, comment: "Config", form_display: true, table_display: true, form_long_text: true }
   created_at:     { type: datetime, comment: "Created at" }
   updated_at:     { type: datetime, comment: "Updated at" }
   excluded:       { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 ```
 
 ## ROLE_APP
@@ -258,13 +267,17 @@ table: role_app
 comment: Role Apps
 columns:
   role_app_id: { type: integer, pk: true, autoincrement: true, comment: "Role App ID" }
-  role_id:     { type: integer, fk: "role.role_id", comment: "Role ID" }
-  app_id:      { type: integer, fk: "app.app_id", comment: "App ID" }
-  access:      { type: boolean, default: true, comment: "Access" }
+  role_id:     { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true }
+  app_id:      { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true }
+  access:      { type: boolean, default: true, comment: "Access", form_display: true, table_display: true }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 ```
 
 ## ROLE_APP_MENU
@@ -273,14 +286,18 @@ table: role_app_menu
 comment: Role App Menus
 columns:
   role_app_menu_id: { type: integer, pk: true, autoincrement: true, comment: "Role App Menu ID" }
-  role_id:          { type: integer, fk: "role.role_id", comment: "Role ID" }
-  app_id:           { type: integer, fk: "app.app_id", comment: "App ID" }
-  menu_id:          { type: integer, fk: "menu.menu_id", comment: "Menu ID" }
-  access:           { type: boolean, default: true, comment: "Access" }
+  role_id:          { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true }
+  app_id:           { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true }
+  menu_id:          { type: integer, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true }
+  access:           { type: boolean, default: true, comment: "Access", form_display: true, table_display: true }
   user_id:          { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:       { type: datetime, comment: "Created at" }
   updated_at:       { type: datetime, comment: "Updated at" }
   excluded:         { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 ```
 
 ## ROLE_APP_MENU_TABLE
@@ -289,19 +306,23 @@ table: role_app_menu_table
 comment: Role App Menu Tables
 columns:
   role_app_menu_table_id: { type: integer, pk: true, autoincrement: true, comment: "Role App Menu Table ID" }
-  role_id:                { type: integer, fk: "role.role_id", comment: "Role ID" }
-  app_id:                 { type: integer, fk: "app.app_id", comment: "App ID" }
-  menu_id:                { type: integer, fk: "menu.menu_id", comment: "Menu ID" }
-  table_id:               { type: integer, fk: "table.table_id", comment: "Table ID" }
-  create:                 { type: boolean, default: false, comment: "Create" }
-  read:                   { type: boolean, default: false, comment: "Read" }
-  update:                 { type: boolean, default: false, comment: "Update" }
-  delete:                 { type: boolean, default: false, comment: "Delete" }
-  share:                  { type: boolean, default: false, comment: "Share" }
+  role_id:                { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true }
+  app_id:                 { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true }
+  menu_id:                { type: integer, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true }
+  table_id:               { type: integer, fk: "table.table_id", comment: "Table ID", form_display: true, table_display: true }
+  create:                 { type: boolean, default: false, comment: "Create", form_display: true, table_display: true }
+  read:                   { type: boolean, default: false, comment: "Read", form_display: true, table_display: true }
+  update:                 { type: boolean, default: false, comment: "Update", form_display: true, table_display: true }
+  delete:                 { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true }
+  share:                  { type: boolean, default: false, comment: "Share", form_display: true, table_display: true }
   user_id:                { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:             { type: datetime, comment: "Created at" }
   updated_at:             { type: datetime, comment: "Updated at" }
   excluded:               { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 ```
 
 ## USER_LOG
@@ -310,17 +331,17 @@ table: user_log
 comment: User Logs
 columns:
   user_log_id: { type: integer, pk: true, autoincrement: true, comment: "User Log ID" }
-  user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
-  action:      { type: varchar(200), nullable: false, comment: "Action" }
-  req_ip:      { type: varchar(200), comment: "Request IP" }
-  req_at:      { type: datetime, comment: "Request at" }
+  user_id:     { type: integer, fk: "users.user_id", comment: "User ID", form_display: true, table_display: true }
+  action:      { type: varchar(200), nullable: false, comment: "Action", form_display: true, table_display: true }
+  req_ip:      { type: varchar(200), comment: "Request IP", form_display: true, table_display: true }
+  req_at:      { type: datetime, comment: "Request at", form_display: true, table_display: true }
   req_data:    { type: text, comment: "Request Data" }
-  res_at:      { type: datetime, comment: "Response at" }
-  res_type:    { type: varchar(200), comment: "Response Type" }
-  res_msg:     { type: varchar(500), comment: "Response Message" }
+  res_at:      { type: datetime, comment: "Response at", form_display: true, table_display: true }
+  res_type:    { type: varchar(200), comment: "Response Type", form_display: true, table_display: true }
+  res_msg:     { type: varchar(500), comment: "Response Message", form_display: true, table_display: true }
   res_data:    { type: text, comment: "Request Data" }
-  table:       { type: varchar(200), comment: "Table" }
-  db:          { type: varchar(200), comment: "Database" }
+  table:       { type: varchar(200), comment: "Table", form_display: true, table_display: true }
+  db:          { type: varchar(200), comment: "Database", form_display: true, table_display: true }
   row_id:      { type: integer, comment: "Database" }
   app_id:      { type: integer, fk: "app.app_id", comment: "App ID" }
   old_data:    { type: text, comment: "Old Data" }
@@ -328,6 +349,10 @@ columns:
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 ```
 
 ## CUSTOM_TABLE
@@ -336,14 +361,18 @@ table: custom_table
 comment: Custom Table
 columns:
   custom_table_id: { type: integer, pk: true, autoincrement: true, comment: "Custom Table ID" }
-  table:           { type: varchar(200), comment: "Table" }
-  db:              { type: varchar(200), comment: "Database" }
-  config:          { type: text, comment: "Config" }
+  table:           { type: varchar(200), comment: "Table", form_display: true, table_display: true }
+  db:              { type: varchar(200), comment: "Database", form_display: true, table_display: true }
+  config:          { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: "json", table_display: true }
   app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:      { type: datetime, comment: "Created at" }
   updated_at:      { type: datetime, comment: "Updated at" }
   excluded:        { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
 ```
 
 ## CUSTOM_FORM
@@ -352,14 +381,18 @@ table: custom_form
 comment: Custom Form
 columns:
   custom_form_id: { type: integer, pk: true, autoincrement: true, comment: "Custom Form ID" }
-  table:          { type: varchar(200), comment: "Table" }
-  db:             { type: varchar(200), comment: "Database" }
-  config:         { type: text, comment: "Config" }
+  table:          { type: varchar(200), comment: "Table", form_display: true, table_display: true }
+  db:             { type: varchar(200), comment: "Database", form_display: true, table_display: true }
+  config:         { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: "json", table_display: true  }
   app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:     { type: datetime, comment: "Created at" }
   updated_at:     { type: datetime, comment: "Updated at" }
   excluded:       { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
 ```
 
 ## ROLE_ROW_LEVEL_ACCESS
@@ -497,11 +530,11 @@ columns:
   cron:         { type: varchar(100), unique: true, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3 }
   cron_desc:    { type: text, comment: "Description", form_display: true, table_display: true, form_size: 9 }
   api:          { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 10 }
-  db:           { type: varchar(50), comment: "Database (if applicable)", form_display: false, table_display: false }
-  table:        { type: varchar(100), comment: "Table (if applicable)", form_display: false, table_display: false }
-  app_id:       { type: integer, fk: "app.app_id", comment: "Application ID", form_display: false, table_display: false }
+  db:           { type: varchar(50), comment: "Database (if applicable)" }
+  table:        { type: varchar(100), comment: "Table (if applicable)" }
+  app_id:       { type: integer, fk: "app.app_id", comment: "Application ID" }
   active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2 }
-  user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", form_display: false, table_display: false }
+  user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by" }
   created_at:   { type: datetime, comment: "Created at" }
   updated_at:   { type: datetime, comment: "Updated at" }
   excluded:     { type: boolean, default: false, comment: "Excluded" }
@@ -557,8 +590,8 @@ columns:
   expires_at:       { type: datetime, comment: "Expires at", form_display: true, table_display: true, form_size: 4 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4 }
   for_user_id:      { type: integer, fk: "users.user_id", comment: "Assigned to User", form_display: true, table_display: true, form_size: 4, form_fk_label: "username" }
-  user_id:          { type: integer, fk: "users.user_id", comment: "Created by", form_display: false, table_display: false }
-  app_id:           { type: integer, fk: "app.app_id", comment: "Application", form_display: false, table_display: false }
+  user_id:          { type: integer, fk: "users.user_id", comment: "Created by" }
+  app_id:           { type: integer, fk: "app.app_id", comment: "Application" }
   created_at:       { type: datetime, comment: "Created at" }
   updated_at:       { type: datetime, comment: "Updated at" }
   excluded:         { type: boolean, default: false, comment: "Excluded" }
@@ -570,10 +603,6 @@ form_layout:
   sub_form_limit: 5
   allow_in_subform: {}
   tabs_steps_conf: []
-table_layout:
-  allow_in_submenu: {}
-  default_order: []
-  allow_import: false
 table_extra_options:
   - size: 6
     component: AccessKey
