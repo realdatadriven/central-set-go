@@ -464,16 +464,20 @@ table: translate_table
 comment: Translate Table
 columns:
   transl_tbl_id:     { type: integer, pk: true, autoincrement: true, comment: "Translate Table ID" }
-  table_org_desc:    { type: varchar(200), nullable: false, comment: "Table Org. Desc" }
-  table_transl_desc: { type: varchar(200), nullable: false, comment: "Table Transl. Desc" }
-  table:             { type: varchar(200), nullable: false, comment: "Table" }
-  db:                { type: varchar(200), nullable: false, comment: "Database" }
-  lang:              { type: varchar(5), nullable: false, comment: "Lang" }
+  table_org_desc:    { type: varchar(200), nullable: false, comment: "Table Org. Desc", form_display: true, table_display: true }
+  table_transl_desc: { type: varchar(200), nullable: false, comment: "Table Transl. Desc", form_display: true, table_display: true }
+  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true }
+  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true }
+  lang:              { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
   updated_at:        { type: datetime, comment: "Updated at" }
   excluded:          { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
 ```
 
 ## TRANSLATE_TABLE_FIELD
@@ -482,17 +486,21 @@ table: translate_table_field
 comment: Translate Table Fields
 columns:
   transl_tbl_field_id: { type: integer, pk: true, autoincrement: true, comment: "Translate Table Field ID" }
-  field_org_desc:      { type: varchar(200), nullable: false, comment: "Field Org. Desc" }
-  field_transl_desc:   { type: varchar(200), nullable: false, comment: "Field Transl. Desc" }
-  field:               { type: varchar(200), nullable: false, comment: "Field" }
-  table:               { type: varchar(200), nullable: false, comment: "Table" }
-  db:                  { type: varchar(200), nullable: false, comment: "Database" }
-  lang:                { type: varchar(5), nullable: false, comment: "Lang" }
+  field_org_desc:      { type: varchar(200), nullable: false, comment: "Field Org. Desc", form_display: true, table_display: true }
+  field_transl_desc:   { type: varchar(200), nullable: false, comment: "Field Transl. Desc", form_display: true, table_display: true }
+  field:               { type: varchar(200), nullable: false, comment: "Field", form_display: true, table_display: true }
+  table:               { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true }
+  db:                  { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true }
+  lang:                { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:          { type: datetime, comment: "Created at" }
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
 ```
 
 ## TABLE_SCHEMA
@@ -501,24 +509,28 @@ table: table_schema
 comment: Table Schema
 columns:
   table_schema_id: { type: integer, pk: true, autoincrement: true, comment: "Table field ID" }
-  db:              { type: varchar(200), nullable: false, comment: "Database" }
-  table:           { type: varchar(200), nullable: false, comment: "Table" }
-  field:           { type: varchar(200), nullable: false, comment: "Field" }
-  type:            { type: varchar(200), nullable: false, comment: "Type" }
-  comment:         { type: varchar(200), comment: "Comment" }
-  pk:              { type: boolean, default: false, comment: "Primary Key" }
-  autoincrement:   { type: boolean, default: false, comment: "Auto Increment" }
-  nullable:        { type: boolean, default: false, comment: "Nullable" }
-  computed:        { type: boolean, default: false, comment: "Nullable" }
-  default:         { type: boolean, comment: "Default" }
-  fk:              { type: boolean, default: false, comment: "Foreign Key" }
-  referred_table:  { type: varchar(200), comment: "Ref. Table." }
-  referred_column: { type: varchar(200), comment: "Ref. Column" }
-  field_order:     { type: integer, comment: "Field Order" }
+  db:              { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true }
+  table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true }
+  field:           { type: varchar(200), nullable: false, comment: "Field", form_display: true, table_display: true }
+  type:            { type: varchar(200), nullable: false, comment: "Type", form_display: true, table_display: true }
+  comment:         { type: varchar(200), comment: "Comment", form_display: true, table_display: true }
+  pk:              { type: boolean, default: false, comment: "Primary Key", form_display: true, table_display: true }
+  autoincrement:   { type: boolean, default: false, comment: "Auto Increment", form_display: true, table_display: true }
+  nullable:        { type: boolean, default: false, comment: "Nullable", form_display: true, table_display: true }
+  computed:        { type: boolean, default: false, comment: "Computed", form_display: true, table_display: true }
+  default:         { type: varchar(200), comment: "Default", form_display: true, table_display: true }
+  fk:              { type: boolean, default: false, comment: "Foreign Key", form_display: true, table_display: true }
+  referred_table:  { type: varchar(200), comment: "Ref. Table.", form_display: true, table_display: true }
+  referred_column: { type: varchar(200), comment: "Ref. Column", form_display: true, table_display: true }
+  field_order:     { type: integer, comment: "Field Order", form_display: true, table_display: true }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:      { type: datetime, comment: "Created at" }
   updated_at:      { type: datetime, comment: "Updated at" }
   excluded:        { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
 ```
 
 ## CRON
