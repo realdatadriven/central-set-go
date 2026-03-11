@@ -1030,6 +1030,78 @@ func getTableComment(driver, tableName, comment string) string {
 	return ""
 }
 
+func generateModelYAML(tableName, tableComment string, fields []map[string]any) string {
+	var schema strings.Builder
+
+	schema.WriteString(fmt.Sprintf("table: %s\n", tableName))
+
+	if tableComment != "" {
+		schema.WriteString(fmt.Sprintf("comment: %s\n", tableComment))
+	}
+
+	schema.WriteString("columns:\n")
+
+	for _, field := range fields {
+
+		name := field["name"].(string)
+
+		var parts []string
+
+		// type
+		if t, ok := field["type"].(string); ok {
+			if nchar, ok := field["nchar"].(int); ok {
+				parts = append(parts, fmt.Sprintf("type: %s(%d)", strings.ToLower(t), nchar))
+			} else {
+				parts = append(parts, fmt.Sprintf("type: %s", strings.ToLower(t)))
+			}
+		}
+
+		// primary key
+		if pk, ok := field["primary_key"].(bool); ok && pk {
+			parts = append(parts, "pk: true")
+		}
+
+		// autoincrement
+		if ai, ok := field["autoincrement"].(bool); ok && ai {
+			parts = append(parts, "autoincrement: true")
+		}
+
+		// nullable
+		if nullable, ok := field["nullable"].(bool); ok && !nullable {
+			parts = append(parts, "nullable: false")
+		}
+
+		// unique
+		if unique, ok := field["unique"].(bool); ok && unique {
+			parts = append(parts, "unique: true")
+		}
+
+		// default
+		if def, ok := field["default"]; ok {
+			switch v := def.(type) {
+			case string:
+				parts = append(parts, fmt.Sprintf("default: \"%s\"", v))
+			default:
+				parts = append(parts, fmt.Sprintf("default: %v", v))
+			}
+		}
+
+		// foreign key
+		if fk, ok := field["foreign_key"].(string); ok {
+			parts = append(parts, fmt.Sprintf("fk: \"%s\"", fk))
+		}
+
+		// comment
+		if cmt, ok := field["comment"].(string); ok {
+			parts = append(parts, fmt.Sprintf("comment: \"%s\"", cmt))
+		}
+
+		schema.WriteString(fmt.Sprintf("  %s: { %s }\n", name, strings.Join(parts, ", ")))
+	}
+
+	return schema.String()
+}
+
 func (app *application) save_table_schema(params map[string]any) map[string]any {
 	//fmt.Println(params)
 	//user_id := int(params["user"].(map[string]any)["user_id"].(float64))
@@ -1146,6 +1218,11 @@ func (app *application) save_table_schema(params map[string]any) map[string]any 
 	}*/
 	schema := generateCreateTableSQL(newDB.GetDriverName(), name, comment, fields)
 	fmt.Println(schema)
+	schema_yaml := generateModelYAML(name, comment, fields)
+	fmt.Println(schema_yaml)
+	model := getMDModel(name, schema_yaml, dsn)
+	fmt.Println(model)
+	//_yaml :=
 	/*/ Map for SQLAlchemy types to SQL types
 	var saTypesToSQL = map[string]string{
 		"Integer":  "INTEGER",
@@ -1162,4 +1239,24 @@ func (app *application) save_table_schema(params map[string]any) map[string]any 
 		"success": false,
 		"msg":     msg,
 	}
+}
+
+func getMDModel(tableName, yamlContent, dsn string) string {
+	var out strings.Builder
+
+	// Model header
+	out.WriteString("# ADMMIN_MODEL\n")
+	out.WriteString("```yaml\n")
+	out.WriteString(fmt.Sprintf("name: %s\n", tableName))
+	out.WriteString(fmt.Sprintf("description: %s\n", tableName))
+	out.WriteString("runs_as: MODEL\n")
+	out.WriteString(fmt.Sprintf("conn: '@DB_DRIVER_NAME:%s'\n", dsn))
+	out.WriteString("```\n\n")
+
+	// Table section
+	out.WriteString(fmt.Sprintf("## %s\n", strings.ToUpper(tableName)))
+	out.WriteString("```yaml\n")
+	out.WriteString(yamlContent)
+	out.WriteString("```\n\n")
+	return out.String()
 }
