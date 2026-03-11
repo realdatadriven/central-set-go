@@ -611,10 +611,8 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
-  sub_form_size: null
+  sub_form_size: 6
   sub_form_limit: 5
-  allow_in_subform: {}
-  tabs_steps_conf: []
 table_extra_options:
   - size: 6
     component: AccessKey
@@ -665,6 +663,13 @@ columns:
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
   - {arrow_flight_id: 1, arrow_flight: "Expose Admin DB", arrow_flight_desc: "Ex. Arrow Flight Schema using ADMIN app", flight_schema: adm, startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 7
+  sub_form_size: null
+  sub_form_limit: 5
+  allow_in_subform: {arrow_flight_table: true}
 ```
 
 ## ARROW_FLIGHT_TABLE
