@@ -214,8 +214,6 @@ table_layout:
   allow_in_submenu: {menu_table: true}
   default_order: [{field: menu_order, order: ASC}]
   allow_import: false
-  exec_button: {callApi: false, api: "", tooltip: "", icon: ""}
-table_extra_options: []
 ```
 
 ## TABLE
@@ -646,16 +644,16 @@ table: arrow_flight
 comment: Expose Arrow Flight
 columns:
   arrow_flight_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight:        { type: varchar(200), unique: true, nullable: false, comment: "Name" }
-  arrow_flight_desc:   { type: text, comment: "Description" }
-  flight_schema:       { type: varchar(200), unique: true, nullable: false, comment: "Schema Name" }
-  startup_sql:         { type: text, comment: "Startup SQL" }
-  main_sql:            { type: text, nullable: false, comment: "Main SQL" }
-  table_discover_sql:  { type: text, comment: "Table Discover SQL" }
-  table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL" }
-  shutdown_sql:        { type: text, comment: "Shutdown SQL" }
-  arrow_flight_conf:   { type: text, comment: "Configuration" }
-  active:              { type: boolean, default: true, comment: "Active" }
+  arrow_flight:        { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true }
+  arrow_flight_desc:   { type: text, comment: "Description", form_display: true, table_display: true, form_code: markdown }
+  flight_schema:       { type: varchar(200), unique: true, nullable: false, comment: "Schema Name", form_display: true, table_display: true }
+  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, form_code: sql }
+  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, form_code: sql }
+  table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, form_code: sql }
+  table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, form_code: sql }
+  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, form_code: sql }
+  arrow_flight_conf:   { type: text, comment: "Configuration", form_display: true, form_code: json }
+  active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:          { type: datetime, comment: "Created at" }
@@ -666,27 +664,46 @@ data:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 7
-  sub_form_size: null
-  sub_form_limit: 5
-  allow_in_subform: {arrow_flight_table: true}
+  size: 8
+  sub_form_size: 9
+  allow_in_subform: {arrow_flight_table: true, arrow_flight_scope: true}
+  tabs_steps_conf: []
+form_extra_options: []
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: arrow_flight, order: ASC }
 ```
 
 ## ARROW_FLIGHT_TABLE
 ```yaml
 table: arrow_flight_table
-comment: Arrow Flight - Tables
+comment: Arrow Flight Tables
 columns:
-  arrow_flight_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table:      { type: varchar(200), nullable: false, comment: "Table Name" }
-  arrow_flight_table_desc: { type: text, comment: "Table Description" }
-  arrow_flight_id:         { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID" }
-  active:                  { type: boolean, default: true, comment: "Active" }
-  user_id:                 { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:              { type: datetime, comment: "Created at" }
-  updated_at:              { type: datetime, comment: "Updated at" }
-  excluded:                { type: boolean, default: false, comment: "Excluded" }
+  arrow_flight_table_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  arrow_flight_id:       { type: integer, fk: "arrow_flight.arrow_flight_id", nullable: false, comment: "Arrow Flight", form_display: true, table_display: true }
+  table_name:            { type: varchar(200), nullable: false, comment: "Table Name", form_display: true, table_display: true }
+  table_desc:            { type: text, comment: "Description", form_display: true, table_display: true, form_code: markdown }
+  order:                 { type: integer, comment: "Order", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
+  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
+  arrow_flight_table_conf:{ type: text, comment: "Configuration", form_display: true, form_code: json }
+  user_id:               { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:                { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:            { type: datetime, comment: "Created at" }
+  updated_at:            { type: datetime, comment: "Updated at" }
+  excluded:              { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+  sub_form_size: 8
+  allow_in_subform:
+    arrow_flight_table_field: true
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: order, order: ASC }
+  allow_import: false
 ```
 
 ## ARROW_FLIGHT_TABLE_FIELD
@@ -695,16 +712,28 @@ table: arrow_flight_table_field
 comment: Arrow Flight - Tables Fields
 columns:
   arrow_flight_table_field_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table_field:      { type: varchar(200), nullable: false, comment: "Field Name" }
-  arrow_flight_table_field_desc: { type: text, comment: "Field Description" }
-  arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID" }
+  arrow_flight_table_field:      { type: varchar(200), nullable: false, comment: "Field Name", form_display: true, table_display: true }
+  arrow_flight_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, form_code: markdown }
+  arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true }
   arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID" }
-  active:                        { type: boolean, default: true, comment: "Active" }
+  active:                        { type: boolean, default: true, comment: "Active", form_sizelg: 3, form_sizexl: 3 }
   user_id:                       { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:                    { type: datetime, comment: "Created at" }
   updated_at:                    { type: datetime, comment: "Updated at" }
   excluded:                      { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+  sub_form_size: null
+  allow_in_subform: {}
+  tabs_steps_conf: []
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: arrow_flight_table_field, order: ASC }
+  allow_import: false
 ```
 
 ## ARROW_FLIGHT_TABLE_SCOPE
@@ -713,17 +742,26 @@ table: arrow_flight_table_scope
 comment: Arrow Flight - Tables Scopes
 columns:
   arrow_flight_table_scope_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table_scope:      { type: varchar(200), unique: true, nullable: false, comment: "Scope Name" }
-  arrow_flight_table_scope_desc: { type: text, comment: "Scope Description" }
-  arrow_flight_table_scope_sql:  { type: text, nullable: false, comment: "Scope SQL" }
-  arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID" }
-  arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID" }
-  active:                        { type: boolean, default: true, comment: "Active" }
+  arrow_flight_table_scope:      { type: varchar(200), unique: true, nullable: false, comment: "Scope Name", form_display: true, table_display: true }
+  arrow_flight_table_scope_desc: { type: text, comment: "Scope Description", form_display: true, table_display: true, form_code: markdown }
+  arrow_flight_table_scope_sql:  { type: text, nullable: false, comment: "Scope SQL", form_display: true, form_code: sql }
+  arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true }
+  arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", form_display: true, table_display: true }
+  active:                        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
   user_id:                       { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:                    { type: datetime, comment: "Created at" }
   updated_at:                    { type: datetime, comment: "Updated at" }
   excluded:                      { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: arrow_flight_table_scope, order: ASC }
+  allow_import: false
 ```
 
 ## DASHBOARD
@@ -746,14 +784,6 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 10
-  sub_form_size: null
-  allow_in_subform: {}
-  tabs_steps_conf: []
-form_extra_options: []
-table_layout:
-  allow_in_submenu: {}
-  default_order: []
-  allow_import: false
 table_extra_options:
   - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
 ```
