@@ -119,6 +119,11 @@ from (values
     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
         <Button tooltip="Details" name = "details" action = "details" label="" icon = "ellipsis-vertical" _class='btn-sm btn-gost' />
     </GridItem>
+    {/if}
+    {#if $$props?.embedded === true}
+     <GridItem width='w-auto' _type='auto' _class='p-1 text-left'>
+        <Button tooltip="Theme" name = "theme" action = "theme" label="" icon = {$$props?.theme === 'dark' ? 'moon' : 'sun'} _class='btn-sm btn-gost' />
+    </GridItem>
      {/if}
 </Grid>
 
