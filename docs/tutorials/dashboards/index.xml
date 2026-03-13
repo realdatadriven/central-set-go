@@ -47,4 +47,20 @@
 &lt;li&gt;Cache it (local disk, S3, blob storage, CDN)&lt;/li&gt;
 &lt;li&gt;Load it in the browser via DuckDB WASM&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;This allows:&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;This allows:&lt;/p&gt;</description></item><item><title>Embedding Dashboards</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/embedding-dashboard/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/embedding-dashboard/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete or change frequently.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;Central Set dashboards can be &lt;strong&gt;embedded directly into external applications&lt;/strong&gt; using a simple &lt;strong&gt;iframe integration&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This allows dashboards built in Central Set to be reused inside:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;internal portals&lt;/li&gt;
+&lt;li&gt;client applications&lt;/li&gt;
+&lt;li&gt;admin panels&lt;/li&gt;
+&lt;li&gt;SaaS products&lt;/li&gt;
+&lt;li&gt;monitoring tools&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The embedding system uses &lt;strong&gt;secure cross-window communication (&lt;code&gt;postMessage&lt;/code&gt;)&lt;/strong&gt; combined with &lt;strong&gt;JWT authentication&lt;/strong&gt;.&lt;/p&gt;</description></item></channel></rss>

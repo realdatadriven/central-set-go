@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Central Set</title><link>https://realdatadriven.github.io/central-set-go/</link><description>Recent content on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Wed, 04 Mar 2026 15:49:14 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/overview/</link><pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/overview/</guid><description>&lt;hr&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Central Set</title><link>https://realdatadriven.github.io/central-set-go/</link><description>Recent content on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Mon, 09 Mar 2026 20:28:02 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/overview/</link><pubDate>Sat, 03 Jan 2026 10:00:00 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/overview/</guid><description>&lt;hr&gt;
 &lt;h2 id="welcome-to-the-central-set-cs-documentation"&gt;Welcome to the &lt;strong&gt;Central Set (CS) documentation&lt;/strong&gt; &lt;a href="#welcome-to-the-central-set-cs-documentation" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This documentation explains &lt;strong&gt;what CS is&lt;/strong&gt;, &lt;strong&gt;how it works&lt;/strong&gt;, and &lt;strong&gt;how to think about it&lt;/strong&gt; before diving into applications, databases, security, APIs, pipelines, and dashboards.&lt;/p&gt;
 &lt;p&gt;If you want to get running quickly, start here:
 👉 &lt;a href="https://realdatadriven.github.io/central-set-go/docs/quickstart/"&gt;Quickstart&lt;/a&gt;&lt;/p&gt;
@@ -231,7 +231,23 @@ All operations — including read-only ones — use &lt;code&gt;POST&lt;/code&gt
 &lt;li&gt;Cache it (local disk, S3, blob storage, CDN)&lt;/li&gt;
 &lt;li&gt;Load it in the browser via DuckDB WASM&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;This allows:&lt;/p&gt;</description></item><item><title>OData v4 API</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</guid><description>&lt;h1 id="odata-v4-api"&gt;OData v4 API &lt;a href="#odata-v4-api" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+&lt;p&gt;This allows:&lt;/p&gt;</description></item><item><title>Embedding Dashboards</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/embedding-dashboard/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/embedding-dashboard/</guid><description>&lt;div class="alert alert-warning d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ warning
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;&lt;strong&gt;Caution&lt;/strong&gt; — Central Set is &lt;strong&gt;production-ready and actively used&lt;/strong&gt;, but this documentation is still &lt;strong&gt;under active development&lt;/strong&gt;. Large parts of the docs are &lt;strong&gt;auto-generated&lt;/strong&gt;, evolving alongside the platform, and some sections may be incomplete or change frequently.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;Central Set dashboards can be &lt;strong&gt;embedded directly into external applications&lt;/strong&gt; using a simple &lt;strong&gt;iframe integration&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This allows dashboards built in Central Set to be reused inside:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;internal portals&lt;/li&gt;
+&lt;li&gt;client applications&lt;/li&gt;
+&lt;li&gt;admin panels&lt;/li&gt;
+&lt;li&gt;SaaS products&lt;/li&gt;
+&lt;li&gt;monitoring tools&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The embedding system uses &lt;strong&gt;secure cross-window communication (&lt;code&gt;postMessage&lt;/code&gt;)&lt;/strong&gt; combined with &lt;strong&gt;JWT authentication&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>OData v4 API</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/</guid><description>&lt;h1 id="odata-v4-api"&gt;OData v4 API &lt;a href="#odata-v4-api" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h1&gt;&lt;div class="alert alert-warning d-flex" role="alert"&gt;
  &lt;div class="flex-shrink-1 alert-icon"&gt;
  &lt;span class="material-icons size-20 me-2"&gt;
  warning
