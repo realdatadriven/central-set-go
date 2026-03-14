@@ -16,10 +16,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (app *application) apps(params map[string]any) map[string]any {
+func (app *application) apps(params Dict) Dict {
 	//fmt.Println("APPS:", params)
-	user_id := int(params["user"].(map[string]any)["user_id"].(float64))
-	role_id := int(params["user"].(map[string]any)["role_id"].(float64))
+	user_id := int(params["user"].(Dict)["user_id"].(float64))
+	role_id := int(params["user"].(Dict)["role_id"].(float64))
 	//fmt.Println(user_id, role_id)
 	query := `SELECT DISTINCT user_role.role_id
 	FROM user_role
@@ -32,7 +32,7 @@ func (app *application) apps(params map[string]any) map[string]any {
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
 		//fmt.Println(1, query, fmt.Sprintf("%s", err))
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -61,26 +61,26 @@ func (app *application) apps(params map[string]any) map[string]any {
 	query, args, err := sqlx.In(query, queryParams...)
 	result, _, err = app.db.QueryMultiRows(query, args...)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success": true,
 		"msg":     msg,
 		"data":    *result,
 	}
 }
 
-func (app *application) menu(params map[string]any) map[string]any {
+func (app *application) menu(params Dict) Dict {
 	//fmt.Println(params)
-	user_id := int(params["user"].(map[string]any)["user_id"].(float64))
-	role_id := int(params["user"].(map[string]any)["role_id"].(float64))
+	user_id := int(params["user"].(Dict)["user_id"].(float64))
+	role_id := int(params["user"].(Dict)["role_id"].(float64))
 	var app_id int
-	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+	if _, ok := params["app"].(Dict)["app_id"]; ok {
+		app_id = int(params["app"].(Dict)["app_id"].(float64))
 	}
 	//fmt.Println(user_id, role_id)
 	query := `SELECT DISTINCT user_role.role_id
@@ -93,7 +93,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	queryParams = append(queryParams, user_id)
 	result, _, err := app.db.QueryMultiRows(query, queryParams...)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -144,7 +144,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	}
 	_menu, _, err := app.db.QueryMultiRows(query, args...)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -190,7 +190,7 @@ func (app *application) menu(params map[string]any) map[string]any {
 	}
 	_menu_table, _, err := app.db.QueryMultiRows(query, args...)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -203,34 +203,34 @@ func (app *application) menu(params map[string]any) map[string]any {
 		//fmt.Println(_table_by_id)
 	}
 	if _, ok := _tables["data"]; ok {
-		_tables = _tables["data"].(map[string]any)
+		_tables = _tables["data"].(Dict)
 	}
 	// MENUS
-	menus := []map[string]any{}
+	menus := []Dict{}
 	for _, mn := range *_menu {
 		_aux := mn
-		_aux["children"] = []map[string]any{}
+		_aux["children"] = []Dict{}
 		for _, mnt := range *_menu_table {
 			if _, ok := mnt["menu_id"]; !ok {
 			} else if _, ok := mn["menu_id"]; !ok {
 			} else if int(mnt["menu_id"].(int64)) == int(mn["menu_id"].(int64)) {
 				_mnt := mnt
-				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(map[string]any))
-				if _, ok := _table_by_id[mnt["table_id"].(int64)].(map[string]any); ok {
-					_mnt["table"] = _table_by_id[mnt["table_id"].(int64)].(map[string]any)["table"].(string)
-					//fmt.Println(2, _table_by_id[mnt["table_id"].(int64)].(map[string]any))
+				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(Dict))
+				if _, ok := _table_by_id[mnt["table_id"].(int64)].(Dict); ok {
+					_mnt["table"] = _table_by_id[mnt["table_id"].(int64)].(Dict)["table"].(string)
+					//fmt.Println(2, _table_by_id[mnt["table_id"].(int64)].(Dict))
 				}
 				_mnt["menu"] = mn["menu"]
-				_aux["children"] = append(_aux["children"].([]map[string]any), _mnt)
+				_aux["children"] = append(_aux["children"].([]Dict), _mnt)
 			}
 		}
 		menus = append(menus, _aux)
 	}
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success": true,
 		"msg":     msg,
-		"data": map[string]any{
+		"data": Dict{
 			"menu":   menus,
 			"tables": _tables,
 		},
@@ -273,18 +273,18 @@ func (app *application) ExtractURLDBName(dsn string) (string, error) {
 	return "", fmt.Errorf("could not find dbname in dsn")
 }
 
-func (app *application) GetDBNameFromParams(params map[string]any) (string, string, error) {
+func (app *application) GetDBNameFromParams(params Dict) (string, string, error) {
 	var _database any
 	if !app.IsEmpty(params["db"]) {
 		_database = params["db"]
-	} else if !app.IsEmpty(params["data"].(map[string]any)["db"]) {
-		_database = params["data"].(map[string]any)["db"]
-	} else if !app.IsEmpty(params["data"].(map[string]any)["database"]) {
-		_database = params["data"].(map[string]any)["database"]
-	} else if !app.IsEmpty(params["app"].(map[string]any)["db"]) {
-		_database = params["app"].(map[string]any)["db"]
-	} else if !app.IsEmpty(params["app"].(map[string]any)["db"]) {
-		_database = params["app"].(map[string]any)["db"]
+	} else if !app.IsEmpty(params["data"].(Dict)["db"]) {
+		_database = params["data"].(Dict)["db"]
+	} else if !app.IsEmpty(params["data"].(Dict)["database"]) {
+		_database = params["data"].(Dict)["database"]
+	} else if !app.IsEmpty(params["app"].(Dict)["db"]) {
+		_database = params["app"].(Dict)["db"]
+	} else if !app.IsEmpty(params["app"].(Dict)["db"]) {
+		_database = params["app"].(Dict)["db"]
 	}
 	//_not_embed_dbs := []any{"postgres", "postgresql", "pg", "pgql", "mysql"}
 	_embed_dbs := []any{"sqlite", "sqlite3", "duckdb", "ducklake"}
@@ -397,18 +397,18 @@ func (app *application) toInt(v any) int {
 	}
 }
 
-func (app *application) tables(params map[string]any, tables []any) map[string]any {
+func (app *application) tables(params Dict, tables []any) Dict {
 	//fmt.Println(1, params)
 	var user_id int
-	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
-		user_id = app.toInt(params["user"].(map[string]any)["user_id"])
+	if _, ok := params["user"].(Dict)["user_id"]; ok {
+		user_id = app.toInt(params["user"].(Dict)["user_id"])
 	}
 	var app_id int
-	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
+	if _, ok := params["app"].(Dict)["app_id"]; ok {
+		app_id = app.toInt(params["app"].(Dict)["app_id"])
 	}
 	// DATABASE
-	_extra_conf := map[string]any{
+	_extra_conf := Dict{
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
 	}
@@ -419,7 +419,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 	dsn, _database, _ := app.GetDBNameFromParams(params)
 	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
@@ -428,35 +428,35 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 	allTables := false
 	if app.IsEmpty(tables) {
 		tables = []any{}
-		if !app.IsEmpty(params["data"].(map[string]any)["table"]) {
-			value := params["data"].(map[string]any)["table"]
+		if !app.IsEmpty(params["data"].(Dict)["table"]) {
+			value := params["data"].(Dict)["table"]
 			switch value.(type) {
 			case nil:
 				// pass
 			case string:
-				tables = append(tables, params["data"].(map[string]any)["table"].(string))
+				tables = append(tables, params["data"].(Dict)["table"].(string))
 			case []any:
-				_tables := params["data"].(map[string]any)["table"].([]any)
+				_tables := params["data"].(Dict)["table"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
 			case map[any]any:
 				// pass
 			default:
-				tables = append(tables, params["data"].(map[string]any)["table"].(string))
+				tables = append(tables, params["data"].(Dict)["table"].(string))
 			}
-		} else if !app.IsEmpty(params["data"].(map[string]any)["tables"]) {
-			value := params["data"].(map[string]any)["tables"]
+		} else if !app.IsEmpty(params["data"].(Dict)["tables"]) {
+			value := params["data"].(Dict)["tables"]
 			switch value.(type) {
 			case string:
-				tables = append(tables, params["data"].(map[string]any)["tables"].(string))
+				tables = append(tables, params["data"].(Dict)["tables"].(string))
 			case []any:
-				_tables := params["data"].(map[string]any)["tables"].([]any)
+				_tables := params["data"].(Dict)["tables"].([]any)
 				for t := 0; t < len(_tables); t++ {
 					tables = append(tables, _tables[t])
 				}
 			default:
-				tables = append(tables, params["data"].(map[string]any)["table"].(string))
+				tables = append(tables, params["data"].(Dict)["table"].(string))
 			}
 		}
 		//fmt.Println("TABLES:", tables)
@@ -464,7 +464,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			// fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)
 			if err != nil {
-				return map[string]any{
+				return Dict{
 					"success": false,
 					"msg":     fmt.Sprintf("%s", err),
 				}
@@ -482,11 +482,11 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		}
 	}
 	//fmt.Println(2, dsn, _database, tables, allTables)
-	data := map[string]any{}
+	data := Dict{}
 	table_by_id := map[int64]any{}
 	if app.IsEmpty(tables) {
-		msg, _ := app.i18n.T("no-table", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no-table", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 			"tables":  tables,
@@ -510,7 +510,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		_table, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TABLES: ", query, args, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
@@ -522,11 +522,11 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				tables_in_table = append(tables_in_table, row["table"].(string))
 			}
 			// fmt.Println(tables_in_table)
-			results := []map[string]any{}
+			results := []Dict{}
 			for _, table := range tables {
 				if !app.contains(tables_in_table, table) {
 					//fmt.Println("ADD TABLE:", table)
-					results = append(results, map[string]any{
+					results = append(results, Dict{
 						"table":        table,
 						"table_desc":   table,
 						"db":           _database,
@@ -592,12 +592,12 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		results, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TABLES TRANSL:", query, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		translate_table := map[string]any{}
+		translate_table := Dict{}
 		for _, row := range *results {
 			translate_table[row["table"].(string)] = row
 		}
@@ -617,21 +617,21 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		results, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TARNSL FIELDS:", query, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		translate_table_field := map[string]any{}
+		translate_table_field := Dict{}
 		for _, row := range *results {
 			if _, ok := translate_table_field[row["table"].(string)]; !ok {
-				translate_table_field[row["table"].(string)] = map[string]any{}
+				translate_table_field[row["table"].(string)] = Dict{}
 			}
-			/*if _, ok := translate_table_field[row["table"].(string)].(map[string]any)["fields"]; !ok {
-				translate_table_field[row["table"].(string)].(map[string]any)["fields"] = map[string]any{}
+			/*if _, ok := translate_table_field[row["table"].(string)].(Dict)["fields"]; !ok {
+				translate_table_field[row["table"].(string)].(Dict)["fields"] = Dict{}
 			}
-			translate_table_field[row["table"].(string)].(map[string]any)["fields"].(map[string]any)[row["field"].(string)] = row*/
-			translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)] = row
+			translate_table_field[row["table"].(string)].(Dict)["fields"].(Dict)[row["field"].(string)] = row*/
+			translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)] = row
 		}
 		// fmt.Println(translate_table_field)
 		// GET THE TABLES DATA IN table_schema
@@ -648,11 +648,11 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			println("Error geting the table query:", err)
 		}
 		//fmt.Println(allTables, query, args, queryParams, _database)
-		table_schema := map[string]any{}
+		table_schema := Dict{}
 		_table_schema, _, err := app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			fmt.Println("TABLE SCHEMA:", query, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
@@ -702,7 +702,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				_table_schema, _, err = app.db.QueryMultiRows(query, args...)
 				if err != nil {
 					fmt.Println("TABLE SCHEMA CREATED:", query, err)
-					return map[string]any{
+					return Dict{
 						"success": false,
 						"msg":     fmt.Sprintf("%s", err),
 					}
@@ -710,25 +710,25 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			}
 			//fmt.Println("tables_not_in_schema:", tables_not_in_schema)
 		}
-		table_fields := map[string]any{}
+		table_fields := Dict{}
 		fk_tables_added := []any{}
 		for _, row := range *_table_schema {
 			if _, ok := table_schema[row["table"].(string)]; !ok {
-				table_schema[row["table"].(string)] = map[string]any{}
+				table_schema[row["table"].(string)] = Dict{}
 			}
 			if _, ok := table_fields[row["table"].(string)]; !ok {
 				table_fields[row["table"].(string)] = []any{}
 			}
 			_row := row
-			/*if _, ok := table_schema[row["table"].(string)].(map[string]any)["fields"]; !ok {
-				table_schema[row["table"].(string)].(map[string]any)["fields"] = map[string]any{}
+			/*if _, ok := table_schema[row["table"].(string)].(Dict)["fields"]; !ok {
+				table_schema[row["table"].(string)].(Dict)["fields"] = Dict{}
 			}
-			table_schema[row["table"].(string)].(map[string]any)["fields"].(map[string]any)[row["field"].(string)] = row*/
+			table_schema[row["table"].(string)].(Dict)["fields"].(Dict)[row["field"].(string)] = row*/
 			comment := _row["comment"]
 			if _, ok := translate_table_field[row["table"].(string)]; !ok {
-			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)]; !ok {
-			} else if _, ok := translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)].(map[string]any)["field_transl_desc"]; ok {
-				comment = translate_table_field[row["table"].(string)].(map[string]any)[row["field"].(string)].(map[string]any)["field_transl_desc"]
+			} else if _, ok := translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)]; !ok {
+			} else if _, ok := translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)].(Dict)["field_transl_desc"]; ok {
+				comment = translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)].(Dict)["field_transl_desc"]
 			}
 			_row["comment"] = comment
 			_row["name"] = _row["field"]
@@ -738,9 +738,9 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				if _, ok := table_fields[row["referred_table"].(string)].([]any); ok {
 					referred_columns_desc = table_fields[row["referred_table"].(string)].([]any)[1].(string)
 				}
-				fk_tables_added = append(fk_tables_added, map[string]any{"table": _row["table"], "referred_table": _row["referred_table"]})
+				fk_tables_added = append(fk_tables_added, Dict{"table": _row["table"], "referred_table": _row["referred_table"]})
 				acorr := app.filterAny(fk_tables_added, func(r any) bool {
-					return r.(map[string]any)["table"].(string) == _row["table"].(string) && r.(map[string]any)["referred_table"].(string) == _row["referred_table"].(string)
+					return r.(Dict)["table"].(string) == _row["table"].(string) && r.(Dict)["referred_table"].(string) == _row["referred_table"].(string)
 				})
 				referred_column := _row["referred_table"]
 				referred_columns_desc_org := referred_columns_desc
@@ -748,14 +748,14 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 					//referred_column = fmt.Sprintf("%s%d", referred_column, len(acorr))
 					referred_columns_desc = fmt.Sprintf("%s%d", referred_columns_desc, len(acorr))
 				}
-				_row["ref"] = map[string]any{
+				_row["ref"] = Dict{
 					"referred_table":            _row["referred_table"],
 					"referred_column":           referred_column,
 					"referred_columns_desc_org": referred_columns_desc_org,
 					"referred_columns_desc":     referred_columns_desc,
 				}
 			}
-			table_schema[row["table"].(string)].(map[string]any)[row["field"].(string)] = _row
+			table_schema[row["table"].(string)].(Dict)[row["field"].(string)] = _row
 			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]any), row["field"])
 		}
 		// table form customizations custom_form
@@ -787,12 +787,12 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		// fmt.Println("custom_form:", queryParams, results)
 		if err != nil {
 			fmt.Println("custom_form:", query, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		custom_form := map[string]any{}
+		custom_form := Dict{}
 		for _, row := range *results {
 			// fmt.Println("custom_form:", row["table"].(string))
 			custom_form[row["table"].(string)] = row
@@ -825,12 +825,12 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		results, _, err = app.db.QueryMultiRows(query, args...)
 		if err != nil {
 			//fmt.Println("custom_table:", query, err)
-			return map[string]any{
+			return Dict{
 				"success": false,
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		custom_table := map[string]any{}
+		custom_table := Dict{}
 		for _, row := range *results {
 			custom_table[row["table"].(string)] = row
 		}
@@ -838,12 +838,12 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 		for _, row := range *_table {
 			comment := row["table_desc"]
 			if _, ok := translate_table[row["table"].(string)]; ok {
-				comment = translate_table[row["table"].(string)].(map[string]any)["table_transl_desc"]
+				comment = translate_table[row["table"].(string)].(Dict)["table_transl_desc"]
 			}
 			var pk string
 			if _, ok := table_schema[row["table"].(string)]; ok {
-				for key, value := range table_schema[row["table"].(string)].(map[string]any) {
-					if properties, ok := value.(map[string]any); ok {
+				for key, value := range table_schema[row["table"].(string)].(Dict) {
+					if properties, ok := value.(Dict); ok {
 						// Check if the "pk" field exists and is true
 						if _pk, found := properties["pk"]; found && _pk == true {
 							pk = key
@@ -853,7 +853,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 				}
 			}
 			table_by_id[row["table_id"].(int64)] = row
-			data[row["table"].(string)] = map[string]any{
+			data[row["table"].(string)] = Dict{
 				"table_id":              row["table_id"],
 				"table":                 row["table"],
 				"comment":               comment,
@@ -869,8 +869,8 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 			}
 		}
 	}
-	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
 		"success":     true,
 		"msg":         msg,
 		"data":        data,
@@ -879,7 +879,7 @@ func (app *application) tables(params map[string]any, tables []any) map[string]a
 }
 
 // Generates CREATE TABLE SQL statements with comments, adapting to SQL dialects
-func generateCreateTableSQL(driver, tableName, tableComment string, fields []map[string]any) string {
+func generateCreateTableSQL(driver, tableName, tableComment string, fields []any) string {
 	var schema strings.Builder
 	schema.WriteString(fmt.Sprintf("CREATE TABLE %s (\n", tableName))
 
@@ -888,7 +888,11 @@ func generateCreateTableSQL(driver, tableName, tableComment string, fields []map
 	var columnComments []string
 
 	// Generate column definitions based on the driver
-	for _, field := range fields {
+	for _, _field := range fields {
+		field, ok := _field.(Dict)
+		if !ok {
+			continue
+		}
 		name := field["name"].(string)
 		columnType := getColumnType(driver, field)
 
@@ -938,7 +942,7 @@ func generateCreateTableSQL(driver, tableName, tableComment string, fields []map
 }
 
 // Returns the appropriate SQL column type based on driver and field type
-func getColumnType(driver string, field map[string]any) string {
+func getColumnType(driver string, field Dict) string {
 	columnType := field["type"].(string)
 	if nchar, ok := field["nchar"].(int); ok {
 		columnType += fmt.Sprintf("(%d)", nchar)
@@ -962,7 +966,7 @@ func getColumnType(driver string, field map[string]any) string {
 }
 
 // Primary key syntax adjustments
-func getPrimaryKey(driver string, field map[string]any) string {
+func getPrimaryKey(driver string, field Dict) string {
 	if pk, ok := field["primary_key"].(bool); ok && pk {
 		if driver == "mysql" || driver == "sqlserver" || driver == "mssql" {
 			return " PRIMARY KEY"
@@ -972,7 +976,7 @@ func getPrimaryKey(driver string, field map[string]any) string {
 }
 
 // Autoincrement syntax adjustments per driver
-func getAutoIncrement(driver string, field map[string]any) string {
+func getAutoIncrement(driver string, field Dict) string {
 	if field["autoincrement"] == true {
 		if driver == "sqlite3" {
 			return " AUTOINCREMENT"
@@ -982,7 +986,7 @@ func getAutoIncrement(driver string, field map[string]any) string {
 }
 
 // Nullable syntax adjustments per driver
-func getNullable(driver string, field map[string]any) string {
+func getNullable(driver string, field Dict) string {
 	if nullable, ok := field["nullable"].(bool); ok && !nullable {
 		return " NOT NULL"
 	}
@@ -990,7 +994,7 @@ func getNullable(driver string, field map[string]any) string {
 }
 
 // Unique constraint syntax adjustments
-func getUnique(driver string, field map[string]any) string {
+func getUnique(driver string, field Dict) string {
 	if unique, ok := field["unique"].(bool); ok && unique {
 		return " UNIQUE"
 	}
@@ -998,7 +1002,7 @@ func getUnique(driver string, field map[string]any) string {
 }
 
 // Default value handling based on driver
-func getDefaultValue(driver string, field map[string]any) string {
+func getDefaultValue(driver string, field Dict) string {
 	if defaultVal, ok := field["default"]; ok {
 		switch v := defaultVal.(type) {
 		case bool:
@@ -1030,132 +1034,122 @@ func getTableComment(driver, tableName, comment string) string {
 	return ""
 }
 
-func generateModelYAML(tableName, tableComment string, fields []map[string]any) string {
+func generateModelYAML(tableName, tableComment string, fields []any) string {
 	var schema strings.Builder
-
 	schema.WriteString(fmt.Sprintf("table: %s\n", tableName))
-
 	if tableComment != "" {
 		schema.WriteString(fmt.Sprintf("comment: %s\n", tableComment))
 	}
-
 	schema.WriteString("columns:\n")
-
-	for _, field := range fields {
-
+	for _, _field := range fields {
+		field, ok := _field.(Dict)
+		if !ok {
+			continue
+		}
 		name := field["name"].(string)
-
 		var parts []string
-
 		// type
 		if t, ok := field["type"].(string); ok {
 			if nchar, ok := field["nchar"].(int); ok {
-				parts = append(parts, fmt.Sprintf("type: %s(%d)", strings.ToLower(t), nchar))
+				parts = append(parts, fmt.Sprintf("type: %s(%d)", strings.ToLower("VARCHAR"), nchar))
 			} else {
 				parts = append(parts, fmt.Sprintf("type: %s", strings.ToLower(t)))
 			}
 		}
-
 		// primary key
 		if pk, ok := field["primary_key"].(bool); ok && pk {
 			parts = append(parts, "pk: true")
 		}
-
 		// autoincrement
 		if ai, ok := field["autoincrement"].(bool); ok && ai {
 			parts = append(parts, "autoincrement: true")
 		}
-
 		// nullable
 		if nullable, ok := field["nullable"].(bool); ok && !nullable {
 			parts = append(parts, "nullable: false")
 		}
-
 		// unique
 		if unique, ok := field["unique"].(bool); ok && unique {
 			parts = append(parts, "unique: true")
 		}
-
 		// default
 		if def, ok := field["default"]; ok {
 			switch v := def.(type) {
+			case nil:
+				// pass
 			case string:
 				parts = append(parts, fmt.Sprintf("default: \"%s\"", v))
 			default:
 				parts = append(parts, fmt.Sprintf("default: %v", v))
 			}
 		}
-
 		// foreign key
 		if fk, ok := field["foreign_key"].(string); ok {
 			parts = append(parts, fmt.Sprintf("fk: \"%s\"", fk))
 		}
-
 		// comment
 		if cmt, ok := field["comment"].(string); ok {
 			parts = append(parts, fmt.Sprintf("comment: \"%s\"", cmt))
 		}
-
 		schema.WriteString(fmt.Sprintf("  %s: { %s }\n", name, strings.Join(parts, ", ")))
 	}
-
 	return schema.String()
 }
 
-func (app *application) save_table_schema(params map[string]any) map[string]any {
+func (app *application) save_table_schema(params Dict) Dict {
 	//fmt.Println(params)
-	//user_id := int(params["user"].(map[string]any)["user_id"].(float64))
-	//role_id := int(params["user"].(map[string]any)["role_id"].(float64))
+	//user_id := int(params["user"].(Dict)["user_id"].(float64))
+	//role_id := int(params["user"].(Dict)["role_id"].(float64))
 	//var app_id int
-	//if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-	//	app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+	//if _, ok := params["app"].(Dict)["app_id"]; ok {
+	//	app_id = int(params["app"].(Dict)["app_id"].(float64))
 	//}
 	// DATABASE
 	//fmt.Println(lang)
 	dsn, _, _ := app.GetDBNameFromParams(params)
 	newDB, err := etlx.GetDB(dsn)
 	if err != nil {
-		return map[string]any{
+		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
 	defer newDB.Close()
-	_data := map[string]any{}
+	_data := Dict{}
 	if _, ok := params["data"]; !ok {
-		msg, _ := app.i18n.T("no_data", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no_data", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
-	} else if _, ok := params["data"].(map[string]any); ok {
-		_data = params["data"].(map[string]any)
+	} else if _, ok := params["data"].(Dict); ok {
+		_data = params["data"].(Dict)
 	}
-	table_metadata := map[string]any{}
+	table_metadata := Dict{}
 	if _, ok := _data["table_metadata"]; !ok {
-		msg, _ := app.i18n.T("no_table_metadata", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no_table_metadata", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
-	} else if _, ok := _data["table_metadata"].(map[string]any); !ok {
-		msg, _ := app.i18n.T("no_table_metadata", map[string]any{})
-		return map[string]any{
+	} else if _, ok := _data["table_metadata"].(Dict); !ok {
+		msg, _ := app.i18n.T("no_table_metadata", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	}
-	table_metadata = _data["table_metadata"].(map[string]any)
+	table_metadata = _data["table_metadata"].(Dict)
 	name := ""
 	if _, ok := table_metadata["name"]; !ok {
-		msg, _ := app.i18n.T("no_table_name", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no_table_name", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	} else if _, ok := table_metadata["name"].(string); !ok {
-		msg, _ := app.i18n.T("no_table_name", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no_table_name", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
@@ -1163,45 +1157,46 @@ func (app *application) save_table_schema(params map[string]any) map[string]any 
 	name = table_metadata["name"].(string)
 	comment := ""
 	if _, ok := table_metadata["comment"]; !ok {
-		msg, _ := app.i18n.T("no_table_comment", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no_table_comment", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	} else if _, ok := table_metadata["comment"].(string); !ok {
-		msg, _ := app.i18n.T("no_table_comment", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("no_table_comment", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	}
 	comment = table_metadata["comment"].(string)
-	fields := []map[string]any{}
-	if _, ok := table_metadata["fields"]; !ok {
-		msg, _ := app.i18n.T("no_fields", map[string]any{})
-		return map[string]any{
+	// fmt.Println("COLUMNS:", _data["fields"])
+	fields := []any{}
+	if _, ok := _data["fields"]; !ok {
+		msg, _ := app.i18n.T("no_fields", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
-	} else if _, ok := table_metadata["fields"].([]map[string]any); !ok {
-		msg, _ := app.i18n.T("no_fields", map[string]any{})
-		return map[string]any{
+	} else if _, ok := _data["fields"].([]any); !ok {
+		msg, _ := app.i18n.T("no_fields", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	}
-	fields = table_metadata["fields"].([]map[string]any)
+	fields = _data["fields"].([]any)
 	if len(fields) < 2 {
-		msg, _ := app.i18n.T("table_must_have_2_or_more_fields", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("table_must_have_2_or_more_fields", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
 	}
 	core_tables := app.sliceStrs2SliceInterfaces(strings.Split(app.config.core_tables, ","))
 	if app.contains(core_tables, name) {
-		msg, _ := app.i18n.T("change_core_tables_not_allowed", map[string]any{})
-		return map[string]any{
+		msg, _ := app.i18n.T("change_core_tables_not_allowed", Dict{})
+		return Dict{
 			"success": false,
 			"msg":     msg,
 		}
@@ -1216,26 +1211,14 @@ func (app *application) save_table_schema(params map[string]any) map[string]any 
 	} else {
 		table_org_name = name
 	}*/
-	schema := generateCreateTableSQL(newDB.GetDriverName(), name, comment, fields)
-	fmt.Println(schema)
+	//schema := generateCreateTableSQL(newDB.GetDriverName(), name, comment, fields)
+	//fmt.Println(schema)
 	schema_yaml := generateModelYAML(name, comment, fields)
 	fmt.Println(schema_yaml)
 	model := getMDModel(name, schema_yaml, dsn)
 	fmt.Println(model)
-	//_yaml :=
-	/*/ Map for SQLAlchemy types to SQL types
-	var saTypesToSQL = map[string]string{
-		"Integer":  "INTEGER",
-		"String":   "VARCHAR",
-		"Text":     "TEXT",
-		"Date":     "DATE",
-		"DateTime": "DATETIME",
-		"Time":     "TIME",
-		"Float":    "DECIMAL",
-		"Boolean":  "BOOLEAN",
-	}*/
-	msg, _ := app.i18n.T("sql-generated-to-be validated", map[string]any{})
-	return map[string]any{
+	msg, _ := app.i18n.T("sql-generated-to-be validated", Dict{})
+	return Dict{
 		"success": false,
 		"msg":     msg,
 	}
@@ -1250,7 +1233,7 @@ func getMDModel(tableName, yamlContent, dsn string) string {
 	out.WriteString(fmt.Sprintf("name: %s\n", tableName))
 	out.WriteString(fmt.Sprintf("description: %s\n", tableName))
 	out.WriteString("runs_as: MODEL\n")
-	out.WriteString(fmt.Sprintf("conn: '@DB_DRIVER_NAME:%s'\n", dsn))
+	out.WriteString(fmt.Sprintf("conn: '%s'\n", dsn))
 	out.WriteString("```\n\n")
 
 	// Table section
