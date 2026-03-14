@@ -1041,12 +1041,13 @@ func generateModelYAML(tableName, tableComment string, fields []any) string {
 		schema.WriteString(fmt.Sprintf("comment: %s\n", tableComment))
 	}
 	schema.WriteString("columns:\n")
-	for _, _field := range fields {
+	for i, _field := range fields {
 		field, ok := _field.(Dict)
 		if !ok {
 			continue
 		}
 		name := field["name"].(string)
+		fmt.Println(i, name)
 		var parts []string
 		// type
 		if t, ok := field["type"].(string); ok {
@@ -1214,9 +1215,9 @@ func (app *application) save_table_schema(params Dict) Dict {
 	//schema := generateCreateTableSQL(newDB.GetDriverName(), name, comment, fields)
 	//fmt.Println(schema)
 	schema_yaml := generateModelYAML(name, comment, fields)
-	// fmt.Println(schema_yaml)
+	//fmt.Println(schema_yaml)
 	model := getMDModel(name, schema_yaml, dsn)
-	fmt.Println(model)
+	//fmt.Println(model)
 	p := Dict{
 		"db": dsn,
 		"data": Dict{
