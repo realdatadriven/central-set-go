@@ -1,7 +1,7 @@
 ---
 weight: 3020
 title: "Admin Model"
-description: "Understanding the Central Set Admin Model and how model-driven architecture defines applications, permissions, APIs, and metadata."
+description: "Understanding the Central Set Admin Model and how model-driven architecture defines applications, permissions, APIs, metadata, and UI."
 icon: schema
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
@@ -21,6 +21,7 @@ It is written as a **Markdown + YAML model**, which allows the platform to:
 - Manage permissions
 - Define dashboards
 - Control APIs and integrations
+- Generate **UI forms and datatables**
 
 All of this is done **from a single model file**.
 
@@ -37,6 +38,8 @@ Instead of manually creating:
 - permissions
 - APIs
 - dashboards
+- forms
+- datatables
 
 everything is defined inside a **model file**.
 
@@ -49,6 +52,7 @@ Advantages include:
 - consistent deployments
 - Git-versioned infrastructure
 - LLM-friendly structure
+- automatic UI generation
 
 The model can initialize or update the database with:
 
@@ -70,6 +74,7 @@ Applications (cs_app)
 Tables
 Security
 Metadata Tables
+UI Definitions
 Integrations
 Dashboards
 Jobs / Scheduling
@@ -194,6 +199,139 @@ fk: "role.role_id"
 ```
 
 This automatically generates relational constraints.
+
+---
+
+# 🧾 UI Generation from the Model
+
+Central Set models now also define **UI behavior**, including:
+
+* form fields
+* datatable columns
+* layout configuration
+* component hooks
+* custom UI extensions
+
+This allows the platform to automatically generate **admin interfaces directly from the schema**.
+
+---
+
+# 🧩 Field UI Configuration
+
+Fields can define how they appear in the UI.
+
+Example:
+
+```yaml
+dashboard: { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true }
+```
+
+Available options include:
+
+| Property        | Description                            |
+| --------------- | -------------------------------------- |
+| `form_display`  | Display field in forms                 |
+| `table_display` | Display field in datatable             |
+| `form_code`     | Enables code editor mode               |
+| `form_sizelg`   | Form layout size (large screens)       |
+| `form_sizexl`   | Form layout size (extra large screens) |
+
+Example with code editor:
+
+```yaml
+dashboard_conf:
+  type: text
+  form_display: true
+  form_code: markdown
+```
+
+This enables a **Markdown editor** for the dashboard configuration.
+
+---
+
+# 🧩 Form Layout Configuration
+
+Forms can define layout options using `form_layout`.
+
+Example:
+
+```yaml
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
+```
+
+Options include:
+
+| Property        | Description             |
+| --------------- | ----------------------- |
+| `tabs_steps`    | Enables tab-based forms |
+| `form_in_popup` | Allows popup forms      |
+| `size`          | Form container width    |
+
+This allows the UI to automatically build **structured form layouts**.
+
+---
+
+# 📊 Datatable Configuration
+
+Datatable behavior can also be controlled.
+
+Example options:
+
+* visible columns
+* ordering
+* component extensions
+
+These configurations are automatically used by the frontend datatable components.
+
+---
+
+# 🧩 Extra UI Options and Component Hooks
+
+Tables can also define **extra UI behavior** through `table_extra_options`.
+
+Example from the **Dashboard table**:
+
+```yaml
+table_extra_options:
+  - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
+```
+
+This allows injecting **custom UI components** into the interface.
+
+Example capabilities include:
+
+* custom visual components
+* dashboard renderers
+* data visualizations
+* intercepting CRUD operations
+
+---
+
+# 🔌 CRUD Interceptors
+
+Components can intercept CRUD actions.
+
+Example:
+
+```
+intercept_r
+```
+
+This means the custom component will intercept **read operations**.
+
+Possible interception hooks include:
+
+| Hook          | Purpose                   |
+| ------------- | ------------------------- |
+| `intercept_r` | intercept read operations |
+| `intercept_c` | intercept create          |
+| `intercept_u` | intercept update          |
+| `intercept_d` | intercept delete          |
+
+This enables **advanced UI extensions without modifying backend logic**.
 
 ---
 
@@ -449,7 +587,8 @@ By defining everything in a **single Markdown model**, Central Set achieves:
 * Self-documenting architecture
 * Automated API generation
 * Built-in security layers
-* Dynamic UI generation
+* Automatic UI generation
+* Dynamic dashboard configuration
 
 The model becomes the **foundation of the entire platform**.
 
@@ -465,15 +604,19 @@ The **Admin Model** defines the entire core system of Central Set, including:
 * menus
 * security layers
 * dashboards
+* UI forms
+* datatables
 * data services
 * integrations
 * job scheduling
 
 All of this is controlled from a **single Markdown model file**.
 
-This approach enables Central Set to function as a **metadata-driven backend platform** capable of dynamically generating:
+This approach enables Central Set to function as a **fully metadata-driven backend platform** capable of dynamically generating:
 
 * APIs
 * dashboards
 * data pipelines
+* UI applications
 * integrations
+
