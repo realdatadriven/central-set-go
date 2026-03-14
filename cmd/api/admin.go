@@ -1214,14 +1214,17 @@ func (app *application) save_table_schema(params Dict) Dict {
 	//schema := generateCreateTableSQL(newDB.GetDriverName(), name, comment, fields)
 	//fmt.Println(schema)
 	schema_yaml := generateModelYAML(name, comment, fields)
-	fmt.Println(schema_yaml)
+	// fmt.Println(schema_yaml)
 	model := getMDModel(name, schema_yaml, dsn)
 	fmt.Println(model)
-	msg, _ := app.i18n.T("sql-generated-to-be validated", Dict{})
-	return Dict{
-		"success": false,
-		"msg":     msg,
+	p := Dict{
+		"db": dsn,
+		"data": Dict{
+			"order_metadata": any(true),
+			"conf":           any(model),
+		},
 	}
+	return app.etlxRun(p, true)
 }
 
 func getMDModel(tableName, yamlContent, dsn string) string {
