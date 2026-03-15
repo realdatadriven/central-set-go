@@ -163,7 +163,7 @@ columns:
   email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$" }
   db:          { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3 }
   attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3}
-  config:      { type: text, comment: "Config", form_display: false, form_long_text: true }
+  config:      { type: text, comment: "Config", form_display: false }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
@@ -770,9 +770,9 @@ table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_code: markdown, table_display: true }
+  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_sizelg: 9, form_sizexl: 9 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, table_display: true }
   order:          { type: integer, comment: "Order", form_display: true, form_sizelg: 3, form_sizexl: 3, table_display: true }
   active:         { type: boolean, default: true, comment: "Active", form_display: true, form_sizelg: 3, form_sizexl: 3, table_display: true }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
