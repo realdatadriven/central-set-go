@@ -162,7 +162,7 @@ columns:
   version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3 }
   email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$" }
   db:          { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3 }
-  attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true }
+  attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3}
   config:      { type: text, comment: "Config", form_display: false, form_long_text: true }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
