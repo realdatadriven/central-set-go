@@ -152,9 +152,10 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	fk_tables_pk := Dict{}
 	if _, ok := _schema["fields"]; ok {
 		for _, field_data := range _schema["fields"].(map[string]any) {
-			//fmt.Println(field_data.(map[string]any)["name"], field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"].(bool), (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)))
-			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+			//fmt.Println(field_data.(map[string]any)["name"], field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"] == any(true), (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)))
+			_fk, ok := field_data.(map[string]any)["fk"]
+			if !ok {
+			} else if _fk == any(true) || (_fk == any(1) || _fk == any(1.0)) {
 				referred_table := ""
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
 					referred_table = field_data.(map[string]any)["referred_table"].(string)
@@ -175,7 +176,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else if join == "all" {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+			} else if field_data.(map[string]any)["fk"] == any(true) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -227,7 +228,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"].(bool) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+			} else if field_data.(map[string]any)["fk"] == any(true) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {

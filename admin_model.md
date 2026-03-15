@@ -19,7 +19,7 @@ cs_app:
     tables:
       - dashboard
   Admin:
-    menu_icon: web
+    menu_icon: user-group
     menu_order: 2
     active: true
     tables:
@@ -122,7 +122,7 @@ columns:
   updated_at:           { type: datetime, comment: "Updated at" }
   excluded:             { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {user_id: 1, username: root, password: '*****', first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
+  - {user_id: 1, username: root, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -680,18 +680,18 @@ table_layout:
 table: arrow_flight_table
 comment: Arrow Flight Tables
 columns:
-  arrow_flight_table_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_id:       { type: integer, fk: "arrow_flight.arrow_flight_id", nullable: false, comment: "Arrow Flight", form_display: true, table_display: true }
-  table_name:            { type: varchar(200), nullable: false, comment: "Table Name", form_display: true, table_display: true }
-  table_desc:            { type: text, comment: "Description", form_display: true, table_display: true, form_code: markdown }
-  order:                 { type: integer, comment: "Order", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
-  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
-  arrow_flight_table_conf:{ type: text, comment: "Configuration", form_display: true, form_code: json }
-  user_id:               { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:                { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:            { type: datetime, comment: "Created at" }
-  updated_at:            { type: datetime, comment: "Updated at" }
-  excluded:              { type: boolean, default: false, comment: "Excluded" }
+  arrow_flight_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  arrow_flight_id:         { type: integer, fk: "arrow_flight.arrow_flight_id", nullable: false, comment: "Arrow Flight", form_display: true, table_display: true }
+  table_name:              { type: varchar(200), nullable: false, comment: "Table Name", form_display: true, table_display: true }
+  table_desc:              { type: text, comment: "Description", form_display: true, table_display: true, form_code: markdown }
+  order:                   { type: integer, comment: "Order", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
+  active:                  { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_sizelg: 3, form_sizexl: 3 }
+  arrow_flight_table_conf: { type: text, comment: "Configuration", form_display: true, form_code: json }
+  user_id:                 { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:              { type: datetime, comment: "Created at" }
+  updated_at:              { type: datetime, comment: "Updated at" }
+  excluded:                { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false

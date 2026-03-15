@@ -42,112 +42,9 @@ table: etlx
 comment: ETLX
 columns:
   etlx_id:          { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  etl:              { type: varchar(200), unique: true, nullable: false, comment: "Name" }
-  etl_desc:         { type: text, comment: "Description" }
+  etl:              { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, form_size: 3 }
+  etl_desc:         { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 9 }
   attach_etlx_conf: { type: varchar(200), comment: "Config File" }
-  etlx_conf:        { type: text, comment: "Config Text" }
-  active:           { type: boolean, default: true, comment: "Active" }
-  user_id:          { type: integer, comment: "User ID" }
-  app_id:           { type: integer, comment: "App ID" }
-  created_at:       { type: datetime, comment: "Created at" }
-  updated_at:       { type: datetime, comment: "Updated at" }
-  excluded:         { type: boolean, default: false, comment: "Excluded" }
-```
-
-## ETLX_CONF
-```yaml
-table: etlx_conf
-comment: ETLX Extra Cofig
-columns:
-  etlx_conf_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  etlx_conf:       { type: varchar(200), unique: true, nullable: false, comment: "Name" }
-  etlx_conf_desc:  { type: text, comment: "Description" }
-  etlx_extra_conf: { type: text, comment: "Config Text" }
-  user_id:         { type: integer, comment: "User ID" }
-  app_id:          { type: integer, comment: "App ID" }
-  created_at:      { type: datetime, comment: "Created at" }
-  updated_at:      { type: datetime, comment: "Updated at" }
-  excluded:        { type: boolean, default: false, comment: "Excluded" }
-```
-
-## MANAGE_QUERY
-```yaml
-table: manage_query
-comment: Queries
-columns:
-  manage_query_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  manage_query:      { type: varchar(200), nullable: false, comment: "Query Desc" }
-  database:          { type: varchar(200), nullable: false, comment: "Database" }
-  manage_query_conf: { type: text, comment: "Query Config" }
-  active:            { type: boolean, default: true, comment: "Active" }
-  user_id:           { type: integer, comment: "User ID" }
-  app_id:            { type: integer, comment: "App ID" }
-  created_at:        { type: datetime, comment: "Created at" }
-  updated_at:        { type: datetime, comment: "Updated at" }
-  excluded:          { type: boolean, default: false, comment: "Excluded" }
-```
-
-## DASHBOARD
-```yaml
-table: dashboard
-comment: Dashboards
-columns:
-  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard" }
-  dashboard_desc: { type: text, comment: "Description" }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params" }
-  order:          { type: integer, comment: "Order" }
-  active:         { type: boolean, default: true, comment: "Active" }
-  user_id:        { type: integer, comment: "User ID" }
-  app_id:         { type: integer, comment: "App ID" }
-  created_at:     { type: datetime, comment: "Created at" }
-  updated_at:     { type: datetime, comment: "Updated at" }
-  excluded:       { type: boolean, default: false, comment: "Excluded" }
-```
-
-## DASHBOARD_COMMENT
-```yaml
-table: dashboard_comment
-comment: Dashboards Comments
-columns:
-  dashboard_comment_id: { type: integer, pk: true, autoincrement: true, comment: "Comment ID" }
-  dashboard_comment:    { type: text, comment: "Comments" }
-  dashboard:            { type: varchar(200), comment: "Dashboard" }
-  active:               { type: boolean, default: true, comment: "Active" }
-  user_id:              { type: integer, comment: "User ID" }
-  app_id:               { type: integer, comment: "App ID" }
-  created_at:           { type: datetime, comment: "Created at" }
-  updated_at:           { type: datetime, comment: "Updated at" }
-  excluded:             { type: boolean, default: false, comment: "Excluded" }
-```
-
-## NOTEBOOK
-```yaml
-table: notebook
-comment: Notebooks
-columns:
-  notebook_id:   { type: integer, pk: true, autoincrement: true, comment: "Notebook ID" }
-  notebook:      { type: varchar(200), comment: "Name" }
-  notebook_desc: { type: text, comment: "Description" }
-  notebook_conf: { type: text, nullable: false, comment: "Conf / Params" }
-  active:        { type: boolean, default: true, comment: "Active" }
-  user_id:       { type: integer, comment: "User ID" }
-  app_id:        { type: integer, comment: "App ID" }
-  created_at:    { type: datetime, comment: "Created at" }
-  updated_at:    { type: datetime, comment: "Updated at" }
-  excluded:      { type: boolean, default: false, comment: "Excluded" }
-```
-
-
-# ETLX
-```yaml
-table: etlx
-comment: ETLX
-columns:
-  etlx_id:          { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  etl:              { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, form_size: 6 }
-  etl_desc:         { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false }
-  attach_etlx_conf: { type: varchar(200), comment: "Config File", form_display: true, table_display: true, form_att: true, form_size: 3 }
   etlx_conf:        { type: text, comment: "Config Text", form_display: true, form_long_text: true, form_code: markdown }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
   user_id:          { type: integer, comment: "User ID" }
@@ -167,7 +64,7 @@ table_extra_options:
   - - {size: 11, component: ETLX, label: etlx, icon: play, main: true, data: '{ "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh" }, { "type": "btn", "icon": "bolt", "name": "RUN_ALL", "class": "btn-sm text-info", "label": "crud.run_all" } ] }'}
 ```
 
-# ETLX_CONF
+## ETLX_CONF
 ```yaml
 table: etlx_conf
 comment: ETLX Extra Config
@@ -191,7 +88,7 @@ table_layout:
   default_order: [{field: etlx_conf_id, order: DESC}]
 ```
 
-# MANAGE_QUERY
+## MANAGE_QUERY
 ```yaml
 table: manage_query
 comment: Queries
@@ -216,14 +113,14 @@ table_layout:
   default_order: [{field: manage_query_id, order: DESC}]
 ```
 
-# DASHBOARD
+## DASHBOARD
 ```yaml
 table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 6 }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true }
+  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 3 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 9 }
   dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown }
   order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3 }
   active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
@@ -244,13 +141,13 @@ table_extra_options:
   - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
 ```
 
-# DASHBOARD_COMMENT
+## DASHBOARD_COMMENT
 ```yaml
 table: dashboard_comment
 comment: Dashboards Comments
 columns:
   dashboard_comment_id: { type: integer, pk: true, autoincrement: true, comment: "Comment ID" }
-  dashboard_comment:    { type: text, comment: "Comments", form_display: true, table_display: true, form_long_text: true }
+  dashboard_comment:    { type: text, comment: "Comments", form_display: true, table_display: true, form_long_text: true, form_code: markdown }
   dashboard:            { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 6 }
   active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
   user_id:              { type: integer, comment: "User ID" }
@@ -268,7 +165,7 @@ table_layout:
   default_order: [{field: dashboard_comment_id, order: DESC}]
 ```
 
-# NOTEBOOK
+## NOTEBOOK
 ```yaml
 table: notebook
 comment: Notebooks
