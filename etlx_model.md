@@ -204,7 +204,8 @@ conn: 'sqlite3:database/ETLX.db'
 ## dashboard-1
 ```yaml
 table: dashboard
-description: Add default Dashboard Logs
+description: Add default Logs Dashboard
+cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false'
 data:
   dashboard_id:   1
   dashboard:      Logs
