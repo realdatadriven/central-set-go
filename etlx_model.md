@@ -204,6 +204,7 @@ conn: 'sqlite3:database/ETLX.db'
 ## dashboard-1
 ```yaml
 table: dashboard
+description: Add default Dashboard Logs
 data:
   dashboard_id:   1
   dashboard:      Logs
