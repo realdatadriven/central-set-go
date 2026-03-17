@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD022 -->
+<!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
 # ETLX_MODEL
 ```yaml
@@ -190,4 +191,29 @@ table_layout:
   default_order: [{field: notebook_id, order: DESC}]
 table_extra_options:
 - {size: 12, component: Notebook, label: notebook, icon: book-open, intercept_r: true}
+```
+
+# DATA
+```yaml
+name: DATA
+description: DATA Model ETLX 
+runs_as: MODEL_DATA
+conn: 'sqlite3:database/ETLX.db'
+```
+
+## dashboard-1
+```yaml
+table: dashboard
+data:
+  dashboard_id:   1
+  dashboard:      Logs
+  dashboard_desc: Logs Example
+  dashboard_conf: FileContent(logs_dashboard.md)
+  order:          1
+  active:         true
+  user_id:        1
+  app_id:         2
+  created_at:    Now()
+  updated_at:    Now()
+  excluded:      false
 ```
