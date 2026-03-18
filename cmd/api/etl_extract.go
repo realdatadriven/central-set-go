@@ -750,12 +750,14 @@ func (app *application) _odbc_csv_duckdb(params map[string]interface{}, _input m
 	query = app.setQueryDate(query, date_ref)
 	//fmt.Println(4, query)
 	destination_table := ""
+	_csv_path := fmt.Sprintf(`%s/%s_YYYYMMDD.csv`, os.TempDir(), destination_table)
+	_csv_path = app.setQueryDate(_csv_path, date_ref)
 	if _, ok := _input["destination_table"]; ok {
 		destination_table = _input["destination_table"].(string)
 	}
 	//fmt.Println(5, destination_table)
 	//new_odbc, err := odbc.New(odbc_conn)
-	new_odbc, err := etlx.NewODBC(odbc_conn)
+	/*/new_odbc, err := etlx.NewODBC(odbc_conn)
 	if err != nil {
 		return map[string]interface{}{
 			"success": false,
@@ -763,8 +765,6 @@ func (app *application) _odbc_csv_duckdb(params map[string]interface{}, _input m
 		}
 	}
 	defer new_odbc.Close()
-	_csv_path := fmt.Sprintf(`%s/%s_YYYYMMDD.csv`, os.TempDir(), destination_table)
-	_csv_path = app.setQueryDate(_csv_path, date_ref)
 	//fmt.Println(_csv_path)
 	_, err = new_odbc.Query2CSV(query, _csv_path)
 	if err != nil {
@@ -772,6 +772,6 @@ func (app *application) _odbc_csv_duckdb(params map[string]interface{}, _input m
 			"success": false,
 			"msg":     fmt.Sprintf("ODBC CSV: %s", err),
 		}
-	}
+	}*/
 	return app._extract(params, _csv_path, _input, _conf, _etlrb, _conf_etlrb, db_conf, _step)
 }

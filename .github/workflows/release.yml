@@ -27,6 +27,7 @@ jobs:
           cp ./LICENSE dist/central-set-linux-amd64
           cp ./admin_model.md dist/central-set-linux-amd64
           cp ./etlx_model.md dist/central-set-linux-amd64
+          cp ./logs_dashboard.md dist/central-set-linux-amd64
           cp ./README.md dist/central-set-linux-amd64
           cp ./.env-exemple.txt dist/central-set-linux-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-linux-amd64
@@ -66,6 +67,7 @@ jobs:
           cp ./README.md dist/central-set-windows-amd64
           cp ./admin_model.md dist/central-set-windows-amd64
           cp ./etlx_model.md dist/central-set-windows-amd64
+          cp ./logs_dashboard.md dist/central-set-windows-amd64
           cp ./.env-exemple.txt dist/central-set-windows-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-amd64
           cp -r ./locales dist/central-set-windows-amd64
@@ -77,6 +79,7 @@ jobs:
           cp ./README.md dist/central-set-windows-arm64
           cp ./admin_model.md dist/central-set-windows-arm64
           cp ./etlx_model.md dist/central-set-windows-arm64
+          cp ./logs_dashboard.md dist/central-set-windows-arm64
           cp ./.env-exemple.txt dist/central-set-windows-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-arm64
           cp -r ./locales dist/central-set-windows-arm64
@@ -127,6 +130,7 @@ jobs:
           cp ./README.md dist/central-set-windows-dyn-linked-amd64
           cp ./admin_model.md dist/central-set-windows-dyn-linked-amd64
           cp ./etlx_model.md dist/central-set-windows-dyn-linked-amd64
+          cp ./logs_dashboard.md dist/central-set-windows-dyn-linked-amd64
           cp ./.env-exemple.txt dist/central-set-windows-dyn-linked-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-dyn-linked-amd64
           cp -r ./locales dist/central-set-windows-dyn-linked-amd64
@@ -138,6 +142,7 @@ jobs:
           cp ./README.md dist/central-set-windows-dyn-linked-arm64
           cp ./admin_model.md dist/central-set-windows-dyn-linked-arm64
           cp ./etlx_model.md dist/central-set-windows-dyn-linked-arm64
+          cp ./logs_dashboard.md dist/central-set-windows-dyn-linked-arm64
           cp ./.env-exemple.txt dist/central-set-windows-dyn-linked-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-windows-dyn-linked-arm64
           cp -r ./locales dist/central-set-windows-dyn-linked-arm64
@@ -219,6 +224,7 @@ jobs:
           cp ./README.md dist/central-set-macos-amd64
           cp ./admin_model.md dist/central-set-macos-amd64
           cp ./etlx_model.md dist/central-set-macos-amd64
+          cp ./logs_dashboard.md dist/central-set-macos-amd64
           cp ./.env-exemple.txt dist/central-set-macos-amd64/dot-env-exemple.txt
           cp -r ./static dist/central-set-macos-amd64
           cp -r ./locales dist/central-set-macos-amd64
@@ -230,6 +236,7 @@ jobs:
           cp ./README.md dist/central-set-macos-arm64
           cp ./admin_model.md dist/central-set-macos-arm64
           cp ./etlx_model.md dist/central-set-macos-arm64
+          cp ./logs_dashboard.md dist/central-set-macos-arm64
           cp ./.env-exemple.txt dist/central-set-macos-arm64/dot-env-exemple.txt
           cp -r ./static dist/central-set-macos-arm64
           cp -r ./locales dist/central-set-macos-arm64
