@@ -157,19 +157,19 @@ table: app
 comment: Applications
 columns:
   app_id:      { type: integer, pk: true, autoincrement: true, comment: "App ID" }
-  app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9 }
-  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true }
-  version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3 }
-  email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$" }
-  db:          { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3 }
-  attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3}
-  config:      { type: text, comment: "Config", form_display: false }
-  user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
-  created_at:  { type: datetime, comment: "Created at" }
-  updated_at:  { type: datetime, comment: "Updated at" }
-  excluded:    { type: boolean, default: false, comment: "Excluded" }
+  app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9, order: 1 }
+  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 3 }
+  version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
+  email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
+  db:          { type: varchar(20), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
+  attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, order: 6 }
+  config:      { type: text, comment: "Config", form_long_text: true, order: 7 }
+  username:    { type: integer, fk: "users.user_id", comment: "Username", order: 8 }
+  created_at:  { type: datetime, comment: "Created at", order: 9 }
+  updated_at:  { type: datetime, comment: "Updated at", form_date_format: "DD/MM/YY", order: 10 }
+  excluded:    { type: boolean, default: false, comment: "Excluded", order: 11 }
 data:
-  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, user_id: 1, excluded: false}
+  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, username: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
