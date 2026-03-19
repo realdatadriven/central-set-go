@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD022 -->
+<!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
 # ADMMIN_MODEL
 ```yaml
