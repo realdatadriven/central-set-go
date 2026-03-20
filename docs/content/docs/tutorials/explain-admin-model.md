@@ -281,3 +281,5 @@ By keeping **everything** in one declarative Markdown/YAML file you get:
 The **ADMIN_MODEL** is effectively the **constitution** of your Central Set instance.
 
 Feel free to extend it — every new table, role, menu group or dashboard added here immediately becomes part of the live system.
+
+[More Details](https://github.com/realdatadriven/central-set-go/blob/main/admin_model.md)
