@@ -3,7 +3,7 @@ Overview</a></li><li><a class=sidebar-root-link href=https://realdatadriven.gith
 Why Markdown?</a></li><li><a class=sidebar-root-link href=https://realdatadriven.github.io/central-set-go/docs/quickstart/><i class="material-icons me-2">rocket_launch</i>
 Quickstart</a></li><li class="sidebar-dropdown current active"><button class=btn>
 <i class="material-icons me-2">auto_awesome</i>
-Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-model/>Admin Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested"><button class=btn>
+Tutorials</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-model/>Admin Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/explain-admin-model/>Explaining ADMIN Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/new-app-model/>Creating a New App / Data Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested"><button class=btn>
 ETLX & Data Pipelines</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li></ul></div></li><li class="sidebar-dropdown nested current active"><button class=btn>
 Analytics & Dashboards</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/export-dashboard/>Exporting Dashboard Data to Excel Templates</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/dyn-custom-dataset-dashboard/>Dynamic Dataset</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/embedding-dashboard/>Embedding Dashboards</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/>OData v4 API</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/config/>Configuration</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
 <i class="material-icons me-2">heart_plus</i>
@@ -362,6 +362,20 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
     
@@ -479,6 +493,24 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
     index.add(
             {
                 id:  12 ,
+                href: "\/central-set-go\/docs\/tutorials\/explain-admin-model\/",
+                title: "Explaining ADMIN Model",
+                description: "Central Set's core administrative model — defines users, roles, permissions, menus, applications, security layers, dashboards, scheduled jobs, Arrow Flight exposure, and dynamic UI generation.",
+                content: " warning Note — Central Set is production-ready and under active development. This documentation page is auto-generation friendly and will evolve together with the platform. Some sections may still be expanding or receive refinements. The ADMIN_MODEL is the foundational metadata model of Central Set.\nIt defines:\nthe security model (users • roles • permissions • row/column access) application \u0026 menu structure UI generation rules (forms • datatables • layouts • custom components) dashboards scheduled jobs environment variables Arrow Flight / data service exposure access tokens translation \u0026 custom metadata Everything lives inside one Markdown + YAML file — the single source of truth.\ncentral-set --init --model admin_model.md or\ncentral-set --update-metadata --model admin_model.md 🧠 Philosophy of the ADMIN Model linkCentral Set follows a strong model-driven architecture.\nInstead of hand-writing:\ndatabase tables CRUD endpoints RBAC rules forms \u0026 datagrids navigation menus dashboards background jobs data service endpoints … you declare the desired system in declarative YAML blocks inside Markdown.\nThe runtime then:\ncreates / updates schema generates metadata entries builds REST-like APIs expose every table as OData v4 API renders admin UI automatically enforces multi-layer security exposes Arrow Flight endpoints (if configured) 📦 High-Level Structure link ADMIN_MODEL.md ├── Model metadata (name, connection, behavior flags) ├── cs_app → applications \u0026 menu groups ├── Core tables → lang, role, users, user_role, app, menu, ... ├── Security tables → role_app, role_app_menu, role_app_menu_table, row_level_access, ... ├── UI \u0026 metadata tables → table, table_schema, menu_table, custom_table, custom_form, ... ├── Dashboard tables → dashboard, dashboard_comment ├── Arrow Flight → arrow_flight, arrow_flight_table, arrow_flight_table_scope, ... ├── Jobs \u0026 logging → cron, cron_log, user_log ├── Integration \u0026 utils → access_key, env, translate_table, translate_table_field ⚙️ Model Header link name: ADMIN description: CS ADMIN Model runs_as: MODEL conn: '@DB_DRIVER_NAME:@DB_DSN' create_all: checkfirst _drop_all: checkfirst update_table_metadata: true active: true Most important flags:\nField Typical value Meaning conn @DB_… Database connection string (env vars) create_all checkfirst Create tables if missing update_table_metadata true Refresh table \u0026 table_schema entries active true Load this model on startup 🧩 Application \u0026 Menu Structure (cs_app) link cs_app: Dashboards: menu_icon: document-report menu_order: 1 active: true tables: - dashboard Admin: menu_icon: user-group menu_order: 2 tables: - app - menu - role - users ## … This block automatically creates:\nsidebar menu groups icons \u0026 ordering associated tables (shown as sub-items or default views) 🔐 Security Layers linkCentral Set implements four levels of access control:\nApplication access — role_app Menu access — role_app_menu Table / CRUD access — role_app_menu_table (create/read/update/delete/share) Row Level Access (RLA) — role_row_level_access / row_level_access Typical flow:\nUser → Role(s) → App permission → Menu permission → Table CRUD permission → Row filter 🖥️ Automatic UI Generation linkEvery table can carry UI hints:\ncolumns: username: type: varchar(50) unique: true nullable: false form_display: true table_display: true form_size: 4 order: 1 Common UI properties:\nProperty Effect form_display Show in create/update forms table_display Show as column in list view form_size Bootstrap column width (1–12) form_long_text Use textarea instead of input form_code markdown, json, sql, … → code editor mode form_att File / attachment upload Form layout control:\nform_layout: tabs_steps: tabs form_in_popup: false size: 9 🎛️ Custom UI Extensions linkVia table_extra_options:\ntable_extra_options: - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true} - {size: 12, component: AdminApps, label: permissions, icon: key, pop_up: true} Popular built-in components:\nEvidenceDash — renders markdown dashboards AdminApps — permission matrix / role editor AccessKey — token generation \u0026 display 📊 Dashboards linkDashboards are stored as markdown + configuration:\ndashboard_conf: { type: text, form_code: markdown } The EvidenceDash component interprets this field and can embed:\nSQL query results charts ETLX results external API data markdown content 🚀 Arrow Flight / Data Service Exposure link arrow_flight: flight_schema: adm startup_sql: \"ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);\" main_sql: \"USE adm;\" Allows Central Set to act as an Arrow Flight server, exposing selected tables/scopes to:\nPython (pyarrow) R BI tools with Arrow Flight support Datafusion, Polars, … ⏱️ Scheduled Jobs (cron) link cron: cron: \"0 0 * * *\" api: \"etlx/name/daily-backup\" active: true Central Set comes with a built-in cron runner that calls internal APIs.\n🔑 Access Keys \u0026 Environment Variables link access_key → bearer tokens for machine-to-machine access env → centrally managed environment variables (usable via @ENV_NAME) Summary — Why one big model? linkBy keeping everything in one declarative Markdown/YAML file you get:\nGit-versioned infrastructure Reproducible environments Self-documenting schema Automatic security \u0026 UI generation Easy auditing \u0026 review LLM-assisted modifications possible The ADMIN_MODEL is effectively the constitution of your Central Set instance.\nFeel free to extend it — every new table, role, menu group or dashboard added here immediately becomes part of the live system.\nMore Details\n"
+            }
+        );
+    index.add(
+            {
+                id:  13 ,
+                href: "\/central-set-go\/docs\/tutorials\/new-app-model\/",
+                title: "Creating a New App / Data Model",
+                description: "How to add a new application or domain-specific data model in Central Set — with automatic support for UI, dashboards, ETLX pipelines, cron jobs, role-based access, row-level security, and more.",
+                content: " warning Central Set is production-ready and this pattern is actively used in real deployments. The documentation evolves together with the platform — expect refinements as new features (ETLX enhancements, better notebook support, etc.) are added. Central Set is built around model-driven architecture.\nYou can (and usually should) create separate models for each business domain or application instead of putting everything into the ADMIN model.\nBenefits of dedicated app models:\nClear separation of concerns Independent lifecycle \u0026 versioning Easier team collaboration (different teams own different models) Automatic generation of:\n• CRUD UI + forms + datatables\n• Role-based access (RBAC)\n• Row-level security (RLA)\n• Dashboards\n• ETLX data pipelines\n• Scheduled jobs (cron)\n• Notebook-style analysis\n• Arrow Flight exposure (optional) Recommended Pattern — One Model per App / Domain linkCreate a new Markdown file (e.g. sales_model.md, inventory_model.md, finance_model.md) with this structure:\nModel metadata header cs_app block → defines the menu group(s) Domain-specific tables (Optional) Re-use or reference shared tables (dashboards, notebooks, cron, …) (Optional) Seed data / default records Typical file name convention:\n{UPPERCASE_APP_NAME}_MODEL.md\n(e.g. SALES_MODEL.md, HR_MODEL.md, ETLX_MODEL.md)\nAfter placing this file in the models directory and running\ncentral-set --init --model sales_model.md You immediately get:\nNew sidebar menu group Sales CRUD interfaces for all tables Automatic form \u0026 datatable generation Permission management (via ADMIN → roles) Ability to add row-level filters per role Dashboard tab (reusing the shared dashboard table) Possibility to create ETLX pipelines that read/write SALES tables Cron jobs that run on SALES data Notebooks for ad-hoc analysis Re-using Shared Features (Dashboards • ETLX • Cron • Notebooks) linkMost models do not redefine dashboard, etlx, cron, notebook tables.\nInstead they:\nAdd their own tables to an existing menu group (e.g. Dashboards, ETLX) Or create a new menu group that references shared tables Now users with access to the ETLX menu can create pipelines like:\nDaily sales aggregation → SALES.sales_kpi Order sync from external API → SALES.order Customer segmentation ETL Same logic applies to cron, notebook, dashboard.\nWhen to Extend ADMIN vs Create New Model link Goal Recommendation Why? Add global user/role/menu/permission Extend ADMIN Single source of truth for auth Add new business domain (sales, hr, inventory, …) Create new model Separation of concerns, independent lifecycle Add new ETLX pipelines / notebooks / dashboards for a domain New model + reference shared tables Clean \u0026 focused Add very generic / cross-cutting feature Consider extending ADMIN (rare) Avoid ADMIN bloat Rule of thumb:\nIf the tables belong to a specific business area → new model.\nIf they affect global system behavior → ADMIN.\nQuick Checklist — New App Model link Unique name: (e.g. SALES, INVENTORY, CRM) Own SQLite/PostgreSQL/etc. file or schema admin_conn pointing to ADMIN.db (for users/roles) At least one cs_app group with your tables requires_rla: true on tables that need per-row security Use form_display, table_display, form_size, form_code: json/markdown/sql for nice UI Optional: table_extra_options with custom components Optional: seed data block at the end The ETLX model is a perfect real-world example:\nit manages ETLX data pipelines it includes notebook-style analysis it re-uses shared dashboards it lives in its own database (ETLX.db) it integrates tightly with the central ADMIN model (users, roles, permissions) This same pattern can be used to quickly build:\ninventory management CRM financial ledger IoT telemetry backend customer analytics warehouse … or just a personal scratchpad database with nice UI ETLX — A Complete, Self-contained App Model linkFile: etlx_model.md\n# ETLX_MODEL ```yaml name: ETLX description: ETLX Model runs_as: MODEL conn: 'sqlite3:database/ETLX.db' admin_conn: 'sqlite3:database/ADMIN.db' create_all: checkfirst _drop_all: checkfirst update_table_metadata: true active: true cs_app: Dashboards: menu_icon: document-report menu_order: 1 active: true menu_config: '{\"label\": \"dashboard\",\"tooltip\": \"dashboard_desc\",\"load_items\": {\"table\": \"dashboard\",\"tables\": [\"dashboard\"]}}' tables: - dashboard ETLX: menu_icon: circle-stack menu_order: 2 active: true tables: - etlx - etlx_conf - manage_query Notebook: menu_icon: book-open menu_order: 3 active: true menu_config: '{\"label\": \"notebook\",\"tooltip\": \"notebook_desc\",\"load_items\": {\"table\": \"notebook\",\"tables\": [\"notebook\"]}}' tables: - notebook ``` ## ETLX ```yaml table: etlx comment: ETLX columns: etlx_id: { type: integer, pk: true, autoincrement: true, comment: \"ID\" } etl: { type: varchar(200), unique: true, nullable: false, comment: \"Name\", form_display: true, table_display: true, form_size: 3 } etl_desc: { type: text, comment: \"Description\", form_display: true, table_display: true, form_long_text: false, form_size: 9 } attach_etlx_conf: { type: varchar(200), comment: \"Config File\" } etlx_conf: { type: text, comment: \"Config Text\", form_display: true, form_long_text: true, form_code: markdown } active: { type: boolean, default: true, comment: \"Active\", form_display: true, table_display: true, form_size: 3 } user_id: { type: integer, comment: \"User ID\" } app_id: { type: integer, comment: \"App ID\" } created_at: { type: datetime, comment: \"Created at\" } updated_at: { type: datetime, comment: \"Updated at\" } excluded: { type: boolean, default: false, comment: \"Excluded\" } form_layout: tabs_steps: tabs form_in_popup: false size: 9 tabs_steps_conf: [] sub_form_size: 9 table_layout: default_order: [{field: etlx_id, order: DESC}] table_extra_options: - - {size: 11, component: ETLX, label: etlx, icon: play, main: true, data: '{ \"actions\": [ { \"type\": \"btn\", \"icon\": \"refresh\", \"name\": \"REFRESH\", \"class\": \"btn-sm text-info\", \"label\": \"crud.refresh\" }, { \"type\": \"btn\", \"icon\": \"bolt\", \"name\": \"RUN_ALL\", \"class\": \"btn-sm text-info\", \"label\": \"crud.run_all\" } ] }'} ``` ## ETLX_CONF ```yaml table: etlx_conf comment: ETLX Extra Config columns: etlx_conf_id: { type: integer, pk: true, autoincrement: true, comment: \"ID\" } etlx_conf: { type: varchar(200), unique: true, nullable: false, comment: \"Name\", form_display: true, table_display: true, form_size: 6 } etlx_conf_desc: { type: text, comment: \"Description\", form_display: true, table_display: true, form_long_text: true } etlx_extra_conf: { type: text, comment: \"Config Text\", form_display: true, form_long_text: true, form_code: json } user_id: { type: integer, comment: \"User ID\" } app_id: { type: integer, comment: \"App ID\" } created_at: { type: datetime, comment: \"Created at\" } updated_at: { type: datetime, comment: \"Updated at\" } excluded: { type: boolean, default: false, comment: \"Excluded\" } form_layout: tabs_steps: tabs form_in_popup: false size: 9 tabs_steps_conf: [] sub_form_size: 9 table_layout: default_order: [{field: etlx_conf_id, order: DESC}] ``` ## MANAGE_QUERY ```yaml table: manage_query comment: Queries columns: manage_query_id: { type: integer, pk: true, autoincrement: true, comment: \"ID\" } manage_query: { type: varchar(200), nullable: false, comment: \"Query Desc\", form_display: true, table_display: true, form_size: 6 } database: { type: varchar(200), nullable: false, comment: \"Database\", form_display: true, table_display: true, form_size: 6 } manage_query_conf: { type: text, comment: \"Query Config\", form_display: true, form_long_text: true, form_code: json } active: { type: boolean, default: true, comment: \"Active\", form_display: true, table_display: true, form_size: 3 } user_id: { type: integer, comment: \"User ID\" } app_id: { type: integer, comment: \"App ID\" } created_at: { type: datetime, comment: \"Created at\" } updated_at: { type: datetime, comment: \"Updated at\" } excluded: { type: boolean, default: false, comment: \"Excluded\" } form_layout: tabs_steps: tabs form_in_popup: false size: 9 tabs_steps_conf: [] sub_form_size: 9 table_layout: default_order: [{field: manage_query_id, order: DESC}] ``` ## DASHBOARD ```yaml table: dashboard comment: Dashboards columns: dashboard_id: { type: integer, pk: true, autoincrement: true, comment: \"Dashboard ID\" } dashboard: { type: varchar(200), comment: \"Dashboard\", form_display: true, table_display: true, form_size: 3 } dashboard_desc: { type: text, comment: \"Description\", form_display: true, table_display: true, form_long_text: true, form_size: 9 } dashboard_conf: { type: text, nullable: false, comment: \"Conf / Params\", form_display: true, form_long_text: true, form_code: markdown } order: { type: integer, comment: \"Order\", form_display: true, table_display: true, form_size: 3 } active: { type: boolean, default: true, comment: \"Active\", form_display: true, table_display: true, form_size: 3 } user_id: { type: integer, comment: \"User ID\" } app_id: { type: integer, comment: \"App ID\" } created_at: { type: datetime, comment: \"Created at\" } updated_at: { type: datetime, comment: \"Updated at\" } excluded: { type: boolean, default: false, comment: \"Excluded\" } form_layout: tabs_steps: tabs form_in_popup: false size: 9 tabs_steps_conf: [] sub_form_size: 9 table_layout: default_order: [{field: order, order: ASC}] table_extra_options: - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true} ``` ## DASHBOARD_COMMENT ```yaml table: dashboard_comment comment: Dashboards Comments columns: dashboard_comment_id: { type: integer, pk: true, autoincrement: true, comment: \"Comment ID\" } dashboard_comment: { type: text, comment: \"Comments\", form_display: true, table_display: true, form_long_text: true, form_code: markdown } dashboard: { type: varchar(200), comment: \"Dashboard\", form_display: true, table_display: true, form_size: 6 } active: { type: boolean, default: true, comment: \"Active\", form_display: true, table_display: true, form_size: 3 } user_id: { type: integer, comment: \"User ID\" } app_id: { type: integer, comment: \"App ID\" } created_at: { type: datetime, comment: \"Created at\" } updated_at: { type: datetime, comment: \"Updated at\" } excluded: { type: boolean, default: false, comment: \"Excluded\" } form_layout: tabs_steps: tabs form_in_popup: false size: 9 tabs_steps_conf: [] sub_form_size: 9 table_layout: default_order: [{field: dashboard_comment_id, order: DESC}] ``` ## NOTEBOOK ```yaml table: notebook comment: Notebooks columns: notebook_id: { type: integer, pk: true, autoincrement: true, comment: \"Notebook ID\" } notebook: { type: varchar(200), comment: \"Name\", form_display: true, table_display: true, form_size: 6 } notebook_desc: { type: text, comment: \"Description\", form_display: true, table_display: true, form_long_text: true } notebook_conf: { type: text, nullable: false, comment: \"Conf / Params\", form_display: true, form_long_text: true, form_code: markdown } active: { type: boolean, default: true, comment: \"Active\", form_display: true, table_display: true, form_size: 3 } user_id: { type: integer, comment: \"User ID\" } app_id: { type: integer, comment: \"App ID\" } created_at: { type: datetime, comment: \"Created at\" } updated_at: { type: datetime, comment: \"Updated at\" } excluded: { type: boolean, default: false, comment: \"Excluded\" } form_layout: tabs_steps: tabs form_in_popup: false size: 9 tabs_steps_conf: [] sub_form_size: 9 table_layout: default_order: [{field: notebook_id, order: DESC}] table_extra_options: - {size: 12, component: Notebook, label: notebook, icon: book-open, intercept_r: true} ``` # DATA ```yaml name: DATA description: DATA Model ETLX runs_as: MODEL_DATA conn: 'sqlite3:database/ETLX.db' ``` ## dashboard-1 ```yaml table: dashboard description: Add default Logs Dashboard cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false' data: dashboard_id: 1 dashboard: Logs dashboard_desc: Logs Example dashboard_conf: FileContent(logs_dashboard.md) order: 1 active: true user_id: 1 app_id: 2 created_at: Now() updated_at: Now() excluded: false ``` After placing the file in your models folder and running\ncentral-set --init --model /path/etlx_model.md it will create the database in any of supported database the supported and update admin model with all the necessary metadata needed for a new app.\nYou instantly get:\nA new ETLX menu group with full CRUD for pipelines Custom Run and Run All buttons (via table_extra_options + component: ETLX) Nice form layouts + code editors (markdown for pipeline config, JSON for extra config) Reusable dashboards tab with EvidenceDash renderer Notebook section for ad-hoc analysis Automatic RBAC (who can see/edit/run pipelines) Optional row-level security (add requires_rla: true to any table) Possibility to schedule pipeline runs via the central cron table Why This Pattern Is So Powerful link Feature you get “for free” How it appears in ETLX model Own database / schema conn: 'sqlite3:database/ETLX.db' (or postgres://…, clickhouse://…, etc.) Sidebar menu group cs_app: ETLX: … Beautiful CRUD UI + forms form_display: true, form_size, form_code: markdown/json Custom buttons \u0026 components table_extra_options + component: ETLX Dashboards Reference shared dashboard table Notebooks Reference shared notebook table Data pipelines \u0026 queries etlx, etlx_conf, manage_query tables Role-based access Controlled from ADMIN → roles → role_app_menu_table Row-level security (optional) Add requires_rla: true to any table Scheduled execution Link to central cron table Easy prototyping → production Start with SQLite → later change conn to prod DB Quick Variations — Use the Same Pattern for Anything linkAnalytics / BI backend\nChange menu to “Analytics”, tables to kpi_daily, report, metric\nInventory app\nconn: 'postgresql:…'\ntables: product, warehouse, stock_movement, supplier\nPersonal finance tracker\nconn: 'sqlite3:finance.db'\ntables: transaction, category, account, budget linkYou decide the database, the tables, the menu name — Central Set generates the rest.\nCreate one .md file per logical application/domain Use SQLite for fast local prototyping Switch to PostgreSQL/MSSQL/MYSQL/etc. when ready (just change conn) Reuse shared tables (dashboard, notebook, cron, etlx) across models Control access centrally from the ADMIN model This gives you:\ninstant admin UI version-controlled schema \u0026 config powerful data tools (pipelines, notebooks, dashboards) strong security model easy transition from prototype → production The ETLX model is one of the best starting points — copy it, rename it, change the tables, and you have a brand-new app in minutes.\nSummary linkCentral Set shines when you compose many small, focused models.\nEach new app/model automatically inherits powerful features:\nFull admin UI (forms + grids) Security (RBAC + RLA) Data pipelines (ETLX) Scheduling (cron) Interactive analysis (notebooks) Dynamic dashboards Extensibility (custom components, Arrow Flight, …) This turns Central Set into a meta-platform — you build new applications just by writing declarative Markdown/YAML models.\nStart small → one new model for your most important domain → iterate!\nQuestions / want a concrete model for HR / Inventory / Finance? Just describe the domain — we can generate a starter template.\n"
+            }
+        );
+    index.add(
+            {
+                id:  14 ,
                 href: "\/central-set-go\/docs\/tutorials\/auth\/",
                 title: "Authentication \u0026 Access",
                 description: "User authentication, password management, and API access in Central Set Go",
@@ -487,7 +519,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  13 ,
+                id:  15 ,
                 href: "\/central-set-go\/docs\/tutorials\/apps\/",
                 title: "Applications",
                 description: "Applications define how databases are exposed as admin interfaces in Central Set Go.",
@@ -496,7 +528,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  14 ,
+                id:  16 ,
                 href: "\/central-set-go\/docs\/tutorials\/admin-schema\/",
                 title: "Admin Schema (the DNA)",
                 description: "How Central Set defines applications, UI, permissions, and automation using database metadata.",
@@ -505,7 +537,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  15 ,
+                id:  17 ,
                 href: "\/central-set-go\/docs\/tutorials\/menus\/",
                 title: "Navigation \u0026 Menus",
                 description: "Navigation \u0026 Menus",
@@ -514,7 +546,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  16 ,
+                id:  18 ,
                 href: "\/central-set-go\/docs\/tutorials\/tables\/",
                 title: "CRUD",
                 description: "CRUD",
@@ -523,7 +555,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  17 ,
+                id:  19 ,
                 href: "\/central-set-go\/docs\/tutorials\/integrations\/",
                 title: "Integrations",
                 description: "Learn how to connect Central Set with multiple databases, data sources, and data platforms using ETLX to integrate, transform, and securely expose data.",
@@ -532,7 +564,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  18 ,
+                id:  20 ,
                 href: "\/central-set-go\/docs\/tutorials\/users-roles\/",
                 title: "Security \u0026 Permissions",
                 description: "Security \u0026 Permissions",
@@ -541,7 +573,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  19 ,
+                id:  21 ,
                 href: "\/central-set-go\/docs\/tutorials\/jobs\/",
                 title: "Automation \u0026 Jobs",
                 description: "Automation \u0026 Jobs",
@@ -550,7 +582,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  20 ,
+                id:  22 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/",
                 title: "ETLX \u0026 Data Pipelines",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -559,7 +591,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  21 ,
+                id:  23 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/overview\/",
                 title: "Overview",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -568,7 +600,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  22 ,
+                id:  24 ,
                 href: "\/central-set-go\/docs\/tutorials\/etlx\/example\/",
                 title: "Example",
                 description: "Configuration-driven data pipelines powered by ETLX",
@@ -577,7 +609,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  23 ,
+                id:  25 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/",
                 title: "Analytics \u0026 Dashboards",
                 description: "Analytics \u0026 Dashboards",
@@ -586,7 +618,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  24 ,
+                id:  26 ,
                 href: "\/central-set-go\/docs\/tutorials\/api\/",
                 title: "Dynamic API Reference",
                 description: "Dynamic API Reference",
@@ -595,7 +627,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  25 ,
+                id:  27 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/overview\/",
                 title: "Overview",
                 description: "Overview",
@@ -604,7 +636,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  26 ,
+                id:  28 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/example\/",
                 title: "Example",
                 description: "Analytics \u0026 Dashboards — Logs Dashboard Example",
@@ -613,7 +645,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  27 ,
+                id:  29 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/export-dashboard\/",
                 title: "Exporting Dashboard Data to Excel Templates",
                 description: "Generate spreadsheet files from dashboard filters and queries using ETLX export templates.",
@@ -622,7 +654,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  28 ,
+                id:  30 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/dyn-custom-dataset-dashboard\/",
                 title: "Dynamic Dataset",
                 description: "Dashboard With Dynamic Dataset For Each User / Profile",
@@ -631,7 +663,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  29 ,
+                id:  31 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/embedding-dashboard\/",
                 title: "Embedding Dashboards",
                 description: "How to embed Central Set dashboards inside external applications using an iframe and JWT authentication.",
@@ -640,7 +672,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  30 ,
+                id:  32 ,
                 href: "\/central-set-go\/docs\/tutorials\/odata-v4\/",
                 title: "OData v4 API",
                 description: "OData v4 API",
@@ -649,7 +681,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  31 ,
+                id:  33 ,
                 href: "\/central-set-go\/docs\/tutorials\/arrow-flight\/",
                 title: "Arrow Flight",
                 description: "Apache Arrow Flight Support API",
@@ -658,7 +690,7 @@ Table of Contents</button><nav id=toc-mobile></nav></div><div class="docs-conten
         );
     index.add(
             {
-                id:  32 ,
+                id:  34 ,
                 href: "\/central-set-go\/docs\/tutorials\/config\/",
                 title: "Configuration",
                 description: "Configuration options for Central Set",
