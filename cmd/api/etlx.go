@@ -357,7 +357,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL"}
+	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL","MODEL_DATA", "CSDATA"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
@@ -554,6 +554,20 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 						}
 					case "MODEL", "CSMODEL":
 						_logs, err := etlxlib.RunMODEL(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					case "MODEL_DATA", "CSDATA":
+						//fmt.Printf("%s AS %s START:\n", key, runs_as)
+						_logs, err := etlxlib.RunMODEL_DATA(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
 						} else {
