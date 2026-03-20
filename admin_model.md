@@ -773,7 +773,7 @@ columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
   dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, order: 1 }
   dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2 }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: true, table_display: true, order: 3 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 3 }
   order:          { type: integer, comment: "Order", form_display: true, table_display: true, order: 4 }
   active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID", order: 6 }
