@@ -2,7 +2,7 @@
 weight: 3022
 title: "Creating a New App / Data Model"
 description: "How to add a new application or domain-specific data model in Central Set — with automatic support for UI, dashboards, ETLX pipelines, cron jobs, role-based access, row-level security, and more."
-icon: plus-circle
+icon: schema
 date: 2026-03-20
 lastmod: 2026-03-20
 draft: false

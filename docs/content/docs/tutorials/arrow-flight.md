@@ -2,7 +2,7 @@
 weight: 7091
 title: "Arrow Flight"
 description: "Apache Arrow Flight Support API"
-icon: arrow
+icon: share
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2026-01-29T00:00:00+00:00
 draft: false

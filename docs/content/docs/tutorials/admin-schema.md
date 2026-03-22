@@ -2,7 +2,7 @@
 weight: 7030
 title: "Admin Schema (the DNA)"
 description: "How Central Set defines applications, UI, permissions, and automation using database metadata."
-icon: cogs
+icon: schema
 date: 2025-12-16T01:04:15+00:00
 lastmod: 2025-12-16T01:04:15+00:00
 draft: false

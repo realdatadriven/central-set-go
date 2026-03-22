@@ -2,7 +2,7 @@
 weight: 3021
 title: "Explaining ADMIN Model"
 description: "Central Set's core administrative model — defines users, roles, permissions, menus, applications, security layers, dashboards, scheduled jobs, Arrow Flight exposure, and dynamic UI generation."
-icon: shield-check
+icon: schema
 date: 2026-03-20
 lastmod: 2026-03-20
 draft: false
