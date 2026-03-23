@@ -87,7 +87,7 @@ ADMIN_MODEL.md
 
 ## ⚙️ Model Header
 
-```yaml
+```yaml {linenos=table}
 name: ADMIN
 description: CS ADMIN Model
 runs_as: MODEL
@@ -111,7 +111,7 @@ Most important flags:
 
 ## 🧩 Application & Menu Structure (`cs_app`)
 
-```yaml
+```yaml {linenos=table}
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -159,7 +159,7 @@ User → Role(s) → App permission → Menu permission → Table CRUD permissio
 
 Every table can carry **UI hints**:
 
-```yaml
+```yaml {linenos=table}
 columns:
   username:
     type: varchar(50)
@@ -184,7 +184,7 @@ Common UI properties:
 
 Form layout control:
 
-```yaml
+```yaml {linenos=table}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -197,7 +197,7 @@ form_layout:
 
 Via `table_extra_options`:
 
-```yaml
+```yaml {linenos=table}
 table_extra_options:
   - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
   - {size: 12, component: AdminApps, label: permissions, icon: key, pop_up: true}
@@ -215,7 +215,7 @@ Popular built-in components:
 
 Dashboards are stored as markdown + configuration:
 
-```yaml
+```yaml {linenos=table}
 dashboard_conf: { type: text, form_code: markdown }
 ```
 
@@ -231,7 +231,7 @@ The `EvidenceDash` component interprets this field and can embed:
 
 ## 🚀 Arrow Flight / Data Service Exposure
 
-```yaml
+```yaml {linenos=table}
 arrow_flight:
   flight_schema: adm
   startup_sql:   "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);"
@@ -249,7 +249,7 @@ Allows Central Set to act as an **Arrow Flight server**, exposing selected table
 
 ## ⏱️ Scheduled Jobs (cron)
 
-```yaml
+```yaml {linenos=table}
 cron:
   cron: "0 0 * * *"
   api:  "etlx/name/daily-backup"

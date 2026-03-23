@@ -90,7 +90,7 @@ The first section defines the **model configuration**.
 
 Example:
 
-```yaml
+```yaml {linenos=table}
 name: ADMIN
 description: CS ADMIN Model
 runs_as: MODEL
@@ -131,7 +131,7 @@ The `cs_app` section defines the **applications and menus** that appear inside t
 
 Example:
 
-```yaml
+```yaml {linenos=table}
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -170,7 +170,7 @@ Each table is defined using a YAML block.
 
 Example:
 
-```yaml
+```yaml {linenos=table}
 table: users
 comment: Users
 columns:
@@ -222,7 +222,7 @@ Fields can define how they appear in the UI.
 
 Example:
 
-```yaml
+```yaml {linenos=table}
 dashboard: { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true }
 ```
 
@@ -238,7 +238,7 @@ Available options include:
 
 Example with code editor:
 
-```yaml
+```yaml {linenos=table}
 dashboard_conf:
   type: text
   form_display: true
@@ -255,7 +255,7 @@ Forms can define layout options using `form_layout`.
 
 Example:
 
-```yaml
+```yaml {linenos=table}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -294,7 +294,7 @@ Tables can also define **extra UI behavior** through `table_extra_options`.
 
 Example from the **Dashboard table**:
 
-```yaml
+```yaml {linenos=table}
 table_extra_options:
   - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
 ```

@@ -136,7 +136,7 @@ This same pattern can be used to quickly build:
 
 File: `etlx_model.md`
 
-````markdown
+````markdown {linenos=table}
 <!-- markdownlint-disable MD022 -->
 <!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
