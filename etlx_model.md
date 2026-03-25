@@ -62,7 +62,7 @@ form_layout:
 table_layout:
   default_order: [{field: etlx_id, order: DESC}]
 table_extra_options:
-  - - {size: 11, component: ETLX, label: etlx, icon: play, main: true, data: '{ "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh" }, { "type": "btn", "icon": "bolt", "name": "RUN_ALL", "class": "btn-sm text-info", "label": "crud.run_all" } ] }'}
+  - {size: 11, component: ETLX, label: etlx, icon: play, main: true, data: '{ "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh" }, { "type": "btn", "icon": "bolt", "name": "RUN_ALL", "class": "btn-sm text-info", "label": "crud.run_all" } ] }'}
 ```
 
 ## ETLX_CONF
