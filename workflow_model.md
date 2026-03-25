@@ -276,6 +276,7 @@ tooltip: "Represents an execution instance of a workflow"
 columns:
   workflow_instance_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Instance ID", tooltip: "Unique identifier of the workflow instance"  }
   workflow_id: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow being executed", table_display: true  }
+  workflow_desc: { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow", form_display: true, table_display: true  }
   status_id: { type: integer, fk: "status.status_id", comment: "Status", tooltip: "Current status of the workflow instance", form_display: true, table_display: true  }
   current_step_id: { type: integer, comment: "Current Step ID", fk: "workflow_step.workflow_step_id", tooltip: "Identifier of the current step in execution", table_display: true  }
   child_workflow_id: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Child Workflow ID", tooltip: "Identifier of the child / sub workflow to which the step belongs", form_display: true, table_display: true  }started_by: { type: integer, comment: "Started By", tooltip: "Identifier of the user who started the workflow"  }
