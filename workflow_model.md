@@ -82,6 +82,7 @@ columns:
   version: { type: integer, default: 1, comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 3  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 3  }  
   depends_on: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_display: true, table_display: true  }
+  schedule: { type: varchar(200), comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 6  }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the workflow"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
   created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the workflow was created"  }
