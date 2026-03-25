@@ -17,34 +17,30 @@ cs_app:
     menu_icon: document-report
     menu_order: 1
     active: true
-    menu_config: '{"label": "dashboard","tooltip": "dashboard_desc","load_items": {"table": "dashboard","tables": ["dashboard"]}}'
+    menu_config: '{"label": "dashboard","tooltip": "dashboard_desc", "load_items": {"table": "dashboard", "tables": ["dashboard"]}}'
     tables:
       - dashboard
   Workflow:
     menu_icon: arrows-right-left
-    menu_order: 1
+    menu_order: 2
     active: true
+    menu_config: '{"label": "workflow", "tooltip": "workflow_desc", "load_items": {"table": "workflow", "tables": ["workflow"]}}'
     tables:
       - {table: workflow, requires_rla: true, active: true}
       - {table: workflow_sla, active: false}
-      - workflow_step
-      - workflow_step_sla
-      - workflow_step_schema
-      - workflow_step_schema_option
-      - workflow_step_responsible
-      - workflow_step_subscriber
-      - department
-      - department_workflow_step
-  Execution:
-    menu_icon: play
-    menu_order: 2
-    active: true
-    tables:
-      - workflow_instance
-      - workflow_instance_step
-      - workflow_data
-      - workflow_log
-      - workflow_notification
+      - {table: workflow_step, active: false}
+      - {table: workflow_step_sla, active: false}
+      - {table: workflow_step_schema, active: false}
+      - {table: workflow_step_schema_option, active: false}
+      - {table: workflow_step_responsible, active: false}
+      - {table: workflow_step_subscriber, active: false}
+      - {table: department, active: false}
+      - {table: department_workflow_step, active: false}
+      - {table: workflow_instance, active: false}
+      - {table: workflow_instance_step, active: false}
+      - {table: workflow_data, active: false}
+      - {table: workflow_log, active: false}
+      - {table: workflow_notification, active: false}
 ```
 
 ## WORKFLOW
@@ -56,6 +52,7 @@ columns:
   workflow_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow ID", tooltip: "Unique identifier of the workflow"  }
   workflow: { type: varchar(200), unique: true, nullable: false, comment: "Workflow", tooltip: "Name of the workflow", form_display: true, table_display: true, form_size: 6  }
   workflow_desc: { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow", form_display: true, table_display: true  }
+  order: { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3 }
   version: { type: varchar(200), default: 'v1.0.0', comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 3  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 3  }  
   depends_on: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_display: true, table_display: true  }
@@ -69,7 +66,9 @@ columns:
   updated_at: { type: datetime, comment: "Updated AT", tooltip: "Date and time when the workflow was last updated"  }
   excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the workflow is excluded from active use"  }
 table_layout:
-  default_order: [{field: workflow_id, order: DESC}]
+  default_order: [{field: order, order: DESC}]
+table_extra_options:
+  - {size: 12, component: Workflow, label: workflow, intercept_r: true}
 ```
 
 ## WORKFLOW_STEP
@@ -422,5 +421,5 @@ name: WORKFLOW 1
 description: Exemple of a workflow
 active: true
 attributes:
-  field1: {label: field 1, data_type: text, options: [A, B, C]}
+  field1: {label: field 1, data_type: text, options: '["A", "B", "C"]'}
 ```
