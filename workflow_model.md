@@ -79,6 +79,7 @@ columns:
   step_desc: { type: text, comment: "Step Desc", tooltip: "Description of the step", form_display: true  }
   step_order: { type: integer, comment: "Step Order", tooltip: "Order of execution of the step", form_display: true, table_display: true  }
   is_final: { type: boolean, default: false, comment: "Is Final", tooltip: "Indicates whether the step is the final step", form_display: true, table_display: true  }
+  document_template: { type: text, comment: "Doc Template", tooltip: "In case the step is suposed to generate some kind of document, here will be the template, and it will be a golang templat tha has access to all the data from the previous step, current date, user, and the processes itself", form_display: true, form_code: html }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the step is active"  }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step definition"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
