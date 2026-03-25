@@ -25,8 +25,8 @@ cs_app:
     menu_order: 1
     active: true
     tables:
-      - workflow
-      - workflow_sla
+      - {table: workflow, requires_rla: true, active: true}
+      - {table: workflow_sla, active: false}
       - workflow_step
       - workflow_step_sla
       - workflow_step_schema
