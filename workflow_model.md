@@ -62,6 +62,7 @@ columns:
   schedule: { type: varchar(200), comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 6  }
   steps_orientation: { type: varchar(200), comment: "Step Orientation", tooltip: "Vertical / Horizontal", form_display: true, table_display: true, form_size: 6  }
   workflow_icon: { type: varchar(200), comment: "Icon", tooltip: "Workflow Icon", form_display: true, table_display: true, form_size: 6  }
+  email_template: { type: text, comment: "Email Template", tooltip: "Email", form_display: true, form_code: html }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the workflow"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
   created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the workflow was created"  }
@@ -82,11 +83,12 @@ columns:
   step: { type: varchar(200), nullable: false, comment: "Step", tooltip: "Name of the step", form_display: true, table_display: true  }
   step_desc: { type: text, comment: "Step Desc", tooltip: "Description of the step", form_display: true  }
   step_order: { type: integer, comment: "Step Order", tooltip: "Order of execution of the step", form_display: true, table_display: true  }
-  document_template: { type: text, comment: "Doc Template", tooltip: "In case the step is suposed to generate some kind of document, here will be the template, and it will be a gostatus templat tha has access to all the data from the previous step, current date, user, and the processes itself", form_display: true, form_code: html }
   child_workflow_id: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Child Workflow ID", tooltip: "Identifier of the child / sub workflow to which the step belongs", form_display: true, table_display: true  }
   step_icon: { type: varchar(200), comment: "Icon", tooltip: "Step Icon", form_display: true, table_display: true, form_size: 6  }
   step_color: { type: varchar(200), comment: "Color", tooltip: "Step Color", form_display: true, table_display: true, form_size: 6  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the step is active"  }
+  step_email_template: { type: text, comment: "Email Template", tooltip: "Email", form_display: true, form_code: html }
+  document_template: { type: text, comment: "Doc Template", tooltip: "In case the step is suposed to generate some kind of document, here will be the template, and it will be a gostatus templat tha has access to all the data from the previous step, current date, user, and the processes itself", form_display: true, form_code: html }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step definition"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
   api: { type: varchar(500), comment: "API", tooltip: "API that is called", form_display: true, table_display: false  }
