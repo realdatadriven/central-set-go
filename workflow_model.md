@@ -47,29 +47,6 @@ cs_app:
       - workflow_notification
 ```
 
-## STATUS
-```yaml
-table: status
-comment: Status
-columns:
-  status_id:   { type: integer, pk: true, autoincrement: true, comment: "Lang ID" }
-  status:      { type: varchar(4), unique: true, nullable: false, comment: "Language", form_display: true, table_display: true, order: 1 }
-  status_desc: { type: varchar(200), comment: "Description", form_display: true, table_display: true, order: 2 }
-  created_at:  { type: datetime, comment: "Created at" }
-  updated_at:  { type: datetime, comment: "Updated at" }
-  excluded:    { type: boolean, default: false, comment: "Excluded" }
-data:
-  - {status_id: 1, status: Asigned, excluded: false}
-  - {status_id: 2, status: Started, excluded: false}
-  - {status_id: 3, status: Stabd By, excluded: false}
-  - {status_id: 4, status: returned, excluded: false}
-  - {status_id: 5, status: Conlcuded, excluded: false}
-form_layout:
-  tabs_steps: deactivate
-  form_in_popup: true
-  size: 6
-```
-
 ## WORKFLOW
 ```yaml
 table: workflow
@@ -83,6 +60,8 @@ columns:
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 3  }  
   depends_on: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_display: true, table_display: true  }
   schedule: { type: varchar(200), comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 6  }
+  steps_orientation: { type: varchar(200), comment: "Step Orientation", tooltip: "Vertical / Horizontal", form_display: true, table_display: true, form_size: 6  }
+  workflow_icon: { type: varchar(200), comment: "Icon", tooltip: "Workflow Icon", form_display: true, table_display: true, form_size: 6  }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the workflow"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
   created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the workflow was created"  }
@@ -105,6 +84,8 @@ columns:
   step_order: { type: integer, comment: "Step Order", tooltip: "Order of execution of the step", form_display: true, table_display: true  }
   document_template: { type: text, comment: "Doc Template", tooltip: "In case the step is suposed to generate some kind of document, here will be the template, and it will be a gostatus templat tha has access to all the data from the previous step, current date, user, and the processes itself", form_display: true, form_code: html }
   child_workflow_id: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Child Workflow ID", tooltip: "Identifier of the child / sub workflow to which the step belongs", form_display: true, table_display: true  }
+  step_icon: { type: varchar(200), comment: "Icon", tooltip: "Step Icon", form_display: true, table_display: true, form_size: 6  }
+  step_color: { type: varchar(200), comment: "Color", tooltip: "Step Color", form_display: true, table_display: true, form_size: 6  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the step is active"  }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step definition"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
@@ -266,6 +247,29 @@ columns:
   updated_at: { type: datetime, comment: "Updated AT", tooltip: "Date and time when the subscription was last updated" }
 table_layout:
   default_order: [{field: workflow_step_subscriber_id, order: DESC}]
+```
+
+## STATUS
+```yaml
+table: status
+comment: Status
+columns:
+  status_id:   { type: integer, pk: true, autoincrement: true, comment: "Lang ID" }
+  status:      { type: varchar(4), unique: true, nullable: false, comment: "Language", form_display: true, table_display: true, order: 1 }
+  status_desc: { type: varchar(200), comment: "Description", form_display: true, table_display: true, order: 2 }
+  created_at:  { type: datetime, comment: "Created at" }
+  updated_at:  { type: datetime, comment: "Updated at" }
+  excluded:    { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {status_id: 1, status: Asigned, excluded: false}
+  - {status_id: 2, status: Started, excluded: false}
+  - {status_id: 3, status: Stabd By, excluded: false}
+  - {status_id: 4, status: returned, excluded: false}
+  - {status_id: 5, status: Conlcuded, excluded: false}
+form_layout:
+  tabs_steps: deactivate
+  form_in_popup: true
+  size: 6
 ```
 
 ## WORKFLOW_INSTANCE
