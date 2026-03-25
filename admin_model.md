@@ -165,12 +165,12 @@ columns:
   db:          { type: varchar(20), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
   attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
   config:      { type: text, comment: "Config" }
-  username:    { type: integer, fk: "users.user_id", comment: "Username" }
+  user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
-  updated_at:  { type: datetime, comment: "Updated at", form_date_format: "DD/MM/YY" }
+  updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, username: 1, excluded: false}
+  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, db: ADMIN, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
