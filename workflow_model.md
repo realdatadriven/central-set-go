@@ -43,6 +43,7 @@ cs_app:
       - {table: workflow_notification, active: false}
 ```
 <!--WORKFLOW DEFINITION-->
+
 ## WORKFLOW
 ```yaml
 table: workflow
