@@ -56,7 +56,7 @@ columns:
   workflow_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow ID", tooltip: "Unique identifier of the workflow"  }
   workflow: { type: varchar(200), unique: true, nullable: false, comment: "Workflow", tooltip: "Name of the workflow", form_display: true, table_display: true, form_size: 6  }
   workflow_desc: { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow", form_display: true, table_display: true  }
-  version: { type: integer, default: 1, comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 3  }
+  version: { type: varchar(200), default: 'v1.0.0', comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 3  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 3  }  
   depends_on: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_display: true, table_display: true  }
   schedule: { type: varchar(200), comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 6  }
@@ -185,9 +185,14 @@ columns:
   label: { type: varchar(200), nullable: false, comment: "Label", tooltip: "Display name of the field", form_display: true, table_display: true  }
   data_type: { type: varchar(50), nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true  }
   nullable: { type: boolean, default: true, comment: "Nullable", tooltip: "Indicates whether the field can be empty", form_display: true  }
-  default_value: { type: text, comment: "Default Value", tooltip: "Default value assigned to the field"  }
-  validation_rule: { type: text, comment: "Validation Rule", tooltip: "Rule used to validate the field value"  }
+  default_value: { type: varchar(200), comment: "Default Value", tooltip: "Default value assigned to the field"  }
+  validation_rule: { type: varchar(200), comment: "Validation Rule", tooltip: "Regex validation rulw for the field"  }
   order_index: { type: integer, comment: "Order Index", tooltip: "Position of the field within the step", form_display: true, table_display: true  }
+  format: { type: varchar(200), comment: "Format", tooltip: "Format intl.Format"  }
+  size: { type: integer, comment: "Size", tooltip: "1 - 12 size that will be shown in form"  }
+  elipsis: { type: integer, comment: "Elipsis", tooltip: "Text elipsis"  }
+  options: { type: text, comment: "Options", tooltip: "JSON Array of string or array of objects{label,value}"  }
+  options_input_type: { type: text, comment: "Options Input Type", tooltip: "Combobox,Checkbox or Radio"  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the field is active"  }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the field definition"  }
   app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
@@ -400,4 +405,22 @@ table_layout:
   default_order: [{field: order, order: ASC}]
 table_extra_options:
   - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
+```
+
+# WORKFLOW 1
+```yaml
+name: WORKFLOW 1
+description: Exemple of a workflow
+runs_as: WORKFLOW
+conn: 'sqlite3:database/WORKFLOW.db'
+active: true
+```
+
+## STEP 1
+```yaml
+name: WORKFLOW 1
+description: Exemple of a workflow
+active: true
+attributes:
+  field1: {label: field 1, data_type: text, options: [A, B, C]}
 ```
