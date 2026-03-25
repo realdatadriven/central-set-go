@@ -7,10 +7,19 @@ name: WORKFLOW
 description: Dynamic Workflow and Process Management Model
 runs_as: MODEL
 conn: 'sqlite3:database/WORKFLOW.db'
+admin_conn: 'sqlite3:database/ADMIN.db'
 create_all: checkfirst
+_drop_all: checkfirst
 update_table_metadata: true
 active: true
 cs_app:
+  Dashboards:
+    menu_icon: document-report
+    menu_order: 1
+    active: true
+    menu_config: '{"label": "dashboard","tooltip": "dashboard_desc","load_items": {"table": "dashboard","tables": ["dashboard"]}}'
+    tables:
+      - dashboard
   Workflow:
     menu_icon: arrows-right-left
     menu_order: 1
@@ -23,6 +32,7 @@ cs_app:
       - workflow_step_schema
       - workflow_step_schema_option
       - workflow_step_responsible
+      - workflow_step_subscriber
       - department
       - department_workflow_step
   Execution:
@@ -34,6 +44,7 @@ cs_app:
       - workflow_instance_step
       - workflow_data
       - workflow_log
+      - workflow_notification
 ```
 
 ## WORKFLOW
@@ -210,6 +221,26 @@ columns:
   created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the assignment was created"  }
 ```
 
+## WORKFLOW_STEP_SUBSCRIBER
+```yaml
+table: workflow_step_subscriber
+comment: "Workflow Step Subscriber"
+tooltip: "Tracks interested parties and stakeholders for workflow steps"
+columns:
+  workflow_step_subscriber_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Subscriber ID", tooltip: "Unique identifier of the subscription" }
+  workflow_step_id: { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the workflow step", form_display: true, table_display: true }
+  user_id: { type: integer, nullable: false, comment: "User ID", tooltip: "Identifier of the user interested in the step", form_display: true, table_display: true }
+  subscriber_type: { type: varchar(50), comment: "Subscriber Type", tooltip: "Type of subscriber (responsible, observer, stakeholder, etc.)", form_display: true, table_display: true }
+  notify_on_start: { type: boolean, default: true, comment: "Notify On Start", tooltip: "Send notification when step starts" }
+  notify_on_complete: { type: boolean, default: true, comment: "Notify On Complete", tooltip: "Send notification when step completes" }
+  notify_on_escalation: { type: boolean, default: false, comment: "Notify On Escalation", tooltip: "Send notification on SLA escalation" }
+  active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the subscription is active" }
+  created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the subscription was created" }
+  updated_at: { type: datetime, comment: "Updated AT", tooltip: "Date and time when the subscription was last updated" }
+table_layout:
+  default_order: [{field: workflow_step_subscriber_id, order: DESC}]
+```
+
 ## WORKFLOW_INSTANCE
 ```yaml
 table: workflow_instance
@@ -283,4 +314,54 @@ columns:
   created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the action was recorded", table_display: true  }
 table_layout:
   default_order: [{field: workflow_log_id, order: DESC}]
+```
+
+## WORKFLOW_NOTIFICATION
+```yaml
+table: workflow_notification
+comment: "Workflow Notification"
+tooltip: "Tracks email and message notifications sent during workflow execution"
+columns:
+  workflow_notification_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Notification ID", tooltip: "Unique identifier of the notification record" }
+  workflow_instance_id: { type: integer, nullable: false, fk: "workflow_instance.workflow_instance_id", comment: "Workflow Instance ID", tooltip: "Identifier of the workflow instance", table_display: true }
+  workflow_instance_step_id: { type: integer, comment: "Workflow Instance Step ID", fk: "workflow_instance_step.workflow_instance_step_id", tooltip: "Identifier of the step execution, if applicable", table_display: true }
+  recipient_user_id: { type: integer, nullable: false, comment: "Recipient User ID", tooltip: "Identifier of the recipient user", form_display: true, table_display: true }
+  notification_type: { type: varchar(50), nullable: false, comment: "Notification Type", tooltip: "Type of notification (step_started, step_completed, escalation, etc.)", form_display: true, table_display: true }
+  subject: { type: varchar(500), comment: "Subject", tooltip: "Email subject or notification title", form_display: true, table_display: true }
+  message: { type: text, comment: "Message", tooltip: "Email body or notification message content", form_display: true, form_long_text: true }
+  delivery_status: { type: varchar(50), default: "pending", comment: "Delivery Status", tooltip: "Status of delivery (pending, sent, failed, bounced)", form_display: true, table_display: true }
+  delivery_attempts: { type: integer, default: 0, comment: "Delivery Attempts", tooltip: "Number of delivery attempts made" }
+  sent_at: { type: datetime, comment: "Sent AT", tooltip: "Date and time when the notification was sent", table_display: true }
+  error_message: { type: text, comment: "Error Message", tooltip: "Error details if delivery failed", form_long_text: true }
+  created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the notification was created", table_display: true }
+table_layout:
+  default_order: [{field: workflow_notification_id, order: DESC}]
+```
+
+## DASHBOARD
+```yaml
+table: dashboard
+comment: Dashboards
+columns:
+  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
+  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 3 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 9 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  user_id:        { type: integer, comment: "User ID" }
+  app_id:         { type: integer, comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  tabs_steps_conf: []
+  sub_form_size: 9
+table_layout:
+  default_order: [{field: order, order: ASC}]
+table_extra_options:
+  - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
 ```
