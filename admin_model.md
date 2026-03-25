@@ -109,7 +109,7 @@ columns:
   last_name:            { type: varchar(50), comment: "Last Name", form_display: true, table_display: true, form_size: 4, order: 3 }
   password:             { type: varchar(200), nullable: false, comment: "Password", form_display: true, form_use_label: true, form_size: 3, order: 4 }
   email:                { type: varchar(50), unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 9, order: 5 }
-  phone:                { type: varchar(50), unique: true, comment: "Phone", form_display: true, table_display: true, form_size: 3, order: 6 }
+  phone:                { type: varchar(50), unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 3, order: 6 }
   role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 6, order: 7 }
   lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 3, order: 8 }
   timezone:             { type: varchar(50), comment: "Timezone", form_display: true, table_display: true, form_size: 12, order: 9 }
@@ -193,7 +193,7 @@ table: menu
 comment: Menu Items
 columns:
   menu_id:       { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
-  menu:          { type: varchar(20), unique: true, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 12, order: 1 }
+  menu:          { type: varchar(20), unique: false, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 12, order: 1 }
   menu_desc:     { type: text, comment: "Description", form_display: true, table_display: true, order: 2 }
   menu_icon:     { type: varchar(20), comment: "Icon", form_display: true, table_display: true, form_size: 6, order: 3 }
   menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 6, order: 4 }
@@ -223,7 +223,7 @@ table: table
 comment: Tables
 columns:
   table_id:         { type: integer, pk: true, autoincrement: true, comment: "Table ID" }
-  table:            { type: varchar(100), unique: true, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12, order: 1 }
+  table:            { type: varchar(100), unique: false, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12, order: 1 }
   table_desc:       { type: text, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 2 }
   db:               { type: varchar(50), comment: "Database / Schema", form_display: true, table_display: true, form_size: 12, order: 3 }
   requires_rla:     { type: boolean, default: false, comment: "Requires Row Level Access (RLA)", form_display: true, table_display: true, order: 4 }
@@ -540,8 +540,8 @@ table: cron
 comment: Jobs scheduling
 columns:
   cron_id:      { type: integer, pk: true, autoincrement: true, comment: "Cron ID" }
-  cron:         { type: varchar(100), unique: true, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
-  cron_desc:    { type: text, comment: "Description", form_display: true, table_display: true, form_size: 9, order: 2 }
+  cron:         { type: varchar(100), unique: false, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
+  cron_desc:    { type: text, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 9, order: 2 }
   api:          { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 10, order: 3 }
   db:           { type: varchar(50), comment: "Database (if applicable)", order: 4 }
   table:        { type: varchar(100), comment: "Table (if applicable)", order: 5 }
@@ -631,7 +631,7 @@ table: env
 comment: Envariomental Variables
 columns:
   env_id:       { type: integer, pk: true, autoincrement: true, comment: "env ID" }
-  env_name:     { type: varchar(200), unique: true, nullable: false, comment: "Env Name", order: 1 }
+  env_name:     { type: varchar(200), unique: false, nullable: false, comment: "Env Name", order: 1 }
   env_value:    { type: text, nullable: false, comment: "Env Value", order: 2 }
   on_srv_start: { type: boolean, default: true, comment: "Set On Server Start", order: 3 }
   active:       { type: boolean, default: true, comment: "Active", order: 4 }
