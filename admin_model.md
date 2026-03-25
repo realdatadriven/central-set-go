@@ -465,14 +465,15 @@ columns:
   transl_tbl_id:     { type: integer, pk: true, autoincrement: true, comment: "Translate Table ID" }
   table_org_desc:    { type: varchar(200), nullable: false, comment: "Table Org. Desc", form_display: true, table_display: true, order: 1 }
   table_transl_desc: { type: varchar(200), nullable: false, comment: "Table Transl. Desc", form_display: true, table_display: true, order: 2 }
-  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 3 }
-  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 4 }
-  lang:              { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true, order: 5 }
-  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 6 }
-  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", order: 7 }
-  created_at:        { type: datetime, comment: "Created at", order: 8 }
-  updated_at:        { type: datetime, comment: "Updated at", order: 9 }
-  excluded:          { type: boolean, default: false, comment: "Excluded", order: 10 }
+  table_tooltip:     { type: varchar(500), comment: "Table Tooltip", form_display: true, table_display: true, order: 3 }
+  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 5 }
+  lang:              { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true, order: 6 }
+  user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:        { type: datetime, comment: "Created at" }
+  updated_at:        { type: datetime, comment: "Updated at" }
+  excluded:          { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -487,15 +488,16 @@ columns:
   transl_tbl_field_id: { type: integer, pk: true, autoincrement: true, comment: "Translate Table Field ID" }
   field_org_desc:      { type: varchar(200), nullable: false, comment: "Field Org. Desc", form_display: true, table_display: true, order: 1 }
   field_transl_desc:   { type: varchar(200), nullable: false, comment: "Field Transl. Desc", form_display: true, table_display: true, order: 2 }
-  field:               { type: varchar(200), nullable: false, comment: "Field", form_display: true, table_display: true, order: 3 }
-  table:               { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  db:                  { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 5 }
-  lang:                { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true, order: 6 }
-  user_id:             { type: integer, fk: "users.user_id", comment: "User ID", order: 7 }
-  app_id:              { type: integer, fk: "app.app_id", comment: "App ID", order: 8 }
-  created_at:          { type: datetime, comment: "Created at", order: 9 }
-  updated_at:          { type: datetime, comment: "Updated at", order: 10 }
-  excluded:            { type: boolean, default: false, comment: "Excluded", order: 11 }
+  field_tooltip:       { type: varchar(500), comment: "Field Tooltip", form_display: true, table_display: true, order: 3 }
+  field:               { type: varchar(200), nullable: false, comment: "Field", form_display: true, table_display: true, order: 4 }
+  table:               { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 5 }
+  db:                  { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 6 }
+  lang:                { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true, order: 7 }
+  user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:          { type: datetime, comment: "Created at" }
+  updated_at:          { type: datetime, comment: "Updated at" }
+  excluded:            { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false

@@ -42,7 +42,7 @@ cs_app:
       - {table: workflow_log, active: false}
       - {table: workflow_notification, active: false}
 ```
-
+<!--WORKFLOW DEFINITION-->
 ## WORKFLOW
 ```yaml
 table: workflow
@@ -278,6 +278,8 @@ form_layout:
   size: 6
 ```
 
+<!--WORKFLOW EXECUTION-->
+
 ## WORKFLOW_INSTANCE
 ```yaml
 table: workflow_instance
@@ -290,12 +292,11 @@ columns:
   workflow_desc: { type: text, nullable: false, comment: "Workflow Desc", tooltip: "Description of the workflow", form_display: true, table_display: true  }
   status_id: { type: integer, fk: "status.status_id", comment: "Status", tooltip: "Current status of the workflow instance", form_display: true, table_display: true  }
   current_step_id: { type: integer, comment: "Current Step ID", fk: "workflow_step.workflow_step_id", tooltip: "Identifier of the current step in execution", table_display: true  }
-  child_workflow_id: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Child Workflow ID", tooltip: "Identifier of the child / sub workflow to which the step belongs", form_display: true, table_display: true  }started_by: { type: integer, comment: "Started By", tooltip: "Identifier of the user who started the workflow"  }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the instance is active"  }
   created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the instance was created"  }
   updated_at: { type: datetime, comment: "Updated AT", tooltip: "Date and time when the instance was last updated"  }
 table_layout:
-  default_order: [{field: workflow_instance_id, order: DESC}]
+  default_order: [{field: start_dt, order: DESC}]
 ```
 
 ## WORKFLOW_INSTANCE_STEP
