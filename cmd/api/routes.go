@@ -80,7 +80,7 @@ func (app *application) routes() http.Handler {
 	})
 
 	// AI ASSISTANT ENDPOINTS
-	//mux.HandleFunc("/etlx-assist", etlxAssistHandler)
+	mux.HandleFunc("/etlx-assist", etlxAssistHandler)
 
 	//mux.NotFound = http.HandlerFunc(app.notFound)
 	//mux.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowed)

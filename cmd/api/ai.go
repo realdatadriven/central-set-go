@@ -9,7 +9,7 @@ Here is a complete, production-ready Go server example using `net/http` and `htt
 - It maintains multi-turn by letting the client send full history each time (stateless, simple).
 - Uses Google AI Gemini 1.5 Flash by default (fast & capable); swap to Ollama for local.
 - Add your API key via env (e.g., `GOOGLE_GENAI_API_KEY`).
-
+*/
 
 import (
 	"context"
@@ -44,14 +44,10 @@ type Response struct {
 
 func initGenkit() {
 	ctx := context.Background()
-	var err error
-	g, err = genkit.Init(ctx,
+	g = genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}), // or ollama.Ollama{ServerAddress: "http://localhost:11434"}
-		genkit.WithLogLevel("debug"),                // optional
+		// genkit.WithLogLevel("debug"),                // optional
 	)
-	if err != nil {
-		log.Fatalf("Failed to init Genkit: %v", err)
-	}
 	log.Println("Genkit initialized with model:", modelName)
 }
 
@@ -70,7 +66,7 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	// Build Genkit messages: prepend system if needed
-	msgs := []ai.Message{}
+	msgs := []*ai.Message{}
 	hasSystem := false
 	for _, m := range req.Messages {
 		if m.Role == "system" {
@@ -80,9 +76,9 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 		if m.Role == "assistant" {
 			role = ai.RoleModel
 		}
-		msgs = append(msgs, ai.Message{
+		msgs = append(msgs, &ai.Message{
 			Role:    role,
-			Content: []ai.Part{ai.NewTextPart(m.Content)},
+			Content: []*ai.Part{ai.NewTextPart(m.Content)},
 		})
 	}
 	var systemPrompt string
@@ -92,14 +88,16 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 	// append from file llm.txt
 	data, err := os.ReadFile("etlxllm.txt")
 	if err != nil {
-		return fmt.Errorf("failed to read file: %w", err)
+		//return fmt.Errorf("failed to read file: %w", err)
+		http.Error(w, fmt.Sprintf("failed to read file: %v", err), http.StatusInternalServerError)
+		return
 	}
 	systemPrompt = systemPrompt + string(data)
 	if !hasSystem {
-		msgs = append([]ai.Message{
+		msgs = append([]*ai.Message{
 			{
 				Role:    ai.RoleSystem,
-				Content: []ai.Part{ai.NewTextPart(systemPrompt)},
+				Content: []*ai.Part{ai.NewTextPart(systemPrompt)},
 			},
 		}, msgs...)
 	}
@@ -117,4 +115,3 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(Response{Content: resp.Text()})
 }
-*/
