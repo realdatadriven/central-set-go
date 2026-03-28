@@ -166,7 +166,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			}
 		}
 	} else {
-		fmt.Println("NO SCHEMA FIELDS (READ)")
+		fmt.Println(table, "NO SCHEMA FIELDS (READ)")
 	}
 	if _, ok := _schema["fields"]; !ok {
 		// pass
