@@ -121,7 +121,7 @@ comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
   dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 3 }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 9 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 9 }
   dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown }
   order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3 }
   active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
