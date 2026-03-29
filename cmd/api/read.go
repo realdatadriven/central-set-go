@@ -155,7 +155,8 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			//fmt.Println(field_data.(map[string]any)["name"], field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"] == any(true), (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)))
 			_fk, ok := field_data.(map[string]any)["fk"]
 			if !ok {
-			} else if _fk == any(true) || (_fk == any(1) || _fk == any(1.0)) {
+				//} else if _fk == any(true) || (_fk == any(1) || _fk == any(1.0)) {
+			} else if app.toBool(_fk) {
 				referred_table := ""
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
 					referred_table = field_data.(map[string]any)["referred_table"].(string)
@@ -174,9 +175,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	} else if join == "none" {
 		// pass
 	} else if join == "all" {
+		//fmt.Println(table, 1)
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"] == any(true) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+				//fmt.Println(field, 1)
+				//fmt.Println(table, field, 2, field_data.(map[string]any)["fk"])
+				//} else if field_data.(map[string]any)["fk"] == any(true) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+			} else if app.toBool(field_data.(map[string]any)["fk"]) {
+				// fmt.Printf("%s -> %s %v %T\n", table, field, field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"])
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -223,12 +229,15 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					fk_tables_fields[alias] = _referred_table_schema
 				}
 				// fmt.Println(field, referred_table, referred_column)
+			} else {
+				// fmt.Printf("%s -> %s %v %T\n", table, field, field_data.(map[string]any)["fk"], field_data.(map[string]any)["fk"])
 			}
 		}
 	} else {
 		for field, field_data := range _schema["fields"].(map[string]any) {
 			if _, ok := field_data.(map[string]any)["fk"]; !ok {
-			} else if field_data.(map[string]any)["fk"] == any(true) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+				//} else if field_data.(map[string]any)["fk"] == any(true) || (field_data.(map[string]any)["fk"] == any(1) || field_data.(map[string]any)["fk"] == any(1.0)) {
+			} else if app.toBool(field_data.(map[string]any)["fk"]) {
 				referred_table := ""
 				level := 1
 				if _, ok := field_data.(map[string]any)["referred_table"]; ok {
@@ -294,6 +303,9 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		}
 	}
 
+	if table == "menu_table" {
+		fmt.Printf("%s: %s -> %v\n", table, join, _flds)
+	}
 	// CHECK ROW LEVEL ACCESS, IF SO UPDATE FILTERS field_id in (?) ? = row_id allowed
 	_row_level_tables := []string{}
 	rla_tables_ids := Dict{}
@@ -603,7 +615,9 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			"args":    args,
 		}
 	}
-	//fmt.Println(query, args)
+	if table == "menu_table" {
+		// fmt.Printf("%s: %s -> %s %v", table, join, query, args)
+	}
 	results := make([]map[string]any, 0)
 	data, _, err := db.QueryMultiRows(query, args...)
 	if err != nil {

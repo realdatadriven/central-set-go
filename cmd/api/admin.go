@@ -397,6 +397,31 @@ func (app *application) toInt(v any) int {
 	}
 }
 
+func (app *application) toBool(v any) bool {
+	switch val := v.(type) {
+	case bool:
+		return val
+	case float32:
+		return bool(val == 1)
+	case float64:
+		return bool(val == 1)
+	case int64:
+		return bool(val == 1)
+	case int32:
+		return bool(val == 1)
+	case int:
+		return bool(val == 1)
+	case string:
+		b, err := strconv.ParseBool(val)
+		if err != nil {
+			return false // Handle invalid strings as needed
+		}
+		return b
+	default:
+		return false // or handle error
+	}
+}
+
 func (app *application) tables(params Dict, tables []any) Dict {
 	//fmt.Println(1, params)
 	var user_id int
