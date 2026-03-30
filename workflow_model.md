@@ -203,6 +203,28 @@ table_layout:
   default_order: [{field: order_index, order: ASC}]
 ```
 
+## WORKFLOW_STEP_COND
+```yaml
+table: workflow_step_cond
+comment: "Workflow Step Conditions"
+tooltip: "Defines the data structure required for each to create workflow condition"
+columns:
+  workflow_step_cond_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Schema ID", tooltip: "Unique identifier of the schema field"  }
+  workflow_id: { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow associated with the field", form_display: true, table_display: true  }
+  workflow_step_id: { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step where the field is collected", form_display: true, table_display: true  }
+  cond_description: { type: text, nullable: false, comment: "Description", tooltip: "Cndition Description", form_display: true, table_display: true, form_long_text: true, form_code: markdown }
+  cond_trigger: { type: text, nullable: false, comment: "Condition Trigger", tooltip: "JS Rule that when matched triger", form_display: true, table_display: true, form_long_text: true, form_code: js }
+  cond_action: { type: text, nullable: false, comment: "Condition Action", tooltip: "JS Rule run on triggered", form_display: true, table_display: true, form_long_text: true, form_code: js }
+  active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the field is active"  }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the field definition"  }
+  app_id: { type: integer, comment: "App ID", tooltip: "Identifier of the application context"  }
+  created_at: { type: datetime, comment: "Created AT", tooltip: "Date and time when the field was created"  }
+  updated_at: { type: datetime, comment: "Updated AT", tooltip: "Date and time when the field was last updated"  }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the field is excluded from active use"  }
+table_layout:
+  default_order: [{field: order_index, order: ASC}]
+```
+
 ## WORKFLOW_STEP_SCHEMA_OPTION
 ```yaml
 table: workflow_step_schema_option
