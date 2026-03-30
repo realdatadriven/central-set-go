@@ -29,6 +29,7 @@ cs_app:
       - {table: workflow, requires_rla: true, active: true}
       - {table: workflow_sla, active: false}
       - {table: workflow_step, active: false}
+      - {table: workflow_step_cond, active: false}
       - {table: workflow_step_sla, active: false}
       - {table: workflow_step_schema, active: false}
       - {table: workflow_step_schema_option, active: false}
