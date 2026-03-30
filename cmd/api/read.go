@@ -304,7 +304,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	}
 
 	if table == "menu_table" {
-		fmt.Printf("%s: %s -> %v\n", table, join, _flds)
+		//fmt.Printf("%s: %s -> %v\n", table, join, _flds)
 	}
 	// CHECK ROW LEVEL ACCESS, IF SO UPDATE FILTERS field_id in (?) ? = row_id allowed
 	_row_level_tables := []string{}
