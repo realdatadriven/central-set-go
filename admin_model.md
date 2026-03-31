@@ -807,29 +807,48 @@ columns:
   excluded:             { type: boolean, default: false, comment: "Excluded", order: 8 }
 ```
 
+## THROW_ERR
+```yaml
+table: throw_err
+comment: Throw Error
+columns:
+  throw_err_id:     { type: integer, pk: true, autoincrement: true, comment: "Role ID" }
+  throw_err:        { type: varchar(20), nullable: false, unique: true, comment: "Role", form_display: true, table_display: true, order: 1 }
+  throw_err_desc:   { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:       { type: datetime, comment: "Created at" }
+  updated_at:       { type: datetime, comment: "Updated at" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {throw_err_id: 1, throw_err: if_empty, throw_err_desc: Throw Error if Empty, excluded: false}
+  - {throw_err_id: 2, throw_err: if_not_empty, throw_err_desc: Throw Error if not Empty, excluded: false}
+form_layout:
+  size: 4
+```
+
 ## VALIDATIONS
 ```yaml
 table: validation
 comment: Validation Roles
 columns:
   validation_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  validation:      { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 10 }
+  validation:      { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   validation_code: { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
+  throw_err_id:    { type: integer, fk: "throw_err.throw_err_id", comment: "Throw Error ID", order: 3, form_size: 2 }
   err_msg:         { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
   table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
   db:              { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  sql:             { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
   create:          { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
   read:            { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
   update:          { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
   delete:          { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
+  sql:             { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
   app_id:          { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
   created_at:      { type: datetime, comment: "Created at", order: 11 }
   updated_at:      { type: datetime, comment: "Updated at", order: 12 }
   excluded:        { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
-  - {validation: Validate user Email existance, err_msg: "User {.email} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+  - {validation: Validate user Email existance, validation_code: USR01, throw_err_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
