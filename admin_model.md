@@ -812,19 +812,24 @@ columns:
 table: validation
 comment: Validation Roles
 columns:
-  validation_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  table:               { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 4 }
-  db:               { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 4 }
-  sql:               { type: text, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
-  app_id:                 { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  create:                 { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
-  read:                   { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
-  update:                 { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
-  delete:                 { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
-  user_id:                { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
-  created_at:             { type: datetime, comment: "Created at", order: 11 }
-  updated_at:             { type: datetime, comment: "Updated at", order: 12 }
-  excluded:               { type: boolean, default: false, comment: "Excluded", order: 13 }
+  validation_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  validation:      { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 10 }
+  validation_code: { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
+  err_msg:         { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
+  table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  db:              { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  sql:             { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
+  create:          { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
+  read:            { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
+  update:          { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
+  delete:          { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
+  user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
+  app_id:          { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  created_at:      { type: datetime, comment: "Created at", order: 11 }
+  updated_at:      { type: datetime, comment: "Updated at", order: 12 }
+  excluded:        { type: boolean, default: false, comment: "Excluded", order: 13 }
+data:
+  - {validation: Validate user Email existance, err_msg: "User {.email} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
