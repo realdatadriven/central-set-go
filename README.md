@@ -1,4 +1,4 @@
-# Central Set (CS)
+# Central Set (CS / C7)
 
 **Central Set** is a **configuration-driven data platform & Admin UI** written in **Golang**.
 
