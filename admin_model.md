@@ -34,6 +34,8 @@ cs_app:
       - {table: arrow_flight_table, active: false}
       - {table: arrow_flight_table_field, active: false}
       - {table: arrow_flight_table_scope, active: false}
+      - validation
+      - {table: valid_reaction, active: false}
       - user_log
       - custom_table
       - custom_form
@@ -807,20 +809,20 @@ columns:
   excluded:             { type: boolean, default: false, comment: "Excluded", order: 8 }
 ```
 
-## THROW_ERR
+## VALID_REACTION
 ```yaml
-table: throw_err
-comment: Throw Error
+table: valid_reaction
+comment: Validation Reaction
 columns:
-  throw_err_id:     { type: integer, pk: true, autoincrement: true, comment: "Role ID" }
-  throw_err:        { type: varchar(20), nullable: false, unique: true, comment: "Role", form_display: true, table_display: true, order: 1 }
-  throw_err_desc:   { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  valid_reaction_id:     { type: integer, pk: true, autoincrement: true, comment: "Validation Reaction ID" }
+  valid_reaction:        { type: varchar(20), nullable: false, unique: true, comment: "Validation Reaction", form_display: true, table_display: true, order: 1 }
+  valid_reaction_desc:   { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
   created_at:       { type: datetime, comment: "Created at" }
   updated_at:       { type: datetime, comment: "Updated at" }
   excluded:         { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {throw_err_id: 1, throw_err: if_empty, throw_err_desc: Throw Error if Empty, excluded: false}
-  - {throw_err_id: 2, throw_err: if_not_empty, throw_err_desc: Throw Error if not Empty, excluded: false}
+  - {valid_reaction_id: 1, valid_reaction: if_empty, valid_reaction_desc: Validation Reaction if Empty, excluded: false}
+  - {valid_reaction_id: 2, valid_reaction: if_not_empty, valid_reaction_desc: Validation Reaction if not Empty, excluded: false}
 form_layout:
   size: 4
 ```
@@ -833,7 +835,7 @@ columns:
   validation_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   validation:      { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   validation_code: { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
-  throw_err_id:    { type: integer, fk: "throw_err.throw_err_id", comment: "Throw Error ID", order: 3, form_size: 2 }
+  valid_reaction_id:    { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", order: 3, form_size: 2 }
   err_msg:         { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
   table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
   db:              { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
@@ -848,7 +850,7 @@ columns:
   updated_at:      { type: datetime, comment: "Updated at", order: 12 }
   excluded:        { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
-  - {validation: Validate user Email existance, validation_code: USR01, throw_err_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+  - {validation: Validate user Email existance, validation_code: USR01, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
