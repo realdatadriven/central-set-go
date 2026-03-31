@@ -806,3 +806,27 @@ columns:
   updated_at:           { type: datetime, comment: "Updated at", order: 7 }
   excluded:             { type: boolean, default: false, comment: "Excluded", order: 8 }
 ```
+
+## VALIDATIONS
+```yaml
+table: validation
+comment: Validation Roles
+columns:
+  validation_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  table:               { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 4 }
+  db:               { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 4 }
+  sql:               { type: text, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
+  app_id:                 { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  create:                 { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
+  read:                   { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
+  update:                 { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
+  delete:                 { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
+  user_id:                { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
+  created_at:             { type: datetime, comment: "Created at", order: 11 }
+  updated_at:             { type: datetime, comment: "Updated at", order: 12 }
+  excluded:               { type: boolean, default: false, comment: "Excluded", order: 13 }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
