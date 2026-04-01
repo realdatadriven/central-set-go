@@ -549,6 +549,8 @@ columns:
   table:        { type: varchar(100), comment: "Table (if applicable)", order: 5 }
   app_id:       { type: integer, fk: "app.app_id", comment: "Application ID", order: 6 }
   active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 7 }
+  run_only_once: { type: boolean, default: false, comment: "Run Once", form_display: true, table_display: true, form_size: 2, order: 9 }
+  last_run:     { type: datetime, comment: "Last Run", form_display: true, table_display: true, form_size: 4, order: 10 }
   user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 8 }
   created_at:   { type: datetime, comment: "Created at", order: 9 }
   updated_at:   { type: datetime, comment: "Updated at", order: 10 }

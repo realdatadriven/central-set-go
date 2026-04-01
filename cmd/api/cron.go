@@ -53,6 +53,21 @@ func (app *application) AdminInsertData(table string, data Dict) error {
 	return nil
 }
 
+func (app *application) AdminExecuteQuery(query string, data Dict) error {
+	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return err
+	} else {
+		defer db.Close()
+		_, err = db.ExecuteNamedQuery(query, data)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (app *application) AdminGetRowByID(sql string, id any) (Dict, error) {
 	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
@@ -126,6 +141,21 @@ func (app *application) GetRowsByFilter(sql string, params Dict, filters []any) 
 		}
 		return *res, nil
 	}
+}
+
+func (app *application) ExecuteQuery(query string, data Dict) error {
+	dsn, _, _ := app.GetDBNameFromParams(params)
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return err
+	} else {
+		defer db.Close()
+		_, err = db.ExecuteNamedQuery(query, data)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (app *application) CronRunEndPoint(data Dict) (Dict, error) {
@@ -208,6 +238,10 @@ func (app *application) CronJobs() error {
 				if err != nil {
 					fmt.Printf("Error saving the cron job log: %v\n", err)
 				}
+			} else if run_only_once, run_only_once_ok := data["run_only_once"]; 
+				last_run, last_run_ok := data["last_run"]; 
+				run_only_once_ok && app.GetBool(run_only_once) && last_run_ok && last_run != nil {
+					continue
 			} else {
 				delete(data, "active")
 				data["start_at"] = time.Now()
@@ -226,6 +260,15 @@ func (app *application) CronJobs() error {
 						fmt.Printf("Error saving the cron job log: %v\n", err)
 					}
 				} else {
+					// update add last_run date
+					data["updated_at"] = time.Now()
+					data["last_run"] = time.Now()
+					sql := `update cron set last_run = :last_run where cron_id = :cron_id`
+					err = app.AdminExecuteQuery(sql, data)
+					if err != nil {
+						fmt.Printf("Body: %v -> %v\n", res_json, data)
+						fmt.Printf("Error updating the cron last_run: %v\n", err)
+					}
 					data["created_at"] = time.Now()
 					data["updated_at"] = time.Now()
 					data["excluded"] = false
