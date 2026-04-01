@@ -55,6 +55,16 @@ type FlightManager interface {
 	Stop(ctx context.Context) error
 }
 
+// namedCatalog wraps a catalog.Catalog with a name.
+type namedCatalog struct {
+	catalog.Catalog
+	name string
+}
+
+func (c *namedCatalog) Name() string {
+	return c.name
+}
+
 // AirportAdapter implements FlightManager using hugr-lab/airport-go.
 type AirportAdapter struct {
 	validateToken func(token string) (string, error)
@@ -224,7 +234,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	if err != nil {
 		return fmt.Errorf("failed to build catalog: %w", err)
 	}
-	a.catalog = cat
+	a.catalog = cat // &namedCatalog{Catalog: cat, name: "catalog_name"} // For multi-catalog support
 	// Create grpc server and register airport server
 	debugLevel := slog.LevelInfo
 	if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelInfo" {
@@ -236,6 +246,13 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	} else if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelDebug" {
 		debugLevel = slog.LevelDebug
 	}
+	/* multi-catalog-support
+	config := airport.MultiCatalogServerConfig{
+		Catalogs: []catalog.Catalog{salesCatalog, analyticsCatalog},
+		Auth:     airport.BearerAuth(a.validateToken),
+		Address:  listenAddr,
+		LogLevel: &debugLevel,
+	}*/
 	config := airport.ServerConfig{
 		Catalog:  cat,
 		Auth:     airport.BearerAuth(a.validateToken),
@@ -248,12 +265,21 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	if err != nil {
 		log.Fatalf("Failed to load TLS credentials: %v", err)
 	}
+	/* multi-catalog-support
+	// Create gRPC server with options (includes interceptors for metadata extraction)
+	opts := airport.MultiCatalogServerOptions(config)
+	*/
 	opts := airport.ServerOptions(config)
 	if creds != nil {
 		// fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)
+	/* multi-catalog-support
+	mcs, err := airport.NewMultiCatalogServer(a.grpcSrv, config); err != nil {
+		return fmt.Errorf("airport.NewServer failed: %w", err)
+	}
+	// mcs coud be use to add or remove catalogs*/
 	if err := airport.NewServer(a.grpcSrv, config); err != nil {
 		return fmt.Errorf("airport.NewServer failed: %w", err)
 	}
