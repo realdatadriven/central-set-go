@@ -253,6 +253,9 @@ columns:
   workflow_step_responsible_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Responsible ID", tooltip: "Unique identifier of the assignment" }
   workflow_step_id: { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step associated with the assignment", table_display: true  }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step" }
+  email: { type: varchar(100), comment: "Email", tooltip: "Email associated with the responsibility" }
+  first_name: { type: varchar(50), nullable: false, comment: "First Name", form_display: true, table_display: true, form_size: 4, order: 2 }
+  last_name: { type: varchar(50), comment: "Last Name", form_display: true, table_display: true, form_size: 4, order: 3 }
   department_id: { type: integer, comment: "Department ID", tooltip: "Identifier of the department responsible for the step" }
   role: { type: varchar(100), comment: "Role", tooltip: "Role associated with the responsibility" }
   active: { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the assignment is active" }

@@ -161,11 +161,12 @@ comment: Applications
 columns:
   app_id:      { type: integer, pk: true, autoincrement: true, comment: "App ID" }
   app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9, order: 1 }
-  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 3 }
+  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 3 }
   version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
   email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
   db:          { type: varchar(20), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
   attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
+  category:    { type: varchar(200), comment: "Category", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
   config:      { type: text, comment: "Config" }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
@@ -549,6 +550,8 @@ columns:
   table:        { type: varchar(100), comment: "Table (if applicable)", order: 5 }
   app_id:       { type: integer, fk: "app.app_id", comment: "Application ID", order: 6 }
   active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 7 }
+  run_only_once: { type: boolean, default: false, comment: "Run Once", form_display: true, table_display: true, form_size: 2, order: 9 }
+  last_run:     { type: datetime, comment: "Last Run", form_display: true, table_display: true, form_size: 4, order: 10 }
   user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 8 }
   created_at:   { type: datetime, comment: "Created at", order: 9 }
   updated_at:   { type: datetime, comment: "Updated at", order: 10 }
