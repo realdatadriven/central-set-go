@@ -114,6 +114,10 @@ type application struct {
 	WS_ConnectionManager           *ConnectionManager
 	//user user
 	//admin  admin
+	cronScheduler *cron.Cron
+    cronEntries   map[any]cron.EntryID
+    cronEntriesMu sync.Mutex
+    lastCronCheck time.Time
 }
 
 func run(logger *slog.Logger) error {
