@@ -14,6 +14,7 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
 	"github.com/realdatadriven/central-set-go/internal/version"
+	"github.com/robfig/cron/v3"
 
 	"github.com/lmittmann/tint"
 	"github.com/realdatadriven/etlx"
@@ -115,9 +116,9 @@ type application struct {
 	//user user
 	//admin  admin
 	cronScheduler *cron.Cron
-    cronEntries   map[any]cron.EntryID
-    cronEntriesMu sync.Mutex
-    lastCronCheck time.Time
+	cronEntries   map[any]cron.EntryID
+	cronEntriesMu sync.Mutex
+	lastCronCheck time.Time
 }
 
 func run(logger *slog.Logger) error {

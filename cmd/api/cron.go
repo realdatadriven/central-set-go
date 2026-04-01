@@ -208,6 +208,7 @@ func (app *application) CronJobsOLD() error {
 			//fmt.Printf("2: %T, %v\n", job, job)
 			sql := `select * from "cron" where "cron_id" = ? and "cron" = ? and "active" = true and "excluded" = false`
 			data, err := app.AdminGetRowByFilter(sql, []any{job["cron_id"], job["cron"]})
+			last_run, last_run_ok := data["last_run"]
 			if err != nil {
 				data = job
 				delete(data, "active")
@@ -238,10 +239,8 @@ func (app *application) CronJobsOLD() error {
 				if err != nil {
 					fmt.Printf("Error saving the cron job log: %v\n", err)
 				}
-			} else if run_only_once, run_only_once_ok := data["run_only_once"]; 
-				last_run, last_run_ok := data["last_run"]; 
-				run_only_once_ok && app.GetBool(run_only_once) && last_run_ok && last_run != nil {
-					continue
+			} else if run_only_once, run_only_once_ok := data["run_only_once"]; run_only_once_ok && app.toBool(run_only_once) && last_run_ok && last_run != nil {
+				//
 			} else {
 				delete(data, "active")
 				data["start_at"] = time.Now()
@@ -344,7 +343,7 @@ func (app *application) RegisterCronJob(job Dict) {
 			return
 		}
 		// run_only_once guard: skip if already ran
-		if runOnce, ok := data["run_only_once"]; ok && app.GetBool(runOnce) {
+		if runOnce, ok := data["run_only_once"]; ok && app.toBool(runOnce) {
 			if lastRun, ok := data["last_run"]; ok && lastRun != nil {
 				fmt.Printf("Skipping run_only_once job %v, already ran at %v\n", data["api"], lastRun)
 				return
