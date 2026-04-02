@@ -817,12 +817,12 @@ columns:
 table: valid_reaction
 comment: Validation Reaction
 columns:
-  valid_reaction_id:     { type: integer, pk: true, autoincrement: true, comment: "Validation Reaction ID" }
-  valid_reaction:        { type: varchar(20), nullable: false, unique: true, comment: "Validation Reaction", form_display: true, table_display: true, order: 1 }
-  valid_reaction_desc:   { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
-  created_at:       { type: datetime, comment: "Created at" }
-  updated_at:       { type: datetime, comment: "Updated at" }
-  excluded:         { type: boolean, default: false, comment: "Excluded" }
+  valid_reaction_id:   { type: integer, pk: true, autoincrement: true, comment: "Validation Reaction ID" }
+  valid_reaction:      { type: varchar(20), nullable: false, unique: true, comment: "Validation Reaction", form_display: true, table_display: true, order: 1 }
+  valid_reaction_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:          { type: datetime, comment: "Created at" }
+  updated_at:          { type: datetime, comment: "Updated at" }
+  excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
   - {valid_reaction_id: 1, valid_reaction: if_empty, valid_reaction_desc: Validation Reaction if Empty, excluded: false}
   - {valid_reaction_id: 2, valid_reaction: if_not_empty, valid_reaction_desc: Validation Reaction if not Empty, excluded: false}
@@ -838,7 +838,7 @@ columns:
   validation_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   validation:      { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   validation_code: { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
-  valid_reaction_id:    { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", order: 3, form_size: 2 }
+  valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", order: 3, form_size: 2 }
   err_msg:         { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
   table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
   db:              { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
