@@ -37,17 +37,17 @@ cs_app:
       - custom_form
       - table
       - table_schema
-  Flight:
-    menu_icon: document-report
+  Arrow Flight:
+    menu_icon: paper-airplane
     menu_order: 3
     active: true
     #menu_config: '{"label": "flight_catalog","tooltip": "flight_catalog_desc","load_items": {"table": "flight_catalog","tables": ["flight_catalog"]}}'
     tables:
       #- {table: flight_catalog, requires_rla: true, active: true}
       - {table: arrow_flight, requires_rla: true, active: true} # flight_schema
-      - {table: arrow_flight_table, active: false}
-      - {table: arrow_flight_table_field, active: false}
-      - {table: arrow_flight_table_scope, active: false}
+      - {table: arrow_flight_table, active: false} # flight_schema_table
+      - {table: arrow_flight_table_field, active: false} # flight_schema_table_field
+      - {table: arrow_flight_table_scope, active: false} # flight_schema_table_scope
   Jobs Scheduling:
     menu_icon: clock
     menu_order: 4
