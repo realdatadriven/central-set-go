@@ -30,10 +30,6 @@ cs_app:
       - users
       - access_key
       - env
-      - {table: arrow_flight, requires_rla: true, active: true}
-      - {table: arrow_flight_table, active: false}
-      - {table: arrow_flight_table_field, active: false}
-      - {table: arrow_flight_table_scope, active: false}
       - validation
       - {table: valid_reaction, active: false}
       - user_log
@@ -41,19 +37,30 @@ cs_app:
       - custom_form
       - table
       - table_schema
-  Params:
-    menu_icon: adjustments
+  Flight:
+    menu_icon: document-report
     menu_order: 3
     active: true
+    #menu_config: '{"label": "flight_catalog","tooltip": "flight_catalog_desc","load_items": {"table": "flight_catalog","tables": ["flight_catalog"]}}'
     tables:
-      - lang
+      #- {table: flight_catalog, requires_rla: true, active: true}
+      - {table: arrow_flight, requires_rla: true, active: true} # flight_schema
+      - {table: arrow_flight_table, active: false}
+      - {table: arrow_flight_table_field, active: false}
+      - {table: arrow_flight_table_scope, active: false}
   Jobs Scheduling:
     menu_icon: clock
     menu_order: 4
     active: true
     tables:
       - cron
-      - {table: cron_log, active: false}
+      - {table: cron_log, active: false}  
+  Params:
+    menu_icon: adjustments
+    menu_order: 5
+    active: true
+    tables:
+      - lang
 ```
 
 ## LANG
@@ -225,16 +232,16 @@ table_layout:
 table: table
 comment: Tables
 columns:
-  table_id:         { type: integer, pk: true, autoincrement: true, comment: "Table ID" }
-  table:            { type: varchar(100), unique: false, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12, order: 1 }
-  table_desc:       { type: text, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 2 }
-  db:               { type: varchar(50), comment: "Database / Schema", form_display: true, table_display: true, form_size: 12, order: 3 }
-  requires_rla:     { type: boolean, default: false, comment: "Requires Row Level Access (RLA)", form_display: true, table_display: true, order: 4 }
-  user_id:          { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 5 }
-  app_id:           { type: integer, fk: "app.app_id", comment: "Application", order: 6 }
-  created_at:       { type: datetime, comment: "Created at", order: 7 }
-  updated_at:       { type: datetime, comment: "Updated at", order: 8 }
-  excluded:         { type: boolean, default: false, comment: "Excluded", order: 9 }
+  table_id:     { type: integer, pk: true, autoincrement: true, comment: "Table ID" }
+  table:        { type: varchar(100), unique: false, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12, order: 1 }
+  table_desc:   { type: text, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 2 }
+  db:           { type: varchar(50), comment: "Database / Schema", form_display: true, table_display: true, form_size: 12, order: 3 }
+  requires_rla: { type: boolean, default: false, comment: "Requires Row Level Access (RLA)", form_display: true, table_display: true, order: 4 }
+  user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 5 }
+  app_id:       { type: integer, fk: "app.app_id", comment: "Application", order: 6 }
+  created_at:   { type: datetime, comment: "Created at", order: 7 }
+  updated_at:   { type: datetime, comment: "Updated at", order: 8 }
+  excluded:     { type: boolean, default: false, comment: "Excluded", order: 9 }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -542,20 +549,20 @@ form_layout:
 table: cron
 comment: Jobs scheduling
 columns:
-  cron_id:      { type: integer, pk: true, autoincrement: true, comment: "Cron ID" }
-  cron:         { type: varchar(100), unique: false, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
-  cron_desc:    { type: text, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 9, order: 2 }
-  api:          { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 10, order: 3 }
-  db:           { type: varchar(50), comment: "Database (if applicable)", order: 4 }
-  table:        { type: varchar(100), comment: "Table (if applicable)", order: 5 }
-  app_id:       { type: integer, fk: "app.app_id", comment: "Application ID", order: 6 }
-  active:       { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 7 }
+  cron_id:       { type: integer, pk: true, autoincrement: true, comment: "Cron ID" }
+  cron:          { type: varchar(100), unique: false, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
+  cron_desc:     { type: text, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 9, order: 2 }
+  api:           { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 10, order: 3 }
+  db:            { type: varchar(50), comment: "Database (if applicable)", order: 4 }
+  table:         { type: varchar(100), comment: "Table (if applicable)", order: 5 }
+  app_id:        { type: integer, fk: "app.app_id", comment: "Application ID", order: 6 }
+  active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 7 }
   run_only_once: { type: boolean, default: false, comment: "Run Once", form_display: true, table_display: true, form_size: 2, order: 9 }
-  last_run:     { type: datetime, comment: "Last Run", form_display: true, table_display: true, form_size: 4, order: 10 }
-  user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 8 }
-  created_at:   { type: datetime, comment: "Created at", order: 9 }
-  updated_at:   { type: datetime, comment: "Updated at", order: 10 }
-  excluded:     { type: boolean, default: false, comment: "Excluded", order: 11 }
+  last_run:      { type: datetime, comment: "Last Run", form_display: true, table_display: true, form_size: 4, order: 10 }
+  user_id:       { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 8 }
+  created_at:    { type: datetime, comment: "Created at", order: 9 }
+  updated_at:    { type: datetime, comment: "Updated at", order: 10 }
+  excluded:      { type: boolean, default: false, comment: "Excluded", order: 11 }
 data:
   - {cron_id: 1, cron: "0 0 * * *", cron_desc: Backup, api: buckup, app_id: 1, db: ADMIN, active: false, excluded: false}
   - {cron_id: 2, cron: "0 0 * * *", cron_desc: "Update Env", api: "env/sync", app_id: 1, db: ADMIN, active: false, excluded: false}
@@ -835,23 +842,23 @@ form_layout:
 table: validation
 comment: Validation Roles
 columns:
-  validation_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  validation:      { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
-  validation_code: { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
+  validation_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  validation:        { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
+  validation_code:   { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
   valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", order: 3, form_size: 2 }
-  err_msg:         { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
-  table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  db:              { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  create:          { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
-  read:            { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
-  update:          { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
-  delete:          { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
-  sql:             { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
-  user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
-  app_id:          { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  created_at:      { type: datetime, comment: "Created at", order: 11 }
-  updated_at:      { type: datetime, comment: "Updated at", order: 12 }
-  excluded:        { type: boolean, default: false, comment: "Excluded", order: 13 }
+  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
+  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  db:                { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
+  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
+  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
+  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
+  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
+  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  created_at:        { type: datetime, comment: "Created at", order: 11 }
+  updated_at:        { type: datetime, comment: "Updated at", order: 12 }
+  excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
   - {validation: Validate user Email existance, validation_code: USR01, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
