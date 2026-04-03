@@ -860,7 +860,7 @@ columns:
   updated_at:        { type: datetime, comment: "Updated at", order: 12 }
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
-  - {validation: Validate user Email existance, validation_code: USR01, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+  - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
