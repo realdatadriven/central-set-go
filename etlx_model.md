@@ -6,8 +6,7 @@
 name: ETLX
 description: ETLX Model
 runs_as: MODEL
-conn: 'sqlite3:database/ETLX.db'
-admin_conn: 'sqlite3:database/ADMIN.db'
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
