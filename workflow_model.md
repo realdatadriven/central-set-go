@@ -6,7 +6,6 @@
 name: WORKFLOW
 description: Dynamic Workflow and Process Management Model
 runs_as: MODEL
-conn: 'sqlite3:database/WORKFLOW.db'
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
