@@ -303,6 +303,57 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			}
 		}
 	}
+
+	// VALIDATIONS
+	/*table: validation*/
+	_, database, _ := app.GetDBNameFromParams(params)
+	//crud_aciton, table
+	validation_data := []any{database, table}
+	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "database" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
+	validation_rows, err := app.AdminGetRowsByFilter(get_validations_sql, validation_data)
+	if err != nil {
+		fmt.Printf("Error occurred while fetching validations: %v", err)
+		/*return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Error occurred while fetching validations: %v", err),
+		}*/
+	} else if len(validation_rows) > 0 {
+		etlx_engine := &etlx.ETLX{}
+		for _, validation := range validation_rows {
+			if _, ok := validation["sql"]; ok {
+				sql_rule := validation["sql"].(string)
+				valid_reaction_id := validation["valid_reaction_id"]
+				//fmt.Println("VALIDATION SQL:", sql_rule)
+				var valid bool
+				sql, _filters_opts, _ := etlx_engine.NamedToPositional(sql_rule, _data)
+				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
+				if err != nil {
+					fmt.Printf("Error executing validation SQL for validation_id %v: %v", validation["validation_id"], err)
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("Error executing validation SQL: %v", err),
+					}
+				}
+				// valid_reaction_id = 1 means throw erroe if len(*res) > 0 and valid_reaction_id = 2 means throw error if len(*res) == 0
+				if app.toInt(valid_reaction_id) == 1 {
+					valid = len(res) == 0
+				} else if app.toInt(valid_reaction_id) == 2 {
+					valid = len(res) > 0
+				}
+				if !valid {
+					msg, err := etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
+					if err != nil {
+						msg = validation["err_msg"].(string)
+						fmt.Println("Error rendering validation error message template for validation_id", validation["validation_id"], ":", err, validation["err_msg"])
+					}
+					return Dict{
+						"success": false,
+						"msg":     msg,
+					}
+				}
+			}
+		}
+	}
 	// fmt.Println(crud_aciton)
 	// REMOVE FIELDS THAT IS NOT IN THE TABLE SCHEMA
 	_aux_data := _data
@@ -324,6 +375,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	if db.GetDriverName() == "postgres" && pk != "" {
 		_pg_returning = fmt.Sprintf(` RETURNING "%s"`, pk)
 	}
+	//
 	query := fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)%s`, table, cols, vals, _pg_returning)
 	if crud_aciton != "create" {
 		keys = []any{}

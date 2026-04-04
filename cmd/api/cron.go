@@ -97,6 +97,7 @@ func (app *application) AdminGetRowByFilter(sql string, params []any) (Dict, err
 		return *res, nil
 	}
 }
+
 func (app *application) AdminGetRowsByFilter(sql string, params []any) ([]Dict, error) {
 	dsn, _, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	db, err := etlx.GetDB(dsn)
