@@ -195,9 +195,10 @@ table_extra_options:
 # DATA
 ```yaml
 name: DATA
-description: DATA Model ETLX 
+description: DATA Model ETLX
+database: ETLX
 runs_as: MODEL_DATA
-conn: 'sqlite3:database/ETLX.db'
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
 ## dashboard-1
