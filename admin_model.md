@@ -907,6 +907,7 @@ columns:
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
   sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
   email_remplate:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: html }
+  email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: text }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
   created_at:        { type: datetime, comment: "Created at", order: 11 }

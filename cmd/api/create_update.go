@@ -306,10 +306,11 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 
 	// VALIDATIONS
 	/*table: validation*/
+	etlx_engine := &etlx.ETLX{}
 	_, database, _ := app.GetDBNameFromParams(params)
 	//crud_aciton, table
 	validation_data := []any{database, table}
-	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "database" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
+	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
 	validation_rows, err := app.AdminGetRowsByFilter(get_validations_sql, validation_data)
 	if err != nil {
 		fmt.Printf("Error occurred while fetching validations: %v", err)
@@ -318,7 +319,6 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching validations: %v", err),
 		}*/
 	} else if len(validation_rows) > 0 {
-		etlx_engine := &etlx.ETLX{}
 		for _, validation := range validation_rows {
 			if _, ok := validation["sql"]; ok {
 				sql_rule := validation["sql"].(string)
@@ -527,6 +527,82 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			} else {
 				params["data"] = _data_user
 				return app.confirm_emmail(params)
+			}
+		}
+	}
+	// *** /
+	/*table: crud_action
+	comment: CRUD Action Roles
+	tooltip: Dispaches some actions after a crud operation
+	columns:
+	  crud_action_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
+	  crud_action:       { type: varchar(200), nullable: false, comment: "CRUD Action", form_display: true, table_display: true, order: 2, form_size: 9 }
+	  crud_action_code:  { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
+	  action_type_id:    { type: integer, fk: "action_type.action_type_id", comment: "CRUD Action Reaction ID", order: 3, form_size: 2 }
+	  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
+	  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+	  db:                { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+	  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
+	  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
+	  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
+	  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
+	  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
+	  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
+	  email_remplate:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: html }
+	  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
+	  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+	  created_at:        { type: datetime, comment: "Created at", order: 11 }
+	  updated_at:        { type: datetime, comment: "Updated at", order: 12 }
+	  excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }*/
+	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
+	crud_action_rows, err := app.AdminGetRowsByFilter(get_crud_actions_sql, validation_data)
+	if err != nil {
+		fmt.Printf("Error occurred while fetching crud_actions: %v", err)
+		/*return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
+		}*/
+	} else if len(crud_action_rows) > 0 {
+		for _, crud_action := range crud_action_rows {
+			action_type_id := crud_action["action_type_id"]
+			_, okSql := crud_action["sql"]
+			_, okEmail := crud_action["email_template"]
+			if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
+				if _, ok := crud_action["sql"]; ok {
+					sql_rule := crud_action["sql"].(string)
+					err := app.AdminExecuteQuery(sql_rule, _data)
+					if err != nil {
+						msg, _ := etlx_engine.RenderTemplate(crud_action["err_msg"].(string), _data)
+						return Dict{
+							"success": false,
+							"msg":     msg,
+						}
+					}
+				}
+			} else if app.toInt(action_type_id) == 2 && okEmail { // SendEmail
+				if _, ok := crud_action["email_template"]; ok {
+					// Process email template
+					_to, _ := crud_action["email_to"].(string)
+					to := strings.Split(_to, ";")
+					emailParams := Dict{
+						"to":      to,
+						"subject": fmt.Sprintf("%s - %s", crud_action["crud_action_code"], crud_action["crud_action"]),
+						"body":    crud_action["email_template"],
+						"data": Dict{
+							"data": _data,
+							"user": params["user"],
+						},
+					}
+					err = etlx_engine.SendEmail(emailParams)
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+			} else {
+				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
 			}
 		}
 	}
