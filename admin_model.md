@@ -838,7 +838,7 @@ form_layout:
   size: 4
 ```
 
-## VALIDATIONS
+## VALIDATION
 ```yaml
 table: validation
 comment: Validation Roles
@@ -863,6 +863,32 @@ columns:
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
   - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## VALIDATION_LOGS
+```yaml
+table: validation_logs
+comment: Validation Logs
+columns:
+  validation_log_id: { type: integer, pk: true, autoincrement: true, comment: "Validation Log ID" }
+  validation_id:     { type: integer, fk: "validation.validation_id", comment: "Validation ID", order: 1 }
+  validation_code:   { type: varchar(200), comment: "Validation Code", order: 2 }
+  validation:        { type: varchar(200), comment: "Validation Name", order: 3 }
+  table:             { type: varchar(200), comment: "Table", order: 4 }
+  db:                { type: varchar(200), comment: "Database", order: 5 }
+  action:            { type: varchar(10), comment: "Action (create/update/delete)", order: 6 }
+  success:           { type: boolean, default: true, comment: "Success", order: 9 }
+  log_message:       { type: text, comment: "Log Message", order: 10 }
+  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 7 }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", order: 8 }
+  executed_at:       { type: datetime, comment: "Executed At", order: 11 }
+  created_at:        { type: datetime, comment: "Created at", order: 12 }
+  updated_at:        { type: datetime, comment: "Updated at", order: 13 }
+  excluded:          { type: boolean, default: false, comment: "Excluded", order: 14 }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -915,6 +941,33 @@ columns:
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
 #data:
 #  - {crud_action_id: 1, crud_action: Validate user Email existance, crud_action_code: USR01, action_type_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## CRUD_ACTION_LOGS
+```yaml
+table: crud_action_logs
+comment: CRUD Action Logs
+columns:
+  crud_action_log_id: { type: integer, pk: true, autoincrement: true, comment: "CRUD Action Log ID" }
+  crud_action_id:     { type: integer, fk: "crud_action.crud_action_id", comment: "CRUD Action ID", order: 1 }
+  crud_action_code:   { type: varchar(200), comment: "CRUD Action Code", order: 2 }
+  crud_action:        { type: varchar(200), comment: "CRUD Action Name", order: 3 }
+  table:              { type: varchar(200), comment: "Table", order: 4 }
+  db:                 { type: varchar(200), comment: "Database", order: 5 }
+  action:             { type: varchar(10), comment: "Action (create/update/delete)", order: 6 }
+  action_type:        { type: varchar(20), comment: "Action Type", order: 7 }
+  success:            { type: boolean, default: true, comment: "Success", order: 10 }
+  log_message:        { type: text, comment: "Log Message", order: 11 }
+  user_id:            { type: integer, fk: "users.user_id", comment: "User ID", order: 8 }
+  app_id:             { type: integer, fk: "app.app_id", comment: "App ID", order: 9 }
+  executed_at:        { type: datetime, comment: "Executed At", order: 12 }
+  created_at:         { type: datetime, comment: "Created at", order: 13 }
+  updated_at:         { type: datetime, comment: "Updated at", order: 14 }
+  excluded:           { type: boolean, default: false, comment: "Excluded", order: 15 }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
