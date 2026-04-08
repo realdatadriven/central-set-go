@@ -235,8 +235,8 @@ func (app *application) queryETLXMD(params Dict) Dict {
 		}
 	}
 	// save the conf in a temp md file
-	//_name, _ := x["data"].([]Dict)[0]["etl"].(string)
-	fname, err := etlxlib.TempFIle("", _conf, "config.*.md")
+	_name, _ := x["data"].([]Dict)[0]["etl"].(string)
+	fname, err := etlxlib.TempFIle("", _conf, fmt.Sprintf("config.%s.*.md", _name))
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -245,11 +245,66 @@ func (app *application) queryETLXMD(params Dict) Dict {
 	}
 	fmt.Println(fname)
 	// get duckdb conn
-
+	conn, err := etlxlib.GetDB("duckdb:")
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%v", err),
+		}
+	}
+	defer conn.Close()
 	// install markdown and yaml from community
+	_, err = conn.ExecuteQuery("INSTALL markdown FROM community")
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%v", err),
+		}
+	}
+	_, err = conn.ExecuteQuery("INSTALL yaml FROM community")
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%v", err),
+		}
+	}
+	_, err = conn.ExecuteQuery("LOAD markdown;LOAD yaml")
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%v", err),
+		}
+	}
+	query := ""
+	query = etlxlib.ReplaceFileTablePlaceholder("file", query, fname)
+	nodes, _, err := conn.QueryMultiRows(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("NODES Query: %v", err),
+		}
+	}
+	edges, _, err := conn.QueryMultiRows(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("NODES Query: %v", err),
+		}
+	}
+	edges_est, _, err := conn.QueryMultiRows(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("NODES Query: %v", err),
+		}
+	}
+	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
-		"success": false,
-		"msg":     "Still being developed!",
+		"success":   true,
+		"msg":       msg,
+		"nodes":     *nodes,
+		"edges":     *edges,
+		"edges_est": *edges_est,
 	}
 }
 

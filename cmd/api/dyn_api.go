@@ -495,6 +495,12 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			} else {
 				data = app.etlxRunByName(params)
 			}
+		} else if app.contains([]any{"query_md", "query-md", "query-markdown", "query_markdown"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.queryETLXMD(params)
+			}
 		} else {
 			data = Dict{
 				"success": false,

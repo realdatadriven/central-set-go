@@ -312,7 +312,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
 	validation_rows, err := app.AdminGetRowsByFilter(get_validations_sql, validation_data)
 	if err != nil {
-		fmt.Printf("Error occurred while fetching validations: %v", err)
+		fmt.Printf("Error occurred while fetching validations: %v", err, get_validations_sql)
 		/*return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("Error occurred while fetching validations: %v", err),
@@ -580,29 +580,6 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
 		}*/
 	} else if len(crud_action_rows) > 0 {
-		/*table: crud_action_logs
-		comment: CRUD Action Logs
-		columns:
-		  crud_action_log_id: { type: integer, pk: true, autoincrement: true, comment: "CRUD Action Log ID" }
-		  crud_action_id:     { type: integer, fk: "crud_action.crud_action_id", comment: "CRUD Action ID", order: 1 }
-		  crud_action_code:   { type: varchar(200), comment: "CRUD Action Code", order: 2 }
-		  crud_action:        { type: varchar(200), comment: "CRUD Action Name", order: 3 }
-		  table:              { type: varchar(200), comment: "Table", order: 4 }
-		  db:                 { type: varchar(200), comment: "Database", order: 5 }
-		  action:             { type: varchar(10), comment: "Action (create/update/delete)", order: 6 }
-		  action_type:        { type: varchar(20), comment: "Action Type", order: 7 }
-		  success:            { type: boolean, default: true, comment: "Success", order: 10 }
-		  log_message:        { type: text, comment: "Log Message", order: 11 }
-		  user_id:            { type: integer, fk: "users.user_id", comment: "User ID", order: 8 }
-		  app_id:             { type: integer, fk: "app.app_id", comment: "App ID", order: 9 }
-		  executed_at:        { type: datetime, comment: "Executed At", order: 12 }
-		  created_at:         { type: datetime, comment: "Created at", order: 13 }
-		  updated_at:         { type: datetime, comment: "Updated at", order: 14 }
-		  excluded:           { type: boolean, default: false, comment: "Excluded", order: 15 }
-		form_layout:
-		  tabs_steps: tabs
-		  form_in_popup: false
-		  size: 6*/
 		for _, crud_action := range crud_action_rows {
 			action_type_id := crud_action["action_type_id"]
 			_, okSql := crud_action["sql"]
