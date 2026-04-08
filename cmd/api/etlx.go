@@ -205,6 +205,54 @@ func anyToStrings(input []any) []string {
 	return result
 }
 
+// run query using INSTALL markdown FROM community on the md config
+func (app *application) queryETLXMD(params Dict) Dict {
+	x := app.getEtlxByID(params)
+	if _, ok := x["success"]; !ok {
+		return x
+	} else if !x["success"].(bool) {
+		return x
+	} else if len(x["data"].([]Dict)) == 0 {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("ETLX ID %s does not exists or you don have access to it!", x["etlx_id"]),
+		}
+	}
+	_conf, ok := x["data"].([]Dict)[0]["etlx_conf"].(string)
+	if !ok {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("ETLX ID %s does not have configuration!", x["etlx_id"]),
+		}
+	}
+	config := make(Dict)
+	etlxlib := &etlx.ETLX{Config: config}
+	err := etlxlib.ConfigFromMDText(_conf)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%v", err),
+		}
+	}
+	// save the conf in a temp md file
+	//_name, _ := x["data"].([]Dict)[0]["etl"].(string)
+	fname, err := etlxlib.TempFIle("", _conf, "config.*.md")
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%v", err),
+		}
+	}
+	fmt.Println(fname)
+	// get duckdb conn
+
+	// install markdown and yaml from community
+	return Dict{
+		"success": false,
+		"msg":     "Still being developed!",
+	}
+}
+
 func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	if app.IsEmpty(params["data"]) {
 		msg, _ := app.i18n.T("no-data", Dict{})
@@ -357,7 +405,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL","MODEL_DATA", "CSDATA"}
+	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL", "MODEL_DATA", "CSDATA"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
