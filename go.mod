@@ -9,7 +9,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.12.3 // indirect
 	github.com/lmittmann/tint v1.1.3
-	github.com/mattn/go-sqlite3 v1.14.40 // indirect
+	github.com/mattn/go-sqlite3 v1.14.41 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
 	github.com/realdatadriven/etlx v1.151.2
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
@@ -32,7 +32,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.296.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.98.0
 	github.com/duckdb/duckdb-go/v2 v2.10501.0
-	github.com/firebase/genkit/go v1.6.0
+	github.com/firebase/genkit/go v1.6.1
 	github.com/go-ldap/ldap/v3 v3.4.13
 	github.com/gorilla/sessions v1.4.0
 	github.com/hashicorp/terraform-exec v0.25.0
@@ -151,7 +151,7 @@ require (
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/api v0.274.0 // indirect
 	google.golang.org/genai v1.52.1 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260401024825-9d38bb4040a9 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260406210006-6f92a3bedf2d // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
