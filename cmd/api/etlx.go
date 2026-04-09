@@ -275,8 +275,70 @@ func (app *application) queryETLXMD(params Dict) Dict {
 			"msg":     fmt.Sprintf("%v", err),
 		}
 	}
-	query := ""
+	query := `WITH A AS (
+    select row_number() over() as row, *
+    from read_markdown_sections('<filename>', include_content := true, extract_metadata := true)
+),
+C AS (
+    select *
+        , md_extract_code_blocks(content) as code_blocks
+        -- , typeof(code_blocks) as _type
+        , len(code_blocks) _len
+        , case
+            when code_blocks[1].language in ('yaml', 'yml', 'json', 'toml') then code_blocks[1].language
+            else null
+        end as metadata_lang
+        , case
+            when code_blocks[1].language in ('yaml', 'yml', 'json', 'toml') then code_blocks[1].code
+            else null
+        end as metadata
+        , yaml_extract(metadata::YAML, '$.name') as metadata_name
+        , yaml_extract(metadata::YAML, '$.description') as metadata_description
+        , yaml_extract(metadata::YAML, '$.source') as metadata_source
+        , coalesce(yaml_extract(metadata::YAML, '$.runs_as'), case when level = 1 then metadata_name else null end) as runs_as
+        , yaml_extract(metadata::YAML, '$.depends_on') as metadata_depends_on
+        , yaml_type(metadata_depends_on) as _type_depends_on
+        , yaml_exists(metadata::YAML, '$.depends_on') as _exists_depends_on
+        --, yaml_array_length(metadata_depends_on::YAML) as metadata_depends_on_len
+        --, yaml_array_elements(metadata_depends_on::YAML) as metadata_depends_on_elements
+        --, yaml_extract(metadata_depends_on::YAML, '$.1') as metadata_depends_on_0
+        , case
+            when len(code_blocks) > 1 then code_blocks[2:]
+            else null
+        end as others
+        , case 
+            when level = 1 then row_number() over (partition by level order by row)
+            else row_number() over (partition by level, parent_id order by row)
+        end as level_order
+    from A
+),
+D AS (
+    select C.*, UNNEST(C.others).language as language, UNNEST(C.others).code as code, UNNEST(C.others).info_string as info_string
+    from C
+)
+select C.*/*, D.language, D.code, D.info_string
+    , case
+        when D.language = 'sql' and trim(replace(regexp_extract(D.code, '(?m)^--\\s*([A-Za-z0-9_]+)', 0), '--', '')) != ''
+            then trim(replace(regexp_extract(D.code, '(?m)^--\\s*([A-Za-z0-9_]+)', 0), '--', ''))
+        else trim(replace(D.info_string, D.language, ''))
+    end AS "name"*/
+    , parent.title as parent_title
+    , parent.level as parent_level
+    , parent.metadata_name as parent_metadata_name
+    , parent.runs_as as parent_runs_as
+from C
+LEFT OUTER JOIN C AS Parent ON Parent.section_id = C.parent_id
+/*LEFT OUTER JOIN D ON D.section_id = C.section_id*/
+order by C.row;`
 	query = etlxlib.ReplaceFileTablePlaceholder("file", query, fname)
+	err := conn.ExecuteQuery(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Create: %v", err),
+		}
+	}
+	query = `SELECT * FROM markdown_sections`
 	nodes, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
@@ -284,6 +346,14 @@ func (app *application) queryETLXMD(params Dict) Dict {
 			"msg":     fmt.Sprintf("NODES Query: %v", err),
 		}
 	}
+	query = `SELECT A.*, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id
+FROM markdown_sections AS A
+LEFT OUTER JOIN markdown_sections AS B ON 
+    A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_title::VARCHAR || '.' || B.title::VARCHAR || '%') 
+    OR INSTR(A.metadata_depends_on::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
+    OR A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR || '%')
+    OR INSTR(A.metadata_depends_on::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
+WHERE B.section_id IS NOT NULL`
 	edges, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
@@ -291,6 +361,17 @@ func (app *application) queryETLXMD(params Dict) Dict {
 			"msg":     fmt.Sprintf("NODES Query: %v", err),
 		}
 	}
+	query = `SELECT DISTINCT A.section_id, A.parent_id, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id, a.parent_runs_as
+FROM markdown_sections AS A
+LEFT OUTER JOIN markdown_sections AS B ON
+    INSTR(A.content::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
+    OR INSTR(A.content::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
+    OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
+    OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
+WHERE B.section_id IS NOT NULL
+    AND B.section_id != A.section_id
+    AND A.level = 2
+    AND B.level = 2`
 	edges_est, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
