@@ -4,6 +4,7 @@
     "company_website": "https://github.com/realdatadriven",
     "url": "conf/conf.json",
     "api": "/dyn_api",
+    "root": "./",
     "__root": "/",
     "ws_api": "ws://localhost:5555/ws",
     "sse_api": "http://localhost:5555/events",
