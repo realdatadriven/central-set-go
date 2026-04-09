@@ -275,7 +275,8 @@ func (app *application) queryETLXMD(params Dict) Dict {
 			"msg":     fmt.Sprintf("%v", err),
 		}
 	}
-	query := `WITH A AS (
+	query := `CREATE OR REPLACE TABLE markdown_sections AS 
+WITH A AS (
     select row_number() over() as row, *
     from read_markdown_sections('<filename>', include_content := true, extract_metadata := true)
 ),
@@ -339,14 +340,15 @@ order by C.row;`
 		}
 	}
 	query = `SELECT * FROM markdown_sections`
-	nodes, _, err := conn.QueryMultiRows(query, []any{}...)
+	md_data, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("NODES Query: %v", err),
 		}
 	}
-	query = `SELECT A.*, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id
+	query = `CREATE OR REPLACE TABLE edges AS
+SELECT A.*, A.section_id, A.parent_id, B.row as depends_on_row, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id, A.parent_runs_as
 FROM markdown_sections AS A
 LEFT OUTER JOIN markdown_sections AS B ON 
     A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_title::VARCHAR || '.' || B.title::VARCHAR || '%') 
@@ -354,37 +356,99 @@ LEFT OUTER JOIN markdown_sections AS B ON
     OR A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR || '%')
     OR INSTR(A.metadata_depends_on::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
 WHERE B.section_id IS NOT NULL`
-	edges, _, err := conn.QueryMultiRows(query, []any{}...)
+	err := conn.ExecuteQuery(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Create: %v", err),
+		}
+	}
+	query = `WITH NODES AS (
+    SELECT DISTINCT row, section_id, parent_id 
+    FROM edges
+    UNION
+    SELECT DISTINCT depends_on_row AS row, depends_on_section_id AS section_id, depends_on_parent_id AS parent_id 
+    FROM edges
+)
+SELECT DISTINCT N.row, N.section_id, N.parent_id, D.title, D.parent_runs_as, P.title as parent_title
+    , D.metadata_name AS name, D.metadata_description AS description, D.metadata_source AS source
+    , P.metadata_name AS parent_name, P.metadata_description AS parent_description, P.metadata_source AS parent_source
+FROM NODES N
+JOIN markdown_sections D ON N.section_id = D.section_id
+JOIN markdown_sections P ON N.parent_id = P.section_id;`
+	nodes, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
 			"success": false,
 			"msg":     fmt.Sprintf("NODES Query: %v", err),
 		}
 	}
-	query = `SELECT DISTINCT A.section_id, A.parent_id, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id, a.parent_runs_as
+	query = `SELECT * FROM edges`
+	edges, _, err := conn.QueryMultiRows(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("EDGES Query: %v", err),
+		}
+	}
+	query = ` CREATE OR REPLACE TABLE edges_est AS
+SELECT DISTINCT A.row, A.section_id, A.parent_id, B.row as depends_on_row, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id, A.parent_runs_as
 FROM markdown_sections AS A
 LEFT OUTER JOIN markdown_sections AS B ON
-    INSTR(A.content::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
-    OR INSTR(A.content::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
-    OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
-    OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
+	INSTR(A.content::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
+	OR INSTR(A.content::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
+	OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
+OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
 WHERE B.section_id IS NOT NULL
-    AND B.section_id != A.section_id
-    AND A.level = 2
-    AND B.level = 2`
+	AND B.section_id != A.section_id
+	AND A.level = 2
+	AND B.level = 2
+	AND A.parent_runs_as IS NOT NULL
+	AND B.parent_runs_as IS NOT NULL
+ORDER BY A.row ASC`
+	err := conn.ExecuteQuery(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Create: %v", err),
+		}
+	}
+	query = `SELECT * FROM edges_est`
 	edges_est, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
 			"success": false,
-			"msg":     fmt.Sprintf("NODES Query: %v", err),
+			"msg":     fmt.Sprintf("EDGES EST Query: %v", err),
+		}
+	}
+	query = `WITH NODES AS (
+    SELECT DISTINCT row, section_id, parent_id 
+    FROM edges_est
+    UNION
+    SELECT DISTINCT depends_on_row AS row, depends_on_section_id AS section_id, depends_on_parent_id AS parent_id 
+    FROM edges_est
+)
+SELECT DISTINCT N.row, N.section_id, N.parent_id, D.title, D.parent_runs_as, P.title as parent_title
+    , D.metadata_name AS name, D.metadata_description AS description, D.metadata_source AS source
+    , P.metadata_name AS parent_name, P.metadata_description AS parent_description, P.metadata_source AS parent_source
+FROM NODES N
+JOIN markdown_sections D ON N.section_id = D.section_id
+JOIN markdown_sections P ON N.parent_id = P.section_id;`
+	nodes_est, _, err := conn.QueryMultiRows(query, []any{}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("NODES EST Query: %v", err),
 		}
 	}
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
 		"success":   true,
 		"msg":       msg,
+		"md_data":   *md_data
 		"nodes":     *nodes,
 		"edges":     *edges,
+		"nodes_est": *nodes_est,
 		"edges_est": *edges_est,
 	}
 }
