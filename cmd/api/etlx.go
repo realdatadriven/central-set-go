@@ -332,7 +332,7 @@ LEFT OUTER JOIN C AS Parent ON Parent.section_id = C.parent_id
 /*LEFT OUTER JOIN D ON D.section_id = C.section_id*/
 order by C.row;`
 	query = etlxlib.ReplaceFileTablePlaceholder("file", query, fname)
-	err := conn.ExecuteQuery(query, []any{}...)
+	_, err = conn.ExecuteQuery(query, []any{}...)
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -356,7 +356,7 @@ LEFT OUTER JOIN markdown_sections AS B ON
     OR A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR || '%')
     OR INSTR(A.metadata_depends_on::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
 WHERE B.section_id IS NOT NULL`
-	err := conn.ExecuteQuery(query, []any{}...)
+	_, err = conn.ExecuteQuery(query, []any{}...)
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -406,7 +406,7 @@ WHERE B.section_id IS NOT NULL
 	AND A.parent_runs_as IS NOT NULL
 	AND B.parent_runs_as IS NOT NULL
 ORDER BY A.row ASC`
-	err := conn.ExecuteQuery(query, []any{}...)
+	_, err = conn.ExecuteQuery(query, []any{}...)
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -445,7 +445,7 @@ JOIN markdown_sections P ON N.parent_id = P.section_id;`
 	return Dict{
 		"success":   true,
 		"msg":       msg,
-		"md_data":   *md_data
+		"md_data":   *md_data,
 		"nodes":     *nodes,
 		"edges":     *edges,
 		"nodes_est": *nodes_est,
