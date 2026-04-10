@@ -185,11 +185,13 @@ func (app *application) etlxMdParse(params Dict) Dict {
 	if os.Getenv("ETLX_DEBUG_QUERY") == "true" {
 		etlxlib.PrintConfigAsJSON(etlxlib.Config)
 	}
+	mdData, _ := etlxlib.QueryETLXMD("")
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
 		"success": true,
 		"msg":     msg,
 		"data":    etlxlib.Config,
+		"mdData":  mdData,
 	}
 }
 
@@ -234,250 +236,12 @@ func (app *application) queryETLXMD(params Dict) Dict {
 			"msg":     fmt.Sprintf("%v", err),
 		}
 	}
-	// save the conf in a temp md file
-	_name, _ := x["data"].([]Dict)[0]["etl"].(string)
-	fname, err := etlxlib.TempFIle("", _conf, fmt.Sprintf("config.%s.*.md", _name))
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("%v", err),
-		}
-	}
-	fmt.Println(fname)
-	// get duckdb conn
-	conn, err := etlxlib.GetDB("duckdb:")
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("%v", err),
-		}
-	}
-	defer conn.Close()
-	// install markdown and yaml from community
-	_, err = conn.ExecuteQuery("INSTALL markdown FROM community")
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("%v", err),
-		}
-	}
-	_, err = conn.ExecuteQuery("INSTALL yaml FROM community")
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("%v", err),
-		}
-	}
-	_, err = conn.ExecuteQuery("LOAD markdown;LOAD yaml")
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("%v", err),
-		}
-	}
-	query := `CREATE OR REPLACE TABLE markdown_sections AS 
-WITH A AS (
-    select row_number() over() as row, *
-    from read_markdown_sections('<filename>', include_content := true, extract_metadata := true)
-),
-C AS (
-    select *
-        , md_extract_code_blocks(content) as code_blocks
-        -- , typeof(code_blocks) as _type
-        , len(code_blocks) _len
-        , case
-            when code_blocks[1].language in ('yaml', 'yml', 'json', 'toml') then code_blocks[1].language
-            else null
-        end as metadata_lang
-        , case
-            when code_blocks[1].language in ('yaml', 'yml', 'json', 'toml') then code_blocks[1].code
-            else null
-        end as metadata
-        , yaml_extract(metadata::YAML, '$.name') as metadata_name
-        , yaml_extract(metadata::YAML, '$.description') as metadata_description
-        , yaml_extract(metadata::YAML, '$.source') as metadata_source
-        , coalesce(yaml_extract(metadata::YAML, '$.runs_as'), case when level = 1 then /*metadata_name*/ null else null end) as runs_as
-        , yaml_extract(metadata::YAML, '$.depends_on') as metadata_depends_on
-        , yaml_type(metadata_depends_on) as _type_depends_on
-        , yaml_exists(metadata::YAML, '$.depends_on') as _exists_depends_on
-        --, yaml_array_length(metadata_depends_on::YAML) as metadata_depends_on_len
-        --, yaml_array_elements(metadata_depends_on::YAML) as metadata_depends_on_elements
-        --, yaml_extract(metadata_depends_on::YAML, '$.1') as metadata_depends_on_0
-        , case
-            when len(code_blocks) > 1 then code_blocks[2:]
-            else null
-        end as others
-        , case 
-            when level = 1 then row_number() over (partition by level order by row)
-            else row_number() over (partition by level, parent_id order by row)
-        end as level_order
-        -- check with regex if content has [[query_name]] references to other sections. We can use this to build a dependency graph and lineage.
-        -- extract only query_name from [[query_name]]
-        , regexp_extract_all(content, '\\[\\[(\w+)\\]\\]') as refered_queries
-    from A 
-),
-D AS (
-    select C.*, UNNEST(C.others).language as language, UNNEST(C.others).code as code, UNNEST(C.others).info_string as info_string
-    from C
-),
-Q AS (
-    /*GET THE CONTENT FROM THE QUERY_DOC REFFERECED IN THE SECTION CONTENT*/
-    WITH X AS (
-        SELECT C.*, Parent.title as parent_title
-        FROM C    
-        LEFT OUTER JOIN C AS Parent ON Parent.section_id = C.parent_id
-    )
-    select X.section_id, X.refered_queries
-        , ARRAY_AGG(Q.section_id) as refered_query_section_ids
-        , GROUP_CONCAT(DISTINCT Q.content) as refered_query_content
-    from X
-    JOIN X AS Q ON
-        CAST(X.refered_queries AS TEXT) LIKE CONCAT('%', Q.title, '%')
-        OR CAST(X.refered_queries AS TEXT) LIKE CONCAT('%', Q.parent_title, '%')
-    WHERE LEN(X.refered_queries) > 0
-    GROUP BY X.section_id, X.refered_queries
-)
-select C.*/*, D.language, D.code, D.info_string
-    , case
-        when D.language = 'sql' and trim(replace(regexp_extract(D.code, '(?m)^--\\s*([A-Za-z0-9_]+)', 0), '--', '')) != ''
-            then trim(replace(regexp_extract(D.code, '(?m)^--\\s*([A-Za-z0-9_]+)', 0), '--', ''))
-        else trim(replace(D.info_string, D.language, ''))
-    end AS "name"*/
-    , parent.title as parent_title
-    , parent.level as parent_level
-    , parent.metadata_name as parent_metadata_name
-    , parent.runs_as as parent_runs_as
-    , Q.refered_query_section_ids
-    , Q.refered_query_content
-from C
-LEFT OUTER JOIN C AS Parent ON Parent.section_id = C.parent_id
-LEFT OUTER JOIN Q ON Q.section_id = C.section_id
-/*LEFT OUTER JOIN D ON D.section_id = C.section_id*/
-order by C.row;`
-	query = etlxlib.ReplaceFileTablePlaceholder("file", query, fname)
-	_, err = conn.ExecuteQuery(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("Create: %v", err),
-		}
-	}
-	query = `SELECT * FROM markdown_sections`
-	md_data, _, err := conn.QueryMultiRows(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("NODES Query: %v", err),
-		}
-	}
-	query = `CREATE OR REPLACE TABLE edges AS
-SELECT A.*, A.section_id, A.parent_id, B.row as depends_on_row, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id, A.parent_runs_as
-FROM markdown_sections AS A
-LEFT OUTER JOIN markdown_sections AS B ON 
-    A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_title::VARCHAR || '.' || B.title::VARCHAR || '%') 
-    OR INSTR(A.metadata_depends_on::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
-    OR A.metadata_depends_on::VARCHAR LIKE ('%' || B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR || '%')
-    OR INSTR(A.metadata_depends_on::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
-WHERE B.section_id IS NOT NULL`
-	_, err = conn.ExecuteQuery(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("Create: %v", err),
-		}
-	}
-	query = `WITH NODES AS (
-    SELECT DISTINCT row, section_id, parent_id 
-    FROM edges
-    UNION
-    SELECT DISTINCT depends_on_row AS row, depends_on_section_id AS section_id, depends_on_parent_id AS parent_id 
-    FROM edges
-)
-SELECT DISTINCT N.row, N.section_id, N.parent_id, D.title, D.parent_runs_as, P.title as parent_title
-    , D.metadata_name AS name, D.metadata_description AS description, D.metadata_source AS source
-    , P.metadata_name AS parent_name, P.metadata_description AS parent_description, P.metadata_source AS parent_source
-FROM NODES N
-JOIN markdown_sections D ON N.section_id = D.section_id
-JOIN markdown_sections P ON N.parent_id = P.section_id
-ORDER BY N.row ASC;`
-	nodes, _, err := conn.QueryMultiRows(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("NODES Query: %v", err),
-		}
-	}
-	query = `SELECT * FROM edges`
-	edges, _, err := conn.QueryMultiRows(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("EDGES Query: %v", err),
-		}
-	}
-	query = ` CREATE OR REPLACE TABLE edges_est AS
-SELECT DISTINCT A.row, A.section_id, A.parent_id, B.row as depends_on_row, B.section_id as depends_on_section_id, B.parent_id as depends_on_parent_id, A.parent_runs_as
-FROM markdown_sections AS A
-LEFT OUTER JOIN markdown_sections AS B ON
-	INSTR(A.content::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
-	OR INSTR(A.content::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
-	OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
-    OR INSTR(A.refered_query_content::VARCHAR, B.parent_title::VARCHAR || '.' || B.title::VARCHAR) > 0
-    OR INSTR(A.refered_query_content::VARCHAR, B.parent_metadata_name::VARCHAR || '.' || B.metadata_name::VARCHAR) > 0
-    OR INSTR(A.refered_query_content::VARCHAR, B.metadata_name::VARCHAR) > 0
-OR INSTR(A.content::VARCHAR, B.metadata_name::VARCHAR) > 0
-WHERE B.section_id IS NOT NULL
-	AND B.section_id != A.section_id
-	AND A.level = 2
-	AND B.level = 2
-	AND A.parent_runs_as IS NOT NULL
-	AND B.parent_runs_as IS NOT NULL
-ORDER BY A.row ASC`
-	_, err = conn.ExecuteQuery(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("Create: %v", err),
-		}
-	}
-	query = `SELECT * FROM edges_est`
-	edges_est, _, err := conn.QueryMultiRows(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("EDGES EST Query: %v", err),
-		}
-	}
-	query = `WITH NODES AS (
-    SELECT DISTINCT row, section_id, parent_id 
-    FROM edges_est
-    UNION
-    SELECT DISTINCT depends_on_row AS row, depends_on_section_id AS section_id, depends_on_parent_id AS parent_id 
-    FROM edges_est
-)
-SELECT DISTINCT N.row, N.section_id, N.parent_id, D.title, D.parent_runs_as, P.title as parent_title
-    , D.metadata_name AS name, D.metadata_description AS description, D.metadata_source AS source
-    , P.metadata_name AS parent_name, P.metadata_description AS parent_description, P.metadata_source AS parent_source
-FROM NODES N
-JOIN markdown_sections D ON N.section_id = D.section_id
-JOIN markdown_sections P ON N.parent_id = P.section_id
-ORDER BY N.row ASC;`
-	nodes_est, _, err := conn.QueryMultiRows(query, []any{}...)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("NODES EST Query: %v", err),
-		}
-	}
+	res, err := etlxlib.QueryETLXMD("")
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
-		"success":   true,
-		"msg":       msg,
-		"md_data":   *md_data,
-		"nodes":     *nodes,
-		"edges":     *edges,
-		"nodes_est": *nodes_est,
-		"edges_est": *edges_est,
+		"success": err == nil,
+		"msg":     msg,
+		"data":    res,
 	}
 }
 
