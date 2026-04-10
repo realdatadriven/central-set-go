@@ -375,7 +375,8 @@ SELECT DISTINCT N.row, N.section_id, N.parent_id, D.title, D.parent_runs_as, P.t
     , P.metadata_name AS parent_name, P.metadata_description AS parent_description, P.metadata_source AS parent_source
 FROM NODES N
 JOIN markdown_sections D ON N.section_id = D.section_id
-JOIN markdown_sections P ON N.parent_id = P.section_id;`
+JOIN markdown_sections P ON N.parent_id = P.section_id
+ORDER BY N.row ASC;`
 	nodes, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
@@ -433,7 +434,8 @@ SELECT DISTINCT N.row, N.section_id, N.parent_id, D.title, D.parent_runs_as, P.t
     , P.metadata_name AS parent_name, P.metadata_description AS parent_description, P.metadata_source AS parent_source
 FROM NODES N
 JOIN markdown_sections D ON N.section_id = D.section_id
-JOIN markdown_sections P ON N.parent_id = P.section_id;`
+JOIN markdown_sections P ON N.parent_id = P.section_id
+ORDER BY N.row ASC;`
 	nodes_est, _, err := conn.QueryMultiRows(query, []any{}...)
 	if err != nil {
 		return Dict{
