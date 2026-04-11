@@ -183,15 +183,37 @@ func (app *application) etlxMdParse(params Dict) Dict {
 	}
 	// Print the parsed configuration
 	if os.Getenv("ETLX_DEBUG_QUERY") == "true" {
-		etlxlib.PrintConfigAsJSON(etlxlib.Config)
+		// etlxlib.PrintConfigAsJSON(etlxlib.Config)
 	}
 	mdData, _ := etlxlib.QueryETLXMD("")
+	nodes, ok := mdData["nodes"]
+	if !ok {
+		fmt.Println("No nodes data found")
+	}
+	edges, ok := mdData["edges"]
+	if !ok {
+		fmt.Println("No edges data found")
+	}
+	if len(nodes) == 0 {
+		nodes, ok = mdData["nodes_est"]
+		if !ok {
+			fmt.Println("No nodes data found")
+		}
+	}
+	if len(edges) == 0 {
+		edges, ok = mdData["edges_est"]
+		if !ok {
+			fmt.Println("No edges data found")
+		}
+	}
+	flow := etlxlib.GenerateMermaidFlowchart(nodes, edges)
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
 		"success": true,
 		"msg":     msg,
 		"data":    etlxlib.Config,
 		"mdData":  mdData,
+		"flow":    flow,
 	}
 }
 
