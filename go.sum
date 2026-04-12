@@ -292,8 +292,8 @@ github.com/pkg/sftp v1.13.10/go.mod h1:bJ1a7uDhrX/4OII+agvy28lzRvQrmIQuaHrcI1Hbe
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/realdatadriven/etlx v1.151.4 h1:+Em+iKBlpX91q7NM36aH2kuaSjOrYIICfuUSEAwTtY4=
-github.com/realdatadriven/etlx v1.151.4/go.mod h1:XbvhfLYMxXdeyJ7f/+CYjHHsK0YUYoqsR8U2nRLIYgw=
+github.com/realdatadriven/etlx v1.151.5 h1:Pe0Tn6u89sb835RAdhjOeq+xdePkKJyYh9epqdti9OI=
+github.com/realdatadriven/etlx v1.151.5/go.mod h1:XbvhfLYMxXdeyJ7f/+CYjHHsK0YUYoqsR8U2nRLIYgw=
 github.com/richardlehane/mscfb v1.0.6 h1:eN3bvvZCp00bs7Zf52bxNwAx5lJDBK1tCuH19qq5aC8=
 github.com/richardlehane/mscfb v1.0.6/go.mod h1:pe0+IUIc0AHh0+teNzBlJCtSyZdFOGgV4ZK9bsoV+Jo=
 github.com/richardlehane/msoleps v1.0.6 h1:9BvkpjvD+iUBalUY4esMwv6uBkfOip/Lzvd93jvR9gg=
