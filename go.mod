@@ -11,7 +11,7 @@ require (
 	github.com/lmittmann/tint v1.1.3
 	github.com/mattn/go-sqlite3 v1.14.42 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
-	github.com/realdatadriven/etlx v1.151.3
+	github.com/realdatadriven/etlx v1.151.4
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	github.com/wneessen/go-mail v0.7.2
 	github.com/xuri/excelize/v2 v2.10.1
@@ -135,6 +135,7 @@ require (
 	github.com/yuin/goldmark v1.8.2 // indirect
 	github.com/zclconf/go-cty v1.18.0 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
+	go.abhg.dev/goldmark/frontmatter v0.3.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
 	go.opentelemetry.io/otel v1.43.0 // indirect
