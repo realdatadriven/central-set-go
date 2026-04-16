@@ -4,7 +4,7 @@ Why Markdown?</a></li><li><a class=sidebar-root-link href=https://realdatadriven
 Quickstart</a></li><li class=sidebar-dropdown><button class=btn>
 <i class="material-icons me-2">auto_awesome</i>
 Tutorials</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-model/>Admin Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/explain-admin-model/>Explaining ADMIN Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/new-app-model/>Creating a New App / Data Model</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/auth/>Authentication & Access</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/apps/>Applications</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/admin-schema/>Admin Schema (the DNA)</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/menus/>Navigation & Menus</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/tables/>CRUD</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/integrations/>Integrations</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/users-roles/>Security & Permissions</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/jobs/>Automation & Jobs</a></li><li class="sidebar-dropdown nested"><button class=btn>
-ETLX & Data Pipelines</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li></ul></div></li><li class="sidebar-dropdown nested"><button class=btn>
+ETLX & Data Pipelines</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example/>Example</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example-graph/>ETLX Workflow Visualization</a></li></ul></div></li><li class="sidebar-dropdown nested"><button class=btn>
 Analytics & Dashboards</button><div class=sidebar-submenu><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/overview/>Overview</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/example/>Example</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/export-dashboard/>Exporting Dashboard Data to Excel Templates</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/dyn-custom-dataset-dashboard/>Dynamic Dataset</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/embedding-dashboard/>Embedding Dashboards</a></li></ul></div></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/api/>Dynamic API Reference</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/odata-v4/>OData v4 API</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/arrow-flight/>Arrow Flight</a></li><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/tutorials/config/>Configuration</a></li></ul></div></li><li class="sidebar-dropdown current active"><button class=btn>
 <i class="material-icons me-2">heart_plus</i>
 Contributing</button><div class="sidebar-submenu d-block"><ul><li><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/contributing/how-to-contribute/>How to Contribute</a></li><li class=current><a class=sidebar-nested-link href=https://realdatadriven.github.io/central-set-go/docs/contributing/code-of-conduct/>Code of Conduct</a></li></ul></div></li><li class=sidebar-dropdown><button class=btn>
@@ -184,6 +184,13 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     
 
 
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -665,6 +672,15 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
     index.add(
             {
                 id:  25 ,
+                href: "\/central-set-go\/docs\/tutorials\/etlx\/example-graph\/",
+                title: "ETLX Workflow Visualization",
+                description: "How Central Set automatically generates visual workflows from ETLX models using depends_on and query inference.",
+                content: " info Central Set automatically converts ETLX models into visual workflows by generating nodes and edges based on dependencies defined in the model. ETLX is not just for executing pipelines — it also enables automatic workflow visualization.\nEvery time an ETLX Markdown model is processed, Central Set:\nparses the structure detects dependencies generates a graph (nodes + edges) renders a Mermaid workflow diagram 🧠 Concept linkEach ETLX model is composed of:\nLevel 1 → logical groups (e.g. EXTRACT_LOAD, TRANSFORM, QUALITY_CHECK) Level 2 → actual nodes (e.g. TRIP_DATA, ZONES, MostPopularRoutes) These are transformed into a graph structure:\nLevel 1 → Subgraph\rLevel 2 → Node\rDependencies → Edges 🔗 Defining Dependencies link✅ Explicit Dependencies (depends_on) linkYou can explicitly define dependencies using the depends_on key.\ndepends_on:\r- EXTRACT_LOAD.TRIP_DATA\r- EXTRACT_LOAD.ZONES Rules link Must be a list (array) Format: LEVEL1.LEVEL2 Example:\nTRANSFORM.MostPopularRoutes depends_on:\r- EXTRACT_LOAD.TRIP_DATA\r- EXTRACT_LOAD.ZONES This generates edges:\nTRIP_DATA → MostPopularRoutes\rZONES → MostPopularRoutes 🤖 Inferred Dependencies (Automatic) linkIf depends_on is not defined, Central Set will infer dependencies automatically.\nHow it works link The system scans queries (SQL, ETLX steps, etc.) If a query references a Level 2 name, it assumes a dependency Example link SELECT *\rFROM TRIP_DATA ➡️ Central Set infers:\nTRANSFORM.X depends_on EXTRACT_LOAD.TRIP_DATA 🧩 Resolution Logic linkDependency resolution follows:\nExplicit depends_on (highest priority) Query-based inference No dependency → standalone node 🧱 Graph Generation linkFrom the model, Central Set generates:\nNodes link Each LEVEL2 becomes a node Grouped by LEVEL1 into subgraphs Edges link Created from depends_on or inferred relationships 📊 Mermaid Workflow Generation linkThe graph is converted into a Mermaid flowchart.\nExample:\n```mermaid\r---\rconfig:\rlook: handDrawn\rtheme: neutral\r---\rflowchart LR\r%% NODES\rsubgraph extract_load[\"EXTRACT_LOAD (ETL)\"]\rextract_load_trip_data[\"TRIP_DATA\"]\rextract_load_zones[\"ZONES\"]\rend\rsubgraph transform[\"TRANSFORM (ETL)\"]\rtransform_mostpopularroutes[\"MostPopularRoutes\"]\rend\rsubgraph quality_check[\"QUALITY_CHECK (DATA_QUALITY)\"]\rquality_check_rule0001[\"Rule0001\"]\rquality_check_rule0002[\"Rule0002\"]\rend\r%% EDGES (generated from depends_on keys)\rextract_load_trip_data --\u003e transform_mostpopularroutes\rextract_load_zones --\u003e transform_mostpopularroutes\rextract_load_trip_data --\u003e quality_check_rule0001\rextract_load_trip_data --\u003e quality_check_rule0002\r``` Resolves to:\n---\rconfig:\rlook: handDrawn\rtheme: neutral\r---\rflowchart LR\r%% NODES\rsubgraph extract_load[\"EXTRACT_LOAD (ETL)\"]\rextract_load_trip_data[\"TRIP_DATA\"]\rextract_load_zones[\"ZONES\"]\rend\rsubgraph transform[\"TRANSFORM (ETL)\"]\rtransform_mostpopularroutes[\"MostPopularRoutes\"]\rend\rsubgraph quality_check[\"QUALITY_CHECK (DATA_QUALITY)\"]\rquality_check_rule0001[\"Rule0001\"]\rquality_check_rule0002[\"Rule0002\"]\rend\r%% EDGES (generated from depends_on keys)\rextract_load_trip_data --\u003e transform_mostpopularroutes\rextract_load_zones --\u003e transform_mostpopularroutes\rextract_load_trip_data --\u003e quality_check_rule0001\rextract_load_trip_data --\u003e quality_check_rule0002 🖼️ Visual Output linkThe generated Mermaid diagram is rendered as a workflow graph:\nSubgraphs → represent ETL stages Nodes → represent datasets or rules Edges → represent dependencies This allows you to instantly understand:\ndata flow transformation steps validation rules pipeline structure 🔄 Real Example Breakdown linkFrom the SQLite example:\nExtract Layer link TRIP_DATA ZONES Transform Layer link MostPopularRoutes Data Quality link Rule0001 Rule0002 Relationships link TRIP_DATA → MostPopularRoutes\rZONES → MostPopularRoutes\rTRIP_DATA → Rule0001\rTRIP_DATA → Rule0002 🚀 Why This Matters linkThis approach provides:\n✅ Instant Visualization linkNo need to manually draw diagrams.\n✅ Always Up-to-Date linkThe diagram is generated directly from the model.\n✅ Debugging Power linkQuickly identify:\nmissing dependencies circular flows unused nodes ✅ Documentation for Free linkYour ETLX model becomes:\nexecution logic documentation architecture diagram 🧠 Best Practices linkUse explicit depends_on when: link pipelines are complex dependencies are not obvious from queries you want full control Rely on inference when: link queries are simple naming is consistent rapid prototyping Naming Tip linkKeep names consistent:\nTRIP_DATA\rZONES\rCUSTOMERS This improves dependency detection accuracy.\n🔮 Future Possibilities linkThis graph structure can also power:\npipeline execution planners dependency validation impact analysis lineage tracking visual editors 🚀 Summary linkCentral Set automatically transforms ETLX models into visual workflows by:\nparsing model structure detecting dependencies (depends_on or inferred) generating nodes and edges rendering Mermaid diagrams This makes ETLX:\nself-documenting visual by default easier to debug easier to understand ETLX is not just a pipeline definition — it is a living, visual data workflow system.\n"
+            }
+        );
+    index.add(
+            {
+                id:  26 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/",
                 title: "Analytics \u0026 Dashboards",
                 description: "Analytics \u0026 Dashboards",
@@ -673,7 +689,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  26 ,
+                id:  27 ,
                 href: "\/central-set-go\/docs\/tutorials\/api\/",
                 title: "Dynamic API Reference",
                 description: "Dynamic API Reference",
@@ -682,7 +698,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  27 ,
+                id:  28 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/overview\/",
                 title: "Overview",
                 description: "Overview",
@@ -691,7 +707,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  28 ,
+                id:  29 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/example\/",
                 title: "Example",
                 description: "Analytics \u0026 Dashboards — Logs Dashboard Example",
@@ -700,7 +716,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  29 ,
+                id:  30 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/export-dashboard\/",
                 title: "Exporting Dashboard Data to Excel Templates",
                 description: "Generate spreadsheet files from dashboard filters and queries using ETLX export templates.",
@@ -709,7 +725,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  30 ,
+                id:  31 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/dyn-custom-dataset-dashboard\/",
                 title: "Dynamic Dataset",
                 description: "Dashboard With Dynamic Dataset For Each User / Profile",
@@ -718,7 +734,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  31 ,
+                id:  32 ,
                 href: "\/central-set-go\/docs\/tutorials\/dashboards\/embedding-dashboard\/",
                 title: "Embedding Dashboards",
                 description: "How to embed Central Set dashboards inside external applications using an iframe and JWT authentication.",
@@ -727,7 +743,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  32 ,
+                id:  33 ,
                 href: "\/central-set-go\/docs\/tutorials\/odata-v4\/",
                 title: "OData v4 API",
                 description: "OData v4 API",
@@ -736,7 +752,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  33 ,
+                id:  34 ,
                 href: "\/central-set-go\/docs\/tutorials\/arrow-flight\/",
                 title: "Arrow Flight",
                 description: "Apache Arrow Flight Support API",
@@ -745,7 +761,7 @@ Submit</button></div></div></div></div><script>const emojiTextWrapper=document.g
         );
     index.add(
             {
-                id:  34 ,
+                id:  35 ,
                 href: "\/central-set-go\/docs\/tutorials\/config\/",
                 title: "Configuration",
                 description: "Configuration options for Central Set",

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ETLX &amp; Data Pipelines on Central Set</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/</link><description>Recent content in ETLX &amp; Data Pipelines on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Sun, 22 Feb 2026 16:48:47 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set was born primarily from the need to &lt;strong&gt;manage data engineering workflows&lt;/strong&gt;, but real-world data systems require much more than just pipelines.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ETLX &amp; Data Pipelines on Central Set</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/</link><description>Recent content in ETLX &amp; Data Pipelines on Central Set</description><generator>Hugo</generator><language>en-GB</language><lastBuildDate>Wed, 15 Apr 2026 15:16:42 -0100</lastBuildDate><atom:link href="https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/</link><pubDate>Tue, 16 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/overview/</guid><description>&lt;h2 id="overview"&gt;Overview &lt;a href="#overview" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Central Set was born primarily from the need to &lt;strong&gt;manage data engineering workflows&lt;/strong&gt;, but real-world data systems require much more than just pipelines.&lt;/p&gt;
 &lt;p&gt;To operate reliable data platforms, you need:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;User and role management&lt;/li&gt;
@@ -21,4 +21,20 @@
 &lt;/ul&gt;
 &lt;p&gt;All driven by configuration and executed step-by-step through the ETLX UI.&lt;/p&gt;
 &lt;p&gt;The example uses the &lt;strong&gt;NYC Yellow Taxi - January 2024&lt;/strong&gt; dataset as a concrete and realistic scenario.&lt;/p&gt;
-&lt;h2 id="getting-started-with-etlx-pipelines"&gt;Getting Started with ETLX Pipelines &lt;a href="#getting-started-with-etlx-pipelines" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When you first open the &lt;strong&gt;ETLX&lt;/strong&gt; menu, the system displays an &lt;strong&gt;empty CRUD table&lt;/strong&gt;, when added pipeline its shown.&lt;/p&gt;</description></item></channel></rss>
+&lt;h2 id="getting-started-with-etlx-pipelines"&gt;Getting Started with ETLX Pipelines &lt;a href="#getting-started-with-etlx-pipelines" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;When you first open the &lt;strong&gt;ETLX&lt;/strong&gt; menu, the system displays an &lt;strong&gt;empty CRUD table&lt;/strong&gt;, when added pipeline its shown.&lt;/p&gt;</description></item><item><title>ETLX Workflow Visualization</title><link>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example-graph/</link><pubDate>Sat, 20 Dec 2025 01:04:15 +0000</pubDate><guid>https://realdatadriven.github.io/central-set-go/docs/tutorials/etlx/example-graph/</guid><description>&lt;div class="alert alert-info d-flex" role="alert"&gt;
+ &lt;div class="flex-shrink-1 alert-icon"&gt;
+ &lt;span class="material-icons size-20 me-2"&gt;
+ info
+ &lt;/span&gt;&lt;/div&gt;
+ &lt;div class="w-100"&gt;Central Set automatically converts ETLX models into &lt;strong&gt;visual workflows&lt;/strong&gt; by generating nodes and edges based on dependencies defined in the model.&lt;/div&gt;
+ &lt;/div&gt;
+&lt;p&gt;ETLX is not just for executing pipelines — it also enables &lt;strong&gt;automatic workflow visualization&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Every time an ETLX Markdown model is processed, Central Set:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;parses the structure&lt;/li&gt;
+&lt;li&gt;detects dependencies&lt;/li&gt;
+&lt;li&gt;generates a graph (nodes + edges)&lt;/li&gt;
+&lt;li&gt;renders a &lt;strong&gt;Mermaid workflow diagram&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="-concept"&gt;🧠 Concept &lt;a href="#-concept" class="anchor" aria-hidden="true"&gt;&lt;i class="material-icons align-middle"&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Each ETLX model is composed of:&lt;/p&gt;</description></item></channel></rss>
