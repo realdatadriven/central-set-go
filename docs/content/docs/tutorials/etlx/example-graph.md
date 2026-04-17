@@ -2,7 +2,7 @@
 weight: 7073
 title: "ETLX Workflow Visualization"
 description: "How Central Set automatically generates visual workflows from ETLX models using depends_on and query inference."
-icon: share-2
+icon: share
 date: 2025-12-20T01:04:15+00:00
 lastmod: 2025-12-20T01:04:15+00:00
 draft: false
@@ -90,7 +90,7 @@ If `depends_on` is **not defined**, Central Set will **infer dependencies automa
 
 ### Example
 
-```sql
+```sql {linenos=table}
 SELECT *
 FROM TRIP_DATA
 ```
@@ -134,7 +134,7 @@ The graph is converted into a **Mermaid flowchart**.
 
 Example:
 
-````markdown {rownos=table}
+````markdown {linenos=table}
 ```mermaid
 ---
 config:
