@@ -580,9 +580,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
 		}*/
 	} else if len(crud_action_rows) > 0 {
-		//ELTRunner := func(
-		for _, c_action := range crud_action_rows {
-			parallel, ok := c_action["parallel"]
+		actionRunner := func(c_action) error {			
 			action_type_id := c_action["action_type_id"]
 			_, okSql := c_action["sql"]
 			_, okEmail := c_action["email_template"]
@@ -595,12 +593,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"crud_action":      c_action["crud_action"],
 				"table":            table,
 				"db":               database,
+				"id":               id,
 				"action":           crud_aciton,
 				"user_id":          user_id,
 				"app_id":           params["app"].(Dict)["app_id"],
 			}
-			insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "action", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
-			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :action, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
+			insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
+			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 			msg := ""
 			if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 				if _, ok := c_action["sql"]; ok {
@@ -618,10 +617,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 						}
-						return Dict{
-							"success": false,
-							"msg":     msg,
-						}
+						return fmt.Error(msg)
 					}
 				}
 			} else if app.toInt(action_type_id) == 2 && okEmail { // SendEmail
@@ -650,10 +646,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 						}
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
-						}
+						return err
 					}
 				}
 			} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
@@ -669,10 +662,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					if err2 != nil {
 						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 					}
-					return Dict{
-						"success": false,
-						"msg":     err.Error(),
-					}
+					return err
 				}
 			} else {
 				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
@@ -698,6 +688,20 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			if err != nil {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err)
 				// Not returning error to avoid interrupting the main CRUD operation flow
+			}
+			return nil
+		}
+		for _, c_action := range crud_action_rows {
+			parallel, ok := c_action["parallel"].(bool)
+			if parallel && ok {
+				go func() {
+					err := actionRunner(c_action)
+					if err != nil {
+						fmt.Printf("Error runing the action: %v\n", err)
+					}
+				}()
+			} else {
+				err := actionRunner(c_action)
 			}
 		}
 	}

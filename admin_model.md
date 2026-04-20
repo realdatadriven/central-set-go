@@ -37,6 +37,8 @@ cs_app:
       - custom_form
       - table
       - table_schema
+      - crud_action
+      - {table: crud_action_logs, active: false}
   Arrow Flight:
     menu_icon: paper-airplane
     menu_order: 3
@@ -947,6 +949,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
+  allow_in_subform: {crud_action_logs: true}
   size: 6
 ```
 
@@ -961,6 +964,7 @@ columns:
   crud_action:        { type: varchar(200), comment: "CRUD Action Name", order: 3 }
   table:              { type: varchar(200), comment: "Table", order: 4 }
   db:                 { type: varchar(200), comment: "Database", order: 5 }
+  id:                 { type: integer, comment: "ID", order: 5 }
   action:             { type: varchar(10), comment: "Action (create/update/delete)", order: 6 }
   action_type:        { type: varchar(20), comment: "Action Type", order: 7 }
   success:            { type: boolean, default: true, comment: "Success", order: 10 }
