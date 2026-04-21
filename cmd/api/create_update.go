@@ -309,7 +309,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	_, database, _ := app.GetDBNameFromParams(params)
 	//crud_aciton, table
 	validation_data := []any{database, table}
-	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
+	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE`, crud_aciton)
 	validation_rows, err := app.AdminGetRowsByFilter(get_validations_sql, validation_data)
 	if err != nil {
 		fmt.Printf("Error occurred while fetching validations: %v", err, get_validations_sql)
@@ -571,7 +571,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		}
 	}
 	// CRUD ACTIONS
-	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%" IS TRUE`, crud_aciton)
+	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE`, crud_aciton)
 	crud_action_rows, err := app.AdminGetRowsByFilter(get_crud_actions_sql, validation_data)
 	if err != nil {
 		fmt.Printf("Error occurred while fetching crud_actions: %v", err)
