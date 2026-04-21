@@ -580,7 +580,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
 		}*/
 	} else if len(crud_action_rows) > 0 {
-		actionRunner := func(c_action) error {			
+		actionRunner := func(c_action Dict) error {			
 			action_type_id := c_action["action_type_id"]
 			_, okSql := c_action["sql"]
 			_, okEmail := c_action["email_template"]
@@ -613,11 +613,11 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						crud_action_log["executed_at"] = time.Now()
 						crud_action_log["created_at"] = time.Now()
 						crud_action_log["updated_at"] = time.Now()
-						_, err2 = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+						_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 						}
-						return fmt.Error(msg)
+						return fmt.Errorf("Err %w", msg)
 					}
 				}
 			} else if app.toInt(action_type_id) == 2 && okEmail { // SendEmail
@@ -642,7 +642,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						crud_action_log["executed_at"] = time.Now()
 						crud_action_log["created_at"] = time.Now()
 						crud_action_log["updated_at"] = time.Now()
-						_, err2 = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+						_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 						}
@@ -658,7 +658,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					crud_action_log["executed_at"] = time.Now()
 					crud_action_log["created_at"] = time.Now()
 					crud_action_log["updated_at"] = time.Now()
-					_, err2 = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+					_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 					if err2 != nil {
 						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 					}
@@ -702,6 +702,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}()
 			} else {
 				err := actionRunner(c_action)
+				if err != nil {
+					fmt.Printf("Error runing the action: %v\n", err)
+				}
 			}
 		}
 	}
