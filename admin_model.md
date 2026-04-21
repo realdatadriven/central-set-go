@@ -981,7 +981,7 @@ form_layout:
   size: 6
 ```
 
-## process_type
+## PROCESS_TYPE
 ```yaml
 table: process_type
 comment: Proccess
