@@ -271,7 +271,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	*/
 	opts := airport.ServerOptions(config)
 	if creds != nil {
-		// fmt.Println("TLS CREDS:", creds)
+		fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)

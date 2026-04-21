@@ -330,7 +330,7 @@ func (app *application) serveArrowFlight() error {
 	if err := flightMgr.Start(addr); err != nil {
 		return err
 	}
-	fmt.Printf("server v3 started at %s", addr)
+	fmt.Printf("Arrow Flight Server Started @ %s", addr)
 	// Wait for signal
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
