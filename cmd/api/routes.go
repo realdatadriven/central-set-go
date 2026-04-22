@@ -80,7 +80,16 @@ func (app *application) routes() http.Handler {
 	})
 
 	// AI ASSISTANT ENDPOINTS
-	mux.HandleFunc("/etlx-assist", etlxAssistHandler)
+	/*{
+		"provider": "googleai",
+		"model": "gemini-1.5-flash",
+		"system_prompt": "You are a ETLX assistant.",
+		"system_prompt_file": "etlxllm.txt",
+		"messages": [
+				{"role": "user", "content": "Analyze this dataset"}
+		]
+	}*/
+	mux.HandleFunc("/etlx-assist", aiAssistHandler)
 
 	//mux.NotFound = http.HandlerFunc(app.notFound)
 	//mux.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowed)
