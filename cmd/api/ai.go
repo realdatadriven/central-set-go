@@ -1,32 +1,19 @@
 package main
 
-/*
-* ### HTTP Endpoint for Your Application
-Here is a complete, production-ready Go server example using `net/http` and `http.NewServeMux()`. It exposes a POST `/etlx-assist` endpoint that accepts an array of messages (OpenAI-compatible format for multi-turn conversations) and returns the assistant's response.
-
-- **Input JSON**: `{"messages": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}, ...]}`
-- The server prepends the system prompt if missing.
-- It maintains multi-turn by letting the client send full history each time (stateless, simple).
-- Uses Google AI Gemini 1.5 Flash by default (fast & capable); swap to Ollama for local.
-- Add your API key via env (e.g., `GOOGLE_GENAI_API_KEY`).
-*/
-
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/firebase/genkit/go/ai"
 	"github.com/firebase/genkit/go/genkit"
-	"github.com/firebase/genkit/go/plugins/googlegenai" // swap to ollama if preferred
-)
 
-var (
-	g         *genkit.Genkit
-	modelName = "googleai/gemini-1.5-flash" // or "ollama/llama3.1" etc.
+	"github.com/firebase/genkit/go/plugins/anthropic"
+	"github.com/firebase/genkit/go/plugins/googlegenai"
+	"github.com/firebase/genkit/go/plugins/ollama"
+	//"github.com/firebase/genkit/go/plugins/openai"
 )
 
 type Message struct {
@@ -35,20 +22,54 @@ type Message struct {
 }
 
 type Request struct {
-	Messages []Message `json:"messages"`
+	Provider    string    `json:"provider"`
+	Model       string    `json:"model"`
+	BaseURL     string    `json:"base_url,omitempty"`
+	Messages    []Message `json:"messages"`
+	Temperature *float32  `json:"temperature,omitempty"`
+	MaxTokens   *int      `json:"max_tokens,omitempty"`
 }
 
 type Response struct {
 	Content string `json:"content"`
 }
 
-func initGenkit() {
-	ctx := context.Background()
-	g = genkit.Init(ctx,
-		genkit.WithPlugins(&googlegenai.GoogleAI{}), // or ollama.Ollama{ServerAddress: "http://localhost:11434"}
-		// genkit.WithLogLevel("debug"),                // optional
-	)
-	log.Println("Genkit initialized with model:", modelName)
+func initGenkit(ctx context.Context, req Request) (*genkit.Genkit, error) {
+	switch req.Provider {
+
+	case "googleai":
+		return genkit.Init(ctx,
+			genkit.WithPlugins(&googlegenai.GoogleAI{}),
+		), nil
+
+	case "ollama":
+		base := req.BaseURL
+		if base == "" {
+			base = "http://localhost:11434"
+		}
+		return genkit.Init(ctx,
+			genkit.WithPlugins(&ollama.Ollama{
+				ServerAddress: base,
+			}),
+		), nil
+
+	/*case "openai":
+	return genkit.Init(ctx,
+		genkit.WithPlugins(&openai.OpenAI{
+			APIKey: os.Getenv("OPENAI_API_KEY"),
+		}),
+	), nil*/
+
+	case "anthropic":
+		return genkit.Init(ctx,
+			genkit.WithPlugins(&anthropic.Anthropic{
+				APIKey: os.Getenv("ANTHROPIC_API_KEY"),
+			}),
+		), nil
+
+	default:
+		return nil, fmt.Errorf("unsupported provider: %s", req.Provider)
+	}
 }
 
 func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,34 +86,39 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	// Build Genkit messages: prepend system if needed
+	g, err := initGenkit(ctx, req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert messages
 	msgs := []*ai.Message{}
 	hasSystem := false
+
 	for _, m := range req.Messages {
 		if m.Role == "system" {
 			hasSystem = true
 		}
+
 		role := ai.RoleUser
 		if m.Role == "assistant" {
 			role = ai.RoleModel
 		}
+
 		msgs = append(msgs, &ai.Message{
 			Role:    role,
 			Content: []*ai.Part{ai.NewTextPart(m.Content)},
 		})
 	}
-	var systemPrompt string
-	// load systemPrompt from file llm.txt
-	systemPrompt = "You are ETLX Assist, an expert ETL and data engineering assistant. Help the user with their ETL tasks."
-	// Prepend system prompt if missing
-	// append from file llm.txt
-	data, err := os.ReadFile("etlxllm.txt")
-	if err != nil {
-		//return fmt.Errorf("failed to read file: %w", err)
-		http.Error(w, fmt.Sprintf("failed to read file: %v", err), http.StatusInternalServerError)
-		return
+
+	// System prompt
+	systemPrompt := "You are ETLX Assist, an expert ETL and data engineering assistant."
+
+	if data, err := os.ReadFile("etlxllm.txt"); err == nil {
+		systemPrompt += string(data)
 	}
-	systemPrompt = systemPrompt + string(data)
+
 	if !hasSystem {
 		msgs = append([]*ai.Message{
 			{
@@ -102,16 +128,49 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 		}, msgs...)
 	}
 
-	// Generate
-	resp, err := genkit.Generate(ctx, g,
-		ai.WithModelName(modelName),
+	fullModel := fmt.Sprintf("%s/%s", req.Provider, req.Model)
+
+	// Build options dynamically
+	opts := []ai.GenerateOption{
+		ai.WithModelName(fullModel),
 		ai.WithMessages(msgs...),
-		// Optional: ai.WithTemperature(0.2), ai.WithMaxTokens(4000)
-	)
+	}
+
+	if req.Temperature != nil {
+		// opts = append(opts, ai.WithTemperature(*req.Temperature))
+	}
+
+	if req.MaxTokens != nil {
+		// opts = append(opts, ai.WithMaxTokens(*req.MaxTokens))
+	}
+
+	resp, err := genkit.Generate(ctx, g, opts...)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Generation failed: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	json.NewEncoder(w).Encode(Response{Content: resp.Text()})
+	json.NewEncoder(w).Encode(Response{
+		Content: resp.Text(),
+	})
 }
+
+/*
+{
+  "provider": "googleai",
+  "model": "gemini-1.5-flash",
+  "messages": [
+    {"role": "user", "content": "Hello"}
+  ]
+}
+{
+  "provider": "ollama",
+  "model": "llama3.1",
+  "base_url": "http://localhost:11434",
+  "messages": [...]
+}
+func main() {
+	http.HandleFunc("/etlx-assist", etlxAssistHandler)
+	log.Println("Server running on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}*/
