@@ -22,12 +22,14 @@ type Message struct {
 }
 
 type Request struct {
-	Provider    string    `json:"provider"`
-	Model       string    `json:"model"`
-	BaseURL     string    `json:"base_url,omitempty"`
-	Messages    []Message `json:"messages"`
-	Temperature *float32  `json:"temperature,omitempty"`
-	MaxTokens   *int      `json:"max_tokens,omitempty"`
+	Provider         string    `json:"provider"`
+	Model            string    `json:"model"`
+	BaseURL          string    `json:"base_url,omitempty"`
+	SystemPrompt     string    `json:"system_prompt,omitempty"`
+	SystemPromptFile string    `json:"system_prompt_file,omitempty"`
+	Messages         []Message `json:"messages"`
+	Temperature      *float32  `json:"temperature,omitempty"`
+	MaxTokens        *int      `json:"max_tokens,omitempty"`
 }
 
 type Response struct {
@@ -72,6 +74,24 @@ func initGenkit(ctx context.Context, req Request) (*genkit.Genkit, error) {
 	}
 }
 
+func buildSystemPrompt(req Request) string {
+	// Default fallback (important safeguard)
+	defaultPrompt := "You are a helpful AI assistant."
+	prompt := ""
+	if req.SystemPrompt != "" {
+		prompt = req.SystemPrompt
+	}
+	if req.SystemPromptFile != "" {
+		if data, err := os.ReadFile(req.SystemPromptFile); err == nil {
+			prompt += "\n" + string(data)
+		}
+	}
+	if prompt == "" {
+		prompt = defaultPrompt
+	}
+	return prompt
+}
+
 func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -113,11 +133,7 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// System prompt
-	systemPrompt := "You are ETLX Assist, an expert ETL and data engineering assistant."
-
-	if data, err := os.ReadFile("etlxllm.txt"); err == nil {
-		systemPrompt += string(data)
-	}
+	systemPrompt := buildSystemPrompt(req)
 
 	if !hasSystem {
 		msgs = append([]*ai.Message{
@@ -168,6 +184,15 @@ func etlxAssistHandler(w http.ResponseWriter, r *http.Request) {
   "model": "llama3.1",
   "base_url": "http://localhost:11434",
   "messages": [...]
+}
+{
+  "provider": "googleai",
+  "model": "gemini-1.5-flash",
+  "system_prompt": "You are a ETLX assistant.",
+  "system_prompt_file": "etlxllm.txt",
+  "messages": [
+    	{"role": "user", "content": "Analyze this dataset"}
+  ]
 }
 func main() {
 	http.HandleFunc("/etlx-assist", etlxAssistHandler)
