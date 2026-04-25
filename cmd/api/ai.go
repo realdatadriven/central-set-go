@@ -11,9 +11,9 @@ import (
 	"github.com/firebase/genkit/go/genkit"
 
 	"github.com/firebase/genkit/go/plugins/anthropic"
+	"github.com/firebase/genkit/go/plugins/compat_oai/openai"
 	"github.com/firebase/genkit/go/plugins/googlegenai"
 	"github.com/firebase/genkit/go/plugins/ollama"
-	"github.com/firebase/genkit/go/plugins/compat_oai/openai"
 )
 
 type Message struct {
@@ -56,11 +56,11 @@ func initGenkit(ctx context.Context, req Request) (*genkit.Genkit, error) {
 		), nil
 
 	case "openai":
-	return genkit.Init(ctx,
-		genkit.WithPlugins(&openai.OpenAI{
-			APIKey: os.Getenv("OPENAI_API_KEY"),
-		}),
-	), nil
+		return genkit.Init(ctx,
+			genkit.WithPlugins(&openai.OpenAI{
+				APIKey: os.Getenv("OPENAI_API_KEY"),
+			}),
+		), nil
 
 	case "anthropic":
 		return genkit.Init(ctx,
