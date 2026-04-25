@@ -147,6 +147,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	var res map[string]string
 	switch action {
 	case "deploy":
+		//res, err = app.DeployTerraformForTenant(params, tenantID, run)
 		res, err = app.DeployOpenTofuForTenant(params, tenantID, run)
 		_json_out, _ := json.Marshal(res)
 		_data["tf_public_ip"] = rawMessageToString(json.RawMessage(res["public_ip"]))
@@ -155,6 +156,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 		_data["terraform_outputs"] = string(_json_out)
 		_data["deployed"] = true
 	case "cancel", "destroy":
+		//err = app.DestroyTerraform(params, tenantID, run)
 		err = app.DestroyOpenTofu(params, tenantID, run)
 		_data["deployed"] = false
 	}
@@ -994,7 +996,6 @@ func (app *application) deleteCustomerConfig(slug string) error {
 		return fmt.Errorf("No TRAEFIK_DYNAMIC_DIR found in your enviromental variables|")
 	}
 	filePath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", slug))
-
 	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
 		return err
 	}
