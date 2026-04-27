@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"context"
 	"encoding/json"
@@ -170,7 +171,7 @@ func aiAssistHandler(w http.ResponseWriter, r *http.Request) {
 		Content: resp.Text(),
 	})
 }
-
+*/
 /*
 {
   "provider": "googleai",
