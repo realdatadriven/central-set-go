@@ -148,8 +148,12 @@ func (app *application) etlxMdParse(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
+	_params := Dict{}
+	if _, ok := params["params"].(Dict); ok {
+		_params = params["params"].(Dict)
+	}
 	config := make(Dict)
-	etlxlib := &etlx.ETLX{Config: config}
+	etlxlib := &etlx.ETLX{Config: config, Params: _params}
 	_data, ok := params["data"].(Dict)
 	if !ok {
 		return Dict{
@@ -249,8 +253,12 @@ func (app *application) queryETLXMD(params Dict) Dict {
 			"msg":     fmt.Sprintf("ETLX ID %s does not have configuration!", x["etlx_id"]),
 		}
 	}
+	_params := Dict{}
+	if _, ok := params["params"].(Dict); ok {
+		_params = params["params"].(Dict)
+	}
 	config := make(Dict)
-	etlxlib := &etlx.ETLX{Config: config}
+	etlxlib := &etlx.ETLX{Config: config, Params: _params}
 	err := etlxlib.ConfigFromMDText(_conf)
 	if err != nil {
 		return Dict{
@@ -282,9 +290,13 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 			"msg":     "Check the data passed, possible mal-formated!",
 		}
 	}
+	_params := Dict{}
+	if _, ok := params["params"].(Dict); ok {
+		_params = params["params"].(Dict)
+	}
 	// CONFIG
 	config := make(Dict)
-	etlxlib := &etlx.ETLX{Config: config}
+	etlxlib := &etlx.ETLX{Config: config, Params: _params}
 	etlxlib.MetadataOrder = false
 	if order_metadata, ok := _data["order_metadata"].(bool); ok {
 		fmt.Println("order_metadata:", order_metadata)

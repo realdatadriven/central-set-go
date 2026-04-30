@@ -134,12 +134,18 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 		fmt.Println(err)
 	}
 	token := app.verifyToken(r)
-	params["user"] = *(contextGetAuthenticatedUser(r))
+	user := *(contextGetAuthenticatedUser(r))
+	params["user"] = user
 	var data Dict
 	if !token["success"].(bool) {
 		data = token
 	} else {
 		params["data"] = Dict{"name": name}
+		if _, ok := user["params"]; ok {
+			params["params"] = user["params"]
+		} else if _, ok := user["data"]; ok {
+			params["params"] = user["data"]
+		}
 		data = app.etlxRunByName(params)
 		//fmt.Println(data)
 	}

@@ -164,10 +164,17 @@ func (app *application) CronRunEndPoint(data Dict) (Dict, error) {
 	if !ok {
 		api, _ = data["endpoint"].(string)
 	}
+	_params := Dict{}
+	if _, ok := data["params"].(Dict); ok {
+		_params = data["params"].(Dict)
+	}
+	if _, ok := data["data"].(Dict); ok {
+		_params = data["data"].(Dict)
+	}
 	endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, api)
 	_jwt, ok := data["token"].(string)
 	if !ok {
-		_jwt, _ = app.AdminGetJWT(Dict{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false})
+		_jwt, _ = app.AdminGetJWT(Dict{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false, "params": _params})
 	}
 	req, _ := http.NewRequest("GET", endpoint, nil) // bytes.NewBuffer(jsonBody)
 	// Set headers

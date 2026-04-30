@@ -486,6 +486,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		}
 		id = _id
 	}
+	_data[pk] = id
 	if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" && crud_aciton == "create" {
 		login_table := os.Getenv("DYN_LOGIN_TABLE")
 		if login_table == table {
@@ -580,7 +581,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
 		}*/
 	} else if len(crud_action_rows) > 0 {
-		actionRunner := func(c_action Dict) error {			
+		actionRunner := func(c_action Dict) error {
 			action_type_id := c_action["action_type_id"]
 			_, okSql := c_action["sql"]
 			_, okEmail := c_action["email_template"]
@@ -650,7 +651,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					}
 				}
 			} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
-				_, err := app.CronRunEndPoint(Dict{"api": api})
+				_, err := app.CronRunEndPoint(Dict{"api": api, "data": _data})
 				if err != nil {
 					success = false
 					crud_action_log["success"] = success
