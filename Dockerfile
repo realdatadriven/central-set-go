@@ -1,7 +1,7 @@
 # ============================================
 # 🛠️ Stage 1: Build central-set-go from Source
 # ============================================
-FROM golang:1.25 as builder
+FROM golang:1.26 as builder
 
 # Set working directory inside the container
 WORKDIR /app
@@ -119,13 +119,13 @@ ENTRYPOINT ["/entrypoint.sh"]
 CMD [""]
 # ============================================
 # Usage Instructions
-#docker build --no-cache -t central-set-go:latest .
-#docker run -v ./database:/app/database central-set-go:latest --init
-#docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
+#podman build --no-cache -t central-set-go:latest .
+#podman run -v ./database:/app/database central-set-go:latest --init
+#podman run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
 #podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:latest
-#podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.1.8
+#podman tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.152.1
 #podman login docker.io
 #podman push docker.io/realdatadriven/central-set-go:latest
-#podman push docker.io/realdatadriven/central-set-go:v1.1.8
+#podman push docker.io/realdatadriven/central-set-go:v1.152.1
 #docker exec -it c78f3f267461 bash
 
