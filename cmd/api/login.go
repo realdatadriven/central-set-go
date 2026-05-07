@@ -401,14 +401,14 @@ func (app *application) dynamic_signup(params Dict) Dict {
 // update failed_login_attmpt and last_failed_login for table users
 func (app *application) updateFailedLoginAttempts(username string) error {
 	query := `UPDATE users 
-	SET failed_login_attempts = failed_login_attempts + 1, 
-	last_failed_login = :last_failed_login,
-	active = CASE
-		WHEN failed_login_attempts + 1 >= :lockout_threshold THEN false
-		ELSE true
-	END,
-	updated_at = :last_failed_login
-WHERE username = :username`
+		SET failed_login_attempts = failed_login_attempts + 1, 
+		last_failed_login = :last_failed_login,
+		active = CASE
+			WHEN failed_login_attempts + 1 >= :lockout_threshold THEN false
+			ELSE true
+		END,
+		updated_at = :last_failed_login
+	WHERE username = :username`
 	data := Dict{
 		"username":          username,
 		"last_failed_login": time.Now(),
@@ -421,10 +421,10 @@ WHERE username = :username`
 // reset failed_login_attmpt and last_failed_login for table users
 func (app *application) resetFailedLoginAttempts(username string) error {
 	query := `UPDATE users
-	SET failed_login_attempts = 0, 
-	last_failed_login = NULL,
-	updated_at = :updated_at
-WHERE username = :username`
+		SET failed_login_attempts = 0, 
+		last_failed_login = NULL,
+		updated_at = :updated_at
+	WHERE username = :username`
 	data := Dict{
 		"username":   username,
 		"updated_at": time.Now(),
