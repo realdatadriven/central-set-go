@@ -82,7 +82,8 @@ If you want to build CS yourself:
 ```bash
 git clone https://github.com/realdatadriven/central-set-go.git
 cd central-set-go
-go build -o central-set ./cmd/api
+go mod tidy
+go build -tags="duckdb_arrow" -o central-set ./cmd/api
 ```
 
 Run it:
