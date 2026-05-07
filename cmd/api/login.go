@@ -216,6 +216,9 @@ func (app *application) dynamic_login(params Dict) Dict {
 			}
 		}
 		if !match {
+			if app.config.LockoutEnabled {
+				_ = app.updateFailedLoginAttempts(username)
+			}
 			msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
 			return Dict{
 				"success": false,
@@ -395,6 +398,41 @@ func (app *application) dynamic_signup(params Dict) Dict {
 	}
 }
 
+// update failed_login_attmpt and last_failed_login for table users
+func (app *application) updateFailedLoginAttempts(username string) error {
+	query := `UPDATE users 
+	SET failed_login_attempts = failed_login_attempts + 1, 
+	last_failed_login = :last_failed_login,
+	active = CASE
+		WHEN failed_login_attempts + 1 >= :lockout_threshold THEN false
+		ELSE true
+	END,
+	updated_at = :last_failed_login
+WHERE username = :username`
+	data := Dict{
+		"username":          username,
+		"last_failed_login": time.Now(),
+		"lockout_threshold": app.config.LockoutThreshold,
+	}
+	_, err := app.db.ExecuteNamedQuery(query, data)
+	return err
+}
+
+// reset failed_login_attmpt and last_failed_login for table users
+func (app *application) resetFailedLoginAttempts(username string) error {
+	query := `UPDATE users
+	SET failed_login_attempts = 0, 
+	last_failed_login = NULL,
+	updated_at = :updated_at
+WHERE username = :username`
+	data := Dict{
+		"username":   username,
+		"updated_at": time.Now(),
+	}
+	_, err := app.db.ExecuteNamedQuery(query, data)
+	return err
+}
+
 // login function, gets username/email and password from params, validates user and returns JWT token
 func (app *application) _login(params Dict) Dict {
 	_data := Dict{}
@@ -495,6 +533,9 @@ func (app *application) _login(params Dict) Dict {
 				}
 			}
 			if !match {
+				if app.config.LockoutEnabled {
+					_ = app.updateFailedLoginAttempts(username)
+				}
 				msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
 				return Dict{
 					"success": false,
@@ -569,6 +610,10 @@ func (app *application) _login(params Dict) Dict {
 			"two_factor": true,
 			"username":   username,
 		}
+	}
+	// reset failed login attempts
+	if app.config.LockoutEnabled {
+		_ = app.resetFailedLoginAttempts(username)
 	}
 	delete(user, "password")
 	delete(user, "created_at")
@@ -675,6 +720,9 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 			}
 		}
 		if !match {
+			if app.config.LockoutEnabled {
+				_ = app.updateFailedLoginAttempts(username)
+			}
 			msg, _ := app.i18n.T("two-factor-code-incorrect", Dict{})
 			return Dict{
 				"success": false,

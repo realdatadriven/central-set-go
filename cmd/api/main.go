@@ -87,6 +87,9 @@ type app_config struct {
 	s3SkipSSLVerify       bool
 	s3Endpoint            string
 	frontend_url          string
+	LockoutEnabled	   	  bool
+	LockoutThreshold	  int
+
 }
 
 //type admin struct{}
@@ -156,6 +159,8 @@ func run(logger *slog.Logger) error {
 	cfg.s3SkipSSLVerify = env.GetBool("S3_SKIP_SSL_VERIFY", false)
 	cfg.s3Endpoint = env.GetString("AWS_ENDPOINT", "")
 	cfg.frontend_url = env.GetString("FRONTEND_URL", "http://localhost:4444")
+	cfg.LockoutEnabled = env.GetBool("LOCKOUT_ENABLED", true)
+	cfg.LockoutThreshold = env.GetInt("LOCKOUT_THRESHOLD", 3)
 	//cli flags
 	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize the main db")
