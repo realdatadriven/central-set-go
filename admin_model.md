@@ -557,9 +557,9 @@ columns:
   cron:          { type: varchar(100), unique: false, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
   cron_desc:     { type: text, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 9, order: 2 }
   api:           { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 10, order: 3 }
-  db:            { type: varchar(50), comment: "Database (if applicable)", order: 4 }
-  table:         { type: varchar(100), comment: "Table (if applicable)", order: 5 }
-  app_id:        { type: integer, fk: "app.app_id", comment: "Application ID", order: 6 }
+  db:            { type: varchar(50), comment: "Database (if applicable)", order: 4, form_display: true, table_display: true, form_size: 4 }
+  table:         { type: varchar(100), comment: "Table (if applicable)", order: 5, form_display: true, table_display: true, form_size: 4 }
+  app_id:        { type: integer, fk: "app.app_id", comment: "Application ID", order: 6, form_display: true, table_display: true, form_size: 4 }
   active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 7 }
   run_only_once: { type: boolean, default: false, comment: "Run Once", form_display: true, table_display: true, form_size: 2, order: 9 }
   last_run:      { type: datetime, comment: "Last Run", form_display: true, table_display: true, form_size: 4, order: 10 }
@@ -663,21 +663,21 @@ table: arrow_flight
 comment: Expose Arrow Flight
 columns:
   arrow_flight_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight:        { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1 }
-  arrow_flight_desc:   { type: text, comment: "Description", form_display: true, table_display: true, order: 2 }
-  flight_schema:       { type: varchar(200), unique: true, nullable: false, comment: "Schema Name", form_display: true, table_display: true, order: 3 }
-  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, order: 4 }
-  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, order: 5 }
-  table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, order: 6 }
-  table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, order: 7 }
-  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, order: 8 }
-  arrow_flight_conf:   { type: text, comment: "Configuration", form_display: true, order: 9 }
+  arrow_flight:        { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 2 }
+  arrow_flight_desc:   { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
+  flight_schema:       { type: varchar(200), unique: true, nullable: false, comment: "Schema Name", form_display: true, table_display: true, order: 3, form_size: 2 }
+  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
+  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
+  table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
+  table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, order: 7, form_long_text: true, form_code: sql }
+  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
+  arrow_flight_conf:   { type: text, comment: "Configuration", form_display: true, order: 9, form_long_text: true, form_code: json}
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 10 }
-  user_id:             { type: integer, fk: "users.user_id", comment: "User ID", order: 11 }
-  app_id:              { type: integer, fk: "app.app_id", comment: "App ID", order: 12 }
-  created_at:          { type: datetime, comment: "Created at", order: 13 }
-  updated_at:          { type: datetime, comment: "Updated at", order: 14 }
-  excluded:            { type: boolean, default: false, comment: "Excluded", order: 15 }
+  user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:          { type: datetime, comment: "Created at" }
+  updated_at:          { type: datetime, comment: "Updated at" }
+  excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
   - {arrow_flight_id: 1, arrow_flight: "Expose Admin DB", arrow_flight_desc: "Ex. Arrow Flight Schema using ADMIN app", flight_schema: adm, startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
 form_layout:
@@ -685,7 +685,7 @@ form_layout:
   form_in_popup: false
   size: 8
   sub_form_size: 9
-  allow_in_subform: {arrow_flight_table: true, arrow_flight_scope: true}
+  allow_in_subform: {arrow_flight_table: true}
   tabs_steps_conf: []
 form_extra_options: []
 table_layout:
@@ -718,6 +718,7 @@ form_layout:
   sub_form_size: 8
   allow_in_subform:
     arrow_flight_table_field: true
+    arrow_flight_table_scope: true
 table_layout:
   allow_in_submenu: {}
   default_order:
