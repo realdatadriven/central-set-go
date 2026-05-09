@@ -861,7 +861,7 @@ columns:
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
   sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
-  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at", order: 11 }
   updated_at:        { type: datetime, comment: "Updated at", order: 12 }
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
@@ -939,7 +939,7 @@ columns:
   sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
   email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 14, form_long_text: true, form_code: text, form_hide_cond: "data?.action_type_id !== 2" }
-  api:               { type: varchar(200), comment: "Call API", form_display: true, table_display: true, order: 15, form_hide_cond: "data?.action_type_id !== 3" }
+  api:               { type: varchar(200), comment: "Call API", form_display: true, table_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 16, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
