@@ -750,23 +750,23 @@ func (app *application) tables(params Dict, tables []any) Dict {
 		}
 		table_fields := Dict{}
 		fk_tables_added := []any{}
-		for _, row := range *_table_schema {
-			if _, ok := table_schema[row["table"].(string)]; !ok {
-				table_schema[row["table"].(string)] = Dict{}
+		for _, _row := range *_table_schema {
+			if _, ok := table_schema[_row["table"].(string)]; !ok {
+				table_schema[_row["table"].(string)] = Dict{}
 			}
-			if _, ok := table_fields[row["table"].(string)]; !ok {
-				table_fields[row["table"].(string)] = []any{}
+			if _, ok := table_fields[_row["table"].(string)]; !ok {
+				table_fields[_row["table"].(string)] = []any{}
 			}
-			_row := row
+			//_row := row
 			/*if _, ok := table_schema[row["table"].(string)].(Dict)["fields"]; !ok {
 				table_schema[row["table"].(string)].(Dict)["fields"] = Dict{}
 			}
 			table_schema[row["table"].(string)].(Dict)["fields"].(Dict)[row["field"].(string)] = row*/
 			comment := _row["comment"]
-			if _, ok := translate_table_field[row["table"].(string)]; !ok {
-			} else if _, ok := translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)]; !ok {
-			} else if _, ok := translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)].(Dict)["field_transl_desc"]; ok {
-				comment = translate_table_field[row["table"].(string)].(Dict)[row["field"].(string)].(Dict)["field_transl_desc"]
+			if _, ok := translate_table_field[_row["table"].(string)]; !ok {
+			} else if _, ok := translate_table_field[_row["table"].(string)].(Dict)[_row["field"].(string)]; !ok {
+			} else if _, ok := translate_table_field[_row["table"].(string)].(Dict)[_row["field"].(string)].(Dict)["field_transl_desc"]; ok {
+				comment = translate_table_field[_row["table"].(string)].(Dict)[_row["field"].(string)].(Dict)["field_transl_desc"]
 			}
 			_row["comment"] = comment
 			_row["name"] = _row["field"]
@@ -774,14 +774,10 @@ func (app *application) tables(params Dict, tables []any) Dict {
 			} else if app.contains([]any{1, true, "true", "True", "TRUE", "T", "1"}, _row["fk"]) || app.toBool(_row["fk"]) {
 				//fmt.Println(_row["field"], _row["table"], _row["referred_table"], _row["referred_column"])
 				referred_columns_desc := ""
-				if _, ok := table_fields[row["referred_table"].(string)].([]any); ok {
-					if len(table_fields[row["referred_table"].(string)].([]any)) > 1 {
-						referred_columns_desc = table_fields[row["referred_table"].(string)].([]any)[1].(string)
-					} else {
-						fmt.Println(1, "Problems:", row["referred_table"].(string), table_fields[row["referred_table"].(string)].([]any), table_fields[row["referred_table"].(string)].([]any)[1].(string))
+				if _, ok := table_fields[_row["referred_table"].(string)].([]any); ok {
+					if len(table_fields[_row["referred_table"].(string)].([]any)) > 1 {
+						referred_columns_desc = table_fields[_row["referred_table"].(string)].([]any)[1].(string)
 					}
-				} else {
-					fmt.Println(0, "Problems:", row["referred_table"].(string), table_fields[row["referred_table"].(string)])
 				}
 				fk_tables_added = append(fk_tables_added, Dict{"table": _row["table"], "referred_table": _row["referred_table"]})
 				acorr := app.filterAny(fk_tables_added, func(r any) bool {
@@ -799,10 +795,11 @@ func (app *application) tables(params Dict, tables []any) Dict {
 					"referred_columns_desc_org": referred_columns_desc_org,
 					"referred_columns_desc":     referred_columns_desc,
 				}
-				fmt.Println("REF:", _row["field"], row["referred_table"].(string), _row["ref"])
+				// fmt.Println("REF:", _row["field"], _row["referred_table"].(string), _row["ref"])
 			}
-			table_schema[row["table"].(string)].(Dict)[row["field"].(string)] = _row
-			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]any), row["field"])
+			table_schema[_row["table"].(string)].(Dict)[_row["field"].(string)] = _row
+			table_fields[_row["table"].(string)] = append(table_fields[_row["table"].(string)].([]any), _row["field"])
+			//_row = nil
 		}
 		// table form customizations custom_form
 		query = `SELECT * 
