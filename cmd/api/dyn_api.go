@@ -187,7 +187,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	_log := Dict{
 		"action": fmt.Sprintf("%s/%s", ctrl, act),
 		"req_ip": _ip,
-		"res_at": time.Now(),
+		"req_at": time.Now(),
 	}
 	//fmt.Println(token, params)
 	if token["success"].(bool) {
@@ -625,14 +625,15 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	actions_not_to_log := app.sliceStrs2SliceInterfaces(strings.Split(app.config.actions_not_to_log, ","))
 	// fmt.Println(actions_not_to_log)
 	if !app.contains(actions_not_to_log, act) {
+		_log["res_at"] = time.Now()
 		_log["res_type"] = "success"
-		if _, ok := data["success"]; !ok {
-			_log["res_type"] = "error"
-		} else if _, ok := data["success"].(bool); !ok {
+		if _, ok := data["success"].(bool); !ok {
 			_log["res_type"] = "error"
 		} else if success, ok := data["success"].(bool); ok {
 			if success {
 				_log["res_type"] = "success"
+			} else {
+				_log["res_type"] = "error"
 			}
 		}
 		_log["res_msg"] = data["msg"]

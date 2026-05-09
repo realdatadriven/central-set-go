@@ -1,3 +1,0 @@
-find /nix/store -name libodbc.so.2
-
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/nix/store/ysw8nj5amckqq9xpqx9mfbm4di0953gi-user-environment/lib/

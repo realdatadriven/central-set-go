@@ -1,3 +1,4 @@
+#CGO_ENABLED=1 go install -tags extended github.com/gohugoio/hugo@latest
 #hugo --source docs --themesDir themes --minify
 #git subtree push --prefix docs/public origin gh-pages
 #baseURL = "./docs" # (or set via env variable HUGO_BASEURL)

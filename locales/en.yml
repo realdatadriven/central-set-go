@@ -110,3 +110,6 @@ two-factor-code-email-sent: 'Login code has been sent to {{.email}}!'
 two-factor-code-incorrect: Two factor auth code incorrect!
 two-factor-code-expired: Two factor auth code expired!
 code-not-saved-or-already-used: Code not set or already used!
+account-inactive: 'Account is inactive, please contact the admin!'
+account-deactivated: 'Account is deactivated, please contact the admin!'
+account-locked: 'Account is locked due to too many failed login attempts, please contact the admin!'

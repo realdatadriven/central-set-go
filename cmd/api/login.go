@@ -401,10 +401,10 @@ func (app *application) dynamic_signup(params Dict) Dict {
 // update failed_login_attmpt and last_failed_login for table users
 func (app *application) updateFailedLoginAttempts(username string) error {
 	query := `UPDATE users 
-		SET failed_login_attempts = failed_login_attempts + 1, 
+		SET failed_login_attmpt = coalesce(failed_login_attmpt, 0) + 1, 
 		last_failed_login = :last_failed_login,
 		active = CASE
-			WHEN failed_login_attempts + 1 >= :lockout_threshold THEN false
+			WHEN coalesce(failed_login_attmpt, 0) + 1 >= :lockout_threshold THEN false
 			ELSE true
 		END,
 		updated_at = :last_failed_login
@@ -421,7 +421,7 @@ func (app *application) updateFailedLoginAttempts(username string) error {
 // reset failed_login_attmpt and last_failed_login for table users
 func (app *application) resetFailedLoginAttempts(username string) error {
 	query := `UPDATE users
-		SET failed_login_attempts = 0, 
+		SET failed_login_attmpt = 0, 
 		last_failed_login = NULL,
 		updated_at = :updated_at
 	WHERE username = :username`
@@ -522,6 +522,24 @@ func (app *application) _login(params Dict) Dict {
 				"msg":     err.Error(),
 			}
 		}
+		// check if active is true
+		if active, ok := user["active"].(bool); ok {
+			if !active {
+				msg, _ := app.i18n.T("account-inactive", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+		} else if active, ok := user["active"]; ok {
+			if app.toBool(active) == false {
+				msg, _ := app.i18n.T("account-inactive", Dict{})
+				return Dict{
+					"success": false,
+					"msg":     msg,
+				}
+			}
+		}
 		if found {
 			//_hash, _ := password.Hash(pass)
 			//fmt.Println(pass, _hash, user["password"].(string))
@@ -534,7 +552,11 @@ func (app *application) _login(params Dict) Dict {
 			}
 			if !match {
 				if app.config.LockoutEnabled {
-					_ = app.updateFailedLoginAttempts(username)
+					// fmt.Println("app.updateFailedLoginAttempts(username):", username, app.config.LockoutThreshold)
+					err = app.updateFailedLoginAttempts(username)
+					if err != nil {
+						fmt.Println("Error updating failed login attempts:", err)
+					}
 				}
 				msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
 				return Dict{
