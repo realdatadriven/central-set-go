@@ -122,10 +122,10 @@ columns:
   phone:                { type: varchar(50), unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 4, order: 6 }
   role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 4, order: 7 }
   lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 4, order: 8 }
-  timezone:             { type: varchar(50), comment: "Timezone", form_display: true, table_display: true, form_size: 4, order: 9 }
-  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture", form_display: true, table_display: true, form_size: 4, form_att: true, order: 10 }
-  failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: false, form_size: 4, form_att: true, order: 10 }
-  last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: false, form_size: 9, form_att: true, order: 10 }
+  timezone:             { type: varchar(50), comment: "Timezone", form_display: true, form_size: 3, order: 9 }
+  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture", form_display: true, table_display: true, form_size: 3, form_att: true, order: 10 }
+  failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: false, form_size: 3, form_att: true, order: 10 }
+  last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: false, form_size: 3, form_att: true, order: 10 }
   active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 11 }
   alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login", form_display: true, order: 12, form_size: 4 }
   enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth.", form_display: true, order: 13, form_size: 3 }
@@ -152,7 +152,7 @@ table: user_role
 comment: User-Role Assignments
 columns:
   user_role_id:  { type: integer, pk: true, autoincrement: true, comment: "User-Role Assignment ID" }
-  user_id:       { type: integer, fk: "users.user_id", nullable: false, comment: "User", table_display: true, order: 1 }
+  user_id:       { type: integer, fk: "users.user_id", nullable: false, comment: "User", table_display: true, form_display: true, order: 1 }
   role_id:       { type: integer, fk: "role.role_id", nullable: false, comment: "Role / Profile", form_display: true, table_display: true, order: 2 }
   active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 12, order: 3 }
   created_at:    { type: datetime, comment: "Created at", order: 4 }
@@ -173,18 +173,18 @@ columns:
   app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9, order: 1 }
   app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 3 }
   version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
-  email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 6, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
+  email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 3, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
   db:          { type: varchar(20), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
   # conn_string: { type: varchar(200), nullable: false, comment: "Conn String", form_display: true, table_display: true, form_size: 3, order: 5 }
   attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
-  category:    { type: varchar(200), comment: "Category", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
-  config:      { type: text, comment: "Config" }
+  category:    { type: varchar(200), comment: "Category", form_display: true, table_display: true, form_size: 3, order: 6 }
+  config:      { type: text, comment: "Config", form_long_text: true, form_code: json }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, db: ADMIN, user_id: 1}
+  - {app_id: 1, app: ADMIN, app_desc: Admin, version: 1.0.0, db: ADMIN, category: Admin, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -207,14 +207,13 @@ table: menu
 comment: Menu Items
 columns:
   menu_id:       { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
-  menu:          { type: varchar(20), unique: false, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 12, order: 1 }
-  menu_desc:     { type: text, comment: "Description", form_display: true, table_display: true, order: 2 }
-  menu_icon:     { type: varchar(20), comment: "Icon", form_display: true, table_display: true, form_size: 6, order: 3 }
-  menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 6, order: 4 }
-  menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, table_display: true, form_use_label: true, order: 5 }
-  config:        { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true, order: 6 }
+  menu:          { type: varchar(20), nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 3, order: 1 }
+  menu_desc:     { type: text, comment: "Description", form_display: true, form_size: 9, table_display: true, order: 2 }
+  menu_icon:     { type: varchar(20), comment: "Icon", form_display: true, table_display: true, form_size: 4, order: 3 }
+  menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 4, order: 4 }
+  menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, form_code: json, table_display: true, form_use_label: true, order: 6 }
   app_id:        { type: integer, fk: "app.app_id", comment: "App ID" }
-  active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 8 }
+  active:        { type: boolean, default: true, comment: "Active", form_display: true, form_size: 4, table_display: true, order: 5 }
   user_id:       { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:    { type: datetime, comment: "Created at" }
   updated_at:    { type: datetime, comment: "Updated at" }
@@ -223,7 +222,7 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
-  allow_in_subform: {}
+  allow_in_subform: {menu_table: true}
   tabs_steps_conf: []
 table_layout:
   allow_in_submenu: {menu_table: true}
@@ -374,9 +373,9 @@ table: custom_table
 comment: Custom Table
 columns:
   custom_table_id: { type: integer, pk: true, autoincrement: true, comment: "Custom Table ID" }
-  table:           { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 1 }
-  db:              { type: varchar(200), comment: "Database", form_display: true, table_display: true, order: 2 }
-  config:          { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true, order: 3 }
+  table:           { type: varchar(200), comment: "Table", form_display: true, table_display: true, form_size: 6, order: 1 }
+  db:              { type: varchar(200), comment: "Database", form_display: true, table_display: true, form_size: 6, order: 2 }
+  config:          { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: json, table_display: true, order: 3 }
   app_id:          { type: integer, fk: "app.app_id", comment: "App ID", order: 4 }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
   created_at:      { type: datetime, comment: "Created at", order: 6 }
@@ -385,7 +384,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 10
+  size: 8
 ```
 
 ## CUSTOM_FORM
@@ -394,9 +393,9 @@ table: custom_form
 comment: Custom Form
 columns:
   custom_form_id: { type: integer, pk: true, autoincrement: true, comment: "Custom Form ID" }
-  table:          { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 1 }
-  db:             { type: varchar(200), comment: "Database", form_display: true, table_display: true, order: 2 }
-  config:         { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true, order: 3 }
+  table:          { type: varchar(200), comment: "Table", form_display: true, table_display: true, form_size: 6, order: 1 }
+  db:             { type: varchar(200), comment: "Database", form_display: true, table_display: true, form_size: 6, order: 2 }
+  config:         { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: json, table_display: true, order: 3 }
   app_id:         { type: integer, fk: "app.app_id", comment: "App ID", order: 4 }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
   created_at:     { type: datetime, comment: "Created at", order: 6 }
@@ -405,7 +404,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 10
+  size: 8
 ```
 
 ## ROLE_ROW_LEVEL_ACCESS
@@ -524,20 +523,20 @@ table: table_schema
 comment: Table Schema
 columns:
   table_schema_id: { type: integer, pk: true, autoincrement: true, comment: "Table field ID" }
-  db:              { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 1 }
-  table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 2 }
-  field:           { type: varchar(200), nullable: false, comment: "Field", form_display: true, table_display: true, order: 3 }
-  type:            { type: varchar(200), nullable: false, comment: "Type", form_display: true, table_display: true, order: 4 }
-  comment:         { type: varchar(200), comment: "Comment", form_display: true, table_display: true, order: 5 }
-  pk:              { type: boolean, default: false, comment: "Primary Key", form_display: true, table_display: true, order: 6 }
-  autoincrement:   { type: boolean, default: false, comment: "Auto Increment", form_display: true, table_display: true, order: 7 }
-  nullable:        { type: boolean, default: false, comment: "Nullable", form_display: true, table_display: true, order: 8 }
-  computed:        { type: boolean, default: false, comment: "Computed", form_display: true, table_display: true, order: 9 }
-  default:         { type: varchar(200), comment: "Default", form_display: true, table_display: true, order: 10 }
-  fk:              { type: boolean, default: false, comment: "Foreign Key", form_display: true, table_display: true, order: 11 }
-  referred_table:  { type: varchar(200), comment: "Ref. Table.", form_display: true, table_display: true, order: 12 }
-  referred_column: { type: varchar(200), comment: "Ref. Column", form_display: true, table_display: true, order: 13 }
-  field_order:     { type: integer, comment: "Field Order", form_display: true, table_display: true, order: 14 }
+  db:              { type: varchar(200), nullable: false, comment: "Database", form_display: true, form_size: 3, table_display: true, order: 1 }
+  table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, form_size: 3, table_display: true, order: 2 }
+  field:           { type: varchar(200), nullable: false, comment: "Field", form_display: true, form_size: 3, table_display: true, order: 3 }
+  type:            { type: varchar(200), nullable: false, comment: "Type", form_display: true, form_size: 3, table_display: true, order: 4 }
+  comment:         { type: varchar(200), comment: "Comment", form_display: true, form_size: 3, table_display: true, order: 5 }
+  pk:              { type: boolean, default: false, comment: "Primary Key", form_display: true, form_size: 3, table_display: true, order: 6 }
+  autoincrement:   { type: boolean, default: false, comment: "Auto Increment", form_display: true, form_size: 3, table_display: true, order: 7 }
+  nullable:        { type: boolean, default: false, comment: "Nullable", form_display: true, form_size: 3, table_display: true, order: 8 }
+  computed:        { type: boolean, default: false, comment: "Computed", form_display: true, form_size: 3, table_display: true, order: 9 }
+  default:         { type: varchar(200), comment: "Default", form_display: true, form_size: 3, table_display: true, order: 10 }
+  fk:              { type: boolean, default: false, comment: "Foreign Key", form_display: true, form_size: 3, table_display: true, order: 11 }
+  referred_table:  { type: varchar(200), comment: "Ref. Table", form_display: true, form_size: 3, table_display: true, order: 12 }
+  referred_column: { type: varchar(200), comment: "Ref. Column", form_display: true, form_size: 3, table_display: true, order: 13 }
+  field_order:     { type: integer, comment: "Field Order", form_display: true, form_size: 3, table_display: true, order: 14 }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 15 }
   created_at:      { type: datetime, comment: "Created at", order: 16 }
   updated_at:      { type: datetime, comment: "Updated at", order: 17 }
@@ -789,11 +788,11 @@ table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, order: 1 }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2 }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 3 }
-  order:          { type: integer, comment: "Order", form_display: true, table_display: true, order: 4 }
-  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
+  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, order: 1, form_size: 3 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 9 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 5 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID", order: 6 }
   app_id:         { type: integer, fk: "app.app_id", comment: "App ID", order: 7 }
   created_at:     { type: datetime, comment: "Created at", order: 8 }
@@ -802,7 +801,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 10
+  size: 8
 table_extra_options:
   - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
 ```
@@ -920,7 +919,7 @@ form_layout:
 ## CRUD_ACTION
 ```yaml
 table: crud_action
-comment: CRUD Action Roles
+comment: CRUD Action Rules
 tooltip: Dispaches some actions after a crud operation
 columns:
   crud_action_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
