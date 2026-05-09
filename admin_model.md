@@ -79,9 +79,8 @@ columns:
 data:
   - {lang_id: 1, lang: en, lang_desc: English, excluded: false}
 form_layout:
-  tabs_steps: deactivate
   form_in_popup: true
-  size: 6
+  size: 4
 ```
 
 ## ROLE
@@ -102,7 +101,7 @@ data:
   - {role_id: 3, role: tenant, role_desc: "Tenant Role", excluded: false}
 form_layout:
   tabs_steps: tabs
-  size: 8
+  size: 4
   allow_in_subform: {}
   tabs_steps_conf: []
 table_extra_options:
@@ -119,18 +118,18 @@ columns:
   first_name:           { type: varchar(50), nullable: false, comment: "First Name", form_display: true, table_display: true, form_size: 4, order: 2 }
   last_name:            { type: varchar(50), comment: "Last Name", form_display: true, table_display: true, form_size: 4, order: 3 }
   password:             { type: varchar(200), nullable: false, comment: "Password", form_display: true, form_use_label: true, form_size: 3, order: 4 }
-  email:                { type: varchar(50), unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 9, order: 5 }
-  phone:                { type: varchar(50), unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 3, order: 6 }
-  role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 6, order: 7 }
-  lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 3, order: 8 }
-  timezone:             { type: varchar(50), comment: "Timezone", form_display: true, table_display: true, form_size: 12, order: 9 }
-  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture", form_display: true, table_display: true, form_size: 9, form_att: true, order: 10 }
-  failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: true, form_size: 9, form_att: true, order: 10 }
-  last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: true, form_size: 9, form_att: true, order: 10 }
+  email:                { type: varchar(50), unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 4, order: 5 }
+  phone:                { type: varchar(50), unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 4, order: 6 }
+  role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 4, order: 7 }
+  lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 4, order: 8 }
+  timezone:             { type: varchar(50), comment: "Timezone", form_display: true, table_display: true, form_size: 4, order: 9 }
+  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture", form_display: true, table_display: true, form_size: 4, form_att: true, order: 10 }
+  failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: false, form_size: 4, form_att: true, order: 10 }
+  last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: false, form_size: 9, form_att: true, order: 10 }
   active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 11 }
-  alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login", form_display: true, order: 15 }
-  enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth.", form_display: true, order: 16 }
-  nxt_code_2f_auth:     { type: varchar(200), comment: "Next Two Factor Code", order: 17 }
+  alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login", form_display: true, order: 12, form_size: 4 }
+  enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth.", form_display: true, order: 13, form_size: 3 }
+  nxt_code_2f_auth:     { type: varchar(200), comment: "Next Two Factor Code", order: 14 }
   code_2f_expires_at:   { type: datetime, comment: "2F Code Expires", order: 18 }
   created_at:           { type: datetime, comment: "Created at" }
   updated_at:           { type: datetime, comment: "Updated at" }
