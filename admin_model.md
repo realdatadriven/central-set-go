@@ -28,6 +28,7 @@ cs_app:
       - menu
       - role
       - users
+      - {table: user_role, active: false}
       - access_key
       - env
       - validation
@@ -117,7 +118,7 @@ columns:
   username:             { type: varchar(50), unique: true, nullable: false, comment: "Username", form_display: true, table_display: true, form_size: 4, order: 1 }
   first_name:           { type: varchar(50), nullable: false, comment: "First Name", form_display: true, table_display: true, form_size: 4, order: 2 }
   last_name:            { type: varchar(50), comment: "Last Name", form_display: true, table_display: true, form_size: 4, order: 3 }
-  password:             { type: varchar(200), nullable: false, comment: "Password", form_display: true, form_use_label: true, form_size: 3, order: 4 }
+  password:             { type: varchar(200), nullable: false, comment: "Password", form_display: true, form_use_label: true, form_size: 4, order: 4 }
   email:                { type: varchar(50), unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 4, order: 5 }
   phone:                { type: varchar(50), unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 4, order: 6 }
   role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 4, order: 7 }
@@ -618,11 +619,11 @@ columns:
   expires_at:       { type: datetime, comment: "Expires at", form_display: true, table_display: true, form_size: 4, order: 3 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 4 }
   for_user_id:      { type: integer, fk: "users.user_id", comment: "Assigned to User", form_display: true, table_display: true, form_size: 4, order: 5 }
-  user_id:          { type: integer, fk: "users.user_id", comment: "Created by", order: 6 }
-  app_id:           { type: integer, fk: "app.app_id", comment: "Application", order: 7 }
-  created_at:       { type: datetime, comment: "Created at", order: 8 }
-  updated_at:       { type: datetime, comment: "Updated at", order: 9 }
-  excluded:         { type: boolean, default: false, comment: "Excluded", order: 10 }
+  user_id:          { type: integer, fk: "users.user_id", comment: "Created by" }
+  app_id:           { type: integer, fk: "app.app_id", comment: "Application" }
+  created_at:       { type: datetime, comment: "Created at" }
+  updated_at:       { type: datetime, comment: "Updated at" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -630,14 +631,14 @@ form_layout:
   sub_form_size: 6
   sub_form_limit: 5
 table_extra_options:
-  - size: 6
-    component: AccessKey
+  - component: AccessKey
     label: accessKey
+    icon: key
+    data: '{ "actions": [ {"type": "btn", "icon": "refresh", "name": "refresh", "class": "btn-sm text-info", "label": "crud.refresh", "action": null}, {"type": "btn", "icon": "save", "name": "save", "class": "btn-sm text-info", "label": "crud.save", "action": null }, {"type": "icon", "icon": "cog-8-tooth", "name": "form_customization", "label": "crud.form_customization", "action": null} ] }'
+    size: 6
     intercept_c: true
     intercept_u: true
-    data: '{ "actions": [ {"type": "btn", "icon": "refresh", "name": "refresh", "class": "btn-sm text-info", "label": "crud.refresh", "action": null}, {"type": "btn", "icon": "save", "name": "save", "class": "btn-sm text-info", "label": "crud.save", "action": null }, {"type": "icon", "icon": "cog-8-tooth", "name": "form_customization", "label": "crud.form_customization", "action": null} ] }'
     main: true
-    icon: key
 ```
 
 ## ENV
@@ -843,21 +844,21 @@ form_layout:
 ## VALIDATION
 ```yaml
 table: validation
-comment: Validation Roles
+comment: Validation Rules
 columns:
   validation_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
   validation:        { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
-  validation_code:   { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
-  valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", order: 3, form_size: 2 }
-  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
-  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 4 }
-  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
-  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
-  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
-  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
-  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
-  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
+  validation_code:   { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
+  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
+  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
+  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
+  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
+  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
+  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
+  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
+  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
   created_at:        { type: datetime, comment: "Created at", order: 11 }
@@ -868,7 +869,7 @@ data:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 8
 ```
 
 ## VALIDATION_LOGS
@@ -924,33 +925,33 @@ tooltip: Dispaches some actions after a crud operation
 columns:
   crud_action_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
   crud_action:       { type: varchar(200), nullable: false, comment: "CRUD Action", form_display: true, table_display: true, order: 2, form_size: 9 }
-  crud_action_code:  { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
-  action_type_id:    { type: integer, fk: "action_type.action_type_id", comment: "CRUD Action Reaction ID", order: 3, form_size: 2 }
-  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
-  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  db:                { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
-  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
-  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
-  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
-  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
-  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
-  email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: html }
-  email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: text }
-  api:               { type: varchar(200), comment: "Call API", form_display: true, table_display: true, order: 4 }
-  parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 5 }
-  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
-  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  created_at:        { type: datetime, comment: "Created at", order: 11 }
-  updated_at:        { type: datetime, comment: "Updated at", order: 12 }
-  excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
+  crud_action_code:  { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  action_type_id:    { type: integer, fk: "action_type.action_type_id", comment: "CRUD Action Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
+  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6}
+  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
+  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
+  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
+  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
+  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
+  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
+  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
+  email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
+  email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 14, form_long_text: true, form_code: text, form_hide_cond: "data?.action_type_id !== 2" }
+  api:               { type: varchar(200), comment: "Call API", form_display: true, table_display: true, order: 15, form_hide_cond: "data?.action_type_id !== 3" }
+  parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 16, form_size: 3 }
+  user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:        { type: datetime, comment: "Created at" }
+  updated_at:        { type: datetime, comment: "Updated at" }
+  excluded:          { type: boolean, default: false, comment: "Excluded" }
 #data:
 #  - {crud_action_id: 1, crud_action: Validate user Email existance, crud_action_code: USR01, action_type_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
   allow_in_subform: {crud_action_logs: true}
-  size: 6
+  size: 8
 ```
 
 ## CRUD_ACTION_LOGS

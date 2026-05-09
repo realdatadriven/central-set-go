@@ -661,9 +661,22 @@ func (app *application) tables(params Dict, tables []any) Dict {
 		// fmt.Println(translate_table_field)
 		// GET THE TABLES DATA IN table_schema
 		query = `SELECT * FROM table_schema WHERE db = ? AND "table" IN (?) AND excluded = FALSE order by field_order`
+		query = `select ts.* 
+		from table_schema ts
+		left join "table" t on ts.db = t.db and ts."table" = t."table" and t.excluded = false
+		where ts.db = ? 
+			and ts."table" in (?) 
+			and ts.excluded = false 
+		order by t.table_id, ts.field_order`
 		queryParams = []any{_database}
 		if allTables {
 			query = `SELECT * FROM table_schema WHERE db = ? AND excluded = FALSE order by field_order`
+			query = `select ts.* 
+			from table_schema ts
+			left join "table" t on ts.db = t.db and ts."table" = t."table" and t.excluded = false
+			where ts.db = ?
+				and ts.excluded = false 
+			order by t.table_id, ts.field_order`
 		} else {
 			queryParams = append(queryParams, tables)
 		}
@@ -712,7 +725,7 @@ func (app *application) tables(params Dict, tables []any) Dict {
 							vals := app.joinSlice(keys, `, :`)
 							// Loop through the slice of maps and insert each record
 							_ins_query := fmt.Sprintf(`INSERT INTO table_schema ("%s") VALUES (:%s)`, cols, vals)
-							fmt.Println(_ins_query)
+							//fmt.Println(_ins_query)
 							for _, row := range results {
 								_, err := app.db.ExecuteNamedQuery(_ins_query, row)
 								if err != nil {
@@ -758,10 +771,17 @@ func (app *application) tables(params Dict, tables []any) Dict {
 			_row["comment"] = comment
 			_row["name"] = _row["field"]
 			if _, ok := _row["fk"]; !ok {
-			} else if app.contains([]any{1, true, "true", "True", "TRUE", "T", "1"}, _row["fk"]) {
+			} else if app.contains([]any{1, true, "true", "True", "TRUE", "T", "1"}, _row["fk"]) || app.toBool(_row["fk"]) {
+				//fmt.Println(_row["field"], _row["table"], _row["referred_table"], _row["referred_column"])
 				referred_columns_desc := ""
 				if _, ok := table_fields[row["referred_table"].(string)].([]any); ok {
-					referred_columns_desc = table_fields[row["referred_table"].(string)].([]any)[1].(string)
+					if len(table_fields[row["referred_table"].(string)].([]any)) > 1 {
+						referred_columns_desc = table_fields[row["referred_table"].(string)].([]any)[1].(string)
+					} else {
+						fmt.Println(1, "Problems:", row["referred_table"].(string), table_fields[row["referred_table"].(string)].([]any), table_fields[row["referred_table"].(string)].([]any)[1].(string))
+					}
+				} else {
+					fmt.Println(0, "Problems:", row["referred_table"].(string), table_fields[row["referred_table"].(string)])
 				}
 				fk_tables_added = append(fk_tables_added, Dict{"table": _row["table"], "referred_table": _row["referred_table"]})
 				acorr := app.filterAny(fk_tables_added, func(r any) bool {
@@ -779,6 +799,7 @@ func (app *application) tables(params Dict, tables []any) Dict {
 					"referred_columns_desc_org": referred_columns_desc_org,
 					"referred_columns_desc":     referred_columns_desc,
 				}
+				fmt.Println("REF:", _row["field"], row["referred_table"].(string), _row["ref"])
 			}
 			table_schema[row["table"].(string)].(Dict)[row["field"].(string)] = _row
 			table_fields[row["table"].(string)] = append(table_fields[row["table"].(string)].([]any), row["field"])
