@@ -351,7 +351,9 @@
         "confirm_pass": "Confirm Password",
         "new_pass_again_match": "New Password and Confirm New Password must match",
         "2f_code": "Two factor code",
-        "submit_2f_code": "Submit code"
+        "submit_2f_code": "Submit code",
+        "rendermd": "Render",
+        "seecode": "See MD ode"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",

@@ -344,7 +344,9 @@
         "new_password": "Nova Password",
         "new_pass_again_match": "Nova Password e Confirmar Nova Password devem ser iguais!",
         "2f_code": "Two factor code",
-        "submit_2f_code": "Submit code"
+        "submit_2f_code": "Submit code",
+        "rendermd": "Visualizar",
+        "seecode": "Ver Codigo"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",
