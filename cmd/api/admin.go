@@ -18,8 +18,8 @@ import (
 
 func (app *application) apps(params Dict) Dict {
 	//fmt.Println("APPS:", params)
-	user_id := int(params["user"].(Dict)["user_id"].(float64))
-	role_id := int(params["user"].(Dict)["role_id"].(float64))
+	user_id := app.toInt(params["user"].(Dict)["user_id"])
+	role_id := app.toInt(params["user"].(Dict)["role_id"])
 	//fmt.Println(user_id, role_id)
 	query := `SELECT DISTINCT user_role.role_id
 	FROM user_role
@@ -40,7 +40,7 @@ func (app *application) apps(params Dict) Dict {
 	roles := []any{}
 	roles = append(roles, role_id)
 	for _, row := range *result {
-		roles = append(roles, int(row["role_id"].(float64)))
+		roles = append(roles, app.toInt(row["role_id"]))
 	}
 	query = `SELECT *
 	FROM app
@@ -76,11 +76,11 @@ func (app *application) apps(params Dict) Dict {
 
 func (app *application) menu(params Dict) Dict {
 	//fmt.Println(params)
-	user_id := int(params["user"].(Dict)["user_id"].(float64))
-	role_id := int(params["user"].(Dict)["role_id"].(float64))
+	user_id := app.toInt(params["user"].(Dict)["user_id"])
+	role_id := app.toInt(params["user"].(Dict)["role_id"])
 	var app_id int
 	if _, ok := params["app"].(Dict)["app_id"]; ok {
-		app_id = int(params["app"].(Dict)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(Dict)["app_id"])
 	}
 	//fmt.Println(user_id, role_id)
 	query := `SELECT DISTINCT user_role.role_id
@@ -101,7 +101,7 @@ func (app *application) menu(params Dict) Dict {
 	roles := []any{}
 	roles = append(roles, role_id)
 	for _, row := range *result {
-		roles = append(roles, int(row["role_id"].(float64)))
+		roles = append(roles, app.toInt(row["role_id"]))
 	}
 	// MENU
 	query = `SELECT *
@@ -213,7 +213,7 @@ func (app *application) menu(params Dict) Dict {
 		for _, mnt := range *_menu_table {
 			if _, ok := mnt["menu_id"]; !ok {
 			} else if _, ok := mn["menu_id"]; !ok {
-			} else if int(mnt["menu_id"].(int64)) == int(mn["menu_id"].(int64)) {
+			} else if app.toInt(mnt["menu_id"]) == app.toInt(mn["menu_id"]) {
 				_mnt := mnt
 				//fmt.Println(1, _table_by_id[mnt["table_id"].(int64)].(Dict))
 				if _, ok := _table_by_id[mnt["table_id"].(int64)].(Dict); ok {
@@ -1142,11 +1142,11 @@ func generateModelYAML(tableName, tableComment string, fields []any) string {
 
 func (app *application) save_table_schema(params Dict) Dict {
 	//fmt.Println(params)
-	//user_id := int(params["user"].(Dict)["user_id"].(float64))
-	//role_id := int(params["user"].(Dict)["role_id"].(float64))
+	//user_id := app.toInt(params["user"].(Dict)["user_id"])
+	//role_id := app.toInt(params["user"].(Dict)["role_id"])
 	//var app_id int
 	//if _, ok := params["app"].(Dict)["app_id"]; ok {
-	//	app_id = int(params["app"].(Dict)["app_id"].(float64))
+	//	app_id = intapp.toInt(params["app"].(Dict)["app_id"])
 	//}
 	// DATABASE
 	//fmt.Println(lang)

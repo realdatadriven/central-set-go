@@ -634,7 +634,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token := app.verifyToken(r)
-	//fmt.Println(params["user"].(Dict)["username"].(string), "->", int(params["user"].(Dict)["user_id"].(float64)), "->", int(params["user"].(Dict)["role_id"].(float64)))
+	//fmt.Println(params["user"].(Dict)["username"].(string), "->", app.toInt(params["user"].(Dict)["user_id"]), "->", app.toInt(params["user"].(Dict)["role_id"]))
 	var data Dict
 	params := map[string]any{
 		"lang": "en",

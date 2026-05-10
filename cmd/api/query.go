@@ -23,11 +23,11 @@ func (app *application) CrudRunQuery(params map[string]any, query string, db etl
 	if len(_match) == 0 {
 		limit := 10
 		if _, ok := params["data"].(map[string]any)["limit"]; ok {
-			limit = int(params["data"].(map[string]any)["limit"].(float64))
+			limit = app.toInt(params["data"].(map[string]any)["limit"])
 		}
 		offset := 0
 		if _, ok := params["data"].(map[string]any)["offset"]; ok {
-			offset = int(params["data"].(map[string]any)["offset"].(float64))
+			offset = app.toInt(params["data"].(map[string]any)["offset"])
 		}
 		if limit != -1 {
 			query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
@@ -51,7 +51,7 @@ func (app *application) CrudRunQuery(params map[string]any, query string, db etl
 		}
 	}
 	total := 0
-	total = int((*n_rows)["n_rows"].(int64))
+	total = app.toInt((*n_rows)["n_rows"])
 	msg, _ := app.i18n.T("success", map[string]any{})
 	return map[string]any{
 		"success": true,

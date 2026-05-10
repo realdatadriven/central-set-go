@@ -110,7 +110,8 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 		roles := []any{}
 		roles = append(roles, role_id)
 		for _, row := range *result {
-			roles = append(roles, int(row["role_id"].(float64)))
+			// roles = append(roles, app.toInt(row["role_id"]))
+			roles = append(roles, app.toInt(row["role_id"]))
 		}
 		queryParams = []any{app_id}
 		queryParams = append(queryParams, roles)
@@ -281,7 +282,7 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		roles := []any{}
 		roles = append(roles, role_id)
 		for _, row := range *result {
-			roles = append(roles, int(row["role_id"].(float64)))
+			roles = append(roles, app.toInt(row["role_id"]))
 		}
 		queryParams = []any{app_id}
 		queryParams = append(queryParams, roles)

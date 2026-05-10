@@ -178,7 +178,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	token := app.verifyToken(r)
-	//fmt.Println(params["user"].(Dict)["username"].(string), "->", int(params["user"].(Dict)["user_id"].(float64)), "->", int(params["user"].(Dict)["role_id"].(float64)))
+	//fmt.Println(params["user"].(Dict)["username"].(string), "->", app.toInt(params["user"].(Dict)["user_id"].(float64)), "->", app.toInt(params["user"].(Dict)["role_id"].(float64)))
 	var data Dict
 	_ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {

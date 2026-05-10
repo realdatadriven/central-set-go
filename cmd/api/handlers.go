@@ -331,7 +331,7 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//user := *(contextGetAuthenticatedUser(r))
-	//print(user["username"].(string), "->", int(user["user_id"].(float64)), "->", int(user["role_id"].(float64)), "\n")
+	//print(user["username"].(string), "->", app.toInt(user["user_id"].(float64)), "->", app.toInt(user["role_id"].(float64)), "\n")
 	text, _ := i18n.T("file-success", struct{ File string }{File: filepath.Base(dst.Name())})
 	data = map[string]interface{}{
 		"success": true,

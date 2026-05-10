@@ -26,15 +26,15 @@ func (app *application) randomString(length int) string {
 func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInterface) Dict {
 	var user_id int
 	if _, ok := params["user"].(Dict)["user_id"]; ok {
-		user_id = int(params["user"].(Dict)["user_id"].(float64))
+		user_id = app.toInt(params["user"].(Dict)["user_id"])
 	}
 	var role_id int
 	if _, ok := params["user"].(Dict)["role_id"]; ok {
-		role_id = int(params["user"].(Dict)["role_id"].(float64))
+		role_id = app.toInt(params["user"].(Dict)["role_id"])
 	}
 	/*var app_id int
 	if _, ok := params["app"].(Dict)["app_id"]; ok {
-		app_id = int(params["app"].(Dict)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(Dict)["app_id"])
 	}*/
 	lang := "en"
 	if _, ok := params["lang"]; ok {

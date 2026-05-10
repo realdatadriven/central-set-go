@@ -108,11 +108,11 @@ func (app *application) nbRunCells(params Dict) Dict {
 			if len(_match) == 0 {
 				limit := 10
 				if _, ok := params["data"].(Dict)["limit"]; ok {
-					limit = int(params["data"].(Dict)["limit"].(float64))
+					limit = app.toInt(params["data"].(Dict)["limit"])
 				}
 				offset := 0
 				if _, ok := params["data"].(Dict)["offset"]; ok {
-					offset = int(params["data"].(Dict)["offset"].(float64))
+					offset = app.toInt(params["data"].(Dict)["offset"])
 				}
 				if limit != -1 {
 					_sql = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, _sql, limit, offset)
@@ -138,7 +138,7 @@ func (app *application) nbRunCells(params Dict) Dict {
 					}
 				} else {
 					total := 0
-					total = int((*n_rows)["n_rows"].(int64))
+					total = app.toInt((*n_rows)["n_rows"])
 					data[_id] = Dict{
 						"success": true,
 						"msg":     msg,

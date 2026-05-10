@@ -58,15 +58,15 @@ func (app *application) getRLAIds(rla_access []map[string]any, table, access_typ
 func (app *application) CrudRead(params map[string]any, table string, db etlx.DBInterface) map[string]any {
 	var user_id int
 	if _, ok := params["user"].(map[string]any)["user_id"]; ok {
-		user_id = int(params["user"].(map[string]any)["user_id"].(float64))
+		user_id = app.toInt(params["user"].(map[string]any)["user_id"])
 	}
 	var role_id int
 	if _, ok := params["user"].(map[string]any)["role_id"]; ok {
-		role_id = int(params["user"].(map[string]any)["role_id"].(float64))
+		role_id = app.toInt(params["user"].(map[string]any)["role_id"])
 	}
 	/*var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
-		app_id = int(params["app"].(map[string]any)["app_id"].(float64))
+		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
 	}*/
 	//fmt.Println(user_id, role_id, app_id)
 	_schema := map[string]any{}
@@ -105,16 +105,16 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		}
 	}
 	limit := 10
-	if _, ok := params["data"].(map[string]any)["limit"].(float64); ok {
-		limit = int(params["data"].(map[string]any)["limit"].(float64))
-	} else if _, ok := params["data"].(map[string]any)["limit"].(float32); ok {
-		limit = int(params["data"].(map[string]any)["limit"].(float32))
+	if _, ok := params["data"].(map[string]any)["limit"]; ok {
+		limit = app.toInt(params["data"].(map[string]any)["limit"])
+	} /*else if _, ok := params["data"].(map[string]any)["limit"]; ok {
+		limit = app.toInt(params["data"].(map[string]any)["limit"])
 	} else if _, ok := params["data"].(map[string]any)["limit"].(int); ok {
 		limit = params["data"].(map[string]any)["limit"].(int)
-	}
+	}*/
 	offset := 0
-	if _, ok := params["data"].(map[string]any)["offset"].(float64); ok {
-		offset = int(params["data"].(map[string]any)["offset"].(float64))
+	if _, ok := params["data"].(map[string]any)["offset"]; ok {
+		offset = app.toInt(params["data"].(map[string]any)["offset"])
 	}
 	table_schema := ""
 	if _, ok := params["data"].(Dict)["schema"]; ok {
@@ -641,7 +641,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		}
 	}
 	// fmt.Println((*trows))
-	total = int((*trows)["n_rows"].(int64))
+	total = app.toInt((*trows)["n_rows"])
 	//fmt.Println(app_id, user_id, pk, args, query)
 	//data := map[string]any{}
 	msg, _ := app.i18n.T("success", map[string]any{})
