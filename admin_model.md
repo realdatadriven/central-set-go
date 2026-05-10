@@ -995,9 +995,9 @@ columns:
   process_type_id:   { type: integer, pk: true, autoincrement: true, comment: "Proccess ID" }
   process_type:      { type: varchar(20), nullable: false, unique: true, comment: "Proccess", form_display: true, table_display: true, order: 1 }
   process_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
-  created_at:       { type: datetime, comment: "Created at" }
-  updated_at:       { type: datetime, comment: "Updated at" }
-  excluded:         { type: boolean, default: false, comment: "Excluded" }
+  created_at:        { type: datetime, comment: "Created at" }
+  updated_at:        { type: datetime, comment: "Updated at" }
+  excluded:          { type: boolean, default: false, comment: "Excluded" }
 data:
   - {process_type_id: 1, process_type: ExecuteQuery, process_type_desc: Execute Query, excluded: false}
   - {process_type_id: 2, process_type: SendEmail, process_type_desc: Send Email, excluded: false}
