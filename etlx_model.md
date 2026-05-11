@@ -42,11 +42,11 @@ table: etlx
 comment: ETLX
 columns:
   etlx_id:          { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  etl:              { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, form_size: 3 }
-  etl_desc:         { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 9 }
+  etl:              { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, form_size: 3, order: 1 }
+  etl_desc:         { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 6, order: 2 }
   attach_etlx_conf: { type: varchar(200), comment: "Config File" }
-  etlx_conf:        { type: text, comment: "Config Text", form_display: true, form_long_text: true, form_code: markdown }
-  active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  etlx_conf:        { type: text, comment: "Config Text", form_display: true, form_long_text: true, form_code: markdown, order: 4 }
+  active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 3 }
   user_id:          { type: integer, comment: "User ID" }
   app_id:           { type: integer, comment: "App ID" }
   created_at:       { type: datetime, comment: "Created at" }
@@ -70,9 +70,9 @@ table: etlx_conf
 comment: ETLX Extra Config
 columns:
   etlx_conf_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  etlx_conf:       { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, form_size: 6 }
+  etlx_conf:       { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true }
   etlx_conf_desc:  { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true }
-  etlx_extra_conf: { type: text, comment: "Config Text", form_display: true, form_long_text: true, form_code: json }
+  etlx_extra_conf: { type: text, comment: "Config Text", form_display: true, table_display: true, form_long_text: true, form_code: markdown }
   user_id:         { type: integer, comment: "User ID" }
   app_id:          { type: integer, comment: "App ID" }
   created_at:      { type: datetime, comment: "Created at" }
@@ -119,11 +119,11 @@ table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 3 }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 9 }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown }
-  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3 }
-  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, form_size: 3, order: 1 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 9, order: 2 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 5 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3, order: 3 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 4 }
   user_id:        { type: integer, comment: "User ID" }
   app_id:         { type: integer, comment: "App ID" }
   created_at:     { type: datetime, comment: "Created at" }
@@ -171,10 +171,10 @@ table: notebook
 comment: Notebooks
 columns:
   notebook_id:   { type: integer, pk: true, autoincrement: true, comment: "Notebook ID" }
-  notebook:      { type: varchar(200), comment: "Name", form_display: true, table_display: true, form_size: 6 }
-  notebook_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true }
-  notebook_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown }
-  active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  notebook:      { type: varchar(200), comment: "Name", form_display: true, table_display: true, form_size: 9, order: 1 }
+  notebook_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, order: 3 }
+  notebook_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 4 }
+  active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 2 }
   user_id:       { type: integer, comment: "User ID" }
   app_id:        { type: integer, comment: "App ID" }
   created_at:    { type: datetime, comment: "Created at" }
