@@ -219,3 +219,21 @@ data:
   updated_at:    Now()
   excluded:      false
 ```
+
+## SQLITE_EX
+```yaml
+table: etlx
+description: Add SQLite Default Example
+cond: 'WHERE etlx_id = :etlx_id AND etlx = :etlx AND excluded = false'
+data:
+  etlx_id:    1
+  etl:        SQLITE_EX
+  etl_desc:   SQLite Example
+  etlx_conf:  FileContent(../etlx/examples/tmpl.sqlite.md)
+  active:     true
+  user_id:    1
+  app_id:     2
+  created_at: Now()
+  updated_at: Now()
+  excluded:   false
+```
