@@ -741,7 +741,7 @@ comment: Arrow Flight - Tables Fields
 columns:
   arrow_flight_table_field_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   arrow_flight_table_field:      { type: varchar(200), nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
-  arrow_flight_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 6 }
+  arrow_flight_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 9 }
   arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 3 }
   arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", order: 4, form_display: true, table_display: true, form_size: 4 }
   active:                        { type: boolean, default: true, comment: "Active", order: 5, form_display: true, table_display: true, form_size: 4 }
