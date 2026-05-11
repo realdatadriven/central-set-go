@@ -710,9 +710,9 @@ columns:
   arrow_flight_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   arrow_flight_id:         { type: integer, fk: "arrow_flight.arrow_flight_id", nullable: false, comment: "Arrow Flight", form_display: true, table_display: true, order: 1, form_size: 3 }
   table_name:              { type: varchar(200), nullable: false, comment: "Table Name", form_display: true, table_display: true, order: 2, form_size: 3 }
-  table_desc:              { type: text, comment: "Description", form_display: true, table_display: true, order: 3, form_size: 6 }
-  order:                   { type: integer, comment: "Order", form_display: true, table_display: true, order: 4, form_size: 6 }
-  active:                  { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5, form_size: 6 }
+  table_desc:              { type: text, comment: "Description", form_display: true, table_display: true, order: 6, form_long_text: true, form_code: markdown }
+  order:                   { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
+  active:                  { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
   arrow_flight_table_conf: { type: text, comment: "Configuration", form_display: true, order: 6, form_size: 12, form_long_text: true, form_code: txt }
   user_id:                 { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -743,8 +743,8 @@ columns:
   arrow_flight_table_field:      { type: varchar(200), nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
   arrow_flight_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 6 }
   arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 3 }
-  arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", order: 4, form_size: 4 }
-  active:                        { type: boolean, default: true, comment: "Active", order: 5, form_size: 4 }
+  arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", order: 4, form_display: true, table_display: true, form_size: 4 }
+  active:                        { type: boolean, default: true, comment: "Active", order: 5, form_display: true, table_display: true, form_size: 4 }
   user_id:                       { type: integer, fk: "users.user_id", comment: "User ID", }
   app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:                    { type: datetime, comment: "Created at" }
