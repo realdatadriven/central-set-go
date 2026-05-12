@@ -56,12 +56,11 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
   default_order: [{field: etlx_id, order: DESC}]
 table_extra_options:
-  - {size: 11, component: ETLX, label: etlx, icon: play, main: true, data: '{ "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh" }, { "type": "btn", "icon": "bolt", "name": "RUN_ALL", "class": "btn-sm text-info", "label": "crud.run_all" } ] }'}
+  - {component: ETLX, label: etlx, icon: play, size: 11, main: true, data: '{ "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh" }, { "type": "btn", "icon": "bolt", "name": "RUN_ALL", "class": "btn-sm text-info", "label": "crud.run_all" } ] }'}
 ```
 
 ## ETLX_CONF
@@ -94,10 +93,10 @@ table: manage_query
 comment: Queries
 columns:
   manage_query_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  manage_query:      { type: varchar(200), nullable: false, comment: "Query Desc", form_display: true, table_display: true, form_size: 6 }
-  database:          { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 6 }
-  manage_query_conf: { type: text, comment: "Query Config", form_display: true, form_long_text: true, form_code: json }
-  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  manage_query:      { type: varchar(200), nullable: false, comment: "Query Desc", form_display: true, table_display: true, form_size: 6, order: 1 }
+  database:          { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 2 }
+  manage_query_conf: { type: text, comment: "Query Config", form_display: true, form_long_text: true, form_code: json, order: 4 }
+  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 3 }
   user_id:           { type: integer, comment: "User ID" }
   app_id:            { type: integer, comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
@@ -107,7 +106,6 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
   default_order: [{field: manage_query_id, order: DESC}]
@@ -133,12 +131,11 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
   default_order: [{field: order, order: ASC}]
 table_extra_options:
-  - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
+  - { component: EvidenceDash, label: dashboard, intercept_r: true, size: 12 }
 ```
 
 ## DASHBOARD_COMMENT
@@ -159,7 +156,6 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
   default_order: [{field: dashboard_comment_id, order: DESC}]
@@ -201,7 +197,7 @@ runs_as: MODEL_DATA
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
-## dashboard-1
+## DASHBOARD_LOGS
 ```yaml
 table: dashboard
 description: Add default Logs Dashboard
@@ -214,13 +210,13 @@ data:
   order:          1
   active:         true
   user_id:        1
-  app_id:         2
+  app_id:        appId()
   created_at:    Now()
   updated_at:    Now()
   excluded:      false
 ```
 
-## SQLITE_EX
+## ETLX_SQLITE_EX
 ```yaml
 table: etlx
 description: Add SQLite Default Example

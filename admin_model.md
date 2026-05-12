@@ -136,7 +136,7 @@ columns:
   updated_at:           { type: datetime, comment: "Updated at" }
   excluded:             { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {user_id: 1, username: root, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Super, last_name: Admin, email: real.datadriven@gmail.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
+  - {user_id: 1, username: root, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Super, last_name: Admin, email: admin@domain.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
