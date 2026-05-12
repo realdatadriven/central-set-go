@@ -258,7 +258,7 @@ data:
 ```yaml
 table: etlx
 description: Add ETLX HTTP Example
-cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+cond: 'WHERE etlx_id = :etlx_id AND excluded = false'
 data:
   etlx_id:    1
   etl:        HTTP_EX
@@ -276,7 +276,7 @@ data:
 ```yaml
 table: etlx
 description: Add ETLX Postgres Example
-cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+cond: 'WHERE etlx_id = :etlx_id AND excluded = false'
 data:
   etlx_id:    2
   etl:        PG_EX
@@ -294,7 +294,7 @@ data:
 ```yaml
 table: etlx
 description: Add ETLX ducklake Example
-cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+cond: 'WHERE etlx_id = :etlx_id AND excluded = false'
 data:
   etlx_id:    3
   etl:        DUCKLAKE_EX
@@ -312,7 +312,7 @@ data:
 ```yaml
 table: etlx
 description: Add SQLite Default Example
-cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+cond: 'WHERE etlx_id = :etlx_id AND excluded = false'
 data:
   etlx_id:    4
   etl:        SQLITE_EX
