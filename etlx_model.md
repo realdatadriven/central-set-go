@@ -206,7 +206,7 @@ data:
   dashboard_id:   1
   dashboard:      Logs
   dashboard_desc: Logs Example
-  dashboard_conf: FileContent(logs_dashboard.md)
+  dashboard_conf: FileContent(examples/logs_dashboard.md)
   order:          1
   active:         true
   user_id:        1
@@ -216,19 +216,111 @@ data:
   excluded:      false
 ```
 
+## DASHBOARD_EX_TCPH_DS
+```yaml
+table: dashboard
+description: Add Ex TCP-H DataSet
+cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false'
+data:
+  dashboard_id:   2
+  dashboard:      Ex TCP-H DataSet
+  dashboard_desc: This Exemple use the TCP-h Dataset generated in the ETLX Ducklake Exemple
+  dashboard_conf: FileContent(examples/tcp-h-dataset-dashboard.md)
+  order:          1
+  active:         true
+  user_id:        1
+  app_id:        appId()
+  created_at:    Now()
+  updated_at:    Now()
+  excluded:      false
+```
+
+## DASHBOARD_EX_DYN_DS
+```yaml
+table: dashboard
+description: Add Dynamic Dataset Dashboard
+cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false'
+data:
+  dashboard_id:   3
+  dashboard:      Ex Dynamic DS
+  dashboard_desc: This Exemple shows how to use dynamic dataset and scoping
+  dashboard_conf: FileContent(examples/dyn_ds_dashboard.md)
+  order:          1
+  active:         true
+  user_id:        1
+  app_id:        appId()
+  created_at:    Now()
+  updated_at:    Now()
+  excluded:      false
+```
+
+## HTTP_EX
+```yaml
+table: etlx
+description: Add ETLX HTTP Example
+cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+data:
+  etlx_id:    1
+  etl:        HTTP_EX
+  etl_desc:   HTTP Examples
+  etlx_conf:  FileContent(examples/http.md)
+  active:     true
+  user_id:    1
+  app_id:     appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded:   false
+```
+
+## PG_EX
+```yaml
+table: etlx
+description: Add ETLX Postgres Example
+cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+data:
+  etlx_id:    2
+  etl:        PG_EX
+  etl_desc:   Postgres Examples
+  etlx_conf:  FileContent(examples/pg.md)
+  active:     true
+  user_id:    1
+  app_id:     appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded:   false
+```
+
+## DUCKLAKE_EX
+```yaml
+table: etlx
+description: Add ETLX ducklake Example
+cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
+data:
+  etlx_id:    2
+  etl:        DUCKLAKE_EX
+  etl_desc:   Ducklake Examples
+  etlx_conf:  FileContent(examples/ducklake.md)
+  active:     true
+  user_id:    1
+  app_id:     appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded:   false
+```
+
 ## ETLX_SQLITE_EX
 ```yaml
 table: etlx
 description: Add SQLite Default Example
-cond: 'WHERE etlx_id = :etlx_id AND etlx = :etlx AND excluded = false'
+cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
 data:
-  etlx_id:    1
+  etlx_id:    4
   etl:        SQLITE_EX
   etl_desc:   SQLite Example
-  etlx_conf:  FileContent(../etlx/examples/tmpl.sqlite.md)
+  etlx_conf:  FileContent(examples/tmpl.sqlite.md)
   active:     true
   user_id:    1
-  app_id:     2
+  app_id:     appId()
   created_at: Now()
   updated_at: Now()
   excluded:   false
