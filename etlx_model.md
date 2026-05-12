@@ -296,7 +296,7 @@ table: etlx
 description: Add ETLX ducklake Example
 cond: 'WHERE etlx_id = :etlx_id AND etl = :etl AND excluded = false'
 data:
-  etlx_id:    2
+  etlx_id:    3
   etl:        DUCKLAKE_EX
   etl_desc:   Ducklake Examples
   etlx_conf:  FileContent(examples/ducklake.md)
