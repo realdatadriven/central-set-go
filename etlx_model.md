@@ -180,12 +180,11 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
-  default_order: [{field: notebook_id, order: DESC}]
+  default_order: [{ field: notebook_id, order: DESC }]
 table_extra_options:
-- {size: 12, component: Notebook, label: notebook, icon: book-open, intercept_r: true}
+- { component: Notebook, label: notebook, icon: book-open,size: 12, intercept_r: true }
 ```
 
 # DATA
@@ -201,7 +200,7 @@ admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```yaml
 table: dashboard
 description: Add default Logs Dashboard
-cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false'
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
 data:
   dashboard_id:   1
   dashboard:      Logs
@@ -220,7 +219,7 @@ data:
 ```yaml
 table: dashboard
 description: Add Ex TCP-H DataSet
-cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false'
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
 data:
   dashboard_id:   2
   dashboard:      Ex TCP-H DataSet
@@ -239,7 +238,7 @@ data:
 ```yaml
 table: dashboard
 description: Add Dynamic Dataset Dashboard
-cond: 'WHERE dashboard_id = :dashboard_id AND dashboard = :dashboard AND excluded = false'
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
 data:
   dashboard_id:   3
   dashboard:      Ex Dynamic DS
@@ -254,7 +253,7 @@ data:
   excluded:      false
 ```
 
-## HTTP_EX
+## ETLX_HTTP_EX
 ```yaml
 table: etlx
 description: Add ETLX HTTP Example
@@ -272,7 +271,7 @@ data:
   excluded:   false
 ```
 
-## PG_EX
+## ETLX_PG_EX
 ```yaml
 table: etlx
 description: Add ETLX Postgres Example
@@ -290,7 +289,7 @@ data:
   excluded:   false
 ```
 
-## DUCKLAKE_EX
+## ETLX_DUCKLAKE_EX
 ```yaml
 table: etlx
 description: Add ETLX ducklake Example
