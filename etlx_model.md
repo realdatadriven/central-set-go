@@ -131,7 +131,6 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  sub_form_size: 9
 table_layout:
   default_order: [{field: order, order: ASC}]
 table_extra_options:

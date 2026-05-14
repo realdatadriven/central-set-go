@@ -103,8 +103,6 @@ data:
 form_layout:
   tabs_steps: tabs
   size: 4
-  allow_in_subform: {}
-  tabs_steps_conf: []
 table_extra_options:
   - {size: 12, component: AdminApps, label: permissions, data: '{ "profile": true, "actions": [ { "type": "btn", "icon": "refresh", "name": "REFRESH", "class": "btn-sm text-info", "label": "crud.refresh", "action": null }, { "type": "btn", "icon": "save", "name": "SAVE", "class": "btn-sm text-info", "label": "crud.save", "action": null } ] }', icon: key, pop_up: true, main: true}
 ```
