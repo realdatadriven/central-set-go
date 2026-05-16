@@ -72,8 +72,8 @@ table: lang
 comment: Languages
 columns:
   lang_id:     { type: integer, pk: true, autoincrement: true, comment: "Lang ID" }
-  lang:        { type: varchar(4), unique: true, nullable: false, comment: "Language", form_display: true, table_display: true, order: 1 }
-  lang_desc:   { type: varchar(200), comment: "Description", form_display: true, table_display: true, order: 2 }
+  lang:        { type: varchar, length: 4, unique: true, nullable: false, comment: "Language", form_display: true, table_display: true, order: 1 }
+  lang_desc:   { type: varchar, length: 200, comment: "Description", form_display: true, table_display: true, order: 2 }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
@@ -90,7 +90,7 @@ table: role
 comment: Roles
 columns:
   role_id:     { type: integer, pk: true, autoincrement: true, comment: "Role ID" }
-  role:        { type: varchar(20), nullable: false, unique: true, comment: "Role", form_display: true, table_display: true, order: 1 }
+  role:        { type: varchar, length: 20, nullable: false, unique: true, comment: "Role", form_display: true, table_display: true, order: 1 }
   role_desc:   { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
   config:      { type: text, comment: "Config", form_display: true, form_long_text: true, table_display: true, order: 3 }
   created_at:  { type: datetime, comment: "Created at" }
@@ -113,22 +113,22 @@ table: users
 comment: Users
 columns:
   user_id:              { type: integer, pk: true, autoincrement: true, comment: "User ID" }
-  username:             { type: varchar(50), unique: true, nullable: false, comment: "Username", form_display: true, table_display: true, form_size: 4, order: 1 }
-  first_name:           { type: varchar(50), nullable: false, comment: "First Name", form_display: true, table_display: true, form_size: 4, order: 2 }
-  last_name:            { type: varchar(50), comment: "Last Name", form_display: true, table_display: true, form_size: 4, order: 3 }
-  password:             { type: varchar(200), nullable: false, comment: "Password", form_display: true, form_use_label: true, form_size: 4, order: 4 }
-  email:                { type: varchar(50), unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 4, order: 5 }
-  phone:                { type: varchar(50), unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 4, order: 6 }
+  username:             { type: varchar, length: 50, unique: true, nullable: false, comment: "Username", form_display: true, table_display: true, form_size: 4, order: 1 }
+  first_name:           { type: varchar, length: 50, nullable: false, comment: "First Name", form_display: true, table_display: true, form_size: 4, order: 2 }
+  last_name:            { type: varchar, length: 50, comment: "Last Name", form_display: true, table_display: true, form_size: 4, order: 3 }
+  password:             { type: varchar, length: 200, nullable: false, comment: "Password", form_display: true, form_use_label: true, form_size: 4, order: 4 }
+  email:                { type: varchar, length: 50, unique: true, nullable: false, comment: "Email", form_display: true, table_display: true, form_size: 4, order: 5 }
+  phone:                { type: varchar, length: 50, unique: false, comment: "Phone", form_display: true, table_display: true, form_size: 4, order: 6 }
   role_id:              { type: integer, fk: "role.role_id", comment: "Default Role ID", form_display: true, table_display: true, form_size: 4, order: 7 }
   lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 4, order: 8 }
-  timezone:             { type: varchar(50), comment: "Timezone", form_display: true, form_size: 4, order: 9 }
-  attach_profile_pic:   { type: varchar(200), comment: "Profile Picture", form_display: true, table_display: true, form_size: 3, form_att: true, order: 10 }
+  timezone:             { type: varchar, length: 50, comment: "Timezone", form_display: true, form_size: 4, order: 9 }
+  attach_profile_pic:   { type: varchar, length: 200, comment: "Profile Picture", form_display: true, table_display: true, form_size: 3, form_att: true, order: 10 }
   failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: false, form_size: 3, form_att: true, order: 10 }
   last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: false, form_size: 3, form_att: true, order: 10 }
   active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 11 }
   alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login", form_display: true, order: 12, form_size: 4 }
   enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth.", form_display: true, order: 13, form_size: 3 }
-  nxt_code_2f_auth:     { type: varchar(200), comment: "Next Two Factor Code", order: 14 }
+  nxt_code_2f_auth:     { type: varchar, length: 200, comment: "Next Two Factor Code", order: 14 }
   code_2f_expires_at:   { type: datetime, comment: "2F Code Expires", order: 18 }
   created_at:           { type: datetime, comment: "Created at" }
   updated_at:           { type: datetime, comment: "Updated at" }
@@ -169,14 +169,14 @@ table: app
 comment: Applications
 columns:
   app_id:      { type: integer, pk: true, autoincrement: true, comment: "App ID" }
-  app:         { type: varchar(20), unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9, order: 1 }
+  app:         { type: varchar, length: 20, unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9, order: 1 }
   app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, form_code: markdown, form_rendermd: true, table_display: true, order: 3 }
-  version:     { type: varchar(10), nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
-  email:       { type: varchar(200), comment: "Email", form_display: true, table_display: true, form_size: 3, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
-  db:          { type: varchar(20), nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
-  # conn_string: { type: varchar(200), nullable: false, comment: "Conn String", form_display: true, table_display: true, form_size: 3, order: 5 }
-  attach_logo: { type: varchar(200), comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
-  category:    { type: varchar(200), comment: "Category", form_display: true, table_display: true, form_size: 3, order: 6 }
+  version:     { type: varchar, length: 10, nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
+  email:       { type: varchar, length: 200, comment: "Email", form_display: true, table_display: true, form_size: 3, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
+  db:          { type: varchar, length: 20, nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
+  # conn_string: { type: varchar, length: 200, nullable: false, comment: "Conn String", form_display: true, table_display: true, form_size: 3, order: 5 }
+  attach_logo: { type: varchar, length: 200, comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
+  category:    { type: varchar, length: 200, comment: "Category", form_display: true, table_display: true, form_size: 3, order: 6 }
   config:      { type: text, comment: "Config", form_long_text: true, form_code: json }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
@@ -206,9 +206,9 @@ table: menu
 comment: Menu Items
 columns:
   menu_id:       { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
-  menu:          { type: varchar(20), nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 3, order: 1 }
+  menu:          { type: varchar, length: 20, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 3, order: 1 }
   menu_desc:     { type: text, comment: "Description", form_display: true, form_size: 9, table_display: true, order: 2 }
-  menu_icon:     { type: varchar(20), comment: "Icon", form_display: true, table_display: true, form_size: 4, order: 3 }
+  menu_icon:     { type: varchar, length: 20, comment: "Icon", form_display: true, table_display: true, form_size: 4, order: 3 }
   menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 4, order: 4 }
   menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, form_code: json, table_display: true, form_use_label: true, order: 6 }
   app_id:        { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -235,9 +235,9 @@ table: table
 comment: Tables
 columns:
   table_id:     { type: integer, pk: true, autoincrement: true, comment: "Table ID" }
-  table:        { type: varchar(100), unique: false, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12, order: 1 }
+  table:        { type: varchar, length: 100, unique: false, nullable: false, comment: "Table Name", form_display: true, table_display: true, form_size: 12, order: 1 }
   table_desc:   { type: text, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 2 }
-  db:           { type: varchar(50), comment: "Database / Schema", form_display: true, table_display: true, form_size: 12, order: 3 }
+  db:           { type: varchar, length: 50, comment: "Database / Schema", form_display: true, table_display: true, form_size: 12, order: 3 }
   requires_rla: { type: boolean, default: false, comment: "Requires Row Level Access (RLA)", form_display: true, table_display: true, order: 4 }
   user_id:      { type: integer, fk: "users.user_id", comment: "Created/Updated by", order: 5 }
   app_id:       { type: integer, fk: "app.app_id", comment: "Application", order: 6 }
@@ -343,16 +343,16 @@ comment: User Logs
 columns:
   user_log_id: { type: integer, pk: true, autoincrement: true, comment: "User Log ID" }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID", form_display: true, table_display: true, order: 1 }
-  action:      { type: varchar(200), nullable: false, comment: "Action", form_display: true, table_display: true, order: 2 }
-  req_ip:      { type: varchar(200), comment: "Request IP", form_display: true, table_display: true, form_use_label: true, order: 3 }
+  action:      { type: varchar, length: 200, nullable: false, comment: "Action", form_display: true, table_display: true, order: 2 }
+  req_ip:      { type: varchar, length: 200, comment: "Request IP", form_display: true, table_display: true, form_use_label: true, order: 3 }
   req_at:      { type: datetime, comment: "Request at", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm", form_use_label: true, order: 4 }
   req_data:    { type: text, comment: "Request Data", form_long_text: true, form_use_label: true, order: 5 }
   res_at:      { type: datetime, comment: "Response at", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm", form_use_label: true, order: 6 }
-  res_type:    { type: varchar(200), comment: "Response Type", form_display: true, table_display: true, form_use_label: true, order: 7 }
-  res_msg:     { type: varchar(500), comment: "Response Message", form_display: true, table_display: true, form_use_label: true, order: 8 }
+  res_type:    { type: varchar, length: 200, comment: "Response Type", form_display: true, table_display: true, form_use_label: true, order: 7 }
+  res_msg:     { type: varchar, length: 500, comment: "Response Message", form_display: true, table_display: true, form_use_label: true, order: 8 }
   res_data:    { type: text, comment: "Request Data", form_long_text: true, form_use_label: true, order: 9 }
-  table:       { type: varchar(200), comment: "Table", form_display: true, table_display: true, order: 10 }
-  db:          { type: varchar(200), comment: "Database", form_display: true, table_display: true, order: 11 }
+  table:       { type: varchar, length: 200, comment: "Table", form_display: true, table_display: true, order: 10 }
+  db:          { type: varchar, length: 200, comment: "Database", form_display: true, table_display: true, order: 11 }
   row_id:      { type: integer, comment: "Database", order: 12 }
   app_id:      { type: integer, fk: "app.app_id", comment: "App ID", order: 13 }
   old_data:    { type: text, comment: "Old Data", form_long_text: true, order: 14 }
@@ -372,8 +372,8 @@ table: custom_table
 comment: Custom Table
 columns:
   custom_table_id: { type: integer, pk: true, autoincrement: true, comment: "Custom Table ID" }
-  table:           { type: varchar(200), comment: "Table", form_display: true, table_display: true, form_size: 6, order: 1 }
-  db:              { type: varchar(200), comment: "Database", form_display: true, table_display: true, form_size: 6, order: 2 }
+  table:           { type: varchar, length: 200, comment: "Table", form_display: true, table_display: true, form_size: 6, order: 1 }
+  db:              { type: varchar, length: 200, comment: "Database", form_display: true, table_display: true, form_size: 6, order: 2 }
   config:          { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: json, table_display: true, order: 3 }
   app_id:          { type: integer, fk: "app.app_id", comment: "App ID", order: 4 }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
@@ -392,8 +392,8 @@ table: custom_form
 comment: Custom Form
 columns:
   custom_form_id: { type: integer, pk: true, autoincrement: true, comment: "Custom Form ID" }
-  table:          { type: varchar(200), comment: "Table", form_display: true, table_display: true, form_size: 6, order: 1 }
-  db:             { type: varchar(200), comment: "Database", form_display: true, table_display: true, form_size: 6, order: 2 }
+  table:          { type: varchar, length: 200, comment: "Table", form_display: true, table_display: true, form_size: 6, order: 1 }
+  db:             { type: varchar, length: 200, comment: "Database", form_display: true, table_display: true, form_size: 6, order: 2 }
   config:         { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: json, table_display: true, order: 3 }
   app_id:         { type: integer, fk: "app.app_id", comment: "App ID", order: 4 }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
@@ -415,8 +415,8 @@ columns:
   role_id:                  { type: integer, fk: "role.role_id", comment: "Role ID", order: 1 }
   row_id:                   { type: integer, nullable: false, comment: "Row ID", order: 2 }
   table_id:                 { type: integer, fk: "table.table_id", comment: "Table ID", order: 3 }
-  table:                    { type: varchar(200), nullable: false, comment: "Table", order: 4 }
-  db:                       { type: varchar(200), nullable: false, comment: "Database", order: 5 }
+  table:                    { type: varchar, length: 200, nullable: false, comment: "Table", order: 4 }
+  db:                       { type: varchar, length: 200, nullable: false, comment: "Database", order: 5 }
   user_id:                  { type: integer, fk: "users.user_id", comment: "User ID", order: 6 }
   app_id:                   { type: integer, fk: "app.app_id", comment: "App ID", order: 7 }
   read:                     { type: boolean, default: false, comment: "Read", order: 8 }
@@ -436,8 +436,8 @@ columns:
   column_level_access_id: { type: integer, pk: true, autoincrement: true, comment: "Column Level Access ID" }
   column:                 { type: integer, nullable: false, comment: "Column", order: 1 }
   table_id:               { type: integer, fk: "table.table_id", comment: "Table ID", order: 2 }
-  table:                  { type: varchar(200), nullable: false, comment: "Table", order: 3 }
-  db:                     { type: varchar(200), nullable: false, comment: "Database", order: 4 }
+  table:                  { type: varchar, length: 200, nullable: false, comment: "Table", order: 3 }
+  db:                     { type: varchar, length: 200, nullable: false, comment: "Database", order: 4 }
   user_id:                { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
   app_id:                 { type: integer, fk: "app.app_id", comment: "App ID", order: 6 }
   create:                 { type: boolean, default: false, comment: "Create", order: 7 }
@@ -456,8 +456,8 @@ columns:
   row_level_access_id: { type: integer, pk: true, autoincrement: true, comment: "Row Level Access ID" }
   row_id:              { type: integer, nullable: false, comment: "Row ID", order: 1 }
   table_id:            { type: integer, fk: "table.table_id", comment: "Table ID", order: 2 }
-  table:               { type: varchar(200), nullable: false, comment: "Table", order: 3 }
-  db:                  { type: varchar(200), nullable: false, comment: "Database", order: 4 }
+  table:               { type: varchar, length: 200, nullable: false, comment: "Table", order: 3 }
+  db:                  { type: varchar, length: 200, nullable: false, comment: "Database", order: 4 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID", order: 6 }
   read:                { type: boolean, default: false, comment: "Read", order: 7 }
@@ -475,12 +475,12 @@ table: translate_table
 comment: Translate Table
 columns:
   transl_tbl_id:     { type: integer, pk: true, autoincrement: true, comment: "Translate Table ID" }
-  table_org_desc:    { type: varchar(200), nullable: false, comment: "Table Org. Desc", form_display: true, table_display: true, order: 1 }
-  table_transl_desc: { type: varchar(200), nullable: false, comment: "Table Transl. Desc", form_display: true, table_display: true, order: 2 }
-  table_tooltip:     { type: varchar(500), comment: "Table Tooltip", form_display: true, table_display: true, order: 3 }
-  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 5 }
-  lang:              { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true, order: 6 }
+  table_org_desc:    { type: varchar, length: 200, nullable: false, comment: "Table Org. Desc", form_display: true, table_display: true, order: 1 }
+  table_transl_desc: { type: varchar, length: 200, nullable: false, comment: "Table Transl. Desc", form_display: true, table_display: true, order: 2 }
+  table_tooltip:     { type: varchar, length: 500, comment: "Table Tooltip", form_display: true, table_display: true, order: 3 }
+  table:             { type: varchar, length: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  db:                { type: varchar, length: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 5 }
+  lang:              { type: varchar, length: 5, nullable: false, comment: "Lang", form_display: true, table_display: true, order: 6 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
@@ -498,13 +498,13 @@ table: translate_table_field
 comment: Translate Table Fields
 columns:
   transl_tbl_field_id: { type: integer, pk: true, autoincrement: true, comment: "Translate Table Field ID" }
-  field_org_desc:      { type: varchar(200), nullable: false, comment: "Field Org. Desc", form_display: true, table_display: true, order: 1 }
-  field_transl_desc:   { type: varchar(200), nullable: false, comment: "Field Transl. Desc", form_display: true, table_display: true, order: 2 }
-  field_tooltip:       { type: varchar(500), comment: "Field Tooltip", form_display: true, table_display: true, order: 3 }
-  field:               { type: varchar(200), nullable: false, comment: "Field", form_display: true, table_display: true, order: 4 }
-  table:               { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 5 }
-  db:                  { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 6 }
-  lang:                { type: varchar(5), nullable: false, comment: "Lang", form_display: true, table_display: true, order: 7 }
+  field_org_desc:      { type: varchar, length: 200, nullable: false, comment: "Field Org. Desc", form_display: true, table_display: true, order: 1 }
+  field_transl_desc:   { type: varchar, length: 200, nullable: false, comment: "Field Transl. Desc", form_display: true, table_display: true, order: 2 }
+  field_tooltip:       { type: varchar, length: 500, comment: "Field Tooltip", form_display: true, table_display: true, order: 3 }
+  field:               { type: varchar, length: 200, nullable: false, comment: "Field", form_display: true, table_display: true, order: 4 }
+  table:               { type: varchar, length: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5 }
+  db:                  { type: varchar, length: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6 }
+  lang:                { type: varchar, length: 5, nullable: false, comment: "Lang", form_display: true, table_display: true, order: 7 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:          { type: datetime, comment: "Created at" }
@@ -522,19 +522,19 @@ table: table_schema
 comment: Table Schema
 columns:
   table_schema_id: { type: integer, pk: true, autoincrement: true, comment: "Table field ID" }
-  db:              { type: varchar(200), nullable: false, comment: "Database", form_display: true, form_size: 3, table_display: true, order: 1 }
-  table:           { type: varchar(200), nullable: false, comment: "Table", form_display: true, form_size: 3, table_display: true, order: 2 }
-  field:           { type: varchar(200), nullable: false, comment: "Field", form_display: true, form_size: 3, table_display: true, order: 3 }
-  type:            { type: varchar(200), nullable: false, comment: "Type", form_display: true, form_size: 3, table_display: true, order: 4 }
-  comment:         { type: varchar(200), comment: "Comment", form_display: true, form_size: 3, table_display: true, order: 5 }
+  db:              { type: varchar, length: 200, nullable: false, comment: "Database", form_display: true, form_size: 3, table_display: true, order: 1 }
+  table:           { type: varchar, length: 200, nullable: false, comment: "Table", form_display: true, form_size: 3, table_display: true, order: 2 }
+  field:           { type: varchar, length: 200, nullable: false, comment: "Field", form_display: true, form_size: 3, table_display: true, order: 3 }
+  type:            { type: varchar, length: 200, nullable: false, comment: "Type", form_display: true, form_size: 3, table_display: true, order: 4 }
+  comment:         { type: varchar, length: 200, comment: "Comment", form_display: true, form_size: 3, table_display: true, order: 5 }
   pk:              { type: boolean, default: false, comment: "Primary Key", form_display: true, form_size: 3, table_display: true, order: 6 }
   autoincrement:   { type: boolean, default: false, comment: "Auto Increment", form_display: true, form_size: 3, table_display: true, order: 7 }
   nullable:        { type: boolean, default: false, comment: "Nullable", form_display: true, form_size: 3, table_display: true, order: 8 }
   computed:        { type: boolean, default: false, comment: "Computed", form_display: true, form_size: 3, table_display: true, order: 9 }
-  default:         { type: varchar(200), comment: "Default", form_display: true, form_size: 3, table_display: true, order: 10 }
+  default:         { type: varchar, length: 200, comment: "Default", form_display: true, form_size: 3, table_display: true, order: 10 }
   fk:              { type: boolean, default: false, comment: "Foreign Key", form_display: true, form_size: 3, table_display: true, order: 11 }
-  referred_table:  { type: varchar(200), comment: "Ref. Table", form_display: true, form_size: 3, table_display: true, order: 12 }
-  referred_column: { type: varchar(200), comment: "Ref. Column", form_display: true, form_size: 3, table_display: true, order: 13 }
+  referred_table:  { type: varchar, length: 200, comment: "Ref. Table", form_display: true, form_size: 3, table_display: true, order: 12 }
+  referred_column: { type: varchar, length: 200, comment: "Ref. Column", form_display: true, form_size: 3, table_display: true, order: 13 }
   field_order:     { type: integer, comment: "Field Order", form_display: true, form_size: 3, table_display: true, order: 14 }
   user_id:         { type: integer, fk: "users.user_id", comment: "User ID", order: 15 }
   created_at:      { type: datetime, comment: "Created at", order: 16 }
@@ -552,11 +552,11 @@ table: cron
 comment: Jobs scheduling
 columns:
   cron_id:       { type: integer, pk: true, autoincrement: true, comment: "Cron ID" }
-  cron:          { type: varchar(100), unique: false, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
+  cron:          { type: varchar, length: 100, unique: false, nullable: false, comment: "Cron Name", form_display: true, table_display: true, form_size: 3, order: 1 }
   cron_desc:     { type: text, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 9, order: 2 }
-  api:           { type: varchar(200), nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 12, order: 3 }
-  db:            { type: varchar(50), comment: "Database (if applicable)", order: 4, form_display: true, table_display: true, form_size: 4 }
-  table:         { type: varchar(100), comment: "Table (if applicable)", order: 5, form_display: true, table_display: true, form_size: 4 }
+  api:           { type: varchar, length: 200, nullable: false, comment: "API Endpoint / Action", form_display: true, table_display: true, form_size: 12, order: 3 }
+  db:            { type: varchar, length: 50, comment: "Database (if applicable)", order: 4, form_display: true, table_display: true, form_size: 4 }
+  table:         { type: varchar, length: 100, comment: "Table (if applicable)", order: 5, form_display: true, table_display: true, form_size: 4 }
   app_id:        { type: integer, fk: "app.app_id", comment: "Application ID", order: 6, form_display: true, table_display: true, form_size: 4 }
   active:        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 7 }
   run_only_once: { type: boolean, default: false, comment: "Run Once", form_display: true, table_display: true, form_size: 2, order: 9 }
@@ -591,16 +591,16 @@ comment: Jobs scheduling logs
 columns:
   cron_log_id: { type: integer, pk: true, autoincrement: true, comment: "Cron Log ID" }
   cron_id:     { type: integer, fk: "cron.cron_id", comment: "Cron ID", order: 1 }
-  cron:        { type: varchar(50), nullable: false, comment: "Cron", order: 2, form_display: true, table_display: true, form_size: 3 }
-  cron_desc:   { type: varchar(200), nullable: false, comment: "Decription", order: 3, form_display: true, table_display: true, form_size: 9 }
-  api:         { type: varchar(200), nullable: false, comment: "API", order: 4, form_display: true, table_display: true, form_size: 12 }
+  cron:        { type: varchar, length: 50, nullable: false, comment: "Cron", order: 2, form_display: true, table_display: true, form_size: 3 }
+  cron_desc:   { type: varchar, length: 200, nullable: false, comment: "Decription", order: 3, form_display: true, table_display: true, form_size: 9 }
+  api:         { type: varchar, length: 200, nullable: false, comment: "API", order: 4, form_display: true, table_display: true, form_size: 12 }
   start_at:    { type: datetime, comment: "Job Start", order: 5, form_display: true, table_display: true, form_size: 4 }
   end_at:      { type: datetime, comment: "Job End", order: 6, form_display: true, table_display: true, form_size: 4 }
   success:     { type: boolean, default: true, comment: "Success", order: 7, form_display: true, table_display: true, form_size: 4 }
   cron_msg:    { type: text, nullable: false, comment: "Message", order: 8, form_display: true, table_display: true, form_long_text: true, form_code: txt }
   app_id:      { type: integer, fk: "app.app_id", comment: "App ID" }
-  db:          { type: varchar(200), comment: "Database" }
-  table:       { type: varchar(50), comment: "Table" }
+  db:          { type: varchar, length: 200, comment: "Database" }
+  table:       { type: varchar, length: 50, comment: "Table" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
   excluded:    { type: boolean, default: false, comment: "Excluded" }
@@ -616,7 +616,7 @@ table: access_key
 comment: API / Access Tokens & Keys
 columns:
   access_key_id:    { type: integer, pk: true, autoincrement: true, comment: "Access Key ID" }
-  access_key_desc:  { type: varchar(200), nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 1 }
+  access_key_desc:  { type: varchar, length: 200, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 1 }
   access_token:     { type: text, nullable: false, comment: "Token / Secret", form_display: true, table_display: true, form_long_text: true, form_code: txt, order: 2 }
   expires_at:       { type: datetime, comment: "Expires at", form_display: true, table_display: true, form_size: 4, order: 3 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 4 }
@@ -649,7 +649,7 @@ table: env
 comment: Envariomental Variables
 columns:
   env_id:       { type: integer, pk: true, autoincrement: true, comment: "env ID" }
-  env_name:     { type: varchar(200), unique: false, nullable: false, comment: "Env Name", order: 1, form_display: true, table_display: true, form_size: 6 }
+  env_name:     { type: varchar, length: 200, unique: false, nullable: false, comment: "Env Name", order: 1, form_display: true, table_display: true, form_size: 6 }
   env_value:    { type: text, nullable: false, comment: "Env Value", order: 4, form_display: true, table_display: true, form_long_text: true, form_code: txt }
   on_srv_start: { type: boolean, default: true, comment: "Set On Server Start", order: 3, form_display: true, table_display: true, form_size: 3 }
   active:       { type: boolean, default: true, comment: "Active", order: 3, form_display: true, table_display: true, form_size: 3 }
@@ -669,9 +669,9 @@ table: arrow_flight
 comment: Expose Arrow Flight
 columns:
   arrow_flight_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight:        { type: varchar(200), unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 2 }
+  arrow_flight:        { type: varchar, length: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 2 }
   arrow_flight_desc:   { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
-  flight_schema:       { type: varchar(200), unique: true, nullable: false, comment: "Schema Name", form_display: true, table_display: true, order: 3, form_size: 2 }
+  flight_schema:       { type: varchar, length: 200, unique: true, nullable: false, comment: "Schema Name", form_display: true, table_display: true, order: 3, form_size: 2 }
   startup_sql:         { type: text, comment: "Startup SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
   main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
   table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
@@ -707,7 +707,7 @@ comment: Arrow Flight Tables
 columns:
   arrow_flight_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   arrow_flight_id:         { type: integer, fk: "arrow_flight.arrow_flight_id", nullable: false, comment: "Arrow Flight", form_display: true, table_display: true, order: 1, form_size: 3 }
-  table_name:              { type: varchar(200), nullable: false, comment: "Table Name", form_display: true, table_display: true, order: 2, form_size: 3 }
+  table_name:              { type: varchar, length: 200, nullable: false, comment: "Table Name", form_display: true, table_display: true, order: 2, form_size: 3 }
   table_desc:              { type: text, comment: "Description", form_display: true, table_display: true, order: 6, form_long_text: true, form_code: markdown }
   order:                   { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
   active:                  { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
@@ -738,7 +738,7 @@ table: arrow_flight_table_field
 comment: Arrow Flight - Tables Fields
 columns:
   arrow_flight_table_field_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table_field:      { type: varchar(200), nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
+  arrow_flight_table_field:      { type: varchar, length: 200, nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
   arrow_flight_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 9 }
   arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 3 }
   arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", order: 4, form_display: true, table_display: true, form_size: 4 }
@@ -760,7 +760,7 @@ table: arrow_flight_table_scope
 comment: Arrow Flight - Tables Scopes
 columns:
   arrow_flight_table_scope_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table_scope:      { type: varchar(200), unique: true, nullable: false, comment: "Scope Name", form_display: true, table_display: true, order: 1, form_size: 4 }
+  arrow_flight_table_scope:      { type: varchar, length: 200, unique: true, nullable: false, comment: "Scope Name", form_display: true, table_display: true, order: 1, form_size: 4 }
   arrow_flight_table_scope_desc: { type: text, comment: "Scope Description", form_display: true, table_display: true, order: 2, form_size: 8 }
   arrow_flight_table_scope_sql:  { type: text, nullable: false, comment: "Scope SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
   arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 4 }
@@ -783,7 +783,7 @@ table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true, order: 1, form_size: 3 }
+  dashboard:      { type: varchar, length: 200, comment: "Dashboard", form_display: true, table_display: true, order: 1, form_size: 3 }
   dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 9 }
   dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 5 }
   order:          { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
@@ -808,7 +808,7 @@ comment: Dashboards Comments
 columns:
   dashboard_comment_id: { type: integer, pk: true, autoincrement: true, comment: "Comment ID" }
   dashboard_comment:    { type: text, comment: "Comments", order: 1 }
-  dashboard:            { type: varchar(200), comment: "Dashboard", order: 2 }
+  dashboard:            { type: varchar, length: 200, comment: "Dashboard", order: 2 }
   active:               { type: boolean, default: true, comment: "Active", order: 3 }
   user_id:              { type: integer, fk: "users.user_id", comment: "User ID", order: 4 }
   app_id:               { type: integer, fk: "app.app_id", comment: "App ID", order: 5 }
@@ -823,7 +823,7 @@ table: valid_reaction
 comment: Validation Reaction
 columns:
   valid_reaction_id:   { type: integer, pk: true, autoincrement: true, comment: "Validation Reaction ID" }
-  valid_reaction:      { type: varchar(20), nullable: false, unique: true, comment: "Validation Reaction", form_display: true, table_display: true, order: 1 }
+  valid_reaction:      { type: varchar, length: 20, nullable: false, unique: true, comment: "Validation Reaction", form_display: true, table_display: true, order: 1 }
   valid_reaction_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
   created_at:          { type: datetime, comment: "Created at" }
   updated_at:          { type: datetime, comment: "Updated at" }
@@ -841,12 +841,12 @@ table: validation
 comment: Validation Rules
 columns:
   validation_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  validation:        { type: varchar(200), nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
-  validation_code:   { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  validation:        { type: varchar, length: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
+  validation_code:   { type: varchar, length: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
   valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
-  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
-  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
-  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
+  err_msg:           { type: varchar, length: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
+  table:             { type: varchar, length: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
+  db:                { type: varchar, length: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
   active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
   create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
   read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
@@ -874,11 +874,11 @@ comment: Validation Logs
 columns:
   validation_log_id: { type: integer, pk: true, autoincrement: true, comment: "Validation Log ID" }
   validation_id:     { type: integer, fk: "validation.validation_id", comment: "Validation ID", order: 1 }
-  validation_code:   { type: varchar(200), comment: "Validation Code", order: 2, form_display: true, table_display: true, form_size: 4 }
-  validation:        { type: varchar(200), comment: "Validation Name", order: 3, form_display: true, table_display: true, form_size: 8 }
-  table:             { type: varchar(200), comment: "Table", order: 4, form_display: true, table_display: true, form_size: 3 }
-  db:                { type: varchar(200), comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
-  action:            { type: varchar(10), comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
+  validation_code:   { type: varchar, length: 200, comment: "Validation Code", order: 2, form_display: true, table_display: true, form_size: 4 }
+  validation:        { type: varchar, length: 200, comment: "Validation Name", order: 3, form_display: true, table_display: true, form_size: 8 }
+  table:             { type: varchar, length: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 3 }
+  db:                { type: varchar, length: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
+  action:            { type: varchar, length: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
   success:           { type: boolean, default: true, comment: "Success", order: 9, form_display: true, table_display: true, form_size: 3 }
   log_message:       { type: text, comment: "Log Message", order: 10, form_display: true, table_display: true, form_size: 12, form_long_text: true, form_code: txt }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 7 }
@@ -899,7 +899,7 @@ table: action_type
 comment: CRUD Action Reaction
 columns:
   action_type_id:   { type: integer, pk: true, autoincrement: true, comment: "Type ID" }
-  action_type:      { type: varchar(20), nullable: false, unique: true, comment: "Type", form_display: true, table_display: true, order: 1 }
+  action_type:      { type: varchar, length: 20, nullable: false, unique: true, comment: "Type", form_display: true, table_display: true, order: 1 }
   action_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
   created_at:       { type: datetime, comment: "Created at" }
   updated_at:       { type: datetime, comment: "Updated at" }
@@ -919,12 +919,12 @@ comment: CRUD Action Rules
 tooltip: Dispaches some actions after a crud operation
 columns:
   crud_action_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  crud_action:       { type: varchar(200), nullable: false, comment: "Action", form_display: true, table_display: true, order: 2, form_size: 9 }
-  crud_action_code:  { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  crud_action:       { type: varchar, length: 200, nullable: false, comment: "Action", form_display: true, table_display: true, order: 2, form_size: 9 }
+  crud_action_code:  { type: varchar, length: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
   action_type_id:    { type: integer, fk: "action_type.action_type_id", comment: "Type ID", form_display: true, table_display: true, order: 3, form_size: 2 }
-  err_msg:           { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6}
-  table:             { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
-  db:                { type: varchar(200), nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
+  err_msg:           { type: varchar, length: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6}
+  table:             { type: varchar, length: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
+  db:                { type: varchar, length: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
   active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
   create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
   read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
@@ -933,7 +933,7 @@ columns:
   sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
   email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 14, form_long_text: true, form_code: text, form_hide_cond: "data?.action_type_id !== 2" }
-  api:               { type: varchar(200), comment: "Call API", form_display: true, table_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
+  api:               { type: varchar, length: 200, comment: "Call API", form_display: true, table_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 16, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -954,13 +954,13 @@ comment: CRUD Action Logs
 columns:
   crud_action_log_id: { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
   crud_action_id:     { type: integer, fk: "crud_action.crud_action_id", comment: "ID", order: 1 }
-  crud_action_code:   { type: varchar(200), comment: "Code", order: 2, form_display: true, table_display: true, form_size: 4 }
-  crud_action:        { type: varchar(200), comment: "Name", order: 3, form_display: true, table_display: true, form_size: 8 }
-  table:              { type: varchar(200), comment: "Table", order: 4, form_display: true, table_display: true, form_size: 4 }
-  db:                 { type: varchar(200), comment: "Database", order: 5, form_display: true, table_display: true, form_size: 4 }
+  crud_action_code:   { type: varchar, length: 200, comment: "Code", order: 2, form_display: true, table_display: true, form_size: 4 }
+  crud_action:        { type: varchar, length: 200, comment: "Name", order: 3, form_display: true, table_display: true, form_size: 8 }
+  table:              { type: varchar, length: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 4 }
+  db:                 { type: varchar, length: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 4 }
   id:                 { type: integer, comment: "ID", order: 5, form_display: true, table_display: true, form_size: 4 }
-  action:             { type: varchar(10), comment: "Action", order: 6, form_display: true, table_display: true, form_size: 4 }
-  action_type:        { type: varchar(20), comment: "Action Type", order: 7, form_display: true, table_display: true, form_size: 4 }
+  action:             { type: varchar, length: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 4 }
+  action_type:        { type: varchar, length: 20, comment: "Action Type", order: 7, form_display: true, table_display: true, form_size: 4 }
   success:            { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 4 }
   log_message:        { type: text, comment: "Log Message", order: 11, form_display: true, table_display: true, form_long_text: true, form_code: txt }
   user_id:            { type: integer, fk: "users.user_id", comment: "User ID" }
@@ -981,7 +981,7 @@ table: process_type
 comment: Proccess
 columns:
   process_type_id:   { type: integer, pk: true, autoincrement: true, comment: "Proccess ID" }
-  process_type:      { type: varchar(20), nullable: false, unique: true, comment: "Proccess", form_display: true, table_display: true, order: 1 }
+  process_type:      { type: varchar, length: 20, nullable: false, unique: true, comment: "Proccess", form_display: true, table_display: true, order: 1 }
   process_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
   created_at:        { type: datetime, comment: "Created at" }
   updated_at:        { type: datetime, comment: "Updated at" }
@@ -1000,14 +1000,14 @@ comment: Processes
 tooltip: Processes that runs automatically in the background
 columns:
   batch_process_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  batch_process:       { type: varchar(200), nullable: false, comment: "Process", form_display: true, table_display: true, order: 2, form_size: 9 }
-  batch_process_code:  { type: varchar(200), nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
+  batch_process:       { type: varchar, length: 200, nullable: false, comment: "Process", form_display: true, table_display: true, order: 2, form_size: 9 }
+  batch_process_code:  { type: varchar, length: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
   batch_process_desc:  { type: text, comment: "Description", form_display: true, table_display: true, order: 1, form_size: 2 }
-  cron:                { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
+  cron:                { type: varchar, length: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
   batch_process_order: { type: integer, comment: "Proccess ID", order: 3, form_size: 2 }
   process_type_id:     { type: integer, fk: "process_type.process_type_id", comment: "Proccess ID", order: 3, form_size: 2 }
-  err_msg:             { type: varchar(200), nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
-  db:                  { type: varchar(200), nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
+  err_msg:             { type: varchar, length: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
+  db:                  { type: varchar, length: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
   create:              { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
   read:                { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
@@ -1034,10 +1034,10 @@ comment: Proccess Logs
 columns:
   batch_process_log_id: { type: integer, pk: true, autoincrement: true, comment: "Proccess Log ID" }
   batch_process_id:     { type: integer, fk: "batch_process.batch_process_id", comment: "Proccess ID", order: 1 }
-  batch_process_code:   { type: varchar(200), comment: "Proccess Code", order: 2 }
-  batch_process:        { type: varchar(200), comment: "Proccess Name", order: 3 }
-  db:                   { type: varchar(200), comment: "Database", order: 5 }
-  process_type:         { type: varchar(20), comment: "Action Type", order: 7 }
+  batch_process_code:   { type: varchar, length: 200, comment: "Proccess Code", order: 2 }
+  batch_process:        { type: varchar, length: 200, comment: "Proccess Name", order: 3 }
+  db:                   { type: varchar, length: 200, comment: "Database", order: 5 }
+  process_type:         { type: varchar, length: 20, comment: "Action Type", order: 7 }
   success:              { type: boolean, default: true, comment: "Success", order: 10 }
   log_message:          { type: text, comment: "Log Message", order: 11 }
   user_id:              { type: integer, fk: "users.user_id", comment: "User ID", order: 8 }
