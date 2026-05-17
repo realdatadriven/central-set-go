@@ -64,7 +64,6 @@ columns:
   order:             { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, form_order: 2 }
   version:           { type: varchar, len: 200, default: 'v1.0.0', comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 2, form_order: 3 }
   active:            { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 2, form_order: 4 }  
-  #depends_on:        { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_label: "Depends On Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 3, form_order: 6 }
   schedule:          { type: varchar, len: 200, comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 4, form_order: 8 }
   steps_orientation: { type: varchar, len: 200, comment: "Step Orientation", tooltip: "Vertical / Horizontal", form_display: true, table_display: true, form_size: 4, form_order: 9 }
   workflow_icon:     { type: varchar, len: 200, comment: "Icon", tooltip: "Workflow Icon - Hero Icon", form_display: true, table_display: true, form_size: 4, form_order: 10 }
@@ -78,7 +77,7 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 10
-  allow_in_subform: { workflow_step: true, workflow_dependence: true, workflow_sla: true}
+  allow_in_subform: {workflow_step: true, workflow_dependence: true, workflow_sla: true}
 table_layout:
   default_order: [{field: order, order: ASC}]
 ```
@@ -117,17 +116,17 @@ comment: "Workflow dependencies"
 tooltip: "Defines workflow dependencies / relations"
 columns:
   workflow_depend_id:    { type: integer, pk: true, autoincrement: true, comment: " ID" }
-  workflow_ depend:      { type: varchar, len: 200, nullable: false, comment: "Workflow", tooltip: "Name of the workflow_dependence", form_display: true, table_display: true, form_size: 6, form_order: 3 }
-  workflow_depend_desc:  { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow_dependence", form_display: true, table_display: true, form_long_text: true, form_code: markdown, form_order: 5 }
+  workflow_ depend:      { type: varchar, len: 200, nullable: false, comment: "Relation", form_display: true, table_display: true, form_size: 6, form_order: 3 }
+  workflow_depend_desc:  { type: text, comment: "Relation Description", form_display: true, table_display: true, form_long_text: true, form_code: markdown, form_order: 6 }
   workflow_id:           { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Main Workflow ID", tooltip: "Current workflow", form_label: "Current Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 6, form_order: 1 }
-  depends_on:            { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the workflow to which this belongs", form_label: "Depends On Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 6, form_order: 2 }
+  depends_on:            { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", form_label: "Depends On Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 6, form_order: 2 }
   depend_order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3, form_order: 4}
-  active:                { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow_dependence is active", form_display: true, table_display: true, form_size: 3, form_order: 5 }  
-  user_id:               { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the workflow_dependence" }
-  app_id:                { type: integer, comment: "App ID", tooltip: "Identifier of the application context" }
-  created_at:            { type: datetime, comment: "Created AT", tooltip: "Date and time when the workflow_dependence was created" }
-  updated_at:            { type: datetime, comment: "Updated AT", tooltip: "Date and time when the workflow_dependence was last updated" }
-  excluded:              { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the workflow_dependence is excluded from active use" }
+  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, form_order: 5 }  
+  user_id:               { type: integer, comment: "User ID" }
+  app_id:                { type: integer, comment: "App ID" }
+  created_at:            { type: datetime, comment: "Created AT" }
+  updated_at:            { type: datetime, comment: "Updated AT" }
+  excluded:              { type: boolean, default: false, comment: "Excluded" }
 form_layout: 
   tabs_steps: tabs
   form_in_popup: false
