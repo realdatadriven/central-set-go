@@ -165,7 +165,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 				referred_column := field_data.(map[string]any)["referred_column"]
 				fk_tables_pk[referred_table] = referred_column
 				//fmt.Println("referred_table:", referred_table, "referred_column:", referred_column)
-				if referred_table != table { // TOVAOID OVERWRITING MAIN TABLE COLUMNS
+				if referred_table == table { // TOVAOID OVERWRITING MAIN TABLE COLUMNS
 					fk_tables_added = append(fk_tables_added, referred_table)
 				}
 			}
@@ -251,6 +251,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					if len(acorr) > 1 {
 						level = len(acorr)
 					}
+					fmt.Println(1, "REF TABLE", referred_table, "OCORRR", acorr, fk_tables_added, "LEVEL", level)
 				}
 				referred_column := field_data.(map[string]any)["referred_column"]
 				if _, ok := field_data.(map[string]any)["referred_column"]; ok {

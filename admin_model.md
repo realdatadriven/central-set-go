@@ -617,10 +617,10 @@ comment: API / Access Tokens & Keys
 columns:
   access_key_id:    { type: integer, pk: true, autoincrement: true, comment: "Access Key ID" }
   access_key_desc:  { type: varchar, len: 200, nullable: false, comment: "Description", form_display: true, table_display: true, form_size: 12, order: 1 }
-  access_token:     { type: text, nullable: false, comment: "Token / Secret", form_display: true, table_display: true, form_long_text: true, form_code: txt, order: 2, form_copy: true }
+  access_token:     { type: text, nullable: false, comment: "Token / Secret", form_display: true, table_display: true, form_long_text: true, form_code: txt, order: 2, form_copy: true, table_ellipsis: 90 }
   expires_at:       { type: datetime, comment: "Expires at", form_display: true, table_display: true, form_size: 4, order: 3 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 4 }
-  for_user_id:      { type: integer, fk: "users.user_id", comment: "Assigned to User", form_display: true, table_display: true, form_size: 4, order: 5 }
+  for_user_id:      { type: integer, fk: "users.user_id", comment: "Assigned to User", form_display: true, table_display: true, form_size: 4, order: 5, form_use_label: true, table_use_label: true }
   user_id:          { type: integer, fk: "users.user_id", comment: "Created by" }
   app_id:           { type: integer, fk: "app.app_id", comment: "Application" }
   created_at:       { type: datetime, comment: "Created at" }
