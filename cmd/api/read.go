@@ -251,7 +251,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					if len(acorr) > 1 {
 						level = len(acorr)
 					}
-					fmt.Println(1, "REF TABLE", referred_table, "OCORRR", acorr, fk_tables_added, "LEVEL", level)
+					// fmt.Println(1, "REF TABLE", referred_table, "OCORRR", acorr, fk_tables_added, "LEVEL", level)
 				}
 				referred_column := field_data.(map[string]any)["referred_column"]
 				if _, ok := field_data.(map[string]any)["referred_column"]; ok {
@@ -297,7 +297,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 						if _, ok := _schema["fields"].(map[string]any)[keys[1].(string)]; !ok {
 							_flds = append(_flds, fmt.Sprintf(`"%s"."%s" AS "%s%s"`, alias, keys[1].(string), keys[1].(string), field_sufix))
 							if field_sufix != "" {
-								fmt.Printf(`"%s"."%s" AS "%s%s"\n`, alias, keys[1].(string), keys[1].(string), field_sufix)
+								// fmt.Printf(`"%s"."%s" AS "%s%s"\n`, alias, keys[1].(string), keys[1].(string), field_sufix)
 							}
 						}
 					}
