@@ -27,6 +27,7 @@ cs_app:
       - {table: workflow, requires_rla: true, active: true}
       - {table: workflow_sla, active: false}
       - {table: workflow_step, active: false}
+      - {table: workflow_dependence, actve: false}
       - {table: workflow_step_cond, active: false}
       - {table: workflow_step_sla, active: false}
       - {table: workflow_step_schema, active: false}
@@ -77,7 +78,7 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 10
-  allow_in_subform: { workflow_step: true, workflow_sla: true}
+  allow_in_subform: { workflow_step: true, workflow_dependence: true, workflow_sla: true}
 table_layout:
   default_order: [{field: order, order: ASC}]
 ```
@@ -107,6 +108,32 @@ columns:
   excluded:            { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the step is excluded from active use" }
 table_layout:
   default_order: [{field: step_order, order: ASC}]
+```
+
+## WORKFLOW_DEPENDENCE
+```yaml
+table: workflow_dependence
+comment: "Workflow dependencies"
+tooltip: "Defines workflow dependencies / relations"
+columns:
+  workflow_depend_id:    { type: integer, pk: true, autoincrement: true, comment: " ID" }
+  workflow_ depend:      { type: varchar, len: 200, nullable: false, comment: "Workflow", tooltip: "Name of the workflow_dependence", form_display: true, table_display: true, form_size: 6, form_order: 3 }
+  workflow_depend_desc:  { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow_dependence", form_display: true, table_display: true, form_long_text: true, form_code: markdown, form_order: 5 }
+  workflow_id:           { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Main Workflow ID", tooltip: "Current workflow", form_label: "Current Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 6, form_order: 1 }
+  depends_on:            { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the workflow to which this belongs", form_label: "Depends On Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 6, form_order: 2 }
+  depend_order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3, form_order: 4}
+  active:                { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow_dependence is active", form_display: true, table_display: true, form_size: 3, form_order: 5 }  
+  user_id:               { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the workflow_dependence" }
+  app_id:                { type: integer, comment: "App ID", tooltip: "Identifier of the application context" }
+  created_at:            { type: datetime, comment: "Created AT", tooltip: "Date and time when the workflow_dependence was created" }
+  updated_at:            { type: datetime, comment: "Updated AT", tooltip: "Date and time when the workflow_dependence was last updated" }
+  excluded:              { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the workflow_dependence is excluded from active use" }
+form_layout: 
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+table_layout:
+  default_order: [{field: depend_order, order: ASC}]
 ```
 
 ## WORKFLOW_SLA
