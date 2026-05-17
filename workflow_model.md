@@ -42,12 +42,13 @@ cs_app:
     menu_config: '{"label": "workflow", "tooltip": "workflow_desc", "load_items": {"table": "workflow", "tables": ["workflow"]}}'
     tables:
       - {table: workflow, requires_rla: true, active: true}
-      - {table: workflow_instance, requires_rla: false, active: true}
+      - {table: workflow_instance, requires_rla: false, active: false}
       - {table: workflow_instance_step, active: false}
       - {table: workflow_data, active: false}
       - {table: workflow_log, active: false}
       - {table: workflow_notification, active: false}
 ```
+
 <!--WORKFLOW DEFINITION-->
 
 ## WORKFLOW
@@ -57,16 +58,16 @@ comment: "Workflow"
 tooltip: "Defines workflow processes"
 columns:
   workflow_id:       { type: integer, pk: true, autoincrement: true, comment: "Workflow ID", tooltip: "Unique identifier of the workflow" }
-  workflow:          { type: varchar, len: 200, unique: true, nullable: false, comment: "Workflow", tooltip: "Name of the workflow", form_display: true, table_display: true, form_size: 6  }
-  workflow_desc:     { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow", form_display: true, table_display: true  }
-  order:             { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3 }
-  version:           { type: varchar, len: 200, default: 'v1.0.0', comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 3  }
-  active:            { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 3  }  
-  depends_on:        { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_display: true, table_display: true  }
-  schedule:          { type: varchar, len: 200, comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 6  }
-  steps_orientation: { type: varchar, len: 200, comment: "Step Orientation", tooltip: "Vertical / Horizontal", form_display: true, table_display: true, form_size: 6  }
-  workflow_icon:     { type: varchar, len: 200, comment: "Icon", tooltip: "Workflow Icon", form_display: true, table_display: true, form_size: 6  }
-  email_template:    { type: text, comment: "Email Template", tooltip: "Email", form_display: true, form_code: html }
+  workflow:          { type: varchar, len: 200, unique: true, nullable: false, comment: "Workflow", tooltip: "Name of the workflow", form_display: true, table_display: true, form_size: 6, form_order: 1 }
+  workflow_desc:     { type: text, comment: "Workflow Desc", tooltip: "Description of the workflow", form_display: true, table_display: true, form_long_text: true, form_order: 5 }
+  order:             { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, form_order: 2 }
+  version:           { type: varchar, len: 200, default: 'v1.0.0', comment: "Version", tooltip: "Version number of the workflow", form_display: true, table_display: true, form_size: 2, form_order: 3 }
+  active:            { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the workflow is active", form_display: true, table_display: true, form_size: 2, form_order: 4 }  
+  depends_on:        { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", tooltip: "Identifier of the main workflow to which this belongs", form_label: "Depends On Workflow", form_use_label: true, form_display: true, table_display: true, form_size: 3, form_order: 6 }
+  schedule:          { type: varchar, len: 200, comment: "Cron Schedule", tooltip: "Cron Representation of when it runs, if so", form_display: true, table_display: true, form_size: 3, form_order: 8 }
+  steps_orientation: { type: varchar, len: 200, comment: "Step Orientation", tooltip: "Vertical / Horizontal", form_display: true, table_display: true, form_size: 3, form_order: 9 }
+  workflow_icon:     { type: varchar, len: 200, comment: "Icon", tooltip: "Workflow Icon - Hero Icon", form_display: true, table_display: true, form_size: 3, form_order: 10 }
+  email_template:    { type: text, comment: "Email Template", tooltip: "Email", form_display: true, form_long_text: true, form_code: html, form_order: 11 }
   user_id:           { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the workflow" }
   app_id:            { type: integer, comment: "App ID", tooltip: "Identifier of the application context" }
   created_at:        { type: datetime, comment: "Created AT", tooltip: "Date and time when the workflow was created" }
@@ -78,7 +79,7 @@ form_layout:
   size: 10
   allow_in_subform: { workflow_step: true, workflow_sla: true}
 table_layout:
-  default_order: [{field: order, order: DESC}]
+  default_order: [{field: order, order: ASC}]
 ```
 
 ## WORKFLOW_STEP

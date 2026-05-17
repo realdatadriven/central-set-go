@@ -147,6 +147,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			join = join_overwrite[table].(string)
 		}
 	}
+	// isRefToSameTable := false
 	fk_tables_fields := map[string]any{}
 	fk_tables_added := []any{}
 	fk_tables_pk := Dict{}
@@ -164,6 +165,9 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 				referred_column := field_data.(map[string]any)["referred_column"]
 				fk_tables_pk[referred_table] = referred_column
 				//fmt.Println("referred_table:", referred_table, "referred_column:", referred_column)
+				if referred_table != table { // TOVAOID OVERWRITING MAIN TABLE COLUMNS
+					fk_tables_added = append(fk_tables_added, referred_table)
+				}
 			}
 		}
 	} else {
