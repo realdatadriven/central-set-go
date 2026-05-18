@@ -14,34 +14,25 @@
 ```
 
 <!---FILTERS SECTION-->
-```sql test
-select *
-from "ADMIN.db"."user_log"
-limit 10
-```
 
 <!-- ACTIONS -->
 ```sql actions
-select * from (values ('%', 'ALL')) t ("val", "desc")
-union
 select distinct action as "val", action as "desc"
 from "ADMIN.db"."user_log"
 ```
 
 <!-- SUCCESS -->
 ```sql status
-select * 
+select column1 as "val", column2 as "desc"
 from (values 
     ('%', 'ALL'),
     ('success', 'Success'),
     ('error', 'Error')
-) t ("val", "desc")
+) -- t ("val", "desc")
 ```
 
 <!-- USERS -->
 ```sql users
-select * from (values ('%', 'ALL')) t ("val", "desc")
-union
 select distinct "user_log"."user_id"  as "val", "users"."username"  as "desc"
 from "ADMIN.db"."user_log"
 join "ADMIN.db"."users" ON "users"."user_id" = "user_log"."user_id"
@@ -49,18 +40,16 @@ join "ADMIN.db"."users" ON "users"."user_id" = "user_log"."user_id"
 
 <!-- DATABASES -->
 ```sql dbs
-select * from (values ('%', 'ALL')) t ("val", "desc")
-union
 select distinct "db" as "val", "db" as "desc"
 from "ADMIN.db"."user_log"
+where "db" is not null
 ```
 
 <!-- TABLES -->
 ```sql tables
-select * from (values ('%', 'ALL')) t ("val", "desc")
-union
 select distinct "table" as "val", "table" as "desc"
 from "ADMIN.db"."user_log"
+where "table" is not null
 ```
 
 <Grid>
@@ -68,7 +57,7 @@ from "ADMIN.db"."user_log"
         <Input type=date
             defaultValue={config?.moment()?.subtract(7, 'day').format('YYYY-MM-DD')}
             _class='input input-sm input-bordered'
-            name=date_end
+            name=date_start
             input_label="Reference Date N-1:"
         />
     </GridItem>
@@ -76,14 +65,14 @@ from "ADMIN.db"."user_log"
         <Input type=date
             defaultValue={config?.moment()?.subtract(1, 'day').format('YYYY-MM-DD')}
             _class='input input-sm input-bordered'
-            name=date_start
+            name=date_end
             input_label="Reference Date:"
         />
     </GridItem>
     <GridItem width='w-auto !align-bottom' _type='auto' _class='p-1'>
         <RadioButtons 
             data={status} 
-            name=state
+            name=status
             value=val
             label=desc
             defaultValue=nth_0
@@ -92,7 +81,7 @@ from "ADMIN.db"."user_log"
         />
     </GridItem>
     <GridItem width='w-auto !align-bottom' _type='auto' _class='p-1'>
-        <RadioButtons 
+        <!--<RadioButtons 
             data={actions} 
             name=action
             value=val
@@ -100,7 +89,10 @@ from "ADMIN.db"."user_log"
             defaultValue=nth_0
             _class='btn-sm'
             input_label="Actions:"
-        />
+        />-->
+        <Dropdown data={actions} name=action value=val label=desc defaultValue="%" input_label='Actions:'>
+            <DropdownOption value="%" valueLabel="All"/>
+        </Dropdown>
     </GridItem>
     <GridItem width='w-auto !align-bottom' _type='auto' _class='p-1'>
         <Dropdown data={users} name=user value=val label=desc defaultValue="%" input_label='Users:'>
@@ -159,13 +151,13 @@ WITH logs AS (
     JOIN "ADMIN.db"."users" u ON u."user_id" = l."user_id"
     WHERE l."req_at" BETWEEN 'inputs.date_start.value' AND 'inputs.date_end.value'
         AND l."action" LIKE 'inputs.action.value'
-        AND l."success" LIKE 'inputs.status.value'
+        AND l."res_type" LIKE 'inputs.status.value'
         AND l."db" LIKE 'inputs.db.value'
         AND l."table" LIKE 'inputs.table.value'
 )
 SELECT count(user_log_id) total
-    , count(user_log_id) filter(where success = 'success') total_success
-    , count(user_log_id) filter(where success = 'error') total_error
+    , count(user_log_id) filter(where res_type = 'success') total_success
+    , count(user_log_id) filter(where res_type = 'error') total_error
     , avg(duration_seconds) as avg_duration_seconds
 FROM logs
 ```

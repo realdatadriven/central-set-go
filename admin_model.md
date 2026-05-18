@@ -10,7 +10,7 @@ conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: true
+active: false
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -1050,4 +1050,32 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
+```
+
+# DATA
+```yaml
+name: DATA
+description: DATA Model ADMIN
+database: ADMIN
+runs_as: MODEL_DATA
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## DASHBOARD_LOGS
+```yaml
+table: dashboard
+description: Add default Amin User Logs Dashboard
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
+data:
+  dashboard_id:   1
+  dashboard:      User Logs
+  dashboard_desc: User Logs Example
+  dashboard_conf: FileContent(examples/user-logs-ex-dashboard.md)
+  order:          1
+  active:         true
+  user_id:        1
+  app_id:        appId()
+  created_at:    Now()
+  updated_at:    Now()
+  excluded:      false
 ```
