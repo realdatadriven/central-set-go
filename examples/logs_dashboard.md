@@ -18,6 +18,9 @@
     "export_template": {
         "etlx_id": 1,
         "app": {"app_id": 2, "app": "ETLX", "db": "ETLX"}
+    },
+    "inputs_not_to_reload_dash": {
+        "big_numbers_select": true
     }
 ```
 

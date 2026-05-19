@@ -2,6 +2,8 @@
 <!-- markdownlint-disable MD041 -->
 <!-- markdownlint-disable MD033 -->
 <!-- markdownlint-disable MD009 -->
+<!-- markdownlint-disable MD010 -->
+<!-- markdownlint-disable MD046 -->
 
 ```config
     "auto_refresh_every_n_seconds": null,
@@ -10,6 +12,9 @@
     },
     "query_datasource": {
         "ds_name": "ds_"
+    },
+    "inputs_not_to_reload_dash": {
+        "big_numbers_select": true
     }
 ```
 
