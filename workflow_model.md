@@ -80,7 +80,10 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 10
-  allow_in_subform: {workflow_step: true, workflow_dependence: true, workflow_sla: true}
+  allow_in_subform: {workflow_step: true, workflow_dependence: true, workflow_sla: false}
+  tabs_steps_conf:
+    - {label: Workflow, fields: [workflow, order, version, step_color, active, workflow_desc, schedule, steps_orientation, workflow_icon]}
+    - {label: Template, fields: [email_template]}
 table_layout:
   default_order: [{field: order, order: ASC}]
 ```
@@ -117,7 +120,7 @@ form_layout:
     workflow_step_responsible: true
     workflow_step_subscriber: true
     workflow_step_department: true
-    workflow_step_sla: true
+    workflow_step_sla: false
   tabs_steps_conf:
     - {label: Step, fields: [step, step_order, step_icon, step_color, active, step_desc]}
     - {label: Conf, fields: [workflow_id, api, step_email_template, document_template]}
@@ -158,16 +161,20 @@ comment: "Workflow SLA"
 tooltip: "Defines Service Level Agreement rules for workflows"
 columns:
   workflow_sla_id:  { type: integer, pk: true, autoincrement: true, comment: "Workflow SLA ID", tooltip: "Unique identifier of the workflow SLA rule" }
-  workflow_id:      { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow", form_display: true, table_display: true }
-  name:             { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Name of the SLA rule", form_display: true, table_display: true }
-  description:      { type: text, comment: "Description", tooltip: "Description of the SLA rule", form_display: true }
-  duration_hours:   { type: integer, nullable: false, comment: "Duration Hours", tooltip: "SLA duration in hours", form_display: true, table_display: true }
-  escalation_hours: { type: integer, comment: "Escalation Hours", tooltip: "Hours before escalation is triggered", form_display: true }
-  priority:         { type: varchar, len: 50, comment: "Priority", tooltip: "Priority level for the SLA", form_display: true }
-  active:           { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the SLA rule is active" }
+  workflow_id:      { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow", form_display: true, table_display: true, order: 5, form_size: 6 }
+  name:             { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Name of the SLA rule", form_display: true, table_display: true, order: 1, form_size: 6 }
+  description:      { type: text, comment: "Description", tooltip: "Description of the SLA rule", form_display: true, form_long_text: true, form_order: 4 }
+  duration_hours:   { type: integer, nullable: false, comment: "Duration Hours", tooltip: "SLA duration in hours", form_display: true, table_display: true, order: 6, form_size: 3 }
+  escalation_hours: { type: integer, comment: "Escalation Hours", tooltip: "Hours before escalation is triggered", form_display: true, table_display: true, order: 7, form_size: 3 }
+  priority:         { type: varchar, len: 50, comment: "Priority", tooltip: "Priority level for the SLA", table_display: true, form_display: true, order: 2, form_size: 3 }
+  active:           { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the SLA rule is active", table_display: true, form_display: true, order: 3, form_size: 3 }
   user_id:          { type: integer, comment: "User ID", tooltip: "Identifier of the user who created the SLA rule" }
   created_at:       { type: datetime, comment: "Created AT", tooltip: "Date and time when the SLA rule was created" }
   updated_at:       { type: datetime, comment: "Updated AT", tooltip: "Date and time when the SLA rule was last updated" }
+form_layout: 
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 table_layout:
   default_order: [{field: workflow_sla_id, order: DESC}]
 ```
@@ -311,21 +318,21 @@ comment: "Workflow Step Schema"
 tooltip: "Defines the data structure required for each step of a workflow"
 columns:
   workflow_step_schema_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Schema ID", tooltip: "Unique identifier of the schema field" }
-  workflow_id:             { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow associated with the field", form_display: true, table_display: true  }
-  workflow_step_id:        { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step where the field is collected", form_display: true, table_display: true  }
-  field:                   { type: varchar, len: 200, nullable: false, comment: "Field", tooltip: "Technical identifier of the field", form_display: true, table_display: true  }
-  label:                   { type: varchar, len: 200, nullable: false, comment: "Label", tooltip: "Display name of the field", form_display: true, table_display: true  }
-  data_type_id:            { type: integer, fk: "data_type.data_type_id", nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true  }
-  nullable:                { type: boolean, default: true, comment: "Nullable", tooltip: "Indicates whether the field can be empty", form_display: true  }
-  default_value:           { type: varchar, len: 200, comment: "Default Value", tooltip: "Default value assigned to the field" }
-  validation_rule:         { type: varchar, len: 200, comment: "Validation Rule", tooltip: "Regex validation rule for the field" }
-  order_index:             { type: integer, comment: "Order Index", tooltip: "Position of the field within the step", form_display: true, table_display: true  }
-  format:                  { type: varchar, len: 200, comment: "Format", tooltip: "Format intl.Format" }
-  size_id:                 { type: integer, fk: "size.size_id", comment: "Size", tooltip: "1 - 12 size that will be shown in form" }
-  elipsis:                 { type: integer, comment: "Elipsis", tooltip: "Text elipsis" }
-  options:                 { type: text, comment: "Options", tooltip: "JSON Array of string or array of objects{label,value}" }
-  input_type_id:           { type: integer, fk: "input_type.input_type_id", comment: "Options Input Type", tooltip: "Combobox,Checkbox or Radio" }
-  active:                  { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the field is active" }
+  workflow_id:             { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow associated with the field", form_display: true, table_display: true, form_size: 6 }
+  workflow_step_id:        { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step where the field is collected", form_display: true, table_display: true, form_size: 6 }
+  field:                   { type: varchar, len: 200, nullable: false, comment: "Field", tooltip: "Technical identifier of the field", form_display: true, table_display: true, form_size: 4 }
+  label:                   { type: varchar, len: 200, nullable: false, comment: "Label", tooltip: "Display name of the field", form_display: true, table_display: true, form_size: 4 }
+  data_type_id:            { type: integer, fk: "data_type.data_type_id", nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true, table_display: true, form_size: 4 }
+  nullable:                { type: boolean, default: true, comment: "Nullable", tooltip: "Indicates whether the field can be empty", form_display: true, table_display: true, form_size: 3 }
+  default_value:           { type: varchar, len: 200, comment: "Default Value", tooltip: "Default value assigned to the field", form_display: true, table_display: false, form_size: 3 }
+  validation_rule:         { type: varchar, len: 200, comment: "Validation Rule", tooltip: "Regex validation rule for the field", form_display: true, table_display: flase, form_size: 3 }
+  order_index:             { type: integer, comment: "Order Index", tooltip: "Position of the field within the step", form_display: true, table_display: true, form_size: 3}
+  format:                  { type: varchar, len: 200, comment: "Format", tooltip: "Format intl.Format", form_display: true, form_size: 4 }
+  size_id:                 { type: integer, fk: "size.size_id", comment: "Size", tooltip: "1 - 12 size that will be shown in form", form_display: true, form_size: 2 }
+  elipsis:                 { type: integer, comment: "Elipsis", tooltip: "Text elipsis", form_display: true, form_size: 2 }
+  input_type_id:           { type: integer, fk: "input_type.input_type_id", comment: "Options Input Type", tooltip: "Combobox,Checkbox or Radio", form_display: true, table_display: true, form_size: 2 }
+  active:                  { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the field is active" , form_display: true, table_display: true, form_size: 2 }
+  options:                 { type: text, comment: "Options", tooltip: "JSON Array of string or array of objects{label,value}", form_display: true, form_long_text: true, form_size: 12 }
   user_id:                 { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the field definition" }
   app_id:                  { type: integer, comment: "App ID", tooltip: "Identifier of the application context" }
   created_at:              { type: datetime, comment: "Created AT", tooltip: "Date and time when the field was created" }
