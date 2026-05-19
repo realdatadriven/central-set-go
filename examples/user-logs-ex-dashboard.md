@@ -148,12 +148,12 @@ WITH logs AS (
     SELECT l.*
         , CAST((julianday(l.res_at) - julianday(l.req_at)) * 86400 AS INT) AS duration_seconds
     FROM "ADMIN.db"."user_log" l
-    JOIN "ADMIN.db"."users" u ON u."user_id" = l."user_id"
+    LEFT JOIN "ADMIN.db"."users" u ON u."user_id" = l."user_id"
     WHERE l."req_at" BETWEEN 'inputs.date_start.value' AND 'inputs.date_end.value'
-        AND l."action" LIKE 'inputs.action.value'
-        AND l."res_type" LIKE 'inputs.status.value'
-        AND l."db" LIKE 'inputs.db.value'
-        AND l."table" LIKE 'inputs.table.value'
+        AND COALESCE(l."action", '') LIKE 'inputs.action.value'
+        AND COALESCE(l."res_type", '') LIKE 'inputs.status.value'
+        AND COALESCE(l."db", '') LIKE 'inputs.db.value'
+        AND COALESCE(l."table", '') LIKE 'inputs.table.value'
 )
 SELECT count(user_log_id) total
     , count(user_log_id) filter(where res_type = 'success') total_success
