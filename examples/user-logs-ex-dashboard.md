@@ -289,7 +289,7 @@ WHERE COALESCE(l."action", '') LIKE 'inputs.action.value'
 	<Column id=req_at title=Start/>
 	<Column id=res_at title=End/>
 	<Column id=duration_miliseconds title="Duration (ms)"/>
-	<Column id=msg_msg title=Message/>
+	<Column id=res_msg title=Message/>
 	<Column id=res_type title=Success/>
 </DataTable>
 {/if}
