@@ -10,7 +10,7 @@ conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: true
+active: false
 cs_app:
   Dashboards:
     menu_icon: document-report
