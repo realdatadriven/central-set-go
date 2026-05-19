@@ -260,3 +260,36 @@ CROSS JOIN avgs_daily_hist AS lavg
         </Stat>
     </Stats>
 </Div>
+
+<!-- Error details table -->
+```sql error_details
+SELECT l.*
+    , CAST((julianday(l.res_at) - julianday(l.req_at)) * 86400000 AS REAL) AS duration_miliseconds
+    , u.username
+FROM "ADMIN.db"."user_log" l
+LEFT JOIN "ADMIN.db"."users" u ON u."user_id" = l."user_id"
+WHERE COALESCE(l."action", '') LIKE 'inputs.action.value'
+    AND COALESCE(l."res_type", '') LIKE 'error'
+    AND COALESCE(l."db", '') LIKE 'inputs.db.value'
+    AND COALESCE(l."table", '') LIKE 'inputs.table.value'
+    AND l."req_at" BETWEEN 'inputs.date_start.value' AND 'inputs.date_end.value'
+```
+
+{#if inputs?.big_numbers_select?.value === 'total_error'}
+<DataTable data={error_details}
+    rowShading=true 
+    rowLines=false
+    rows=20
+    search=true
+>   <Column id=username title="User"/>
+	<Column id=req_ip title="Sub Process"/>
+	<Column id=action title="Action"/>
+	<Column id=table title="Table"/>
+	<Column id=db title="Database"/>
+	<Column id=req_at title=Start/>
+	<Column id=res_at title=End/>
+	<Column id=duration_miliseconds title="Duration (ms)"/>
+	<Column id=msg_msg title=Message/>
+	<Column id=res_type title=Success/>
+</DataTable>
+{/if}
