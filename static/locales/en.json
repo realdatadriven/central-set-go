@@ -353,7 +353,8 @@
         "2f_code": "Two factor code",
         "submit_2f_code": "Submit code",
         "rendermd": "Render",
-        "seecode": "See MD ode"
+        "seecode": "See MD code",
+        "copy": "Copy"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",
