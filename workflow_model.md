@@ -30,12 +30,15 @@ cs_app:
       - {table: workflow_dependence, actve: false}
       - {table: workflow_step_cond, active: false}
       - {table: workflow_step_sla, active: false}
+      - {table: input_type, active: false}
+      - {table: data_type, active: false}
+      - {table: size, active: false}
       - {table: workflow_step_schema, active: false}
       - {table: workflow_step_schema_option, active: false}
       - {table: workflow_step_responsible, active: false}
       - {table: workflow_step_subscriber, active: false}
       - {table: department, requires_rla: true, active: true}
-      - {table: department_workflow_step, active: false}
+      - {table: workflow_step_department, active: false}
   Execute Workflow:
     menu_icon: clipboard-document-check
     menu_order: 3
@@ -89,22 +92,35 @@ comment: "Workflow Step"
 tooltip: "Defines the steps of a workflow"
 columns:
   workflow_step_id:    { type: integer, pk: true, autoincrement: true, comment: "Workflow Step ID", tooltip: "Unique identifier of the workflow step" }
-  workflow_id:         { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow to which the step belongs", form_display: true, table_display: true  }
-  step:                { type: varchar, len: 200, nullable: false, comment: "Step", tooltip: "Name of the step", form_display: true, table_display: true  }
-  step_desc:           { type: text, comment: "Step Desc", tooltip: "Description of the step", form_display: true  }
-  step_order:          { type: integer, comment: "Step Order", tooltip: "Order of execution of the step", form_display: true, table_display: true  }
-  child_workflow_id:   { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Child Workflow ID", tooltip: "Identifier of the child / sub workflow to which the step belongs", form_display: true, table_display: true  }
-  step_icon:           { type: varchar, len: 200, comment: "Icon", tooltip: "Step Icon", form_display: true, table_display: true, form_size: 6  }
-  step_color:          { type: varchar, len: 200, comment: "Color", tooltip: "Step Color", form_display: true, table_display: true, form_size: 6  }
-  active:              { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the step is active" }
-  step_email_template: { type: text, comment: "Email Template", tooltip: "Email", form_display: true, form_code: html }
-  document_template:   { type: text, comment: "Doc Template", tooltip: "In case the step is suposed to generate some kind of document, here will be the template, and it will be a gostatus templat tha has access to all the data from the previous step, current date, user, and the processes itself", form_display: true, form_code: html }
+  step:                { type: varchar, len: 200, nullable: false, comment: "Step", tooltip: "Name of the step", form_display: true, table_display: true, form_size: 4, form_order: 1 }
+  step_desc:           { type: text, comment: "Step Desc", tooltip: "Description of the step", form_display: true, form_long_text: true, form_order: 6 }
+  step_order:          { type: integer, comment: "Step Order", tooltip: "Order of execution of the step", form_display: true, table_display: true, form_size: 2, form_order: 2 }
+  workflow_id:         { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Workflow ID", tooltip: "Identifier of the workflow to which the step belongs", form_display: true, table_display: true, form_size: 4, form_order: 7 }
+  step_icon:           { type: varchar, len: 200, comment: "Icon", tooltip: "Step Icon", form_display: true, table_display: true, form_size: 2, form_order: 3 }
+  step_color:          { type: varchar, len: 200, comment: "Color", tooltip: "Step Color", form_display: true, table_display: true, form_size: 2, form_order: 4 }
+  active:              { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the step is active", form_display: true, form_size: 2, form_order: 5 }
+  step_email_template: { type: text, comment: "Email Template", tooltip: "Email", form_display: true, form_code: html, form_long_text: true, form_order: 8 }
+  document_template:   { type: text, comment: "Doc Template", tooltip: "In case the step is suposed to generate some kind of document, here will be the template, and it will be a gostatus templat tha has access to all the data from the previous step, current date, user, and the processes itself", form_display: true, form_code: html, form_long_text: true, form_order: 9 }
+  api:                 { type: varchar, len: 255, comment: "Trigers API", tooltip: "API that is called", form_display: true, table_display: false, form_size: 8, form_order: 7 }
   user_id:             { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step definition" }
   app_id:              { type: integer, comment: "App ID", tooltip: "Identifier of the application context" }
-  api:                 { type: varchar, len: 255, comment: "API", tooltip: "API that is called", form_display: true, table_display: false  }
   created_at:          { type: datetime, comment: "Created AT", tooltip: "Date and time when the step was created" }
   updated_at:          { type: datetime, comment: "Updated AT", tooltip: "Date and time when the step was last updated" }
   excluded:            { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the step is excluded from active use" }
+form_layout: 
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+  allow_in_subform:
+    workflow_step_schema: true
+    workflow_step_cond: true
+    workflow_step_responsible: true
+    workflow_step_subscriber: true
+    workflow_step_department: true
+    workflow_step_sla: true
+  tabs_steps_conf:
+    - {label: Main, fields: [step, step_order, step_icon, step_color, active, step_desc]}
+    - {label: Conf, fields: [workflow_id, api, step_email_template, document_template]}
 table_layout:
   default_order: [{field: step_order, order: ASC}]
 ```
@@ -193,19 +209,99 @@ table_layout:
   default_order: [{field: department_id, order: DESC}]
 ```
 
-## DEPARTMENT_WORKFLOW_STEP
+## WORKFLOW_STEP_DEPARTMENT
 ```yaml
-table: department_workflow_step
+table: workflow_step_department
 comment: "Department Workflow Step"
 tooltip: "Associates departments with workflow steps"
 columns:
-  department_workflow_step_id: { type: integer, pk: true, autoincrement: true, comment: "Department Workflow Step ID", tooltip: "Unique identifier of the relation" }
+  workflow_step_department_id: { type: integer, pk: true, autoincrement: true, comment: "Department Workflow Step ID", tooltip: "Unique identifier of the relation" }
   department_id:               { type: integer, nullable: false, fk: "department.department_id", comment: "Department ID", tooltip: "Identifier of the department", form_display: true, table_display: true }
   workflow_step_id:            { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the workflow step", form_display: true, table_display: true }
   active:                      { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the relation is active" }
   created_at:                  { type: datetime, comment: "Created AT", tooltip: "Date and time when the relation was created" }
 table_layout:
-  default_order: [{field: department_workflow_step_id, order: DESC}]
+  default_order: [{field: workflow_step_department_id, order: DESC}]
+```
+
+## INPUT_TYPE
+```yaml
+table: input_type
+comment: InputType
+columns:
+  input_type_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  input_type:      { type: varchar, len: 4, unique: true, nullable: false, comment: "Input Type", form_display: true, table_display: true, order: 1 }
+  input_type_desc: { type: varchar, len: 200, comment: "Description", form_display: true, table_display: true, order: 2 }
+  created_at:      { type: datetime, comment: "Created at" }
+  updated_at:      { type: datetime, comment: "Updated at" }
+  excluded:        { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {input_type_id: 1, input_type: text, excluded: false}
+  - {input_type_id: 2, input_type: textarea, excluded: false}
+  - {input_type_id: 3, input_type: password, excluded: false}
+  - {input_type_id: 4, input_type: checkbox, excluded: false}
+  - {input_type_id: 5, input_type: radio, excluded: false}
+  - {input_type_id: 6, input_type: date, excluded: false}
+  - {input_type_id: 7, input_type: datetime, excluded: false}
+form_layout:
+  tabs_steps: deactivate
+  form_in_popup: true
+  size: 6
+```
+
+## DATA_TYPE
+```yaml
+table: data_type
+comment: Input Type
+columns:
+  data_type_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  data_type:      { type: varchar, len: 4, unique: true, nullable: false, comment: "Data Type", form_display: true, table_display: true, order: 1 }
+  data_type_desc: { type: varchar, len: 200, comment: "Description", form_display: true, table_display: true, order: 2 }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {data_type_id: 1, data_type: text, excluded: false}
+  - {data_type_id: 2, data_type: varchar, excluded: false}
+  - {data_type_id: 3, data_type: boolean, excluded: false}
+  - {data_type_id: 4, data_type: integer, excluded: false}
+  - {data_type_id: 5, data_type: decimal, excluded: false}
+  - {data_type_id: 6, data_type: date, excluded: false}
+  - {data_type_id: 7, data_type: datetime, excluded: false}
+form_layout:
+  tabs_steps: deactivate
+  form_in_popup: true
+  size: 6
+```
+
+## SIZE
+```yaml
+table: size
+comment: Size
+columns:
+  size_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  size:        { type: varchar, len: 4, unique: true, nullable: false, comment: "Data Type", form_display: true, table_display: true, order: 1 }
+  size_desc:   { type: varchar, len: 200, comment: "Description", form_display: true, table_display: true, order: 2 }
+  created_at:  { type: datetime, comment: "Created at" }
+  updated_at:  { type: datetime, comment: "Updated at" }
+  excluded:    { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {size_id: 1, size: "1/12 - 8.33%", excluded: false}
+  - {size_id: 2, size: "2/12 - 16.67%", excluded: false}
+  - {size_id: 3, size: "3/12 - 25%", excluded: false}
+  - {size_id: 4, size: "4/12 - 33.33%", excluded: false}
+  - {size_id: 5, size: "5/12 - 41.67%", excluded: false}
+  - {size_id: 6, size: "6/12 - 50%", excluded: false}
+  - {size_id: 7, size: "7/12 - 58.33%", excluded: false}
+  - {size_id: 8, size: "8/12 - 66.67%", excluded: false}
+  - {size_id: 9, size: "9/12 - 75%", excluded: false}
+  - {size_id: 10, size: "10/12 - 83.33%", excluded: false}
+  - {size_id: 11, size: "11/12 - 91.67%", excluded: false}
+  - {size_id: 12, size: "12/12 - 100%", excluded: false}
+form_layout:
+  tabs_steps: deactivate
+  form_in_popup: true
+  size: 6
 ```
 
 ## WORKFLOW_STEP_SCHEMA
@@ -219,22 +315,26 @@ columns:
   workflow_step_id:        { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step where the field is collected", form_display: true, table_display: true  }
   field:                   { type: varchar, len: 200, nullable: false, comment: "Field", tooltip: "Technical identifier of the field", form_display: true, table_display: true  }
   label:                   { type: varchar, len: 200, nullable: false, comment: "Label", tooltip: "Display name of the field", form_display: true, table_display: true  }
-  data_type:               { type: varchar, len: 50, nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true  }
+  data_type_id:            { type: integer, fk: "data_type.data_type_id", nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true  }
   nullable:                { type: boolean, default: true, comment: "Nullable", tooltip: "Indicates whether the field can be empty", form_display: true  }
   default_value:           { type: varchar, len: 200, comment: "Default Value", tooltip: "Default value assigned to the field" }
-  validation_rule:         { type: varchar, len: 200, comment: "Validation Rule", tooltip: "Regex validation rulw for the field" }
+  validation_rule:         { type: varchar, len: 200, comment: "Validation Rule", tooltip: "Regex validation rule for the field" }
   order_index:             { type: integer, comment: "Order Index", tooltip: "Position of the field within the step", form_display: true, table_display: true  }
   format:                  { type: varchar, len: 200, comment: "Format", tooltip: "Format intl.Format" }
-  size:                    { type: integer, comment: "Size", tooltip: "1 - 12 size that will be shown in form" }
+  size_id:                 { type: integer, fk: "size.size_id", comment: "Size", tooltip: "1 - 12 size that will be shown in form" }
   elipsis:                 { type: integer, comment: "Elipsis", tooltip: "Text elipsis" }
   options:                 { type: text, comment: "Options", tooltip: "JSON Array of string or array of objects{label,value}" }
-  options_input_type:      { type: text, comment: "Options Input Type", tooltip: "Combobox,Checkbox or Radio" }
+  input_type_id:           { type: integer, fk: "input_type.input_type_id", comment: "Options Input Type", tooltip: "Combobox,Checkbox or Radio" }
   active:                  { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the field is active" }
   user_id:                 { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the field definition" }
   app_id:                  { type: integer, comment: "App ID", tooltip: "Identifier of the application context" }
   created_at:              { type: datetime, comment: "Created AT", tooltip: "Date and time when the field was created" }
   updated_at:              { type: datetime, comment: "Updated AT", tooltip: "Date and time when the field was last updated" }
   excluded:                { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the field is excluded from active use" }
+form_layout:
+  tabs_steps: deactivate
+  form_in_popup: true
+  size: 6
 table_layout:
   default_order: [{field: order_index, order: ASC}]
 ```
@@ -323,8 +423,8 @@ table_layout:
 table: status
 comment: Status
 columns:
-  status_id:   { type: integer, pk: true, autoincrement: true, comment: "Lang ID" }
-  status:      { type: varchar, len: 4, unique: true, nullable: false, comment: "Language", form_display: true, table_display: true, order: 1 }
+  status_id:   { type: integer, pk: true, autoincrement: true, comment: "Status ID" }
+  status:      { type: varchar, len: 4, unique: true, nullable: false, comment: "Status", form_display: true, table_display: true, order: 1 }
   status_desc: { type: varchar, len: 200, comment: "Description", form_display: true, table_display: true, order: 2 }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
@@ -472,16 +572,17 @@ table_extra_options:
 
 # WORKFLOW 1
 ```yaml
-name: WORKFLOW 1
+name: WORKFLOW_1
 description: Exemple of a workflow
 runs_as: WORKFLOW
-conn: 'sqlite3:database/WORKFLOW.db'
+database: WORKFLOW
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 active: true
 ```
 
 ## STEP 1
 ```yaml
-name: WORKFLOW 1
+name: WORKFLOW_1
 description: Exemple of a workflow
 active: true
 attributes:
