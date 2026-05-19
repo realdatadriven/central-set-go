@@ -119,7 +119,7 @@ form_layout:
     workflow_step_department: true
     workflow_step_sla: true
   tabs_steps_conf:
-    - {label: Main, fields: [step, step_order, step_icon, step_color, active, step_desc]}
+    - {label: Step, fields: [step, step_order, step_icon, step_color, active, step_desc]}
     - {label: Conf, fields: [workflow_id, api, step_email_template, document_template]}
 table_layout:
   default_order: [{field: step_order, order: ASC}]
