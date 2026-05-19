@@ -149,7 +149,7 @@ columns:
 form_layout: 
   tabs_steps: tabs
   form_in_popup: false
-  size: 8
+  size: 6
 table_layout:
   default_order: [{field: depend_order, order: ASC}]
 ```
