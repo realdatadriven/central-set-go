@@ -242,14 +242,14 @@ CROSS JOIN avgs_daily_hist AS lavg
                 title='vs daily average'
             />
         </Stat>
-        <Stat name=avg_duration parent_name=big_numbers_select bg_selected='bg-base-200'>
+        <Stat name=avg_duration_miliseconds parent_name=big_numbers_select bg_selected='bg-base-200'>
             <StatFigure _class='text-success p-0 w-14 h-14' icon='check'/>
             <StatTitle _class='text-success font-bold'># Average Duration Response (ms)</StatTitle>
             <StatValue _class=''
                 data={big_numbers}
-                value=avg_duration
+                value=avg_duration_miliseconds
                 fmt=num2
-                name=avg_duration
+                name=avg_duration_miliseconds
             />
             <StatDesc _class='text-error'
                 data={big_numbers}
