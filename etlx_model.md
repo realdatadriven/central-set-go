@@ -117,11 +117,11 @@ table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, form_size: 3, order: 1 }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: false, form_size: 9, order: 2 }
+  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, form_size: 8, order: 1 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
   dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 5 }
-  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 3, order: 3 }
-  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 4 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, order: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 3 }
   user_id:        { type: integer, comment: "User ID" }
   app_id:         { type: integer, comment: "App ID" }
   created_at:     { type: datetime, comment: "Created at" }

@@ -10,7 +10,7 @@ conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: false
+active: true
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -783,22 +783,24 @@ table: dashboard
 comment: Dashboards
 columns:
   dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
-  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, order: 1, form_size: 3 }
-  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 9 }
-  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, table_display: true, order: 5 }
-  order:          { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
-  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
-  user_id:        { type: integer, fk: "users.user_id", comment: "User ID", order: 6 }
-  app_id:         { type: integer, fk: "app.app_id", comment: "App ID", order: 7 }
-  created_at:     { type: datetime, comment: "Created at", order: 8 }
-  updated_at:     { type: datetime, comment: "Updated at", order: 9 }
-  excluded:       { type: boolean, default: false, comment: "Excluded", order: 10 }
+  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, form_size: 8, order: 1 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 5 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, order: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 3 }
+  user_id:        { type: integer, comment: "User ID" }
+  app_id:         { type: integer, comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 8
+  size: 9
+table_layout:
+  default_order: [{field: order, order: ASC}]
 table_extra_options:
-  - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
+  - { component: EvidenceDash, label: dashboard, intercept_r: true, size: 12 }
 ```
 
 ## DASHBOARD_COMMENT
