@@ -27,7 +27,7 @@ cs_app:
       - {table: workflow, requires_rla: true, active: true}
       - {table: workflow_sla, active: false}
       - {table: workflow_step, active: false}
-      - {table: workflow_dependence, actve: false}
+      - {table: workflow_dependence, active: false}
       - {table: workflow_step_cond, active: false}
       - {table: workflow_step_sla, active: false}
       - {table: input_type, active: false}
@@ -207,7 +207,7 @@ comment: "Department"
 tooltip: "Represents an organizational department"
 columns:
   department_id: { type: integer, pk: true, autoincrement: true, comment: "Department ID", tooltip: "Unique identifier of the department" }
-  name:          { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Name of the department", form_display: true, table_display: true }
+  name:          { type: varchar, len: 200, nullable: false, comment: "Department Name", tooltip: "Name of the department", form_display: true, table_display: true }
   description:   { type: text, comment: "Description", tooltip: "Description of the department", form_display: true, table_display: true }
   active:        { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the department is active" }
   created_at:    { type: datetime, comment: "Created AT", tooltip: "Date and time when the department was created" }

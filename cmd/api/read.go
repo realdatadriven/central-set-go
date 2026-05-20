@@ -645,9 +645,8 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	// fmt.Println((*trows))
 	total = app.toInt((*trows)["n_rows"])
-	//fmt.Println(app_id, user_id, pk, args, query)
+	// fmt.Println(table, user_id, pk, args, total, query)
 	//data := map[string]any{}
 	msg, _ := app.i18n.T("success", map[string]any{})
 	return map[string]any{
