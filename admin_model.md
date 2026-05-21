@@ -58,9 +58,18 @@ cs_app:
     tables:
       - cron
       - {table: cron_log, active: false}  
+  APIs:
+    menu_icon: plug-circle
+    menu_order: 5
+    active: true
+    tables:
+      - {table: api_type, active: false}
+      - api
+      - {table: api_header, active: false}
+      - {table: api_call_log, active: false}
   Params:
     menu_icon: adjustments
-    menu_order: 5
+    menu_order: 6
     active: true
     tables:
       - lang
@@ -910,6 +919,7 @@ data:
   - {action_type_id: 1, action_type: ExecuteQuery, action_type_desc: Execute Query, excluded: false}
   - {action_type_id: 2, action_type: SendEmail, action_type_desc: Send Email, excluded: false}
   - {action_type_id: 3, action_type: InternalAPICall, action_type_desc: Internal API Call, excluded: false}
+  - {action_type_id: 4, action_type: ExternalAPICall, action_type_desc: External API Call, excluded: false}
 form_layout:
   size: 4
 ```
@@ -1048,6 +1058,101 @@ columns:
   created_at:           { type: datetime, comment: "Created at", order: 13 }
   updated_at:           { type: datetime, comment: "Updated at", order: 14 }
   excluded:             { type: boolean, default: false, comment: "Excluded", order: 15 }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## API_TYPE
+```yaml
+table: api_type
+comment: API Types
+columns:
+  api_type_id:   { type: integer, pk: true, autoincrement: true, comment: "API Type ID" }
+  api_type:      { type: varchar, len: 50, unique: true, nullable: false, comment: "API Type", form_display: true, table_display: true, order: 1 }
+  api_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:    { type: datetime, comment: "Created at" }
+  updated_at:    { type: datetime, comment: "Updated at" }
+  excluded:      { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {api_type_id: 1, api_type: REST, api_type_desc: RESTful API, excluded: false}
+  - {api_type_id: 2, api_type: SOAP, api_type_desc: SOAP Web Service, excluded: false}
+  - {api_type_id: 3, api_type: gRPC, api_type_desc: gRPC Protocol, excluded: false}
+  - {api_type_id: 4, api_type: GraphQL, api_type_desc: GraphQL API, excluded: false}
+form_layout:
+  form_in_popup: true
+  size: 4
+```
+
+## API
+```yaml
+table: api
+comment: API Integrations
+columns:
+  api_id:                { type: integer, pk: true, autoincrement: true, comment: "API ID" }
+  api_name:              { type: varchar, len: 100, nullable: false, comment: "API Name", form_display: true, table_display: true, form_size: 6, order: 1 }
+  api_type_id:           { type: integer, fk: "api_type.api_type_id", nullable: false, comment: "API Type", form_display: true, table_display: true, form_size: 3, order: 2 }
+  api_description:       { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 3 }
+  endpoint:              { type: varchar, len: 500, nullable: false, comment: "API Endpoint", form_display: true, table_display: true, form_size: 9, order: 4 }
+  request_body_template: { type: text, comment: "Request Body Template (Go template)", form_display: true, form_long_text: true, form_code: json, order: 5 }
+  num_retries:           { type: integer, default: 3, comment: "Number of Retries", form_display: true, table_display: true, form_size: 3, order: 6 }
+  timeout_seconds:       { type: integer, default: 30, comment: "Timeout (seconds)", form_display: true, table_display: true, form_size: 3, order: 7 }
+  headers_template:      { type: text, comment: "Headers Template (use @VAR_NAME for environment variables)", form_display: true, form_long_text: true, form_code: json, order: 8 }
+  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
+  user_id:               { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
+  app_id:                { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
+  created_at:            { type: datetime, comment: "Created at" }
+  updated_at:            { type: datetime, comment: "Updated at" }
+  excluded:              { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {api_header: true, api_call_log: true}
+  sub_form_size: 9
+```
+
+## API_HEADER
+```yaml
+table: api_header
+comment: API Headers
+columns:
+  api_header_id:   { type: integer, pk: true, autoincrement: true, comment: "Header ID" }
+  api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
+  header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 4, order: 2 }
+  header_value:    { type: text, nullable: false, comment: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, table_display: true, form_size: 8, order: 3 }
+  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
+  user_id:         { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
+  app_id:          { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
+  created_at:      { type: datetime, comment: "Created at" }
+  updated_at:      { type: datetime, comment: "Updated at" }
+  excluded:        { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## API_CALL_LOG
+```yaml
+table: api_call_log
+comment: API Call Logs
+columns:
+  api_call_log_id:  { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
+  api_id:           { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
+  api_name:         { type: varchar, len: 100, comment: "API Name", form_display: true, table_display: true, form_size: 4, order: 2 }
+  request_datetime:  { type: datetime, nullable: false, comment: "Request DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 3 }
+  response_datetime: { type: datetime, comment: "Response DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 4 }
+  request_body:     { type: text, comment: "Request Body", form_display: true, form_long_text: true, form_code: json, order: 5 }
+  response_body:    { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: json, order: 6 }
+  response_status:  { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 7 }
+  response_message: { type: varchar, len: 500, comment: "Response Message", form_display: true, table_display: true, order: 8 }
+  user_id:          { type: integer, fk: "users.user_id", comment: "User ID", order: 9 }
+  app_id:           { type: integer, fk: "app.app_id", comment: "App ID", order: 10 }
+  created_at:       { type: datetime, comment: "Created at", order: 11 }
+  updated_at:       { type: datetime, comment: "Updated at", order: 12 }
+  excluded:         { type: boolean, default: false, comment: "Excluded", order: 13 }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
