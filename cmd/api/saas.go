@@ -424,7 +424,7 @@ func (app *application) DeployOpenTofuForTenant(params Dict, tenantID any, run *
 	return result, nil
 }
 
-func (etlx *application) RenderTemplate(tmplStr string, data map[string]any) (string, error) {
+func (app *application) RenderTemplate(tmplStr string, data map[string]any) (string, error) {
 	// Create a FuncMap with some common functions
 	// funcMap := sprig.FuncMap()
 	tmpl, err := template.New("tmpl").Funcs(sprig.FuncMap()).Parse(tmplStr)

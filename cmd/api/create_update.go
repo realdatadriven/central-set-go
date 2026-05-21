@@ -665,6 +665,21 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					}
 					return err
 				}
+			} else if app.toInt(action_type_id) == 4 && okAPI { // CallExternalAPI
+				/*_, err := app.CronRunEndPoint(Dict{"api": api, "data": _data})
+				if err != nil {
+					success = false
+					crud_action_log["success"] = success
+					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
+					crud_action_log["executed_at"] = time.Now()
+					crud_action_log["created_at"] = time.Now()
+					crud_action_log["updated_at"] = time.Now()
+					_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+					if err2 != nil {
+						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+					}
+					return err
+				}*/
 			} else {
 				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
 				crud_action_log["success"] = success
