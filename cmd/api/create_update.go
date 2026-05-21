@@ -586,6 +586,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			_, okSql := c_action["sql"]
 			_, okEmail := c_action["email_template"]
 			api, okAPI := c_action["api"]
+			api_id, okAPIID := c_action["api_id"]
+			api_name, okAPIName := c_action["api_name"]
+			api_endpoint, okAPIEndpoint := c_action["api_endpoint"]
 			//  register crud_action_logs
 			success := true
 			crud_action_log := Dict{
@@ -665,12 +668,31 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					}
 					return err
 				}
-			} else if app.toInt(action_type_id) == 4 && okAPI { // CallExternalAPI
-				/*_, err := app.CronRunEndPoint(Dict{"api": api, "data": _data})
-				if err != nil {
+			} else if app.toInt(action_type_id) == 4 && (okAPIID || okAPIName || okAPIEndpoint) { // CallExternalAPI
+				_params := Dict{
+					"data": Dict{
+						"api_id":         api_id,
+						"api_name":       api_name,
+						"api_endpoint":   api_endpoint,
+						"data":           _data,
+						"action":         c_action,
+						"db":             database,
+						"table":          table,
+						"table_pk_field": pk,
+						"row_id":         id,
+						"user":           params["user"],
+					},
+				}
+				res := app.runAPI(_params)
+				_, ok := res["success"].(bool)
+				if !ok || !res["success"].(bool) {
 					success = false
+					msg := ""
+					if _, ok := res["msg"].(string); ok {
+						msg = res["msg"].(string)
+					}
 					crud_action_log["success"] = success
-					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
+					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action External API. Message: %s. API Response: %v", msg, res)
 					crud_action_log["executed_at"] = time.Now()
 					crud_action_log["created_at"] = time.Now()
 					crud_action_log["updated_at"] = time.Now()
@@ -678,8 +700,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					if err2 != nil {
 						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 					}
-					return err
-				}*/
+					return fmt.Errorf("Error executing external API: %s", msg)
+				}
 			} else {
 				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
 				crud_action_log["success"] = success

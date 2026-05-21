@@ -947,9 +947,9 @@ columns:
   email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 14, form_long_text: true, form_code: text, form_hide_cond: "data?.action_type_id !== 2" }
   api:               { type: varchar, len: 200, comment: "Call API", form_display: true, table_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
-  api_id:            { type: varchar, len: 200, comment: "API ID", form_display: true, table_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
+  api_id:            { integer, comment: "API ID", form_display: true, table_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, table_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
-  api_endpoint:      { type: varchar, len: 200, comment: "API Endpoint", form_display: true, table_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
+  api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, table_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 19, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1166,20 +1166,24 @@ form_layout:
 table: api_call_log
 comment: API Call Logs
 columns:
-  api_call_log_id:  { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
-  api_id:           { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
-  api_name:         { type: varchar, len: 100, comment: "API Name", form_display: true, table_display: true, form_size: 4, order: 2 }
-  request_at:       { type: datetime, nullable: false, comment: "Request DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 3 }
-  response_at:      { type: datetime, comment: "Response DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 4 }
-  request_body:     { type: text, comment: "Request Body", form_display: true, form_long_text: true, form_code: json, order: 5 }
-  response_body:    { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: json, order: 6 }
-  response_status:  { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 7 }
-  response_message: { type: varchar, len: 500, comment: "Response Message", form_display: true, table_display: true, order: 8 }
-  user_id:          { type: integer, fk: "users.user_id", comment: "User ID", order: 9 }
-  app_id:           { type: integer, fk: "app.app_id", comment: "App ID", order: 10 }
-  created_at:       { type: datetime, comment: "Created at", order: 11 }
-  updated_at:       { type: datetime, comment: "Updated at", order: 12 }
-  excluded:         { type: boolean, default: false, comment: "Excluded", order: 13 }
+  api_call_log_id:      { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
+  api_id:               { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
+  api_name:             { type: varchar, len: 100, comment: "API Name", form_display: true, table_display: true, form_size: 4, order: 2 }
+  request_at:           { type: datetime, nullable: false, comment: "Request DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 3 }
+  response_at:          { type: datetime, comment: "Response DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 4 }
+  request_body:         { type: text, comment: "Request Body", form_display: true, form_long_text: true, form_code: txt, order: 5 }
+  response_body:        { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: txt, order: 6 }
+  response_status:      { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 7 }
+  response_message:     { type: varchar, len: 500, comment: "Response Message", form_display: true, table_display: true, order: 8 }
+  crud_trggrd_db:       { type: varchar, len: 50, comment: "Crud Triggered DB", form_display: true, table_display: true, order: 9, form_size: 3 }
+  crud_trggrd_table:    { type: varchar, len: 50, comment: "Crud Triggered Table", form_display: true, table_display: true, order: 9, form_size: 3 }
+  crud_trggrd_pk_field: { type: varchar, len: 50, comment: "Crud Triggered FK Field", form_display: true, table_display: true, order: 9, form_size: 3 }
+  crud_trggrd_row_id:   { type: varchar, len: 50, comment: "Crud Triggered Row ID", form_display: true, table_display: true, order: 9, form_size: 3 }
+  user_id:              { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:               { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:           { type: datetime, comment: "Created at" }
+  updated_at:           { type: datetime, comment: "Updated at" }
+  excluded:             { type: boolean, default: false, comment: "Excluded"}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false

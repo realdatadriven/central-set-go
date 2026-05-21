@@ -116,6 +116,10 @@ columns:
   response_body:    { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: json, order: 6 }
   response_status:  { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 7 }
   response_message: { type: varchar, len: 500, comment: "Response Message", form_display: true, table_display: true, order: 8 }
+  crud_trggrd_db:       { type: varchar, len: 50, comment: "Crud Triggered DB", form_display: true, table_display: true, order: 9, form_size: 3 }
+  crud_trggrd_table:    { type: varchar, len: 50, comment: "Crud Triggered Table", form_display: true, table_display: true, order: 9, form_size: 3 }
+  crud_trggrd_pk_field: { type: varchar, len: 50, comment: "Crud Triggered FK Field", form_display: true, table_display: true, order: 9, form_size: 3 }
+  crud_trggrd_row_id:   { type: varchar, len: 50, comment: "Crud Triggered Row ID", form_display: true, table_display: true, order: 9, form_size: 3 }
   user_id:          { type: integer, fk: "users.user_id", comment: "User ID", order: 9 }
   app_id:           { type: integer, fk: "app.app_id", comment: "App ID", order: 10 }
   created_at:       { type: datetime, comment: "Created at", order: 11 }
@@ -153,6 +157,14 @@ func (app *application) runAPI(params Dict) Dict {
 	} else if _, ok := params["data"].(Dict)["api"].(Dict); ok {
 		api_name = params["data"].(Dict)["api"].(Dict)["api_name"]
 	}
+	api_endpoint := any(nil)
+	if _, ok := params["data"].(Dict)["api_endpoint"]; ok {
+		api_endpoint = params["data"].(Dict)["api_endpoint"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		api_endpoint = params["data"].(Dict)["data"].(Dict)["api_endpoint"]
+	} else if _, ok := params["data"].(Dict)["api"].(Dict); ok {
+		api_endpoint = params["data"].(Dict)["api"].(Dict)["api_endpoint"]
+	}
 	var api Dict
 	var err error
 	if api_id == nil || api_id == any(nil) {
@@ -163,6 +175,15 @@ func (app *application) runAPI(params Dict) Dict {
 				return Dict{
 					"success": false,
 					"msg":     "API not found with the provided name!",
+				}
+			}
+		} else if api_endpoint != nil && api_endpoint != any(nil) {
+			_sql := "select * from api where api_endpoint = ? and excluded = false and active = true"
+			api, err = app.AdminGetRowByFilter(_sql, []any{api_endpoint})
+			if err != nil {
+				return Dict{
+					"success": false,
+					"msg":     "API not found with the provided endpoint!",
 				}
 			}
 		} else {
@@ -224,13 +245,17 @@ func (app *application) runAPI(params Dict) Dict {
 	// fmt.Println("Rendered Request Body:", request_body)
 	// Make API call based on api_type_id
 	api_logs := Dict{
-		"api_id":       api["api_id"].(string),
-		"api_name":     api["api_name"],
-		"request_at":   time.Now(),
-		"request_body": request_body,
-		"user_id":      user_id,
-		"app_id":       app_id,
-		"excluded":     false,
+		"api_id":               api["api_id"].(string),
+		"api_name":             api["api_name"],
+		"request_at":           time.Now(),
+		"request_body":         request_body,
+		"crud_trggrd_db":       data["crud_trggrd_db"],
+		"crud_trggrd_table":    data["crud_trggrd_table"],
+		"crud_trggrd_pk_field": data["crud_trggrd_pk_field"],
+		"crud_trggrd_row_id":   data["crud_trggrd_row_id"],
+		"user_id":              user_id,
+		"app_id":               app_id,
+		"excluded":             false,
 	}
 	switch int(api_type_id) {
 	case 1: // REST
