@@ -9,27 +9,12 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-// QuackServerConfig holds runtime configuration for a Quack server instance
-type QuackServerConfig struct {
-	QuackServerID int
-	QuackName     string
-	Port          int
-	Token         string
-	Protocol      string
-	StartupSQL    string
-	AttachSQL     string
-	ShutdownSQL   string
-	Status        string
-	Config        map[string]any
-}
-
 // QuackManager manages the lifecycle of in-memory DuckDB instances keyed by server ID
 type QuackManager struct {
 	pool         map[int]etlx.DBInterface // Keyed by quack_server_id
 	mux          sync.RWMutex
-	adminDB      etlx.DBInterface           // Reference to admin DB for config fetch
-	logger       interface{}                // Logger interface (can be extended)
-	quackConfigs map[int]*QuackServerConfig // Cache of server configs
+	adminDB      etlx.DBInterface // Reference to admin DB for config fetch
+	quackConfigs map[int]Dict     // Cache of server configs
 	configMu     sync.RWMutex
 }
 
@@ -38,7 +23,7 @@ func NewQuackManager(adminDB etlx.DBInterface) *QuackManager {
 	return &QuackManager{
 		pool:         make(map[int]etlx.DBInterface),
 		adminDB:      adminDB,
-		quackConfigs: make(map[int]*QuackServerConfig),
+		quackConfigs: make(map[int]Dict),
 	}
 }
 
@@ -65,16 +50,16 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int)
 	}
 
 	// Execute startup SQL (e.g., "INSTALL SQLITE; LOAD SQLITE;")
-	if config.StartupSQL != "" {
-		if err := qm.executeSQL(conn, config.StartupSQL); err != nil {
+	if config["startup_sql"] != "" {
+		if err := qm.executeSQL(conn, config["startup_sql"].(string)); err != nil {
 			conn.Close()
 			return fmt.Errorf("startup sql failed: %w", err)
 		}
 	}
 
 	// Execute attach SQL (e.g., "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;")
-	if config.AttachSQL != "" {
-		if err := qm.executeSQL(conn, config.AttachSQL); err != nil {
+	if config["attach_sql"] != "" {
+		if err := qm.executeSQL(conn, config["attach_sql"].(string)); err != nil {
 			conn.Close()
 			return fmt.Errorf("attach sql failed: %w", err)
 		}
@@ -95,7 +80,7 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int)
 	qm.configMu.Unlock()
 
 	// Log startup in quack_logs table
-	qm.logQuackEvent(quackServerID, "startup", "online", int64(config.Port), "Server started successfully", true)
+	// qm.logQuackEvent(quackServerID, "startup", "online", int64(config["port"].(float64))), "Server started successfully", true)
 
 	return nil
 }
@@ -115,11 +100,11 @@ func (qm *QuackManager) StopQuackServer(ctx context.Context, quackServerID int) 
 	config, ok := qm.quackConfigs[quackServerID]
 	qm.configMu.RUnlock()
 
-	if ok && config.ShutdownSQL != "" {
+	if ok && config["shutdown_sql"] != "" {
 		// Execute shutdown SQL (e.g., "USE memory; DETACH adm;")
-		if err := qm.executeSQL(conn, config.ShutdownSQL); err != nil {
+		if err := qm.executeSQL(conn, config["shutdown_sql"].(string)); err != nil {
 			// Log but don't fail shutdown
-			qm.logQuackEvent(quackServerID, "shutdown", "error", int64(config.Port), fmt.Sprintf("Shutdown error: %v", err), false)
+			// // qm.logQuackEvent(quackServerID, "shutdown", "error", int64(config["port"].(float64))), fmt.Sprintf("Shutdown error: %v", err), false)
 		}
 	}
 
@@ -136,7 +121,7 @@ func (qm *QuackManager) StopQuackServer(ctx context.Context, quackServerID int) 
 
 	// Log shutdown
 	if ok {
-		qm.logQuackEvent(quackServerID, "shutdown", "offline", int64(config.Port), "Server stopped", true)
+		// qm.logQuackEvent(quackServerID, "shutdown", "offline", int64(config.Port), "Server stopped", true)
 	}
 
 	return nil
@@ -212,7 +197,7 @@ func (qm *QuackManager) registerSecurityUDF(conn etlx.DBInterface, quackServerID
 	tokenTableSQL := fmt.Sprintf(`
 		CREATE TEMPORARY TABLE quack_tokens (server_id INTEGER, token VARCHAR);
 		INSERT INTO quack_tokens VALUES (%d, '%s');
-	`, quackServerID, config.Token)
+	`, quackServerID, config["token"].(string))
 
 	if err := qm.executeSQL(conn, tokenTableSQL); err != nil {
 		return fmt.Errorf("failed to create token validation table: %w", err)
@@ -222,10 +207,9 @@ func (qm *QuackManager) registerSecurityUDF(conn etlx.DBInterface, quackServerID
 }
 
 // fetchQuackServerConfig retrieves Quack server config from admin DB
-func (qm *QuackManager) fetchQuackServerConfig(quackServerID int) (*QuackServerConfig, error) {
+func (qm *QuackManager) fetchQuackServerConfig(quackServerID int) (Dict, error) {
 	query := `
-		SELECT quack_server_id, quack_name, port, token, protocol, 
-		       startup_sql, attach_sql, shutdown_sql, status, quack_conf
+		SELECT *
 		FROM quack_server
 		WHERE quack_server_id = $1 AND active = TRUE AND excluded = FALSE
 	`
@@ -239,21 +223,7 @@ func (qm *QuackManager) fetchQuackServerConfig(quackServerID int) (*QuackServerC
 		return nil, fmt.Errorf("quack server %d not found", quackServerID)
 	}
 
-	row := (*rows)[0]
-
-	config := &QuackServerConfig{
-		QuackServerID: quackServerID,
-		QuackName:     row["quack_name"].(string),
-		Port:          toInt(row["port"]),
-		Token:         row["token"].(string),
-		Protocol:      row["protocol"].(string),
-		StartupSQL:    toString(row["startup_sql"]),
-		AttachSQL:     toString(row["attach_sql"]),
-		ShutdownSQL:   toString(row["shutdown_sql"]),
-		Status:        toString(row["status"]),
-	}
-
-	return config, nil
+	return (*rows)[0], nil
 }
 
 // logQuackEvent logs server lifecycle events to quack_logs table
@@ -264,8 +234,7 @@ func (qm *QuackManager) logQuackEvent(quackServerID int, event string, status st
 			INSERT INTO quack_logs (quack_server_id, event, status, port, message, log_time, active, excluded)
 			VALUES ($1, $2, $3, $4, $5, $6, TRUE, FALSE)
 		`
-		_, err := qm.adminDB.ExecuteQuery(insertQuery,
-			quackServerID, event, status, port, message, time.Now())
+		_, err := qm.adminDB.ExecuteQuery(insertQuery, quackServerID, event, status, port, message, time.Now())
 		if err != nil {
 			// Log error but don't fail the operation
 			fmt.Printf("Failed to log quack event: %v\n", err)
