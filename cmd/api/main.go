@@ -44,7 +44,6 @@ func main() {
 
 type app_config struct {
 	quackEnabled bool
-	quackPort    int
 	baseURL      string
 	httpPort     int
 	basicAuth    struct {
@@ -169,7 +168,6 @@ func run(logger *slog.Logger) error {
 	cfg.LockoutEnabled = env.GetBool("LOCKOUT_ENABLED", true)
 	cfg.LockoutThreshold = env.GetInt("LOCKOUT_THRESHOLD", 3)
 	cfg.quackEnabled = env.GetBool("QUACK_ENABLED", false)
-	cfg.quackPort = env.GetInt("QUACK_PORT", 8779)
 	//cli flags
 	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize the main db")
