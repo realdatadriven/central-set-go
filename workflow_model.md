@@ -287,7 +287,7 @@ table: size
 comment: Size
 columns:
   size_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  size:        { type: varchar, len: 4, unique: true, nullable: false, comment: "Data Type", form_display: true, table_display: true, order: 1 }
+  size:        { type: varchar, len: 4, unique: true, nullable: false, comment: "Size", form_display: true, table_display: true, order: 1 }
   size_desc:   { type: varchar, len: 200, comment: "Description", form_display: true, table_display: true, order: 2 }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
