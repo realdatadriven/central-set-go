@@ -123,6 +123,17 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /env/sync", app.refreshEnv)
 	mux.HandleFunc("GET /env/refresh", app.refreshEnv)
 
+	// QUACK ENDPOINTS
+	mux.HandleFunc("GET /quack/start/{name}", app.startQuack)
+	mux.HandleFunc("GET /quack/stop/{name}", app.stopQuack)
+	mux.HandleFunc("GET /quack/restart/{name}", app.restartQuack)
+	mux.HandleFunc("GET /quack_server/start/{name}", app.startQuack)
+	mux.HandleFunc("GET /quack_server/stop/{name}", app.stopQuack)
+	mux.HandleFunc("GET /quack_server/restart/{name}", app.restartQuack)
+	mux.HandleFunc("GET /quack-server/start/{name}", app.startQuack)
+	mux.HandleFunc("GET /quack-server/stop/{name}", app.stopQuack)
+	mux.HandleFunc("GET /quack-server/restart/{name}", app.restartQuack)
+
 	// OAUTH2
 	mux.HandleFunc("GET /auth/{provider}/login", app.GothLoginHandler)
 	mux.HandleFunc("GET /auth/{provider}/callback", app.GothCallbackHandler)

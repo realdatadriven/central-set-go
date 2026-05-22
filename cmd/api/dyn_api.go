@@ -199,6 +199,96 @@ func (app *application) startQuack(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+func (app *application) stopQuack(w http.ResponseWriter, r *http.Request) {
+	params := Dict{}
+	request.DecodeJSON(w, r, &params)
+	name := r.PathValue("name")
+	// fmt.Println("run_etlx_run_by_name: ", name)
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	if _, ok := params["data"]; !ok {
+		params["data"] = Dict{}
+	}
+	if _, ok := params["app"]; !ok {
+		params["app"] = Dict{}
+	}
+	err := app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := app.verifyToken(r)
+	user := *(contextGetAuthenticatedUser(r))
+	params["user"] = user
+	var data Dict
+	if !token["success"].(bool) {
+		data = token
+	} else if !app.quackEnabled {
+		data = Dict{
+			"success": false,
+			"msg":     "Quack is not enabled",
+		}
+	} else {
+		params["data"] = Dict{"name": name}
+		if _, ok := user["params"]; ok {
+			params["params"] = user["params"]
+		} else if _, ok := user["data"]; ok {
+			params["params"] = user["data"]
+		}
+		data = app.stopQuackServer(params)
+		//fmt.Println(data)
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+func (app *application) restartQuack(w http.ResponseWriter, r *http.Request) {
+	params := Dict{}
+	request.DecodeJSON(w, r, &params)
+	name := r.PathValue("name")
+	// fmt.Println("run_etlx_run_by_name: ", name)
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	if _, ok := params["data"]; !ok {
+		params["data"] = Dict{}
+	}
+	if _, ok := params["app"]; !ok {
+		params["app"] = Dict{}
+	}
+	err := app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := app.verifyToken(r)
+	user := *(contextGetAuthenticatedUser(r))
+	params["user"] = user
+	var data Dict
+	if !token["success"].(bool) {
+		data = token
+	} else if !app.quackEnabled {
+		data = Dict{
+			"success": false,
+			"msg":     "Quack is not enabled",
+		}
+	} else {
+		params["data"] = Dict{"name": name}
+		if _, ok := user["params"]; ok {
+			params["params"] = user["params"]
+		} else if _, ok := user["data"]; ok {
+			params["params"] = user["data"]
+		}
+		data = app.restartQuackServer(params)
+		//fmt.Println(data)
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
 func (app *application) getLocationFromRequest(r *http.Request, params Dict) *time.Location {
 	// timezone
 	var loc *time.Location
