@@ -202,9 +202,7 @@ func (qm *QuackManager) registerSecurityUDF(conn etlx.DBInterface, quackServerID
 	// Create a simple macro or function that validates the token
 	// Example: CREATE FUNCTION validate_quack_token(token VARCHAR) RETURNS BOOLEAN AS ...
 	// For now, we'll create a simple placeholder that can be extended
-	udfSQL := fmt.Sprintf(`
-		CREATE FUNCTION validate_quack_token(token VARCHAR) RETURNS BOOLEAN AS 'return token == "%s"' LANGUAGE python;
-	`, config.Token)
+	//udfSQL := fmt.Sprintf(`CREATE FUNCTION validate_quack_token(token VARCHAR) RETURNS BOOLEAN AS 'return token == "%s"' LANGUAGE python;`, config.Token)
 
 	// Note: This is pseudo-code. Actual UDF registration depends on DuckDB's capabilities
 	// DuckDB supports SQL UDFs but Python UDFs require the python extension
@@ -266,7 +264,7 @@ func (qm *QuackManager) logQuackEvent(quackServerID int, event string, status st
 			INSERT INTO quack_logs (quack_server_id, event, status, port, message, log_time, active, excluded)
 			VALUES ($1, $2, $3, $4, $5, $6, TRUE, FALSE)
 		`
-		_, err := qm.adminDB.ExecQuery(insertQuery,
+		_, err := qm.adminDB.ExecuteQuery(insertQuery,
 			quackServerID, event, status, port, message, time.Now())
 		if err != nil {
 			// Log error but don't fail the operation
