@@ -124,10 +124,11 @@ type application struct {
 	lastCronCheck time.Time
 
 	// Quack server pool
-	quackEnabled bool                     // Whether Quack is enabled
-	quackPool    map[int]etlx.DBInterface // In-memory DuckDB instances keyed by quack_server_id
-	quackPoolMux sync.RWMutex             // Protect concurrent access to pool
-	quackManager *QuackManager            // Quack lifecycle manager
+	quackEnabled      bool                     // Whether Quack is enabled
+	quackPool         map[int]etlx.DBInterface // In-memory DuckDB instances keyed by quack_server_id
+	quackPoolMux      sync.RWMutex             // Protect concurrent access to pool
+	quackManager      *QuackManager            // Quack lifecycle manager
+	quackInstanciated bool                     // Quack instanciated flag to avoid multiple instantiation of quack manager and pool in case of multiple calls to run function, as it can happen in licensee app where we validate the license on startup and then periodically, and both operations call run function
 }
 
 func run(logger *slog.Logger) error {
@@ -212,6 +213,7 @@ func run(logger *slog.Logger) error {
 		appType:                        "community",                     // can be community, licensor or licensee
 		lastLicenseValidation:          time.Now().Add(-24 * time.Hour), // in a licencee app, we will validate the license on startup and, as its by default 24 hours periodicity, we set last validation to 24 hours ago
 		licenceVerificationPeriodicity: 24 * time.Hour,
+		quackEnabled:                   cfg.quackEnabled,
 		//admin:  admin{},
 	}
 	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)

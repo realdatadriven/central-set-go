@@ -154,6 +154,51 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 		app.serverError(w, r, err)
 	}
 }
+func (app *application) startQuack(w http.ResponseWriter, r *http.Request) {
+	params := Dict{}
+	request.DecodeJSON(w, r, &params)
+	name := r.PathValue("name")
+	// fmt.Println("run_etlx_run_by_name: ", name)
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	if _, ok := params["data"]; !ok {
+		params["data"] = Dict{}
+	}
+	if _, ok := params["app"]; !ok {
+		params["app"] = Dict{}
+	}
+	err := app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := app.verifyToken(r)
+	user := *(contextGetAuthenticatedUser(r))
+	params["user"] = user
+	var data Dict
+	if !token["success"].(bool) {
+		data = token
+	} else if !app.quackEnabled {
+		data = Dict{
+			"success": false,
+			"msg":     "Quack is not enabled",
+		}
+	} else {
+		params["data"] = Dict{"name": name}
+		if _, ok := user["params"]; ok {
+			params["params"] = user["params"]
+		} else if _, ok := user["data"]; ok {
+			params["params"] = user["data"]
+		}
+		data = app.startQuackServer(params)
+		//fmt.Println(data)
+	}
+	err = response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
 func (app *application) getLocationFromRequest(r *http.Request, params Dict) *time.Location {
 	// timezone
 	var loc *time.Location
@@ -582,6 +627,46 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				data = token
 			} else {
 				data = app.runAPI(params)
+			}
+		} else {
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
+	case "quack", "quack-protocol", "quack-serve", "quack-server", "quackserve", "quackserver":
+		if app.contains([]any{"start", "startup", "run", "open", "index"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else if !app.quackEnabled {
+				data = Dict{
+					"success": false,
+					"msg":     "Quack is not enabled",
+				}
+			} else {
+				data = app.startQuackServer(params)
+			}
+		} else if app.contains([]any{"restart", "reboot", "rerun", "reopen"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else if !app.quackEnabled {
+				data = Dict{
+					"success": false,
+					"msg":     "Quack is not enabled",
+				}
+			} else {
+				data = app.restartQuackServer(params)
+			}
+		} else if app.contains([]any{"stop", "shutdown", "break"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else if !app.quackEnabled {
+				data = Dict{
+					"success": false,
+					"msg":     "Quack is not enabled",
+				}
+			} else {
+				data = app.stopQuackServer(params)
 			}
 		} else {
 			data = Dict{

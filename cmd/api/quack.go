@@ -28,7 +28,7 @@ func NewQuackManager(adminDB etlx.DBInterface) *QuackManager {
 }
 
 // StartQuackServer initializes an in-memory DuckDB instance and runs startup/attach SQL
-func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int) error {
+func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int, config Dict) error {
 	qm.mux.Lock()
 	defer qm.mux.Unlock()
 
@@ -37,11 +37,11 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int)
 		return fmt.Errorf("quack server %d is already running", quackServerID)
 	}
 
-	// Fetch config from admin DB
+	/*/ Fetch config from admin DB
 	config, err := qm.fetchQuackServerConfig(quackServerID)
 	if err != nil {
 		return fmt.Errorf("failed to fetch quack server config: %w", err)
-	}
+	}*/
 
 	// Create in-memory DuckDB connection (DSN: "duckdb:")
 	conn, err := etlx.GetDB("duckdb:")
@@ -65,11 +65,11 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int)
 		}
 	}
 
-	// Register the security UDF for this server (token validation)
+	/*/ Register the security UDF for this server (token validation)
 	if err := qm.registerSecurityUDF(conn, quackServerID); err != nil {
 		conn.Close()
 		return fmt.Errorf("failed to register security udf: %w", err)
-	}
+	}*/
 
 	// Store in pool
 	qm.pool[quackServerID] = conn
@@ -89,17 +89,14 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int)
 func (qm *QuackManager) StopQuackServer(ctx context.Context, quackServerID int) error {
 	qm.mux.Lock()
 	defer qm.mux.Unlock()
-
 	conn, exists := qm.pool[quackServerID]
 	if !exists {
 		return fmt.Errorf("quack server %d is not running", quackServerID)
 	}
-
 	// Fetch config
 	qm.configMu.RLock()
 	config, ok := qm.quackConfigs[quackServerID]
 	qm.configMu.RUnlock()
-
 	if ok && config["shutdown_sql"] != "" {
 		// Execute shutdown SQL (e.g., "USE memory; DETACH adm;")
 		if err := qm.executeSQL(conn, config["shutdown_sql"].(string)); err != nil {
@@ -107,38 +104,31 @@ func (qm *QuackManager) StopQuackServer(ctx context.Context, quackServerID int) 
 			// // qm.logQuackEvent(quackServerID, "shutdown", "error", int64(config["port"].(float64))), fmt.Sprintf("Shutdown error: %v", err), false)
 		}
 	}
-
 	// Close connection
 	conn.Close()
-
 	// Remove from pool
 	delete(qm.pool, quackServerID)
-
 	// Remove config
 	qm.configMu.Lock()
 	delete(qm.quackConfigs, quackServerID)
 	qm.configMu.Unlock()
-
 	// Log shutdown
 	if ok {
 		// qm.logQuackEvent(quackServerID, "shutdown", "offline", int64(config.Port), "Server stopped", true)
 	}
-
 	return nil
 }
 
 // RestartQuackServer restarts a Quack server (stop then start)
-func (qm *QuackManager) RestartQuackServer(ctx context.Context, quackServerID int) error {
+func (qm *QuackManager) RestartQuackServer(ctx context.Context, quackServerID int, config Dict) error {
 	// Stop
 	if err := qm.StopQuackServer(ctx, quackServerID); err != nil {
 		return fmt.Errorf("failed to stop server during restart: %w", err)
 	}
-
 	// Start
-	if err := qm.StartQuackServer(ctx, quackServerID); err != nil {
+	if err := qm.StartQuackServer(ctx, quackServerID, config); err != nil {
 		return fmt.Errorf("failed to start server during restart: %w", err)
 	}
-
 	return nil
 }
 
@@ -146,12 +136,10 @@ func (qm *QuackManager) RestartQuackServer(ctx context.Context, quackServerID in
 func (qm *QuackManager) GetQuackConnector(quackServerID int) (etlx.DBInterface, error) {
 	qm.mux.RLock()
 	defer qm.mux.RUnlock()
-
 	conn, exists := qm.pool[quackServerID]
 	if !exists {
 		return nil, fmt.Errorf("quack server %d is not running", quackServerID)
 	}
-
 	return conn, nil
 }
 
@@ -163,12 +151,10 @@ func (qm *QuackManager) executeSQL(conn etlx.DBInterface, sql string) error {
 	if err != nil {
 		return err
 	}
-
 	// Consume rows (if any)
 	if rows != nil && len(*rows) > 0 {
 		// Just consume them, don't need to do anything
 	}
-
 	return nil
 }
 
@@ -179,11 +165,9 @@ func (qm *QuackManager) registerSecurityUDF(conn etlx.DBInterface, quackServerID
 	qm.configMu.RLock()
 	config, ok := qm.quackConfigs[quackServerID]
 	qm.configMu.RUnlock()
-
 	if !ok {
 		return fmt.Errorf("server config not found for security udf registration")
 	}
-
 	// Create a simple macro or function that validates the token
 	// Example: CREATE FUNCTION validate_quack_token(token VARCHAR) RETURNS BOOLEAN AS ...
 	// For now, we'll create a simple placeholder that can be extended
@@ -213,16 +197,13 @@ func (qm *QuackManager) fetchQuackServerConfig(quackServerID int) (Dict, error) 
 		FROM quack_server
 		WHERE quack_server_id = $1 AND active = TRUE AND excluded = FALSE
 	`
-
 	rows, _, err := qm.adminDB.QueryMultiRows(query, []any{quackServerID}...)
 	if err != nil {
 		return nil, fmt.Errorf("query failed: %w", err)
 	}
-
 	if rows == nil || len(*rows) == 0 {
 		return nil, fmt.Errorf("quack server %d not found", quackServerID)
 	}
-
 	return (*rows)[0], nil
 }
 
@@ -246,7 +227,6 @@ func (qm *QuackManager) logQuackEvent(quackServerID int, event string, status st
 func (qm *QuackManager) ListRunningServers() []int {
 	qm.mux.RLock()
 	defer qm.mux.RUnlock()
-
 	ids := make([]int, 0, len(qm.pool))
 	for id := range qm.pool {
 		ids = append(ids, id)
@@ -258,7 +238,6 @@ func (qm *QuackManager) ListRunningServers() []int {
 func (qm *QuackManager) IsServerRunning(quackServerID int) bool {
 	qm.mux.RLock()
 	defer qm.mux.RUnlock()
-
 	_, exists := qm.pool[quackServerID]
 	return exists
 }
@@ -271,13 +250,11 @@ func (qm *QuackManager) StopAllServers(ctx context.Context) error {
 		ids = append(ids, id)
 	}
 	qm.mux.Unlock()
-
 	for _, id := range ids {
 		if err := qm.StopQuackServer(ctx, id); err != nil {
 			fmt.Printf("Error stopping quack server %d: %v\n", id, err)
 		}
 	}
-
 	return nil
 }
 
@@ -311,4 +288,323 @@ func toString(v any) string {
 	default:
 		return fmt.Sprintf("%v", val)
 	}
+}
+
+func (app *application) startQuackServer(params Dict) Dict {
+	quack_server_id := any(nil)
+	if _, ok := params["data"].(Dict)["quack_server_id"]; ok {
+		quack_server_id = params["data"].(Dict)["quack_server_id"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		quack_server_id = params["data"].(Dict)["data"].(Dict)["quack_server_id"]
+	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+		quack_server_id = params["data"].(Dict)["quack"].(Dict)["quack_server_id"]
+	}
+
+	quack_server := any(nil)
+	if _, ok := params["data"].(Dict)["name"]; ok {
+		quack_server = params["data"].(Dict)["name"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		quack_server = params["data"].(Dict)["data"].(Dict)["name"]
+	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+		quack_server = params["data"].(Dict)["quack"].(Dict)["name"]
+	}
+	if quack_server == nil || quack_server == any(nil) {
+		if _, ok := params["data"].(Dict)["quack_server"]; ok {
+			quack_server = params["data"].(Dict)["quack_server"]
+		} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+			quack_server = params["data"].(Dict)["data"].(Dict)["quack_server"]
+		} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+			quack_server = params["data"].(Dict)["quack"].(Dict)["quack_server"]
+		}
+	}
+	if (quack_server_id == nil || quack_server_id == any(nil)) && (quack_server == nil || quack_server == any(nil)) {
+		return Dict{
+			"success": false,
+			"msg":     "No Quack Server not especified in the requested!",
+		}
+	}
+	accessQuackData := Dict{}
+	if quack_server_id != nil && quack_server_id != any(nil) {
+		accessQuackData = app.getQuackByID(params, quack_server_id)
+		if accessQuackData["success"] != true {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	} else if quack_server != nil && quack_server != any(nil) {
+		accessQuackData = app.getQuackByID(params, quack_server)
+		if accessQuackData["success"] != true {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	}
+	quackInfo := Dict{}
+	if quack, ok := accessQuackData["data"].([]Dict); ok {
+		if len(quack) > 0 {
+			quackInfo = quack[0]
+			quack_server_id = quackInfo["quack_server_id"]
+			// pass
+		} else {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	}
+	if !app.quackInstanciated || app.quackManager == nil {
+		app.quackManager = NewQuackManager(app.db)
+		app.quackInstanciated = true
+	}
+	err := app.quackManager.StartQuackServer(context.Background(), app.toInt(quack_server_id), quackInfo)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Failed to start Quack Server: %v", err),
+		}
+	}
+	return Dict{
+		"success": true,
+		"msg":     "Quack Server started successfully!",
+	}
+}
+
+func (app *application) stopQuackServer(params Dict) Dict {
+	quack_server_id := any(nil)
+	if _, ok := params["data"].(Dict)["quack_server_id"]; ok {
+		quack_server_id = params["data"].(Dict)["quack_server_id"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		quack_server_id = params["data"].(Dict)["data"].(Dict)["quack_server_id"]
+	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+		quack_server_id = params["data"].(Dict)["quack"].(Dict)["quack_server_id"]
+	}
+
+	quack_server := any(nil)
+	if _, ok := params["data"].(Dict)["name"]; ok {
+		quack_server = params["data"].(Dict)["name"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		quack_server = params["data"].(Dict)["data"].(Dict)["name"]
+	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+		quack_server = params["data"].(Dict)["quack"].(Dict)["name"]
+	}
+	if quack_server == nil || quack_server == any(nil) {
+		if _, ok := params["data"].(Dict)["quack_server"]; ok {
+			quack_server = params["data"].(Dict)["quack_server"]
+		} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+			quack_server = params["data"].(Dict)["data"].(Dict)["quack_server"]
+		} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+			quack_server = params["data"].(Dict)["quack"].(Dict)["quack_server"]
+		}
+	}
+	if (quack_server_id == nil || quack_server_id == any(nil)) && (quack_server == nil || quack_server == any(nil)) {
+		return Dict{
+			"success": false,
+			"msg":     "No Quack Server not especified in the requested!",
+		}
+	}
+	accessQuackData := Dict{}
+	if quack_server_id != nil && quack_server_id != any(nil) {
+		accessQuackData = app.getQuackByID(params, quack_server_id)
+		if accessQuackData["success"] != true {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	} else if quack_server != nil && quack_server != any(nil) {
+		accessQuackData = app.getQuackByID(params, quack_server)
+		if accessQuackData["success"] != true {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	}
+	quackInfo := Dict{}
+	if quack, ok := accessQuackData["data"].([]Dict); ok {
+		if len(quack) > 0 {
+			quackInfo = quack[0]
+			quack_server_id = quackInfo["quack_server_id"]
+			// pass
+		} else {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	}
+	if !app.quackInstanciated || app.quackManager == nil {
+		app.quackManager = NewQuackManager(app.db)
+		app.quackInstanciated = true
+	}
+	err := app.quackManager.StopQuackServer(context.Background(), app.toInt(quack_server_id))
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Failed to stop Quack Server: %v", err),
+		}
+	}
+	return Dict{
+		"success": true,
+		"msg":     "Quack Server stopped successfully!",
+	}
+}
+
+func (app *application) restartQuackServer(params Dict) Dict {
+	quack_server_id := any(nil)
+	if _, ok := params["data"].(Dict)["quack_server_id"]; ok {
+		quack_server_id = params["data"].(Dict)["quack_server_id"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		quack_server_id = params["data"].(Dict)["data"].(Dict)["quack_server_id"]
+	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+		quack_server_id = params["data"].(Dict)["quack"].(Dict)["quack_server_id"]
+	}
+
+	quack_server := any(nil)
+	if _, ok := params["data"].(Dict)["name"]; ok {
+		quack_server = params["data"].(Dict)["name"]
+	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+		quack_server = params["data"].(Dict)["data"].(Dict)["name"]
+	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+		quack_server = params["data"].(Dict)["quack"].(Dict)["name"]
+	}
+	if quack_server == nil || quack_server == any(nil) {
+		if _, ok := params["data"].(Dict)["quack_server"]; ok {
+			quack_server = params["data"].(Dict)["quack_server"]
+		} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
+			quack_server = params["data"].(Dict)["data"].(Dict)["quack_server"]
+		} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
+			quack_server = params["data"].(Dict)["quack"].(Dict)["quack_server"]
+		}
+	}
+	if (quack_server_id == nil || quack_server_id == any(nil)) && (quack_server == nil || quack_server == any(nil)) {
+		return Dict{
+			"success": false,
+			"msg":     "No Quack Server not especified in the requested!",
+		}
+	}
+	accessQuackData := Dict{}
+	if quack_server_id != nil && quack_server_id != any(nil) {
+		accessQuackData = app.getQuackByID(params, quack_server_id)
+		if accessQuackData["success"] != true {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	} else if quack_server != nil && quack_server != any(nil) {
+		accessQuackData = app.getQuackByID(params, quack_server)
+		if accessQuackData["success"] != true {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	}
+	quackInfo := Dict{}
+	if quack, ok := accessQuackData["data"].([]Dict); ok {
+		if len(quack) > 0 {
+			quackInfo = quack[0]
+			quack_server_id = quackInfo["quack_server_id"]
+			// pass
+		} else {
+			return Dict{
+				"success": false,
+				"msg":     "Quack Server not found or inactive!",
+			}
+		}
+	}
+	if !app.quackInstanciated || app.quackManager == nil {
+		app.quackManager = NewQuackManager(app.db)
+		app.quackInstanciated = true
+	}
+	err := app.quackManager.RestartQuackServer(context.Background(), app.toInt(quack_server_id), quackInfo)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Failed to restart Quack Server: %v", err),
+		}
+	}
+	return Dict{
+		"success": true,
+		"msg":     "Quack Server restarted successfully!",
+	}
+}
+
+func (app *application) getQuackByID(params Dict, quack_server_id any) Dict {
+	table := "quack_server"
+	if _, ok := params["table"].(string); ok {
+		table, _ = params["table"].(string)
+	} else if _, ok := params["data"].(Dict)["table"].(string); ok {
+		table, _ = params["data"].(Dict)["table"].(string)
+	}
+	database := "ADMIN"
+	if _, ok := params["db"].(string); ok {
+		database, _ = params["db"].(string)
+	} else if _, ok := params["data"].(Dict)["db"].(string); ok {
+		database, _ = params["data"].(Dict)["db"].(string)
+	} else if _, ok := params["database"].(string); ok {
+		database, _ = params["database"].(string)
+	} else if _, ok := params["data"].(Dict)["database"].(string); ok {
+		database, _ = params["data"].(Dict)["database"].(string)
+	}
+	if quack_server_id == nil || quack_server_id == any(nil) {
+		return Dict{
+			"success": false,
+			"msg":     "No Quack Server ID found!",
+		}
+	}
+	_aux_params := params
+	_aux_params["data"].(Dict)["table"] = table
+	_aux_params["data"].(Dict)["db"] = database
+	_aux_params["data"].(Dict)["limit"] = any(1.0)
+	_aux_params["data"].(Dict)["offset"] = any(0.0)
+	_aux_params["data"].(Dict)["filters"] = []any{Dict{
+		"field": "quack_server_id",
+		"cond":  "=",
+		"value": quack_server_id,
+	}}
+	res := app.read(_aux_params)
+	res["quack_server_id"] = quack_server_id
+	return res
+}
+
+func (app *application) getQuackByName(params Dict, quack_server any) Dict {
+	table := "quack_server"
+	if _, ok := params["table"].(string); ok {
+		table, _ = params["table"].(string)
+	} else if _, ok := params["data"].(Dict)["table"].(string); ok {
+		table, _ = params["data"].(Dict)["table"].(string)
+	}
+	database := "ADMIN"
+	if _, ok := params["db"].(string); ok {
+		database, _ = params["db"].(string)
+	} else if _, ok := params["data"].(Dict)["db"].(string); ok {
+		database, _ = params["data"].(Dict)["db"].(string)
+	} else if _, ok := params["database"].(string); ok {
+		database, _ = params["database"].(string)
+	} else if _, ok := params["data"].(Dict)["database"].(string); ok {
+		database, _ = params["data"].(Dict)["database"].(string)
+	}
+	if quack_server == nil || quack_server == any(nil) {
+		return Dict{
+			"success": false,
+			"msg":     "No Quack Server ID found!",
+		}
+	}
+	_aux_params := params
+	_aux_params["data"].(Dict)["table"] = table
+	_aux_params["data"].(Dict)["db"] = database
+	_aux_params["data"].(Dict)["limit"] = any(1.0)
+	_aux_params["data"].(Dict)["offset"] = any(0.0)
+	_aux_params["data"].(Dict)["filters"] = []any{Dict{
+		"field": "quack_server",
+		"cond":  "=",
+		"value": quack_server,
+	}}
+	res := app.read(_aux_params)
+	res["quack_server"] = quack_server
+	return res
 }
