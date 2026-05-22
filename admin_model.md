@@ -751,7 +751,11 @@ form_extra_options: []
 table_layout:
   allow_in_submenu: {}
   default_order:
-    - { field: quack_name, order: ASC }
+    - { field: quack_name, order: ASC }  
+  exec_button: 
+    - {callApi: true, method: GET, api: quack/start/[quack_name],   tooltip: Start Quack Server,   icon: play}
+    - {callApi: true, method: GET, api: quack/stop/[quack_name],    tooltip: Stop Quack Server,    icon: stop}
+    - {callApi: true, method: GET, api: quack/restart/[quack_name], tooltip: Restart Quack Server, icon: arrow-path}
 ```
 
 ## QUACK_LOGS
