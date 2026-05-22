@@ -154,6 +154,46 @@ func (app *application) run_etlx_run_by_name(w http.ResponseWriter, r *http.Requ
 		app.serverError(w, r, err)
 	}
 }
+func (app *application) getLocationFromRequest(r *http.Request, params Dict) *time.Location {
+	// timezone
+	var loc *time.Location
+	var err error
+	if tz, ok := params["timezone"].(string); ok {
+		// Do something with the timezone parameter
+		loc, err = time.LoadLocation(tz)
+		if err != nil {
+			tz := r.Header.Get("X-Timezone")
+			if tz != "" {
+				loc, err := time.LoadLocation(tz)
+				if err != nil {
+					fmt.Println("Error loading timezone from header:", err)
+					loc = time.Local
+				} else {
+					loc = loc
+				}
+			} else {
+				loc = time.Local
+			}
+		} else {
+			loc = time.Local
+		}
+	} else {
+		tz := r.Header.Get("X-Timezone")
+		if tz != "" {
+			loc, err = time.LoadLocation(tz)
+			if err != nil {
+				fmt.Println("Error loading timezone from header:", err)
+				loc = time.Local
+			} else {
+				loc = time.Local
+			}
+		} else {
+			loc = time.Local
+		}
+	}
+	return loc
+}
+
 func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	var params Dict
 	ctrl := r.PathValue("ctrl")
@@ -163,6 +203,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		app.badRequest(w, r, err)
 		return
 	}
+	// timezone
+	loc := app.getLocationFromRequest(r, params)
+	params["location"] = loc
 	lang := "en"
 	if _, ok := params["lang"]; ok {
 		lang = params["lang"].(string)
@@ -187,7 +230,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	_log := Dict{
 		"action": fmt.Sprintf("%s/%s", ctrl, act),
 		"req_ip": _ip,
-		"req_at": time.Now(),
+		"req_at": time.Now().In(loc),
 	}
 	//fmt.Println(token, params)
 	if token["success"].(bool) {
@@ -203,7 +246,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			token = app.validateLicense()
 			// update the app.lastLicenseValidation timestamp if success
 			if token["success"].(bool) {
-				app.lastLicenseValidation = time.Now() // when this became older the app.licenceVerificationPeriodicity it will check again
+				app.lastLicenseValidation = time.Now().In(loc) // when this became older the app.licenceVerificationPeriodicity it will check again
 			}
 		} // else it will be verifyed untill the licence gets validated again
 	}
@@ -638,7 +681,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	actions_not_to_log := app.sliceStrs2SliceInterfaces(strings.Split(app.config.actions_not_to_log, ","))
 	// fmt.Println(actions_not_to_log)
 	if !app.contains(actions_not_to_log, act) {
-		_log["res_at"] = time.Now()
+		_log["res_at"] = time.Now().In(loc)
 		_log["res_type"] = "success"
 		if _, ok := data["success"].(bool); !ok {
 			_log["res_type"] = "error"
@@ -825,6 +868,7 @@ func (app *application) verifyToken(r *http.Request) Dict {
 	if err == nil && authorizationHeader == "" {
 		authorizationHeader = "Bearer " + cookie.Value
 	}*/
+	loc := app.getLocationFromRequest(r, Dict{})
 	if authorizationHeader != "" {
 		headerParts := strings.Split(authorizationHeader, " ")
 		if len(headerParts) == 2 && headerParts[0] == "Bearer" {
@@ -836,7 +880,7 @@ func (app *application) verifyToken(r *http.Request) Dict {
 					"msg":     "Error validating token!",
 				}
 			}
-			if !claims.Valid(time.Now()) {
+			if !claims.Valid(time.Now().In(loc)) {
 				return Dict{
 					"success": false,
 					"msg":     "Token has expired!",

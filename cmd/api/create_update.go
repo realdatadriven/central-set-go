@@ -32,6 +32,12 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	if _, ok := params["user"].(Dict)["role_id"]; ok {
 		role_id = app.toInt(params["user"].(Dict)["role_id"])
 	}
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	/*var app_id int
 	if _, ok := params["app"].(Dict)["app_id"]; ok {
 		app_id = app.toInt(params["app"].(Dict)["app_id"])
@@ -135,7 +141,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			if app.contains([]any{"created_at", "updated_at"}, field) {
 				if _, ok := _data[pk]; ok && field == "created_at" && crud_aciton != "create" {
 				} else {
-					_data[field] = time.Now()
+					_data[field] = time.Now().In(loc)
 				}
 			} else if app.contains([]any{"excluded"}, field) {
 				if _, ok := _data[pk]; ok {
@@ -343,9 +349,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					valid = false
 					validation_log["success"] = valid
 					validation_log["log_message"] = fmt.Sprintf("Error executing validation SQL: %v", err)
-					validation_log["executed_at"] = time.Now()
-					validation_log["created_at"] = time.Now()
-					validation_log["updated_at"] = time.Now()
+					validation_log["executed_at"] = time.Now().In(loc)
+					validation_log["created_at"] = time.Now().In(loc)
+					validation_log["updated_at"] = time.Now().In(loc)
 					_, err = app.db.ExecuteNamedQuery(insert_validation_log_sql, validation_log)
 					if err != nil {
 						fmt.Printf("Error inserting validation log for validation_id %v: %v", validation["validation_id"], err)
@@ -369,9 +375,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						}
 						validation_log["success"] = valid
 						validation_log["log_message"] = fmt.Sprintf("Validation %s executed with result: %v. Message: %s", validation["validation_code"], valid, msg)
-						validation_log["executed_at"] = time.Now()
-						validation_log["created_at"] = time.Now()
-						validation_log["updated_at"] = time.Now()
+						validation_log["executed_at"] = time.Now().In(loc)
+						validation_log["created_at"] = time.Now().In(loc)
+						validation_log["updated_at"] = time.Now().In(loc)
 						_, err = app.db.ExecuteNamedQuery(insert_validation_log_sql, validation_log)
 						if err != nil {
 							fmt.Printf("Error inserting validation log for validation_id %v: %v", validation["validation_id"], err)
@@ -384,9 +390,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 				validation_log["success"] = valid
 				validation_log["log_message"] = fmt.Sprintf("Validation %s executed with result: %v", validation["validation_code"], valid)
-				validation_log["executed_at"] = time.Now()
-				validation_log["created_at"] = time.Now()
-				validation_log["updated_at"] = time.Now()
+				validation_log["executed_at"] = time.Now().In(loc)
+				validation_log["created_at"] = time.Now().In(loc)
+				validation_log["updated_at"] = time.Now().In(loc)
 				_, err = app.db.ExecuteNamedQuery(insert_validation_log_sql, validation_log)
 				if err != nil {
 					fmt.Printf("Error inserting validation log for validation_id %v: %v", validation["validation_id"], err)
@@ -552,8 +558,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"role_id":    dyn_login_role_id,
 				"password":   pass,
 				"active":     _data[active_field],
-				"created_at": time.Now(),
-				"updated_at": time.Now(),
+				"created_at": time.Now().In(loc),
+				"updated_at": time.Now().In(loc),
 				"excluded":   false,
 			}
 			query_user := fmt.Sprintf(`INSERT INTO "users" ("username", "first_name", "last_name", "email", "role_id", "password", "active", "created_at", "updated_at", "excluded") 
@@ -614,9 +620,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						msg, _ = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
 						crud_action_log["success"] = success
 						crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action ExecuteQuery: %v. Message: %s", err, msg)
-						crud_action_log["executed_at"] = time.Now()
-						crud_action_log["created_at"] = time.Now()
-						crud_action_log["updated_at"] = time.Now()
+						crud_action_log["executed_at"] = time.Now().In(loc)
+						crud_action_log["created_at"] = time.Now().In(loc)
+						crud_action_log["updated_at"] = time.Now().In(loc)
 						_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
@@ -643,9 +649,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						success = false
 						crud_action_log["success"] = success
 						crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action SendEmail: %v. Message: %s", err, err.Error())
-						crud_action_log["executed_at"] = time.Now()
-						crud_action_log["created_at"] = time.Now()
-						crud_action_log["updated_at"] = time.Now()
+						crud_action_log["executed_at"] = time.Now().In(loc)
+						crud_action_log["created_at"] = time.Now().In(loc)
+						crud_action_log["updated_at"] = time.Now().In(loc)
 						_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
@@ -659,9 +665,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					success = false
 					crud_action_log["success"] = success
 					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
-					crud_action_log["executed_at"] = time.Now()
-					crud_action_log["created_at"] = time.Now()
-					crud_action_log["updated_at"] = time.Now()
+					crud_action_log["executed_at"] = time.Now().In(loc)
+					crud_action_log["created_at"] = time.Now().In(loc)
+					crud_action_log["updated_at"] = time.Now().In(loc)
 					_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 					if err2 != nil {
 						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
@@ -693,9 +699,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					}
 					crud_action_log["success"] = success
 					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action External API. Message: %s. API Response: %v", msg, res)
-					crud_action_log["executed_at"] = time.Now()
-					crud_action_log["created_at"] = time.Now()
-					crud_action_log["updated_at"] = time.Now()
+					crud_action_log["executed_at"] = time.Now().In(loc)
+					crud_action_log["created_at"] = time.Now().In(loc)
+					crud_action_log["updated_at"] = time.Now().In(loc)
 					_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 					if err2 != nil {
 						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
@@ -706,9 +712,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
 				crud_action_log["success"] = success
 				crud_action_log["log_message"] = fmt.Sprintf("Unknown action_type_id: %v", action_type_id)
-				crud_action_log["executed_at"] = time.Now()
-				crud_action_log["created_at"] = time.Now()
-				crud_action_log["updated_at"] = time.Now()
+				crud_action_log["executed_at"] = time.Now().In(loc)
+				crud_action_log["created_at"] = time.Now().In(loc)
+				crud_action_log["updated_at"] = time.Now().In(loc)
 				_, err = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 				if err != nil {
 					fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
@@ -719,9 +725,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				msg = fmt.Sprintf("CRUD Action %s executed successfully", c_action["crud_action_code"])
 			}
 			crud_action_log["log_message"] = msg
-			crud_action_log["executed_at"] = time.Now()
-			crud_action_log["created_at"] = time.Now()
-			crud_action_log["updated_at"] = time.Now()
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
 			_, err = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 			if err != nil {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err)
