@@ -178,6 +178,7 @@ func (app *application) getLocationFromRequest(r *http.Request, params Dict) *ti
 			loc = time.Local
 		}
 	} else {
+		// const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone in javascript to get the timezone of the user and send it in the header X-Timezone
 		tz := r.Header.Get("X-Timezone")
 		if tz != "" {
 			loc, err = time.LoadLocation(tz)
