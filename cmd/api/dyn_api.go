@@ -532,6 +532,19 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
+	case "api", "API", "external_api", "external", "ext_api", "extapi":
+		if app.contains([]any{"run", "execute", "exec", "exe", "x"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.runAPI(params)
+			}
+		} else {
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
 	case "cron":
 		if app.contains([]any{"run", "r", "execute", "exec", "e"}, act) {
 			if !token["success"].(bool) {
