@@ -294,9 +294,15 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	if _, ok := params["params"].(Dict); ok {
 		_params = params["params"].(Dict)
 	}
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	// CONFIG
 	config := make(Dict)
-	etlxlib := &etlx.ETLX{Config: config, Params: _params}
+	etlxlib := &etlx.ETLX{Config: config, Params: _params, TimeZone: loc}
 	etlxlib.MetadataOrder = false
 	if order_metadata, ok := _data["order_metadata"].(bool); ok {
 		fmt.Println("order_metadata:", order_metadata)
