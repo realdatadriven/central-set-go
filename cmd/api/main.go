@@ -43,9 +43,11 @@ func main() {
 }
 
 type app_config struct {
-	baseURL   string
-	httpPort  int
-	basicAuth struct {
+	quackEnabled bool
+	quackPort    int
+	baseURL      string
+	httpPort     int
+	basicAuth    struct {
 		username       string
 		hashedPassword string
 	}
@@ -87,9 +89,8 @@ type app_config struct {
 	s3SkipSSLVerify       bool
 	s3Endpoint            string
 	frontend_url          string
-	LockoutEnabled	   	  bool
-	LockoutThreshold	  int
-
+	LockoutEnabled        bool
+	LockoutThreshold      int
 }
 
 //type admin struct{}
@@ -122,6 +123,12 @@ type application struct {
 	cronEntries   map[any]cron.EntryID
 	cronEntriesMu sync.Mutex
 	lastCronCheck time.Time
+
+	// Quack server pool
+	quackEnabled bool                     // Whether Quack is enabled
+	quackPool    map[int]etlx.DBInterface // In-memory DuckDB instances keyed by quack_server_id
+	quackPoolMux sync.RWMutex             // Protect concurrent access to pool
+	quackManager *QuackManager            // Quack lifecycle manager
 }
 
 func run(logger *slog.Logger) error {
@@ -161,6 +168,8 @@ func run(logger *slog.Logger) error {
 	cfg.frontend_url = env.GetString("FRONTEND_URL", "http://localhost:4444")
 	cfg.LockoutEnabled = env.GetBool("LOCKOUT_ENABLED", true)
 	cfg.LockoutThreshold = env.GetInt("LOCKOUT_THRESHOLD", 3)
+	cfg.quackEnabled = env.GetBool("QUACK_ENABLED", false)
+	cfg.quackPort = env.GetInt("QUACK_PORT", 8779)
 	//cli flags
 	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize the main db")
