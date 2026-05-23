@@ -1,6 +1,7 @@
 <!-- markdownlint-disable MD022 -->
 <!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
+<!-- markdownlint-disable MD012 -->
 # ADMMIN_MODEL
 ```yaml
 name: ADMIN
@@ -10,7 +11,7 @@ conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: false
+active: true
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -54,7 +55,7 @@ cs_app:
   Quack:
     menu_icon: bolt
     menu_order: 4
-    active: false
+    active: true
     tables:
       - {table: quack_server, requires_rla: true, active: true}
       - {table: quack_logs, active: true}
@@ -753,9 +754,9 @@ table_layout:
   default_order:
     - { field: quack_name, order: ASC }  
   exec_button: 
-    - {callApi: true, method: GET, api: quack/start/[quack_name],   tooltip: Start Quack Server,   icon: play}
-    - {callApi: true, method: GET, api: quack/stop/[quack_name],    tooltip: Stop Quack Server,    icon: stop}
-    - {callApi: true, method: GET, api: quack/restart/[quack_name], tooltip: Restart Quack Server, icon: arrow-path}
+    - {callApi: true, method: POST, api: quack/start,   tooltip: Start Quack Server,   icon: play,       active: true}
+    - {callApi: true, method: POST, api: quack/stop,    tooltip: Stop Quack Server,    icon: stop,       active: true}
+    - {callApi: true, method: POST, api: quack/restart, tooltip: Restart Quack Server, icon: arrow-path, active: true}
 ```
 
 ## QUACK_LOGS
@@ -1024,7 +1025,7 @@ columns:
   email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 14, form_long_text: true, form_code: text, form_hide_cond: "data?.action_type_id !== 2" }
   api:               { type: varchar, len: 200, comment: "Call API", form_display: true, table_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
-  api_id:            { integer, comment: "API ID", form_display: true, table_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
+  api_id:            { type: integer, comment: "API ID", form_display: true, table_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, table_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, table_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 19, form_size: 3 }
@@ -1266,7 +1267,6 @@ form_layout:
   form_in_popup: false
   size: 6
 ```
-
 
 # DATA
 ```yaml
