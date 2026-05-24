@@ -730,7 +730,7 @@ columns:
   token:           { type: varchar, len: 200, comment: "Access Token", form_display: true, table_display: false, order: 4, form_size: 4 }
   protocol:        { type: varchar, len: 20, default: quack, comment: "Protocol", form_display: true, table_display: true, order: 5, form_size: 2 }
   startup_sql:     { type: text, comment: "Startup SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
-  attach_sql:      { type: text, comment: "Data Attach SQL", form_display: true, order: 7, form_long_text: true, form_code: sql }
+  attach_sql:      { type: text, comment: "Data Attach SQL", form_display: true, order: 7, form_att: false, form_long_text: true, form_code: sql }
   shutdown_sql:    { type: text, comment: "Shutdown SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
   status:          { type: varchar, len: 50, default: offline, comment: "Status", form_display: true, table_display: true, order: 9, form_size: 2 }
   quack_conf:      { type: text, comment: "Configuration", form_display: true, order: 10, form_long_text: true, form_code: json }
