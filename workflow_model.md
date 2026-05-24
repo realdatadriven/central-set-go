@@ -1,6 +1,7 @@
 <!-- markdownlint-disable MD022 -->
 <!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
+<!-- markdownlint-disable MD012 -->
 # WORKFLOW_MODEL
 ```yaml
 name: WORKFLOW
@@ -387,6 +388,26 @@ table_layout:
   default_order: [{field: order_index, order: ASC}]
 ```
 
+## ROLE
+```yaml
+table: role
+comment: Role Type
+columns:
+  role:        { type: varchar, len: 50, pk: true, comment: "ID" }
+  role_desc:   { type: varchar, len: 200, comment: "Role", form_display: true, table_display: true, order: 2 }
+  created_at:  { type: datetime, comment: "Created at" }
+  updated_at:  { type: datetime, comment: "Updated at" }
+  excluded:    { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {role: Owner,      role_desc: Owner,      excluded: false}
+  - {role: Observer,   role_desc: Observer,   excluded: false}
+  - {role: Supervisor, role_desc: Supervisor, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size_desc: 4
+```
+
 ## WORKFLOW_STEP_RESPONSIBLE
 ```yaml
 table: workflow_step_responsible
@@ -398,7 +419,7 @@ columns:
   first_name:                   { type: varchar, len: 50, comment: "First Name", form_display: true, table_display: true, form_size_desc: 3, order: 2 }
   last_name:                    { type: varchar, len: 50, comment: "Last Name", form_display: true, table_display: true, form_size_desc: 3, order: 3 }
   department_id:                { type: integer, comment: "Department ID", tooltip: "Identifier of the department responsible for the step", form_display: true, table_display: true, form_size_desc: 4, order: 5 }
-  role:                         { type: varchar, len: 100, comment: "Role", tooltip: "Role associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 6 }
+  role:                         { type: varchar, len: 100, comment: "Role", fk: "role.role", tooltip: "Role associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 6 }
   workflow_step_id:             { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step associated with the assignment", table_display: true, form_size_desc: 4, order: 7 }
   active:                       { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the assignment is active", form_display: true, table_display: true, form_size_desc: 2, order: 4 }
   responsible_email_template    { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
@@ -413,6 +434,26 @@ table_layout:
   default_order: [{field: workflow_step_responsible_id, order: ASC}]
 ```
 
+## SUBSCRIBER_TYPE
+```yaml
+table: subscriber_type
+comment: Subscriber Types
+columns:
+  subscriber_type:      { type: varchar, len: 50, pk: true, comment: "ID" }
+  subscriber_type_desc: { type: varchar, len: 200, comment: "Subscriber Type", form_display: true, table_display: true, order: 2 }
+  created_at:           { type: datetime, comment: "Created at" }
+  updated_at:           { type: datetime, comment: "Updated at" }
+  excluded:             { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {subscriber_type: Owner,      subscriber_type_desc: Owner,      excluded: false}
+  - {subscriber_type: Observer,   subscriber_type_desc: Observer,   excluded: false}
+  - {subscriber_type: Supervisor, subscriber_type_desc: Supervisor, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size_desc: 4
+```
+
 ## WORKFLOW_STEP_SUBSCRIBER
 ```yaml
 table: workflow_step_subscriber
@@ -420,10 +461,10 @@ comment: "Step Subscriber"
 tooltip: "Tracks interested parties and stakeholders for workflow steps"
 columns:
   workflow_step_subscriber_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Subscriber ID", tooltip: "Unique identifier of the subscription" }
-  email:                       { type: varchar, len: 100, comment: "Email", tooltip: "Email associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 1 }
-  first_name:                  { type: varchar, len: 50, nullable: false, comment: "First Name", form_display: true, table_display: true, form_size_desc: 3, order: 2 }
+  email:                       { type: varchar, len: 100, nullable: false, comment: "Email", tooltip: "Email associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 1 }
+  first_name:                  { type: varchar, len: 50, comment: "First Name", form_display: true, table_display: true, form_size_desc: 3, order: 2 }
   last_name:                   { type: varchar, len: 50, comment: "Last Name", form_display: true, table_display: true, form_size_desc: 3, order: 3 }
-  subscriber_type:             { type: varchar, len: 50, comment: "Subscriber Type", tooltip: "Type of subscriber (responsible, observer, stakeholder, etc.)", form_display: true, table_display: true, form_size_desc: 3, order: 5 }
+  subscriber_type:             { type: varchar, len: 50, comment: "Subscriber Type", fk: "subscriber_type.subscriber_type", tooltip: "Type of subscriber (responsible, observer, stakeholder, etc.)", form_display: true, table_display: true, form_size_desc: 3, order: 5 }
   notify_on_start:             { type: boolean, default: true, comment: "Notify On Start", tooltip: "Send notification when step starts", form_display: true, table_display: true, form_size_desc: 3, order: 6}
   notify_on_complete:          { type: boolean, default: true, comment: "Notify On Complete", tooltip: "Send notification when step completes", form_display: true, table_display: true, form_size_desc: 3, order: 7}
   notify_on_escalation:        { type: boolean, default: false, comment: "Notify On Escalation", tooltip: "Send notification on SLA escalation", form_display: true, table_display: true, form_size_desc: 3, order: 8}
@@ -617,8 +658,12 @@ order: 1
 icon: plus
 color: green
 active: true
-workflow_step_schema:
+schema:
   - {field: field1, label: field 1, data_type: text, input_type: radio, nullable: false, size: 3, options: '["A", "B", "C"]'}
+responsibles:
+  - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, role: owner}
+subscribers:
+  - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, start: true, complete: true}
 ```
 
 ## STEP 2
