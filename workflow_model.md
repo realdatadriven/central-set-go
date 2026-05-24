@@ -135,7 +135,7 @@ comment: "Workflow dependencies"
 tooltip: "Defines workflow dependencies / relations"
 columns:
   workflow_depend_id:    { type: integer, pk: true, autoincrement: true, comment: " ID" }
-  workflow_ depend:      { type: varchar, len: 200, nullable: false, comment: "Relation", form_display: true, table_display: true, form_size_desc: 6, form_order: 3 }
+  workflow_depend:       { type: varchar, len: 200, nullable: false, comment: "Relation", form_display: true, table_display: true, form_size_desc: 6, form_order: 3 }
   workflow_depend_desc:  { type: text, comment: "Relation Description", form_display: true, table_display: true, form_long_text: true, form_code: markdown, form_order: 6 }
   workflow_id:           { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Main Workflow ID", tooltip: "Current workflow", form_label: "Current Workflow", form_use_label: true, form_display: true, table_display: true, form_size_desc: 6, form_order: 1 }
   depends_on:            { type: integer, nullable: false, fk: "workflow.workflow_id", comment: "Depends Workflow ID", form_label: "Depends On Workflow", form_use_label: true, form_display: true, table_display: true, form_size_desc: 6, form_order: 2 }
@@ -616,5 +616,5 @@ icon: plus
 color: green
 active: true
 workflow_step_schema:
-  field1: {label: field 1, data_type_desc: text, input_type_desc: radio, nullable: false, size_desc: 3, options: '["A", "B", "C"]'}
+  - {field: field1, label: field 1, data_type_desc: text, input_type_desc: radio, nullable: false, size_desc: 3, options: '["A", "B", "C"]'}
 ```
