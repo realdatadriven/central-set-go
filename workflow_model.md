@@ -174,6 +174,7 @@ columns:
   user_id:          { type: integer, comment: "User ID", tooltip: "Identifier of the user who created the SLA rule" }
   created_at:       { type: datetime, comment: "Created AT", tooltip: "Date and time when the SLA rule was created" }
   updated_at:       { type: datetime, comment: "Updated AT", tooltip: "Date and time when the SLA rule was last updated" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
 form_layout: 
   tabs_steps: tabs
   form_in_popup: false
@@ -199,6 +200,7 @@ columns:
   user_id:              { type: integer, comment: "User ID", tooltip: "Identifier of the user who created the step SLA rule" }
   created_at:           { type: datetime, comment: "Created AT", tooltip: "Date and time when the step SLA rule was created" }
   updated_at:           { type: datetime, comment: "Updated AT", tooltip: "Date and time when the step SLA rule was last updated" }
+  excluded:             { type: boolean, default: false, comment: "Excluded" }
 table_layout:
   default_order: [{field: workflow_step_sla_id, order: DESC}]
 ```
@@ -215,6 +217,7 @@ columns:
   active:        { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the department is active" }
   created_at:    { type: datetime, comment: "Created AT", tooltip: "Date and time when the department was created" }
   updated_at:    { type: datetime, comment: "Updated AT", tooltip: "Date and time when the department was last updated" }
+  excluded:      { type: boolean, default: false, comment: "Excluded" }
 table_layout:
   default_order: [{field: department_id, order: DESC}]
 ```
@@ -230,6 +233,8 @@ columns:
   workflow_step_id:            { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the workflow step", form_display: true, table_display: true }
   active:                      { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the relation is active" }
   created_at:                  { type: datetime, comment: "Created AT", tooltip: "Date and time when the relation was created" }
+  updated_at:                  { type: datetime, comment: "Updated AT", tooltip: "Date and time when the relation was last updated" }
+  excluded:                    { type: boolean, default: false, comment: "Excluded" }
 table_layout:
   default_order: [{field: workflow_step_department_id, order: DESC}]
 ```
@@ -288,7 +293,7 @@ table: size
 comment: Size
 columns:
   size:       { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  size:  { type: varchar, len: 20, unique: true, nullable: false, comment: "Size", form_display: true, table_display: true, order: 1 }
+  size_desc:  { type: varchar, len: 20, unique: true, nullable: false, comment: "Size", form_display: true, table_display: true, order: 1 }
   created_at: { type: datetime, comment: "Created at" }
   updated_at: { type: datetime, comment: "Updated at" }
   excluded:   { type: boolean, default: false, comment: "Excluded" }
@@ -386,6 +391,7 @@ columns:
   active:                         { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the option is active" }
   created_at:                     { type: datetime, comment: "Created AT", tooltip: "Date and time when the option was created" }
   updated_at:                     { type: datetime, comment: "Updated AT", tooltip: "Date and time when the option was last updated" }
+  excluded:                       { type: boolean, default: false, comment: "Excluded" }
 table_layout:
   default_order: [{field: order_index, order: ASC}]
 ```
@@ -424,10 +430,11 @@ columns:
   role:                         { type: varchar, len: 100, comment: "Role", fk: "role.role", tooltip: "Role associated with the responsibility", form_display: true, table_display: true, form_size: 4, order: 6 }
   workflow_step_id:             { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step associated with the assignment", table_display: true, form_size: 4, order: 7 }
   active:                       { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the assignment is active", form_display: true, table_display: true, form_size: 2, order: 4 }
-  responsible_email_template    { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
+  responsible_email_template:   { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
   user_id:                      { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step" }
   created_at:                   { type: datetime, comment: "Created AT", tooltip: "Date and time when the assignment was created" }
   updated_at:                   { type: datetime, comment: "Updated AT", tooltip: "Date and time when the option was last updated" }
+  excluded:                     { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: true
@@ -471,11 +478,12 @@ columns:
   notify_on_complete:          { type: boolean, default: true, comment: "Notify On Complete", tooltip: "Send notification when step completes", form_display: true, table_display: true, form_size: 3, order: 7}
   notify_on_escalation:        { type: boolean, default: false, comment: "Notify On Escalation", tooltip: "Send notification on SLA escalation", form_display: true, table_display: true, form_size: 3, order: 8}
   workflow_step_id:            { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the workflow step", form_display: true, table_display: true, form_size: 4, order: 9 }
-  subscriber_email_template    { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
+  subscriber_email_template:   { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
   active:                      { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the assignment is active", form_display: true, table_display: true, form_size: 2, order: 4 }
-  user_id:                     { type: integer, nullable: false, comment: "User ID", tooltip: "Identifier of the user interested in the step" }
+  user_id:                     { type: integer, comment: "User ID", tooltip: "Identifier of the user interested in the step" }
   created_at:                  { type: datetime, comment: "Created AT", tooltip: "Date and time when the subscription was created" }
   updated_at:                  { type: datetime, comment: "Updated AT", tooltip: "Date and time when the subscription was last updated" }
+  excluded:                    { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: true
