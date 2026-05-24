@@ -437,7 +437,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL", "MODEL_DATA", "CSDATA"}
+	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL", "C7MODEL", "MODEL_DATA", "CSDATA", "C7DATA", "WORKFLOW", "C7WORKFLOW", "CSWORKFLOW"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
@@ -632,7 +632,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 							}
 							logs = append(logs, _logs...)
 						}
-					case "MODEL", "CSMODEL":
+					case "MODEL", "CSMODEL", "C7MODEL":
 						_logs, err := etlxlib.RunMODEL(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
@@ -645,9 +645,23 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 							}
 							logs = append(logs, _logs...)
 						}
-					case "MODEL_DATA", "CSDATA":
+					case "MODEL_DATA", "CSDATA", "C7DATA":
 						//fmt.Printf("%s AS %s START:\n", key, runs_as)
 						_logs, err := etlxlib.RunMODEL_DATA(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					case "WORKFLOW", "C7WORKFLOW", "CSWORKFLOW":
+						// fmt.Printf("%s AS %s START:\n", key, runs_as)
+						_logs, err := etlxlib.RunWORKFLOW(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
 						} else {
