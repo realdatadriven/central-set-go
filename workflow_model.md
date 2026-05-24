@@ -36,7 +36,9 @@ cs_app:
       - {table: size, active: false}
       - {table: workflow_step_schema, active: false}
       - {table: workflow_step_schema_option, active: false}
+      - {table: role, active: false}
       - {table: workflow_step_responsible, active: false}
+      - {table: subscriber_type, active: false}
       - {table: workflow_step_subscriber, active: false}
       - {table: department, requires_rla: true, active: true}
       - {table: workflow_step_department, active: false}
@@ -323,7 +325,7 @@ columns:
   data_type:               { type: varchar, fk: "data_type.data_type", nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true, table_display: true, form_size_desc: 4 }
   nullable:                { type: boolean, default: true, comment: "Nullable", tooltip: "Indicates whether the field can be empty", form_display: true, table_display: true, form_size_desc: 3 }
   default_value:           { type: varchar, len: 200, comment: "Default Value", tooltip: "Default value assigned to the field", form_display: true, table_display: false, form_size_desc: 3 }
-  validation_rule:         { type: varchar, len: 200, comment: "Validation Rule", tooltip: "Regex validation rule for the field", form_display: true, table_display: flase, form_size_desc: 3 }
+  validation_rule:         { type: varchar, len: 200, comment: "Validation Rule", tooltip: "Regex validation rule for the field", form_display: true, table_display: false, form_size_desc: 3 }
   order_index:             { type: integer, comment: "Order Index", tooltip: "Position of the field within the step", form_display: true, table_display: true, form_size_desc: 3}
   format:                  { type: varchar, len: 200, comment: "Format", tooltip: "Format intl.Format", form_display: true, form_size_desc: 4 }
   size:                    { type: integer, fk: "size.size", comment: "Size", tooltip: "1 - 12 size that will be shown in form", form_display: true, form_size_desc: 2 }
@@ -675,6 +677,10 @@ order: 2
 icon: plus
 color: yellow
 active: true
-workflow_step_schema:
+schema:
   - {field: field1, label: field 1, data_type: text, input_type: radio, nullable: false, size: 3, options: '["A", "B", "C"]'}
+responsibles:
+  - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, role: owner}
+subscribers:
+  - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, start: true, complete: true}
 ```
