@@ -616,5 +616,5 @@ icon: plus
 color: green
 active: true
 workflow_step_schema:
-  - {field: field1, label: field 1, data_type_desc: text, input_type_desc: radio, nullable: false, size_desc: 3, options: '["A", "B", "C"]'}
+  - {field: field1, label: field 1, data_type: text, input_type: radio, nullable: false, size: 3, options: '["A", "B", "C"]'}
 ```
