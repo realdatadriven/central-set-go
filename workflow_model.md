@@ -394,13 +394,14 @@ comment: "Step Responsible"
 tooltip: "Defines the responsible users for each workflow step"
 columns:
   workflow_step_responsible_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Responsible ID", tooltip: "Unique identifier of the assignment" }
-  email:                        { type: varchar, len: 100, comment: "Email", tooltip: "Email associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 1 }
-  first_name:                   { type: varchar, len: 50, nullable: false, comment: "First Name", form_display: true, table_display: true, form_size_desc: 3, order: 2 }
+  email:                        { type: varchar, len: 100, nullable: false, comment: "Email", tooltip: "Email associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 1 }
+  first_name:                   { type: varchar, len: 50, comment: "First Name", form_display: true, table_display: true, form_size_desc: 3, order: 2 }
   last_name:                    { type: varchar, len: 50, comment: "Last Name", form_display: true, table_display: true, form_size_desc: 3, order: 3 }
   department_id:                { type: integer, comment: "Department ID", tooltip: "Identifier of the department responsible for the step", form_display: true, table_display: true, form_size_desc: 4, order: 5 }
   role:                         { type: varchar, len: 100, comment: "Role", tooltip: "Role associated with the responsibility", form_display: true, table_display: true, form_size_desc: 4, order: 6 }
   workflow_step_id:             { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the step associated with the assignment", table_display: true, form_size_desc: 4, order: 7 }
   active:                       { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the assignment is active", form_display: true, table_display: true, form_size_desc: 2, order: 4 }
+  responsible_email_template    { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
   user_id:                      { type: integer, comment: "User ID", tooltip: "Identifier of the user responsible for the step" }
   created_at:                   { type: datetime, comment: "Created AT", tooltip: "Date and time when the assignment was created" }
   updated_at:                   { type: datetime, comment: "Updated AT", tooltip: "Date and time when the option was last updated" }
@@ -427,6 +428,7 @@ columns:
   notify_on_complete:          { type: boolean, default: true, comment: "Notify On Complete", tooltip: "Send notification when step completes", form_display: true, table_display: true, form_size_desc: 3, order: 7}
   notify_on_escalation:        { type: boolean, default: false, comment: "Notify On Escalation", tooltip: "Send notification on SLA escalation", form_display: true, table_display: true, form_size_desc: 3, order: 8}
   workflow_step_id:            { type: integer, nullable: false, fk: "workflow_step.workflow_step_id", comment: "Workflow Step ID", tooltip: "Identifier of the workflow step", form_display: true, table_display: true, form_size_desc: 4, order: 9 }
+  subscriber_email_template    { type: text, comment: "Email Template", form_display: true, form_long_text: true, form_code: html}
   active:                      { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the assignment is active", form_display: true, table_display: true, form_size_desc: 2, order: 4 }
   user_id:                     { type: integer, nullable: false, comment: "User ID", tooltip: "Identifier of the user interested in the step" }
   created_at:                  { type: datetime, comment: "Created AT", tooltip: "Date and time when the subscription was created" }
@@ -614,6 +616,19 @@ description: Step 1
 order: 1
 icon: plus
 color: green
+active: true
+workflow_step_schema:
+  - {field: field1, label: field 1, data_type: text, input_type: radio, nullable: false, size: 3, options: '["A", "B", "C"]'}
+```
+
+## STEP 2
+```yaml
+name: STEP_2
+table: workflow_step
+description: Step 2
+order: 2
+icon: plus
+color: yellow
 active: true
 workflow_step_schema:
   - {field: field1, label: field 1, data_type: text, input_type: radio, nullable: false, size: 3, options: '["A", "B", "C"]'}
