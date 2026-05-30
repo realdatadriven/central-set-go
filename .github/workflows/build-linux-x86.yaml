@@ -1,0 +1,71 @@
+name: GoReleaser Cross Platform
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux-x86:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            gcc-multilib \
+            g++-multilib \
+            unixodbc \
+            unixodbc-dev \
+            zip
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Prepare Dist Folder
+        run: |
+          mkdir -p dist/central-set-linux-x86
+          mkdir -p dist/central-set-linux-x86/database
+
+          cp ./database/*.sql dist/central-set-linux-x86/database/ || true
+          cp ./database/*.csapp dist/central-set-linux-x86/database/ || true
+
+          cp ./LICENSE dist/central-set-linux-x86/
+          cp ./admin_model.md dist/central-set-linux-x86/
+          cp ./etlx_model.md dist/central-set-linux-x86/
+          cp ./logs_dashboard.md dist/central-set-linux-x86/
+          cp ./README.md dist/central-set-linux-x86/
+
+          cp ./.env-exemple.txt \
+            dist/central-set-linux-x86/dot-env-exemple.txt
+
+          cp -r ./static dist/central-set-linux-x86/
+          cp -r ./locales dist/central-set-linux-x86/
+
+      - name: Build Linux x86 Binary
+        run: |
+          go mod tidy
+
+          CGO_ENABLED=1 \
+          GOOS=linux \
+          GOARCH=386 \
+          go build \
+            -tags="duckdb_arrow" \
+            -o dist/central-set-linux-x86/central-set-linux-x86 \
+            ./cmd/api
+
+      - name: Create Zip
+        run: |
+          cd dist
+          zip -r central-set-linux-x86.zip central-set-linux-x86
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: central-set-linux-x86
+          path: dist/central-set-linux-x86.zip
