@@ -15,11 +15,7 @@ jobs:
           apt-get update
           apt-get install -y \
             build-essential \
-            gcc-multilib \
-            g++-multilib \
             gcc g++ \
-            unixodbc \
-            unixodbc-dev \
             zip
 
       - name: Checkout Code
