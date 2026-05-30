@@ -1,4 +1,4 @@
-name: Linux x86 Release
+name: GoReleaser Cross Platform
 
 on:
   workflow_dispatch:
