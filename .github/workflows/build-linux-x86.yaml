@@ -38,7 +38,7 @@ jobs:
           cp ./LICENSE dist/central-set-linux-x86/
           cp ./admin_model.md dist/central-set-linux-x86/
           cp ./etlx_model.md dist/central-set-linux-x86/
-          cp ./logs_dashboard.md dist/central-set-linux-x86/
+          cp ./examples dist/central-set-linux-x86/
           cp ./README.md dist/central-set-linux-x86/
 
           cp ./.env-exemple.txt \
