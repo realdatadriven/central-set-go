@@ -7,7 +7,7 @@ jobs:
   build-linux-x86:
     runs-on: ubuntu-latest
     container:
-      image: i386/ubuntu:latest # Pulls the official 32-bit Ubuntu image
+      image: i386/ubuntu:22.04 #:latest # Pulls the official 32-bit Ubuntu image
 
     steps:
       - name: Install Dependencies
