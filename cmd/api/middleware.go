@@ -217,7 +217,7 @@ func (app *application) compress(next http.Handler) http.Handler {
 func (app *application) rateLimit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// ignore get static file req
-		if r.Method == "GET" && strings.Contains(r.URL.Path, "static") {
+		if app.rateLimitingEnabled && r.Method == "GET" && strings.Contains(r.URL.Path, "static") {
 			next.ServeHTTP(w, r)
 		}
 		if app.rateLimitingEnabled {
