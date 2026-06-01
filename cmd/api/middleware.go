@@ -218,8 +218,9 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// ignore get static file req
 		// fmt.Println(r.Method, r.URL.Path, strings.Contains(r.URL.Path, "static"))
-		if app.rateLimitingEnabled && r.Method == "GET" && strings.Contains(r.URL.Path, "static") && strings.Contains(r.URL.Path, "public") {
+		if app.rateLimitingEnabled && r.Method == "GET" && (strings.Contains(r.URL.Path, "static") || strings.Contains(r.URL.Path, "public")) {
 			// next.ServeHTTP(w, r)
+			// fmt.Println("SKIP:", r.Method, r.URL.Path, strings.Contains(r.URL.Path, "static"), strings.Contains(r.URL.Path, "public"))
 		} else if app.rateLimitingEnabled {
 			ip := realip.FromRequest(r)
 			// Check if the IP has exceeded the rate limit
