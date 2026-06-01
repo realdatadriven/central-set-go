@@ -240,7 +240,8 @@ func run(logger *slog.Logger) error {
 		if err != nil {
 			fmt.Printf("Error setting duckdb memory limit: %v\n", err)
 		}*/
-		_, err := app.memdb.Exec(`CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT PRIMARY KEY, request_count INTEGER, last_request_time TIMESTAMP)`)
+		sql := `CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT PRIMARY KEY, request_count INTEGER, last_request_time TIMESTAMP)`
+		_, err := app.memdb.Exec(sql)
 		if err != nil {
 			return err
 		}

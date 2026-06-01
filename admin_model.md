@@ -58,7 +58,7 @@ cs_app:
     active: true
     tables:
       - {table: quack_server, requires_rla: true, active: true}
-      - {table: quack_logs, active: true}
+      - {table: quack_logs, active: false}
   Jobs Scheduling:
     menu_icon: clock
     menu_order: 5
@@ -67,7 +67,7 @@ cs_app:
       - cron
       - {table: cron_log, active: false}  
   APIs:
-    menu_icon: plug-circle
+    menu_icon: share
     menu_order: 6
     active: true
     tables:
@@ -718,76 +718,6 @@ table_layout:
     - { field: arrow_flight, order: ASC }
 ```
 
-## QUACK_SERVER
-```yaml
-table: quack_server
-comment: DuckDB Quack Server
-columns:
-  quack_server_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  quack_name:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 3 }
-  quack_desc:      { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 9 }
-  port:            { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 3, form_size: 2 }
-  token:           { type: varchar, len: 200, comment: "Access Token", form_display: true, table_display: false, order: 4, form_size: 4 }
-  protocol:        { type: varchar, len: 20, default: quack, comment: "Protocol", form_display: true, table_display: true, order: 5, form_size: 2 }
-  startup_sql:     { type: text, comment: "Startup SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
-  attach_sql:      { type: text, comment: "Data Attach SQL", form_display: true, order: 7, form_att: false, form_long_text: true, form_code: sql }
-  shutdown_sql:    { type: text, comment: "Shutdown SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
-  status:          { type: varchar, len: 50, default: offline, comment: "Status", form_display: true, table_display: true, order: 9, form_size: 2 }
-  quack_conf:      { type: text, comment: "Configuration", form_display: true, order: 10, form_long_text: true, form_code: json }
-  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 11 }
-  user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:      { type: datetime, comment: "Created at" }
-  updated_at:      { type: datetime, comment: "Updated at" }
-  excluded:        { type: boolean, default: false, comment: "Excluded" }
-data:
-  - {quack_server_id: 1, quack_name: "Quack Admin DB", quack_desc: "Expose ADMIN DB via DuckDB Quack", port: 8779, token: "replace-me", protocol: quack, startup_sql: "INSTALL SQLITE; LOAD SQLITE;", attach_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", shutdown_sql: "USE memory; DETACH adm;", status: offline, active: false, app_id: 1, user_id: 1, excluded: false}
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 10
-  sub_form_size: 10
-  tabs_steps_conf: []
-form_extra_options: []
-table_layout:
-  allow_in_submenu: {}
-  default_order:
-    - { field: quack_name, order: ASC }  
-  exec_button: 
-    - {callApi: true, method: POST, api: quack/start,   tooltip: Start Quack Server,   icon: play,       active: true}
-    - {callApi: true, method: POST, api: quack/stop,    tooltip: Stop Quack Server,    icon: stop,       active: true}
-    - {callApi: true, method: POST, api: quack/restart, tooltip: Restart Quack Server, icon: arrow-path, active: true}
-```
-
-## QUACK_LOGS
-```yaml
-table: quack_logs
-comment: Quack Server Activity Logs
-columns:
-  quack_log_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  quack_server_id: { type: integer, fk: "quack_server.quack_server_id", nullable: false, comment: "Quack Server", form_display: true, table_display: true, order: 1, form_size: 3 }
-  event:           { type: varchar, len: 100, nullable: false, comment: "Event", form_display: true, table_display: true, order: 2, form_size: 3 }
-  status:          { type: varchar, len: 50, comment: "Status", form_display: true, table_display: true, order: 3, form_size: 2 }
-  port:            { type: integer, comment: "Port", form_display: true, table_display: true, order: 4, form_size: 2 }
-  message:         { type: text, comment: "Message", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: txt }
-  log_time:        { type: datetime, nullable: false, comment: "Log Time", form_display: true, table_display: true, order: 6, form_size: 3 }
-  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
-  user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:      { type: datetime, comment: "Created at" }
-  updated_at:      { type: datetime, comment: "Updated at" }
-  excluded:        { type: boolean, default: false, comment: "Excluded" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 8
-table_layout:
-  allow_in_submenu: {}
-  default_order:
-    - { field: log_time, order: DESC }
-  allow_import: false
-```
-
 ## ARROW_FLIGHT_TABLE
 ```yaml
 table: arrow_flight_table
@@ -863,6 +793,76 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
+```
+
+## QUACK_SERVER
+```yaml
+table: quack_server
+comment: DuckDB Quack Server
+columns:
+  quack_server_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  quack_name:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 3 }
+  quack_desc:      { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 9 }
+  port:            { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 3, form_size: 2 }
+  token:           { type: varchar, len: 200, comment: "Access Token", form_display: true, table_display: false, order: 4, form_size: 4 }
+  protocol:        { type: varchar, len: 20, default: quack, comment: "Protocol", form_display: true, table_display: true, order: 5, form_size: 2 }
+  startup_sql:     { type: text, comment: "Startup SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
+  main_sql:        { type: text, comment: "Main SQL", form_display: true, order: 9, form_long_text: true, form_code: sql }
+  shutdown_sql:    { type: text, comment: "Shutdown SQL", form_display: true, order: 10, form_long_text: true, form_code: sql }
+  status:          { type: varchar, len: 50, default: offline, comment: "Status", form_display: true, table_display: true, order: 6, form_size: 2 }
+  quack_conf:      { type: text, comment: "Configuration", form_display: true, order: 11, form_long_text: true, form_code: json }
+  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 17}
+  user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:      { type: datetime, comment: "Created at" }
+  updated_at:      { type: datetime, comment: "Updated at" }
+  excluded:        { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {quack_server_id: 1, quack_name: "Quack Admin DB", quack_desc: "Expose ADMIN DB via DuckDB Quack", port: 8779, token: "replace-me", protocol: quack, startup_sql: "INSTALL SQLITE; LOAD SQLITE;", attach_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", shutdown_sql: "USE memory; DETACH adm;", status: offline, active: false, app_id: 1, user_id: 1, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
+  sub_form_size: 10
+  tabs_steps_conf: []
+form_extra_options: []
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: quack_name, order: ASC }  
+  exec_button: 
+    - {callApi: true, method: POST, api: quack/start,   tooltip: Start Quack Server,   icon: play,       active: true}
+    - {callApi: true, method: POST, api: quack/stop,    tooltip: Stop Quack Server,    icon: stop,       active: true}
+    - {callApi: true, method: POST, api: quack/restart, tooltip: Restart Quack Server, icon: arrow-path, active: true}
+```
+
+## QUACK_LOGS
+```yaml
+table: quack_logs
+comment: Quack Server Activity Logs
+columns:
+  quack_log_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  quack_server_id: { type: integer, fk: "quack_server.quack_server_id", nullable: false, comment: "Quack Server", form_display: true, table_display: true, order: 1, form_size: 3 }
+  event:           { type: varchar, len: 100, nullable: false, comment: "Event", form_display: true, table_display: true, order: 2, form_size: 3 }
+  status:          { type: varchar, len: 50, comment: "Status", form_display: true, table_display: true, order: 3, form_size: 2 }
+  port:            { type: integer, comment: "Port", form_display: true, table_display: true, order: 4, form_size: 2 }
+  message:         { type: text, comment: "Message", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: txt }
+  log_time:        { type: datetime, nullable: false, comment: "Log Time", form_display: true, table_display: true, order: 6, form_size: 3 }
+  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:      { type: datetime, comment: "Created at" }
+  updated_at:      { type: datetime, comment: "Updated at" }
+  excluded:        { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: log_time, order: DESC }
+  allow_import: false
 ```
 
 ## DASHBOARD
@@ -1226,8 +1226,8 @@ columns:
   api_header_id:   { type: integer, pk: true, autoincrement: true, comment: "Header ID" }
   api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
   header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 4, order: 2 }
-  header_value:    { type: text, nullable: false, comment: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, table_display: true, form_size: 8, order: 3 }
-  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
+  header_value:    { type: text, nullable: false, comment: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 4 }
+  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 3 }
   user_id:         { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
   app_id:          { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
   created_at:      { type: datetime, comment: "Created at" }
