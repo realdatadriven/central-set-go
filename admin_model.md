@@ -1205,8 +1205,8 @@ columns:
   timeout_seconds:       { type: integer, default: 30, comment: "Timeout (seconds)", form_display: true, table_display: true, form_size: 3, order: 8 }
   headers_template:      { type: text, comment: "Headers Template (use @VAR_NAME for environment variables)", form_display: true, form_long_text: true, form_code: json, order: 9 }
   active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
-  user_id:               { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
-  app_id:                { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
+  user_id:               { type: integer, fk: "users.user_id", comment: "Created by" }
+  app_id:                { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:            { type: datetime, comment: "Created at" }
   updated_at:            { type: datetime, comment: "Updated at" }
   excluded:              { type: boolean, default: false, comment: "Excluded" }
@@ -1215,6 +1215,9 @@ form_layout:
   form_in_popup: false
   size: 9
   allow_in_subform: {api_header: true, api_call_log: true}
+  tabs_steps_conf:
+    - {label: Step, fields: [api_name, api_type_id, http_request_type_id, endpoint, active, num_retries, timeout_seconds, api_description]}
+    - {label: Conf, fields: [request_body_template, headers_template]}
   sub_form_size: 9
 ```
 
@@ -1224,12 +1227,12 @@ table: api_header
 comment: API Headers
 columns:
   api_header_id:   { type: integer, pk: true, autoincrement: true, comment: "Header ID" }
-  api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
-  header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 4, order: 2 }
+  header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 5, order: 2 }
   header_value:    { type: text, nullable: false, comment: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 4 }
-  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 3 }
-  user_id:         { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
-  app_id:          { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
+  api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 5, order: 1 }
+  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 2 }
+  user_id:         { type: integer, fk: "users.user_id", comment: "Created by"  }
+  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:      { type: datetime, comment: "Created at" }
   updated_at:      { type: datetime, comment: "Updated at" }
   excluded:        { type: boolean, default: false, comment: "Excluded" }
