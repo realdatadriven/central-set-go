@@ -818,7 +818,7 @@ columns:
   updated_at:      { type: datetime, comment: "Updated at" }
   excluded:        { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {quack_server_id: 1, quack_name: "Quack Admin DB", quack_desc: "Expose ADMIN DB via DuckDB Quack", port: 8779, token: "replace-me", protocol: quack, startup_sql: "INSTALL SQLITE; LOAD SQLITE;", attach_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", shutdown_sql: "USE memory; DETACH adm;", status: offline, active: false, app_id: 1, user_id: 1, excluded: false}
+  - {quack_server_id: 1, quack_name: "Quack Admin DB", quack_desc: "Expose ADMIN DB via DuckDB Quack", port: 8779, token: "replace-me", protocol: quack, startup_sql: "INSTALL SQLITE; LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", shutdown_sql: "USE memory; DETACH adm;", status: offline, active: false, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1216,8 +1216,8 @@ form_layout:
   size: 9
   allow_in_subform: {api_header: true, api_call_log: true}
   tabs_steps_conf:
-    - {label: Step, fields: [api_name, api_type_id, http_request_type_id, endpoint, active, num_retries, timeout_seconds, api_description]}
-    - {label: Conf, fields: [request_body_template, headers_template]}
+    - {label: API Data, fields: [api_id, api_name, api_type_id, http_request_type_id, endpoint, active, num_retries, timeout_seconds, api_description]}
+    - {label: Templates, fields: [request_body_template, headers_template]}
   sub_form_size: 9
 ```
 

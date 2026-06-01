@@ -25,7 +25,7 @@ From `admin_model.md`:
     token: "your-secret-token",
     protocol: quack, 
     startup_sql: "INSTALL SQLITE; LOAD SQLITE;", 
-    attach_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", 
+    main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", 
     shutdown_sql: "USE memory; DETACH adm;", 
     status: offline, 
     active: false, 

@@ -57,9 +57,9 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 		}
 	}
 
-	// Execute attach SQL (e.g., "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;")
-	if config["attach_sql"] != "" {
-		if err := qm.executeSQL(conn, config["attach_sql"].(string)); err != nil {
+	// Execute main SQL (e.g., "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;")
+	if config["main_sql"] != "" {
+		if err := qm.executeSQL(conn, config["main_sql"].(string)); err != nil {
 			conn.Close()
 			return fmt.Errorf("attach sql failed: %w", err)
 		}
