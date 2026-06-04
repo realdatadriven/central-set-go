@@ -688,7 +688,7 @@ table: flight_catalog
 comment: Arrow Flight Catalogs
 columns:
   flight_catalog_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  flight_catalog:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Catalog Name", form_display: true, table_display: true, order: 1, form_size: 10, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character "}
+  flight_catalog:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Catalog Name", form_display: true, table_display: true, order: 1, form_size: 10, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!"}
   flight_catalog_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 3, form_size: 12, form_long_text: true }
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_order: 2, form_size: 2 }
   flight_catalog_conf: { type: text, comment: "Config", form_display: false, order: 3, form_size: 12, form_long_text: true, form_code: json }
@@ -717,7 +717,7 @@ comment: Expose Arrow Flight Schema
 columns:
   flight_schema_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
   flight_catalog_id:   { type: integer, fk: "flight_catalog.flight_catalog_id", nullable: false, comment: "Flight Catalog", form_display: true, table_display: true, order: 2, form_size: 4 }
-  flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 5 }
+  flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 5, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   flight_schema_desc:  { type: text, comment: "Description", form_display: true, table_display: true, order: 4, form_text_long: true }
   startup_sql:         { type: text, comment: "Startup SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
   main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
@@ -725,7 +725,7 @@ columns:
   table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
   shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, order: 9, form_long_text: true, form_code: sql }
   flight_schema_conf:  { type: text, comment: "Configuration", form_display: true, order: 10, form_long_text: true, form_code: json}
-  active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 3, form_size: 3 }
+  active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_order: 3, form_size: 3 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:          { type: datetime, comment: "Created at" }
