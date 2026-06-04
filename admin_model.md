@@ -1319,5 +1319,7 @@ active: true
 
 ```sql
 -- pg_procedure
-DROP TEMP_TABLE1;
+CREATE OR REPLACE PROCEDURE X AS $$
+
+$$
 ```
