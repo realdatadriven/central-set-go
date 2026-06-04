@@ -22,11 +22,7 @@ package flight
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"database/sql"
-	"database/sql/driver"
-	"encoding/json"
 	"fmt"
 	"log"
 	"log/slog"
@@ -41,7 +37,6 @@ import (
 	"github.com/duckdb/duckdb-go/v2"
 	"github.com/realdatadriven/etlx"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
 	airport "github.com/hugr-lab/airport-go"
 	"github.com/hugr-lab/airport-go/catalog"
@@ -49,24 +44,8 @@ import (
 	//duckarrow "github.com/duckdb/duckdb-go/v2/arrow"
 )
 
-// FlightManager is the interface the server uses to start/stop the FlightSQL server.
-type FlightManager interface {
-	Start(listenAddr string) error
-	Stop(ctx context.Context) error
-}
-
-// namedCatalog wraps a catalog.Catalog with a name.
-type namedCatalog struct {
-	catalog.Catalog
-	name string
-}
-
-func (c *namedCatalog) Name() string {
-	return c.name
-}
-
-// AirportAdapter implements FlightManager using hugr-lab/airport-go.
-type AirportAdapter struct {
+// AirportAdapterMultiCatalogs implements FlightManager using hugr-lab/airport-go.
+type AirportAdapterMultiCatalogs struct {
 	validateToken func(token string) (string, error)
 	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case flight_schema_table mapping tables
 	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in flight_schema_table is accessible to the user
@@ -74,20 +53,20 @@ type AirportAdapter struct {
 	grpcSrv       *grpc.Server
 	listener      net.Listener
 	mem           memory.Allocator
-	catalog       *DynamicCatalog
+	catalogs      *[]catalog.Catalog //*DynamicCatalog
 	cfg           []map[string]any
 	shutdownc     chan struct{}
 }
 
 // NewAirportAdapter constructs the adapter with the provided DDB.
-func NewAirportAdapter(
+func NewAirportMultiCatalogsAdapter(
 	config []map[string]any,
 	validateToken func(token string) (string, error),
 	table_access func(params map[string]any, tables []any) map[string]any,
 	rla_access func(params map[string]any, tables []any, row_id []any) map[string]any,
 	read func(params map[string]any) map[string]any,
-) *AirportAdapter {
-	return &AirportAdapter{
+) *AirportAdapterMultiCatalogs {
+	return &AirportAdapterMultiCatalogs{
 		validateToken: validateToken,
 		table_access:  table_access,
 		rla_access:    rla_access,
@@ -100,11 +79,11 @@ func NewAirportAdapter(
 
 // Start builds an airport-go catalog from the DuckDB schemas and tables discovered via the manager.
 // It then creates a gRPC server and registers the airport server.
-func (a *AirportAdapter) Start(listenAddr string) error {
+func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 	// Build catalog using airport.NewCatalogBuilder()
 	//builder := airport.NewCatalogBuilder()
 	// CATALOGS
-	//catalogs := []catalog.Catalog{}
+	catalogs := []catalog.Catalog{}
 	builder := NewCatalogBuilder().Dynamic()
 	db, err := duckdb.NewConnector("", nil)
 	if err != nil {
@@ -114,129 +93,137 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	conn := sql.OpenDB(db)
 	defer conn.Close()
 	_etlx := etlx.ETLX{}
-	// For each schema defined in config, discover its tables and add them as SimpleTable entries.
-	for _, s := range a.cfg {
-		schemaName := s["flight_schema"].(string)
-		// create a schema builder for this schema
-		sb := builder.Schema(schemaName).Comment("Main application schema")
-		// execute startup_sql
-		var main_sql string
-		if startup_sql, ok := s["startup_sql"].(string); ok {
-			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
-			//fmt.Printf("%s: %s\n", s["flight_schema"], startup_sql)
-			_, err := conn.ExecContext(context.Background(), startup_sql)
-			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["flight_schema"], startup_sql, err)
-			}
-			main_sql = _etlx.ReplaceEnvVariable(s["main_sql"].(string))
-			//fmt.Printf("%s: %s\n", s["flight_schema"], main_sql)
-			_, err = conn.ExecContext(context.Background(), main_sql)
-			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["flight_schema"], main_sql, err)
-			}
+	// For each catalog
+	for _, c := range a.cfg {
+		// For each schema defined in config, discover its tables and add them as SimpleTable entries.
+		schemas, ok := c["schemas"].([]map[string]any)
+		if !ok {
+			fmt.Println("invalid config: schemas must be an array of objects")
+			continue
 		}
-		// check if main_sql has use <schema>; is not do use <schema>;
-		/*/ fmt.Println(strings.Contains(strings.ToLower(main_sql), fmt.Sprintf("use %s;", strings.ToLower(schemaName))), main_sql)
-		if !strings.Contains(strings.ToLower(main_sql), fmt.Sprintf("use %s;", strings.ToLower(schemaName))) {
-			_, err = conn.ExecContext(context.Background(), fmt.Sprintf("USE %s;", schemaName))
-			if err != nil {
-				return fmt.Errorf("use schema %s: %w", schemaName, err)
-			}
-		}*/
-		//q := `SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_type = 'BASE TABLE' ORDER BY table_name`
-		table_discover_sql := `select table_name from duckdb_tables`
-		if _table_discover_sql, ok := s["table_discover_sql"].(string); ok {
-			table_discover_sql = _etlx.ReplaceEnvVariable(_table_discover_sql)
-			//fmt.Println("table_discover_sql:", table_discover_sql)
-		}
-		rows, err := conn.QueryContext(context.Background(), table_discover_sql, schemaName)
-		if err != nil {
-			return fmt.Errorf("query tables: %w", err)
-		}
-		defer rows.Close()
-		for rows.Next() {
-			var tname string
-			if err := rows.Scan(&tname); err != nil {
-				return fmt.Errorf("scan table name: %w", err)
-			}
-			//fmt.Println(tname)
-			// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
-			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
-				found := false
-				if _, ok := tables[tname]; ok {
-					found = true
-					//rla = a.rla_tables(map[string]any{}, []any{tname})
+		for _, s := range schemas {
+			schemaName := s["flight_schema"].(string)
+			// create a schema builder for this schema
+			sb := builder.Schema(schemaName).Comment("Main application schema")
+			// execute startup_sql
+			var main_sql string
+			if startup_sql, ok := s["startup_sql"].(string); ok {
+				startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
+				//fmt.Printf("%s: %s\n", s["flight_schema"], startup_sql)
+				_, err := conn.ExecContext(context.Background(), startup_sql)
+				if err != nil {
+					fmt.Printf("%s: %s: %s\n", s["flight_schema"], startup_sql, err)
 				}
-				if !found {
-					continue
+				main_sql = _etlx.ReplaceEnvVariable(s["main_sql"].(string))
+				//fmt.Printf("%s: %s\n", s["flight_schema"], main_sql)
+				_, err = conn.ExecContext(context.Background(), main_sql)
+				if err != nil {
+					fmt.Printf("%s: %s: %s\n", s["flight_schema"], main_sql, err)
 				}
 			}
-			// // if s["tables"].(map[string]any) exists and it length > 0 and tname is in s["tables"].(map[string]any), and s["tables"].(map[string]any)[tname].(map[string]any)[fields] has length > 0, filter arrowSchema to only include those fields
-			_fields := []string{}
-			if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
-				if tableConf, ok := tables[tname].(map[string]any); ok {
-					if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
-						for field, _ := range fields {
-							_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+			// check if main_sql has use <schema>; is not do use <schema>;
+			/*/ fmt.Println(strings.Contains(strings.ToLower(main_sql), fmt.Sprintf("use %s;", strings.ToLower(schemaName))), main_sql)
+			if !strings.Contains(strings.ToLower(main_sql), fmt.Sprintf("use %s;", strings.ToLower(schemaName))) {
+				_, err = conn.ExecContext(context.Background(), fmt.Sprintf("USE %s;", schemaName))
+				if err != nil {
+					return fmt.Errorf("use schema %s: %w", schemaName, err)
+				}
+			}*/
+			//q := `SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_type = 'BASE TABLE' ORDER BY table_name`
+			table_discover_sql := `select table_name from duckdb_tables`
+			if _table_discover_sql, ok := s["table_discover_sql"].(string); ok {
+				table_discover_sql = _etlx.ReplaceEnvVariable(_table_discover_sql)
+				//fmt.Println("table_discover_sql:", table_discover_sql)
+			}
+			rows, err := conn.QueryContext(context.Background(), table_discover_sql, schemaName)
+			if err != nil {
+				return fmt.Errorf("query tables: %w", err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+				var tname string
+				if err := rows.Scan(&tname); err != nil {
+					return fmt.Errorf("scan table name: %w", err)
+				}
+				//fmt.Println(tname)
+				// if s["tables"].(map[string]any) exists and it length > 0 and tname not in s["tables"].(map[string]any) skip
+				if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
+					found := false
+					if _, ok := tables[tname]; ok {
+						found = true
+						//rla = a.rla_tables(map[string]any{}, []any{tname})
+					}
+					if !found {
+						continue
+					}
+				}
+				// // if s["tables"].(map[string]any) exists and it length > 0 and tname is in s["tables"].(map[string]any), and s["tables"].(map[string]any)[tname].(map[string]any)[fields] has length > 0, filter arrowSchema to only include those fields
+				_fields := []string{}
+				if tables, ok := s["tables"].(map[string]any); ok && len(tables) > 0 {
+					if tableConf, ok := tables[tname].(map[string]any); ok {
+						if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
+							for field, _ := range fields {
+								_fields = append(_fields, fmt.Sprintf(`"%s"`, field))
+							}
 						}
 					}
 				}
+				if len(_fields) == 0 {
+					_fields = []string{"*"}
+				}
+				query := fmt.Sprintf(`SELECT %s FROM %s."%s" LIMIT 0`, strings.Join(_fields, ","), schemaName, tname)
+				// if s["table_scan_tmpl_sql"] exists use it to build the query
+				if table_scan_tmpl_sql, ok := s["table_scan_tmpl_sql"].(string); ok {
+					table_scan_tmpl_sql = _etlx.ReplaceEnvVariable(table_scan_tmpl_sql)
+					query = strings.ReplaceAll(table_scan_tmpl_sql, "{{table_name}}", tname)
+					query = strings.ReplaceAll(query, "{{schema_name}}", schemaName)
+					query = strings.ReplaceAll(query, "{{fields}}", strings.Join(_fields, ","))
+					query = fmt.Sprintf(query+" LIMIT 0", strings.Join(_fields, ","), schemaName, tname)
+					//fmt.Println("table_scan_tmpl_sql query:", query)
+				}
+				conn, err := db.Connect(context.Background())
+				if err != nil {
+					return err
+				}
+				defer conn.Close()
+				arrow, err := duckdb.NewArrowFromConn(conn)
+				if err != nil {
+					return err
+				}
+				rdr, err := arrow.QueryContext(context.Background(), query)
+				if err != nil {
+					return err
+				}
+				defer rdr.Release()
+				arrowSchema := rdr.Schema()
+				//fmt.Println(tname, arrowSchema)
+				scanFn := a.scanFunc(a.mem, schemaName, tname, arrowSchema, s)
+				_table := NewDynamicTable(tname, arrowSchema, tname, scanFn)
+				// register simple table under current schema builder
+				sb.Table(_table)
 			}
-			if len(_fields) == 0 {
-				_fields = []string{"*"}
+			if err := rows.Err(); err != nil {
+				return fmt.Errorf("tables rows err: %w", err)
 			}
-			query := fmt.Sprintf(`SELECT %s FROM %s."%s" LIMIT 0`, strings.Join(_fields, ","), schemaName, tname)
-			// if s["table_scan_tmpl_sql"] exists use it to build the query
-			if table_scan_tmpl_sql, ok := s["table_scan_tmpl_sql"].(string); ok {
-				table_scan_tmpl_sql = _etlx.ReplaceEnvVariable(table_scan_tmpl_sql)
-				query = strings.ReplaceAll(table_scan_tmpl_sql, "{{table_name}}", tname)
-				query = strings.ReplaceAll(query, "{{schema_name}}", schemaName)
-				query = strings.ReplaceAll(query, "{{fields}}", strings.Join(_fields, ","))
-				query = fmt.Sprintf(query+" LIMIT 0", strings.Join(_fields, ","), schemaName, tname)
-				//fmt.Println("table_scan_tmpl_sql query:", query)
+			// execute shutdown_sql
+			if shutdown_sql, ok := s["shutdown_sql"].(string); ok {
+				shutdown_sql := _etlx.ReplaceEnvVariable(shutdown_sql)
+				//fmt.Printf("%s: %s\n", s["flight_schema"], shutdown_sql)
+				_, err = conn.ExecContext(context.Background(), shutdown_sql)
+				if err != nil {
+					fmt.Printf("%s: %s: %s\n", s["flight_schema"], shutdown_sql, err)
+				}
 			}
-			conn, err := db.Connect(context.Background())
-			if err != nil {
-				return err
-			}
-			defer conn.Close()
-			arrow, err := duckdb.NewArrowFromConn(conn)
-			if err != nil {
-				return err
-			}
-			rdr, err := arrow.QueryContext(context.Background(), query)
-			if err != nil {
-				return err
-			}
-			defer rdr.Release()
-			arrowSchema := rdr.Schema()
-			//fmt.Println(tname, arrowSchema)
-			scanFn := a.scanFunc(a.mem, schemaName, tname, arrowSchema, s)
-			_table := NewDynamicTable(tname, arrowSchema, tname, scanFn)
-			// register simple table under current schema builder
-			sb.Table(_table)
+			// conn.ExecContext(context.Background(), "USE memory;")
 		}
-		if err := rows.Err(); err != nil {
-			return fmt.Errorf("tables rows err: %w", err)
+		conn.Close()
+		db.Close()
+		cat, err := builder.Build()
+		if err != nil {
+			return fmt.Errorf("failed to build catalog: %w", err)
 		}
-		// execute shutdown_sql
-		if shutdown_sql, ok := s["shutdown_sql"].(string); ok {
-			shutdown_sql := _etlx.ReplaceEnvVariable(shutdown_sql)
-			//fmt.Printf("%s: %s\n", s["flight_schema"], shutdown_sql)
-			_, err = conn.ExecContext(context.Background(), shutdown_sql)
-			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["flight_schema"], shutdown_sql, err)
-			}
-		}
-		// conn.ExecContext(context.Background(), "USE memory;")
+		catalogs = append(catalogs, cat) // &namedCatalog{Catalog: cat, name: "catalog_name"} // For multi-catalog support
 	}
-	conn.Close()
-	db.Close()
-	cat, err := builder.Build()
-	if err != nil {
-		return fmt.Errorf("failed to build catalog: %w", err)
-	}
-	a.catalog = cat // &namedCatalog{Catalog: cat, name: "catalog_name"} // For multi-catalog support
 	// Create grpc server and register airport server
 	debugLevel := slog.LevelInfo
 	if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelInfo" {
@@ -248,15 +235,9 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	} else if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelDebug" {
 		debugLevel = slog.LevelDebug
 	}
-	/*/ multi-catalog-support
+	// multi-catalog-support
 	config := airport.MultiCatalogServerConfig{
 		Catalogs: catalogs,
-		Auth:     airport.BearerAuth(a.validateToken),
-		Address:  listenAddr,
-		LogLevel: &debugLevel,
-	}*/
-	config := airport.ServerConfig{
-		Catalog:  cat,
 		Auth:     airport.BearerAuth(a.validateToken),
 		Address:  listenAddr,
 		LogLevel: &debugLevel,
@@ -269,19 +250,14 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	}
 	// multi-catalog-support
 	// Create gRPC server with options (includes interceptors for metadata extraction)
-	//opts := airport.MultiCatalogServerOptions(config)
-	opts := airport.ServerOptions(config)
+	opts := airport.MultiCatalogServerOptions(config)
 	if creds != nil {
 		fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)
-	/*/ multi-catalog-support
+	// multi-catalog-support
 	if _, err := airport.NewMultiCatalogServer(a.grpcSrv, config); err != nil {
-		return fmt.Errorf("airport.NewServer failed: %w", err)
-	}*/
-	/* mcs coud be use to add or remove catalogs*/
-	if err := airport.NewServer(a.grpcSrv, config); err != nil {
 		return fmt.Errorf("airport.NewServer failed: %w", err)
 	}
 	lis, err := net.Listen("tcp", listenAddr)
@@ -301,7 +277,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 }
 
 // Stop gracefully stops the airport-go server.
-func (a *AirportAdapter) Stop(ctx context.Context) error {
+func (a *AirportAdapterMultiCatalogs) Stop(ctx context.Context) error {
 	if a.grpcSrv != nil {
 		a.grpcSrv.GracefulStop()
 		// wait until serve goroutine exits or context times out
@@ -314,7 +290,7 @@ func (a *AirportAdapter) Stop(ctx context.Context) error {
 	}
 	return nil
 }
-func (a *AirportAdapter) contains(slice []string, element string) bool {
+func (a *AirportAdapterMultiCatalogs) contains(slice []string, element string) bool {
 	for _, v := range slice {
 		if v == element {
 			return true
@@ -322,7 +298,7 @@ func (a *AirportAdapter) contains(slice []string, element string) bool {
 	}
 	return false
 }
-func (a *AirportAdapter) containsInt(slice []any, element any) bool {
+func (a *AirportAdapterMultiCatalogs) containsInt(slice []any, element any) bool {
 	for _, v := range slice {
 		if v.(int64) == element.(int64) {
 			return true
@@ -330,7 +306,7 @@ func (a *AirportAdapter) containsInt(slice []any, element any) bool {
 	}
 	return false
 }
-func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
+func (a *AirportAdapterMultiCatalogs) getRLAIds(rla_access []map[string]any, table, access_type string) []any {
 	data := []any{}
 	for _, v := range rla_access {
 		_access := false
@@ -369,7 +345,7 @@ func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_ty
 // but im im passing the all configuration and making the connection and initializing the sturup and shutdown
 // all over again because of some problems with the shared connector across goroutines.
 // This needs to be improved later for performance and resource usage.
-func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
+func (a *AirportAdapterMultiCatalogs) scanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED MEANING IF THERE IS TABLE MAPPING, ONLLY THOSE ARE EXPOSED
 		flight_schema_id := conf["flight_schema_id"]
@@ -754,91 +730,4 @@ func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName st
 			conn:         conn2,
 		}, nil
 	}
-}
-
-// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
-// loadTLSCredentials loads TLS credentials from files.
-// In production, use proper certificate management.
-func loadTLSCredentials() (credentials.TransportCredentials, error) {
-	// Load server certificate and key
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
-	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		caFile := os.Getenv("TLS_CA_CERT_FILE")
-		if certFile == "" || keyFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
-		}
-		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
-		if err != nil {
-			return nil, fmt.Errorf("failed to load server cert: %w", err)
-		}
-		// Load CA certificate for mutual TLS (optional)
-		//if caFile != "" {
-		certPool := x509.NewCertPool()
-		if caCert, err := os.ReadFile(caFile); err == nil {
-			if !certPool.AppendCertsFromPEM(caCert) {
-				return nil, fmt.Errorf("failed to add CA cert to pool")
-			}
-		}
-		//}
-		// Configure TLS
-		tlsConfig := &tls.Config{
-			Certificates: []tls.Certificate{serverCert},
-			ClientAuth:   tls.NoClientCert, // Change to tls.RequireAndVerifyClientCert for mTLS
-			ClientCAs:    certPool,
-			MinVersion:   tls.VersionTLS12,
-		}
-		return credentials.NewTLS(tlsConfig), nil
-	}
-	return nil, nil
-}
-
-func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
-	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		caFile := os.Getenv("TLS_CA_CERT_FILE")
-		if certFile == "" || keyFile == "" || caFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
-		}
-		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
-		if err != nil {
-			return nil, fmt.Errorf("load server cert: %w", err)
-		}
-		// CA pool (for mTLS or client verification)
-		caCert, err := os.ReadFile(caFile)
-		if err != nil {
-			return nil, fmt.Errorf("read CA cert: %w", err)
-		}
-		certPool := x509.NewCertPool()
-		if !certPool.AppendCertsFromPEM(caCert) {
-			return nil, fmt.Errorf("append CA cert")
-		}
-		return credentials.NewTLS(&tls.Config{
-			Certificates: []tls.Certificate{serverCert},
-			ClientAuth:   tls.NoClientCert, //tls.RequestClientCert, ////tls.RequireAndVerifyClientCert, // Enable mTLS
-			// ClientCAs:    certPool,
-			MinVersion: tls.VersionTLS13, // Use TLS 1.3
-		}), nil
-	}
-	return nil, nil
-}
-func IdentityJSONToMap(identity string) (map[string]any, error) {
-	var m map[string]any
-	if err := json.Unmarshal([]byte(identity), &m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-type connBoundRecordReader struct {
-	array.RecordReader
-	conn driver.Conn
-}
-
-func (r *connBoundRecordReader) Release() {
-	r.RecordReader.Release()
-	_ = r.conn.Close()
 }
