@@ -437,10 +437,10 @@ The Admin model also defines the **Arrow Flight server configuration**.
 Tables:
 
 ```
-arrow_flight
-arrow_flight_table
-arrow_flight_table_field
-arrow_flight_table_scope
+flight_schema
+flight_schema_table
+flight_schema_table_field
+flight_schema_table_scope
 ```
 
 These allow exposing datasets through the **Arrow Flight protocol**.

@@ -261,23 +261,28 @@ func (app *application) validateToken(token string) (Dict, error) {
 }
 func (app *application) serveArrowFlight() error {
 	// use crud.read to respect access control
-	_sql := `SELECT * FROM "arrow_flight" WHERE active = ? AND excluded = ?`
-	fligths, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	_sql := `SELECT * FROM "flight_catalog" WHERE active = ? AND excluded = ?`
+	catalogs, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
 	if err != nil {
 		return err
 	}
-	_sql = `SELECT * FROM "arrow_flight_table" WHERE active = ? AND excluded = ?`
+	_sql = `SELECT * FROM "flight_schema" WHERE active = ? AND excluded = ?`
+	flight_schemas, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
+	if err != nil {
+		return err
+	}
+	_sql = `SELECT * FROM "flight_schema_table" WHERE active = ? AND excluded = ?`
 	fligths_tables, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
 	if err != nil {
 		return err
 	}
-	_sql = `SELECT * FROM "arrow_flight_table_field" WHERE active = ? AND excluded = ?`
+	_sql = `SELECT * FROM "flight_schema_table_field" WHERE active = ? AND excluded = ?`
 	fligths_tables_fields, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
 	if err != nil {
 		return err
 	}
-	// arrow_flight_table_scope
-	_sql = `SELECT * FROM "arrow_flight_table_scope" WHERE active = ? AND excluded = ?`
+	// flight_schema_table_scope
+	_sql = `SELECT * FROM "flight_schema_table_scope" WHERE active = ? AND excluded = ?`
 	fligths_tables_scopes, err := app.AdminGetRowsByFilter(_sql, []any{true, false})
 	if err != nil {
 		return err
@@ -287,44 +292,52 @@ func (app *application) serveArrowFlight() error {
 	if !rla_tables["success"].(bool) {
 		return fmt.Errorf("Error listing tables that requires RLA: %s", rla_tables["msg"])
 	}
-
 	// add tree tables and fields to flights, but with map[string]any like map[string]any{f["table"]: {"fields": map[string]any{"field": field}}}
-	for _, f := range fligths {
+	for _, f := range flight_schemas {
 		var tables Dict = make(Dict)
 		for _, t := range fligths_tables {
-			if t["arrow_flight_id"] == f["arrow_flight_id"] {
+			if t["flight_schema_id"] == f["flight_schema_id"] {
 				var fields Dict = make(Dict)
 				for _, tf := range fligths_tables_fields {
-					if tf["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
-						fields[tf["arrow_flight_table_field"].(string)] = tf
+					if tf["flight_schema_table_id"] == t["flight_schema_table_id"] {
+						fields[tf["flight_schema_table_field"].(string)] = tf
 					}
 				}
 				t["fields"] = fields
 				var scopes Dict = make(Dict)
 				for _, ts := range fligths_tables_scopes {
-					if ts["arrow_flight_table_id"] == t["arrow_flight_table_id"] {
-						scopes[ts["arrow_flight_table_scope"].(string)] = ts
+					if ts["flight_schema_table_id"] == t["flight_schema_table_id"] {
+						scopes[ts["flight_schema_table_scope"].(string)] = ts
 					}
 				}
 				t["scopes"] = scopes
-				tables[t["arrow_flight_table"].(string)] = t
+				tables[t["flight_schema_table"].(string)] = t
 			}
 		}
 		f["tables"] = tables
 		f["rla_tables"] = rla_tables["tables"]
-		if _conf, ok := f["arrow_flight_conf"].(string); ok {
+		if _conf, ok := f["flight_schema_conf"].(string); ok {
 			var conf map[string]any
 			err := json.Unmarshal([]byte(_conf), &conf)
 			if err != nil {
-				fmt.Printf("failed to parse arrow_flight_conf JSON: %v\n", err)
+				fmt.Printf("failed to parse flight_schema_conf JSON: %v\n", err)
 			}
 			f["conf"] = conf
 		}
 		//fmt.Println(f["rla_tables"])
 	}
+	for _, c := range catalogs {
+		var schemas Dict = make(Dict)
+		for _, f := range flight_schemas {
+			if f["flight_catalog_id"] == c["flight_catalog_id"] {
+				schemas[f["flight_schema"].(string)] = f
+			}
+		}
+		c["flights"] = schemas
+	}
 	// start server
 	// Create Flight adapter (airport-go) backed by our manager.
-	flightMgr := flight.NewAirportAdapter(fligths, app.airportValidateToken, app.table_access, app.row_level_access, app.read)
+	flightMgr := flight.NewAirportAdapter(flight_schemas, app.airportValidateToken, app.table_access, app.row_level_access, app.read)
 	addr := env.GetString("ARROW_FLIGHT_ADDR", "0.0.0.0:50051")
 	// Start the server (includes starting airport-go Flight server)
 	if err := flightMgr.Start(addr); err != nil {

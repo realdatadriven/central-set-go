@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS app (
 	UNIQUE (app), 
 	FOREIGN KEY(user_id) REFERENCES users (user_id)
 );
-CREATE TABLE IF NOT EXISTS "arrow_flight" (
-	"arrow_flight_id"	INTEGER NOT NULL,
-	"arrow_flight"	VARCHAR(200) NOT NULL,
-	"arrow_flight_desc"	TEXT,
+CREATE TABLE IF NOT EXISTS "flight_schema" (
+	"flight_schema_id"	INTEGER NOT NULL,
+	"flight_schema"	VARCHAR(200) NOT NULL,
+	"flight_schema_desc"	TEXT,
 	"startup_sql"	TEXT,
 	"main_sql"	TEXT NOT NULL,
 	"shutdown_sql"	TEXT,
@@ -45,40 +45,40 @@ CREATE TABLE IF NOT EXISTS "arrow_flight" (
 	"flight_schema"	TEXT,
 	"table_discover_sql"	TEXT,
 	"table_scan_tmpl_sql"	TEXT,
-	UNIQUE("arrow_flight"),
-	PRIMARY KEY("arrow_flight_id" AUTOINCREMENT)
+	UNIQUE("flight_schema"),
+	PRIMARY KEY("flight_schema_id" AUTOINCREMENT)
 );
-CREATE TABLE IF NOT EXISTS arrow_flight_table (
-	arrow_flight_table_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	arrow_flight_table VARCHAR(200) NOT NULL, 
-	arrow_flight_table_desc TEXT, 
-	arrow_flight_id INTEGER, 
+CREATE TABLE IF NOT EXISTS flight_schema_table (
+	flight_schema_table_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	flight_schema_table VARCHAR(200) NOT NULL, 
+	flight_schema_table_desc TEXT, 
+	flight_schema_id INTEGER, 
 	active BOOLEAN, 
 	user_id INTEGER, 
 	app_id INTEGER, 
 	created_at DATETIME, 
 	updated_at DATETIME, 
 	excluded BOOLEAN, 
-	UNIQUE (arrow_flight_table), 
-	FOREIGN KEY(arrow_flight_id) REFERENCES arrow_flight (arrow_flight_id), 
+	UNIQUE (flight_schema_table), 
+	FOREIGN KEY(flight_schema_id) REFERENCES flight_schema (flight_schema_id), 
 	FOREIGN KEY(user_id) REFERENCES users (user_id), 
 	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );
-CREATE TABLE IF NOT EXISTS arrow_flight_table_field (
-	arrow_flight_table_field_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	arrow_flight_table_field VARCHAR(200) NOT NULL, 
-	arrow_flight_table_field_desc TEXT, 
-	arrow_flight_table_id INTEGER, 
-	arrow_flight_id INTEGER, 
+CREATE TABLE IF NOT EXISTS flight_schema_table_field (
+	flight_schema_table_field_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	flight_schema_table_field VARCHAR(200) NOT NULL, 
+	flight_schema_table_field_desc TEXT, 
+	flight_schema_table_id INTEGER, 
+	flight_schema_id INTEGER, 
 	active BOOLEAN, 
 	user_id INTEGER, 
 	app_id INTEGER, 
 	created_at DATETIME, 
 	updated_at DATETIME, 
 	excluded BOOLEAN, 
-	UNIQUE (arrow_flight_table_field), 
-	FOREIGN KEY(arrow_flight_table_id) REFERENCES arrow_flight_table (arrow_flight_table_id), 
-	FOREIGN KEY(arrow_flight_id) REFERENCES arrow_flight (arrow_flight_id), 
+	UNIQUE (flight_schema_table_field), 
+	FOREIGN KEY(flight_schema_table_id) REFERENCES flight_schema_table (flight_schema_table_id), 
+	FOREIGN KEY(flight_schema_id) REFERENCES flight_schema (flight_schema_id), 
 	FOREIGN KEY(user_id) REFERENCES users (user_id), 
 	FOREIGN KEY(app_id) REFERENCES app (app_id)
 );

@@ -59,9 +59,9 @@ Defines which **tables** may be exposed via Arrow Flight.
 
 | Field | Description |
 |-----|------------|
-| `arrow_flight_table` | Logical table name exposed to clients |
-| `arrow_flight_table_desc` | Description |
-| `arrow_flight_id` | Parent Arrow Flight schema |
+| `flight_schema_table` | Logical table name exposed to clients |
+| `flight_schema_table_desc` | Description |
+| `flight_schema_id` | Parent Arrow Flight schema |
 | `active` | Enables / disables the table |
 | `user_id` | Owner |
 | `app_id` | Application scope |
@@ -77,10 +77,10 @@ Defines **field-level visibility** per table.
 
 | Field | Description |
 |-----|------------|
-| `arrow_flight_table_field` | Column name |
-| `arrow_flight_table_field_desc` | Description |
-| `arrow_flight_table_id` | Parent table |
-| `arrow_flight_id` | Arrow Flight schema |
+| `flight_schema_table_field` | Column name |
+| `flight_schema_table_field_desc` | Description |
+| `flight_schema_table_id` | Parent table |
+| `flight_schema_id` | Arrow Flight schema |
 | `active` | Enables / disables the field |
 | `excluded` | Soft-delete flag |
 
@@ -104,11 +104,11 @@ Defines **data scopes** using SQL predicates.
 
 | Field | Description |
 |-----|------------|
-| `arrow_flight_table_scope` | Scope name |
-| `arrow_flight_table_scope_desc` | Description |
-| `arrow_flight_table_scope_sql` | SQL condition |
-| `arrow_flight_table_id` | Target table |
-| `arrow_flight_id` | Arrow Flight schema |
+| `flight_schema_table_scope` | Scope name |
+| `flight_schema_table_scope_desc` | Description |
+| `flight_schema_table_scope_sql` | SQL condition |
+| `flight_schema_table_id` | Target table |
+| `flight_schema_id` | Arrow Flight schema |
 | `active` | Enables / disables scope |
 | `excluded` | Soft-delete flag |
 
@@ -290,9 +290,9 @@ Arrow Flight allows Central-Set to function as a **governed data serving layer**
 
 It bridges **data engineering, governance, and analytics** — cleanly and safely.
 
-## Application-Aware Mode (`arrow_flight_conf`)
+## Application-Aware Mode (`flight_schema_conf`)
 
-Arrow Flight can optionally operate in **Application-Aware Mode** when the `arrow_flight_conf` field is defined.
+Arrow Flight can optionally operate in **Application-Aware Mode** when the `flight_schema_conf` field is defined.
 
 ### Example Configuration
 
@@ -389,7 +389,7 @@ This mode is more flexible but bypasses CRUD-level business logic.
 
 ## Summary
 
-If `arrow_flight_conf.app` is defined:
+If `flight_schema_conf.app` is defined:
 
 Arrow Flight behaves as a **high-performance analytical interface over the application’s database**, with full CRUD-level security enforcement.
 

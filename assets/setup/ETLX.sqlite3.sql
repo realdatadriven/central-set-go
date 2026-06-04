@@ -1,15 +1,15 @@
 BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS arrow_flight (
-	arrow_flight_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	arrow_flight VARCHAR(200) NOT NULL, 
-	arrow_flight_desc TEXT, 
-	arrow_flight_conf TEXT, 
+CREATE TABLE IF NOT EXISTS flight_schema (
+	flight_schema_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	flight_schema VARCHAR(200) NOT NULL, 
+	flight_schema_desc TEXT, 
+	flight_schema_conf TEXT, 
 	user_id INTEGER, 
 	app_id INTEGER, 
 	created_at DATETIME, 
 	updated_at DATETIME, 
 	excluded BOOLEAN, 
-	UNIQUE (arrow_flight)
+	UNIQUE (flight_schema)
 );
 CREATE TABLE IF NOT EXISTS dashboard (
 	dashboard_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 

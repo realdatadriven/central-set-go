@@ -45,13 +45,13 @@ cs_app:
     menu_icon: paper-airplane
     menu_order: 3
     active: true
-    #menu_config: '{"label": "flight_catalog","tooltip": "flight_catalog_desc","load_items": {"table": "flight_catalog","tables": ["flight_catalog"]}}'
+    menu_config: '{"label": "flight_catalog","tooltip": "flight_catalog_desc","load_items": {"table": "flight_catalog","tables": ["flight_catalog"]}}'
     tables:
-      #- {table: flight_catalog, requires_rla: true, active: true}
-      - {table: arrow_flight, requires_rla: true, active: true} # flight_schema
-      - {table: arrow_flight_table, active: false} # flight_schema_table
-      - {table: arrow_flight_table_field, active: false} # flight_schema_table_field
-      - {table: arrow_flight_table_scope, active: false} # flight_schema_table_scope
+      - {table: flight_catalog, requires_rla: true, active: true}
+      - {table: flight_schema, requires_rla: true, active: true}
+      - {table: flight_schema_table, active: false}
+      - {table: flight_schema_table_field, active: false}
+      - {table: flight_schema_table_scope, active: false}
   Quack:
     menu_icon: bolt
     menu_order: 4
@@ -681,21 +681,51 @@ form_layout:
   size: 8
 ```
 
-## ARROW_FLIGHT
+## FLIGHT_CATALOG
 ```yaml
-table: arrow_flight
-comment: Expose Arrow Flight
+table: flight_catalog
+comment: Arrow Flight Catalogs
 columns:
-  arrow_flight_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight:        { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 2 }
-  arrow_flight_desc:   { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
+  flight_catalog_id: { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  flight_catalog:    { type: varchar, len: 200, unique: true, nullable: false, comment: "Catalog Name", form_display: true, table_display: true, order: 1, form_size: 6 }
+  flight_catalog_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 6 }
+  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 3 }
+  user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:        { type: datetime, comment: "Created at" }
+  updated_at:        { type: datetime, comment: "Updated at" }
+  excluded:          { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {flight_catalog_id: 1, flight_catalog: "Default Catalog", flight_catalog_desc: "Default Arrow Flight catalog", active: true, app_id: 1, user_id: 1, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+  allow_in_subform: {flight_schema: true}
+form_extra_options: []
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: flight_catalog, order: ASC }
+  allow_import: false
+```
+
+## FLIGHT_SCHEMA
+```yaml
+table: flight_schema
+comment: Expose Arrow Flight Schema
+columns:
+  flight_schema_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  flight_catalog_id:   { type: integer, fk: "flight_catalog.flight_catalog_id", nullable: false, comment: "Flight Catalog", form_display: true, table_display: true, order: 2, form_size: 3 }
+  flight_schema:        { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 2 }
+  flight_schema_desc:   { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
   flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Schema Name", form_display: true, table_display: true, order: 3, form_size: 2 }
   startup_sql:         { type: text, comment: "Startup SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
   main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
   table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
   table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, order: 7, form_long_text: true, form_code: sql }
   shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
-  arrow_flight_conf:   { type: text, comment: "Configuration", form_display: true, order: 9, form_long_text: true, form_code: json}
+  flight_schema_conf:   { type: text, comment: "Configuration", form_display: true, order: 9, form_long_text: true, form_code: json}
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 10 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -703,33 +733,33 @@ columns:
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {arrow_flight_id: 1, arrow_flight: "Expose Admin DB", arrow_flight_desc: "Ex. Arrow Flight Schema using ADMIN app", flight_schema: adm, startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
+  - {flight_schema_id: 1, flight_catalog_id: 1, flight_schema: "Expose Admin DB", flight_schema_desc: "Ex. Arrow Flight Schema using ADMIN app", flight_schema: adm, startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 10
   sub_form_size: 10
-  allow_in_subform: {arrow_flight_table: true}
+  allow_in_subform: {flight_schema_table: true}
   tabs_steps_conf: []
 form_extra_options: []
 table_layout:
   allow_in_submenu: {}
   default_order:
-    - { field: arrow_flight, order: ASC }
+    - { field: flight_schema, order: ASC }
 ```
 
-## ARROW_FLIGHT_TABLE
+## FLIGHT_SCHEMA_TABLE
 ```yaml
-table: arrow_flight_table
-comment: Arrow Flight Tables
+table: flight_schema_table
+comment: Arrow Flight Schema Tables
 columns:
-  arrow_flight_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_id:         { type: integer, fk: "arrow_flight.arrow_flight_id", nullable: false, comment: "Arrow Flight", form_display: true, table_display: true, order: 1, form_size: 3 }
+  flight_schema_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  flight_schema_id:         { type: integer, fk: "flight_schema.flight_schema_id", nullable: false, comment: "Flight Schema", form_display: true, table_display: true, order: 1, form_size: 3 }
   table_name:              { type: varchar, len: 200, nullable: false, comment: "Table Name", form_display: true, table_display: true, order: 2, form_size: 3 }
   table_desc:              { type: text, comment: "Description", form_display: true, table_display: true, order: 6, form_long_text: true, form_code: markdown }
   order:                   { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
   active:                  { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
-  arrow_flight_table_conf: { type: text, comment: "Configuration", form_display: true, order: 6, form_size: 12, form_long_text: true, form_code: txt }
+  flight_schema_table_conf: { type: text, comment: "Configuration", form_display: true, order: 6, form_size: 12, form_long_text: true, form_code: txt }
   user_id:                 { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:              { type: datetime, comment: "Created at" }
@@ -741,27 +771,26 @@ form_layout:
   size: 8
   sub_form_size: 8
   allow_in_subform:
-    arrow_flight_table_field: true
-    arrow_flight_table_scope: true
+    flight_schema_table_field: true
+    flight_schema_table_scope: true
 table_layout:
-  allow_in_submenu: {}
   default_order:
     - { field: order, order: ASC }
   allow_import: false
 ```
 
-## ARROW_FLIGHT_TABLE_FIELD
+## FLIGHT_SCHEMA_TABLE_FIELD
 ```yaml
-table: arrow_flight_table_field
-comment: Arrow Flight - Tables Fields
+table: flight_schema_table_field
+comment: Arrow Flight Schema Table Fields
 columns:
-  arrow_flight_table_field_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table_field:      { type: varchar, len: 200, nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
-  arrow_flight_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 9 }
-  arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 3 }
-  arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", order: 4, form_display: true, table_display: true, form_size: 4 }
+  flight_schema_table_field_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  flight_schema_table_field:      { type: varchar, len: 200, nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
+  flight_schema_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 9 }
+  flight_schema_table_id:         { type: integer, fk: "flight_schema_table.flight_schema_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 3 }
+  flight_schema_id:               { type: integer, fk: "flight_schema.flight_schema_id", comment: "Arrow Flight ID", order: 4, form_display: true, table_display: true, form_size: 4 }
   active:                        { type: boolean, default: true, comment: "Active", order: 5, form_display: true, table_display: true, form_size: 4 }
-  user_id:                       { type: integer, fk: "users.user_id", comment: "User ID", }
+  user_id:                       { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:                    { type: datetime, comment: "Created at" }
   updated_at:                    { type: datetime, comment: "Updated at" }
@@ -772,17 +801,17 @@ form_layout:
   size: 5
 ```
 
-## ARROW_FLIGHT_TABLE_SCOPE
+## FLIGHT_SCHEMA_TABLE_SCOPE
 ```yaml
-table: arrow_flight_table_scope
-comment: Arrow Flight - Tables Scopes
+table: flight_schema_table_scope
+comment: Arrow Flight Schema Table Scopes
 columns:
-  arrow_flight_table_scope_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  arrow_flight_table_scope:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Scope Name", form_display: true, table_display: true, order: 1, form_size: 4 }
-  arrow_flight_table_scope_desc: { type: text, comment: "Scope Description", form_display: true, table_display: true, order: 2, form_size: 8 }
-  arrow_flight_table_scope_sql:  { type: text, nullable: false, comment: "Scope SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
-  arrow_flight_table_id:         { type: integer, fk: "arrow_flight_table.arrow_flight_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 4 }
-  arrow_flight_id:               { type: integer, fk: "arrow_flight.arrow_flight_id", comment: "Arrow Flight ID", form_display: true, table_display: true, order: 4, form_size: 4 }
+  flight_schema_table_scope_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  flight_schema_table_scope:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Scope Name", form_display: true, table_display: true, order: 1, form_size: 4 }
+  flight_schema_table_scope_desc: { type: text, comment: "Scope Description", form_display: true, table_display: true, order: 2, form_size: 8 }
+  flight_schema_table_scope_sql:  { type: text, nullable: false, comment: "Scope SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
+  flight_schema_table_id:         { type: integer, fk: "flight_schema_table.flight_schema_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 4 }
+  flight_schema_id:               { type: integer, fk: "flight_schema.flight_schema_id", comment: "Arrow Flight ID", form_display: true, table_display: true, order: 4, form_size: 4 }
   active:                        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5, form_size: 4 }
   user_id:                       { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }

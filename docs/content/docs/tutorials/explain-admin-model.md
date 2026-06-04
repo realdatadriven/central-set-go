@@ -78,7 +78,7 @@ ADMIN_MODEL.md
 ├── Security tables       → role_app, role_app_menu, role_app_menu_table, row_level_access, ...
 ├── UI & metadata tables  → table, table_schema, menu_table, custom_table, custom_form, ...
 ├── Dashboard tables      → dashboard, dashboard_comment
-├── Arrow Flight          → arrow_flight, arrow_flight_table, arrow_flight_table_scope, ...
+├── Arrow Flight          → flight_schema, flight_schema_table, flight_schema_table_scope, ...
 ├── Jobs & logging        → cron, cron_log, user_log
 ├── Integration & utils   → access_key, env, translate_table, translate_table_field
 ```
@@ -232,7 +232,7 @@ The `EvidenceDash` component interprets this field and can embed:
 ## 🚀 Arrow Flight / Data Service Exposure
 
 ```yaml {linenos=table}
-arrow_flight:
+flight_schema:
   flight_schema: adm
   startup_sql:   "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);"
   main_sql:      "USE adm;"

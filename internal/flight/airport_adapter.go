@@ -68,8 +68,8 @@ func (c *namedCatalog) Name() string {
 // AirportAdapter implements FlightManager using hugr-lab/airport-go.
 type AirportAdapter struct {
 	validateToken func(token string) (string, error)
-	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case arrow_flight_table mapping tables
-	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in arrow_flight_table is accessible to the user
+	table_access  func(params map[string]any, tables []any) map[string]any               // checks is a user has access to a specifc table in this case flight_schema_table mapping tables
+	rla_access    func(params map[string]any, tables []any, row_id []any) map[string]any // checks table in flight_schema_table is accessible to the user
 	read          func(params map[string]any) map[string]any                             // use CS internal read mechanism instead of raw query
 	grpcSrv       *grpc.Server
 	listener      net.Listener
@@ -121,16 +121,16 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 		var main_sql string
 		if startup_sql, ok := s["startup_sql"].(string); ok {
 			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
-			//fmt.Printf("%s: %s\n", s["arrow_flight"], startup_sql)
+			//fmt.Printf("%s: %s\n", s["flight_schema"], startup_sql)
 			_, err := conn.ExecContext(context.Background(), startup_sql)
 			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], startup_sql, err)
+				fmt.Printf("%s: %s: %s\n", s["flight_schema"], startup_sql, err)
 			}
 			main_sql = _etlx.ReplaceEnvVariable(s["main_sql"].(string))
-			//fmt.Printf("%s: %s\n", s["arrow_flight"], main_sql)
+			//fmt.Printf("%s: %s\n", s["flight_schema"], main_sql)
 			_, err = conn.ExecContext(context.Background(), main_sql)
 			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], main_sql, err)
+				fmt.Printf("%s: %s: %s\n", s["flight_schema"], main_sql, err)
 			}
 		}
 		// check if main_sql has use <schema>; is not do use <schema>;
@@ -220,10 +220,10 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 		// execute shutdown_sql
 		if shutdown_sql, ok := s["shutdown_sql"].(string); ok {
 			shutdown_sql := _etlx.ReplaceEnvVariable(shutdown_sql)
-			//fmt.Printf("%s: %s\n", s["arrow_flight"], shutdown_sql)
+			//fmt.Printf("%s: %s\n", s["flight_schema"], shutdown_sql)
 			_, err = conn.ExecContext(context.Background(), shutdown_sql)
 			if err != nil {
-				fmt.Printf("%s: %s: %s\n", s["arrow_flight"], shutdown_sql, err)
+				fmt.Printf("%s: %s: %s\n", s["flight_schema"], shutdown_sql, err)
 			}
 		}
 		// conn.ExecContext(context.Background(), "USE memory;")
@@ -371,20 +371,20 @@ func (a *AirportAdapter) getRLAIds(rla_access []map[string]any, table, access_ty
 func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName string, aSchema *arrow.Schema, conf map[string]any) func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 	return func(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
 		// CHECK IF TABLE IS ALLOWED MEANING IF THERE IS TABLE MAPPING, ONLLY THOSE ARE EXPOSED
-		arrow_flight_id := conf["arrow_flight_id"]
-		var arrow_flight_table_id any
+		flight_schema_id := conf["flight_schema_id"]
+		var flight_schema_table_id any
 		if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
 			found := false
 			if _, ok := tables[tableName].(map[string]any); ok {
 				found = true
-				arrow_flight_table_id = tables[tableName].(map[string]any)["arrow_flight_table_id"]
+				flight_schema_table_id = tables[tableName].(map[string]any)["flight_schema_table_id"]
 			}
 			if !found {
 				return nil, fmt.Errorf("table %s not allowed", tableName)
 			}
 		}
 		// CHECK IF USER HAS ACCESS TO SPECIFC TABLE
-		// fmt.Println("arrow_flight_id:", arrow_flight_id, "arrow_flight_table_id:", arrow_flight_table_id)
+		// fmt.Println("flight_schema_id:", flight_schema_id, "flight_schema_table_id:", flight_schema_table_id)
 		user, err := IdentityJSONToMap(airport.IdentityFromContext(ctx))
 		if err != nil {
 			return nil, fmt.Errorf("Error getting Identity From Context %v", err)
@@ -396,79 +396,79 @@ func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName st
 			rla_tables = conf["rla_tables"].([]string)
 		}
 		//fmt.Println(user["role_id"] != 1, user["role_id"] != any(1.0), user)
-		// check if arrow_flight is in rla_tables
+		// check if flight_schema is in rla_tables
 		//fmt.Printf("%T", conf["rla_tables"])
-		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "arrow_flight")
+		//fmt.Println(conf["rla_tables"], rla_tables, " CHECK CONTAINS ", "flight_schema")
 		//schema_permissions := map[string]any{}
 		//schema_table_permissions := map[string]any{}
 		scopes_access := map[string]any{}
 		fields_access := map[string]any{}
-		if user["role_id"] != any(1.0) && (a.contains(rla_tables, "arrow_flight") ||
-			a.contains(rla_tables, "arrow_flight_table") ||
-			a.contains(rla_tables, "arrow_flight_table_field") ||
-			a.contains(rla_tables, "arrow_flight_table_scope")) {
+		if user["role_id"] != any(1.0) && (a.contains(rla_tables, "flight_schema") ||
+			a.contains(rla_tables, "flight_schema_table") ||
+			a.contains(rla_tables, "flight_schema_table_field") ||
+			a.contains(rla_tables, "flight_schema_table_scope")) {
 			/*schema_access := a.table_access(
 				map[string]any{
 					"app":  map[string]any{"app_id": 1},
 					"data": map[string]any{},
 					"user": user,
-				}, []any{"arrow_flight", "arrow_flight_table"})
+				}, []any{"flight_schema", "flight_schema_table"})
 			if !schema_access["success"].(bool) {
 				fmt.Println("schema_access:", tableName, schema_access["msg"])
 			} else if _, ok := schema_access["data"]; ok {
 				_permissions := schema_access["data"].(map[string]any)
-				if _, ok := _permissions["arrow_flight"]; ok {
-					schema_permissions = _permissions["arrow_flight"].(map[string]any)
+				if _, ok := _permissions["flight_schema"]; ok {
+					schema_permissions = _permissions["flight_schema"].(map[string]any)
 				} else {
 					return nil, fmt.Errorf("Access denied access to the schema %s!", schemaName)
 				}
-				if _, ok := _permissions["arrow_flight_table"]; ok {
-					schema_table_permissions = _permissions["arrow_flight_table"].(map[string]any)
+				if _, ok := _permissions["flight_schema_table"]; ok {
+					schema_table_permissions = _permissions["flight_schema_table"].(map[string]any)
 				} else {
 					return nil, fmt.Errorf("Access denied access to the table %s from schema %s!", schemaName, tableName)
 				}
 			}*/
 			// setup for fields access
-			arrow_flight_table_field_ids := []any{}
+			flight_schema_table_field_ids := []any{}
 			_field_id_map := map[string]any{}
-			if a.contains(rla_tables, "arrow_flight_table_field") {
+			if a.contains(rla_tables, "flight_schema_table_field") {
 				if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
 					if tableConf, ok := tables[tableName].(map[string]any); ok {
 						if fields, ok := tableConf["fields"].(map[string]any); ok && len(fields) > 0 {
 							for field := range fields {
-								arrow_flight_table_field_ids = append(arrow_flight_table_field_ids, fields[field].(map[string]any)["arrow_flight_table_field_id"])
-								_field_id_map[field] = fields[field].(map[string]any)["arrow_flight_table_field_id"]
+								flight_schema_table_field_ids = append(flight_schema_table_field_ids, fields[field].(map[string]any)["flight_schema_table_field_id"])
+								_field_id_map[field] = fields[field].(map[string]any)["flight_schema_table_field_id"]
 							}
 						}
 					}
 				}
 			}
 			// SCOPE ACCESS
-			arrow_flight_table_scope_ids := []any{}
+			flight_schema_table_scope_ids := []any{}
 			_scope_id_map := map[string]any{}
-			if a.contains(rla_tables, "arrow_flight_table_scope") {
+			if a.contains(rla_tables, "flight_schema_table_scope") {
 				if tables, ok := conf["tables"].(map[string]any); ok && len(tables) > 0 {
 					if tableConf, ok := tables[tableName].(map[string]any); ok {
 						if scopes, ok := tableConf["scopes"].(map[string]any); ok && len(scopes) > 0 {
 							for scope := range scopes {
-								arrow_flight_table_scope_ids = append(arrow_flight_table_scope_ids, scopes[scope].(map[string]any)["arrow_flight_table_scope_id"])
-								_scope_id_map[scope] = scopes[scope].(map[string]any)["arrow_flight_table_scope_id"]
+								flight_schema_table_scope_ids = append(flight_schema_table_scope_ids, scopes[scope].(map[string]any)["flight_schema_table_scope_id"])
+								_scope_id_map[scope] = scopes[scope].(map[string]any)["flight_schema_table_scope_id"]
 							}
-							fmt.Println("SCOPES:", arrow_flight_table_scope_ids, _scope_id_map)
+							fmt.Println("SCOPES:", flight_schema_table_scope_ids, _scope_id_map)
 						}
 					}
 				}
 			}
 			// RUN THE ACCESSS
-			_ids := append([]any{arrow_flight_id, arrow_flight_table_id}, arrow_flight_table_field_ids...)
-			_ids = append(_ids, arrow_flight_table_scope_ids...)
+			_ids := append([]any{flight_schema_id, flight_schema_table_id}, flight_schema_table_field_ids...)
+			_ids = append(_ids, flight_schema_table_scope_ids...)
 			rla_access := a.rla_access(
 				map[string]any{
 					"app":  map[string]any{"app_id": 1},
 					"data": map[string]any{},
 					"user": user,
 				},
-				[]any{"arrow_flight", "arrow_flight_table", "arrow_flight_table_field", "arrow_flight_table_scope"},
+				[]any{"flight_schema", "flight_schema_table", "flight_schema_table_field", "flight_schema_table_scope"},
 				_ids,
 			)
 			//fmt.Println("rla_access:", tableName, rla_access)
@@ -476,63 +476,63 @@ func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName st
 				fmt.Println("rla_access:", tableName, rla_access["msg"])
 			} else if _, ok := rla_access["data"]; ok {
 				_permissions := rla_access["data"].(map[string]any)
-				if _, ok := _permissions["arrow_flight"]; ok {
-					_schema := _permissions["arrow_flight"].([]map[string]any)
-					ids := a.getRLAIds(_schema, "arrow_flight", "read")
-					//fmt.Println("arrow_flight row ids:", ids)
-					if !a.containsInt(ids, arrow_flight_id) {
+				if _, ok := _permissions["flight_schema"]; ok {
+					_schema := _permissions["flight_schema"].([]map[string]any)
+					ids := a.getRLAIds(_schema, "flight_schema", "read")
+					//fmt.Println("flight_schema row ids:", ids)
+					if !a.containsInt(ids, flight_schema_id) {
 						return nil, fmt.Errorf("Access denied to the schema \"%s\"!", schemaName)
 					}
-				} else if a.contains(rla_tables, "arrow_flight") {
+				} else if a.contains(rla_tables, "flight_schema") {
 					return nil, fmt.Errorf("Access denied to the schema \"%s\"!", schemaName)
 				}
-				if _, ok := _permissions["arrow_flight_table"]; ok {
-					_schema_table := _permissions["arrow_flight_table"].([]map[string]any)
-					ids := a.getRLAIds(_schema_table, "arrow_flight_table", "read")
-					//fmt.Println("arrow_flight_table row ids:", _schema_table, ids)
-					if !a.containsInt(ids, arrow_flight_table_id) {
+				if _, ok := _permissions["flight_schema_table"]; ok {
+					_schema_table := _permissions["flight_schema_table"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table, "flight_schema_table", "read")
+					//fmt.Println("flight_schema_table row ids:", _schema_table, ids)
+					if !a.containsInt(ids, flight_schema_table_id) {
 						return nil, fmt.Errorf("Access denied to the table \"%s\" from schema \"%s\"!", tableName, schemaName)
 					}
-				} else if a.contains(rla_tables, "arrow_flight_table") {
+				} else if a.contains(rla_tables, "flight_schema_table") {
 					return nil, fmt.Errorf("Access denied to the table \"%s\" from schema \"%s\"!", tableName, schemaName)
 				}
 				// FIELDS ACCESS
-				if _, ok := _permissions["arrow_flight_table_field"]; ok {
-					_schema_table_field := _permissions["arrow_flight_table_field"].([]map[string]any)
-					ids := a.getRLAIds(_schema_table_field, "arrow_flight_table_field", "read")
+				if _, ok := _permissions["flight_schema_table_field"]; ok {
+					_schema_table_field := _permissions["flight_schema_table_field"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table_field, "flight_schema_table_field", "read")
 					if len(ids) == 0 {
 						return nil, fmt.Errorf("Access denied, fileds level access are required on table \"%s\" from schema \"%s\", and you have access to none!", tableName, schemaName)
 					}
-					//fmt.Println("arrow_flight_table_field row ids:", _schema_table, ids)
-					for field, arrow_flight_table_field_id := range _field_id_map {
-						if a.containsInt(ids, arrow_flight_table_field_id) {
+					//fmt.Println("flight_schema_table_field row ids:", _schema_table, ids)
+					for field, flight_schema_table_field_id := range _field_id_map {
+						if a.containsInt(ids, flight_schema_table_field_id) {
 							fields_access[field] = true
 							//return nil, fmt.Errorf("Access denied to the field \"%s\" in the table \"%s\" from schema \"%s\"!", field, tableName, schemaName)
 						} else {
 							fields_access[field] = false
 						}
 					}
-				} else if a.contains(rla_tables, "arrow_flight_table_field") {
+				} else if a.contains(rla_tables, "flight_schema_table_field") {
 					for field := range _field_id_map {
 						fields_access[field] = false
 					}
 					return nil, fmt.Errorf("Access denied to the fields on table \"%s\" from schema \"%s\"!", tableName, schemaName)
 				}
 				// SCOPE ACCESS
-				if _, ok := _permissions["arrow_flight_table_scope"]; ok {
-					_schema_table_scope := _permissions["arrow_flight_table_scope"].([]map[string]any)
-					ids := a.getRLAIds(_schema_table_scope, "arrow_flight_table_scope", "read")
+				if _, ok := _permissions["flight_schema_table_scope"]; ok {
+					_schema_table_scope := _permissions["flight_schema_table_scope"].([]map[string]any)
+					ids := a.getRLAIds(_schema_table_scope, "flight_schema_table_scope", "read")
 					if len(ids) == 0 {
 						return nil, fmt.Errorf("Access denied, scopes are required on table \"%s\" from schema \"%s\", and you have access to none!", tableName, schemaName)
 					}
-					for scope, arrow_flight_table_scope_id := range _scope_id_map {
-						if a.containsInt(ids, arrow_flight_table_scope_id) {
+					for scope, flight_schema_table_scope_id := range _scope_id_map {
+						if a.containsInt(ids, flight_schema_table_scope_id) {
 							scopes_access[scope] = true
 						} else {
 							scopes_access[scope] = false
 						}
 					}
-				} else if a.contains(rla_tables, "arrow_flight_table_scope") {
+				} else if a.contains(rla_tables, "flight_schema_table_scope") {
 					for scope := range _scope_id_map {
 						scopes_access[scope] = false
 					}
@@ -554,28 +554,28 @@ func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName st
 			conn := sql.OpenDB(db)
 			defer conn.Close()
 			if shutdown_sql, ok := conf["shutdown_sql"].(string); ok {
-				//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["shutdown_sql"])
+				//fmt.Printf("%s: %s\n", conf["flight_schema"], conf["shutdown_sql"])
 				shutdown_sql = _etlx.ReplaceEnvVariable(shutdown_sql)
 				_, err := conn.ExecContext(context.Background(), shutdown_sql)
 				if err != nil {
-					fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], shutdown_sql, err)
+					fmt.Printf("Err %s: %s: %s\n", conf["flight_schema"], shutdown_sql, err)
 				}
 			}
 			db.Close()
 		}()
 		// EXECUTE STARTUP SQL
 		if startup_sql, ok := conf["startup_sql"].(string); ok {
-			//fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["startup_sql"])
+			//fmt.Printf("%s: %s\n", conf["flight_schema"], conf["startup_sql"])
 			startup_sql = _etlx.ReplaceEnvVariable(startup_sql)
 			_, err := conn.ExecContext(context.Background(), startup_sql)
 			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], startup_sql, err)
+				fmt.Printf("Err %s: %s: %s\n", conf["flight_schema"], startup_sql, err)
 			}
-			// fmt.Printf("%s: %s\n", conf["arrow_flight"], conf["main_sql"])
+			// fmt.Printf("%s: %s\n", conf["flight_schema"], conf["main_sql"])
 			main_sql := _etlx.ReplaceEnvVariable(conf["main_sql"].(string))
 			_, err = conn.ExecContext(context.Background(), main_sql)
 			if err != nil {
-				fmt.Printf("Err %s: %s: %s\n", conf["arrow_flight"], main_sql, err)
+				fmt.Printf("Err %s: %s: %s\n", conf["flight_schema"], main_sql, err)
 			}
 		}
 		// MAP FIELD TYPES
@@ -638,7 +638,7 @@ func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName st
 			if tableConf, ok := tables[tableName].(map[string]any); ok {
 				if scopes, ok := tableConf["scopes"].(map[string]any); ok && len(scopes) > 0 {
 					for scope := range scopes {
-						scope_sql := scopes[scope].(map[string]any)["arrow_flight_table_scope_sql"].(string)
+						scope_sql := scopes[scope].(map[string]any)["flight_schema_table_scope_sql"].(string)
 						scope_sql = _etlx.ReplaceEnvVariable(scope_sql)
 						if len(scopes_access) > 0 {
 							if _access, ok := scopes_access[scope].(bool); ok {

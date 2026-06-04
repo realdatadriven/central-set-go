@@ -2,45 +2,45 @@
 
 \connect "ETLX";
 
-DROP TABLE IF EXISTS "arrow_flight";
-DROP SEQUENCE IF EXISTS arrow_flight_arrow_flight_id_seq;
-CREATE SEQUENCE arrow_flight_arrow_flight_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
+DROP TABLE IF EXISTS "flight_schema";
+DROP SEQUENCE IF EXISTS flight_schema_flight_schema_id_seq;
+CREATE SEQUENCE flight_schema_flight_schema_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
-CREATE TABLE "public"."arrow_flight" (
-    "arrow_flight_id" integer DEFAULT nextval('arrow_flight_arrow_flight_id_seq') NOT NULL,
-    "arrow_flight" character varying(200) NOT NULL,
-    "arrow_flight_desc" text,
-    "arrow_flight_conf" text,
+CREATE TABLE "public"."flight_schema" (
+    "flight_schema_id" integer DEFAULT nextval('flight_schema_flight_schema_id_seq') NOT NULL,
+    "flight_schema" character varying(200) NOT NULL,
+    "flight_schema_desc" text,
+    "flight_schema_conf" text,
     "user_id" integer,
     "app_id" integer,
     "created_at" timestamp,
     "updated_at" timestamp,
     "excluded" boolean,
-    CONSTRAINT "arrow_flight_pkey" PRIMARY KEY ("arrow_flight_id")
+    CONSTRAINT "flight_schema_pkey" PRIMARY KEY ("flight_schema_id")
 )
 WITH (oids = false);
 
-COMMENT ON TABLE "public"."arrow_flight" IS 'Expose Arrow Flight';
+COMMENT ON TABLE "public"."flight_schema" IS 'Expose Arrow Flight';
 
-COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight_id" IS 'ID';
+COMMENT ON COLUMN "public"."flight_schema"."flight_schema_id" IS 'ID';
 
-COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight" IS 'Name';
+COMMENT ON COLUMN "public"."flight_schema"."flight_schema" IS 'Name';
 
-COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight_desc" IS 'Description';
+COMMENT ON COLUMN "public"."flight_schema"."flight_schema_desc" IS 'Description';
 
-COMMENT ON COLUMN "public"."arrow_flight"."arrow_flight_conf" IS 'Config Text';
+COMMENT ON COLUMN "public"."flight_schema"."flight_schema_conf" IS 'Config Text';
 
-COMMENT ON COLUMN "public"."arrow_flight"."user_id" IS 'User ID';
+COMMENT ON COLUMN "public"."flight_schema"."user_id" IS 'User ID';
 
-COMMENT ON COLUMN "public"."arrow_flight"."app_id" IS 'App ID';
+COMMENT ON COLUMN "public"."flight_schema"."app_id" IS 'App ID';
 
-COMMENT ON COLUMN "public"."arrow_flight"."created_at" IS 'Created at';
+COMMENT ON COLUMN "public"."flight_schema"."created_at" IS 'Created at';
 
-COMMENT ON COLUMN "public"."arrow_flight"."updated_at" IS 'Updated at';
+COMMENT ON COLUMN "public"."flight_schema"."updated_at" IS 'Updated at';
 
-COMMENT ON COLUMN "public"."arrow_flight"."excluded" IS 'Excluded';
+COMMENT ON COLUMN "public"."flight_schema"."excluded" IS 'Excluded';
 
-CREATE UNIQUE INDEX arrow_flight_arrow_flight_key ON public.arrow_flight USING btree (arrow_flight);
+CREATE UNIQUE INDEX flight_schema_flight_schema_key ON public.flight_schema USING btree (flight_schema);
 
 
 DROP TABLE IF EXISTS "dashboard";
