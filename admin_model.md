@@ -2,6 +2,7 @@
 <!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
 <!-- markdownlint-disable MD012 -->
+<!-- markdownlint-disable MD047 -->
 # ADMMIN_MODEL
 ```yaml
 name: ADMIN
