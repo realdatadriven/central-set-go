@@ -101,6 +101,11 @@ func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 			fmt.Println("invalid config: schemas must be an array of objects")
 			continue
 		}
+		catalog_name, ok := c["catalog_name"].(string)
+		if !ok {
+			fmt.Println("invalid config: catalog_name must be a string")
+			continue
+		}
 		for _, s := range schemas {
 			schemaName := s["flight_schema"].(string)
 			// create a schema builder for this schema
@@ -222,7 +227,7 @@ func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 		if err != nil {
 			return fmt.Errorf("failed to build catalog: %w", err)
 		}
-		catalogs = append(catalogs, cat) // &namedCatalog{Catalog: cat, name: "catalog_name"} // For multi-catalog support
+		catalogs = append(catalogs, &namedCatalog{Catalog: cat, name: catalog_name}) // For multi-catalog support
 	}
 	// Create grpc server and register airport server
 	debugLevel := slog.LevelInfo
