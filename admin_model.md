@@ -704,11 +704,9 @@ form_layout:
   form_in_popup: false
   size: 9
   allow_in_subform: {flight_schema: true}
-form_extra_options: []
 table_layout:
-  allow_in_submenu: {}
   default_order:
-    - { field: flight_catalog, order: ASC }
+    - { field: flight_catalog_id, order: ASC }
   allow_import: false
 ```
 
@@ -741,12 +739,9 @@ form_layout:
   size: 10
   sub_form_size: 10
   allow_in_subform: {flight_schema_table: true}
-  tabs_steps_conf: []
-form_extra_options: []
 table_layout:
-  allow_in_submenu: {}
   default_order:
-    - { field: flight_schema, order: ASC }
+    - { field: flight_schema_id, order: ASC }
 ```
 
 ## FLIGHT_SCHEMA_TABLE
@@ -756,16 +751,16 @@ comment: Arrow Flight Schema Tables
 columns:
   flight_schema_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   flight_schema_id:         { type: integer, fk: "flight_schema.flight_schema_id", nullable: false, comment: "Flight Schema", form_display: true, table_display: true, order: 1, form_size: 3 }
-  table_name:              { type: varchar, len: 200, nullable: false, comment: "Table Name", form_display: true, table_display: true, order: 2, form_size: 3 }
-  table_desc:              { type: text, comment: "Description", form_display: true, table_display: true, order: 6, form_long_text: true, form_code: markdown }
-  order:                   { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
-  active:                  { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
+  table_name:               { type: varchar, len: 200, nullable: false, comment: "Table Name", form_display: true, table_display: true, order: 2, form_size: 3 }
+  table_desc:               { type: text, comment: "Description", form_display: true, table_display: true, order: 6, form_long_text: true, form_code: markdown }
+  order:                    { type: integer, comment: "Order", form_display: true, table_display: true, order: 3, form_size: 3 }
+  active:                   { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 3 }
   flight_schema_table_conf: { type: text, comment: "Configuration", form_display: true, order: 6, form_size: 12, form_long_text: true, form_code: txt }
-  user_id:                 { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:              { type: datetime, comment: "Created at" }
-  updated_at:              { type: datetime, comment: "Updated at" }
-  excluded:                { type: boolean, default: false, comment: "Excluded" }
+  user_id:                  { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:                   { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:               { type: datetime, comment: "Created at" }
+  updated_at:               { type: datetime, comment: "Updated at" }
+  excluded:                 { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -790,12 +785,12 @@ columns:
   flight_schema_table_field_desc: { type: text, comment: "Field Description", form_display: true, table_display: true, order: 2, form_size: 9 }
   flight_schema_table_id:         { type: integer, fk: "flight_schema_table.flight_schema_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 3 }
   flight_schema_id:               { type: integer, fk: "flight_schema.flight_schema_id", comment: "Arrow Flight ID", order: 4, form_display: true, table_display: true, form_size: 4 }
-  active:                        { type: boolean, default: true, comment: "Active", order: 5, form_display: true, table_display: true, form_size: 4 }
-  user_id:                       { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:                    { type: datetime, comment: "Created at" }
-  updated_at:                    { type: datetime, comment: "Updated at" }
-  excluded:                      { type: boolean, default: false, comment: "Excluded" }
+  active:                         { type: boolean, default: true, comment: "Active", order: 5, form_display: true, table_display: true, form_size: 4 }
+  user_id:                        { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:                         { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:                     { type: datetime, comment: "Created at" }
+  updated_at:                     { type: datetime, comment: "Updated at" }
+  excluded:                       { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -813,12 +808,12 @@ columns:
   flight_schema_table_scope_sql:  { type: text, nullable: false, comment: "Scope SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
   flight_schema_table_id:         { type: integer, fk: "flight_schema_table.flight_schema_table_id", comment: "Arrow Flight Table ID", form_display: true, table_display: true, order: 3, form_size: 4 }
   flight_schema_id:               { type: integer, fk: "flight_schema.flight_schema_id", comment: "Arrow Flight ID", form_display: true, table_display: true, order: 4, form_size: 4 }
-  active:                        { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5, form_size: 4 }
-  user_id:                       { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:                        { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:                    { type: datetime, comment: "Created at" }
-  updated_at:                    { type: datetime, comment: "Updated at" }
-  excluded:                      { type: boolean, default: false, comment: "Excluded" }
+  active:                         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5, form_size: 4 }
+  user_id:                        { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:                         { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:                     { type: datetime, comment: "Created at" }
+  updated_at:                     { type: datetime, comment: "Updated at" }
+  excluded:                       { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
