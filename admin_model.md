@@ -1298,3 +1298,26 @@ data:
   updated_at:    Now()
   excluded:      false
 ```
+
+# RUN_ESPECIFC_SQL
+```yaml
+name: Run domain specifc sql
+runs_as: MODEL_SQL
+description: Run domain specifc sql
+connection: '@DB_DRIVER_NAME:@DB_DSN'
+active: false
+```
+
+## PROCEDURE_1
+```yaml
+name: PROCEDURE_1
+description: Create store procedure with domain specifc sql
+connection: '@DB_DRIVER_NAME:@DB_DSN'
+script_sql: pg_procedure
+active: true
+```
+
+```sql
+-- pg_procedure
+DROP TEMP_TABLE1;
+```
