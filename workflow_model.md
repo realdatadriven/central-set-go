@@ -2,6 +2,7 @@
 <!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
 <!-- markdownlint-disable MD012 -->
+<!-- markdownlint-disable MD047 -->
 # WORKFLOW_MODEL
 ```yaml
 name: WORKFLOW
@@ -691,4 +692,413 @@ responsibles:
   - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, role: owner}
 subscribers:
   - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, start: true, complete: true}
+```
+
+---
+
+# HELPDESK SUPPORT WORKFLOW
+
+**Workflow Overview:** Complete IT Help Desk Support Process with Ticket Opening, Assignment, Resolution, Quality Verification, and Customer Approval.
+
+```yaml
+name: HELPDESK_SUPPORT
+table: workflow
+runs_as: WORKFLOW
+description: Comprehensive IT Help Desk Support Workflow with Multi-Step Approval and Resolution Process
+icon: lifebuoy
+order: 2
+version: v1.0.0
+orientation: vertical
+database: HELPDESK
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+active: true
+email_template: |
+  <h1>Support Ticket Update</h1>
+  <p>Your support ticket #{{ticket_number}} has been updated.</p>
+  <p><strong>Status:</strong> {{current_status}}</p>
+  <p><strong>Current Step:</strong> {{current_step}}</p>
+  <p><strong>Details:</strong> {{step_description}}</p>
+```
+
+## HELPDESK SLA RULES
+
+```yaml
+name: HELPDESK_SLA_CRITICAL
+table: workflow_sla
+workflow_name: HELPDESK_SUPPORT
+sla_name: "Critical Priority SLA"
+description: "SLA for critical issues - 1 hour response, 4 hours resolution"
+duration_hours: 4
+escalation_hours: 1
+priority: critical
+active: true
+```
+
+```yaml
+name: HELPDESK_SLA_HIGH
+table: workflow_sla
+workflow_name: HELPDESK_SUPPORT
+sla_name: "High Priority SLA"
+description: "SLA for high priority issues - 4 hours response, 8 hours resolution"
+duration_hours: 8
+escalation_hours: 4
+priority: high
+active: true
+```
+
+```yaml
+name: HELPDESK_SLA_NORMAL
+table: workflow_sla
+workflow_name: HELPDESK_SUPPORT
+sla_name: "Normal Priority SLA"
+description: "SLA for normal priority issues - 8 hours response, 24 hours resolution"
+duration_hours: 24
+escalation_hours: 12
+priority: normal
+active: true
+```
+
+## STEP 1: TICKET OPENING
+
+**Description:** Customer submits a new support ticket with issue details.
+
+```yaml
+name: STEP_1_TICKET_OPENING
+table: workflow_step
+workflow_name: HELPDESK_SUPPORT
+step: "Ticket Opening"
+step_desc: "Customer initiates a support ticket by providing issue details, affected system, and impact assessment"
+step_order: 1
+step_icon: ticket-plus
+step_color: blue
+active: true
+api: /api/helpdesk/ticket/create
+step_email_template: |
+  <h2>New Support Ticket Received</h2>
+  <p>Your ticket <strong>#{{ticket_number}}</strong> has been successfully created.</p>
+  <p><strong>Title:</strong> {{issue_title}}</p>
+  <p><strong>Priority:</strong> {{priority_level}}</p>
+  <p><strong>Created:</strong> {{created_at}}</p>
+
+# Rich Schema for Ticket Opening
+schema:
+  - {field: customer_email, label: "Customer Email", data_type: varchar, input_type: text, nullable: false, size: 6, order_index: 1, validation_rule: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', default_value: null}
+  - {field: customer_name, label: "Customer Full Name", data_type: varchar, input_type: text, nullable: false, size: 6, order_index: 2}
+  - {field: phone_number, label: "Contact Phone Number", data_type: varchar, input_type: text, nullable: true, size: 4, order_index: 3, validation_rule: '^\+?[0-9]{7,15}$'}
+  - {field: issue_title, label: "Issue Title", data_type: varchar, input_type: text, nullable: false, size: 12, order_index: 4}
+  - {field: issue_description, label: "Detailed Issue Description", data_type: text, input_type: textarea, nullable: false, size: 12, order_index: 5}
+  - {field: affected_system, label: "Affected System/Application", data_type: varchar, input_type: radio, nullable: false, size: 6, order_index: 6, options: '[{"label": "Email System", "value": "email"}, {"label": "VPN", "value": "vpn"}, {"label": "File Server", "value": "fileserver"}, {"label": "Database", "value": "database"}, {"label": "Web Application", "value": "webapp"}, {"label": "Other", "value": "other"}]'}
+  - {field: priority_level, label: "Priority Level", data_type: varchar, input_type: radio, nullable: false, size: 6, order_index: 7, options: '[{"label": "Critical - System Down", "value": "critical"}, {"label": "High - Significant Impact", "value": "high"}, {"label": "Normal - Minor Impact", "value": "normal"}, {"label": "Low - Documentation", "value": "low"}]', default_value: normal}
+  - {field: impact_users_count, label: "Number of Users Affected", data_type: integer, input_type: text, nullable: false, size: 3, order_index: 8}
+  - {field: has_workaround, label: "Is there a Workaround?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 9}
+  - {field: workaround_description, label: "Workaround Details (if applicable)", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 10}
+  - {field: ticket_attachment_ref, label: "Attachment Reference (URL or Path)", data_type: varchar, input_type: text, nullable: true, size: 12, order_index: 11}
+
+# Step Conditions
+conditions:
+  - cond_description: "Auto-escalate if critical and no response within SLA"
+    cond_trigger: |
+      priority_level === 'critical' && 
+      (new Date() - started_at) > 3600000
+    cond_action: |
+      escalation_flag = true;
+      notify_manager = true;
+
+  - cond_description: "Auto-assign low priority to self-service knowledge base"
+    cond_trigger: |
+      priority_level === 'low'
+    cond_action: |
+      assigned_to_team = 'knowledge_base';
+      auto_response = true;
+
+# Responsibles for Step
+responsibles:
+  - {email: support@company.com, first_name: Support, last_name: Team, role: owner, department_id: 3}
+
+# Subscribers
+subscribers:
+  - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: supervisor, notify_on_start: true, notify_on_complete: true, notify_on_escalation: true}
+
+# Step SLA
+step_sla:
+  - {name: "Ticket Opening SLA", description: "Time allowed for customer to complete ticket submission", duration_hours: 1, escalation_hours: 0.5, priority: normal, active: true}
+```
+
+## STEP 2: TICKET REVIEW & ASSIGNMENT
+
+**Description:** Support team lead reviews ticket and assigns to appropriate technician based on expertise and workload.
+
+```yaml
+name: STEP_2_TICKET_REVIEW_ASSIGNMENT
+table: workflow_step
+workflow_name: HELPDESK_SUPPORT
+step: "Ticket Review & Assignment"
+step_desc: "Support supervisor reviews ticket details, determines urgency, and assigns to qualified technician"
+step_order: 2
+step_icon: user-check
+step_color: purple
+active: true
+api: /api/helpdesk/ticket/assign
+step_email_template: |
+  <h2>Ticket Assignment Notice</h2>
+  <p>Ticket <strong>#{{ticket_number}}</strong> has been assigned to you.</p>
+  <p><strong>Title:</strong> {{issue_title}}</p>
+  <p><strong>Priority:</strong> {{priority_level}}</p>
+  <p><strong>Assigned By:</strong> {{assigned_by_name}}</p>
+  <p><strong>SLA End Time:</strong> {{sla_deadline}}</p>
+
+schema:
+  - {field: ticket_number, label: "Ticket Number", data_type: varchar, input_type: text, nullable: false, size: 4, order_index: 1, default_value: "AUTO-GENERATED"}
+  - {field: review_notes, label: "Supervisor Review Notes", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 2}
+  - {field: assigned_technician, label: "Assign to Technician", data_type: varchar, input_type: radio, nullable: false, size: 6, order_index: 3, options: '[{"label": "John Smith - Network Expert", "value": "john.smith@company.com"}, {"label": "Sarah Johnson - Database DBA", "value": "sarah.johnson@company.com"}, {"label": "Mike Chen - Application Support", "value": "mike.chen@company.com"}, {"label": "Lisa Rodriguez - Infrastructure", "value": "lisa.rodriguez@company.com"}]'}
+  - {field: urgency_assessment, label: "Reassess Priority", data_type: varchar, input_type: radio, nullable: false, size: 6, order_index: 4, options: '[{"label": "Confirmed Critical", "value": "critical"}, {"label": "High Priority", "value": "high"}, {"label": "Normal Priority", "value": "normal"}, {"label": "Can Wait", "value": "low"}]'}
+  - {field: expected_resolution_time, label: "Expected Resolution Time (hours)", data_type: integer, input_type: text, nullable: true, size: 3, order_index: 5}
+  - {field: requires_manager_approval, label: "Requires Manager Approval?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 6}
+  - {field: approval_reason, label: "Reason for Manager Approval (if needed)", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
+
+conditions:
+  - cond_description: "Route critical tickets requiring manager approval"
+    cond_trigger: |
+      requires_manager_approval === true &&
+      urgency_assessment === 'critical'
+    cond_action: |
+      approval_required = true;
+      route_to_manager = true;
+      escalation_level = 'manager';
+
+responsibles:
+  - {email: support-supervisor@company.com, first_name: Support, last_name: Supervisor, role: owner, department_id: 3}
+
+subscribers:
+  - {email: it-director@company.com, first_name: IT, last_name: Director, subscriber_type: supervisor, notify_on_complete: true, notify_on_escalation: true}
+  - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: observer, notify_on_start: true}
+```
+
+## STEP 3: ISSUE RESOLUTION
+
+**Description:** Assigned technician works on resolving the issue, updating status and adding notes.
+
+```yaml
+name: STEP_3_ISSUE_RESOLUTION
+table: workflow_step
+workflow_name: HELPDESK_SUPPORT
+step: "Issue Resolution"
+step_desc: "Technician diagnoses and resolves the issue, maintaining detailed resolution logs"
+step_order: 3
+step_icon: wrench
+step_color: yellow
+active: true
+api: /api/helpdesk/ticket/resolve
+step_email_template: |
+  <h2>Working on Your Ticket</h2>
+  <p>Our technician is actively working on ticket <strong>#{{ticket_number}}</strong>.</p>
+  <p><strong>Current Status:</strong> {{resolution_status}}</p>
+  <p><strong>Progress:</strong> {{progress_percentage}}%</p>
+  <p><strong>Last Update:</strong> {{last_update_time}}</p>
+
+schema:
+  - {field: resolution_status, label: "Current Resolution Status", data_type: varchar, input_type: radio, nullable: false, size: 6, order_index: 1, options: '[{"label": "Investigating", "value": "investigating"}, {"label": "Working on Fix", "value": "working"}, {"label": "Testing Solution", "value": "testing"}, {"label": "Ready for Customer Test", "value": "ready_test"}]', default_value: investigating}
+  - {field: work_log, label: "Detailed Work Log", data_type: text, input_type: textarea, nullable: false, size: 12, order_index: 2}
+  - {field: root_cause, label: "Root Cause Analysis", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 3}
+  - {field: resolution_steps, label: "Resolution Steps Taken", data_type: text, input_type: textarea, nullable: false, size: 12, order_index: 4}
+  - {field: prevention_measures, label: "Prevention Measures for Future", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 5}
+  - {field: requires_customer_action, label: "Requires Customer Action?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 6}
+  - {field: customer_action_details, label: "Customer Action Details", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
+  - {field: resolution_documentation_url, label: "Documentation/KB Article URL", data_type: varchar, input_type: text, nullable: true, size: 12, order_index: 8}
+  - {field: time_spent_hours, label: "Time Spent (hours)", data_type: decimal, input_type: text, nullable: true, size: 3, order_index: 9}
+  - {field: additional_resources_used, label: "Additional Resources/Tools Used", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 10}
+
+conditions:
+  - cond_description: "Alert if resolution exceeds SLA"
+    cond_trigger: |
+      (new Date() - started_at) > 
+      (priority_level === 'critical' ? 14400000 : 
+       priority_level === 'high' ? 28800000 : 86400000)
+    cond_action: |
+      sla_breach = true;
+      notify_escalation = true;
+      escalation_level = 'manager';
+
+  - cond_description: "Route to QA if customer action required"
+    cond_trigger: |
+      requires_customer_action === true
+    cond_action: |
+      qa_review_required = true;
+      step_comment = 'Awaiting customer verification';
+
+responsibles:
+  - {email: john.smith@company.com, first_name: John, last_name: Smith, role: owner, department_id: 3}
+  - {email: mike.chen@company.com, first_name: Mike, last_name: Chen, role: owner, department_id: 3}
+
+subscribers:
+  - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: observer, notify_on_start: true, notify_on_complete: true, notify_on_escalation: true}
+
+step_sla:
+  - {name: "Resolution SLA", description: "Time allowed for issue resolution based on priority", duration_hours: 8, escalation_hours: 4, priority: normal, active: true}
+```
+
+## STEP 4: QUALITY CHECK & VERIFICATION
+
+**Description:** QA supervisor verifies resolution quality before customer approval.
+
+```yaml
+name: STEP_4_QUALITY_CHECK
+table: workflow_step
+workflow_name: HELPDESK_SUPPORT
+step: "Quality Check & Verification"
+step_desc: "QA Team Lead verifies the solution quality, tests functionality, and ensures documentation completeness"
+step_order: 4
+step_icon: check-circle
+step_color: green
+active: true
+api: /api/helpdesk/ticket/verify
+step_email_template: |
+  <h2>Quality Assurance Review</h2>
+  <p>Ticket <strong>#{{ticket_number}}</strong> has passed quality review.</p>
+  <p><strong>Resolution Quality:</strong> {{quality_score}}/10</p>
+  <p><strong>QA Notes:</strong> {{qa_notes}}</p>
+  <p><strong>Status:</strong> Ready for customer approval</p>
+
+schema:
+  - {field: qa_tested, label: "Have you tested the solution?", data_type: boolean, input_type: checkbox, nullable: false, size: 3, order_index: 1}
+  - {field: qa_test_results, label: "Test Results and Findings", data_type: text, input_type: textarea, nullable: false, size: 12, order_index: 2}
+  - {field: solution_quality_score, label: "Solution Quality Score (1-10)", data_type: integer, input_type: text, nullable: false, size: 2, order_index: 3, validation_rule: '^[1-9]$|^10$'}
+  - {field: documentation_complete, label: "Documentation Complete?", data_type: boolean, input_type: checkbox, nullable: false, size: 3, order_index: 4}
+  - {field: qa_recommendations, label: "QA Recommendations", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 5}
+  - {field: quality_issues, label: "Any Quality Issues Found?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 6}
+  - {field: issue_details, label: "Issue Details (if any)", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
+  - {field: rejection_reason, label: "Reason for Rejection (if applicable)", data_type: varchar, input_type: radio, nullable: true, size: 6, order_index: 8, options: '[{"label": "Incomplete Solution", "value": "incomplete"}, {"label": "Poor Documentation", "value": "poor_doc"}, {"label": "Test Failed", "value": "test_failed"}, {"label": "Does Not Meet Requirements", "value": "not_req"}]'}
+  - {field: qa_approved, label: "QA Approval", data_type: boolean, input_type: checkbox, nullable: false, size: 3, order_index: 9}
+
+conditions:
+  - cond_description: "Reject and send back to technician if quality issues found"
+    cond_trigger: |
+      quality_issues === true &&
+      solution_quality_score < 7
+    cond_action: |
+      qa_approved = false;
+      send_back_to_technician = true;
+      rejection_notification = true;
+      step_status = 'rejected';
+
+  - cond_description: "Auto-approve high quality solutions"
+    cond_trigger: |
+      solution_quality_score >= 9 &&
+      documentation_complete === true
+    cond_action: |
+      qa_approved = true;
+      expedite_customer_approval = true;
+
+responsibles:
+  - {email: qa-lead@company.com, first_name: QA, last_name: Lead, role: owner, department_id: 4}
+  - {email: qa-team@company.com, first_name: QA, last_name: Team, role: owner, department_id: 4}
+
+subscribers:
+  - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: supervisor, notify_on_complete: true}
+  - {email: john.smith@company.com, first_name: John, last_name: Smith, subscriber_type: observer, notify_on_start: true, notify_on_complete: true}
+```
+
+## STEP 5: CUSTOMER APPROVAL & CLOSURE
+
+**Description:** Customer verifies resolution works, provides approval, and case is closed.
+
+```yaml
+name: STEP_5_CUSTOMER_APPROVAL_CLOSURE
+table: workflow_step
+workflow_name: HELPDESK_SUPPORT
+step: "Customer Approval & Closure"
+step_desc: "Customer verifies the solution works as expected and approves ticket closure"
+step_order: 5
+step_icon: thumbs-up
+step_color: lime
+active: true
+api: /api/helpdesk/ticket/close
+step_email_template: |
+  <h2>Please Verify Your Resolution</h2>
+  <p>Dear {{customer_name}},</p>
+  <p>Your support ticket <strong>#{{ticket_number}}</strong> has been resolved.</p>
+  <p><strong>Please test the solution</strong> and confirm it works for you.</p>
+  <p>Click the link below to approve or request additional work:</p>
+  <p><a href="{{approval_link}}">Review and Approve Resolution</a></p>
+  <p>This ticket will auto-close in 48 hours if we don't hear back.</p>
+
+schema:
+  - {field: solution_works, label: "Does the solution work for you?", data_type: boolean, input_type: checkbox, nullable: false, size: 4, order_index: 1}
+  - {field: solution_effectiveness, label: "Solution Effectiveness Rating (1-10)", data_type: integer, input_type: text, nullable: false, size: 4, order_index: 2, validation_rule: '^[1-9]$|^10$'}
+  - {field: additional_issues, label: "Any Additional Issues?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 3}
+  - {field: additional_issues_description, label: "Describe Additional Issues", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 4}
+  - {field: customer_feedback, label: "Customer Feedback", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 5}
+  - {field: support_satisfaction, label: "Support Team Performance Rating (1-10)", data_type: integer, input_type: text, nullable: true, size: 4, order_index: 6}
+  - {field: satisfaction_comments, label: "Satisfaction Comments", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
+  - {field: would_recommend, label: "Would you recommend our support?", data_type: boolean, input_type: checkbox, nullable: true, size: 4, order_index: 8}
+  - {field: customer_approval, label: "I approve this resolution and authorize ticket closure", data_type: boolean, input_type: checkbox, nullable: false, size: 12, order_index: 9}
+
+conditions:
+  - cond_description: "Auto-close ticket on customer approval"
+    cond_trigger: |
+      customer_approval === true &&
+      solution_works === true
+    cond_action: |
+      ticket_status = 'closed';
+      closure_date = new Date();
+      send_closure_notification = true;
+      archive_ticket = true;
+
+  - cond_description: "Reopen ticket if additional issues found"
+    cond_trigger: |
+      additional_issues === true
+    cond_action: |
+      reopen_ticket = true;
+      route_back_to_technician = true;
+      new_priority = 'high';
+      notification_sent = true;
+
+  - cond_description: "Flag low satisfaction for review"
+    cond_trigger: |
+      support_satisfaction < 6
+    cond_action: |
+      flag_for_management_review = true;
+      send_to_manager = true;
+      quality_improvement_flag = true;
+
+responsibles:
+  - {email: support@company.com, first_name: Support, last_name: Team, role: owner, department_id: 3}
+
+subscribers:
+  - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: supervisor, notify_on_start: true, notify_on_complete: true}
+  - {email: customer-success@company.com, first_name: Customer, last_name: Success, subscriber_type: observer, notify_on_complete: true}
+
+step_sla:
+  - {name: "Customer Approval SLA", description: "Time allowed for customer to approve or request changes", duration_hours: 48, escalation_hours: 24, priority: normal, active: true}
+```
+
+---
+
+## HELPDESK WORKFLOW DEPENDENCIES
+
+```yaml
+name: HELPDESK_DEPENDENCIES
+table: workflow_dependence
+description: "Step Sequence for Helpdesk Workflow"
+workflow_id: HELPDESK_SUPPORT
+dependencies:
+  - depends_on: STEP_1_TICKET_OPENING
+    description: "Ticket must be opened before review"
+    order: 1
+
+  - depends_on: STEP_2_TICKET_REVIEW_ASSIGNMENT
+    description: "Ticket must be reviewed and assigned before resolution"
+    order: 2
+
+  - depends_on: STEP_3_ISSUE_RESOLUTION
+    description: "Issue must be resolved before QA verification"
+    order: 3
+
+  - depends_on: STEP_4_QUALITY_CHECK
+    description: "QA verification required before customer approval"
+    order: 4
+
+  - depends_on: STEP_5_CUSTOMER_APPROVAL_CLOSURE
+    description: "Customer approval required for final closure"
+    order: 5
 ```
