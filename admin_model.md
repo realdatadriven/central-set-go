@@ -698,7 +698,7 @@ columns:
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {flight_catalog_id: 1, flight_catalog: "Default Catalog", flight_catalog_desc: "Default Arrow Flight catalog", active: true, app_id: 1, user_id: 1, excluded: false}
+  - {flight_catalog_id: 1, flight_catalog: admin, flight_catalog_desc: "Default Arrow Flight catalog", active: true, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -852,7 +852,6 @@ form_layout:
   tabs_steps_conf: []
 form_extra_options: []
 table_layout:
-  allow_in_submenu: {}
   default_order:
     - { field: quack_name, order: ASC }  
   exec_button: 
@@ -1244,6 +1243,13 @@ form_layout:
     - {label: API Data, fields: [api_id, api_name, api_type_id, http_request_type_id, endpoint, active, num_retries, timeout_seconds, api_description]}
     - {label: Templates, fields: [request_body_template, headers_template]}
   sub_form_size: 9
+table_layout:
+  default_order:
+    - { field: api_id, order: ASC }  
+  exec_button: 
+    - {callApi: true, method: POST, api: api/run, tooltip: Get Public IP, icon: play, active: true}
+data:
+  - {api_id: 1, api_name: My public ip, api_type_id: 1, http_request_type_id: 1, api_description: Get my public ip, endpoint: "https://api.ipify.org/", active: true, user_id: 1, app_id: 1, excluded: false}
 ```
 
 ## API_HEADER
@@ -1253,7 +1259,7 @@ comment: API Headers
 columns:
   api_header_id:   { type: integer, pk: true, autoincrement: true, comment: "Header ID" }
   header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 5, order: 2 }
-  header_value:    { type: text, nullable: false, comment: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 4 }
+  header_value:    { type: text, nullable: false, comment: "Header Value", tootip: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 4 }
   api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 5, order: 1 }
   active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 2 }
   user_id:         { type: integer, fk: "users.user_id", comment: "Created by"  }
