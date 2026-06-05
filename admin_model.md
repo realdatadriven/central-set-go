@@ -1240,7 +1240,7 @@ form_layout:
   size: 9
   allow_in_subform: {api_header: true, api_call_log: true}
   tabs_steps_conf:
-    - {label: API Data, fields: [api_id, api_name, api_type_id, http_request_type_id, endpoint, active, num_retries, timeout_seconds, api_description]}
+    - {label: API Data, fields: [api_id, api_name, api_type, http_request_type, endpoint, active, num_retries, timeout_seconds, api_description]}
     - {label: Templates, fields: [request_body_template, headers_template]}
   sub_form_size: 9
 table_layout:

@@ -133,6 +133,7 @@ form_layout:
 **/
 
 func (app *application) runAPI(params Dict) Dict {
+	//fmt.Println("DATA:", params["data"])
 	var user_id int
 	if _, ok := params["user"].(Dict)["user_id"]; ok {
 		user_id = app.toInt(params["user"].(Dict)["user_id"])
@@ -157,14 +158,15 @@ func (app *application) runAPI(params Dict) Dict {
 	} else if _, ok := params["data"].(Dict)["api"].(Dict); ok {
 		api_name = params["data"].(Dict)["api"].(Dict)["api_name"]
 	}
-	api_endpoint := any(nil)
-	if _, ok := params["data"].(Dict)["api_endpoint"]; ok {
-		api_endpoint = params["data"].(Dict)["api_endpoint"]
+	endpoint := any(nil)
+	if _, ok := params["data"].(Dict)["endpoint"]; ok {
+		endpoint = params["data"].(Dict)["endpoint"]
 	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
-		api_endpoint = params["data"].(Dict)["data"].(Dict)["api_endpoint"]
+		endpoint = params["data"].(Dict)["data"].(Dict)["endpoint"]
 	} else if _, ok := params["data"].(Dict)["api"].(Dict); ok {
-		api_endpoint = params["data"].(Dict)["api"].(Dict)["api_endpoint"]
+		endpoint = params["data"].(Dict)["api"].(Dict)["endpoint"]
 	}
+	// fmt.Println(1, api_id, api_name, endpoint)
 	var api Dict
 	var err error
 	if api_id == nil || api_id == any(nil) {
@@ -177,9 +179,9 @@ func (app *application) runAPI(params Dict) Dict {
 					"msg":     "API not found with the provided name!",
 				}
 			}
-		} else if api_endpoint != nil && api_endpoint != any(nil) {
-			_sql := "select * from api where api_endpoint = ? and excluded = false and active = true"
-			api, err = app.AdminGetRowByFilter(_sql, []any{api_endpoint})
+		} else if endpoint != nil && endpoint != any(nil) {
+			_sql := "select * from api where endpoint = ? and excluded = false and active = true"
+			api, err = app.AdminGetRowByFilter(_sql, []any{endpoint})
 			if err != nil {
 				return Dict{
 					"success": false,
@@ -193,11 +195,12 @@ func (app *application) runAPI(params Dict) Dict {
 			}
 		}
 	} else {
-		api, err = app.AdminGetRowByID("api", app.toInt(api_id))
+		sql := "select * from api where api_id = ? and excluded = false and active = true"
+		api, err = app.AdminGetRowByID(sql, app.toInt(api_id))
 		if err != nil {
 			return Dict{
 				"success": false,
-				"msg":     "HTTP Request Type not found!",
+				"msg":     "No API ID or API name found!",
 			}
 		}
 	}
@@ -220,14 +223,22 @@ func (app *application) runAPI(params Dict) Dict {
 	// prepair api call by each api_type in api_details
 	api_type_id := app.toInt(api["api_type_id"])
 	http_request_type_id := app.toInt(api["http_request_type_id"])
-	http_request_type, err := app.AdminGetRowByID("http_request_type", http_request_type_id)
+	fmt.Println("HTTP Request Type ID:", http_request_type_id)
+	sql := "select * from http_request_type where http_request_type_id = ? and excluded = false"
+	http_request_type, err := app.AdminGetRowByID(sql, http_request_type_id)
 	if err != nil {
 		return Dict{
 			"success": false,
 			"msg":     "HTTP Request Type not found!",
 		}
 	}
-	endpoint, _ := api["endpoint"].(string)
+	endpoint, ok = api["endpoint"].(string)
+	if !ok {
+		return Dict{
+			"success": false,
+			"msg":     "API endpoint is required for API call!",
+		}
+	}
 	request_body_template, _ := api["request_body_template"].(string)
 	//num_retries := app.toInt(api["num_retries"])
 	//timeout_seconds := app.toInt(api["timeout_seconds"])
@@ -270,7 +281,7 @@ func (app *application) runAPI(params Dict) Dict {
 		if _method, ok := http_request_type["http_request_type"].(string); ok && method != "" {
 			method = _method
 		}
-		req, err := http.NewRequest(method, endpoint, bytes.NewBuffer([]byte(request_body))) // bytes.NewBuffer(jsonBody)
+		req, err := http.NewRequest(method, endpoint.(string), bytes.NewBuffer([]byte(request_body))) // bytes.NewBuffer(jsonBody)
 		if err != nil {
 			return Dict{
 				"success": false,
