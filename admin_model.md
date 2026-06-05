@@ -1281,16 +1281,16 @@ columns:
   api_call_log_id:      { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
   api_id:               { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
   api_name:             { type: varchar, len: 100, comment: "API Name", form_display: true, table_display: true, form_size: 4, order: 2 }
-  request_at:           { type: datetime, nullable: false, comment: "Request DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 3 }
-  response_at:          { type: datetime, comment: "Response DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 4 }
-  request_body:         { type: text, comment: "Request Body", form_display: true, form_long_text: true, form_code: txt, order: 5 }
-  response_body:        { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: txt, order: 6 }
-  response_status:      { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 7 }
-  response_message:     { type: varchar, len: 500, comment: "Response Message", form_display: true, table_display: true, order: 8 }
-  crud_trggrd_db:       { type: varchar, len: 50, comment: "Crud Triggered DB", form_display: true, table_display: true, order: 9, form_size: 3 }
-  crud_trggrd_table:    { type: varchar, len: 50, comment: "Crud Triggered Table", form_display: true, table_display: true, order: 9, form_size: 3 }
-  crud_trggrd_pk_field: { type: varchar, len: 50, comment: "Crud Triggered FK Field", form_display: true, table_display: true, order: 9, form_size: 3 }
-  crud_trggrd_row_id:   { type: varchar, len: 50, comment: "Crud Triggered Row ID", form_display: true, table_display: true, order: 9, form_size: 3 }
+  request_at:           { type: datetime, nullable: false, comment: "Request DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", order: 3, form_size: 3  }
+  response_at:          { type: datetime, comment: "Response DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", order: 4, form_size: 3 }
+  request_body:         { type: text, comment: "Request Body", form_display: true, form_long_text: true, form_code: txt, order: 7 }
+  response_body:        { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: txt, order: 8 }
+  response_status:      { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 5, form_size: 2 }
+  response_message:     { type: text, comment: "Response Message", form_display: true, table_display: true, order: 6, form_long_text: true }
+  crud_trggrd_db:       { type: varchar, len: 50, comment: "Crud Triggered DB", form_display: true, order: 9, form_size: 3 }
+  crud_trggrd_table:    { type: varchar, len: 50, comment: "Crud Triggered Table", form_display: true, order: 10, form_size: 3 }
+  crud_trggrd_pk_field: { type: varchar, len: 50, comment: "Crud Triggered FK Field", form_display: true, order: 11, form_size: 3 }
+  crud_trggrd_row_id:   { type: varchar, len: 50, comment: "Crud Triggered Row ID", form_display: true, order: 12, form_size: 3 }
   user_id:              { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:               { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:           { type: datetime, comment: "Created at" }

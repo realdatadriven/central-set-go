@@ -256,7 +256,7 @@ func (app *application) runAPI(params Dict) Dict {
 	// fmt.Println("Rendered Request Body:", request_body)
 	// Make API call based on api_type_id
 	api_logs := Dict{
-		"api_id":               api["api_id"].(string),
+		"api_id":               api["api_id"],
 		"api_name":             api["api_name"],
 		"request_at":           time.Now(),
 		"request_body":         request_body,
