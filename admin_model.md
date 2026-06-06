@@ -734,7 +734,6 @@ table: flight_schema
 comment: Arrow Flight Schemas
 columns:
   flight_schema_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  flight_catalog_id:   { type: integer, fk: "flight_catalog.flight_catalog_id", nullable: false, comment: "Flight Catalog", form_display: true, table_display: true, order: 2, form_size: 4 }
   flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Schema", form_display: true, table_display: true, order: 1, form_size: 5, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   flight_schema_desc:  { type: text, comment: "Description", form_display: true, table_display: true, order: 4, form_text_long: true }
   startup_sql:         { type: text, comment: "Startup SQL", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: sql }
@@ -744,6 +743,7 @@ columns:
   shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, table_display: true, order: 9, form_long_text: true, form_code: sql }
   flight_schema_conf:  { type: text, comment: "Configuration", form_display: true, order: 10, form_long_text: true, form_code: json}
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_order: 3, form_size: 3 }
+  flight_catalog_id:   { type: integer, fk: "flight_catalog.flight_catalog_id", nullable: false, comment: "Flight Catalog", form_display: true, table_display: true, order: 2, form_size: 4 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:          { type: datetime, comment: "Created at" }
@@ -1256,9 +1256,8 @@ columns:
   excluded:              { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
-  form_in_popup: false
   size: 9
-  allow_in_subform: {api_header: true, api_call_log: true}
+  allow_in_subform: {api_call_log: true, api_header: true}
   tabs_steps_conf:
     - {label: API Data, fields: [api_id, api_name, api_type, http_request_type, endpoint, active, num_retries, timeout_seconds, api_description]}
     - {label: Templates, fields: [request_body_template, headers_template]}
