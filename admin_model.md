@@ -1343,10 +1343,10 @@ data:
   order:          1
   active:         true
   user_id:        1
-  app_id:        appId()
-  created_at:    Now()
-  updated_at:    Now()
-  excluded:      false
+  app_id:         appId()
+  created_at:     Now()
+  updated_at:     Now()
+  excluded:       false
 ```
 
 # RUN_ESPECIFC_SQL
