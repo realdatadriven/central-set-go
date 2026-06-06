@@ -731,17 +731,17 @@ table_layout:
 ## FLIGHT_SCHEMA
 ```yaml
 table: flight_schema
-comment: Expose Arrow Flight Schema
+comment: Arrow Flight Schemas
 columns:
   flight_schema_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
   flight_catalog_id:   { type: integer, fk: "flight_catalog.flight_catalog_id", nullable: false, comment: "Flight Catalog", form_display: true, table_display: true, order: 2, form_size: 4 }
-  flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 5, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
+  flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Schema", form_display: true, table_display: true, order: 1, form_size: 5, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   flight_schema_desc:  { type: text, comment: "Description", form_display: true, table_display: true, order: 4, form_text_long: true }
-  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, table_display: true,, order: 5, form_long_text: true, form_code: sql }
-  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, table_display: true,, order: 6, form_long_text: true, form_code: sql }
+  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: sql }
+  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, table_display: true, order: 6, form_long_text: true, form_code: sql }
   table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, order: 7, form_long_text: true, form_code: sql }
   table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
-  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, table_display: true,, order: 9, form_long_text: true, form_code: sql }
+  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, table_display: true, order: 9, form_long_text: true, form_code: sql }
   flight_schema_conf:  { type: text, comment: "Configuration", form_display: true, order: 10, form_long_text: true, form_code: json}
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_order: 3, form_size: 3 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
@@ -753,6 +753,10 @@ data:
   - {flight_schema_id: 1, flight_catalog_id: 1, flight_schema: adm, flight_schema_desc: "Ex. Arrow Flight Schema using ADMIN app", startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
+  tabs_steps_conf:
+    - {label: Schema, fields: [flight_schema, flight_catalog, active, flight_schema_desc]}
+    - {label: Managment SQLs, fields: [startup_sql, main_sql, table_discover_sql, table_scan_tmpl_sql, shutdown_sql]}
+    - {label: Config, fields: [flight_schema_conf]}
   form_in_popup: false
   size: 10
   sub_form_size: 10
@@ -765,7 +769,7 @@ table_layout:
 ## FLIGHT_SCHEMA_TABLE
 ```yaml
 table: flight_schema_table
-comment: Arrow Flight Schema Tables
+comment: Flight Schema Tables
 columns:
   flight_schema_table_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   flight_schema_id:         { type: integer, fk: "flight_schema.flight_schema_id", nullable: false, comment: "Flight Schema", form_display: true, table_display: true, order: 1, form_size: 3 }
@@ -796,7 +800,7 @@ table_layout:
 ## FLIGHT_SCHEMA_TABLE_FIELD
 ```yaml
 table: flight_schema_table_field
-comment: Arrow Flight Schema Table Fields
+comment: Flight Schema Table Fields
 columns:
   flight_schema_table_field_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   flight_schema_table_field:      { type: varchar, len: 200, nullable: false, comment: "Field Name", form_display: true, table_display: true, order: 1, form_size: 3 }
@@ -818,7 +822,7 @@ form_layout:
 ## FLIGHT_SCHEMA_TABLE_SCOPE
 ```yaml
 table: flight_schema_table_scope
-comment: Arrow Flight Schema Table Scopes
+comment: Flight Schema Table Scopes
 columns:
   flight_schema_table_scope_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   flight_schema_table_scope:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Scope Name", form_display: true, table_display: true, order: 1, form_size: 4 }
@@ -867,8 +871,6 @@ form_layout:
   form_in_popup: false
   size: 10
   sub_form_size: 10
-  tabs_steps_conf: []
-form_extra_options: []
 table_layout:
   default_order:
     - { field: quack_name, order: ASC }  
