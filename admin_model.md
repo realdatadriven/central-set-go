@@ -46,10 +46,28 @@ cs_app:
     menu_icon: paper-airplane
     menu_order: 3
     active: true
-    menu_config: '{"label": "flight_catalog","tooltip": "flight_catalog_desc", "load_items": {"table": "flight_catalog","tables": ["flight_catalog"]}}'
+    #menu_config: '{"label": "flight_catalog","tooltip": "flight_catalog_desc", "load_items": {"table": "flight_catalog","tables": ["flight_catalog"]}}'
+    menu_config: |
+      {
+          "label": "flight_catalog",
+          "tooltip": "flight_catalog_desc",
+          "load_items": {
+              "table": "flight_catalog",
+              "label": "flight_catalog",
+              "tooltip": "flight_catalog_desc",
+              "detail": true,
+              "load_items": {
+                  "table": "flight_schema",
+                  "label": "flight_schema",
+                  "tooltip": "flight_schema_desc",
+                  "detail": false
+              }, 
+              "tables": ["flight_catalog", "flight_schema"]
+          }
+      }
     tables:
       - {table: flight_catalog, requires_rla: true, active: true}
-      - {table: flight_schema, requires_rla: true, active: true}
+      - {table: flight_schema, requires_rla: true, active: false}
       - {table: flight_schema_table, active: false}
       - {table: flight_schema_table_field, active: false}
       - {table: flight_schema_table_scope, active: false}
@@ -719,11 +737,11 @@ columns:
   flight_catalog_id:   { type: integer, fk: "flight_catalog.flight_catalog_id", nullable: false, comment: "Flight Catalog", form_display: true, table_display: true, order: 2, form_size: 4 }
   flight_schema:       { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 5, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   flight_schema_desc:  { type: text, comment: "Description", form_display: true, table_display: true, order: 4, form_text_long: true }
-  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
-  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, order: 6, form_long_text: true, form_code: sql }
+  startup_sql:         { type: text, comment: "Startup SQL", form_display: true, table_display: true,, order: 5, form_long_text: true, form_code: sql }
+  main_sql:            { type: text, nullable: false, comment: "Main SQL", form_display: true, table_display: true,, order: 6, form_long_text: true, form_code: sql }
   table_discover_sql:  { type: text, comment: "Table Discover SQL", form_display: true, order: 7, form_long_text: true, form_code: sql }
   table_scan_tmpl_sql: { type: text, comment: "Table Scan Template SQL", form_display: true, order: 8, form_long_text: true, form_code: sql }
-  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, order: 9, form_long_text: true, form_code: sql }
+  shutdown_sql:        { type: text, comment: "Shutdown SQL", form_display: true, table_display: true,, order: 9, form_long_text: true, form_code: sql }
   flight_schema_conf:  { type: text, comment: "Configuration", form_display: true, order: 10, form_long_text: true, form_code: json}
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_order: 3, form_size: 3 }
   user_id:             { type: integer, fk: "users.user_id", comment: "User ID" }
@@ -1260,7 +1278,7 @@ columns:
   api_header_id:   { type: integer, pk: true, autoincrement: true, comment: "Header ID" }
   header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 5, order: 2 }
   header_value:    { type: text, nullable: false, comment: "Header Value", tootip: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 4 }
-  api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 5, order: 1 }
+  api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
   active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 2 }
   user_id:         { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
