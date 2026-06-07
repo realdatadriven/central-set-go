@@ -1025,6 +1025,9 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
+table_layout:
+  default_order:
+    - { field: validation_log_id, order: DESC }  
 ```
 
 ## ACTION_TYPE
@@ -1111,6 +1114,9 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
+table_layout:
+  default_order:
+    - { field: crud_action_log_id, order: DESC } 
 ```
 
 ## PROCESS_TYPE
@@ -1319,6 +1325,9 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
+table_layout:
+  default_order:
+    - { field: crud_action_log_id, order: DESC } 
 ```
 
 # DATA
