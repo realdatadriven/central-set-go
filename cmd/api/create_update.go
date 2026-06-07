@@ -317,6 +317,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	validation_data := []any{database, table}
 	get_validations_sql := fmt.Sprintf(`SELECT * FROM "validation" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE`, crud_aciton)
 	validation_rows, err := app.AdminGetRowsByFilter(get_validations_sql, validation_data)
+	//fmt.Println("VALIDATIONS:", get_validations_sql, validation_data, validation_rows)
 	if err != nil {
 		fmt.Printf("Error occurred while fetching validations: %v", err, get_validations_sql)
 		/*return Dict{
@@ -340,10 +341,11 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
-				//fmt.Println("VALIDATION SQL:", sql_rule)
+				fmt.Println("VALIDATION SQL:", sql_rule)
 				var valid bool
 				sql, _filters_opts, _ := etlx_engine.NamedToPositional(sql_rule, _data)
 				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
+				// fmt.Println("VALIDATIONS:", validation["validation_code"], sql, _filters_opts, res)
 				if err != nil {
 					fmt.Printf("Error executing validation SQL for validation_id %v: %v", validation["validation_id"], err)
 					valid = false
@@ -361,12 +363,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						"msg":     fmt.Sprintf("Error executing validation SQL: %v", err),
 					}
 				} else {
-					// valid_reaction_id = 1 means throw erroe if len(*res) > 0 and valid_reaction_id = 2 means throw error if len(*res) == 0
-					if app.toInt(valid_reaction_id) == 1 {
-						valid = len(res) == 0
-					} else if app.toInt(valid_reaction_id) == 2 {
+					// valid_reaction_id = 1 means throw erroe if len(res) == 0 and valid_reaction_id = 2 means throw error if len(res) > 0
+					if app.toInt(valid_reaction_id) == 1 { //if_empty then fail
 						valid = len(res) > 0
+					} else if app.toInt(valid_reaction_id) == 2 { // if_not_empty then fail
+						valid = len(res) == 0
 					}
+					fmt.Printf("Validation %s executed with result: %v. Result rows: %d, valid_reaction_id: %v\n", validation["validation_code"], valid, len(res), valid_reaction_id)
 					if !valid {
 						msg, err := etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
 						if err != nil {
