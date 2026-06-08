@@ -1089,7 +1089,6 @@ form_layout:
   form_in_popup: false
   allow_in_subform: {crud_action_logs: true}
   size: 10
-
 ```
 
 ## CRUD_ACTION_LOGS
