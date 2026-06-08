@@ -1431,6 +1431,27 @@ data:
     <p>If you have questions, contact support.</p>
 ```
 
+## EX_CRUD_ACTION_CREATE_LOG
+```yaml
+table: crud_action
+description: Add Example of CRUD Action that logs user creation
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: USER_CREATE_LOG
+  crud_action: User Create Log
+  action_type_id: 1
+  err_msg: 'Error inserting user log for {{.data.user_id}}'
+  table: users
+  db: ADMIN
+  active: true
+  create: true
+  update: false
+  delete: false
+  sql: |
+    INSERT INTO "user_log" ("user_id","action","table","db","row_id","app_id","created_at","updated_at","excluded")
+    VALUES (:user_id, 'CREATE', 'users', 'ADMIN', :user_id, :app_id, :created_at, :updated_at, FALSE)
+```
+
 # RUN_ESPECIFC_SQL
 ```yaml
 name: Run domain specifc sql
