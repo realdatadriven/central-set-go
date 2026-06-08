@@ -1071,13 +1071,14 @@ columns:
   read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
   update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
-  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
-  email_template:    { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
-  email_to:          { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 14, form_long_text: true, form_code: text, form_hide_cond: "data?.action_type_id !== 2" }
-  api:               { type: varchar, len: 200, comment: "Call API", form_display: true, table_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
-  api_id:            { type: integer, comment: "API ID", form_display: true, table_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
-  api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, table_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
-  api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, table_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
+  sql:               { type: text, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
+  email_template:    { type: text, comment: "Email Template", form_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
+  email_to:          { type: text, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, order: 14, form_size: 6, form_hide_cond: "data?.action_type_id !== 2" }
+  email_subject:     { type: text, comment: "Email Subject", form_display: true, order: 14, form_size: 6, form_hide_cond: "data?.action_type_id !== 2" }
+  api:               { type: varchar, len: 200, comment: "Call API", form_display: true, order: 15, form_size: 9, form_hide_cond: "data?.action_type_id !== 3" }
+  api_id:            { type: integer, comment: "API ID", form_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
+  api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
+  api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 19, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1370,14 +1371,14 @@ data:
   crud_action_code: USER_CREATED_EMAIL
   crud_action: User Created Email
   action_type_id: 2
-  err_msg: 'Error sending the email to {{.data.email}}!'
+  err_msg: 'Error sending the email to {{.email}}!'
   table: users
   db: ADMIN
   active: true
   create: true
   update: false
   delete: false
-  email_to: '{{.data.email}}'
+  email_to: '{{.email}}'
   email_template: |
     <p>Hi {{.data.first_name}},</p>
     <p>Your account has been created.</p>
@@ -1394,14 +1395,14 @@ data:
   crud_action_code: USER_UPDATED_EMAIL
   crud_action: User Updated Email
   action_type_id: 2
-  err_msg: 'Error sending the email to {{.data.email}}!'
+  err_msg: 'Error sending the email to {{.email}}!'
   table: users
   db: ADMIN
   active: true
   create: false
   update: true
   delete: false
-  email_to: '{{.data.email}}'
+  email_to: '{{.email}}'
   email_template: |
     <p>Hi {{.data.first_name}},</p>
     <p>Your account has been updated.</p>
@@ -1417,14 +1418,14 @@ data:
   crud_action_code: USER_DELETED_EMAIL
   crud_action: User Deleted Email
   action_type_id: 2
-  err_msg: 'Error sending the email to {{.data.email}}!'
+  err_msg: 'Error sending the email to {{.email}}!'
   table: users
   db: ADMIN
   active: true
   create: false
   update: false
   delete: true
-  email_to: '{{.data.email}}'
+  email_to: '{{.email}}'
   email_template: |
     <p>Hi {{.data.first_name}},</p>
     <p>Your account has been deleted.</p>
@@ -1440,7 +1441,7 @@ data:
   crud_action_code: USER_CREATE_LOG
   crud_action: User Create Log
   action_type_id: 1
-  err_msg: 'Error inserting user log for {{.data.user_id}}'
+  err_msg: 'Error inserting user log for {{.user_id}} {{.email}}'
   table: users
   db: ADMIN
   active: true
@@ -1448,8 +1449,8 @@ data:
   update: false
   delete: false
   sql: |
-    INSERT INTO "user_log" ("user_id","action","table","db","row_id","app_id","created_at","updated_at","excluded")
-    VALUES (:user_id, 'CREATE', 'users', 'ADMIN', :user_id, :app_id, :created_at, :updated_at, FALSE)
+    INSERT INTO "user_log" ("user_id", "action", "table", "db", "row_id", "created_at", "updated_at", "excluded")
+    VALUES (:user_id, 'crud/create from actions', 'users', 'ADMIN', :user_id, :created_at, :updated_at, FALSE)
 ```
 
 # RUN_ESPECIFC_SQL

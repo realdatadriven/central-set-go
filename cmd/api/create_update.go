@@ -341,7 +341,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
-				fmt.Println("VALIDATION SQL:", sql_rule)
+				//fmt.Println("VALIDATION SQL:", sql_rule)
 				var valid bool
 				sql, _filters_opts, _ := etlx_engine.NamedToPositional(sql_rule, _data)
 				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
@@ -369,7 +369,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					} else if app.toInt(valid_reaction_id) == 2 { // if_not_empty then fail
 						valid = len(res) == 0
 					}
-					fmt.Printf("Validation %s executed with result: %v. Result rows: %d, valid_reaction_id: %v\n", validation["validation_code"], valid, len(res), valid_reaction_id)
+					//fmt.Printf("Validation %s executed with result: %v. Result rows: %d, valid_reaction_id: %v\n", validation["validation_code"], valid, len(res), valid_reaction_id)
 					if !valid {
 						msg, err := etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
 						if err != nil {
@@ -617,10 +617,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 				if _, ok := c_action["sql"]; ok {
 					sql_rule := c_action["sql"].(string)
-					err := app.AdminExecuteQuery(sql_rule, _data)
+					err := app.ExecuteQuery(sql_rule, params, _data)
 					if err != nil {
 						success = false
-						msg, _ = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+						msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+						if err != nil {
+							msg = c_action["err_msg"].(string)
+						}
 						crud_action_log["success"] = success
 						crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action ExecuteQuery: %v. Message: %s", err, msg)
 						crud_action_log["executed_at"] = time.Now().In(loc)
@@ -630,6 +633,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 						}
+						msg = fmt.Sprintf("Error executing query: %v", err)
 						return fmt.Errorf("Err %w", msg)
 					}
 				}
@@ -637,10 +641,17 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				if _, ok := c_action["email_template"]; ok {
 					// Process email template
 					_to, _ := c_action["email_to"].(string)
-					to := strings.Split(_to, ";")
+					_to_tmpl, _ := etlx_engine.RenderTemplate(_to, _data)
+					_subject, ok := c_action["email_subject"].(string)
+					if !ok {
+						_subject = fmt.Sprintf("%s - %s", c_action["crud_action_code"], c_action["crud_action"])
+					}
+					subject, _ := etlx_engine.RenderTemplate(_subject, _data)
+					//fmt.Println("Rendered email_to template:", _to, _to_tmpl, subject)
+					to := strings.Split(_to_tmpl, ";")
 					emailParams := Dict{
-						"to":      to,
-						"subject": fmt.Sprintf("%s - %s", c_action["crud_action_code"], c_action["crud_action"]),
+						"to":      app.sliceStrs2SliceInterfaces(to),
+						"subject": subject,
 						"body":    c_action["email_template"],
 						"data": Dict{
 							"data": _data,
@@ -659,7 +670,11 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						if err2 != nil {
 							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 						}
-						return err
+						msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+						if err != nil {
+							msg = c_action["err_msg"].(string)
+						}
+						return fmt.Errorf("Err %w", msg)
 					}
 				}
 			} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
@@ -712,7 +727,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					return fmt.Errorf("Error executing external API: %s", msg)
 				}
 			} else {
+				success = false
 				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
+				msg = fmt.Sprintf("Unknown action type for CRUD Action: %v", action_type_id)
 				crud_action_log["success"] = success
 				crud_action_log["log_message"] = fmt.Sprintf("Unknown action_type_id: %v", action_type_id)
 				crud_action_log["executed_at"] = time.Now().In(loc)
@@ -722,6 +739,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				if err != nil {
 					fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
 				}
+				return fmt.Errorf(msg)
 			}
 			crud_action_log["success"] = success
 			if msg == "" {
@@ -736,6 +754,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err)
 				// Not returning error to avoid interrupting the main CRUD operation flow
 			}
+			if !success {
+				return fmt.Errorf(msg)
+			}
 			return nil
 		}
 		for _, c_action := range crud_action_rows {
@@ -744,13 +765,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				go func() {
 					err := actionRunner(c_action)
 					if err != nil {
-						fmt.Printf("Error runing the action: %v\n", err)
+						fmt.Printf("Error runing the action: %v\n", err.Error())
 					}
 				}()
 			} else {
 				err := actionRunner(c_action)
 				if err != nil {
-					fmt.Printf("Error runing the action: %v\n", err)
+					fmt.Printf("Error runing the action: %v\n", err.Error())
 				}
 			}
 		}
