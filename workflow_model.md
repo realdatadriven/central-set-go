@@ -729,6 +729,7 @@ escalation_hours: 1
 priority: critical
 active: true
 ```
+
 ## HELPDESK_SLA_HIGH
 ```yaml
 name: HELPDESK_SLA_HIGH
