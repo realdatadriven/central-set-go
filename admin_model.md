@@ -645,6 +645,9 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 10
+table_layout:
+  default_order:
+    - { field: cron_log_id, order: DESC } 
 ```
 
 ## ACCESS_KEY
