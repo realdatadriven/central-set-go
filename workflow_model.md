@@ -694,12 +694,9 @@ subscribers:
   - {email: real.datadriven@gmail.com, first_name: real, last_name: datadriven, start: true, complete: true}
 ```
 
----
-
-# HELPDESK SUPPORT WORKFLOW
-
 **Workflow Overview:** Complete IT Help Desk Support Process with Ticket Opening, Assignment, Resolution, Quality Verification, and Customer Approval.
 
+# HELPDESK SUPPORT WORKFLOW
 ```yaml
 name: HELPDESK_SUPPORT
 table: workflow
@@ -720,8 +717,7 @@ email_template: |
   <p><strong>Details:</strong> {{step_description}}</p>
 ```
 
-## HELPDESK SLA RULES
-
+## HELPDESK_SLA_CRITICAL
 ```yaml
 name: HELPDESK_SLA_CRITICAL
 table: workflow_sla
@@ -733,7 +729,7 @@ escalation_hours: 1
 priority: critical
 active: true
 ```
-
+## HELPDESK_SLA_HIGH
 ```yaml
 name: HELPDESK_SLA_HIGH
 table: workflow_sla
@@ -746,6 +742,7 @@ priority: high
 active: true
 ```
 
+## HELPDESK_SLA_NORMAL
 ```yaml
 name: HELPDESK_SLA_NORMAL
 table: workflow_sla
@@ -758,10 +755,9 @@ priority: normal
 active: true
 ```
 
-## STEP 1: TICKET OPENING
-
 **Description:** Customer submits a new support ticket with issue details.
 
+## STEP 1: TICKET OPENING
 ```yaml
 name: STEP_1_TICKET_OPENING
 table: workflow_step
@@ -779,7 +775,6 @@ step_email_template: |
   <p><strong>Title:</strong> {{issue_title}}</p>
   <p><strong>Priority:</strong> {{priority_level}}</p>
   <p><strong>Created:</strong> {{created_at}}</p>
-
 # Rich Schema for Ticket Opening
 schema:
   - {field: customer_email, label: "Customer Email", data_type: varchar, input_type: text, nullable: false, size: 6, order_index: 1, validation_rule: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', default_value: null}
@@ -793,7 +788,6 @@ schema:
   - {field: has_workaround, label: "Is there a Workaround?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 9}
   - {field: workaround_description, label: "Workaround Details (if applicable)", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 10}
   - {field: ticket_attachment_ref, label: "Attachment Reference (URL or Path)", data_type: varchar, input_type: text, nullable: true, size: 12, order_index: 11}
-
 # Step Conditions
 conditions:
   - cond_description: "Auto-escalate if critical and no response within SLA"
@@ -803,31 +797,26 @@ conditions:
     cond_action: |
       escalation_flag = true;
       notify_manager = true;
-
   - cond_description: "Auto-assign low priority to self-service knowledge base"
     cond_trigger: |
       priority_level === 'low'
     cond_action: |
       assigned_to_team = 'knowledge_base';
       auto_response = true;
-
 # Responsibles for Step
 responsibles:
   - {email: support@company.com, first_name: Support, last_name: Team, role: owner, department_id: 3}
-
 # Subscribers
 subscribers:
   - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: supervisor, notify_on_start: true, notify_on_complete: true, notify_on_escalation: true}
-
 # Step SLA
 step_sla:
   - {name: "Ticket Opening SLA", description: "Time allowed for customer to complete ticket submission", duration_hours: 1, escalation_hours: 0.5, priority: normal, active: true}
 ```
 
-## STEP 2: TICKET REVIEW & ASSIGNMENT
-
 **Description:** Support team lead reviews ticket and assigns to appropriate technician based on expertise and workload.
 
+## STEP 2: TICKET REVIEW & ASSIGNMENT
 ```yaml
 name: STEP_2_TICKET_REVIEW_ASSIGNMENT
 table: workflow_step
@@ -846,7 +835,6 @@ step_email_template: |
   <p><strong>Priority:</strong> {{priority_level}}</p>
   <p><strong>Assigned By:</strong> {{assigned_by_name}}</p>
   <p><strong>SLA End Time:</strong> {{sla_deadline}}</p>
-
 schema:
   - {field: ticket_number, label: "Ticket Number", data_type: varchar, input_type: text, nullable: false, size: 4, order_index: 1, default_value: "AUTO-GENERATED"}
   - {field: review_notes, label: "Supervisor Review Notes", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 2}
@@ -855,7 +843,6 @@ schema:
   - {field: expected_resolution_time, label: "Expected Resolution Time (hours)", data_type: integer, input_type: text, nullable: true, size: 3, order_index: 5}
   - {field: requires_manager_approval, label: "Requires Manager Approval?", data_type: boolean, input_type: checkbox, nullable: true, size: 3, order_index: 6}
   - {field: approval_reason, label: "Reason for Manager Approval (if needed)", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
-
 conditions:
   - cond_description: "Route critical tickets requiring manager approval"
     cond_trigger: |
@@ -865,19 +852,16 @@ conditions:
       approval_required = true;
       route_to_manager = true;
       escalation_level = 'manager';
-
 responsibles:
   - {email: support-supervisor@company.com, first_name: Support, last_name: Supervisor, role: owner, department_id: 3}
-
 subscribers:
   - {email: it-director@company.com, first_name: IT, last_name: Director, subscriber_type: supervisor, notify_on_complete: true, notify_on_escalation: true}
   - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: observer, notify_on_start: true}
 ```
 
-## STEP 3: ISSUE RESOLUTION
-
 **Description:** Assigned technician works on resolving the issue, updating status and adding notes.
 
+## STEP 3: ISSUE RESOLUTION
 ```yaml
 name: STEP_3_ISSUE_RESOLUTION
 table: workflow_step
@@ -895,7 +879,6 @@ step_email_template: |
   <p><strong>Current Status:</strong> {{resolution_status}}</p>
   <p><strong>Progress:</strong> {{progress_percentage}}%</p>
   <p><strong>Last Update:</strong> {{last_update_time}}</p>
-
 schema:
   - {field: resolution_status, label: "Current Resolution Status", data_type: varchar, input_type: radio, nullable: false, size: 6, order_index: 1, options: '[{"label": "Investigating", "value": "investigating"}, {"label": "Working on Fix", "value": "working"}, {"label": "Testing Solution", "value": "testing"}, {"label": "Ready for Customer Test", "value": "ready_test"}]', default_value: investigating}
   - {field: work_log, label: "Detailed Work Log", data_type: text, input_type: textarea, nullable: false, size: 12, order_index: 2}
@@ -907,7 +890,6 @@ schema:
   - {field: resolution_documentation_url, label: "Documentation/KB Article URL", data_type: varchar, input_type: text, nullable: true, size: 12, order_index: 8}
   - {field: time_spent_hours, label: "Time Spent (hours)", data_type: decimal, input_type: text, nullable: true, size: 3, order_index: 9}
   - {field: additional_resources_used, label: "Additional Resources/Tools Used", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 10}
-
 conditions:
   - cond_description: "Alert if resolution exceeds SLA"
     cond_trigger: |
@@ -918,29 +900,24 @@ conditions:
       sla_breach = true;
       notify_escalation = true;
       escalation_level = 'manager';
-
   - cond_description: "Route to QA if customer action required"
     cond_trigger: |
       requires_customer_action === true
     cond_action: |
       qa_review_required = true;
       step_comment = 'Awaiting customer verification';
-
 responsibles:
   - {email: john.smith@company.com, first_name: John, last_name: Smith, role: owner, department_id: 3}
   - {email: mike.chen@company.com, first_name: Mike, last_name: Chen, role: owner, department_id: 3}
-
 subscribers:
   - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: observer, notify_on_start: true, notify_on_complete: true, notify_on_escalation: true}
-
 step_sla:
   - {name: "Resolution SLA", description: "Time allowed for issue resolution based on priority", duration_hours: 8, escalation_hours: 4, priority: normal, active: true}
 ```
 
-## STEP 4: QUALITY CHECK & VERIFICATION
-
 **Description:** QA supervisor verifies resolution quality before customer approval.
 
+## STEP 4: QUALITY CHECK & VERIFICATION
 ```yaml
 name: STEP_4_QUALITY_CHECK
 table: workflow_step
@@ -958,7 +935,6 @@ step_email_template: |
   <p><strong>Resolution Quality:</strong> {{quality_score}}/10</p>
   <p><strong>QA Notes:</strong> {{qa_notes}}</p>
   <p><strong>Status:</strong> Ready for customer approval</p>
-
 schema:
   - {field: qa_tested, label: "Have you tested the solution?", data_type: boolean, input_type: checkbox, nullable: false, size: 3, order_index: 1}
   - {field: qa_test_results, label: "Test Results and Findings", data_type: text, input_type: textarea, nullable: false, size: 12, order_index: 2}
@@ -969,7 +945,6 @@ schema:
   - {field: issue_details, label: "Issue Details (if any)", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
   - {field: rejection_reason, label: "Reason for Rejection (if applicable)", data_type: varchar, input_type: radio, nullable: true, size: 6, order_index: 8, options: '[{"label": "Incomplete Solution", "value": "incomplete"}, {"label": "Poor Documentation", "value": "poor_doc"}, {"label": "Test Failed", "value": "test_failed"}, {"label": "Does Not Meet Requirements", "value": "not_req"}]'}
   - {field: qa_approved, label: "QA Approval", data_type: boolean, input_type: checkbox, nullable: false, size: 3, order_index: 9}
-
 conditions:
   - cond_description: "Reject and send back to technician if quality issues found"
     cond_trigger: |
@@ -980,7 +955,6 @@ conditions:
       send_back_to_technician = true;
       rejection_notification = true;
       step_status = 'rejected';
-
   - cond_description: "Auto-approve high quality solutions"
     cond_trigger: |
       solution_quality_score >= 9 &&
@@ -988,20 +962,17 @@ conditions:
     cond_action: |
       qa_approved = true;
       expedite_customer_approval = true;
-
 responsibles:
   - {email: qa-lead@company.com, first_name: QA, last_name: Lead, role: owner, department_id: 4}
   - {email: qa-team@company.com, first_name: QA, last_name: Team, role: owner, department_id: 4}
-
 subscribers:
   - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: supervisor, notify_on_complete: true}
   - {email: john.smith@company.com, first_name: John, last_name: Smith, subscriber_type: observer, notify_on_start: true, notify_on_complete: true}
 ```
 
-## STEP 5: CUSTOMER APPROVAL & CLOSURE
-
 **Description:** Customer verifies resolution works, provides approval, and case is closed.
 
+## STEP 5: CUSTOMER APPROVAL & CLOSURE
 ```yaml
 name: STEP_5_CUSTOMER_APPROVAL_CLOSURE
 table: workflow_step
@@ -1021,7 +992,6 @@ step_email_template: |
   <p>Click the link below to approve or request additional work:</p>
   <p><a href="{{approval_link}}">Review and Approve Resolution</a></p>
   <p>This ticket will auto-close in 48 hours if we don't hear back.</p>
-
 schema:
   - {field: solution_works, label: "Does the solution work for you?", data_type: boolean, input_type: checkbox, nullable: false, size: 4, order_index: 1}
   - {field: solution_effectiveness, label: "Solution Effectiveness Rating (1-10)", data_type: integer, input_type: text, nullable: false, size: 4, order_index: 2, validation_rule: '^[1-9]$|^10$'}
@@ -1032,7 +1002,6 @@ schema:
   - {field: satisfaction_comments, label: "Satisfaction Comments", data_type: text, input_type: textarea, nullable: true, size: 12, order_index: 7}
   - {field: would_recommend, label: "Would you recommend our support?", data_type: boolean, input_type: checkbox, nullable: true, size: 4, order_index: 8}
   - {field: customer_approval, label: "I approve this resolution and authorize ticket closure", data_type: boolean, input_type: checkbox, nullable: false, size: 12, order_index: 9}
-
 conditions:
   - cond_description: "Auto-close ticket on customer approval"
     cond_trigger: |
@@ -1043,7 +1012,6 @@ conditions:
       closure_date = new Date();
       send_closure_notification = true;
       archive_ticket = true;
-
   - cond_description: "Reopen ticket if additional issues found"
     cond_trigger: |
       additional_issues === true
@@ -1052,7 +1020,6 @@ conditions:
       route_back_to_technician = true;
       new_priority = 'high';
       notification_sent = true;
-
   - cond_description: "Flag low satisfaction for review"
     cond_trigger: |
       support_satisfaction < 6
@@ -1060,22 +1027,16 @@ conditions:
       flag_for_management_review = true;
       send_to_manager = true;
       quality_improvement_flag = true;
-
 responsibles:
   - {email: support@company.com, first_name: Support, last_name: Team, role: owner, department_id: 3}
-
 subscribers:
   - {email: support-manager@company.com, first_name: Support, last_name: Manager, subscriber_type: supervisor, notify_on_start: true, notify_on_complete: true}
   - {email: customer-success@company.com, first_name: Customer, last_name: Success, subscriber_type: observer, notify_on_complete: true}
-
 step_sla:
   - {name: "Customer Approval SLA", description: "Time allowed for customer to approve or request changes", duration_hours: 48, escalation_hours: 24, priority: normal, active: true}
 ```
 
----
-
 ## HELPDESK WORKFLOW DEPENDENCIES
-
 ```yaml
 name: HELPDESK_DEPENDENCIES
 table: workflow_dependence
