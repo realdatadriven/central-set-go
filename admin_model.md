@@ -1089,6 +1089,7 @@ form_layout:
   form_in_popup: false
   allow_in_subform: {crud_action_logs: true}
   size: 10
+
 ```
 
 ## CRUD_ACTION_LOGS
@@ -1359,6 +1360,76 @@ data:
   created_at:     Now()
   updated_at:     Now()
   excluded:       false
+```
+
+## EX_CRUD_ACTION_CREATE
+```yaml
+table: crud_action
+description: Add Example of CRUD Actions
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: USER_CREATED_EMAIL
+  crud_action: User Created Email
+  action_type_id: 2
+  err_msg: 'Error sending the email to {{.data.email}}!'
+  table: users
+  db: ADMIN
+  active: true
+  create: true
+  update: false
+  delete: false
+  email_to: '{{.data.email}}'
+  email_template: |
+    <p>Hi {{.data.first_name}},</p>
+    <p>Your account has been created.</p>
+    <p><strong>Username:</strong> {{.data.username}}</p>
+    <p>If you did not request this, contact support.</p>
+```
+
+## EX_CRUD_ACTION_UPDATE
+```yaml
+table: crud_action
+description: Add Example of CRUD Actions
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: USER_UPDATED_EMAIL
+  crud_action: User Updated Email
+  action_type_id: 2
+  err_msg: 'Error sending the email to {{.data.email}}!'
+  table: users
+  db: ADMIN
+  active: true
+  create: false
+  update: true
+  delete: false
+  email_to: '{{.data.email}}'
+  email_template: |
+    <p>Hi {{.data.first_name}},</p>
+    <p>Your account has been updated.</p>
+    <p>If you did not request this change, contact support.</p>
+```
+
+## EX_CRUD_ACTION_DELETE
+```yaml
+table: crud_action
+description: Add Example of CRUD Actions
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: USER_DELETED_EMAIL
+  crud_action: User Deleted Email
+  action_type_id: 2
+  err_msg: 'Error sending the email to {{.data.email}}!'
+  table: users
+  db: ADMIN
+  active: true
+  create: false
+  update: false
+  delete: true
+  email_to: '{{.data.email}}'
+  email_template: |
+    <p>Hi {{.data.first_name}},</p>
+    <p>Your account has been deleted.</p>
+    <p>If you have questions, contact support.</p>
 ```
 
 # RUN_ESPECIFC_SQL
