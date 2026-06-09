@@ -2,28 +2,32 @@ package main
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"sync"
 	"time"
 
+	"github.com/duckdb/duckdb-go/v2"
 	"github.com/realdatadriven/etlx"
 )
 
 // QuackManager manages the lifecycle of in-memory DuckDB instances keyed by server ID
 type QuackManager struct {
-	pool         map[int]etlx.DBInterface // Keyed by quack_server_id
-	mux          sync.RWMutex
-	adminDB      etlx.DBInterface // Reference to admin DB for config fetch
-	quackConfigs map[int]Dict     // Cache of server configs
-	configMu     sync.RWMutex
+	pool          map[int]etlx.DBInterface // Keyed by quack_server_id
+	mux           sync.RWMutex
+	adminDB       etlx.DBInterface // Reference to admin DB for config fetch
+	validateToken func(string) (Dict, error)
+	quackConfigs  map[int]Dict // Cache of server configs
+	configMu      sync.RWMutex
 }
 
 // NewQuackManager creates a new Quack manager instance
-func NewQuackManager(adminDB etlx.DBInterface) *QuackManager {
+func NewQuackManager(adminDB etlx.DBInterface, validateToken func(string) (Dict, error)) *QuackManager {
 	return &QuackManager{
-		pool:         make(map[int]etlx.DBInterface),
-		adminDB:      adminDB,
-		quackConfigs: make(map[int]Dict),
+		pool:          make(map[int]etlx.DBInterface),
+		adminDB:       adminDB,
+		validateToken: validateToken,
+		quackConfigs:  make(map[int]Dict),
 	}
 }
 
@@ -65,11 +69,11 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 		}
 	}
 
-	/*/ Register the security UDF for this server (token validation)
-	if err := qm.registerSecurityUDF(conn, quackServerID); err != nil {
+	// Register the token validation UDF for this server
+	if err := qm.registerCheckTokenUDF(conn, config); err != nil {
 		conn.Close()
-		return fmt.Errorf("failed to register security udf: %w", err)
-	}*/
+		return fmt.Errorf("failed to register check token udf: %w", err)
+	}
 
 	// Store in pool
 	qm.pool[quackServerID] = conn
@@ -158,33 +162,82 @@ func (qm *QuackManager) executeSQL(conn etlx.DBInterface, sql string) error {
 	return nil
 }
 
-// registerSecurityUDF registers a UDF for token validation
-// This can be extended with actual security logic
-func (qm *QuackManager) registerSecurityUDF(conn etlx.DBInterface, quackServerID int) error {
-	// Fetch the token for this server
-	qm.configMu.RLock()
-	config, ok := qm.quackConfigs[quackServerID]
-	qm.configMu.RUnlock()
-	if !ok {
-		return fmt.Errorf("server config not found for security udf registration")
+type quackCheckTokenUDF struct {
+	validateToken func(string) (Dict, error)
+}
+
+func (q *quackCheckTokenUDF) Config() duckdb.ScalarFuncConfig {
+	inputTypeInfo, err := duckdb.NewTypeInfo(duckdb.TYPE_VARCHAR)
+	if err != nil {
+		panic(fmt.Errorf("failed to create input type info: %w", err))
 	}
-	// Create a simple macro or function that validates the token
-	// Example: CREATE FUNCTION validate_quack_token(token VARCHAR) RETURNS BOOLEAN AS ...
-	// For now, we'll create a simple placeholder that can be extended
-	//udfSQL := fmt.Sprintf(`CREATE FUNCTION validate_quack_token(token VARCHAR) RETURNS BOOLEAN AS 'return token == "%s"' LANGUAGE python;`, config.Token)
+	resultTypeInfo, err := duckdb.NewTypeInfo(duckdb.TYPE_BOOLEAN)
+	if err != nil {
+		panic(fmt.Errorf("failed to create result type info: %w", err))
+	}
+	return duckdb.ScalarFuncConfig{
+		InputTypeInfos: []duckdb.TypeInfo{inputTypeInfo},
+		ResultTypeInfo: resultTypeInfo,
+	}
+}
 
-	// Note: This is pseudo-code. Actual UDF registration depends on DuckDB's capabilities
-	// DuckDB supports SQL UDFs but Python UDFs require the python extension
-	// For simplicity, we can use a SQL-based check or store tokens in a table
+func (q *quackCheckTokenUDF) Executor() duckdb.ScalarFuncExecutor {
+	return duckdb.ScalarFuncExecutor{RowExecutor: q.exec}
+}
 
-	// Alternative: Store token in a table and query it
-	tokenTableSQL := fmt.Sprintf(`
-		CREATE TEMPORARY TABLE quack_tokens (server_id INTEGER, token VARCHAR);
-		INSERT INTO quack_tokens VALUES (%d, '%s');
-	`, quackServerID, config["token"].(string))
+func (q *quackCheckTokenUDF) exec(values []driver.Value) (any, error) {
+	if len(values) == 0 {
+		return false, fmt.Errorf("quack_check_token requires one argument")
+	}
+	if values[0] == nil {
+		return false, nil
+	}
+	token, ok := values[0].(string)
+	fmt.Println("Validating token in quack_check_token UDF:", token)
+	if !ok {
+		return false, fmt.Errorf("invalid token type for quack_check_token")
+	}
+	if q.validateToken == nil {
+		return false, fmt.Errorf("token validation function is not configured")
+	}
+	user, err := q.validateToken(token)
+	if err != nil {
+		fmt.Println("Token validation failed:", err)
+		return false, nil
+	}
+	fmt.Println("TOKEN USER DATA:", user)
+	return true, nil
+}
 
-	if err := qm.executeSQL(conn, tokenTableSQL); err != nil {
-		return fmt.Errorf("failed to create token validation table: %w", err)
+// registerCheckTokenUDF registers a Go scalar UDF for token validation.
+func (qm *QuackManager) registerCheckTokenUDF(conn etlx.DBInterface, config Dict) error {
+	if qm.validateToken == nil {
+		return fmt.Errorf("no token validation function configured for quack manager")
+	}
+
+	ddb, ok := conn.(*etlx.DuckDB)
+	if !ok {
+		return fmt.Errorf("check token udf registration requires a DuckDB connection")
+	}
+
+	sqlConn, err := ddb.Conn(context.Background())
+	if err != nil {
+		return fmt.Errorf("failed to obtain duckdb connection: %w", err)
+	}
+	defer sqlConn.Close()
+
+	udf := &quackCheckTokenUDF{validateToken: qm.validateToken}
+	if err := duckdb.RegisterScalarUDF(sqlConn, "quack_check_token", udf); err != nil {
+		return fmt.Errorf("failed to register quack_check_token UDF: %w", err)
+	}
+
+	macroSQL := `CREATE MACRO IF NOT EXISTS check_token(session_id, client_token, server_token) AS (quack_check_token(client_token));`
+	if _, err := conn.ExecuteQuery(macroSQL); err != nil {
+		return fmt.Errorf("failed to create check_token macro: %w", err)
+	}
+	sql := `SET GLOBAL quack_authentication_function = 'check_token';`
+	if _, err := conn.ExecuteQuery(sql); err != nil {
+		return fmt.Errorf("failed to set quack_authentication_function: %w", err)
 	}
 
 	return nil
@@ -290,6 +343,16 @@ func toString(v any) string {
 	}
 }
 
+func (app *application) quackValidateToken(token string) (Dict, error) {
+	// fmt.Println("TOKEN:", token)
+	identity, err := app.verifyTokenString(token)
+	if err != nil {
+		fmt.Printf("Err validating token: %s\n", err)
+		return nil, err
+	}
+	return identity, nil
+}
+
 func (app *application) startQuackServer(params Dict) Dict {
 	quack_server_id := any(nil)
 	if _, ok := params["data"].(Dict)["quack_server_id"]; ok {
@@ -355,7 +418,7 @@ func (app *application) startQuackServer(params Dict) Dict {
 		}
 	}
 	if !app.quackInstanciated || app.quackManager == nil {
-		app.quackManager = NewQuackManager(app.db)
+		app.quackManager = NewQuackManager(app.db, app.verifyTokenString)
 		app.quackInstanciated = true
 	}
 	err := app.quackManager.StartQuackServer(context.Background(), app.toInt(quack_server_id), quackInfo)
@@ -436,7 +499,7 @@ func (app *application) stopQuackServer(params Dict) Dict {
 		}
 	}
 	if !app.quackInstanciated || app.quackManager == nil {
-		app.quackManager = NewQuackManager(app.db)
+		app.quackManager = NewQuackManager(app.db, app.verifyTokenString)
 		app.quackInstanciated = true
 	}
 	err := app.quackManager.StopQuackServer(context.Background(), app.toInt(quack_server_id))
@@ -517,7 +580,7 @@ func (app *application) restartQuackServer(params Dict) Dict {
 		}
 	}
 	if !app.quackInstanciated || app.quackManager == nil {
-		app.quackManager = NewQuackManager(app.db)
+		app.quackManager = NewQuackManager(app.db, app.verifyTokenString)
 		app.quackInstanciated = true
 	}
 	err := app.quackManager.RestartQuackServer(context.Background(), app.toInt(quack_server_id), quackInfo)
