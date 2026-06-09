@@ -608,11 +608,12 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"db":               database,
 				"id":               id,
 				"action":           crud_aciton,
+				"action_type":      c_action["action_type_id"],
 				"user_id":          user_id,
 				"app_id":           params["app"].(Dict)["app_id"],
 			}
-			insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
-			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
+			insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
+			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 			msg := ""
 			if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 				if _, ok := c_action["sql"]; ok {
@@ -678,8 +679,14 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					}
 				}
 			} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
-				_, err := app.CronRunEndPoint(Dict{"api": api, "data": _data})
+				_api, err := etlx_engine.RenderTemplate(api.(string), _data)
+				if err == nil {
+					api = _api
+				}
+				res, err := app.CronRunEndPoint(Dict{"api": api, "data": _data})
 				if err != nil {
+					msg = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
+					fmt.Println("API Response:", res, "Error:", err, msg)
 					success = false
 					crud_action_log["success"] = success
 					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
@@ -742,7 +749,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				return fmt.Errorf(msg)
 			}
 			crud_action_log["success"] = success
-			if msg == "" {
+			if msg == "" || success {
 				msg = fmt.Sprintf("CRUD Action %s executed successfully", c_action["crud_action_code"])
 			}
 			crud_action_log["log_message"] = msg

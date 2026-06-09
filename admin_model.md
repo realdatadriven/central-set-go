@@ -1378,6 +1378,7 @@ data:
   create: true
   update: false
   delete: false
+  email_subject: C7 User Created
   email_to: '{{.email}}'
   email_template: |
     <p>Hi {{.data.first_name}},</p>
@@ -1402,6 +1403,7 @@ data:
   create: false
   update: true
   delete: false
+  email_subject: C7 User Updated
   email_to: '{{.email}}'
   email_template: |
     <p>Hi {{.data.first_name}},</p>
@@ -1425,6 +1427,7 @@ data:
   create: false
   update: false
   delete: true
+  email_subject: C7 User Deleted
   email_to: '{{.email}}'
   email_template: |
     <p>Hi {{.data.first_name}},</p>
@@ -1451,6 +1454,25 @@ data:
   sql: |
     INSERT INTO "user_log" ("user_id", "action", "table", "db", "row_id", "created_at", "updated_at", "excluded")
     VALUES (:user_id, 'crud/create from actions', 'users', 'ADMIN', :user_id, :created_at, :updated_at, FALSE)
+```
+
+## EX_CRUD_ACTION_API_CALL
+```yaml
+table: crud_action
+description: Add Example of CRUD Action API CALL Example
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: CRUD_ACTION_API_CALL
+  crud_action: User Create Log
+  action_type_id: 3
+  err_msg: 'Error calling the api for {{.user_id}} {{.email}}'
+  table: users
+  db: ADMIN
+  active: true
+  create: true
+  update: true
+  delete: true
+  api: 'run/process_user/{{.user_id}}'
 ```
 
 # RUN_ESPECIFC_SQL
