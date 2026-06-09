@@ -424,7 +424,6 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	if db.GetDriverName() == "postgres" && pk != "" {
 		_pg_returning = fmt.Sprintf(` RETURNING "%s"`, pk)
 	}
-	//
 	query := fmt.Sprintf(`INSERT INTO "%s" ("%s") VALUES (:%s)%s`, table, cols, vals, _pg_returning)
 	if crud_aciton != "create" {
 		keys = []any{}
@@ -495,7 +494,11 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		}
 		id = _id
 	}
-	_data[pk] = id
+	if _, ok := _data[pk]; ok {
+		// id = app.toInt(_data[pk])
+	} else {
+		_data[pk] = id
+	}
 	if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" && crud_aciton == "create" {
 		login_table := os.Getenv("DYN_LOGIN_TABLE")
 		if login_table == table {
@@ -683,10 +686,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				if err == nil {
 					api = _api
 				}
-				res, err := app.CronRunEndPoint(Dict{"api": api, "data": _data})
+				_, err = app.CronRunEndPoint(Dict{"api": api, "data": _data})
 				if err != nil {
-					msg = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
-					fmt.Println("API Response:", res, "Error:", err, msg)
 					success = false
 					crud_action_log["success"] = success
 					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())

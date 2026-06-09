@@ -916,7 +916,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		if _, ok := data["success"]; !ok {
 		} else if _, ok := data["success"].(bool); !ok {
 		} else if success, ok := data["success"].(bool); ok {
-			fmt.Println("BROADCAST CHAGE WS:", success, act, broadcast_changes, _log)
+			// fmt.Println("BROADCAST CHAGE WS:", success, act, broadcast_changes, _log)
 			if success {
 				_data := Dict{
 					"type":     "data_change",

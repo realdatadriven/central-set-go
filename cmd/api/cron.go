@@ -172,7 +172,7 @@ func (app *application) CronRunEndPoint(data Dict) (Dict, error) {
 		_params = data["data"]
 	}
 	endpoint := fmt.Sprintf(`%s/%s`, app.config.baseURL, api)
-	println("CronRunEndPoint called with api:", api, endpoint, _params)
+	// fmt.Println("CronRunEndPoint called with api:", api, endpoint, _params, data)
 	_jwt, ok := data["token"].(string)
 	if !ok {
 		_jwt, _ = app.AdminGetJWT(Dict{"user_id": 1, "username": "root", "role_id": 1, "active": true, "excluded": false, "params": _params})
