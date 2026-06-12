@@ -101,7 +101,10 @@ func (app *application) routes() http.Handler {
 	// REPLICA OF THE FASTAPI CENTRAL-SET
 	//mux.HandleFunc("POST /dyn_api/login/login", app.dyn_api)
 	mux.HandleFunc("POST /upload", app.uploadHandler)
-	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api)
+	// OAuth2 token endpoint (minimal scaffold)
+	mux.HandleFunc("POST /oauth2/token", app.oauthTokenHandler)
+	// Protect dynamic API with OAuth middleware (validates JWT issued by existing login)
+	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.oauthMiddleware(app.dyn_api))
 
 	// ODATA HANDDLER
 	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
