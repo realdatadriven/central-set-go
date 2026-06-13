@@ -218,7 +218,7 @@ func run(logger *slog.Logger) error {
 	}
 	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)
 	if app.rateLimitingEnabled {
-		app.rtRequestLimit = env.GetInt("RATE_LIMITING_REQUEST_LIMIT", 100)
+		app.rtRequestLimit = env.GetInt("RATE_LIMITING_REQUESTS_PER_MINUTE", 100)
 		fmt.Printf("Rate limiting is enabled with request limit: %d\n", app.rtRequestLimit)
 		//app.memdb, err = etlx.New("duckdb:", ":memory:")
 		rtLimitPath := env.GetString("RATE_LIMITING_DB_PATH", "file::memory:?cache=shared")
@@ -240,6 +240,9 @@ func run(logger *slog.Logger) error {
 		if err != nil {
 			fmt.Printf("Error setting duckdb memory limit: %v\n", err)
 		}*/
+		app.memdb.Exec("PRAGMA journal_mode=WAL;")
+		busy_timeout := 5_1000
+		app.memdb.Exec(fmt.Sprintf("PRAGMA busy_timeout = %d;", busy_timeout))
 		sql := `CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT PRIMARY KEY, request_count INTEGER, last_request_time TIMESTAMP)`
 		_, err := app.memdb.Exec(sql)
 		if err != nil {

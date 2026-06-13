@@ -225,7 +225,9 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 			ip := realip.FromRequest(r)
 			// Check if the IP has exceeded the rate limit
 			if app.IsRateLimited(ip) {
+				fmt.Println("IsRateLimited:", app.rtRequestLimit, app.rtRequestLimit, ip)
 				w.Header().Set("Content-Type", "application/json")
+				w.Header().Set("Retry-After", "120")
 				w.WriteHeader(http.StatusTooManyRequests)
 				json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": "Too many requests"})
 				return

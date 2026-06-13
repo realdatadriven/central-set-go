@@ -600,6 +600,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	if limit != -1 {
 		query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
 	}
+	//fmt.Println(query)
 	query, args, err := sqlx.In(query, queryParams...)
 	if err != nil {
 		println("Error geting the table query:", err)
@@ -626,7 +627,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	results := make([]map[string]any, 0)
 	data, _, err := db.QueryMultiRows(query, args...)
 	if err != nil {
-		// fmt.Println("READ ERR:", args, query, err)
+		fmt.Println("READ ERR:", args, query, err)
 		return map[string]any{
 			"success": false,
 			"msg":     fmt.Sprintf("%s", err),
