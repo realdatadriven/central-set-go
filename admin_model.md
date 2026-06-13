@@ -1016,13 +1016,13 @@ columns:
   table:             { type: varchar, len: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 3 }
   db:                { type: varchar, len: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
   action:            { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
+  executed_at:       { type: datetime, comment: "Executed At", order: 7, form_display: true, table_display: true, form_size: 4}
   success:           { type: boolean, default: true, comment: "Success", order: 9, form_display: true, table_display: true, form_size: 3 }
   log_message:       { type: text, comment: "Log Message", order: 10, form_display: true, table_display: true, form_size: 12, form_long_text: true, form_code: txt }
-  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 7 }
-  app_id:            { type: integer, fk: "app.app_id", comment: "App ID", order: 8 }
-  executed_at:       { type: datetime, comment: "Executed At", order: 11 }
-  created_at:        { type: datetime, comment: "Created at", order: 12 }
-  updated_at:        { type: datetime, comment: "Updated at", order: 13 }
+  user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:        { type: datetime, comment: "Created at" }
+  updated_at:        { type: datetime, comment: "Updated at" }
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 14 }
 form_layout:
   tabs_steps: tabs
@@ -1108,18 +1108,18 @@ columns:
   id:                 { type: integer, comment: "ID", order: 5, form_display: true, table_display: true, form_size: 4 }
   action:             { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 4 }
   action_type:        { type: varchar, len: 20, comment: "Action Type", order: 7, form_display: true, table_display: true, form_size: 4 }
+  executed_at:        { type: datetime, comment: "Executed At", order: 8, form_display: true, table_display: true, form_size: 4 }
   success:            { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 4 }
   log_message:        { type: text, comment: "Log Message", order: 11, form_display: true, table_display: true, form_long_text: true, form_code: txt }
   user_id:            { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:             { type: integer, fk: "app.app_id", comment: "App ID" }
-  executed_at:        { type: datetime, comment: "Executed At" }
   created_at:         { type: datetime, comment: "Created at" }
   updated_at:         { type: datetime, comment: "Updated at" }
   excluded:           { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 8
 table_layout:
   default_order:
     - { field: crud_action_log_id, order: DESC } 

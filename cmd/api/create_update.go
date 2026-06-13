@@ -338,6 +338,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"action":          crud_aciton,
 					"user_id":         user_id,
 					"app_id":          params["app"].(Dict)["app_id"],
+					"started_at":      time.Now().In(loc),
 				}
 				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
@@ -710,6 +711,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		"action_type":      c_action["action_type_id"],
 		"user_id":          user_id,
 		"app_id":           params["app"].(Dict)["app_id"],
+		"started_at":       time.Now().In(loc),
 	}
 	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
