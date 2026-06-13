@@ -636,6 +636,7 @@ func (app *application) UserTriggeredCrudAction(params Dict) Dict {
 	database := params["data"].(Dict)["database"]
 	crud_action_id := params["data"].(Dict)["crud_action_id"]
 	pk := params["data"].(Dict)["pk"]
+	id := params["data"].(Dict)["id"]
 	user_id := params["user"].(Dict)["user_id"]
 	_data := params["data"].(Dict)["data"].(Dict)
 	args := []any{database, table, crud_action_id}
@@ -656,7 +657,7 @@ func (app *application) UserTriggeredCrudAction(params Dict) Dict {
 		for _, c_action := range crud_action_rows {
 			params["table"] = table
 			params["database"] = database
-			params["id"] = pk
+			params["id"] = id
 			params["crud_aciton"] = crud_aciton
 			params["user_id"] = user_id
 			params["pk"] = pk
