@@ -652,15 +652,20 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	// fmt.Println(table, user_id, pk, args, total, query)
 	//data := map[string]any{}
 	msg, _ := app.i18n.T("success", map[string]any{})
-	return map[string]any{
+
+	res := map[string]any{
 		"success": true,
 		"msg":     msg,
 		"data":    results,
 		"total":   total,
 		"cols":    _schema["fields_order"],
-		//"schema":           _schema,
+		// "schema":      _schema,
 		"permissions": _permissions,
 		//"row_level_tables": _row_level_tables,
 		"sql": query,
 	}
+	if include_schema, ok := params["data"].(Dict)["include_schema"].(bool); ok && include_schema {
+		res["schema"] = _schema
+	}
+	return res
 }
