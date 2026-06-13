@@ -881,11 +881,15 @@ func (app *application) tables(params Dict, tables []any) Dict {
 		crud_actions := app.getTableCrudActions(app.db, _database, tables)
 		if _, ok := crud_actions["data"].(Dict); ok {
 			crud_actions = crud_actions["data"].(Dict)
+		} else {
+			fmt.Println("VALIDATIONS ERR:", crud_actions["msg"])
 		}
 		// get crud validations for tables
 		crud_validations := app.getTableCrudValidations(app.db, _database, tables)
 		if _, ok := crud_validations["data"].(Dict); ok {
 			crud_validations = crud_validations["data"].(Dict)
+		} else {
+			fmt.Println("VALIDATIONS ERR:", crud_validations["msg"])
 		}
 		// return
 		for _, row := range *_table {
@@ -935,7 +939,7 @@ func (app *application) tables(params Dict, tables []any) Dict {
 
 func (app *application) getTableCrudActions(dbCon etlx.DBInterface, database string, tables []any) Dict {
 	query := `SELECT * FROM crud_action WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
-	queryParams := []any{database}
+	queryParams := []any{database, tables}
 	query, args, err := sqlx.In(query, queryParams...)
 	if err != nil {
 		println("Error geting the table query: ", err)
@@ -955,6 +959,7 @@ func (app *application) getTableCrudActions(dbCon etlx.DBInterface, database str
 		}
 		data[row["table"].(string)] = append(data[row["table"].(string)].([]any), row)
 	}
+	// fmt.Println("getTableCrudActions:", data)
 	return Dict{
 		"success": true,
 		"msg":     "success",
@@ -964,7 +969,7 @@ func (app *application) getTableCrudActions(dbCon etlx.DBInterface, database str
 
 func (app *application) getTableCrudValidations(dbCon etlx.DBInterface, database string, tables []any) Dict {
 	query := `SELECT * FROM validation WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
-	queryParams := []any{database}
+	queryParams := []any{database, tables}
 	query, args, err := sqlx.In(query, queryParams...)
 	if err != nil {
 		println("Error geting the table query: ", err)
@@ -984,6 +989,7 @@ func (app *application) getTableCrudValidations(dbCon etlx.DBInterface, database
 		}
 		data[row["table"].(string)] = append(data[row["table"].(string)].([]any), row)
 	}
+	//fmt.Println("getTableCrudValidations:", data)
 	return Dict{
 		"success": true,
 		"msg":     "success",
