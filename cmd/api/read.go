@@ -230,7 +230,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 						_flds = append(_flds, fmt.Sprintf(`"%s"."%s" AS "%s_%s%s"`, alias, key, referred_table, key, field_sufix))
 						//}
 					}
-					fk_tables_fields[alias] = _referred_table_schema
+					fk_tables_fields[alias] = _referred_table_schema["fields"].(map[string]any)
 				}
 				// fmt.Println(field, referred_table, referred_column)
 			} else {
@@ -301,7 +301,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 							}
 						}
 					}
-					fk_tables_fields[alias] = _referred_table_schema
+					fk_tables_fields[alias] = _referred_table_schema["fields"].(map[string]any) //_schema["fields"].(map[string]any)
 				}
 				// fmt.Println(field, referred_table, referred_column, len(_referred_table_schema), joins)
 			}
@@ -455,8 +455,10 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			if len(fk_tables_fields) > 0 {
 				for _tbl, _tbl_fields := range fk_tables_fields {
 					if _, ok := _tbl_fields.(map[string]any)[_field]; ok {
+						// fmt.Println(_tbl, _tbl_fields)
 						is_in_fk_fields = true
 						_table = _tbl
+						fmt.Println("FILTER FIELD IN FK TABLE:", _table, _field)
 						break
 					}
 				}
