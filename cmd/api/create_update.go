@@ -499,6 +499,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	} else {
 		_data[pk] = id
 	}
+	_data["_action"] = crud_aciton
 	if os.Getenv("DYN_LOGIN_TABLE_MAP_TO_USERS") == "true" && crud_aciton == "create" {
 		login_table := os.Getenv("DYN_LOGIN_TABLE")
 		if login_table == table {
@@ -702,6 +703,9 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 			} else if app.toInt(action_type_id) == 4 && (okAPIID || okAPIName || okAPIEndpoint) { // CallExternalAPI
 				_params := Dict{
+					"user": params["user"],
+					"app":  params["app"],
+					"lang": params["lang"],
 					"data": Dict{
 						"api_id":         api_id,
 						"api_name":       api_name,
@@ -773,13 +777,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				go func() {
 					err := actionRunner(c_action)
 					if err != nil {
-						fmt.Printf("Error runing the action: %v\n", err.Error())
+						fmt.Printf("Error runing the action: %s -> %v\n", c_action["crud_action_code"], err.Error())
 					}
 				}()
 			} else {
 				err := actionRunner(c_action)
 				if err != nil {
-					fmt.Printf("Error runing the action: %v\n", err.Error())
+					fmt.Printf("Error runing the action: %s -> %v\n", c_action["crud_action_code"], err.Error())
 				}
 			}
 		}

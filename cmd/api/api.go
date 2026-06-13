@@ -8,130 +8,6 @@ import (
 	"time"
 )
 
-/** -- SCHEMA DEFINITIONS --
-## API_TYPE
-```yaml
-table: api_type
-comment: API Types
-columns:
-  api_type_id:   { type: integer, pk: true, autoincrement: true, comment: "API Type ID" }
-  api_type:      { type: varchar, len: 50, unique: true, nullable: false, comment: "API Type", form_display: true, table_display: true, order: 1 }
-  api_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
-  created_at:    { type: datetime, comment: "Created at" }
-  updated_at:    { type: datetime, comment: "Updated at" }
-  excluded:      { type: boolean, default: false, comment: "Excluded" }
-data:
-  - {api_type_id: 1, api_type: REST, api_type_desc: RESTful API, excluded: false}
-  - {api_type_id: 2, api_type: SOAP, api_type_desc: SOAP Web Service, excluded: false}
-  - {api_type_id: 3, api_type: gRPC, api_type_desc: gRPC Protocol, excluded: false}
-  - {api_type_id: 4, api_type: GraphQL, api_type_desc: GraphQL API, excluded: false}
-form_layout:
-  form_in_popup: true
-  size: 4
-```
-
-## HTTP_REQUEST_TYPE
-```yaml
-table: http_request_type
-comment: HTTP Request Types
-columns:
-  http_request_type_id:   { type: integer, pk: true, autoincrement: true, comment: "HTTP Request Type ID" }
-  http_request_type:      { type: varchar, len: 20, unique: true, nullable: false, comment: "HTTP Request Type", form_display: true, table_display: true, order: 1 }
-  http_request_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
-  created_at:             { type: datetime, comment: "Created at" }
-  updated_at:             { type: datetime, comment: "Updated at" }
-  excluded:               { type: boolean, default: false, comment: "Excluded" }
-data:
-  - {http_request_type_id: 1, http_request_type: GET, http_request_type_desc: "HTTP GET method", excluded: false}
-  - {http_request_type_id: 2, http_request_type: POST, http_request_type_desc: "HTTP POST method", excluded: false}
-  - {http_request_type_id: 3, http_request_type: PUT, http_request_type_desc: "HTTP PUT method", excluded: false}
-  - {http_request_type_id: 4, http_request_type: DELETE, http_request_type_desc: "HTTP DELETE method", excluded: false}
-  - {http_request_type_id: 5, http_request_type: PATCH, http_request_type_desc: "HTTP PATCH method", excluded: false}
-form_layout:
-  form_in_popup: true
-  size: 4
-```
-
-## API
-```yaml
-table: api
-comment: API Integrations
-columns:
-  api_id:                { type: integer, pk: true, autoincrement: true, comment: "API ID" }
-  api_name:              { type: varchar, len: 100, nullable: false, comment: "API Name", form_display: true, table_display: true, form_size: 6, order: 1 }
-  api_type_id:           { type: integer, fk: "api_type.api_type_id", nullable: false, comment: "API Type", form_display: true, table_display: true, form_size: 3, order: 2 }
-  http_request_type_id:  { type: integer, fk: "http_request_type.http_request_type_id", nullable: false, comment: "HTTP Request Type", form_display: true, table_display: true, form_size: 3, order: 3 }
-  api_description:       { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 4 }
-  endpoint:              { type: varchar, len: 500, nullable: false, comment: "API Endpoint", form_display: true, table_display: true, form_size: 9, order: 5 }
-  request_body_template: { type: text, comment: "Request Body Template (Go template)", form_display: true, form_long_text: true, form_code: json, order: 6 }
-  num_retries:           { type: integer, default: 3, comment: "Number of Retries", form_display: true, table_display: true, form_size: 3, order: 7 }
-  timeout_seconds:       { type: integer, default: 30, comment: "Timeout (seconds)", form_display: true, table_display: true, form_size: 3, order: 8 }
-  headers_template:      { type: text, comment: "Headers Template (use @VAR_NAME for environment variables)", form_display: true, form_long_text: true, form_code: json, order: 9 }
-  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
-  user_id:               { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
-  app_id:                { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
-  created_at:            { type: datetime, comment: "Created at" }
-  updated_at:            { type: datetime, comment: "Updated at" }
-  excluded:              { type: boolean, default: false, comment: "Excluded" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 9
-  allow_in_subform: {api_header: true, api_call_log: true}
-  sub_form_size: 9
-```
-
-## API_HEADER
-```yaml
-table: api_header
-comment: API Headers
-columns:
-  api_header_id:   { type: integer, pk: true, autoincrement: true, comment: "Header ID" }
-  api_id:          { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
-  header_name:     { type: varchar, len: 100, nullable: false, comment: "Header Name", form_display: true, table_display: true, form_size: 4, order: 2 }
-  header_value:    { type: text, nullable: false, comment: "Header Value (supports @VAR_NAME for env variables)", form_display: true, form_long_text: true, table_display: true, form_size: 8, order: 3 }
-  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
-  user_id:         { type: integer, fk: "users.user_id", comment: "Created by", order: 10 }
-  app_id:          { type: integer, fk: "app.app_id", comment: "App ID", order: 11 }
-  created_at:      { type: datetime, comment: "Created at" }
-  updated_at:      { type: datetime, comment: "Updated at" }
-  excluded:        { type: boolean, default: false, comment: "Excluded" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 6
-```
-
-## API_CALL_LOG
-```yaml
-table: api_call_log
-comment: API Call Logs
-columns:
-  api_call_log_id:  { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
-  api_id:           { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
-  api_name:         { type: varchar, len: 100, comment: "API Name", form_display: true, table_display: true, form_size: 4, order: 2 }
-  request_at:       { type: datetime, nullable: false, comment: "Request DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 3 }
-  response_at:      { type: datetime, comment: "Response DateTime", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm:ss", form_use_label: true, order: 4 }
-  request_body:     { type: text, comment: "Request Body", form_display: true, form_long_text: true, form_code: json, order: 5 }
-  response_body:    { type: text, comment: "Response Body", form_display: true, form_long_text: true, form_code: json, order: 6 }
-  response_status:  { type: integer, comment: "Response Status Code", form_display: true, table_display: true, order: 7 }
-  response_message: { type: varchar, len: 500, comment: "Response Message", form_display: true, table_display: true, order: 8 }
-  crud_trggrd_db:       { type: varchar, len: 50, comment: "Crud Triggered DB", form_display: true, table_display: true, order: 9, form_size: 3 }
-  crud_trggrd_table:    { type: varchar, len: 50, comment: "Crud Triggered Table", form_display: true, table_display: true, order: 9, form_size: 3 }
-  crud_trggrd_pk_field: { type: varchar, len: 50, comment: "Crud Triggered FK Field", form_display: true, table_display: true, order: 9, form_size: 3 }
-  crud_trggrd_row_id:   { type: varchar, len: 50, comment: "Crud Triggered Row ID", form_display: true, table_display: true, order: 9, form_size: 3 }
-  user_id:          { type: integer, fk: "users.user_id", comment: "User ID", order: 9 }
-  app_id:           { type: integer, fk: "app.app_id", comment: "App ID", order: 10 }
-  created_at:       { type: datetime, comment: "Created at", order: 11 }
-  updated_at:       { type: datetime, comment: "Updated at", order: 12 }
-  excluded:         { type: boolean, default: false, comment: "Excluded", order: 13 }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 6
-```
-**/
-
 func (app *application) runAPI(params Dict) Dict {
 	//fmt.Println("DATA:", params["data"])
 	var user_id int
@@ -159,7 +35,9 @@ func (app *application) runAPI(params Dict) Dict {
 		api_name = params["data"].(Dict)["api"].(Dict)["api_name"]
 	}
 	endpoint := any(nil)
-	if _, ok := params["data"].(Dict)["endpoint"]; ok {
+	if _, ok := params["data"].(Dict)["api_endpoint"]; ok {
+		endpoint = params["data"].(Dict)["api_endpoint"]
+	} else if _, ok := params["data"].(Dict)["endpoint"]; ok {
 		endpoint = params["data"].(Dict)["endpoint"]
 	} else if _, ok := params["data"].(Dict)["data"].(Dict); ok {
 		endpoint = params["data"].(Dict)["data"].(Dict)["endpoint"]
@@ -169,7 +47,7 @@ func (app *application) runAPI(params Dict) Dict {
 	// fmt.Println(1, api_id, api_name, endpoint)
 	var api Dict
 	var err error
-	if api_id == nil || api_id == any(nil) {
+	if api_id == nil && api_id == any(nil) {
 		if api_name != nil && api_name != any(nil) {
 			_sql := "select * from api where api_name = ? and excluded = false and active = true"
 			api, err = app.AdminGetRowByFilter(_sql, []any{api_name})
@@ -194,6 +72,13 @@ func (app *application) runAPI(params Dict) Dict {
 				"msg":     "No API ID or API name found!",
 			}
 		}
+		if len(api) == 0 {
+			return Dict{
+				"success": false,
+				"msg":     "API not found with the provided details!",
+			}
+		}
+		api_id = api["api_id"]
 	} else {
 		sql := "select * from api where api_id = ? and excluded = false and active = true"
 		api, err = app.AdminGetRowByID(sql, app.toInt(api_id))
@@ -204,6 +89,7 @@ func (app *application) runAPI(params Dict) Dict {
 			}
 		}
 	}
+	fmt.Println(1, api_id, api_name, endpoint)
 	_sql := "select * from api_header where api_id = ? and excluded = false and active = true"
 	api_headers, err := app.AdminGetRowsByFilter(_sql, []any{api_id})
 	if err != nil {
@@ -223,7 +109,7 @@ func (app *application) runAPI(params Dict) Dict {
 	// prepair api call by each api_type in api_details
 	api_type_id := app.toInt(api["api_type_id"])
 	http_request_type_id := app.toInt(api["http_request_type_id"])
-	fmt.Println("HTTP Request Type ID:", http_request_type_id)
+	// fmt.Println("HTTP Request Type ID:", http_request_type_id)
 	sql := "select * from http_request_type where http_request_type_id = ? and excluded = false"
 	http_request_type, err := app.AdminGetRowByID(sql, http_request_type_id)
 	if err != nil {
@@ -315,6 +201,8 @@ func (app *application) runAPI(params Dict) Dict {
 				"msg":     "Failed to read HTTP response body!",
 			}
 		}
+		fmt.Println("HTTP Response Status:", resp.Status)
+		fmt.Println("HTTP Response Body:", string(bodyBytes))
 		api_logs["response_at"] = time.Now()
 		api_logs["response_status"] = resp.StatusCode
 		api_logs["response_message"] = resp.Status

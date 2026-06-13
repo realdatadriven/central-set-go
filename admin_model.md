@@ -1071,6 +1071,7 @@ columns:
   read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
   update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
+  user_trigger:      { type: boolean, default: false, comment: "By User", tooltip: "Can be triggered by user", form_display: true, table_display: true, order: 11, form_size: 2 }
   sql:               { type: text, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
   email_template:    { type: text, comment: "Email Template", form_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, order: 14, form_size: 6, form_hide_cond: "data?.action_type_id !== 2" }
@@ -1374,10 +1375,11 @@ data:
   err_msg: 'Error sending the email to {{.email}}!'
   table: users
   db: ADMIN
-  active: true
+  active: false
   create: true
   update: false
   delete: false
+  parallel: true
   email_subject: C7 User Created
   email_to: '{{.email}}'
   email_template: |
@@ -1399,10 +1401,11 @@ data:
   err_msg: 'Error sending the email to {{.email}}!'
   table: users
   db: ADMIN
-  active: true
+  active: false
   create: false
   update: true
   delete: false
+  parallel: true
   email_subject: C7 User Updated
   email_to: '{{.email}}'
   email_template: |
@@ -1423,10 +1426,11 @@ data:
   err_msg: 'Error sending the email to {{.email}}!'
   table: users
   db: ADMIN
-  active: true
+  active: false
   create: false
   update: false
   delete: true
+  parallel: true
   email_subject: C7 User Deleted
   email_to: '{{.email}}'
   email_template: |
@@ -1447,10 +1451,11 @@ data:
   err_msg: 'Error inserting user log for {{.user_id}} {{.email}}'
   table: users
   db: ADMIN
-  active: true
+  active: false
   create: true
   update: false
   delete: false
+  parallel: true
   sql: |
     INSERT INTO "user_log" ("user_id", "action", "table", "db", "row_id", "created_at", "updated_at", "excluded")
     VALUES (:user_id, 'crud/create from actions', 'users', 'ADMIN', :user_id, :created_at, :updated_at, FALSE)
@@ -1472,7 +1477,28 @@ data:
   create: true
   update: true
   delete: true
-  api: 'run/process_user/{{.user_id}}'
+  parallel: true
+  api: 'run/process_user/{{._action}}/{{.user_id}}'
+```
+
+## EX_CRUD_ACTION_EXTERNAL_API_CALL
+```yaml
+table: crud_action
+description: Add Example of CRUD Action External API CALL Example
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: CRUD_ACTION_EXT_API_CALL
+  crud_action: User Create Log
+  action_type_id: 4
+  err_msg: 'Error calling the external api for {{.user_id}} {{.email}} to get the external ip'
+  table: users
+  db: ADMIN
+  active: true
+  create: true
+  update: true
+  delete: true
+  parallel: true
+  api_endpoint: 'https://api.ipify.org'
 ```
 
 # RUN_ESPECIFC_SQL
