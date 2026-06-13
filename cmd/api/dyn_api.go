@@ -724,7 +724,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
-	case "crud_actions", "run_actions", "user_triggered_actions":
+	case "crud_actions", "run_actions", "user_triggered_actions", "actions":
 		if app.contains([]any{"run", "execute", "exec", "exe", "x"}, act) {
 			if !token["success"].(bool) {
 				data = token
