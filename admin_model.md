@@ -1280,7 +1280,7 @@ table_layout:
   exec_button: 
     - {callApi: true, method: POST, api: api/run, tooltip: Get Public IP, icon: play, active: true}
 data:
-  - {api_id: 1, api_name: My public ip, api_type_id: 1, http_request_type_id: 1, api_description: Get my public ip, endpoint: "https://api.ipify.org/", active: true, user_id: 1, app_id: 1, excluded: false}
+  - {api_id: 1, api_name: My public ip, api_type_id: 1, http_request_type_id: 1, api_description: Get my public ip, endpoint: "https://api.ipify.org", active: true, user_id: 1, app_id: 1, excluded: false}
 ```
 
 ## API_HEADER

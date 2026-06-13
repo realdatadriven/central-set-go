@@ -654,19 +654,18 @@ func (app *application) UserTriggeredCrudAction(params Dict) Dict {
 			"msg":     fmt.Sprintf("No active Actions mached %s %s %d!", database, table, crud_action_id),
 		}
 	} else {
-		for _, c_action := range crud_action_rows {
-			params["table"] = table
-			params["database"] = database
-			params["id"] = id
-			params["crud_aciton"] = crud_aciton
-			params["user_id"] = user_id
-			params["pk"] = pk
-			err := app.RunCrudAction(params, c_action, _data) // actionRunner(c_action)
-			if err != nil {
-				return Dict{
-					"success": false,
-					"msg":     fmt.Sprintf("Error runing the action: %s -> %v", c_action["crud_action_code"], err.Error()),
-				}
+		c_action := crud_action_rows[0]
+		params["table"] = table
+		params["database"] = database
+		params["id"] = id
+		params["crud_aciton"] = crud_aciton
+		params["user_id"] = user_id
+		params["pk"] = pk
+		err := app.RunCrudAction(params, c_action, _data) // actionRunner(c_action)
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("Error runing the action: %s -> %v", c_action["crud_action_code"], err.Error()),
 			}
 		}
 	}
