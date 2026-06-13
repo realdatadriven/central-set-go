@@ -388,7 +388,9 @@
         "file_selected": "Ficheiro Selecionado",
         "files_selected": "Ficheiros Selecionados",
         "file_viewed": "Ficheiro Visualizado",
-        "files_viewed": "Ficheiros Visualizados"
+        "files_viewed": "Ficheiros Visualizados",
+        "crud_actions_logs": "Logs de Actions",
+        "validations_logs": "Logs Validações"
     },
     "fmrt": {
         "date": "DD/MM/YYYY",

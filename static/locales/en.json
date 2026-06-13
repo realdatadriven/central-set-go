@@ -354,7 +354,9 @@
         "submit_2f_code": "Submit code",
         "rendermd": "Render",
         "seecode": "See MD code",
-        "copy": "Copy"
+        "copy": "Copy",
+        "crud_actions_logs": "Actions Logs",
+        "validations_logs": "Validations Logs"
     },
     "fmrt": {
         "date": "YYYY/MM/DD",
