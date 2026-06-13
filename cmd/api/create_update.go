@@ -594,194 +594,24 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
 		}*/
 	} else if len(crud_action_rows) > 0 {
-		actionRunner := func(c_action Dict) error {
-			action_type_id := c_action["action_type_id"]
-			_, okSql := c_action["sql"]
-			_, okEmail := c_action["email_template"]
-			api, okAPI := c_action["api"]
-			api_id, okAPIID := c_action["api_id"]
-			api_name, okAPIName := c_action["api_name"]
-			api_endpoint, okAPIEndpoint := c_action["api_endpoint"]
-			//  register crud_action_logs
-			success := true
-			crud_action_log := Dict{
-				"crud_action_id":   c_action["crud_action_id"],
-				"crud_action_code": c_action["crud_action_code"],
-				"crud_action":      c_action["crud_action"],
-				"table":            table,
-				"db":               database,
-				"id":               id,
-				"action":           crud_aciton,
-				"action_type":      c_action["action_type_id"],
-				"user_id":          user_id,
-				"app_id":           params["app"].(Dict)["app_id"],
-			}
-			insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
-			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
-			msg := ""
-			if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
-				if _, ok := c_action["sql"]; ok {
-					sql_rule := c_action["sql"].(string)
-					err := app.ExecuteQuery(sql_rule, params, _data)
-					if err != nil {
-						success = false
-						msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
-						if err != nil {
-							msg = c_action["err_msg"].(string)
-						}
-						crud_action_log["success"] = success
-						crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action ExecuteQuery: %v. Message: %s", err, msg)
-						crud_action_log["executed_at"] = time.Now().In(loc)
-						crud_action_log["created_at"] = time.Now().In(loc)
-						crud_action_log["updated_at"] = time.Now().In(loc)
-						_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
-						if err2 != nil {
-							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
-						}
-						msg = fmt.Sprintf("Error executing query: %v", err)
-						return fmt.Errorf("Err %w", msg)
-					}
-				}
-			} else if app.toInt(action_type_id) == 2 && okEmail { // SendEmail
-				if _, ok := c_action["email_template"]; ok {
-					// Process email template
-					_to, _ := c_action["email_to"].(string)
-					_to_tmpl, _ := etlx_engine.RenderTemplate(_to, _data)
-					_subject, ok := c_action["email_subject"].(string)
-					if !ok {
-						_subject = fmt.Sprintf("%s - %s", c_action["crud_action_code"], c_action["crud_action"])
-					}
-					subject, _ := etlx_engine.RenderTemplate(_subject, _data)
-					//fmt.Println("Rendered email_to template:", _to, _to_tmpl, subject)
-					to := strings.Split(_to_tmpl, ";")
-					emailParams := Dict{
-						"to":      app.sliceStrs2SliceInterfaces(to),
-						"subject": subject,
-						"body":    c_action["email_template"],
-						"data": Dict{
-							"data": _data,
-							"user": params["user"],
-						},
-					}
-					err = etlx_engine.SendEmail(emailParams)
-					if err != nil {
-						success = false
-						crud_action_log["success"] = success
-						crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action SendEmail: %v. Message: %s", err, err.Error())
-						crud_action_log["executed_at"] = time.Now().In(loc)
-						crud_action_log["created_at"] = time.Now().In(loc)
-						crud_action_log["updated_at"] = time.Now().In(loc)
-						_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
-						if err2 != nil {
-							fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
-						}
-						msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
-						if err != nil {
-							msg = c_action["err_msg"].(string)
-						}
-						return fmt.Errorf("Err %w", msg)
-					}
-				}
-			} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
-				_api, err := etlx_engine.RenderTemplate(api.(string), _data)
-				if err == nil {
-					api = _api
-				}
-				_, err = app.CronRunEndPoint(Dict{"api": api, "data": _data})
-				if err != nil {
-					success = false
-					crud_action_log["success"] = success
-					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
-					crud_action_log["executed_at"] = time.Now().In(loc)
-					crud_action_log["created_at"] = time.Now().In(loc)
-					crud_action_log["updated_at"] = time.Now().In(loc)
-					_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
-					if err2 != nil {
-						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
-					}
-					return err
-				}
-			} else if app.toInt(action_type_id) == 4 && (okAPIID || okAPIName || okAPIEndpoint) { // CallExternalAPI
-				_params := Dict{
-					"user": params["user"],
-					"app":  params["app"],
-					"lang": params["lang"],
-					"data": Dict{
-						"api_id":         api_id,
-						"api_name":       api_name,
-						"api_endpoint":   api_endpoint,
-						"data":           _data,
-						"action":         c_action,
-						"db":             database,
-						"table":          table,
-						"table_pk_field": pk,
-						"row_id":         id,
-						"user":           params["user"],
-					},
-				}
-				res := app.runAPI(_params)
-				_, ok := res["success"].(bool)
-				if !ok || !res["success"].(bool) {
-					success = false
-					msg := ""
-					if _, ok := res["msg"].(string); ok {
-						msg = res["msg"].(string)
-					}
-					crud_action_log["success"] = success
-					crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action External API. Message: %s. API Response: %v", msg, res)
-					crud_action_log["executed_at"] = time.Now().In(loc)
-					crud_action_log["created_at"] = time.Now().In(loc)
-					crud_action_log["updated_at"] = time.Now().In(loc)
-					_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
-					if err2 != nil {
-						fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
-					}
-					return fmt.Errorf("Error executing external API: %s", msg)
-				}
-			} else {
-				success = false
-				fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
-				msg = fmt.Sprintf("Unknown action type for CRUD Action: %v", action_type_id)
-				crud_action_log["success"] = success
-				crud_action_log["log_message"] = fmt.Sprintf("Unknown action_type_id: %v", action_type_id)
-				crud_action_log["executed_at"] = time.Now().In(loc)
-				crud_action_log["created_at"] = time.Now().In(loc)
-				crud_action_log["updated_at"] = time.Now().In(loc)
-				_, err = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
-				if err != nil {
-					fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
-				}
-				return fmt.Errorf(msg)
-			}
-			crud_action_log["success"] = success
-			if msg == "" || success {
-				msg = fmt.Sprintf("CRUD Action %s executed successfully", c_action["crud_action_code"])
-			}
-			crud_action_log["log_message"] = msg
-			crud_action_log["executed_at"] = time.Now().In(loc)
-			crud_action_log["created_at"] = time.Now().In(loc)
-			crud_action_log["updated_at"] = time.Now().In(loc)
-			_, err = app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
-			if err != nil {
-				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err)
-				// Not returning error to avoid interrupting the main CRUD operation flow
-			}
-			if !success {
-				return fmt.Errorf(msg)
-			}
-			return nil
-		}
 		for _, c_action := range crud_action_rows {
 			parallel, ok := c_action["parallel"].(bool)
+			params["loc"] = loc
+			params["table"] = table
+			params["database"] = database
+			params["id"] = pk
+			params["crud_aciton"] = crud_aciton
+			params["user_id"] = user_id
+			params["pk"] = pk
 			if parallel && ok {
 				go func() {
-					err := actionRunner(c_action)
+					err := app.RunCrudAction(params, c_action, _data) //actionRunner(c_action)
 					if err != nil {
 						fmt.Printf("Error runing the action: %s -> %v\n", c_action["crud_action_code"], err.Error())
 					}
 				}()
 			} else {
-				err := actionRunner(c_action)
+				err := app.RunCrudAction(params, c_action, _data) // actionRunner(c_action)
 				if err != nil {
 					fmt.Printf("Error runing the action: %s -> %v\n", c_action["crud_action_code"], err.Error())
 				}
@@ -799,4 +629,240 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		"data":                 _data,
 		"sql":                  query,
 	}
+}
+
+func (app *application) UserTriggeredCrudAction(params Dict) Dict {
+	table := params["data"].(Dict)["table"]
+	database := params["data"].(Dict)["database"]
+	crud_action_id := params["data"].(Dict)["crud_action_id"]
+	pk := params["data"].(Dict)["pk"]
+	user_id := params["user"].(Dict)["user_id"]
+	_data := params["data"].(Dict)["data"].(Dict)
+	args := []any{database, table, crud_action_id}
+	crud_aciton := "user_trigger"
+	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND crud_action_id = ? AND "%s" IS TRUE`, crud_aciton)
+	crud_action_rows, err := app.AdminGetRowsByFilter(get_crud_actions_sql, args)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
+		}
+	} else if len(crud_action_rows) == 0 {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("No active Actions mached %s %s %d!", database, table, crud_action_id),
+		}
+	} else {
+		for _, c_action := range crud_action_rows {
+			params["table"] = table
+			params["database"] = database
+			params["id"] = pk
+			params["crud_aciton"] = crud_aciton
+			params["user_id"] = user_id
+			params["pk"] = pk
+			err := app.RunCrudAction(params, c_action, _data) // actionRunner(c_action)
+			if err != nil {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error runing the action: %s -> %v", c_action["crud_action_code"], err.Error()),
+				}
+			}
+		}
+	}
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
+		"success": true,
+		"msg":     msg,
+	}
+}
+
+func (app *application) RunCrudAction(params, c_action, _data Dict) error {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
+	table := params["table"]
+	database := params["database"]
+	id := params["id"]
+	crud_aciton := params["crud_aciton"]
+	user_id := params["user_id"]
+	pk := params["pk"]
+	action_type_id := c_action["action_type_id"]
+	_, okSql := c_action["sql"]
+	_, okEmail := c_action["email_template"]
+	api, okAPI := c_action["api"]
+	api_id, okAPIID := c_action["api_id"]
+	api_name, okAPIName := c_action["api_name"]
+	api_endpoint, okAPIEndpoint := c_action["api_endpoint"]
+	//  register crud_action_logs
+	success := true
+	etlx_engine := &etlx.ETLX{}
+	crud_action_log := Dict{
+		"crud_action_id":   c_action["crud_action_id"],
+		"crud_action_code": c_action["crud_action_code"],
+		"crud_action":      c_action["crud_action"],
+		"table":            table,
+		"db":               database,
+		"id":               id,
+		"action":           crud_aciton,
+		"action_type":      c_action["action_type_id"],
+		"user_id":          user_id,
+		"app_id":           params["app"].(Dict)["app_id"],
+	}
+	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
+			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
+	msg := ""
+	if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
+		if _, ok := c_action["sql"]; ok {
+			sql_rule := c_action["sql"].(string)
+			err := app.ExecuteQuery(sql_rule, params, _data)
+			if err != nil {
+				success = false
+				msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+				if err != nil {
+					msg = c_action["err_msg"].(string)
+				}
+				crud_action_log["success"] = success
+				crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action ExecuteQuery: %v. Message: %s", err, msg)
+				crud_action_log["executed_at"] = time.Now().In(loc)
+				crud_action_log["created_at"] = time.Now().In(loc)
+				crud_action_log["updated_at"] = time.Now().In(loc)
+				_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+				if err2 != nil {
+					fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+				}
+				msg = fmt.Sprintf("Error executing query: %v", err)
+				return fmt.Errorf("Err %w", msg)
+			}
+		}
+	} else if app.toInt(action_type_id) == 2 && okEmail { // SendEmail
+		if _, ok := c_action["email_template"]; ok {
+			// Process email template
+			_to, _ := c_action["email_to"].(string)
+			_to_tmpl, _ := etlx_engine.RenderTemplate(_to, _data)
+			_subject, ok := c_action["email_subject"].(string)
+			if !ok {
+				_subject = fmt.Sprintf("%s - %s", c_action["crud_action_code"], c_action["crud_action"])
+			}
+			subject, _ := etlx_engine.RenderTemplate(_subject, _data)
+			//fmt.Println("Rendered email_to template:", _to, _to_tmpl, subject)
+			to := strings.Split(_to_tmpl, ";")
+			emailParams := Dict{
+				"to":      app.sliceStrs2SliceInterfaces(to),
+				"subject": subject,
+				"body":    c_action["email_template"],
+				"data": Dict{
+					"data": _data,
+					"user": params["user"],
+				},
+			}
+			err := etlx_engine.SendEmail(emailParams)
+			if err != nil {
+				success = false
+				crud_action_log["success"] = success
+				crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action SendEmail: %v. Message: %s", err, err.Error())
+				crud_action_log["executed_at"] = time.Now().In(loc)
+				crud_action_log["created_at"] = time.Now().In(loc)
+				crud_action_log["updated_at"] = time.Now().In(loc)
+				_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+				if err2 != nil {
+					fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+				}
+				msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+				if err != nil {
+					msg = c_action["err_msg"].(string)
+				}
+				return fmt.Errorf("Err %w", msg)
+			}
+		}
+	} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
+		_api, err := etlx_engine.RenderTemplate(api.(string), _data)
+		if err == nil {
+			api = _api
+		}
+		_, err = app.CronRunEndPoint(Dict{"api": api, "data": _data})
+		if err != nil {
+			success = false
+			crud_action_log["success"] = success
+			crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+			if err2 != nil {
+				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+			}
+			return err
+		}
+	} else if app.toInt(action_type_id) == 4 && (okAPIID || okAPIName || okAPIEndpoint) { // CallExternalAPI
+		_params := Dict{
+			"user": params["user"],
+			"app":  params["app"],
+			"lang": params["lang"],
+			"data": Dict{
+				"api_id":         api_id,
+				"api_name":       api_name,
+				"api_endpoint":   api_endpoint,
+				"data":           _data,
+				"action":         c_action,
+				"db":             database,
+				"table":          table,
+				"table_pk_field": pk,
+				"row_id":         id,
+				"user":           params["user"],
+			},
+		}
+		res := app.runAPI(_params)
+		_, ok := res["success"].(bool)
+		if !ok || !res["success"].(bool) {
+			success = false
+			msg := ""
+			if _, ok := res["msg"].(string); ok {
+				msg = res["msg"].(string)
+			}
+			crud_action_log["success"] = success
+			crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action External API. Message: %s. API Response: %v", msg, res)
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+			if err2 != nil {
+				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+			}
+			return fmt.Errorf("Error executing external API: %s", msg)
+		}
+	} else {
+		success = false
+		fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
+		msg = fmt.Sprintf("Unknown action type for CRUD Action: %v", action_type_id)
+		crud_action_log["success"] = success
+		crud_action_log["log_message"] = fmt.Sprintf("Unknown action_type_id: %v", action_type_id)
+		crud_action_log["executed_at"] = time.Now().In(loc)
+		crud_action_log["created_at"] = time.Now().In(loc)
+		crud_action_log["updated_at"] = time.Now().In(loc)
+		_, err := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+		if err != nil {
+			fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
+		}
+		return fmt.Errorf(msg)
+	}
+	crud_action_log["success"] = success
+	if msg == "" || success {
+		msg = fmt.Sprintf("CRUD Action %s executed successfully", c_action["crud_action_code"])
+	}
+	crud_action_log["log_message"] = msg
+	crud_action_log["executed_at"] = time.Now().In(loc)
+	crud_action_log["created_at"] = time.Now().In(loc)
+	crud_action_log["updated_at"] = time.Now().In(loc)
+	_, err := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+	if err != nil {
+		fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err)
+		// Not returning error to avoid interrupting the main CRUD operation flow
+	}
+	if !success {
+		return fmt.Errorf(msg)
+	}
+	return nil
 }

@@ -724,6 +724,19 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
+	case "crud_actions", "run_actions", "user_triggered_actions":
+		if app.contains([]any{"run", "execute", "exec", "exe", "x"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				data = app.UserTriggeredCrudAction(params)
+			}
+		} else {
+			data = Dict{
+				"success": false,
+				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
+			}
+		}
 	case "quack", "quack-protocol", "quack-serve", "quack-server", "quackserve", "quackserver":
 		if app.contains([]any{"start", "startup", "run", "open", "index"}, act) {
 			if !token["success"].(bool) {
