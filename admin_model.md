@@ -1489,7 +1489,7 @@ description: Add Example of CRUD Action External API CALL Example
 cond: 'WHERE crud_action_code = :crud_action_code'
 data:
   crud_action_code: CRUD_ACTION_EXT_API_CALL
-  crud_action: User Create Log
+  crud_action: User External API Call Example
   action_type_id: 4
   err_msg: 'Error calling the external api for {{.user_id}} {{.email}} to get the external ip'
   table: users

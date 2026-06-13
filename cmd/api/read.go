@@ -458,7 +458,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 						// fmt.Println(_tbl, _tbl_fields)
 						is_in_fk_fields = true
 						_table = _tbl
-						fmt.Println("FILTER FIELD IN FK TABLE:", _table, _field)
+						// fmt.Println("FILTER FIELD IN FK TABLE:", _table, _field)
 						break
 					}
 				}
