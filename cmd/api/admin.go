@@ -877,6 +877,16 @@ func (app *application) tables(params Dict, tables []any) Dict {
 		for _, row := range *results {
 			custom_table[row["table"].(string)] = row
 		}
+		// get crud actions for tables
+		crud_actions := app.getTableCrudActions(app.db, _database, tables)
+		if _, ok := crud_actions["data"].(Dict); ok {
+			crud_actions = crud_actions["data"].(Dict)
+		}
+		// get crud validations for tables
+		crud_validations := app.getTableCrudValidations(app.db, _database, tables)
+		if _, ok := crud_validations["data"].(Dict); ok {
+			crud_validations = crud_validations["data"].(Dict)
+		}
 		// return
 		for _, row := range *_table {
 			comment := row["table_desc"]
@@ -907,6 +917,8 @@ func (app *application) tables(params Dict, tables []any) Dict {
 				"custom_form":           custom_form[row["table"].(string)],
 				"translate_table":       translate_table[row["table"].(string)],
 				"translate_table_field": translate_table_field[row["table"].(string)],
+				"crud_actions":          crud_actions[row["table"].(string)],
+				"validations":           crud_validations[row["table"].(string)],
 				"pk":                    pk,
 				"fields_order":          table_fields[row["table"].(string)],
 			}
@@ -918,6 +930,64 @@ func (app *application) tables(params Dict, tables []any) Dict {
 		"msg":         msg,
 		"data":        data,
 		"table_by_id": table_by_id,
+	}
+}
+
+func (app *application) getTableCrudActions(dbCon etlx.DBInterface, database string, tables []any) Dict {
+	query := `SELECT * FROM crud_action WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
+	queryParams := []any{database}
+	query, args, err := sqlx.In(query, queryParams...)
+	if err != nil {
+		println("Error geting the table query: ", err)
+	}
+	//fmt.Println(query, args, queryParams)
+	res, _, err := app.db.QueryMultiRows(query, args...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	data := Dict{}
+	for _, row := range *res {
+		if _, ok := data[row["table"].(string)]; !ok {
+			data[row["table"].(string)] = []any{}
+		}
+		data[row["table"].(string)] = append(data[row["table"].(string)].([]any), row)
+	}
+	return Dict{
+		"success": true,
+		"msg":     "success",
+		"data":    data,
+	}
+}
+
+func (app *application) getTableCrudValidations(dbCon etlx.DBInterface, database string, tables []any) Dict {
+	query := `SELECT * FROM validation WHERE db = ? AND "table" IN (?) AND excluded = FALSE`
+	queryParams := []any{database}
+	query, args, err := sqlx.In(query, queryParams...)
+	if err != nil {
+		println("Error geting the table query: ", err)
+	}
+	//fmt.Println(query, args, queryParams)
+	res, _, err := app.db.QueryMultiRows(query, args...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("%s", err),
+		}
+	}
+	data := Dict{}
+	for _, row := range *res {
+		if _, ok := data[row["table"].(string)]; !ok {
+			data[row["table"].(string)] = []any{}
+		}
+		data[row["table"].(string)] = append(data[row["table"].(string)].([]any), row)
+	}
+	return Dict{
+		"success": true,
+		"msg":     "success",
+		"data":    data,
 	}
 }
 
