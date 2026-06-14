@@ -339,6 +339,10 @@ func (app *application) RegisterCronJob(job Dict) {
 			d["updated_at"] = time.Now()
 			d["excluded"] = false
 			delete(d, "active")
+			delete(d, "run_only_once")
+			delete(d, "last_run")
+			delete(d, "user_id")
+			// fmt.Println("LOGS DATA:", d)
 			if logErr := app.AdminInsertData("cron_log", d); logErr != nil {
 				fmt.Printf("Error saving the cron job log: %v\n", logErr)
 			}
@@ -432,10 +436,12 @@ func (app *application) CronJobs() error {
 	app.lastCronCheck = time.Now()
 	// ── 3. Watcher: every minute look for rows newer than lastCronCheck ──────
 	_, err = app.cronScheduler.AddFunc("@every 1m", func() {
+		//fmt.Println("LAST CRON CHECK:", app.lastCronCheck)
 		checkFrom := app.lastCronCheck
 		sql := `select * from "cron"
-		        where active = true and excluded = false
-		          and (created_at >= ? or updated_at >= ?)`
+		        where active = true 
+				  and excluded = false
+		          and (/*created_at >= ? or */updated_at >= ?)`
 		newJobs, err := app.AdminGetRowsByFilter(sql, []any{checkFrom, checkFrom})
 		app.lastCronCheck = time.Now() // advance the window before querying
 		if err != nil {

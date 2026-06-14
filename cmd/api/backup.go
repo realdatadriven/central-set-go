@@ -81,7 +81,14 @@ func (app *application) Buckup(params Dict) Dict {
 	//admin_db_tables := strings.Split(env.GetString("EXPORT_ADMIN_DB_TABLES", ""), ",")
 	etlx_obj := &etlx.ETLX{Config: Dict{}}
 	//fmt.Println("APPS:", *apps)
-	memDB, _ := etlx.GetDB("duckdb:")
+	memDB, err := etlx.GetDB("duckdb:")
+	if err != nil {
+		fmt.Println("Buckup Err:", err)
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Buckup Err connecting to in memory duckdb: %s", err.Error()),
+		}
+	}
 	defer memDB.Close()
 	for _, _app := range *apps {
 		fmt.Printf("Backup Start: %s -> %v\n", _app["app"], time.Now())
