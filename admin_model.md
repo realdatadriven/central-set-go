@@ -1072,7 +1072,7 @@ columns:
   update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
   user_trigger:      { type: boolean, default: false, comment: "By User", tooltip: "Can be triggered by user", form_display: true, table_display: true, order: 11, form_size: 2 }
-  user_trigger_icon: { type: boolean, default: false, comment: "By User Icon", tooltip: "User triggered by user ICON", form_display: true, order: 20, form_size: 3, form_hide_cond: "!data?.user_trigger"  }
+  user_trigger_icon: { type: varchar, len: 50, default: false, comment: "By User Icon", tooltip: "User triggered by user ICON", form_display: true, order: 20, form_size: 3, form_hide_cond: "!data?.user_trigger"  }
   sql:               { type: text, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
   email_template:    { type: text, comment: "Email Template", form_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, order: 14, form_size: 6, form_hide_cond: "data?.action_type_id !== 2" }
