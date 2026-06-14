@@ -123,9 +123,9 @@ CMD [""]
 #docker run -v ./database:/app/database central-set-go:latest --init
 #docker run -p 8080:4444 -v ./.env:/app/.env:ro -v ./database:/app/database central-set-go:latest
 #docker tag central-set-go:latest docker.io/realdatadriven/central-set-go:latest
-#docker tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.152.1
+#docker tag central-set-go:latest docker.io/realdatadriven/central-set-go:v1.153.2
 #docker login docker.io
 #docker push docker.io/realdatadriven/central-set-go:latest
-#docker push docker.io/realdatadriven/central-set-go:v1.152.1
+#docker push docker.io/realdatadriven/central-set-go:v1.153.2
 #docker exec -it c78f3f267461 bash
 
