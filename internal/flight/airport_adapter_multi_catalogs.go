@@ -101,15 +101,21 @@ func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 			fmt.Println("invalid config: schemas must be an array of objects")
 			continue
 		}
-		catalog_name, ok := c["catalog_name"].(string)
+		catalog_name, ok := c["flight_catalog"].(string)
 		if !ok {
 			fmt.Println("invalid config: catalog_name must be a string")
 			continue
 		}
+		fmt.Printf("CATALOG: %s # SCHEMA: %d\n", catalog_name, len(schemas))
 		for _, s := range schemas {
 			schemaName := s["flight_schema"].(string)
+			fmt.Printf("SCHEMA: %s/%s\n", catalog_name, schemaName)
+			schemaDesc, ok := s["flight_schema_desc"].(string)
+			if !ok {
+				schemaDesc = schemaName
+			}
 			// create a schema builder for this schema
-			sb := builder.Schema(schemaName).Comment("Main application schema")
+			sb := builder.Schema(schemaName).Comment(schemaDesc)
 			// execute startup_sql
 			var main_sql string
 			if startup_sql, ok := s["startup_sql"].(string); ok {

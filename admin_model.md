@@ -753,7 +753,7 @@ columns:
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {flight_schema_id: 1, flight_catalog_id: 1, flight_schema: adm, flight_schema_desc: "Ex. Arrow Flight Schema using ADMIN app", startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: false, app_id: 1, user_id: 1, excluded: false}
+  - {flight_schema_id: 1, flight_catalog_id: 1, flight_schema: adm, flight_schema_desc: "Ex. Arrow Flight Schema using ADMIN app", startup_sql: "INSTALL SQLITE;LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE);USE adm;", shutdown_sql: "USE memory;DETACH adm;", active: true, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   tabs_steps_conf:
