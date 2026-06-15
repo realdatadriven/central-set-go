@@ -94,6 +94,8 @@ cs_app:
       - {table: http_request_type, active: false}
       - api
       - {table: api_header, active: false}
+      - {table: api_data_type, active: false}
+      - {table: api_data, active: false}
       - {table: api_call_log, active: false}
   Params:
     menu_icon: adjustments
@@ -1269,7 +1271,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   size: 9
-  allow_in_subform: {api_call_log: true, api_header: true}
+  allow_in_subform: {api_call_log: true, api_header: true, api_data: true }
   tabs_steps_conf:
     - {label: API Data, fields: [api_id, api_name, api_type, http_request_type, endpoint, active, num_retries, timeout_seconds, api_description]}
     - {label: Templates, fields: [request_body_template, headers_template]}
@@ -1298,6 +1300,52 @@ columns:
   created_at:      { type: datetime, comment: "Created at" }
   updated_at:      { type: datetime, comment: "Updated at" }
   excluded:        { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## API_DATA_TYPE
+```yaml
+table: api_data_type
+comment: API DATA Types
+columns:
+  api_data_type_id:   { type: integer, pk: true, autoincrement: true, comment: "API Type ID" }
+  api_data_type:      { type: varchar, len: 50, unique: true, nullable: false, comment: "API DATA Type", form_display: true, table_display: true, order: 1 }
+  api_data_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:         { type: datetime, comment: "Created at" }
+  updated_at:         { type: datetime, comment: "Updated at" }
+  excluded:           { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {api_data_type_id: 1, api_data_type: C7SQLQuery, api_data_type_desc: C7 SQL Query, excluded: false}
+  - {api_data_type_id: 2, api_data_type: C7Read, api_data_type_desc: C7 Read, excluded: false}
+  - {api_data_type_id: 3, api_data_type: C7OData, api_data_type_desc: C7 OData, excluded: false}
+form_layout:
+  form_in_popup: true
+  size: 4
+```
+
+## API_DATA
+```yaml
+table: api_data
+comment: API Data
+columns:
+  api_data_id:      { type: integer, pk: true, autoincrement: true, comment: "API Data ID" }
+  api_data:         { type: varchar, len: 100, nullable: false, comment: "API Data", form_display: true, table_display: true, form_size: 4, order: 2 }
+  api_data_desc:    { type: text, comment: "API Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
+  api_data_type_id: { type: integer, fk: "api_data_type.api_data_type_id", nullable: false, comment: "API Data Type", form_display: true, table_display: true, form_size: 2, order: 3 }
+  api_id:           { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
+  api_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 12, order: 6, form_hide_cond: "data?.api_data_type_id !== 1" }
+  read_table:       { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 3, order: 7, form_hide_cond: "data?.api_data_type_id !== 2" }
+  read_params_json: { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 2" }
+  odata_params:     { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 3" }
+  active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 2 }
+  user_id:          { type: integer, fk: "users.user_id", comment: "Created by"  }
+  app_id:           { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:       { type: datetime, comment: "Created at" }
+  updated_at:       { type: datetime, comment: "Updated at" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false

@@ -118,6 +118,18 @@ func (app *application) runAPI(params Dict) Dict {
 			"msg":     "HTTP Request Type not found!",
 		}
 	}
+	// API DATA TO HELP BUILD THE TEPLATE
+	sql = "select * from api_data where api_id = ? and excluded = false"
+	api_data_res, err := app.AdminGetRowsByFilter(sql, []any{api_id})
+	if err != nil {
+		fmt.Println("Error getting API Data:", err)
+		return Dict{
+			"success": false,
+			"msg":     "Error getting API Data!",
+		}
+	}
+	fmt.Println("API DATA:", api_data_res)
+	//api_ app.GetAPIData(params, api_data_res, _data)
 	endpoint, ok = api["endpoint"].(string)
 	if !ok {
 		return Dict{
@@ -131,7 +143,7 @@ func (app *application) runAPI(params Dict) Dict {
 	var request_body string
 	if request_body_template != "" {
 		// Here you can implement logic to render the request_body_template with the appropriate data
-		request_body, err = app.RenderTemplate(request_body_template, data)
+		request_body, err = app.RenderTemplate(request_body_template, _data)
 		if err != nil {
 			return Dict{
 				"success": false,

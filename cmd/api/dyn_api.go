@@ -356,6 +356,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	params["token"] = r.Header.Get("Authorization")
 	token := app.verifyToken(r)
 	//fmt.Println(params["user"].(Dict)["username"].(string), "->", app.toInt(params["user"].(Dict)["user_id"].(float64)), "->", app.toInt(params["user"].(Dict)["role_id"].(float64)))
 	var data Dict
