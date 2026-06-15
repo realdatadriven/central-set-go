@@ -130,6 +130,7 @@ func (app *application) runAPI(params Dict) Dict {
 	}
 	fmt.Println("API DATA:", api_data_res)
 	//api_ app.GetAPIData(params, api_data_res, _data)
+	// loop and handle each api_data_type_id
 	endpoint, ok = api["endpoint"].(string)
 	if !ok {
 		return Dict{
