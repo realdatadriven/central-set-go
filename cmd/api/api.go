@@ -5,8 +5,71 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
+
+	"github.com/realdatadriven/etlx"
 )
+
+func parsePath(s string) (db string, table string, query url.Values, err error) {
+	parts := strings.SplitN(s, "?", 2)
+	path := parts[0]
+	if len(parts) == 2 {
+		query, err = url.ParseQuery(parts[1])
+		if err != nil {
+			return "", "", nil, err
+		}
+	} else {
+		query = url.Values{}
+	}
+	pathParts := strings.Split(strings.Trim(path, "/"), "/")
+	if len(pathParts) != 2 {
+		return "", "", nil, fmt.Errorf("invalid path format: expected db/table")
+	}
+	db = pathParts[0]
+	table = pathParts[1]
+	return
+}
+
+func (app *application) GetAPIData(params Dict, api_data_res []Dict, _data Dict) (Dict, error) {
+	// loop api_data_res
+	etlx_engine := &etlx.ETLX{}
+	res := Dict{}
+	for _, api_data := range api_data_res {
+		name := api_data["api_data"].(string)
+		if app.toInt(api_data["api_data_type_id"]) == 3 { // ODATA
+			odata_path := api_data["odata_path"].(string)
+			odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
+			if err != nil {
+				odata_path = api_data["odata_path"].(string)
+			} else {
+				odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
+			}
+			sigle_row_obj := app.toBool(api_data["sigle_row_obj"])
+			db, table, query, err := parsePath(odata_path)
+			if err != nil {
+				return nil, err
+			}
+			results, err := app.OData2C7Read(params, db, table, query)
+			if err != nil {
+				return nil, err
+			}
+			if sigle_row_obj {
+				aux := Dict{}
+				if len(results) > 0 {
+					aux = results[1]
+				}
+				res[name] = aux
+			} else {
+				res[name] = results
+			}
+		} else {
+			return nil, fmt.Errorf("Error: API Data Type %d is not implemented yet!", app.toInt(api_data["api_data_type_id"]))
+		}
+	}
+	return res, nil
+}
 
 func (app *application) runAPI(params Dict) Dict {
 	//fmt.Println("DATA:", params["data"])
@@ -129,8 +192,16 @@ func (app *application) runAPI(params Dict) Dict {
 		}
 	}
 	fmt.Println("API DATA:", api_data_res)
-	//api_ app.GetAPIData(params, api_data_res, _data)
-	// loop and handle each api_data_type_id
+	api_data, err := app.GetAPIData(params, api_data_res, data)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("Error getting API Data: %v", err.Error()),
+		}
+	}
+	for key, val := range api_data {
+		_data[key] = val
+	}
 	endpoint, ok = api["endpoint"].(string)
 	if !ok {
 		return Dict{

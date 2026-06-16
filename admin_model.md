@@ -1131,7 +1131,7 @@ columns:
   action_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 12, order: 6, form_hide_cond: "data?.action_data_type_id !== 1" }
   read_table:          { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
   read_params_json:    { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
-  odata_params:        { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 3" }
+  odata_path:        { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 3" }
   sigle_row_obj:       { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 4, order: 13 }
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 2 }
   user_id:             { type: integer, fk: "users.user_id", comment: "Created by"  }
@@ -1388,7 +1388,7 @@ columns:
   api_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 12, order: 6, form_hide_cond: "data?.api_data_type_id !== 1" }
   read_table:       { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 3, order: 7, form_hide_cond: "data?.api_data_type_id !== 2" }
   read_params_json: { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 2" }
-  odata_params:     { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 3" }
+  odata_path:       { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 3" }
   sigle_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 4, order: 13 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 2 }
   user_id:          { type: integer, fk: "users.user_id", comment: "Created by"  }

@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func ParseODataQuery(r *http.Request) (map[string]any, error) {
-	q := r.URL.Query()
-	out := make(map[string]any)
+func ParseODataQuery(q url.Values /*r *http.Request*/) (Dict, error) {
+	//q := r.URL.Query()
+	out := make(Dict)
 	for key, values := range q {
 		if !strings.HasPrefix(key, "$") {
 			continue
@@ -52,15 +53,15 @@ func ParseODataQuery(r *http.Request) (map[string]any, error) {
 	}
 	return out, nil
 }
-func ODataToCentralParams(odata map[string]any) (map[string]any, error) {
-	/*out := map[string]any{
+func ODataToCentralParams(odata Dict) (Dict, error) {
+	/*out := Dict{
 		"filters":  []any{},
 		"fields":   []any{},
 		"offset":   any(0),
 		"limit":    any(10),
 		"order_by": []any{},
 	}*/
-	out := map[string]any{}
+	out := Dict{}
 	// $select -> fields
 	if v, ok := odata["$select"]; ok {
 		out["fields"] = toAnySlice(v.([]string))
@@ -127,7 +128,7 @@ func stripSingleQuotes(s string) string {
 	}
 	return s
 }
-func parseFunctionFilter(expr string) (map[string]any, error) {
+func parseFunctionFilter(expr string) (Dict, error) {
 	open := strings.Index(expr, "(")
 	close := strings.LastIndex(expr, ")")
 	if open < 0 || close <= open {
@@ -153,13 +154,13 @@ func parseFunctionFilter(expr string) (map[string]any, error) {
 	case "contains":
 		value = "%" + value + "%"
 	}
-	return map[string]any{
+	return Dict{
 		"field": field,
 		"cond":  cond,
 		"value": value,
 	}, nil
 }
-func parseSimpleFilter(expr string) (map[string]any, error) {
+func parseSimpleFilter(expr string) (Dict, error) {
 	expr = strings.TrimSpace(expr)
 	// function-style
 	if strings.Contains(expr, "(") && strings.HasSuffix(expr, ")") {
@@ -191,7 +192,7 @@ func parseSimpleFilter(expr string) (map[string]any, error) {
 		for i := range parts {
 			parts[i] = stripSingleQuotes(strings.TrimSpace(parts[i]))
 		}
-		return map[string]any{
+		return Dict{
 			"field": field,
 			"cond":  cond,
 			"value": strings.Join(parts, ","),
@@ -202,14 +203,14 @@ func parseSimpleFilter(expr string) (map[string]any, error) {
 		}
 		v1 := stripSingleQuotes(tokens[2])
 		v2 := stripSingleQuotes(tokens[4])
-		return map[string]any{
+		return Dict{
 			"field": field,
 			"cond":  cond,
 			"value": v1 + "," + v2,
 		}, nil
 	default:
 		value := stripSingleQuotes(strings.Join(tokens[2:], " "))
-		return map[string]any{
+		return Dict{
 			"field": field,
 			"cond":  cond,
 			"value": value,
@@ -238,7 +239,7 @@ func convertOrderBy(expr string) ([]any, error) {
 		if len(fields) == 0 {
 			continue
 		}
-		item := map[string]any{
+		item := Dict{
 			"field": fields[0],
 			"order": "ASC",
 		}
@@ -281,7 +282,7 @@ func sqlToEdmType(sqlType string) string {
 		return "Edm.String"
 	}
 }
-func BuildODataMetadata(rows []map[string]any) (string, error) {
+func BuildODataMetadata(rows []Dict) (string, error) {
 	type Column struct {
 		Name     string
 		Type     string
@@ -363,12 +364,12 @@ func BuildODataMetadata(rows []map[string]any) (string, error) {
 </edmx:Edmx>`)
 	return b.String(), nil
 }
-func BuildODataMetadataJSON(rows []map[string]any) (map[string]any, error) {
+func BuildODataMetadataJSON(rows []Dict) (Dict, error) {
 	type Entity struct {
-		Props map[string]any
+		Props Dict
 		Keys  []string
 	}
-	model := map[string]any{
+	model := Dict{
 		"@odata.context": "$metadata",
 	}
 	namespaces := map[string]map[string]*Entity{}
@@ -387,12 +388,12 @@ func BuildODataMetadataJSON(rows []map[string]any) (map[string]any, error) {
 		}
 		if namespaces[db][table] == nil {
 			namespaces[db][table] = &Entity{
-				Props: map[string]any{
+				Props: Dict{
 					"$Kind": "EntityType",
 				},
 			}
 		}
-		prop := map[string]any{
+		prop := Dict{
 			"$Type": sqlToEdmType(sqlType),
 		}
 		if !nullable {
@@ -407,7 +408,7 @@ func BuildODataMetadataJSON(rows []map[string]any) (map[string]any, error) {
 		}
 	}
 	for db, tables := range namespaces {
-		ns := map[string]any{}
+		ns := Dict{}
 		// entity types
 		for name, e := range tables {
 			if len(e.Keys) > 0 {
@@ -416,11 +417,11 @@ func BuildODataMetadataJSON(rows []map[string]any) (map[string]any, error) {
 			ns[name] = e.Props
 		}
 		// entity container
-		container := map[string]any{
+		container := Dict{
 			"$Kind": "EntityContainer",
 		}
 		for name := range tables {
-			container[name] = map[string]any{
+			container[name] = Dict{
 				"$Collection": true,
 				"$Type":       db + "." + name,
 			}
@@ -431,7 +432,7 @@ func BuildODataMetadataJSON(rows []map[string]any) (map[string]any, error) {
 	return model, nil
 }
 func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("METADATA ONLY!")
+	// fmt.Println("METADATA ONLY!")
 	db := r.PathValue("db")
 	w.Header().Set("OData-Version", "4.0")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -439,8 +440,8 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db})
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_res := map[string]any{
-			"error": map[string]any{
+		_res := Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": "MetadataErr: " + err.Error(),
 			},
@@ -451,8 +452,8 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	xml, err := BuildODataMetadata(_table_schema)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_res := map[string]any{
-			"error": map[string]any{
+		_res := Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": "BuildMetadataErr: " + err.Error(),
 			},
@@ -467,8 +468,8 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	/*model, err := BuildODataMetadataJSON(_table_schema)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_res := map[string]any{
-			"error": map[string]any{
+		_res := Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": "BuildMetadataErr: " + err.Error(),
 			},
@@ -485,6 +486,36 @@ func isXMLMetadataRequest(r *http.Request) bool {
 	return strings.Contains(accept, "application/xml") ||
 		strings.Contains(accept, "application/atom+xml")
 }
+func (app *application) OData2C7Read(params Dict, db, table string, odata_path url.Values) ([]Dict, error) {
+	sql := `select * from app where (app = ? or db = ?) and excluded = false`
+	_app, err := app.AdminGetRowByFilter(sql, []any{db, table})
+	if err != nil {
+		return nil, err
+	}
+	odata_params, err := ParseODataQuery(odata_path)
+	if err != nil {
+		return nil, err
+	}
+	csParams, err := ODataToCentralParams(odata_params)
+	if err != nil {
+		return nil, err
+	}
+	var data Dict
+	params["app"] = _app
+	params["data"].(Dict)["db"] = db
+	params["data"].(Dict)["table"] = table
+	for key, val := range csParams {
+		params["data"].(Dict)[key] = val
+	}
+	data = app.read(params)
+	if !data["success"].(bool) {
+		return nil, fmt.Errorf("%s", data["msg"])
+	}
+	if _, ok := data["data"].([]Dict); !ok {
+		return nil, fmt.Errorf("%s", data["msg"])
+	}
+	return data["data"].([]Dict), nil
+}
 func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	db := r.PathValue("db")
 	table := r.PathValue("table")
@@ -496,8 +527,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db, table})
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			_res := map[string]any{
-				"error": map[string]any{
+			_res := Dict{
+				"error": Dict{
 					"code":    "GeneralError",
 					"message": "MetadataErr: " + err.Error(),
 				},
@@ -508,8 +539,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		xml, err := BuildODataMetadata(_table_schema)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			_res := map[string]any{
-				"error": map[string]any{
+			_res := Dict{
+				"error": Dict{
 					"code":    "GeneralError",
 					"message": "BuildDBMetadataErr: " + err.Error(),
 				},
@@ -524,8 +555,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		/*model, err := BuildODataMetadataJSON(_table_schema)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			_res := map[string]any{
-				"error": map[string]any{
+			_res := Dict{
+				"error": Dict{
 					"code":    "GeneralError",
 					"message": "BuildMetadataErr: " + err.Error(),
 				},
@@ -542,8 +573,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db, table})
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			_res := map[string]any{
-				"error": map[string]any{
+			_res := Dict{
+				"error": Dict{
 					"code":    "GeneralError",
 					"message": "MetadataErr: " + err.Error(),
 				},
@@ -554,8 +585,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		xml, err := BuildODataMetadata(_table_schema)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			_res := map[string]any{
-				"error": map[string]any{
+			_res := Dict{
+				"error": Dict{
 					"code":    "GeneralError",
 					"message": "BuildTableMetadataErr: " + err.Error(),
 				},
@@ -581,8 +612,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	_app, err := app.AdminGetRowByFilter(sql, []any{db, table})
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_res := map[string]any{
-			"error": map[string]any{
+		_res := Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": "AppErr: " + err.Error(),
 			},
@@ -591,20 +622,21 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//fmt.Println(_app)
-	odata_params, err := ParseODataQuery(r)
-	response := map[string]any{
-		"error": map[string]any{
+	q := r.URL.Query()
+	odata_params, err := ParseODataQuery(q)
+	response := Dict{
+		"error": Dict{
 			"code":    "BadRequest",
 			"message": "Invalid filter expression",
 			"target":  "filter",
-			"details": []map[string]any{
+			"details": []Dict{
 				{
 					"code":    "SyntaxError",
 					"message": "Expected 'eq' or 'ne' operator",
 					"target":  "$filter",
 				},
 			},
-			"innererror": map[string]any{
+			"innererror": Dict{
 				"trace":   "...",
 				"context": "...",
 			},
@@ -612,8 +644,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		response = map[string]any{
-			"error": map[string]any{
+		response = Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": "ParseODataQueryErr: " + err.Error(),
 			},
@@ -624,8 +656,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	csParams, err := ODataToCentralParams(odata_params)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		response = map[string]any{
-			"error": map[string]any{
+		response = Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": "ODataToCentralSetParamsErr: " + err.Error(),
 			},
@@ -636,10 +668,10 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	token := app.verifyToken(r)
 	//fmt.Println(params["user"].(Dict)["username"].(string), "->", app.toInt(params["user"].(Dict)["user_id"]), "->", app.toInt(params["user"].(Dict)["role_id"]))
 	var data Dict
-	params := map[string]any{
+	params := Dict{
 		"lang": "en",
 		"app":  _app,
-		"data": map[string]any{
+		"data": Dict{
 			"db":    db,
 			"table": table,
 			//"odata_params": odata_params,
@@ -648,7 +680,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	}
 	for key, val := range csParams {
 		//fmt.Println(key, val)
-		params["data"].(map[string]any)[key] = val
+		params["data"].(Dict)[key] = val
 	}
 	_ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
@@ -666,8 +698,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(params["user"])
 	if !token["success"].(bool) {
 		w.WriteHeader(http.StatusForbidden)
-		response = map[string]any{
-			"error": map[string]any{
+		response = Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": token["msg"],
 			},
@@ -734,8 +766,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	}
 	if !data["success"].(bool) {
 		w.WriteHeader(http.StatusBadRequest)
-		response = map[string]any{
-			"error": map[string]any{
+		response = Dict{
+			"error": Dict{
 				"code":    "GeneralError",
 				"message": data["msg"],
 				//"params":  params,
@@ -744,7 +776,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	response = map[string]any{
+	response = Dict{
 		"@odata.context": fmt.Sprintf("%s/odata/%s/$metadata#%s", r.Host, db, table), //"http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery),
 		"@odata.count":   data["total"],                                              // optional: total count (when $count=true or $inlinecount)
 		"value":          data["data"],
