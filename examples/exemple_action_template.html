@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>User A4 Profile</title>
+    <style>
+      /* A4 page styling */
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #222;
+      }
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        box-sizing: border-box;
+        background: #fff;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12mm;
+      }
+      .brand {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .title {
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .profile {
+        display: flex;
+        gap: 18px;
+      }
+      .avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 6px;
+        background: #f3f3f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #888;
+      }
+      .meta {
+        flex: 1;
+      }
+      .meta h2 {
+        margin: 0 0 6px 0;
+      }
+      .meta .muted {
+        color: #666;
+        font-size: 14px;
+      }
+      .section {
+        margin-top: 12mm;
+      }
+      .two-col {
+        display: flex;
+        gap: 18px;
+      }
+      .col {
+        flex: 1;
+      }
+      .label {
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      .value {
+        background: #fafafa;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+      }
+      footer {
+        position: absolute;
+        bottom: 20mm;
+        left: 20mm;
+        right: 20mm;
+        font-size: 12px;
+        color: #999;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="header">
+        <div class="brand">{{ "Acme Corp" }}</div>
+        <div class="title">User Profile</div>
+        <div class="muted">Generated: {{ now | date "2006-01-02" }}</div>
+      </div>
+
+      <div class="section two-col">
+        <div class="col">
+          <div class="label">Contact</div>
+          <div class="value">
+            <div>Username: <strong>{{ .username }}</strong></div>
+            <div>Email: <strong>{{ .email | lower }}</strong></div>
+            <div>Phone: {{ .phone | default "—" }}</div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="label">Details</div>
+          <div class="value">
+            <div>Timezone: {{ .timezone | default "—" }}</div>
+            <div>Active: {{ if .active }}Yes{{ else }}No{{ end }}</div>
+            <div>
+              2FA Enabled: {{ if .enable_2f_auth }}Yes{{ else }}No{{ end }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Notes</div>
+        <div class="value">
+          {{ .notes | default "No notes." | indent 2 | html }}
+        </div>
+      </div>
+
+      <table>
+        <tr>
+          <td>role</td>
+          <td>role desc</td>
+        </tr>
+        <tr>
+          <td>{{.main_role.role}}</td>
+          <td>{{.main_role.role_desc}}</td>
+        </tr>
+      </table>
+
+      <footer>Data source: internal</footer>
+    </div>
+  </body>
+</html>

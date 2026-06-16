@@ -1077,7 +1077,7 @@ columns:
   update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
   user_trigger:      { type: boolean, default: false, comment: "By User", tooltip: "Can be triggered by user", form_display: true, table_display: true, order: 11, form_size: 2 }
-  user_trigger_icon: { type: varchar, len: 50, default: false, comment: "By User Icon", tooltip: "User triggered by user ICON", form_display: true, order: 20, form_size: 3, form_hide_cond: "!data?.user_trigger"  }
+  user_trigger_icon: { type: varchar, len: 50, default: false, comment: "By User Icon", tooltip: "User triggered by user ICON", form_display: true, order: 22, form_size: 3, form_hide_cond: "!data?.user_trigger"  }
   sql:               { type: text, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
   email_template:    { type: text, comment: "Email Template", form_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, order: 14, form_size: 6, form_hide_cond: "data?.action_type_id !== 2" }
@@ -1087,9 +1087,9 @@ columns:
   api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   pdf_path:          { type: varchar, len: 200, comment: "PDF Path", form_display: true, order: 19, form_size: 12, form_hide_cond: "data?.action_type_id !== 5" }
-  pdf_template:      { type: varchar, len: 255, comment: "PDF Template", form_display: true, order: 20, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5" }
-  after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 5"}
-  parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 21, form_size: 3 }
+  pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 20, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5" }
+  after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 21, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 5"}
+  parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
@@ -1601,6 +1601,27 @@ data:
   user_trigger_icon: play
   parallel: true
   api_endpoint: 'https://api.ipify.org'
+```
+
+## EX_CRUD_ACTION_GEN_PDF_EX
+```yaml
+table: crud_action
+description: Add Example of CRUD Action Generate PDF Example
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: EX_CRUD_ACTION_GEN_PDF_EX
+  crud_action: Generate PDF Example
+  action_type_id: 5
+  err_msg: 'Error generating PDF example {{.user_id}} {{.email}} to get the external ip'
+  table: users
+  db: ADMIN
+  active: true
+  user_trigger: true
+  user_trigger_icon: document-arrow-down
+  parallel: false
+  pdf_path: 'static/uploads/user_{{.username}}.pdf'
+  pdf_template: FileContent(examples/exemple_action_template.html)
+  after_sql: "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
 ```
 
 # RUN_ESPECIFC_SQL

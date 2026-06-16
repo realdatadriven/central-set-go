@@ -37,6 +37,7 @@ func (app *application) GetAPIData(params Dict, api_data_res []Dict, _data Dict)
 	etlx_engine := &etlx.ETLX{}
 	res := Dict{}
 	for _, api_data := range api_data_res {
+		//fmt.Println(api_data)
 		name := api_data["api_data"].(string)
 		if app.toInt(api_data["api_data_type_id"]) == 3 { // ODATA
 			odata_path, ok := api_data["odata_path"].(string)
@@ -63,7 +64,7 @@ func (app *application) GetAPIData(params Dict, api_data_res []Dict, _data Dict)
 			if sigle_row_obj {
 				aux := Dict{}
 				if len(results) > 0 {
-					aux = results[1]
+					aux = results[0]
 				}
 				res[name] = aux
 			} else {

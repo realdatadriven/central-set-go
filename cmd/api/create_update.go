@@ -725,8 +725,8 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		//fmt.Println("Error getting API Data:", err)
 		return fmt.Errorf("Error getting API Data: %s", err)
 	}
-	// fmt.Println("API DATA:", action_data_res)
-	action_data, err := app.GetAPIData(params, action_data_res, _data)
+	// fmt.Println("ACTION DATA:", action_data_res)
+	action_data, err := app.GetActionData(params, action_data_res, _data)
 	if err != nil {
 		return fmt.Errorf("Error getting API Data: %s", err)
 	}
@@ -974,7 +974,7 @@ func (app *application) GetActionData(params Dict, action_data_res []Dict, _data
 			if sigle_row_obj {
 				aux := Dict{}
 				if len(results) > 0 {
-					aux = results[1]
+					aux = results[0]
 				}
 				res[name] = aux
 			} else {
