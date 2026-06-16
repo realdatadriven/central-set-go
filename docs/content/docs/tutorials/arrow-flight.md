@@ -243,7 +243,7 @@ CREATE OR REPLACE [PERSISTENT] SECRET airport_auth_secret (
     SCOPE 'grpc://127.0.0.1:50051'
 );
 
-ATTACH '' AS my_server (
+ATTACH 'my_catalog' AS my_server (
     TYPE AIRPORT,
     LOCATION 'grpc://127.0.0.1:50051'
 );

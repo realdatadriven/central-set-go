@@ -289,7 +289,13 @@ func run(logger *slog.Logger) error {
 			fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
 		}
 		return nil
-	}
+	} /*else if *model != "" {
+		err := app.setupWithModel(*model)
+		if err != nil {
+			fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
+		}
+		return nil
+	}*/
 	app.CronJobs()
 	if env.GetBool("ENABLE_ARROW_FLIGHT", false) {
 		go func() {
