@@ -697,6 +697,8 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	api_id, okAPIID := c_action["api_id"]
 	api_name, okAPIName := c_action["api_name"]
 	api_endpoint, okAPIEndpoint := c_action["api_endpoint"]
+	pdf_path, okPDFPath := c_action["pdf_path"]
+	pdf_template, okPDFTmpl := c_action["pdf_template"]
 	//  register crud_action_logs
 	success := true
 	etlx_engine := &etlx.ETLX{}
@@ -850,6 +852,9 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			}
 			return fmt.Errorf("Error executing external API: %s", msg)
 		}
+	} else if app.toInt(action_type_id) == 5 && (okPDFPath && okPDFTmpl) { // GeneratePDF
+		//
+		fmt.Println("GeneratePDF:", pdf_path, pdf_template)
 	} else {
 		success = false
 		fmt.Println("Unknown action_type_id for crud_action:", action_type_id)

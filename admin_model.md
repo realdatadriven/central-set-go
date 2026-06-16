@@ -1053,6 +1053,7 @@ data:
   - {action_type_id: 2, action_type: SendEmail, action_type_desc: Send Email, excluded: false}
   - {action_type_id: 3, action_type: InternalAPICall, action_type_desc: Internal API Call, excluded: false}
   - {action_type_id: 4, action_type: ExternalAPICall, action_type_desc: External API Call, excluded: false}
+  - {action_type_id: 5, action_type: GeneratePDF, action_type_desc: GeneratePDF, excluded: false}
 form_layout:
   size: 4
 ```
@@ -1085,7 +1086,10 @@ columns:
   api_id:            { type: integer, comment: "API ID", form_display: true, order: 16, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
-  parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 19, form_size: 3 }
+  pdf_path:          { type: varchar, len: 200, comment: "PDF Path", form_display: true, order: 19, form_size: 12, form_hide_cond: "data?.action_type_id !== 5" }
+  pdf_template:      { type: varchar, len: 255, comment: "PDF Template", form_display: true, order: 20, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5" }
+  after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 5"}
+  parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 21, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
