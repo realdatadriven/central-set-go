@@ -1137,7 +1137,7 @@ columns:
   read_params_json:    { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
   odata_path:          { type: text, comment: "Read OData Path", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
   sigle_row_obj:       { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
-  active:              { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, order: 4 }
+  active:              { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:             { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:          { type: datetime, comment: "Created at" }
@@ -1389,12 +1389,12 @@ columns:
   api_data_desc:    { type: text, comment: "API Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
   api_data_type_id: { type: integer, fk: "api_data_type.api_data_type_id", nullable: false, comment: "API Data Type", form_display: true, table_display: true, form_size: 2, order: 3 }
   api_id:           { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
-  api_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 12, order: 6, form_hide_cond: "data?.api_data_type_id !== 1" }
-  read_table:       { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 3, order: 7, form_hide_cond: "data?.api_data_type_id !== 2" }
-  read_params_json: { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 2" }
-  odata_path:       { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.api_data_type_id !== 3" }
-  sigle_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 4, order: 13 }
-  active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 2 }
+  action_data_sql:  { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, form_size: 12, order: 6, form_hide_cond: "data?.action_data_type_id !== 1" }
+  read_table:       { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
+  read_params_json: { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
+  odata_path:       { type: text, comment: "Read OData Path", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
+  sigle_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  active:           { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:          { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:           { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:       { type: datetime, comment: "Created at" }
