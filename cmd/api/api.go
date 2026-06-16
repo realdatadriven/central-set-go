@@ -39,15 +39,20 @@ func (app *application) GetAPIData(params Dict, api_data_res []Dict, _data Dict)
 	for _, api_data := range api_data_res {
 		name := api_data["api_data"].(string)
 		if app.toInt(api_data["api_data_type_id"]) == 3 { // ODATA
-			odata_path := api_data["odata_path"].(string)
+			odata_path, ok := api_data["odata_path"].(string)
+			if !ok {
+				return nil, fmt.Errorf("Error, odata_path is not set!")
+			}
 			odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
 			if err != nil {
 				odata_path = api_data["odata_path"].(string)
 			} else {
 				odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
 			}
+			fmt.Println(api_data["odata_path"], odata_path)
 			sigle_row_obj := app.toBool(api_data["sigle_row_obj"])
 			db, table, query, err := parsePath(odata_path)
+			fmt.Println(db, table, query)
 			if err != nil {
 				return nil, err
 			}
@@ -191,7 +196,7 @@ func (app *application) runAPI(params Dict) Dict {
 			"msg":     "Error getting API Data!",
 		}
 	}
-	fmt.Println("API DATA:", api_data_res)
+	// fmt.Println("API DATA:", api_data_res)
 	api_data, err := app.GetAPIData(params, api_data_res, data)
 	if err != nil {
 		return Dict{

@@ -1110,8 +1110,8 @@ columns:
   updated_at:            { type: datetime, comment: "Updated at" }
   excluded:              { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {action_data_type_id: 1, action_data_type: C7SQLQuery, action_data_type_desc: C7 SQL Query, excluded: false}
-  - {action_data_type_id: 2, action_data_type: C7Read, action_data_type_desc: C7 Read, excluded: false}
+  - {action_data_type_id: 1, action_data_type: C7SQLQuery, action_data_type_desc: C7 SQL Query, excluded: true}
+  - {action_data_type_id: 2, action_data_type: C7Read, action_data_type_desc: C7 Read, excluded: true}
   - {action_data_type_id: 3, action_data_type: C7OData, action_data_type_desc: C7 OData, excluded: false}
 form_layout:
   form_in_popup: true
@@ -1124,14 +1124,14 @@ table: action_data
 comment: Action Data
 columns:
   action_data_id:      { type: integer, pk: true, autoincrement: true, comment: "Action Data ID" }
-  action_data:         { type: varchar, len: 100, nullable: false, comment: "Action Data", form_display: true, table_display: true, form_size: 4, order: 2 }
+  action_data:         { type: varchar, len: 100, nullable: false, comment: "Action Data", form_display: true, table_display: true, form_size: 4, order: 2, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   action_data_desc:    { type: text, comment: "Action Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
   action_data_type_id: { type: integer, fk: "action_data_type.action_data_type_id", nullable: false, comment: "Action Data Type", form_display: true, table_display: true, form_size: 2, order: 3 }
   Action_id:           { type: integer, fk: "crud_action.crud_action_id", nullable: false, comment: "Action", form_display: true, table_display: true, form_size: 4, order: 1 }
   action_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 12, order: 6, form_hide_cond: "data?.action_data_type_id !== 1" }
   read_table:          { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, table_display: true, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
   read_params_json:    { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
-  odata_path:        { type: text, comment: "Read OData Params", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 3" }
+  odata_path:          { type: text, comment: "Read OData Path", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 3" }
   sigle_row_obj:       { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 4, order: 13 }
   active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 4, order: 2 }
   user_id:             { type: integer, fk: "users.user_id", comment: "Created by"  }
@@ -1367,8 +1367,8 @@ columns:
   updated_at:         { type: datetime, comment: "Updated at" }
   excluded:           { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {api_data_type_id: 1, api_data_type: C7SQLQuery, api_data_type_desc: C7 SQL Query, excluded: false}
-  - {api_data_type_id: 2, api_data_type: C7Read, api_data_type_desc: C7 Read, excluded: false}
+  - {api_data_type_id: 1, api_data_type: C7SQLQuery, api_data_type_desc: C7 SQL Query, excluded: true}
+  - {api_data_type_id: 2, api_data_type: C7Read, api_data_type_desc: C7 Read, excluded: true}
   - {api_data_type_id: 3, api_data_type: C7OData, api_data_type_desc: C7 OData, excluded: false}
 form_layout:
   form_in_popup: true
@@ -1381,7 +1381,7 @@ table: api_data
 comment: API Data
 columns:
   api_data_id:      { type: integer, pk: true, autoincrement: true, comment: "API Data ID" }
-  api_data:         { type: varchar, len: 100, nullable: false, comment: "API Data", form_display: true, table_display: true, form_size: 4, order: 2 }
+  api_data:         { type: varchar, len: 100, nullable: false, comment: "API Data", form_display: true, table_display: true, form_size: 4, order: 2, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   api_data_desc:    { type: text, comment: "API Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
   api_data_type_id: { type: integer, fk: "api_data_type.api_data_type_id", nullable: false, comment: "API Data Type", form_display: true, table_display: true, form_size: 2, order: 3 }
   api_id:           { type: integer, fk: "api.api_id", nullable: false, comment: "API", form_display: true, table_display: true, form_size: 4, order: 1 }
