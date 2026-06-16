@@ -171,8 +171,9 @@ func run(logger *slog.Logger) error {
 	cfg.quackEnabled = env.GetBool("QUACK_ENABLED", false)
 	//cli flags
 	showVersion := flag.Bool("version", false, "display version and exit")
-	initdb := flag.Bool("init", false, "initialize the main db")
-	dbname := flag.String("dbname", "ADMIN", "initialize the main db")
+	initdb := flag.Bool("init", false, "initialize db")
+	updatedb := flag.Bool("update", false, "update the db")
+	dbname := flag.String("dbname", "ADMIN", "main db name")
 	model := flag.String("model", "admin_model.md", "initialize the db with the provided model (only used if init flag is set)")
 	embedded := flag.Bool("embedded", true, "use the embedded db")
 	flag.Parse()
@@ -280,6 +281,12 @@ func run(logger *slog.Logger) error {
 			if err != nil {
 				fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
 			}
+		}
+		return nil
+	} else if *updatedb && *model != "" {
+		err := app.setupWithModel(*model)
+		if err != nil {
+			fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
 		}
 		return nil
 	}
