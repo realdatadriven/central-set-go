@@ -699,6 +699,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	api_endpoint, okAPIEndpoint := c_action["api_endpoint"]
 	pdf_path, okPDFPath := c_action["pdf_path"]
 	pdf_template, okPDFTmpl := c_action["pdf_template"]
+	after_sql, okAfterSQL := c_action["after_sql"].(string)
 	//  register crud_action_logs
 	success := true
 	etlx_engine := &etlx.ETLX{}
@@ -803,9 +804,13 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		}
 		_, err = app.CronRunEndPoint(Dict{"api": api, "data": _data})
 		if err != nil {
+			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			if err != nil {
+				msg = c_action["err_msg"].(string)
+			}
 			success = false
 			crud_action_log["success"] = success
-			crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %v. Message: %s", err, err.Error())
+			crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %s", err.Error())
 			crud_action_log["executed_at"] = time.Now().In(loc)
 			crud_action_log["created_at"] = time.Now().In(loc)
 			crud_action_log["updated_at"] = time.Now().In(loc)
@@ -853,8 +858,36 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			return fmt.Errorf("Error executing external API: %s", msg)
 		}
 	} else if app.toInt(action_type_id) == 5 && (okPDFPath && okPDFTmpl) { // GeneratePDF
-		//
-		fmt.Println("GeneratePDF:", pdf_path, pdf_template)
+		// fmt.Println("GeneratePDF:", pdf_path, pdf_template)
+		output_path, err := etlx_engine.RenderTemplate(pdf_path.(string), _data)
+		if err != nil {
+			output_path = pdf_path.(string)
+		}
+		output_path = etlx_engine.ReplaceEnvVariable(output_path)
+		_data["fname"] = output_path
+		html, err := etlx_engine.RenderTemplate(pdf_template.(string), _data)
+		if err != nil {
+			return err
+		}
+		html = etlx_engine.ReplaceEnvVariable(html)
+		err = app.GenPDFFromHTML(html, output_path)
+		if err != nil {
+			success = false
+			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			if err != nil {
+				msg = c_action["err_msg"].(string)
+			}
+			crud_action_log["success"] = success
+			crud_action_log["log_message"] = fmt.Sprintf("Error generating PDF: %v", err)
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+			if err2 != nil {
+				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+			}
+			return fmt.Errorf("Error executing external API: %s", msg)
+		}
 	} else {
 		success = false
 		fmt.Println("Unknown action_type_id for crud_action:", action_type_id)
@@ -869,6 +902,27 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
 		}
 		return fmt.Errorf(msg)
+	}
+	if okAfterSQL && after_sql != "" {
+		after_sql, err = etlx_engine.RenderTemplate(after_sql, _data)
+		if err != nil {
+			return fmt.Errorf("Error rendering after sql %v", err.Error())
+		}
+		after_sql = etlx_engine.ReplaceEnvVariable(after_sql)
+		err = app.ExecuteQuery(after_sql, params, _data)
+		if err != nil {
+			success = false
+			crud_action_log["success"] = success
+			crud_action_log["log_message"] = fmt.Errorf("Error executing after SQL %s!", err.Error())
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+			if err != nil {
+				fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
+			}
+			return fmt.Errorf("Error executing after SQL %s!", err.Error())
+		}
 	}
 	crud_action_log["success"] = success
 	if msg == "" || success {
