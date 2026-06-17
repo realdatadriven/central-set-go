@@ -55,6 +55,7 @@ func LatexEscape(v any) string {
 	return replacer.Replace(s)
 }
 
+// sudo apt install texlive-latex-base
 func (app *application) GenPDFFromLatex(latex, output_path string) error {
 	latex = LatexEscape(latex)
 	//ctx, cancel := chromedp.NewContext(context.Background())
@@ -65,19 +66,16 @@ func (app *application) GenPDFFromLatex(latex, output_path string) error {
 	}
 	defer os.Remove(temptex.Name())
 	defer temptex.Close()
-
 	_, err = temptex.WriteString(latex)
 	if err != nil {
 		return err
 	}
 	temptex.Close()
-
 	cmd := exec.Command("pdflatex", temptex.Name())
 	err = cmd.Run()
 	if err != nil {
 		return err
 	}
-
 	// Move generated PDF to output path
 	tempPDF := strings.TrimSuffix(temptex.Name(), ".tex") + ".pdf"
 	err = os.Rename(tempPDF, output_path)
