@@ -699,6 +699,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	api_endpoint, okAPIEndpoint := c_action["api_endpoint"]
 	pdf_path, okPDFPath := c_action["pdf_path"]
 	pdf_template, okPDFTmpl := c_action["pdf_template"]
+	pdf_tex_template, okPDFTexTmpl := c_action["pdf_tex_template"]
 	after_sql, okAfterSQL := c_action["after_sql"].(string)
 	//  register crud_action_logs
 	success := true
@@ -857,20 +858,30 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			}
 			return fmt.Errorf("Error executing external API: %s", msg)
 		}
-	} else if app.toInt(action_type_id) == 5 && (okPDFPath && okPDFTmpl) { // GeneratePDF
+	} else if app.toInt(action_type_id) == 5 && (okPDFPath && (okPDFTmpl || okPDFTexTmpl)) { // GeneratePDF
 		// fmt.Println("GeneratePDF:", pdf_path, pdf_template)
 		output_path, err := etlx_engine.RenderTemplate(pdf_path.(string), _data)
 		if err != nil {
 			output_path = pdf_path.(string)
 		}
+		use_latext := app.toBool(c_action["use_latext"])
 		output_path = etlx_engine.ReplaceEnvVariable(output_path)
 		_data["fname"] = output_path
-		html, err := etlx_engine.RenderTemplate(pdf_template.(string), _data)
-		if err != nil {
-			return err
+		if use_latext {
+			latex, err := etlx_engine.RenderTemplate(pdf_tex_template.(string), _data)
+			latex = etlx_engine.ReplaceEnvVariable(latex)
+			if err != nil {
+				return err
+			}
+			err = app.GenPDFFromLatex(latex, output_path)
+		} else {
+			html, err := etlx_engine.RenderTemplate(pdf_template.(string), _data)
+			html = etlx_engine.ReplaceEnvVariable(html)
+			if err != nil {
+				return err
+			}
+			err = app.GenPDFFromHTML(html, output_path)
 		}
-		html = etlx_engine.ReplaceEnvVariable(html)
-		err = app.GenPDFFromHTML(html, output_path)
 		if err != nil {
 			success = false
 			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
