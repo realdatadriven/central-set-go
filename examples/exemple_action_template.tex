@@ -1,0 +1,101 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[a4paper,margin=20mm]{geometry}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{ifthen}
+\usepackage{xcolor}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[L]{Data source: internal}
+\renewcommand{\headrulewidth}{0pt}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% --------------------------------------------------
+% Header
+% --------------------------------------------------
+
+\begin{tabularx}{\textwidth}{X c r}
+{\Large\textbf{{{ "Acme Corp" }}}}
+&
+{\Huge\textbf{User Profile}}
+&
+\small Generated: {{ now | date "2006-01-02" }}
+\end{tabularx}
+
+\vspace{10mm}
+
+% --------------------------------------------------
+% Contact / Details
+% --------------------------------------------------
+
+\begin{tabularx}{\textwidth}{X X}
+
+\textbf{Contact}
+&
+\textbf{Details}
+
+\\[3mm]
+
+\begin{tcolorbox}[colback=gray!5,colframe=gray!20]
+Username: \textbf{{{ .username }}}\\
+
+Email: \textbf{{{ .email | lower }}}\\
+
+Phone: {{ .phone | default "—" }}
+\end{tcolorbox}
+
+&
+
+\begin{tcolorbox}[colback=gray!5,colframe=gray!20]
+Timezone: {{ .timezone | default "—" }}\\
+
+Active:
+{{ if .active }}Yes{{ else }}No{{ end }}\\
+
+2FA Enabled:
+{{ if .enable_2f_auth }}Yes{{ else }}No{{ end }}
+\end{tcolorbox}
+
+\end{tabularx}
+
+\vspace{10mm}
+
+% --------------------------------------------------
+% Notes
+% --------------------------------------------------
+
+\textbf{Notes}
+
+\vspace{2mm}
+
+\begin{tcolorbox}[colback=gray!5,colframe=gray!20]
+{{ .notes | default "No notes." }}
+\end{tcolorbox}
+
+\vspace{10mm}
+
+% --------------------------------------------------
+% Main Role
+% --------------------------------------------------
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Role} & \textbf{Role Description} \\
+\hline
+{{ .main_role.role }}
+&
+{{ .main_role.role_desc }}
+\\
+\hline
+\end{tabularx}
+
+\end{document}

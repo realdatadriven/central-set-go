@@ -1649,9 +1649,9 @@ description: Add Example of CRUD Action Generate PDF Example From Latex Tmpl
 cond: 'WHERE crud_action_code = :crud_action_code'
 data:
   crud_action_code:  EX_ACTION_GEN_PDF_LATEX_EX
-  crud_action:       Generate PDF Example
+  crud_action:       PDF Example From TEX
   action_type_id:    5
-  err_msg:           'Error generating PDF example {{.user_id}} {{.email}} to get the external ip'
+  err_msg:           'Error generating PDF From Latex example {{.user_id}} {{.email}} to get the external ip'
   table:             users
   db:                ADMIN
   active:            true
@@ -1660,7 +1660,7 @@ data:
   parallel:          false
   pdf_path:          'static/uploads/user_{{.username}}.pdf'
   use_latex:         true
-  pdf_tex_template:FileContent(examples/exemple_action_template.tex)
+  pdf_tex_template:  FileContent(examples/exemple_action_template.tex)
   after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
   children:
     table: action_data
