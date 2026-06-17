@@ -1611,19 +1611,68 @@ table: crud_action
 description: Add Example of CRUD Action Generate PDF Example
 cond: 'WHERE crud_action_code = :crud_action_code'
 data:
-  crud_action_code: EX_CRUD_ACTION_GEN_PDF_EX
-  crud_action: Generate PDF Example
-  action_type_id: 5
-  err_msg: 'Error generating PDF example {{.user_id}} {{.email}} to get the external ip'
-  table: users
-  db: ADMIN
-  active: true
-  user_trigger: true
+  crud_action_code:  EX_CRUD_ACTION_GEN_PDF_EX
+  crud_action:       Generate PDF Example
+  action_type_id:    5
+  err_msg:           'Error generating PDF example {{.user_id}} {{.email}} to get the external ip'
+  table:             users
+  db:                ADMIN
+  active:            true
+  user_trigger:      true
   user_trigger_icon: document-arrow-down
-  parallel: false
-  pdf_path: 'static/uploads/user_{{.username}}.pdf'
-  pdf_template: FileContent(examples/exemple_action_template.html)
-  after_sql: "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
+  parallel:          false
+  pdf_path:          'static/uploads/user_{{.username}}.pdf'
+  pdf_template:      FileContent(examples/exemple_action_template.html)
+  after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
+  children:
+    table: action_data
+    cond: 'WHERE action_data = :action_data'
+    data:
+      action_data:         main_role
+      action_data_desc:    Main Role
+      action_data_type_id: 3
+      crud_action_id:      crud_action_id()
+      odata_path:          "ADMIN/role?$filter=role_id eq {{.role_id}}"
+      sigle_row_obj:       true
+      active:              true
+      user_id:             1
+      app_id:              appId()
+      created_at:          Now()
+      updated_at:          Now()
+      excluded:            false
+```
+
+## EX_ACTION_GEN_PDF_LATEX_EX
+```yaml
+table: crud_action
+description: Add Example of CRUD Action Generate PDF Example From Latex Tmpl
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code:  EX_ACTION_GEN_PDF_LATEX_EX
+  crud_action:       Generate PDF Example
+  action_type_id:    5
+  err_msg:           'Error generating PDF example {{.user_id}} {{.email}} to get the external ip'
+  table:             users
+  db:                ADMIN
+  active:            true
+  user_trigger:      true
+  user_trigger_icon: document-arrow-down
+  parallel:          false
+  pdf_path:          'static/uploads/user_{{.username}}.pdf'
+  use_latex:         true
+  pdf_tex_template:FileContent(examples/exemple_action_template.tex)
+  after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
+  children:
+    table: action_data
+    cond: 'WHERE action_data = :action_data'
+    data:
+      action_data:         main_role2
+      action_data_desc:    Main Role 2
+      action_data_type_id: 3
+      crud_action_id:      crud_action_id()
+      odata_path:          "ADMIN/role?$filter=role_id eq {{.role_id}}"
+      sigle_row_obj:       true
+      active:              true
 ```
 
 # RUN_ESPECIFC_SQL
