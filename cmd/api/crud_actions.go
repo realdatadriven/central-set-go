@@ -196,11 +196,13 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		if err != nil {
 			output_path = pdf_path.(string)
 		}
-		use_latext := app.toBool(c_action["use_latext"])
+		use_latex := app.toBool(c_action["use_latex"])
 		output_path = etlx_engine.ReplaceEnvVariable(output_path)
 		_data["fname"] = output_path
-		if use_latext {
-			latex, err := etlx_engine.RenderTemplate(pdf_tex_template.(string), _data)
+		if use_latex {
+			latex := pdf_tex_template.(string)
+			//latex = LatexEscape(latex)
+			latex, err = etlx_engine.RenderTemplate(latex, _data)
 			latex = etlx_engine.ReplaceEnvVariable(latex)
 			if err != nil {
 				return err

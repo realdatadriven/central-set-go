@@ -1113,8 +1113,8 @@ columns:
   api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   pdf_path:          { type: varchar, len: 200, comment: "PDF Path", form_display: true, order: 19, form_size: 9, form_hide_cond: "data?.action_type_id !== 5" }
   use_latex:         { type: boolean, default: false, comment: "Use Latex", form_display: true, table_display: true, order: 20, form_size: 3, form_hide_cond: "data?.action_type_id !== 5" }
-  pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: tex, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex" }
-  pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 && !data?.use_latex" }
+  pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: latex, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === true" }
+  pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === false" }
   etlx_md_template:  { type: text, comment: "ETLX Template", form_display: true, order: 21, form_long_text: true, form_code: markdown, form_hide_cond: "data?.action_type_id !== 6" }
   after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 5"}
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
@@ -1129,8 +1129,8 @@ form_layout:
   allow_in_subform: {crud_action_logs: true, action_data: true}
   size: 10
   tabs_steps_conf:
-    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel, use_latex]}
-    - {label: Config / Templates, fields: [sql, email_template, email_to, email_subject, api, api_name, api_endpoint, pdf_path, pdf_tex_template, pdf_template, etlx_md_template, after_sql]}
+    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel]}
+    - {label: Config / Templates, fields: [sql, email_template, email_to, email_subject, api, api_name, api_endpoint, pdf_path, use_latex, pdf_template, pdf_tex_template, etlx_md_template, after_sql]}
 ```
 
 ## ACTION_DATA_TYPE
@@ -1166,7 +1166,7 @@ columns:
   action_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, form_size: 12, order: 6, form_hide_cond: "data?.action_data_type_id !== 1" }
   read_table:          { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
   read_params_json:    { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
-  odata_path:          { type: text, comment: "Read OData Path", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
+  odata_path:          { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
   sigle_row_obj:       { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:              { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:             { type: integer, fk: "users.user_id", comment: "Created by"  }
@@ -1423,7 +1423,7 @@ columns:
   action_data_sql:  { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, form_size: 12, order: 6, form_hide_cond: "data?.action_data_type_id !== 1" }
   read_table:       { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
   read_params_json: { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
-  odata_path:       { type: text, comment: "Read OData Path", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
+  odata_path:       { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
   sigle_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:           { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:          { type: integer, fk: "users.user_id", comment: "Created by"  }
@@ -1650,7 +1650,7 @@ data:
   user_trigger:      true
   user_trigger_icon: document-arrow-down
   parallel:          false
-  pdf_path:          'static/uploads/user_{{.username}}.pdf'
+  pdf_path:          'static/uploads/tmp/user_{{.username}}.pdf'
   pdf_template:      FileContent(examples/exemple_action_template.html)
   after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
   children:
@@ -1687,9 +1687,9 @@ data:
   user_trigger:      true
   user_trigger_icon: document-arrow-down
   parallel:          false
-  pdf_path:          'static/uploads/user_{{.username}}.pdf'
+  pdf_path:          'static/uploads/tmp/user_{{.username}}.pdf'
   use_latex:         true
-  pdf_tex_template:  FileContent(examples/exemple_action_template.tex)
+  pdf_tex_template:  FileContent(examples/latex_tmpl_ex.tex)
   after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
   children:
     table: action_data
