@@ -1129,7 +1129,7 @@ form_layout:
   allow_in_subform: {crud_action_logs: true, action_data: true}
   size: 10
   tabs_steps_conf:
-    - {label: Params, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel, use_latex]}
+    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel, use_latex]}
     - {label: Config / Templates, fields: [sql, email_template, email_to, email_subject, api, api_name, api_endpoint, pdf_path, pdf_tex_template, pdf_template, etlx_md_template, after_sql]}
 ```
 
