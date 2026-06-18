@@ -333,6 +333,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"validation_id":   validation["validation_id"],
 					"validation_code": validation["validation_code"],
 					"validation":      validation["validation"],
+					"valid_criticity_id": validation["valid_criticity_id"],
 					"table":           table,
 					"db":              database,
 					"action":          crud_aciton,
@@ -344,6 +345,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 				//fmt.Println("VALIDATION SQL:", sql_rule)
 				var valid bool
+				var msg string
+				var err error
 				sql, _filters_opts, _ := etlx_engine.NamedToPositional(sql_rule, _data)
 				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
 				// fmt.Println("VALIDATIONS:", validation["validation_code"], sql, _filters_opts, res)
@@ -369,6 +372,12 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						valid = len(res) > 0
 					} else if app.toInt(valid_reaction_id) == 2 { // if_not_empty then fail
 						valid = len(res) == 0
+					} else if app.toInt(valid_reaction_id) == 3 {
+						valid = true
+						msg, err = etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
+						if err != nil {
+							msg = validation["err_msg"].(string)
+						}
 					}
 					//fmt.Printf("Validation %s executed with result: %v. Result rows: %d, valid_reaction_id: %v\n", validation["validation_code"], valid, len(res), valid_reaction_id)
 					if !valid {
@@ -392,8 +401,11 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						}
 					}
 				}
+				if msg != "" {
+					msg = fmt.Sprintf("Validation %s executed with result: %v", validation["validation_code"], valid)
+				}
 				validation_log["success"] = valid
-				validation_log["log_message"] = fmt.Sprintf("Validation %s executed with result: %v", validation["validation_code"], valid)
+				validation_log["log_message"] = msg
 				validation_log["executed_at"] = time.Now().In(loc)
 				validation_log["created_at"] = time.Now().In(loc)
 				validation_log["updated_at"] = time.Now().In(loc)

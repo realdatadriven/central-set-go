@@ -35,6 +35,7 @@ cs_app:
       - env
       - validation
       - {table: valid_reaction, active: false}
+      - {table: valid_criticity, active: false}
       - user_log
       - custom_table
       - custom_form
@@ -970,8 +971,29 @@ columns:
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {valid_reaction_id: 1, valid_reaction: if_empty, valid_reaction_desc: Validation Reaction if Empty, excluded: false}
-  - {valid_reaction_id: 2, valid_reaction: if_not_empty, valid_reaction_desc: Validation Reaction if not Empty, excluded: false}
+  - {valid_reaction_id: 1, valid_reaction: trow_err_if_empty, valid_reaction_desc: Validation Reaction if Empty, excluded: false}
+  - {valid_reaction_id: 2, valid_reaction: trow_err_if_not_empty, valid_reaction_desc: Validation Reaction if not Empty, excluded: false}
+  - {valid_reaction_id: 3, valid_reaction: log_it_as_alert, valid_reaction_desc: Only Log it as Alert or Non-Critical Error, excluded: false}
+form_layout:
+  size: 4
+```
+
+## VALID_CRITICITY
+```yaml
+table: valid_criticity
+comment: Validation Criticity Levels
+columns:
+  valid_criticity_id: { type: integer, pk: true, autoincrement: true, comment: "Validation Criticity Level ID" }
+  criticity_level:        { type: varchar, len: 50, nullable: false, unique: true, comment: "Criticity Level", form_display: true, table_display: true, order: 1 }
+  criticity_desc:         { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:             { type: datetime, comment: "Created at" }
+  updated_at:             { type: datetime, comment: "Updated at" }
+  excluded:               { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {valid_criticity_id: 1, criticity_level: low, criticity_desc: Low severity, excluded: false}
+  - {valid_criticity_id: 2, criticity_level: medium, criticity_desc: Medium severity, excluded: false}
+  - {valid_criticity_id: 3, criticity_level: high, criticity_desc: High severity, excluded: false}
+  - {valid_criticity_id: 4, criticity_level: critical, criticity_desc: Critical severity, excluded: false}
 form_layout:
   size: 4
 ```
@@ -984,6 +1006,7 @@ columns:
   validation_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
   validation:        { type: varchar, len: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   validation_code:   { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", form_display: true, table_display: true, order: 2, form_size: 3 }
   valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
   err_msg:           { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
   table:             { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
@@ -1000,7 +1023,7 @@ columns:
   updated_at:        { type: datetime, comment: "Updated at", order: 12 }
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
-  - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+  - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_criticity_id: 2, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1017,9 +1040,10 @@ columns:
   validation_id:     { type: integer, fk: "validation.validation_id", comment: "Validation ID", order: 1 }
   validation_code:   { type: varchar, len: 200, comment: "Validation Code", order: 2, form_display: true, table_display: true, form_size: 4 }
   validation:        { type: varchar, len: 200, comment: "Validation Name", order: 3, form_display: true, table_display: true, form_size: 8 }
-  table:             { type: varchar, len: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 3 }
-  db:                { type: varchar, len: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
-  action:            { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
+  valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", order: 4, form_display: true, table_display: true, form_size: 3 }
+  table:             { type: varchar, len: 200, comment: "Table", order: 5, form_display: true, table_display: true, form_size: 3 }
+  db:                { type: varchar, len: 200, comment: "Database", order: 6, form_display: true, table_display: true, form_size: 3 }
+  action:            { type: varchar, len: 10, comment: "Action", order: 7, form_display: true, table_display: true, form_size: 3 }
   executed_at:       { type: datetime, comment: "Executed At", order: 7, form_display: true, table_display: true, form_size: 4}
   success:           { type: boolean, default: true, comment: "Success", order: 9, form_display: true, table_display: true, form_size: 3 }
   log_message:       { type: text, comment: "Log Message", order: 10, form_display: true, table_display: true, form_size: 12, form_long_text: true, form_code: txt }
