@@ -1023,7 +1023,7 @@ columns:
   updated_at:        { type: datetime, comment: "Updated at", order: 12 }
   excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
-  - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_criticity_id: 2, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
+  - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_criticity_id: 1, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1078,6 +1078,7 @@ data:
   - {action_type_id: 3, action_type: InternalAPICall, action_type_desc: Internal API Call, excluded: false}
   - {action_type_id: 4, action_type: ExternalAPICall, action_type_desc: External API Call, excluded: false}
   - {action_type_id: 5, action_type: GeneratePDF, action_type_desc: GeneratePDF, excluded: false}
+  - {action_type_id: 6, action_type: RunETLXWorkflow, action_type_desc: Run ETLX Workflow, excluded: false}
 form_layout:
   size: 4
 ```
@@ -1114,6 +1115,7 @@ columns:
   use_latex:         { type: boolean, default: false, comment: "Use Latex", form_display: true, table_display: true, order: 20, form_size: 3, form_hide_cond: "data?.action_type_id !== 5" }
   pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: tex, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex" }
   pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 && !data?.use_latex" }
+  etlx_md_template:  { type: text, comment: "ETLX Template", form_display: true, order: 21, form_long_text: true, form_code: markdown, form_hide_cond: "data?.action_type_id !== 6" }
   after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 5"}
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }

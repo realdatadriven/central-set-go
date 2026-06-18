@@ -330,16 +330,16 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				sql_rule := validation["sql"].(string)
 				valid_reaction_id := validation["valid_reaction_id"]
 				validation_log := Dict{
-					"validation_id":   validation["validation_id"],
-					"validation_code": validation["validation_code"],
-					"validation":      validation["validation"],
+					"validation_id":      validation["validation_id"],
+					"validation_code":    validation["validation_code"],
+					"validation":         validation["validation"],
 					"valid_criticity_id": validation["valid_criticity_id"],
-					"table":           table,
-					"db":              database,
-					"action":          crud_aciton,
-					"user_id":         user_id,
-					"app_id":          params["app"].(Dict)["app_id"],
-					"started_at":      time.Now().In(loc),
+					"table":              table,
+					"db":                 database,
+					"action":             crud_aciton,
+					"user_id":            user_id,
+					"app_id":             params["app"].(Dict)["app_id"],
+					"started_at":         time.Now().In(loc),
 				}
 				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
@@ -372,7 +372,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						valid = len(res) > 0
 					} else if app.toInt(valid_reaction_id) == 2 { // if_not_empty then fail
 						valid = len(res) == 0
-					} else if app.toInt(valid_reaction_id) == 3 {
+					} else if app.toInt(valid_reaction_id) == 3 && len(res) > 0 {
 						valid = true
 						msg, err = etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
 						if err != nil {
@@ -713,6 +713,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	pdf_template, okPDFTmpl := c_action["pdf_template"]
 	pdf_tex_template, okPDFTexTmpl := c_action["pdf_tex_template"]
 	after_sql, okAfterSQL := c_action["after_sql"].(string)
+	etlx_md_template, okETLX := c_action["etlx_md_template"]
 	//  register crud_action_logs
 	success := true
 	etlx_engine := &etlx.ETLX{}
@@ -910,6 +911,39 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 			}
 			return fmt.Errorf("Error executing external API: %s", msg)
+		}
+	} else if app.toInt(action_type_id) == 6 && okETLX { // GeneratePDF
+		etlx_md_template, err := etlx_engine.RenderTemplate(etlx_md_template.(string), _data)
+		if err != nil {
+			return err
+		}
+		// fmt.Println(etlx_md_template)
+		params := Dict{
+			"db": app.config.db.dsn,
+			"data": Dict{
+				"order_metadata": any(true),
+				"params":         _data,
+				"conf":           any(string(etlx_md_template)),
+			},
+		}
+		res := app.etlxRun(params, true)
+		if res["success"].(bool) != true {
+			success = false
+			_data["error"] = res["msg"]
+			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			if err != nil {
+				msg = c_action["err_msg"].(string)
+			}
+			crud_action_log["success"] = success
+			crud_action_log["log_message"] = msg
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+			if err2 != nil {
+				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+			}
+			return fmt.Errorf("Error executing external ETLX: %s", msg)
 		}
 	} else {
 		success = false
