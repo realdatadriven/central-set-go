@@ -13,6 +13,20 @@ import (
 )
 
 // USING CHROMIUN
+// print a specific pdf page.
+func printToPDF(urlstr string, res *[]byte) chromedp.Tasks {
+	return chromedp.Tasks{
+		chromedp.Navigate(urlstr),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			buf, _, err := page.PrintToPDF().WithPrintBackground(false).Do(ctx)
+			if err != nil {
+				return err
+			}
+			*res = buf
+			return nil
+		}),
+	}
+}
 func (app *application) GenPDFFromHTML(html, output_path string) error {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
@@ -27,13 +41,20 @@ func (app *application) GenPDFFromHTML(html, output_path string) error {
 			return err
 		}),
 	)
-	if err != nil {
-		return err
-	}
 	err = os.WriteFile(output_path, pdf, 0644)
 	if err != nil {
 		return err
 	}
+	// capture pdf
+	/*var buf []byte
+	err := chromedp.Run(ctx, printToPDF("data:text/html,"+html, &buf))
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(output_path, buf, 0o644)
+	if err != nil {
+		return err
+	}*/
 	return nil
 }
 
