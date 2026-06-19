@@ -1652,7 +1652,7 @@ data:
   parallel:          false
   pdf_path:          'static/uploads/tmp/user_{{.username}}.pdf'
   pdf_template:      FileContent(examples/exemple_action_template.html)
-  after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
+  after_sql:         "update users set attach_profile_pic = 'tmp/user_{{.username}}.pdf' where user_id = {{.user_id}}"
   children:
     table: action_data
     cond: 'WHERE action_data = :action_data'
@@ -1685,12 +1685,12 @@ data:
   db:                ADMIN
   active:            true
   user_trigger:      true
-  user_trigger_icon: document-arrow-down
+  user_trigger_icon: document-text
   parallel:          false
   pdf_path:          'static/uploads/tmp/user_{{.username}}.pdf'
   use_latex:         true
   pdf_tex_template:  FileContent(examples/latex_tmpl_ex.tex)
-  after_sql:         "update users set attach_profile_pic = '{{.fname}}' where user_id = {{.user_id}}"
+  after_sql:         "update users set attach_profile_pic = 'tmp/user_{{.username}}.pdf' where user_id = {{.user_id}}"
   children:
     table: action_data
     cond: 'WHERE action_data = :action_data'

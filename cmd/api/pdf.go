@@ -30,13 +30,36 @@ func printToPDF(urlstr string, res *[]byte) chromedp.Tasks {
 func (app *application) GenPDFFromHTML(html, output_path string) error {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
+	// dir := filepath.Dir(output_path)
+	base := filepath.Base(output_path)
+	ext := filepath.Ext(base)
+	base_no_ext := strings.Replace(base, ext, "", 1)
+	temptex, err := os.CreateTemp("", fmt.Sprintf("%s-*.html", base_no_ext))
+	if err != nil {
+		return err
+	}
+	//fmt.Println(temptex.Name(), output_path)
+	defer os.Remove(temptex.Name())
+	defer temptex.Close()
+	_, err = temptex.WriteString(html)
+	if err != nil {
+		return err
+	}
+	temptex.Close()
 	var pdf []byte
-	err := chromedp.Run(ctx,
-		chromedp.Navigate("data:text/html,"+html),
+	fmt.Println(html)
+	err = chromedp.Run(ctx,
+		// chromedp.Navigate("data:text/html,"+html),
+		chromedp.Navigate(fmt.Sprintf("file://%s", temptex.Name())),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			var err error
 			pdf, _, err = page.PrintToPDF().
 				WithPrintBackground(true).
+				WithLandscape(true).
+				WithMarginLeft(0.4).
+				WithMarginTop(0.4).
+				WithMarginRight(0.4).
+				WithMarginBottom(0.4).
 				Do(ctx)
 			return err
 		}),
@@ -55,12 +78,12 @@ func (app *application) GenPDFFromHTML(html, output_path string) error {
 	if err != nil {
 		return err
 	}*/
+	// file:///home/clovis/Documents/apps/central-set-go/test.html
 	return nil
 }
 
 func LatexEscape(v any) string {
 	s := fmt.Sprint(v)
-
 	replacer := strings.NewReplacer(
 		"\\", "\\textbackslash{}",
 		"&", "\\&",
@@ -73,7 +96,6 @@ func LatexEscape(v any) string {
 		"~", "\\textasciitilde{}",
 		"^", "\\textasciicircum{}",
 	)
-
 	return replacer.Replace(s)
 }
 
@@ -90,8 +112,8 @@ func (app *application) GenPDFFromLatex(latex, output_path string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(temptex.Name(), output_path)
-	//defer os.Remove(temptex.Name())
+	// fmt.Println(temptex.Name(), output_path)
+	defer os.Remove(temptex.Name())
 	defer temptex.Close()
 	_, err = temptex.WriteString(latex)
 	if err != nil {
