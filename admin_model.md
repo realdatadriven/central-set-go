@@ -255,7 +255,7 @@ columns:
   menu_icon:     { type: varchar, len: 20, comment: "Icon", form_display: true, table_display: true, form_size: 4, order: 3 }
   menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 4, order: 4 }
   menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, form_code: json, table_display: true, form_use_label: true, order: 6 }
-  app_id:        { type: integer, fk: "app.app_id", comment: "App ID" }
+  app_id:        { type: integer, nullable: false, fk: "app.app_id", comment: "App ID" }
   active:        { type: boolean, default: true, comment: "Active", form_display: true, form_size: 4, table_display: true, order: 5 }
   user_id:       { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:    { type: datetime, comment: "Created at" }
@@ -300,9 +300,9 @@ table: menu_table
 comment: Menu Tables
 columns:
   menu_table_id:  { type: integer, pk: true, autoincrement: true, comment: "Menu Table ID" }
-  menu_id:        { type: integer, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true, order: 1, form_size: 8 }
-  table_id:       { type: integer, fk: "table.table_id", comment: "Table ID", form_display: true, table_display: true, order: 2, form_size: 4 }
-  app_id:         { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 3, form_size: 4 }
+  menu_id:        { type: integer, nullable: false, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true, order: 1, form_size: 8 }
+  table_id:       { type: integer, nullable: false, fk: "table.table_id", comment: "Table ID", form_display: true, table_display: true, order: 2, form_size: 4 }
+  app_id:         { type: integer, nullable: false, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 3, form_size: 4 }
   active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5, form_size: 4 }
   requires_rla:   { type: boolean, default: false, comment: "Requires Row Level Access", form_display: true, table_display: true, order: 6, form_size: 4 }
   menu_table_cnf: { type: text, comment: "Config", form_display: true, table_display: true, form_long_text: true, form_code: json, order: 7 }
@@ -322,9 +322,9 @@ table: role_app
 comment: Role Apps
 columns:
   role_app_id: { type: integer, pk: true, autoincrement: true, comment: "Role App ID" }
-  role_id:     { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true, order: 1 }
-  app_id:      { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  access:      { type: boolean, default: true, comment: "Access", form_display: true, table_display: true, order: 3 }
+  role_id:     { type: integer, nullable: false, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true, order: 1 }
+  app_id:      { type: integer, nullable: false, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  access:      { type: boolean, nullable: false, default: true, comment: "Access", form_display: true, table_display: true, order: 3 }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID", order: 4 }
   created_at:  { type: datetime, comment: "Created at", order: 5 }
   updated_at:  { type: datetime, comment: "Updated at", order: 6 }
@@ -341,9 +341,9 @@ table: role_app_menu
 comment: Role App Menus
 columns:
   role_app_menu_id: { type: integer, pk: true, autoincrement: true, comment: "Role App Menu ID" }
-  role_id:          { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true, order: 1 }
-  app_id:           { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  menu_id:          { type: integer, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true, order: 3 }
+  role_id:          { type: integer, nullable: false, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true, order: 1 }
+  app_id:           { type: integer, nullable: false, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  menu_id:          { type: integer, nullable: false, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true, order: 3 }
   access:           { type: boolean, default: true, comment: "Access", form_display: true, table_display: true, order: 4 }
   user_id:          { type: integer, fk: "users.user_id", comment: "User ID", order: 5 }
   created_at:       { type: datetime, comment: "Created at", order: 6 }
@@ -361,10 +361,10 @@ table: role_app_menu_table
 comment: Role App Menu Tables
 columns:
   role_app_menu_table_id: { type: integer, pk: true, autoincrement: true, comment: "Role App Menu Table ID" }
-  role_id:                { type: integer, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true, order: 1 }
-  app_id:                 { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  menu_id:                { type: integer, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true, order: 3 }
-  table_id:               { type: integer, fk: "table.table_id", comment: "Table ID", form_display: true, table_display: true, order: 4 }
+  role_id:                { type: integer, nullable: false, fk: "role.role_id", comment: "Role ID", form_display: true, table_display: true, order: 1 }
+  app_id:                 { type: integer, nullable: false, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
+  menu_id:                { type: integer, nullable: false, fk: "menu.menu_id", comment: "Menu ID", form_display: true, table_display: true, order: 3 }
+  table_id:               { type: integer, nullable: false, fk: "table.table_id", comment: "Table ID", form_display: true, table_display: true, order: 4 }
   create:                 { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
   read:                   { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
   update:                 { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
@@ -386,7 +386,7 @@ table: user_log
 comment: User Logs
 columns:
   user_log_id: { type: integer, pk: true, autoincrement: true, comment: "User Log ID" }
-  user_id:     { type: integer, fk: "users.user_id", comment: "User ID", form_display: true, table_display: true, order: 1 }
+  user_id:     { type: integer, nullable: false, fk: "users.user_id", comment: "User ID", form_display: true, table_display: true, order: 1 }
   action:      { type: varchar, len: 200, nullable: false, comment: "Action", form_display: true, table_display: true, order: 2 }
   req_ip:      { type: varchar, len: 200, comment: "Request IP", form_display: true, table_display: true, form_use_label: true, order: 3 }
   req_at:      { type: datetime, comment: "Request at", form_display: true, table_display: true, form_date_format: "YY/MM/DD HH:mm", form_use_label: true, order: 4 }
@@ -1499,14 +1499,14 @@ data:
   excluded:       false
 ```
 
-## MENU_APP_UNIQUENESS
+## APP_MENU_UNIQUENESS
 ```yaml
 table: validation
 description: Ensure menu uniqueness for a specific app
 cond: 'WHERE validation_code = :validation_code'
 data:
   validation: Ensure menu uniqueness for a specific app
-  validation_code:    MENU_APP_UNIQUENESS
+  validation_code:    APP_MENU_UNIQUENESS
   valid_criticity_id: 1
   valid_reaction_id:  2
   err_msg:            "Menu {{.menu}} already exists for app_id = {{.app_id}}!"
