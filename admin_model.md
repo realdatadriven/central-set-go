@@ -12,7 +12,7 @@ conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: true
+active: false
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -142,6 +142,7 @@ data:
   - {role_id: 1, role: root, role_desc: "Root role", excluded: false}
   - {role_id: 2, role: no-role, role_desc: "No role set", excluded: false}
   - {role_id: 3, role: tenant, role_desc: "Tenant Role", excluded: false}
+#  - {role_id: 4, role: anonymous, role_desc: "Anonymous role", excluded: false}
 form_layout:
   tabs_steps: tabs
   size: 4
@@ -177,6 +178,7 @@ columns:
   excluded:             { type: boolean, default: false, comment: "Excluded" }
 data:
   - {user_id: 1, username: root, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Super, last_name: Admin, email: admin@domain.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
+#  - {user_id: 2, username: anonymous, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Anonymous, last_name: User, email: anonymous@domain.com, role_id: 4, lang_id: 1, active: true, alter_pass_nxt_login: false, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1497,6 +1499,28 @@ data:
   excluded:       false
 ```
 
+## MENU_APP_UNIQUENESS
+```yaml
+table: validation
+description: Ensure menu uniqueness for a specific app
+cond: 'WHERE validation_code = :validation_code'
+data:
+  validation: Ensure menu uniqueness for a specific app
+  validation_code:    MENU_APP_UNIQUENESS
+  valid_criticity_id: 1
+  valid_reaction_id:  2
+  err_msg:            "Menu {{.menu}} already exists for app_id = {{.app_id}}!"
+  table:              menu
+  db:                 ADMIN
+  sql:                "select * from menu where menu = :menu and app_id = :app_id and excluded = false"
+  app_id:             1
+  create:             true
+  user_id:            1
+  created_at:         Now()
+  updated_at:         Now()
+  excluded:           false
+```
+
 ## EX_CRUD_ACTION_CREATE
 ```yaml
 table: crud_action
@@ -1702,6 +1726,26 @@ data:
       odata_path:          "ADMIN/role?$filter=role_id eq {{.role_id}}"
       sigle_row_obj:       true
       active:              true
+```
+
+# ROLE_ACCESS
+```yaml
+name: ROLE_ACCESS
+description: DATA Model ADMIN
+database: ADMIN
+runs_as: ROLE
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## ANONYMOUS
+```yaml
+name: anonymous
+description: Anonymous Role
+apps:
+  - ADMIN:
+    - Arrow Flight:
+      - {table: flight_schema, read: true, rla: [{flight_schema: admin, read: true, share: true}]}
+active: true
 ```
 
 # RUN_ESPECIFC_SQL

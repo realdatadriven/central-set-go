@@ -55,7 +55,7 @@ func (app *application) GenPDFFromHTML(html, output_path string) error {
 			var err error
 			pdf, _, err = page.PrintToPDF().
 				WithPrintBackground(true).
-				WithLandscape(true).
+				WithLandscape(false).
 				WithMarginLeft(0.4).
 				WithMarginTop(0.4).
 				WithMarginRight(0.4).
