@@ -49,7 +49,7 @@ func (app *application) GenPDFFromHTML(html, output_path string) error {
 	var pdf []byte
 	fmt.Println(html)
 	err = chromedp.Run(ctx,
-		// chromedp.Navigate("data:text/html,"+html),
+		// chromedp.Navigate("data:text/html,"+html) ,
 		chromedp.Navigate(fmt.Sprintf("file://%s", temptex.Name())),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			var err error

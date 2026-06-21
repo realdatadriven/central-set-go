@@ -249,7 +249,7 @@ table_extra_options:
 ## MENU
 ```yaml
 table: menu
-comment: Menu Items
+comment: Menus
 columns:
   menu_id:       { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
   menu:          { type: varchar, len: 20, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 3, order: 1 }
@@ -1007,25 +1007,25 @@ form_layout:
 table: validation
 comment: Validation Rules
 columns:
-  validation_id:     { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  validation:        { type: varchar, len: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
-  validation_code:   { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
-  valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", form_display: true, table_display: true, order: 2, form_size: 3 }
-  valid_reaction_id: { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
-  err_msg:           { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
-  table:             { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
-  db:                { type: varchar, len: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
-  active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
-  create:            { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
-  read:              { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
-  update:            { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
-  delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
-  sql:               { type: text, nullable: false, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql }
-  user_id:           { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
-  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:        { type: datetime, comment: "Created at", order: 11 }
-  updated_at:        { type: datetime, comment: "Updated at", order: 12 }
-  excluded:          { type: boolean, default: false, comment: "Excluded", order: 13 }
+  validation_id:      { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  validation:         { type: varchar, len: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
+  validation_code:    { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", form_display: true, table_display: true, order: 2, form_size: 2 }
+  valid_reaction_id:  { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
+  err_msg:            { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
+  table:              { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
+  db:                 { type: varchar, len: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
+  active:             { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  create:             { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
+  read:               { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
+  update:             { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
+  delete:             { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
+  sql:                { type: text, nullable: false, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql }
+  user_id:            { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
+  app_id:             { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:         { type: datetime, comment: "Created at", order: 11 }
+  updated_at:         { type: datetime, comment: "Updated at", order: 12 }
+  excluded:           { type: boolean, default: false, comment: "Excluded", order: 13 }
 data:
   - {validation_id: 1, validation: Validate user Email existance, validation_code: USR01, valid_criticity_id: 1, valid_reaction_id: 2, err_msg: "User {{.email}} already exists!", table: users, db: ADMIN, sql: "select * from users where email = :email", app_id: 1, create: true, user_id: 1}
 form_layout:
@@ -1043,6 +1043,7 @@ columns:
   validation_data_id:      { type: integer, pk: true, autoincrement: true, comment: "Validation Data ID" }
   validation_data:         { type: varchar, len: 100, nullable: false, comment: "Validation Data", form_display: true, table_display: true, form_size: 4, order: 2, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
   validation_data_desc:    { type: text, comment: "Validation Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
+  validation_id:           { type: integer, fk: "validation.validation_id", nullable: false, comment: "Validation", form_display: true, table_display: true, form_size: 4, order: 1 }  
   odata_path:              { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9 }
   sigle_row_obj:           { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:                  { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
@@ -1062,22 +1063,22 @@ form_layout:
 table: validation_logs
 comment: Validation Logs
 columns:
-  validation_log_id: { type: integer, pk: true, autoincrement: true, comment: "Validation Log ID" }
-  validation_id:     { type: integer, fk: "validation.validation_id", comment: "Validation ID", order: 1 }
-  validation_code:   { type: varchar, len: 200, comment: "Validation Code", order: 2, form_display: true, table_display: true, form_size: 4 }
-  validation:        { type: varchar, len: 200, comment: "Validation Name", order: 3, form_display: true, table_display: true, form_size: 8 }
+  validation_log_id:  { type: integer, pk: true, autoincrement: true, comment: "Validation Log ID" }
+  validation_code:    { type: varchar, len: 200, comment: "Validation Code", order: 2, form_display: true, table_display: true, form_size: 4 }
+  validation:         { type: varchar, len: 200, comment: "Validation Name", order: 3, form_display: true, table_display: true, form_size: 8 }
+  validation_id:      { type: integer, fk: "validation.validation_id", comment: "Validation ID", order: 1 }
   valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", order: 4, form_display: true, table_display: true, form_size: 3 }
-  table:             { type: varchar, len: 200, comment: "Table", order: 5, form_display: true, table_display: true, form_size: 3 }
-  db:                { type: varchar, len: 200, comment: "Database", order: 6, form_display: true, table_display: true, form_size: 3 }
-  action:            { type: varchar, len: 10, comment: "Action", order: 7, form_display: true, table_display: true, form_size: 3 }
-  executed_at:       { type: datetime, comment: "Executed At", order: 7, form_display: true, table_display: true, form_size: 4}
-  success:           { type: boolean, default: true, comment: "Success", order: 9, form_display: true, table_display: true, form_size: 3 }
-  log_message:       { type: text, comment: "Log Message", order: 10, form_display: true, table_display: true, form_size: 12, form_long_text: true, form_code: txt }
-  user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:        { type: datetime, comment: "Created at" }
-  updated_at:        { type: datetime, comment: "Updated at" }
-  excluded:          { type: boolean, default: false, comment: "Excluded", order: 14 }
+  table:              { type: varchar, len: 200, comment: "Table", order: 5, form_display: true, table_display: true, form_size: 3 }
+  db:                 { type: varchar, len: 200, comment: "Database", order: 6, form_display: true, table_display: true, form_size: 3 }
+  action:             { type: varchar, len: 10, comment: "Action", order: 7, form_display: true, table_display: true, form_size: 3 }
+  executed_at:        { type: datetime, comment: "Executed At", order: 7, form_display: true, table_display: true, form_size: 4}
+  success:            { type: boolean, default: true, comment: "Success", order: 9, form_display: true, table_display: true, form_size: 3 }
+  log_message:        { type: text, comment: "Log Message", order: 10, form_display: true, table_display: true, form_size: 12, form_long_text: true, form_code: txt }
+  user_id:            { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:             { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:         { type: datetime, comment: "Created at" }
+  updated_at:         { type: datetime, comment: "Updated at" }
+  excluded:           { type: boolean, default: false, comment: "Excluded", order: 14 }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1142,7 +1143,7 @@ columns:
   pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: latex, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === true" }
   pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === false" }
   etlx_md_template:  { type: text, comment: "ETLX Template", form_display: true, order: 21, form_long_text: true, form_code: markdown, form_hide_cond: "data?.action_type_id !== 6" }
-  after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 5"}
+  after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1529,11 +1530,11 @@ table: validation
 description: Ensure menu uniqueness for a specific app
 cond: 'WHERE validation_code = :validation_code'
 data:
-  validation: Ensure menu uniqueness for a specific app
+  validation:         Ensure menu uniqueness for a specific app
   validation_code:    APP_MENU_UNIQUENESS
   valid_criticity_id: 1
   valid_reaction_id:  2
-  err_msg:            "Menu {{.menu}} already exists for app {{.appdata.app}} (app_id = {{.app_id}})!"
+  err_msg:            'Menu "{{.menu}}" already exists for app "{{.appdata.app}}" (app_id = {{.app_id}})!'
   table:              menu
   db:                 ADMIN
   sql:                "select * from menu where menu = :menu and app_id = :app_id and excluded = false"
@@ -1770,10 +1771,11 @@ data:
 # ROLE_ACCESS
 ```yaml
 name: ROLE_ACCESS
-description: Role Model
+description: Role Model Example, Create Role anonymous and gives access to ADMIN/Arrow Flight ...
 database: ADMIN #RLA may need to access records on other DBs
 runs_as: ROLE
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+active: false
 ```
 
 ## ANONYMOUS
@@ -1795,6 +1797,7 @@ name: ROLE_USERS
 description: Give user access to a role
 runs_as: ROLE_USERS
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+active: false
 ```
 
 ## ANONYMOUS

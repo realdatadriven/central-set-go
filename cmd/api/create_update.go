@@ -333,18 +333,19 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				sql_rule := validation["sql"].(string)
 				valid_reaction_id := validation["valid_reaction_id"]
 				// ACTION DATA TO HELP BUILD THE TEPLATE
-				sql := "select * from validation_data where validation_data_id = ? and excluded = false"
-				valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{validation["valid_reaction_id"]})
+				sql := "select * from validation_data where validation_id = ? and excluded = false"
+				valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{validation["validation_id"]})
 				if err != nil {
-					fmt.Println("Error getting API Data:", err)
+					fmt.Println("Error getting Validation Data:", err)
 					// return fmt.Errorf("Error getting API Data: %s", err)
 				} else {
 					// fmt.Println("ACTION DATA:", valid_data_res)
 					validation_data, err := app.GetValidationData(params, valid_data_res, _data)
 					if err != nil {
-						fmt.Printf("Error getting API Data: %s", err)
+						fmt.Printf("Error getting Validation Data: %s", err)
 					} else {
 						for key, val := range validation_data {
+							fmt.Println("VALIDATION DATA:", key, val)
 							_data[key] = val
 						}
 					}
