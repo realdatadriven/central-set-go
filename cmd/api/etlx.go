@@ -437,7 +437,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	//fmt.Println("extraConf:", extraConf)
 	logs := []Dict{}
 	data := Dict{}
-	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MODEL_SQL", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL", "C7MODEL", "MODEL_DATA", "CSDATA", "C7DATA", "WORKFLOW", "C7WORKFLOW", "CSWORKFLOW"}
+	_keys := []any{"NOTIFY", "NOTIFICATION", "LOGS", "OBSERVABILITY", "SCRIPTS", "MODEL_SQL", "MULTI_QUERIES", "STACKED_QUERIES", "EXPORTS", "DATA_QUALITY", "DATAQUALITY", "QUALITY", "ETL", "ELT", "ACTIONS", "AUTO_LOGS", "REQUIRES", "IMPORTS", "MODEL", "CSMODEL", "C7MODEL", "MODEL_DATA", "CSDATA", "C7DATA", "WORKFLOW", "C7WORKFLOW", "CSWORKFLOW", "C7ROLE", "ROLE", "CSROLE", "C7ROLE_USERS", "CSROLE_USERS", "ROLE_USERS"}
 	__order, ok := etlxlib.Config["__order"].([]string)
 	hasOrderedKeys := false
 	if !ok {
@@ -662,6 +662,34 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 					case "WORKFLOW", "C7WORKFLOW", "CSWORKFLOW":
 						// fmt.Printf("%s AS %s START:\n", key, runs_as)
 						_logs, err := etlxlib.RunWORKFLOW(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					case "C7ROLE", "CSROLE", "ROLE":
+						fmt.Printf("%s AS %s START:\n", key, runs_as)
+						_logs, err := etlxlib.RunC7ROLE(dateRef, nil, extraConf, key)
+						if err != nil {
+							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
+						} else {
+							if _, ok := etlxlib.Config["AUTO_LOGS"]; ok && len(_logs) > 0 {
+								_, err := etlxlib.RunLOGS(dateRef, nil, _logs, "AUTO_LOGS")
+								if err != nil {
+									fmt.Printf("INCREMENTAL AUTOLOGS ERR: %v\n", err)
+								}
+							}
+							logs = append(logs, _logs...)
+						}
+					case "C7ROLE_USERS", "CSROLE_USERS", "ROLE_USERS":
+						fmt.Printf("%s AS %s START:\n", key, runs_as)
+						_logs, err := etlxlib.RunC7ROLE_USERS(dateRef, nil, extraConf, key)
 						if err != nil {
 							fmt.Printf("%s AS %s ERR: %v\n", key, runs_as, err)
 						} else {

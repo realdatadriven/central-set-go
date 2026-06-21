@@ -13,7 +13,7 @@ conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: false
+active: true
 cs_app:
   Dashboards:
     menu_icon: document-report
@@ -220,7 +220,7 @@ columns:
   version:     { type: varchar, len: 10, nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
   email:       { type: varchar, len: 200, comment: "Email", form_display: true, table_display: true, form_size: 3, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
   db:          { type: varchar, len: 20, nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
-  # conn_string: { type: varchar, len: 200, nullable: false, comment: "Conn String", form_display: true, table_display: true, form_size: 3, order: 5 }
+  # conn_string: { type: varchar, len: 200, comment: "Conn String", form_display: true, table_display: true, form_size: 3, order: 5 }
   attach_logo: { type: varchar, len: 200, comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
   category:    { type: varchar, len: 200, comment: "Category", form_display: true, table_display: true, form_size: 3, order: 6 }
   config:      { type: text, comment: "Config", form_long_text: true, form_code: json }
