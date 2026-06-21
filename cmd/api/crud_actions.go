@@ -53,13 +53,13 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 	// ACTION DATA TO HELP BUILD THE TEPLATE
 	sql := "select * from action_data where crud_action_id = ? and excluded = false"
-	action_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_action["crud_action_id"]})
+	valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_action["crud_action_id"]})
 	if err != nil {
 		//fmt.Println("Error getting API Data:", err)
 		return fmt.Errorf("Error getting API Data: %s", err)
 	}
-	// fmt.Println("ACTION DATA:", action_data_res)
-	action_data, err := app.GetActionData(params, action_data_res, _data)
+	// fmt.Println("ACTION DATA:", valid_data_res)
+	action_data, err := app.GetActionData(params, valid_data_res, _data)
 	if err != nil {
 		return fmt.Errorf("Error getting API Data: %s", err)
 	}
@@ -321,11 +321,11 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	return nil
 }
 
-func (app *application) GetActionData(params Dict, action_data_res []Dict, _data Dict) (Dict, error) {
-	// loop action_data_res
+func (app *application) GetActionData(params Dict, valid_data_res []Dict, _data Dict) (Dict, error) {
+	// loop valid_data_res
 	etlx_engine := &etlx.ETLX{}
 	res := Dict{}
-	for _, action_data := range action_data_res {
+	for _, action_data := range valid_data_res {
 		name := action_data["action_data"].(string)
 		if app.toInt(action_data["action_data_type_id"]) == 3 { // ODATA
 			odata_path, ok := action_data["odata_path"].(string)
@@ -360,6 +360,46 @@ func (app *application) GetActionData(params Dict, action_data_res []Dict, _data
 			}
 		} else {
 			return nil, fmt.Errorf("Error: API Data Type %d is not implemented yet!", app.toInt(action_data["action_data_type_id"]))
+		}
+	}
+	return res, nil
+}
+
+func (app *application) GetValidationData(params Dict, valid_data_res []Dict, _data Dict) (Dict, error) {
+	// loop valid_data_res
+	etlx_engine := &etlx.ETLX{}
+	res := Dict{}
+	for _, validation_data := range valid_data_res {
+		name := validation_data["validation_data"].(string)
+		odata_path, ok := validation_data["odata_path"].(string)
+		if !ok {
+			return nil, fmt.Errorf("Error, odata_path is not set!")
+		}
+		odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
+		if err != nil {
+			odata_path = validation_data["odata_path"].(string)
+		} else {
+			odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
+		}
+		// fmt.Println(validation_data["odata_path"], odata_path)
+		sigle_row_obj := app.toBool(validation_data["sigle_row_obj"])
+		db, table, query, err := parsePath(odata_path)
+		fmt.Println(db, table, query)
+		if err != nil {
+			return nil, err
+		}
+		results, err := app.OData2C7Read(params, db, table, query)
+		if err != nil {
+			return nil, err
+		}
+		if sigle_row_obj {
+			aux := Dict{}
+			if len(results) > 0 {
+				aux = results[0]
+			}
+			res[name] = aux
+		} else {
+			res[name] = results
 		}
 	}
 	return res, nil

@@ -327,8 +327,28 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	} else if len(validation_rows) > 0 {
 		for _, validation := range validation_rows {
 			if _, ok := validation["sql"]; ok {
+				var valid bool
+				var msg string
+				var err error
 				sql_rule := validation["sql"].(string)
 				valid_reaction_id := validation["valid_reaction_id"]
+				// ACTION DATA TO HELP BUILD THE TEPLATE
+				sql := "select * from validation_data where validation_data_id = ? and excluded = false"
+				valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{validation["valid_reaction_id"]})
+				if err != nil {
+					fmt.Println("Error getting API Data:", err)
+					// return fmt.Errorf("Error getting API Data: %s", err)
+				} else {
+					// fmt.Println("ACTION DATA:", valid_data_res)
+					validation_data, err := app.GetValidationData(params, valid_data_res, _data)
+					if err != nil {
+						fmt.Printf("Error getting API Data: %s", err)
+					} else {
+						for key, val := range validation_data {
+							_data[key] = val
+						}
+					}
+				}
 				validation_log := Dict{
 					"validation_id":      validation["validation_id"],
 					"validation_code":    validation["validation_code"],
@@ -344,9 +364,6 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 				//fmt.Println("VALIDATION SQL:", sql_rule)
-				var valid bool
-				var msg string
-				var err error
 				sql, _filters_opts, _ := etlx_engine.NamedToPositional(sql_rule, _data)
 				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
 				// fmt.Println("VALIDATIONS:", validation["validation_code"], sql, _filters_opts, res)

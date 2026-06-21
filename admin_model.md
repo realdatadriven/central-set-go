@@ -37,6 +37,7 @@ cs_app:
       - validation
       - {table: valid_reaction, active: false}
       - {table: valid_criticity, active: false}
+      - {table: validation_data, active: false}
       - user_log
       - custom_table
       - custom_form
@@ -1030,8 +1031,30 @@ data:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  allow_in_subform: {validation_logs: true}
+  allow_in_subform: {validation_logs: true, validation_data: true}
   size: 8
+```
+
+## VALIDATION_DATA
+```yaml
+table: validation_data
+comment: Validation Data
+columns:
+  validation_data_id:      { type: integer, pk: true, autoincrement: true, comment: "Validation Data ID" }
+  validation_data:         { type: varchar, len: 100, nullable: false, comment: "Validation Data", form_display: true, table_display: true, form_size: 4, order: 2, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
+  validation_data_desc:    { type: text, comment: "Validation Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
+  odata_path:              { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9 }
+  sigle_row_obj:           { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  active:                  { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
+  user_id:                 { type: integer, fk: "users.user_id", comment: "Created by"  }
+  app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:              { type: datetime, comment: "Created at" }
+  updated_at:              { type: datetime, comment: "Updated at" }
+  excluded:                { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
 ```
 
 ## VALIDATION_LOGS
@@ -1510,7 +1533,7 @@ data:
   validation_code:    APP_MENU_UNIQUENESS
   valid_criticity_id: 1
   valid_reaction_id:  2
-  err_msg:            "Menu {{.menu}} already exists for app_id = {{.app_id}}!"
+  err_msg:            "Menu {{.menu}} already exists for app {{.appdata.app}} (app_id = {{.app_id}})!"
   table:              menu
   db:                 ADMIN
   sql:                "select * from menu where menu = :menu and app_id = :app_id and excluded = false"
@@ -1520,6 +1543,21 @@ data:
   created_at:         Now()
   updated_at:         Now()
   excluded:           false
+  children:
+    table: validation_data
+    cond: 'WHERE validation_data = :validation_data'
+    data:
+      validation_data:       appdata
+      validation_data_desc:  Associated App Data
+      validation_id:         validation_id()
+      odata_path:            "ADMIN/app?$filter=app_id eq {{.app_id}}"
+      sigle_row_obj:         true
+      active:                true
+      user_id:               1
+      app_id:                appId()
+      created_at:            Now()
+      updated_at:            Now()
+      excluded:              false
 ```
 
 ## EX_CRUD_ACTION_CREATE
@@ -1745,7 +1783,7 @@ description: Anonymous Role
 access:
   - ADMIN:
     - Arrow Flight:
-      - {table: flight_catalog, read: true, rla: [{flight_schema: admin, read: true, share: true}]}
+      - {table: flight_catalog, read: true, rla: [{flight_catalog: admin, read: true, share: true}]}
       - flight_schema
       - flight_schema_table
 active: true
