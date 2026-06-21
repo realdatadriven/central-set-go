@@ -369,6 +369,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
 				// fmt.Println("VALIDATIONS:", validation["validation_code"], sql, _filters_opts, res)
 				if err != nil {
+					_data["err"] = err.Error()
 					fmt.Printf("Error executing validation SQL for validation_id %v: %v", validation["validation_id"], err)
 					valid = false
 					validation_log["success"] = valid

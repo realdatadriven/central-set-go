@@ -99,7 +99,7 @@ func LatexEscape(v any) string {
 	return replacer.Replace(s)
 }
 
-// sudo apt install texlive-latex-base
+// sudo apt install texlive-latex-base texlive-latex-extra
 func (app *application) GenPDFFromLatex(latex, output_path string) error {
 	// latex = LatexEscape(latex)
 	//ctx, cancel := chromedp.NewContext(context.Background())
@@ -123,11 +123,14 @@ func (app *application) GenPDFFromLatex(latex, output_path string) error {
 	jobname := fmt.Sprintf("-jobname=%s", base_no_ext)
 	output_directory := fmt.Sprintf("-output-directory=%s", dir)
 	cmd := exec.Command("pdflatex", jobname, output_directory, temptex.Name())
-	err = cmd.Run()
-	// output, err := cmd.CombinedOutput()
+	//err = cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return err
+		fmt.Println("GenPDFFromLatex Err:", string(output), err)
+		return fmt.Errorf("%s: %s", err.Error(), string(output))
 	}
+	// fmt.Println("GenPDFFromLatex Output:", string(output))
+
 	/*/ Move generated PDF to output path
 	tempPDF := strings.TrimSuffix(temptex.Name(), ".tex") + ".pdf"
 	err = os.Rename(tempPDF, output_path)

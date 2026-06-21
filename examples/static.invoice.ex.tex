@@ -1,0 +1,243 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[a4paper,margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+
+\definecolor{headergray}{gray}{0.9}
+
+\begin{document}
+
+%--------------------------------------------------
+% HEADER
+%--------------------------------------------------
+
+\noindent
+\begin{minipage}[t]{0.35\textwidth}
+
+\includegraphics[height=2.5cm]{static/img/icon.png}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.55\textwidth}
+
+\raggedleft
+
+{\Huge \textbf{INVOICE}}
+
+\vspace{0.5cm}
+
+Invoice Number: INV-2026-001
+
+Invoice Date: 21/06/2026
+
+Due Date: 21/07/2026
+
+\end{minipage}
+
+
+\vspace{1cm}
+
+
+%--------------------------------------------------
+% COMPANY / CUSTOMER
+%--------------------------------------------------
+
+\noindent
+\begin{minipage}[t]{0.45\textwidth}
+
+\textbf{From}
+
+ABC Consulting Ltd
+
+123 Business Avenue
+
+Business District
+
+New York, NY 10001
+
+United States
+
+Tax ID: US123456789
+
+billing@abcconsulting.com
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+
+\raggedleft
+
+\textbf{Bill To}
+
+XYZ Technologies Inc.
+
+456 Innovation Drive
+
+Suite 300
+
+San Francisco, CA 94105
+
+United States
+
+Tax ID: US987654321
+
+accounts@xyztech.com
+
+\end{minipage}
+
+
+\vspace{1cm}
+
+
+%--------------------------------------------------
+% INVOICE ITEMS
+%--------------------------------------------------
+
+\renewcommand{\arraystretch}{1.5}
+
+\setlength{\tabcolsep}{0pt}
+
+\begin{tabularx}{\linewidth}{|@{}X|r|r|r@{}|}
+\hline
+
+\rowcolor{headergray}
+
+\textbf{Description}
+&
+\textbf{Qty}
+&
+\textbf{Unit Price}
+&
+\textbf{Amount}
+
+\\
+\hline
+
+
+Software Development Services
+&
+40
+&
+50.00
+&
+2000.00
+
+\\
+\hline
+
+
+Technical Consulting
+&
+10
+&
+75.00
+&
+750.00
+
+\\
+\hline
+
+
+System Integration
+&
+5
+&
+100.00
+&
+500.00
+
+\\
+\hline
+
+
+Training Session
+&
+2
+&
+125.00
+&
+250.00
+
+\\
+\hline
+
+\end{tabularx}
+
+%--------------------------------------------------
+% TOTALS
+%--------------------------------------------------
+
+\begin{flushright}
+
+\begin{tabular}{lr}
+
+Subtotal:
+&
+3500.00
+\\
+
+Tax (15\%):
+&
+525.00
+\\
+
+\hline
+
+\textbf{Total}
+&
+\textbf{4025.00}
+
+\\
+
+\end{tabular}
+
+\end{flushright}
+
+
+
+\vspace{1cm}
+
+
+%--------------------------------------------------
+% PAYMENT
+%--------------------------------------------------
+
+\textbf{Payment Information}
+
+\vspace{0.2cm}
+
+Bank: Example Bank
+
+Account: 123456789
+
+SWIFT: EXMPUS33
+
+
+\vspace{1cm}
+
+
+%--------------------------------------------------
+% NOTES
+%--------------------------------------------------
+
+\textbf{Notes}
+
+Payment is due within 30 days of invoice date.
+
+Thank you for your business.
+
+
+\vfill
+
+
+\begin{center}
+
+ABC Consulting Ltd
+
+\end{center}
+
+
+\end{document}

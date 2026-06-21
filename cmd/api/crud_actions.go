@@ -72,13 +72,14 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			sql_rule := c_action["sql"].(string)
 			err := app.ExecuteQuery(sql_rule, params, _data)
 			if err != nil {
+				_data["err"] = err.Error()
 				success = false
 				msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
 				if err != nil {
 					msg = c_action["err_msg"].(string)
 				}
 				crud_action_log["success"] = success
-				crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action ExecuteQuery: %v. Message: %s", err, msg)
+				crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action ExecuteQuery: %v. Message: %s", _data["err"], msg)
 				crud_action_log["executed_at"] = time.Now().In(loc)
 				crud_action_log["created_at"] = time.Now().In(loc)
 				crud_action_log["updated_at"] = time.Now().In(loc)
@@ -113,6 +114,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			}
 			err := etlx_engine.SendEmail(emailParams)
 			if err != nil {
+				_data["err"] = err.Error()
 				success = false
 				crud_action_log["success"] = success
 				crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action SendEmail: %v. Message: %s", err, err.Error())
@@ -137,19 +139,20 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		}
 		_, err = app.CronRunEndPoint(Dict{"api": api, "data": _data})
 		if err != nil {
-			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
-			if err != nil {
-				msg = c_action["err_msg"].(string)
-			}
+			_data["err"] = err.Error()
 			success = false
 			crud_action_log["success"] = success
-			crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %s", err.Error())
+			crud_action_log["log_message"] = fmt.Sprintf("Error executing CRUD Action API: %s", _data["err"])
 			crud_action_log["executed_at"] = time.Now().In(loc)
 			crud_action_log["created_at"] = time.Now().In(loc)
 			crud_action_log["updated_at"] = time.Now().In(loc)
 			_, err2 := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
 			if err2 != nil {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
+			}
+			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			if err != nil {
+				msg = c_action["err_msg"].(string)
 			}
 			return err
 		}
@@ -217,6 +220,8 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			err = app.GenPDFFromHTML(html, output_path)
 		}
 		if err != nil {
+			_data["err"] = err.Error()
+			fmt.Println("GeneratePDF:", err)
 			success = false
 			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
 			if err != nil {
@@ -231,9 +236,10 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			if err2 != nil {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 			}
-			return fmt.Errorf("Error executing external API: %s", msg)
+			return fmt.Errorf("Error generating PDF: %s", msg)
 		}
-	} else if app.toInt(action_type_id) == 6 && okETLX { // GeneratePDF
+	} else if app.toInt(action_type_id) == 6 && okETLX { // ETLX
+		_data["err"] = err.Error()
 		etlx_md_template, err := etlx_engine.RenderTemplate(etlx_md_template.(string), _data)
 		if err != nil {
 			return err

@@ -1753,7 +1753,7 @@ data:
   parallel:          false
   pdf_path:          'static/uploads/tmp/user_{{.username}}.pdf'
   use_latex:         true
-  pdf_tex_template:  FileContent(examples/latex_tmpl_ex.tex)
+  pdf_tex_template:  FileContent(examples/static.invoice.ex.tex)
   after_sql:         "update users set attach_profile_pic = 'tmp/user_{{.username}}.pdf' where user_id = {{.user_id}}"
   children:
     table: action_data
