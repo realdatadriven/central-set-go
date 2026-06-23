@@ -68,7 +68,7 @@ The installer will:
 Verify the installation:
 
 ```bash
-c7 --help
+./c7 --help
 ```
 
 > 💡 The installer is the recommended method for most users because it always installs the latest stable release.
