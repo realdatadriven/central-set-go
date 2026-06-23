@@ -48,7 +48,32 @@ Choose the option that best fits your workflow.
 
 ---
 
-## ▶️ Option 1: Download a Precompiled Binary (Recommended)
+### ▶️ Option 1: Download a Precompiled Binary (Recommended)
+
+#### Recommended: One-Line Installer (Linux & macOS)
+
+The fastest way to install the latest release is:
+
+```bash
+curl -fsSL https://realdatadriven.github.io/central-set-go/install.sh | sh
+```
+
+The installer will:
+
+* Detect your operating system and architecture
+* Download the latest Central Set release
+* Install the `c7` binary
+* Verify the installation
+
+Verify the installation:
+
+```bash
+c7 --help
+```
+
+> 💡 The installer is the recommended method for most users because it always installs the latest stable release.
+
+#### Manual download
 
 Download the **latest CS release** for your platform:
 
@@ -68,13 +93,13 @@ Run it:
 
 ---
 
-## 🛠️ Option 2: Build from Source (Git Clone)
+### 🛠️ Option 2: Build from Source (Git Clone)
 
 If you want to build CS yourself:
 
 ### Requirements
 
-* **Go ≥ 1.21**
+* **Go ≥ 1.26**
 * **git**
 
 ### Clone and build

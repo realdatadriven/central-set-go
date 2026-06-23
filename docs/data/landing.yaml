@@ -15,12 +15,12 @@ hero:
       mobile: "gradient-mobile.webp"
 
   badge:
-    text: v1.152.0
+    text: v1.154.0
     color: secondary
     pill: false
     soft: true
 
-  title: "Central Set (CS)"
+  title: "Central Set (C7)"
   subtitle: >
     A **configuration-driven data app & Admin UI**
     built with **Golang**.
@@ -30,7 +30,7 @@ hero:
   image:
     path: "images"
     filename: "CS-overview.gif"
-    alt: "CS platform overview"
+    alt: "C7 platform overview"
     boxShadow: true
     rounded: true
 
@@ -57,7 +57,7 @@ featureGrid:
   title: Why Central Set?
   subtitle: >
     Most admin panels, data tools, and dashboards solve *one problem*.
-    CS unifies **application management, data engineering,
+    C7 unifies **application management, data engineering,
     analytics, and governance** into a single, extensible platform.
 
   items:
@@ -156,7 +156,7 @@ imageCompare:
 
   title: From Configuration to Operations & Analytics
   subtitle: >
-    CS treats configuration as **the single source of truth** —
+    C7 treats configuration as **the single source of truth** —
     powering CRUD apps, pipelines, dashboards,
     security, and automation.
 

@@ -45,4 +45,5 @@ node_modules
 *.log
 ssl-/
 saas_model.md
-!docs/assets/images/install.sh
+!docs/assets/install.sh
+!docs/public/install.sh
