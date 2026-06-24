@@ -424,7 +424,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	case "login":
 		switch act {
 		case "login", "sign_in", "signin", "auth", "authenticate", "log_in", "logon", "log_on", "index":
+			fmt.Println("LOGIN:")
 			data = app._login(params)
+			fmt.Println("LOGIN DATA:", data)
 		case "validate_code", "validate_2f_code", "valid_code", "valid_2f_code", "2f_code", "two_factor_code":
 			data = app.two_factor_code_valid(params)
 		// dynamic_login
@@ -460,7 +462,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		case "recover_pass", "recover_password":
 			//fmt.Println(ctrl, act, params)
 			data = app.recover_pass(params)
-			fmt.Println("recover_pass data:", data)
+			// fmt.Println("recover_pass data:", data)
 		// reset_pass
 		case "reset_pass", "reset_password":
 			data = app.reset_pass(params)
