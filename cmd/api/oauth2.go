@@ -48,12 +48,12 @@ func (app *application) oauthTokenHandler(w http.ResponseWriter, r *http.Request
 // this with Fosite introspection and a full OAuth2/OIDC flow.
 func (app *application) oauthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := app.verifyToken(r)
+		/*token := app.verifyToken(r)
 		ok, _ := token["success"].(bool)
 		if !ok {
 			_ = response.JSON(w, http.StatusUnauthorized, token)
 			return
-		}
+		}*/
 		next(w, r)
 	}
 }

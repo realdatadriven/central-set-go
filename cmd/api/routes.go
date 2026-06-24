@@ -104,7 +104,7 @@ func (app *application) routes() http.Handler {
 	// OAuth2 token endpoint (minimal scaffold)
 	mux.HandleFunc("POST /oauth2/token", app.oauthTokenHandler)
 	// Protect dynamic API with OAuth middleware (validates JWT issued by existing login)
-	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.oauthMiddleware(app.dyn_api))
+	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api) //app.oauthMiddleware(app.dyn_api))
 
 	// ODATA HANDDLER
 	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)

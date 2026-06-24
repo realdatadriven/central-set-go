@@ -216,14 +216,14 @@ comment: Applications
 columns:
   app_id:      { type: integer, pk: true, autoincrement: true, comment: "App ID" }
   app:         { type: varchar, len: 20, unique: true, nullable: false, comment: "App Name", form_display: true, table_display: true, form_size: 9, order: 1 }
-  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, form_code: markdown, form_rendermd: true, table_display: true, order: 3 }
+  app_desc:    { type: text, comment: "Description", form_display: true, form_long_text: true, form_code: markdown, form_rendermd: false, table_display: true, order: 3 }
   version:     { type: varchar, len: 10, nullable: false, comment: "Version", form_display: true, table_display: true, form_size: 3, order: 2 }
   email:       { type: varchar, len: 200, comment: "Email", form_display: true, table_display: true, form_size: 3, form_regex_val: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$", order: 4 }
   db:          { type: varchar, len: 20, nullable: false, comment: "Database", form_display: true, table_display: true, form_size: 3, order: 5 }
   # conn_string: { type: varchar, len: 200, comment: "Conn String", form_display: true, table_display: true, form_size: 3, order: 5 }
   attach_logo: { type: varchar, len: 200, comment: "Logo", form_display: true, table_display: true, form_size: 3, form_att: true, order: 6 }
   category:    { type: varchar, len: 200, comment: "Category", form_display: true, table_display: true, form_size: 3, order: 6 }
-  config:      { type: text, comment: "Config", form_long_text: true, form_code: json }
+  config:      { type: text, comment: "Config", form_display: true, form_long_text: true, form_code: json }
   user_id:     { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:  { type: datetime, comment: "Created at" }
   updated_at:  { type: datetime, comment: "Updated at" }
@@ -235,7 +235,9 @@ form_layout:
   form_in_popup: false
   size: 9
   allow_in_subform: {menu: true, role_app: true}
-  tabs_steps_conf: []
+  tabs_steps_conf:
+    - {label: App, fields: [app, app_desc, version, email, db, attach_logo, category]}
+    - {label: Config, fields: [config]}
   sub_form_size: 9
 form_extra_options: []
 table_layout:
@@ -1507,13 +1509,13 @@ admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 
 ## APP_SET_CONFIG_CSS_VARS
 ```yaml
-table: apps
+table: app
 description: Update apps, add css vars for https://v4.daisyui.com/docs/colors/
 cond: 'WHERE app_id = :app_id'
 data:
   app_id: 1
   config: |
-    '{
+    {
       "css_vars": {
         "--p": "55% 0.3 240", 
         "--pc": "98% 0.01 240", 
@@ -1522,7 +1524,7 @@ data:
         "--a": "65% 0.25 160", 
         "--ac": "98% 0.01 160"
       }
-    }'
+    }
   updated_at: Now()
   excluded:   false
 ```

@@ -334,6 +334,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	var params Dict
 	ctrl := r.PathValue("ctrl")
 	act := r.PathValue("act")
+	fmt.Println(ctrl, act)
 	err := request.DecodeJSON(w, r, &params)
 	if err != nil {
 		app.badRequest(w, r, err)
@@ -369,7 +370,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		"req_ip": _ip,
 		"req_at": time.Now().In(loc),
 	}
-	//fmt.Println(token, params)
+	fmt.Println(token, params)
 	if token["success"].(bool) {
 		//user := *(contextGetAuthenticatedUser(r))
 		params["user"] = *(contextGetAuthenticatedUser(r))
@@ -424,9 +425,9 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	case "login":
 		switch act {
 		case "login", "sign_in", "signin", "auth", "authenticate", "log_in", "logon", "log_on", "index":
-			fmt.Println("LOGIN:")
+			// fmt.Println("LOGIN:")
 			data = app._login(params)
-			fmt.Println("LOGIN DATA:", data)
+			// fmt.Println("LOGIN DATA:", data)
 		case "validate_code", "validate_2f_code", "valid_code", "valid_2f_code", "2f_code", "two_factor_code":
 			data = app.two_factor_code_valid(params)
 		// dynamic_login
@@ -1042,6 +1043,7 @@ func (app *application) validateLicense() Dict {
 }
 func (app *application) getToken(r *http.Request) (string, error) {
 	authorizationHeader := r.Header.Get("Authorization")
+	//fmt.Println("getToken:", authorizationHeader)
 	if authorizationHeader != "" {
 		headerParts := strings.Split(authorizationHeader, " ")
 		if len(headerParts) == 2 && headerParts[0] == "Bearer" {
@@ -1061,6 +1063,7 @@ func (app *application) verifyToken(r *http.Request) Dict {
 		authorizationHeader = "Bearer " + cookie.Value
 	}*/
 	loc := app.getLocationFromRequest(r, Dict{})
+	//fmt.Println("verifyToken:", authorizationHeader)
 	if authorizationHeader != "" {
 		headerParts := strings.Split(authorizationHeader, " ")
 		if len(headerParts) == 2 && headerParts[0] == "Bearer" {
@@ -1114,6 +1117,7 @@ func (app *application) verifyToken(r *http.Request) Dict {
 	}
 }
 func (app *application) verifyTokenString(authorizationHeader string) (Dict, error) {
+	//fmt.Println("verifyTokenString:", authorizationHeader)
 	if authorizationHeader != "" {
 		token := authorizationHeader
 		claims, err := jwt.HMACCheck([]byte(token), []byte(app.config.jwt.secretKey))
