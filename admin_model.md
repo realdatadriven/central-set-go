@@ -1508,33 +1508,56 @@ admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ## APP_SET_CONFIG_CSS_VARS
 ```yaml
 table: apps
-description: Update apps, add css vars
+description: Update apps, add css vars for https://v4.daisyui.com/docs/colors/
 cond: 'WHERE app_id = :app_id'
 data:
   app_id: 1
   config: |
     '{
       "css_vars": {
-        "--color-base-100": "lch(98% 0.02 240)", 
-        "--color-base-200": "lch(95% 0.03 240)", 
-        "--color-base-300": "lch(92% 0.04 240)", 
-        "--color-base-content": "lch(20% 0.05 240)", 
-        "--color-primary": "lch(55% 0.3 240)", 
-        "--color-primary-content": "lch(98% 0.01 240)", 
-        "--color-secondary": "lch(70% 0.25 200)", 
-        "--color-secondary-content": "lch(98% 0.01 200)", 
-        "--color-accent": "lch(65% 0.25 160)", 
-        "--color-accent-content": "lch(98% 0.01 160)", 
-        "--color-neutral": "lch(50% 0.05 240)", 
-        "--color-neutral-content": "lch(98% 0.01 240)", 
-        "--color-info": "lch(70% 0.2 220)", 
-        "--color-info-content": "lch(98% 0.01 220)", 
-        "--color-success": "lch(65% 0.25 140)", 
-        "--color-success-content": "lch(98% 0.01 140)", 
-        "--color-warning": "lch(80% 0.25 80)", 
-        "--color-warning-content": "lch(20% 0.05 80)", 
-        "--color-error": "lch(65% 0.3 30)", 
-        "--color-error-content": "lch(98% 0.01 30)"
+        "--p": "55% 0.3 240", 
+        "--pc": "98% 0.01 240", 
+        "--s": "70% 0.25 200", 
+        "--sc": "98% 0.01 200", 
+        "--a": "65% 0.25 160", 
+        "--ac": "98% 0.01 160"
+      }
+    }'
+  updated_at: Now()
+  excluded:   false
+```
+
+## APP_SET_CONFIG_CSS_VARS_v5
+```yaml
+table: apps
+description: Update apps, add css vars for https://daisyui.com/docs/themes/
+cond: 'WHERE app_id = :app_id'
+active: false
+data:
+  app_id: 1
+  config: |
+    '{
+      "css_vars": {
+        "--color-base-100": "oklch(98% 0.02 240)", 
+        "--color-base-200": "oklch(95% 0.03 240)", 
+        "--color-base-300": "oklch(92% 0.04 240)", 
+        "--color-base-content": "oklch(20% 0.05 240)", 
+        "--color-primary": "oklch(55% 0.3 240)", 
+        "--color-primary-content": "oklch(98% 0.01 240)", 
+        "--color-secondary": "oklch(70% 0.25 200)", 
+        "--color-secondary-content": "oklch(98% 0.01 200)", 
+        "--color-accent": "oklch(65% 0.25 160)", 
+        "--color-accent-content": "oklch(98% 0.01 160)", 
+        "--color-neutral": "oklch(50% 0.05 240)", 
+        "--color-neutral-content": "oklch(98% 0.01 240)", 
+        "--color-info": "oklch(70% 0.2 220)", 
+        "--color-info-content": "oklch(98% 0.01 220)", 
+        "--color-success": "oklch(65% 0.25 140)", 
+        "--color-success-content": "oklch(98% 0.01 140)", 
+        "--color-warning": "oklch(80% 0.25 80)", 
+        "--color-warning-content": "oklch(20% 0.05 80)", 
+        "--color-error": "oklch(65% 0.3 30)", 
+        "--color-error-content": "oklch(98% 0.01 30)"
       }
     }'
   updated_at: Now()
