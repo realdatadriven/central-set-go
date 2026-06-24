@@ -276,6 +276,12 @@ func (app *application) query(params map[string]any) map[string]any {
 	if _, ok := _data["query"]; ok {
 		_query = _data["query"]
 	}
+	if startup_sql, ok := _data["startup_sql"]; ok {
+		_, err := newDB.ExecuteQuery(startup_sql.(string), []any{}...)
+		if err != nil {
+			fmt.Println("startup_sql:", err.Error())
+		}
+	}
 	if app.IsEmpty(_query) {
 		msg, _ := app.i18n.T("no-query", map[string]any{})
 		return map[string]any{
@@ -335,7 +341,19 @@ func (app *application) query(params map[string]any) map[string]any {
 			default:
 				fmt.Println(_t, query)
 			}
+			/*if startup_sql, ok := query.(map[string]any)["startup_sql"]; ok {
+				_, err := newDB.ExecuteQuery(startup_sql.(string), []any{}...)
+				if err != nil {
+					fmt.Println("startup_sql:", err.Error())
+				}
+			}*/
 			data[key] = app.CrudRunQuery(params, _q, newDB)
+			/*if shutdown_sql, ok := query.(map[string]any)["shutdown_sql"]; ok {
+				_, err := newDB.ExecuteQuery(shutdown_sql.(string), []any{}...)
+				if err != nil {
+					fmt.Println("shutdown_sql:", err.Error())
+				}
+			}*/
 		}
 	case map[string]string:
 		for key, query := range _query.(map[string]string) {
@@ -347,6 +365,12 @@ func (app *application) query(params map[string]any) map[string]any {
 			"success": false,
 			"msg":     msg,
 			"type":    _type,
+		}
+	}
+	if shutdown_sql, ok := _data["shutdown_sql"]; ok {
+		_, err := newDB.ExecuteQuery(shutdown_sql.(string), []any{}...)
+		if err != nil {
+			fmt.Println("shutdown_sql:", err.Error())
 		}
 	}
 	msg, _ := app.i18n.T("success", map[string]any{})

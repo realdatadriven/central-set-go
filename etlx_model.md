@@ -224,7 +224,7 @@ data:
   dashboard:      Ex TCP-H DataSet
   dashboard_desc: This Exemple use the TCP-h Dataset generated in the ETLX Ducklake Exemple
   dashboard_conf: FileContent(examples/tcp-h-dataset-dashboard.md)
-  order:          1
+  order:          2
   active:         true
   user_id:        1
   app_id:        appId()
@@ -243,7 +243,26 @@ data:
   dashboard:      Ex Dynamic DS
   dashboard_desc: This Exemple shows how to use dynamic dataset and scoping
   dashboard_conf: FileContent(examples/dyn_ds_dashboard.md)
-  order:          1
+  order:          3
+  active:         true
+  user_id:        1
+  app_id:        appId()
+  created_at:    Now()
+  updated_at:    Now()
+  excluded:      false
+```
+
+## DASHBOARD_EX_GGSQL
+```yaml
+table: dashboard
+description: Add GGSQL Dashboard Example
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
+data:
+  dashboard_id:   4
+  dashboard:      GGSQL Dashboard Example
+  dashboard_desc: This Exemple shows how duckdb GGSQL to turn your data into vega-lite specs to be renderend 
+  dashboard_conf: FileContent(examples/ggsql-dashboard-ex.md)
+  order:          4
   active:         true
   user_id:        1
   app_id:        appId()
