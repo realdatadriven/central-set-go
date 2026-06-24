@@ -21,7 +21,10 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/flight"
 	"google.golang.org/grpc/credentials"
+
 	// TELEMETRY
+	// AUTOCERT
+	"golang.org/x/crypto/acme/autocert"
 )
 
 const (
@@ -132,7 +135,8 @@ func (app *application) serveHTTP() error {
 		WriteTimeout: defaultWriteTimeout,
 		//TLSConfig: ,
 	}
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	enableTLS := env.GetBool("ENABLE_TLS", false)
+	autoCert := env.GetBool("AUTO_CERT", false)
 	tlsConfig, err := app.loadTLSConfig()
 	if err != nil && enableTLS {
 		return err
@@ -150,16 +154,44 @@ func (app *application) serveHTTP() error {
 	}()
 	app.logger.Info("starting server", slog.Group("server", "addr", srv.Addr))
 	if enableTLS {
-		srv.TLSConfig = tlsConfig
-		ln, err := net.Listen("tcp", srv.Addr)
-		if err != nil {
-			log.Fatal(err)
-		}
-		tlsListener := tls.NewListener(ln, srv.TLSConfig)
-		app.logger.Info("🔐 HTTPS server listening on", srv.Addr)
-		err = srv.Serve(tlsListener)
-		if !errors.Is(err, http.ErrServerClosed) {
-			return err
+		if autoCert {
+			domain := env.GetString("DOMAIN", "")
+			if domain == "" {
+				return fmt.Errorf("DOMAIN is required when AUTO_CERT=true")
+			}
+			certManager := &autocert.Manager{
+				Prompt: autocert.AcceptTOS,
+				Cache: autocert.DirCache(
+					env.GetString("AUTO_CERT_CACHE", "./certs"),
+				),
+				Email:      env.GetString("AUTO_CERT_EMAIL", ""),
+				HostPolicy: autocert.HostWhitelist(domain),
+			}
+			srv.TLSConfig = certManager.TLSConfig()
+			// HTTP challenge server
+			go func() {
+				challengeServer := &http.Server{
+					Addr:    ":80",
+					Handler: certManager.HTTPHandler(nil),
+				}
+				app.logger.Info("🔐 HTTPS server listening on with autocert", srv.Addr)
+				if err := challengeServer.ListenAndServe(); err != nil &&
+					!errors.Is(err, http.ErrServerClosed) {
+					app.logger.Error(err.Error())
+				}
+			}()
+		} else {
+			srv.TLSConfig = tlsConfig
+			ln, err := net.Listen("tcp", srv.Addr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			tlsListener := tls.NewListener(ln, srv.TLSConfig)
+			app.logger.Info("🔐 HTTPS server listening on", srv.Addr)
+			err = srv.Serve(tlsListener)
+			if !errors.Is(err, http.ErrServerClosed) {
+				return err
+			}
 		}
 	} else {
 		err := srv.ListenAndServe()
