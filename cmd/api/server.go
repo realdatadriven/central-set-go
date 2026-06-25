@@ -137,10 +137,6 @@ func (app *application) serveHTTP() error {
 	}
 	enableTLS := env.GetBool("ENABLE_TLS", false)
 	autoCert := env.GetBool("AUTO_CERT", false)
-	tlsConfig, err := app.loadTLSConfig()
-	if err != nil && enableTLS {
-		return err
-	}
 	shutdownErrorChan := make(chan error)
 	go func() {
 		quitChan := make(chan os.Signal, 1)
@@ -159,11 +155,14 @@ func (app *application) serveHTTP() error {
 			if domain == "" {
 				return fmt.Errorf("DOMAIN is required when AUTO_CERT=true")
 			}
+			autocertCache = env.GetString("AUTO_CERT_CACHE", "./certs")
+			err := os.MkdirAll(autocertCache, 0755)
+			if err != nil {
+				return err
+			}
 			certManager := &autocert.Manager{
 				Prompt: autocert.AcceptTOS,
-				Cache: autocert.DirCache(
-					env.GetString("AUTO_CERT_CACHE", "./certs"),
-				),
+				Cache: autocert.DirCache(autocertCache),
 				Email:      env.GetString("AUTO_CERT_EMAIL", ""),
 				HostPolicy: autocert.HostWhitelist(domain),
 			}
@@ -180,7 +179,11 @@ func (app *application) serveHTTP() error {
 					app.logger.Error(err.Error())
 				}
 			}()
-		} else {
+		} else {			
+			tlsConfig, err := app.loadTLSConfig()
+			if err != nil && enableTLS {
+				return err
+			}
 			srv.TLSConfig = tlsConfig
 			ln, err := net.Listen("tcp", srv.Addr)
 			if err != nil {
