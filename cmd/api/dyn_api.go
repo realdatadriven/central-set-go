@@ -334,7 +334,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	var params Dict
 	ctrl := r.PathValue("ctrl")
 	act := r.PathValue("act")
-	fmt.Println(ctrl, act)
+	//fmt.Println(ctrl, act)
 	err := request.DecodeJSON(w, r, &params)
 	if err != nil {
 		app.badRequest(w, r, err)
@@ -370,7 +370,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		"req_ip": _ip,
 		"req_at": time.Now().In(loc),
 	}
-	fmt.Println(token, params)
+	//fmt.Println(token, params)
 	if token["success"].(bool) {
 		//user := *(contextGetAuthenticatedUser(r))
 		params["user"] = *(contextGetAuthenticatedUser(r))
