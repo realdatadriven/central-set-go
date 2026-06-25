@@ -1010,8 +1010,8 @@ table: validation
 comment: Validation Rules
 columns:
   validation_id:      { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  validation:         { type: varchar, len: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   validation_code:    { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  validation:         { type: varchar, len: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", form_display: true, table_display: true, order: 2, form_size: 2 }
   valid_reaction_id:  { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
   err_msg:            { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
@@ -1119,8 +1119,8 @@ comment: CRUD Action Rules
 tooltip: Dispaches some actions after a crud operation
 columns:
   crud_action_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  crud_action:       { type: varchar, len: 200, nullable: false, comment: "Action", form_display: true, table_display: true, order: 2, form_size: 9 }
   crud_action_code:  { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  crud_action:       { type: varchar, len: 200, nullable: false, comment: "Action", form_display: true, table_display: true, order: 2, form_size: 9 }
   action_type_id:    { type: integer, fk: "action_type.action_type_id", comment: "Type ID", form_display: true, table_display: true, order: 3, form_size: 2 }
   err_msg:           { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6}
   table:             { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
@@ -1511,7 +1511,7 @@ admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```yaml
 table: app
 description: Update apps, add css vars for https://v4.daisyui.com/docs/colors/
-cond: 'WHERE app_id = :app_id'
+cond: 'WHERE app_id = :app_id AND excluded = false'
 data:
   app_id: 1
   config: |

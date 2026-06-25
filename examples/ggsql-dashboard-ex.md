@@ -115,8 +115,13 @@ limit 10
 <!--- DASHBOARD CONTENT SECTION --->
 
 ```sql get_the_raw_spec
-SET ggsql_output = 'spec';
 SELECT x, x*x AS y
 FROM range(10) t(x) 
 VISUALISE x, y DRAW line;
 ```
+
+<VegaEmbed data={get_the_raw_spec} 
+    column=plot 
+    _class=""
+    _style=""
+/>

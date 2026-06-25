@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 )
 
@@ -20,17 +21,27 @@ func (app *application) CrudRunQuery(params map[string]any, query string, db etl
 	query_n_rows := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, query)
 	patt = regexp.MustCompile(`LIMIT`)
 	_match = patt.FindAllString(query, -1)
+	exclude_lim_offset_nrows := false
+	excl_patt, err := regexp.Compile(env.GetString("QUERY_EXCLUDE_LIMIT_OFFSET_NROWS", "VISUALISE.+DRAW|RENDER.+DRAW"))
+	if err == nil {
+		_match_xcl := excl_patt.FindAllString(query, -1)
+		if len(_match_xcl) > 0 {
+			exclude_lim_offset_nrows = true
+		}
+	}
 	if len(_match) == 0 {
-		limit := 10
-		if _, ok := params["data"].(map[string]any)["limit"]; ok {
-			limit = app.toInt(params["data"].(map[string]any)["limit"])
-		}
-		offset := 0
-		if _, ok := params["data"].(map[string]any)["offset"]; ok {
-			offset = app.toInt(params["data"].(map[string]any)["offset"])
-		}
-		if limit != -1 {
-			query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
+		if /*!strings.Contains(query, "VISUALISE") && */ !exclude_lim_offset_nrows {
+			limit := 10
+			if _, ok := params["data"].(map[string]any)["limit"]; ok {
+				limit = app.toInt(params["data"].(map[string]any)["limit"])
+			}
+			offset := 0
+			if _, ok := params["data"].(map[string]any)["offset"]; ok {
+				offset = app.toInt(params["data"].(map[string]any)["offset"])
+			}
+			if limit != -1 {
+				query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
+			}
 		}
 	}
 	//query_started_at := time.Now()
@@ -43,15 +54,19 @@ func (app *application) CrudRunQuery(params map[string]any, query string, db etl
 			"msg":     fmt.Sprintf("%s", err),
 		}
 	}
-	n_rows, _, err := db.QuerySingleRow(query_n_rows, []any{}...)
-	if err != nil {
-		return map[string]any{
-			"success": false,
-			"msg":     fmt.Sprintf("%s", err),
-		}
-	}
 	total := 0
-	total = app.toInt((*n_rows)["n_rows"])
+	if /*strings.Contains(query_n_rows, "VISUALISE") ||*/ exclude_lim_offset_nrows {
+		total = 1
+	} else {
+		n_rows, _, err := db.QuerySingleRow(query_n_rows, []any{}...)
+		if err != nil {
+			return map[string]any{
+				"success": false,
+				"msg":     fmt.Sprintf("%s", err),
+			}
+		}
+		total = app.toInt((*n_rows)["n_rows"])
+	}
 	msg, _ := app.i18n.T("success", map[string]any{})
 	return map[string]any{
 		"success": true,

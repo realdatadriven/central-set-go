@@ -276,10 +276,11 @@ func (app *application) query(params map[string]any) map[string]any {
 	if _, ok := _data["query"]; ok {
 		_query = _data["query"]
 	}
-	if startup_sql, ok := _data["startup_sql"]; ok {
-		_, err := newDB.ExecuteQuery(startup_sql.(string), []any{}...)
+	// fmt.Println("STARTUP_SQL:", newDB.GetDriverName(), _data["startup_sql"])
+	if startup_sql, ok := _data["startup_sql"].(string); ok {
+		_, err := newDB.ExecuteQuery(startup_sql, []any{}...)
 		if err != nil {
-			fmt.Println("startup_sql:", err.Error())
+			fmt.Println("startup_sql:", newDB.GetDriverName(), startup_sql, err.Error())
 		}
 	}
 	if app.IsEmpty(_query) {
@@ -341,19 +342,20 @@ func (app *application) query(params map[string]any) map[string]any {
 			default:
 				fmt.Println(_t, query)
 			}
-			/*if startup_sql, ok := query.(map[string]any)["startup_sql"]; ok {
-				_, err := newDB.ExecuteQuery(startup_sql.(string), []any{}...)
+			if startup_sql, ok := query.(map[string]any)["startup_sql"].(string); ok {
+				//fmt.Println("STARTUP_SQL:", newDB.GetDriverName(), startup_sql)
+				_, err := newDB.ExecuteQuery(startup_sql, []any{}...)
 				if err != nil {
-					fmt.Println("startup_sql:", err.Error())
+					fmt.Println("startup_sql:", newDB.GetDriverName(), startup_sql, err.Error())
 				}
-			}*/
+			}
 			data[key] = app.CrudRunQuery(params, _q, newDB)
-			/*if shutdown_sql, ok := query.(map[string]any)["shutdown_sql"]; ok {
-				_, err := newDB.ExecuteQuery(shutdown_sql.(string), []any{}...)
+			if shutdown_sql, ok := query.(map[string]any)["shutdown_sql"].(string); ok {
+				_, err := newDB.ExecuteQuery(shutdown_sql, []any{}...)
 				if err != nil {
-					fmt.Println("shutdown_sql:", err.Error())
+					fmt.Println("shutdown_sql:", newDB.GetDriverName(), shutdown_sql, err.Error())
 				}
-			}*/
+			}
 		}
 	case map[string]string:
 		for key, query := range _query.(map[string]string) {
@@ -367,10 +369,10 @@ func (app *application) query(params map[string]any) map[string]any {
 			"type":    _type,
 		}
 	}
-	if shutdown_sql, ok := _data["shutdown_sql"]; ok {
-		_, err := newDB.ExecuteQuery(shutdown_sql.(string), []any{}...)
+	if shutdown_sql, ok := _data["shutdown_sql"].(string); ok {
+		_, err := newDB.ExecuteQuery(shutdown_sql, []any{}...)
 		if err != nil {
-			fmt.Println("shutdown_sql:", err.Error())
+			fmt.Println("shutdown_sql:", newDB.GetDriverName(), shutdown_sql, err.Error())
 		}
 	}
 	msg, _ := app.i18n.T("success", map[string]any{})
