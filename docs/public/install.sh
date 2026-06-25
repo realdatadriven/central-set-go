@@ -99,9 +99,9 @@ if [ ! -f "c7" ] && [ -f "central-set-${PLATFORM}" ]; then
     echo "rename central-set-${PLATFORM} to c7"
 fi
 
-if [ ! -f ".env" ] && [ -f "dot-env-exemple.txt" ]; then
-    mv "dot-env-exemple.txt" ".env"
-    echo "Created .env from dot-env-exemple.txt"
+if [ ! -f ".env" ] && [ -f "dot-env-example.txt" ]; then
+    mv "dot-env-example.txt" ".env"
+    echo "Created .env from dot-env-example.txt"
 fi
 
 if [ -f "c7" ]; then
