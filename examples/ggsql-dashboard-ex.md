@@ -15,11 +15,6 @@
 ```
 
 <!---FILTERS SECTION-->
-```sql test
-select *
-from "sample.duckdb"."lineitem"
-limit 10
-```
 
 <!-- REGION -->
 ```sql r_region
@@ -27,15 +22,6 @@ select * from (values ('%', 'ALL')) t ("val", "desc")
 union
 select distinct r_name as "val", r_name as "desc"
 from "sample.duckdb"."region"
-```
-
-<!-- SHIP MODE -->
-```sql l_shipmode
-select * from (values ('%', 'ALL')) t ("val", "desc")
-union
-select distinct l_shipmode  as "val", l_shipmode  as "desc"
-from "sample.duckdb"."lineitem"
-limit 10
 ```
 
 <Grid>
@@ -54,31 +40,6 @@ limit 10
             name=date_end
             input_label="Reference Date N-1"
         />
-    </GridItem>
-    <GridItem width='w-auto !align-bottom' _type='auto' _class='p-1'>
-        <RadioButtons 
-            data={r_region} 
-            name=region
-            value=val
-            label=desc
-            defaultValue=nth_0
-            _class='btn-sm'
-            input_label="Region"
-        />
-    </GridItem>
-    <GridItem width='w-auto !align-bottom' _type='auto' _class='p-1'>
-        <Dropdown data={l_shipmode} name=ship_mode value=val label=desc defaultValue="%" input_label='Ship Mode'>
-            <DropdownOption value="%" valueLabel="All"/>
-        </Dropdown>
-        <!--<RadioButtons 
-            data={l_shipmode} 
-            name=ship_mode
-            value=val
-            label=desc
-            defaultValue=nth_0
-            _class='btn-sm'
-            input_label="Ship Mode"
-        />-->
     </GridItem>
     <GridItem width='w-auto' _type='auto' _class='p-1 grow'/>
     {#if $_global?.tables?.[$$props?.table]?.permissions?.create === true || !$_global?.tables?.[$$props?.table]?.permissions}
@@ -123,5 +84,5 @@ VISUALISE x, y DRAW line;
 <VegaEmbed data={get_the_raw_spec} 
     column=plot 
     _class=""
-    _style=""
+    _style="width: 100px; heigth:100px; border: 1px solid red;"
 />
