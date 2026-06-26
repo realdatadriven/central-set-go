@@ -1398,6 +1398,8 @@ data:
   - {api_id: 1, api_name: My public ip, api_type_id: 1, http_request_type_id: 1, api_description: Get my public ip, endpoint: "https://api.ipify.org", active: true, user_id: 1, app_id: 1, excluded: false}
 ```
 
+<!--get data on an IP https://ipinfo.io/{{.ip}}/json-->
+
 ## API_HEADER
 ```yaml
 table: api_header
