@@ -186,7 +186,7 @@ func (app *application) serveHTTP() error {
 					app.logger.Error(err.Error())
 				}
 			}()
-			err := tlsServer.ListenAndServeTLS("", "")
+			err := srv.ListenAndServeTLS("", "")
 			app.logger.Info("🔐 HTTPS server listening on with autocert", srv.Addr)
 			err != nil && !errors.Is(err, http.ErrServerClosed) {
 				app.logger.Error(err.Error())
