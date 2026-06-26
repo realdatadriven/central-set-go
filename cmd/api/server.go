@@ -166,9 +166,10 @@ func (app *application) serveHTTP() error {
 				Email:      env.GetString("AUTO_CERT_EMAIL", ""),
 				HostPolicy: autocert.HostWhitelist(domain),
 			}
-			srv.TLSConfig = certManager.TLSConfig()
+			//srv.TLSConfig = certManager.TLSConfig()
+			srv.TLSConfig = &tls.Config{GetCertificate: certManager.GetCertificate}
 			// HTTP challenge server
-			go func() {
+			/*go func() {
 				challengeServer := &http.Server{
 					Addr:    ":80",
 					Handler: certManager.HTTPHandler(nil),
@@ -178,7 +179,18 @@ func (app *application) serveHTTP() error {
 					!errors.Is(err, http.ErrServerClosed) {
 					app.logger.Error(err.Error())
 				}
+			}()*/
+			go func() {
+				err := http.ListenAndServe(":80", certManager.HTTPHandler(nil))
+				err != nil && !errors.Is(err, http.ErrServerClosed) {
+					app.logger.Error(err.Error())
+				}
 			}()
+			err := tlsServer.ListenAndServeTLS("", "")
+			app.logger.Info("🔐 HTTPS server listening on with autocert", srv.Addr)
+			err != nil && !errors.Is(err, http.ErrServerClosed) {
+				app.logger.Error(err.Error())
+			}
 		} else {
 			tlsConfig, err := app.loadTLSConfig()
 			if err != nil && enableTLS {
