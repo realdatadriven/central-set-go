@@ -181,14 +181,14 @@ func (app *application) serveHTTP() error {
 				}
 			}()*/
 			go func() {
-				err := http.ListenAndServe(":80", certManager.HTTPHandler(nil))
-				err != nil && !errors.Is(err, http.ErrServerClosed) {
+				err = http.ListenAndServe(":80", certManager.HTTPHandler(nil))
+				if err != nil && !errors.Is(err, http.ErrServerClosed) {
 					app.logger.Error(err.Error())
 				}
 			}()
-			err := srv.ListenAndServeTLS("", "")
+			err = srv.ListenAndServeTLS("", "")
 			app.logger.Info("🔐 HTTPS server listening on with autocert", srv.Addr)
-			err != nil && !errors.Is(err, http.ErrServerClosed) {
+			if err != nil && !errors.Is(err, http.ErrServerClosed) {
 				app.logger.Error(err.Error())
 			}
 		} else {
