@@ -255,12 +255,12 @@ comment: Menus
 columns:
   menu_id:       { type: integer, pk: true, autoincrement: true, comment: "Menu ID" }
   menu:          { type: varchar, len: 20, nullable: false, comment: "Menu", form_display: true, table_display: true, form_size: 3, order: 1 }
-  menu_desc:     { type: text, comment: "Description", form_display: true, form_size: 9, table_display: true, order: 2 }
-  menu_icon:     { type: varchar, len: 20, comment: "Icon", form_display: true, table_display: true, form_size: 4, order: 3 }
-  menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 4, order: 4 }
-  menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, form_code: json, table_display: true, form_use_label: true, order: 6 }
-  app_id:        { type: integer, nullable: false, fk: "app.app_id", comment: "App ID" }
-  active:        { type: boolean, default: true, comment: "Active", form_display: true, form_size: 4, table_display: true, order: 5 }
+  menu_desc:     { type: text, comment: "Description", form_display: true, form_size: 7, table_display: true, order: 2 }
+  menu_icon:     { type: varchar, len: 20, comment: "Icon", form_display: true, table_display: true, form_size: 4, order: 4 }
+  menu_order:    { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 4, order: 5 }
+  menu_config:   { type: text, comment: "Menu Config", form_display: true, form_long_text: true, form_code: json, table_display: true, form_use_label: true, order: 7 }
+  app_id:        { type: integer, nullable: false, fk: "app.app_id", comment: "App ID" , form_display: true, table_display: true, form_size: 2, order: 3}
+  active:        { type: boolean, default: true, comment: "Active", form_display: true, form_size: 4, table_display: true, order: 6 }
   user_id:       { type: integer, fk: "users.user_id", comment: "User ID" }
   created_at:    { type: datetime, comment: "Created at" }
   updated_at:    { type: datetime, comment: "Updated at" }
@@ -268,12 +268,12 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 8
   allow_in_subform: {menu_table: true}
   tabs_steps_conf: []
 table_layout:
   allow_in_submenu: {menu_table: true}
-  default_order: [{field: menu_order, order: ASC}]
+  default_order: [{field: app_id, order: ASC}, {field: menu_order, order: ASC}]
   allow_import: false
 ```
 
@@ -1221,11 +1221,12 @@ columns:
   table:              { type: varchar, len: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 4 }
   db:                 { type: varchar, len: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 4 }
   id:                 { type: integer, comment: "ID", order: 5, form_display: true, table_display: true, form_size: 4 }
-  action:             { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 4 }
-  action_type:        { type: varchar, len: 20, comment: "Action Type", order: 7, form_display: true, table_display: true, form_size: 4 }
+  action:             { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
+  action_type:        { type: varchar, len: 20, comment: "Action Type", order: 7, form_display: true, table_display: true, form_size: 3 }
   executed_at:        { type: datetime, comment: "Executed At", order: 8, form_display: true, table_display: true, form_size: 4 }
-  success:            { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 4 }
+  success:            { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 2 }
   log_message:        { type: text, comment: "Log Message", order: 11, form_display: true, table_display: true, form_long_text: true, form_code: txt }
+  log_data:           { type: text, comment: "Log Data", order: 12, form_display: true, table_display: true, form_long_text: true, form_code: txt }
   user_id:            { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:             { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:         { type: datetime, comment: "Created at" }
@@ -1370,7 +1371,7 @@ columns:
   api_type_id:           { type: integer, fk: "api_type.api_type_id", nullable: false, comment: "API Type", form_display: true, table_display: true, form_size: 3, order: 2 }
   http_request_type_id:  { type: integer, fk: "http_request_type.http_request_type_id", nullable: false, comment: "HTTP Request Type", form_display: true, table_display: true, form_size: 3, order: 3 }
   api_description:       { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 4 }
-  endpoint:              { type: varchar, len: 500, nullable: false, comment: "API Endpoint", form_display: true, table_display: true, form_size: 9, order: 5 }
+  endpoint:              { type: varchar, len: 500, nullable: false, comment: "API Endpoint", form_display: true, table_display: true, form_size: 9, order: 5, table_ellipsis: 50 }
   request_body_template: { type: text, comment: "Request Body Template (Go template)", form_display: true, form_long_text: true, form_code: json, order: 6 }
   num_retries:           { type: integer, default: 3, comment: "Number of Retries", form_display: true, table_display: true, form_size: 3, order: 7 }
   timeout_seconds:       { type: integer, default: 30, comment: "Timeout (seconds)", form_display: true, table_display: true, form_size: 3, order: 8 }
@@ -1390,15 +1391,12 @@ form_layout:
     - {label: Templates, fields: [request_body_template, headers_template]}
   sub_form_size: 9
 table_layout:
-  default_order:
-    - { field: api_id, order: ASC }  
+  default_order: [{ field: api_id, order: ASC }]
   exec_button: 
     - {callApi: true, method: POST, api: api/run, tooltip: Get Public IP, icon: play, active: true}
 data:
   - {api_id: 1, api_name: My public ip, api_type_id: 1, http_request_type_id: 1, api_description: Get my public ip, endpoint: "https://api.ipify.org", active: true, user_id: 1, app_id: 1, excluded: false}
 ```
-
-<!--get data on an IP https://ipinfo.io/{{.ip}}/json-->
 
 ## API_HEADER
 ```yaml
@@ -1494,10 +1492,9 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 8
 table_layout:
-  default_order:
-    - { field: crud_action_log_id, order: DESC } 
+  default_order: [{ field: crud_action_log_id, order: DESC }] 
 ```
 
 # DATA
@@ -1829,6 +1826,39 @@ data:
       odata_path:          "ADMIN/role?$filter=role_id eq {{.role_id}}"
       sigle_row_obj:       true
       active:              true
+```
+
+## LOG_IP_GEODATA
+```yaml
+table: crud_action
+description: Example o CRUD Actions Get User log IP GeoData
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: LOG_IP_GEODATA
+  crud_action: Get User log IP GeoData
+  action_type_id: 4
+  err_msg: 'Error calling the external api for {{.ip}} to get the ip geodata'
+  table: user_log
+  db: ADMIN
+  active: true
+  user_trigger: true
+  user_trigger_icon: globe-alt
+  parallel: true
+  api_name: IP_GEODATA
+```
+
+## API_IP_GEODATA
+```yaml
+table: api
+description: Get IP GeoData
+cond: 'WHERE api_name = :api_name'
+data:
+  api_name:              IP_GEODATA
+  api_type_id:           1
+  http_request_type_id:  1
+  api_description:       Get IP Geo Data
+  endpoint:              'https://ipinfo.io/{{.data.req_ip}}/json' # api_id api_name db table_pk_field user api_endpoint data action table row_id
+  active:                true
 ```
 
 # ROLE_ACCESS

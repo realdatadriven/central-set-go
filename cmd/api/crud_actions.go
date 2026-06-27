@@ -49,8 +49,8 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		"app_id":           params["app"].(Dict)["app_id"],
 		"started_at":       time.Now().In(loc),
 	}
-	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
-			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
+	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "log_data", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
+			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :log_data, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 	// ACTION DATA TO HELP BUILD THE TEPLATE
 	sql := "select * from action_data where crud_action_id = ? and excluded = false"
 	valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_action["crud_action_id"]})
@@ -176,6 +176,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		}
 		res := app.runAPI(_params)
 		_, ok := res["success"].(bool)
+		//fmt.Println("API RES:", res["data"].(string))
 		if !ok || !res["success"].(bool) {
 			success = false
 			msg := ""
@@ -192,6 +193,9 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 			}
 			return fmt.Errorf("Error executing external API: %s", msg)
+		} else if log_data, ok := res["data"].(string); ok {
+			crud_action_log["log_data"] = log_data
+			_data["api_response"] = log_data
 		}
 	} else if app.toInt(action_type_id) == 5 && (okPDFPath && (okPDFTmpl || okPDFTexTmpl)) { // GeneratePDF
 		// fmt.Println("GeneratePDF:", pdf_path, pdf_template)

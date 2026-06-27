@@ -208,12 +208,21 @@ func (app *application) runAPI(params Dict) Dict {
 	for key, val := range api_data {
 		_data[key] = val
 	}
-	endpoint, ok = api["endpoint"].(string)
+	api_endpoint, ok := api["endpoint"].(string)
 	if !ok {
 		return Dict{
 			"success": false,
 			"msg":     "API endpoint is required for API call!",
 		}
+	}
+	api_endpoint, err = app.RenderTemplate(api_endpoint, _data)
+	keys := []any{}
+	for key := range _data {
+		keys = append(keys, key)
+	}
+	fmt.Println("API ENDPOINT:", api["endpoint"], api_endpoint, keys) // _data["data"]
+	if err != nil {
+		api_endpoint = api["endpoint"].(string)
 	}
 	request_body_template, _ := api["request_body_template"].(string)
 	//num_retries := app.toInt(api["num_retries"])
@@ -246,7 +255,7 @@ func (app *application) runAPI(params Dict) Dict {
 	}
 	switch int(api_type_id) {
 	case 1: // REST
-		if endpoint == "" {
+		if api_endpoint == "" {
 			return Dict{
 				"success": false,
 				"msg":     "API endpoint is required for REST API!",
@@ -257,7 +266,7 @@ func (app *application) runAPI(params Dict) Dict {
 		if _method, ok := http_request_type["http_request_type"].(string); ok && method != "" {
 			method = _method
 		}
-		req, err := http.NewRequest(method, endpoint.(string), bytes.NewBuffer([]byte(request_body))) // bytes.NewBuffer(jsonBody)
+		req, err := http.NewRequest(method, api_endpoint, bytes.NewBuffer([]byte(request_body))) // bytes.NewBuffer(jsonBody)
 		if err != nil {
 			return Dict{
 				"success": false,
@@ -291,8 +300,8 @@ func (app *application) runAPI(params Dict) Dict {
 				"msg":     "Failed to read HTTP response body!",
 			}
 		}
-		fmt.Println("HTTP Response Status:", resp.Status)
-		fmt.Println("HTTP Response Body:", string(bodyBytes))
+		//fmt.Println("HTTP Response Status:", resp.Status)
+		//fmt.Println("HTTP Response Body:", string(bodyBytes))
 		api_logs["response_at"] = time.Now()
 		api_logs["response_status"] = resp.StatusCode
 		api_logs["response_message"] = resp.Status
