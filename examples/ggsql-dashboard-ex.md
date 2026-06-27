@@ -81,8 +81,29 @@ FROM range(10) t(x)
 VISUALISE x, y DRAW line;
 ```
 
-<VegaEmbed data={get_the_raw_spec} 
-    column=plot 
-    _class=""
-    _style="width: 100px; heigth:100px; border: 1px solid red;"
-/>
+<Grid>
+    <GridItem width=5 _class='p-1'>
+        <Card _class='bg-base-100 shadow-md'>
+            <CardBody>
+                <CardTitle _class='border-b border-base-200 p-2'>GGSQL Vega Light</CardTitle>
+                <VegaEmbed data={get_the_raw_spec} 
+                    column=plot 
+                    _class="w-full"
+                    _style="height: 300px;"
+                />
+            </CardBody>
+        </Card>
+    </GridItem>
+    <GridItem width=7 _class='p-1'>
+        <Card _class='bg-base-100 shadow-md'>
+            <CardBody>
+                <CardTitle _class='border-b border-base-200 p-2'>GGSQL Vega Light</CardTitle>
+                <VegaEmbed data={get_the_raw_spec} 
+                    column=plot 
+                    _class="w-full"
+                    _style="height: 300px;"
+                />
+            </CardBody>
+        </Card>
+    </GridItem>
+</Grid>
