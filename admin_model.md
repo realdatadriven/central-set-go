@@ -1014,7 +1014,7 @@ columns:
   validation:         { type: varchar, len: 200, nullable: false, comment: "Validation", form_display: true, table_display: true, order: 2, form_size: 9 }
   valid_criticity_id: { type: integer, fk: "valid_criticity.valid_criticity_id", comment: "Validation Criticity Level ID", form_display: true, table_display: true, order: 2, form_size: 2 }
   valid_reaction_id:  { type: integer, fk: "valid_reaction.valid_reaction_id", comment: "Validation Reaction ID", form_display: true, table_display: true, order: 3, form_size: 2 }
-  err_msg:            { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6 }
+  err_msg:            { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: false, order: 4, form_size: 6 }
   table:              { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
   db:                 { type: varchar, len: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
   active:             { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
@@ -1592,7 +1592,7 @@ cond: 'WHERE validation_code = :validation_code'
 data:
   validation:         Ensure menu uniqueness for a specific app
   validation_code:    APP_MENU_UNIQUENESS
-  valid_criticity_id: 1
+  valid_criticity_id: 4
   valid_reaction_id:  2
   err_msg:            'Menu "{{.menu}}" already exists for app "{{.appdata.app}}" (app_id = {{.app_id}})!'
   table:              menu

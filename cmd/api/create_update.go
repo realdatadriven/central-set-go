@@ -362,8 +362,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"app_id":             params["app"].(Dict)["app_id"],
 					"started_at":         time.Now().In(loc),
 				}
-				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
-				VALUES (:validation_id, :validation_code, :validation, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
+				insert_validation_log_sql := `INSERT INTO "validation_logs" ("validation_id", "validation_code", "validation", "valid_criticity_id", "table", "db", "action", "success", "log_message", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
+				VALUES (:validation_id, :validation_code, :validation, :valid_criticity_id, :table, :db, :action, :success, :log_message, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 				//fmt.Println("VALIDATION SQL:", sql_rule)
 				sql, _filters_opts, _ := etlx_engine.NamedToPositional(sql_rule, _data)
 				res, err := app.AdminGetRowsByFilter(sql, _filters_opts)
