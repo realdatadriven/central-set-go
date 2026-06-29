@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"text/template"
+	texttemplate "text/template"
 	"time"
 
 	"github.com/Masterminds/sprig/v3"
@@ -428,6 +429,22 @@ func (app *application) RenderTemplate(tmplStr string, data map[string]any) (str
 	// Create a FuncMap with some common functions
 	// funcMap := sprig.FuncMap()
 	tmpl, err := template.New("tmpl").Funcs(sprig.FuncMap()).Parse(tmplStr)
+	//tmpl, err := template.New("email").Funcs(funcMap).Parse(tmplStr)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse template: %v", err)
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", fmt.Errorf("failed to execute template: %v", err)
+	}
+	//fmt.Println(buf.String())
+	return buf.String(), nil
+}
+
+func (app *application) RenderTextTemplate(tmplStr string, data map[string]any) (string, error) {
+	// Create a FuncMap with some common functions
+	// funcMap := sprig.FuncMap()
+	tmpl, err := texttemplate.New("tmpl").Funcs(sprig.FuncMap()).Parse(tmplStr)
 	//tmpl, err := template.New("email").Funcs(funcMap).Parse(tmplStr)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse template: %v", err)

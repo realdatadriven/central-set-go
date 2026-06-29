@@ -48,6 +48,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		"user_id":          user_id,
 		"app_id":           params["app"].(Dict)["app_id"],
 		"started_at":       time.Now().In(loc),
+		"log_data":         "",
 	}
 	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "log_data", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
 			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :log_data, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
@@ -243,12 +244,11 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			return fmt.Errorf("Error generating PDF: %s", msg)
 		}
 	} else if app.toInt(action_type_id) == 6 && okETLX { // ETLX
-		_data["err"] = err.Error()
-		etlx_md_template, err := etlx_engine.RenderTemplate(etlx_md_template.(string), _data)
+		etlx_md_template, err := app.RenderTextTemplate(etlx_md_template.(string), _data)
 		if err != nil {
 			return err
 		}
-		// fmt.Println(etlx_md_template)
+		//fmt.Println(etlx_md_template)
 		params := Dict{
 			"db": app.config.db.dsn,
 			"data": Dict{
