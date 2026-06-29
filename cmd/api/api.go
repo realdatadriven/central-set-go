@@ -215,7 +215,7 @@ func (app *application) runAPI(params Dict) Dict {
 			"msg":     "API endpoint is required for API call!",
 		}
 	}
-	api_endpoint, err = app.RenderTemplate(api_endpoint, _data)
+	api_endpoint, err = app.RenderTextTemplate(api_endpoint, _data)
 	keys := []any{}
 	for key := range _data {
 		keys = append(keys, key)
@@ -230,7 +230,7 @@ func (app *application) runAPI(params Dict) Dict {
 	var request_body string
 	if request_body_template != "" {
 		// Here you can implement logic to render the request_body_template with the appropriate data
-		request_body, err = app.RenderTemplate(request_body_template, _data)
+		request_body, err = app.RenderTextTemplate(request_body_template, _data)
 		if err != nil {
 			return Dict{
 				"success": false,

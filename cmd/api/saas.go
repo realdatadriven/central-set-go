@@ -128,7 +128,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 		}
 	}
 	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "envKV": tenantEnvKeyPair, "plan": plan, "tenant": tenant, "data": _data}
-	parsedTmpl, err := app.RenderTemplate(plan["terraform_template"].(string), _tmpl_data)
+	parsedTmpl, err := app.RenderTextTemplate(plan["terraform_template"].(string), _tmpl_data)
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -980,7 +980,7 @@ func (app *application) generateCustomerConfig(customer Dict) error {
 
 	outputPath := filepath.Join(outputDir, fmt.Sprintf("%s.yaml", customer["slug"]))
 
-	tmpl, err := app.RenderTemplate(string(content), customer)
+	tmpl, err := app.RenderTextTemplate(string(content), customer)
 
 	// Parse template
 	//tmpl, err := template.ParseFiles(tmplPath)
