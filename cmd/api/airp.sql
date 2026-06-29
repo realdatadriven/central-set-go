@@ -1,0 +1,12 @@
+INSTALL airport FROM community;LOAD airport;
+
+CREATE OR REPLACE PERSISTENT SECRET airport_auth_secret (
+    TYPE airport,
+    AUTH_TOKEN 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc5ODQ3MzQxOS45OTk5OTk4LCJuYmYiOjE3ODI2NjU4NDguNjkyNjk5MiwiaWF0IjoxNzgyNjY1ODQ4LjY5MjY5OH0.aNqPtc6yF0TM8z-lfdCwvlLkbp92mlPdLhinbrIAcuE',
+    SCOPE 'grpc://localhost/flight'
+    --SCOPE 'grpc://localhost/flight'
+);
+
+ATTACH IF NOT EXISTS 'admin' AS my_server (TYPE AIRPORT, LOCATION 'grpc://localhost/flight');
+
+SELECT * FROM my_server.adm.table LIMIT 10;

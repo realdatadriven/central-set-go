@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1782657989686",
+    "name": "C7",
+    "folders": [],
+    "requests": [
+      {
+        "id": "1782657989687g6uk",
+        "name": "C7.SSE",
+        "method": "GET",
+        "url": "http://localhost/sse",
+        "params": [],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
+      }
+    ],
+    "variables": []
+  }
+]

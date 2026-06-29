@@ -1,0 +1,94 @@
+[
+  {
+    "id": "1782657989690k54tec7ujz",
+    "name": "New Request 6/28/2026, 1:46:29 PM",
+    "createdAt": 1782657989690,
+    "baseRequest": {
+      "id": "1782657989687g6uk",
+      "name": "New Request",
+      "method": "GET",
+      "url": "http://localhost/sse/events",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "records": [
+      {
+        "id": "1782658464730tzq9eeexo2o",
+        "timestamp": 1782658464730,
+        "request": {
+          "id": "1782657989687g6uk",
+          "name": "New Request",
+          "method": "GET",
+          "url": "http://localhost/sse/events",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 404,
+          "statusText": "Not Found",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-length": "19",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Sun, 28 Jun 2026 14:54:24 GMT",
+            "x-content-type-options": "nosniff"
+          },
+          "body": "404 page not found\n",
+          "time": 37,
+          "size": 19,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://localhost/sse/events",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      }
+    ],
+    "responseContracts": []
+  }
+]

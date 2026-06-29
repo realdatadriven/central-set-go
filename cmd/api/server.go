@@ -228,6 +228,7 @@ func (app *application) serveSSE() error {
 	app.SSE_Broker = NewBroker()
 	mux := http.NewServeMux()
 	// SSE and notify endpoints
+	mux.HandleFunc("/sse", app.SSE_Broker.SSEHandler)
 	mux.HandleFunc("/events", app.SSE_Broker.SSEHandler)
 	mux.HandleFunc("/notify", app.SSE_Broker.NotifyHandler)
 	// WS

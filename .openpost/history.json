@@ -1,0 +1,108 @@
+[
+  {
+    "id": "1782658026153",
+    "timestamp": 1782658026153,
+    "request": {
+      "id": "1782657890524",
+      "name": "New Request",
+      "method": "GET",
+      "url": "http://localhost/sse",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "no-cache",
+        "content-type": "text/event-stream",
+        "date": "Sun, 28 Jun 2026 14:45:05 GMT",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"database\":\"ADMIN\",\"table\":\"app\",\"type\":\"data_change\"}\n{\"database\":\"ADMIN\",\"table\":\"app\",\"type\":\"data_change\"}",
+      "time": 15037,
+      "size": 111,
+      "streaming": false,
+      "events": [
+        {
+          "data": "{\"database\":\"ADMIN\",\"table\":\"app\",\"type\":\"data_change\"}",
+          "timestamp": 1782657922426
+        },
+        {
+          "data": "{\"database\":\"ADMIN\",\"table\":\"app\",\"type\":\"data_change\"}",
+          "timestamp": 1782657940318
+        }
+      ],
+      "streamDuration": 120588,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1782658464730",
+    "timestamp": 1782658464730,
+    "request": {
+      "id": "1782657989687g6uk",
+      "name": "New Request",
+      "method": "GET",
+      "url": "http://localhost/sse/events",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-length": "19",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sun, 28 Jun 2026 14:54:24 GMT",
+        "x-content-type-options": "nosniff"
+      },
+      "body": "404 page not found\n",
+      "time": 37,
+      "size": 19,
+      "cookies": []
+    }
+  }
+]
