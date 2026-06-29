@@ -327,6 +327,37 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	}
 	if !success {
 		return fmt.Errorf(msg)
+	} else {
+		// CRUD ACTIONS
+		get_crud_actions_sql := `SELECT ca.*, at.action_trigger_action_id, ca2.crud_action_code AS main_action
+FROM crud_action ca
+JOIN action_trigger_action at ON at.action_trigger_code = ca.crud_action_code
+JOIN crud_action ca2 ON ca2.crud_action_id = at.crud_action_id
+WHERE at.crud_action_id = ? AND at.excluded = false AND ca.excluded = false
+-- ORDER BY at."trigger_order" ASC`
+		crud_action_rows, err := app.AdminGetRowsByFilter(get_crud_actions_sql, []any{c_action["crud_action_id"]})
+		if err != nil {
+			fmt.Printf("Error occurred while fetching crud_actions: %v", err)
+		} else if len(crud_action_rows) > 0 {
+			fmt.Println("HAS TRIGGERED ACTIONS!")
+			for _, c_ation_trigger := range crud_action_rows {
+				fmt.Println("HAS TRIGGERED ACTION:", c_ation_trigger["crud_action_code"])
+				parallel, ok := c_ation_trigger["parallel"].(bool)
+				if parallel && ok {
+					go func() {
+						err := app.RunCrudAction(params, c_ation_trigger, _data) //actionRunner(c_ation_trigger)
+						if err != nil {
+							fmt.Printf("Error runing the action: %s triggered by %s -> %v\n", c_ation_trigger["crud_action_code"], c_ation_trigger["main_action"], err.Error())
+						}
+					}()
+				} else {
+					err := app.RunCrudAction(params, c_ation_trigger, _data) // actionRunner(c_ation_trigger)
+					if err != nil {
+						fmt.Printf("Error runing the action: %s triggered by %s -> %v\n", c_ation_trigger["crud_action_code"], c_ation_trigger["main_action"], err.Error())
+					}
+				}
+			}
+		}
 	}
 	return nil
 }

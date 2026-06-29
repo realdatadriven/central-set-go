@@ -617,7 +617,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		}
 	}
 	// CRUD ACTIONS
-	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE`, crud_aciton)
+	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE ORDER BY "db", "table", "order", "crud_action_id"`, crud_aciton)
 	crud_action_rows, err := app.AdminGetRowsByFilter(get_crud_actions_sql, validation_data)
 	if err != nil {
 		fmt.Printf("Error occurred while fetching crud_actions: %v", err)

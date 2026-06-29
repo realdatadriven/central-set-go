@@ -38,6 +38,7 @@ cs_app:
       - {table: valid_reaction, active: false}
       - {table: valid_criticity, active: false}
       - {table: validation_data, active: false}
+      - {table: action_trigger_action, active: false}
       - user_log
       - custom_table
       - custom_form
@@ -1147,6 +1148,7 @@ columns:
   etlx_md_template:  { type: text, comment: "ETLX Template", form_display: true, order: 21, form_long_text: true, form_code: markdown, form_hide_cond: "data?.action_type_id !== 6" }
   after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
+  order:             { type: integer, comment: "Order", form_display: true, table_display: true, order: 24, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
@@ -1155,11 +1157,14 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  allow_in_subform: {crud_action_logs: true, action_data: true}
+  allow_in_subform: {crud_action_logs: true, action_data: true, action_trigger_action: true}
   size: 10
   tabs_steps_conf:
-    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel]}
+    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel, order]}
     - {label: Config / Templates, fields: [sql, email_template, email_to, email_subject, api, api_name, api_endpoint, pdf_path, use_latex, pdf_template, pdf_tex_template, etlx_md_template, after_sql]}
+table_layout:
+  default_order:
+    - { field: crud_action_id, order: DESC }  
 ```
 
 ## ACTION_DATA_TYPE
@@ -1203,6 +1208,29 @@ columns:
   created_at:          { type: datetime, comment: "Created at" }
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## ACTION_TRIGGERS_ACTION
+```yaml
+table: action_trigger_action
+comment: Action Triggers Action
+columns:
+  action_trigger_action_id:   { type: integer, pk: true, autoincrement: true, comment: "Action Triggers Action ID" }
+  action_trigger_action:      { type: varchar, len: 100, nullable: false, comment: "Trigger Code", form_display: true, table_display: true, form_size: 3, order: 2, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
+  action_trigger_action_desc: { type: text, comment: "Trigger Desc", form_display: true, form_long_text: true, table_display: true, order: 4 }
+  action_trigger_code:        { type: varchar, len: 100, nullable: false, comment: "Code of Action to Trigger", form_display: true, table_display: true, form_size: 3, order: 3, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
+  crud_action_id:             { type: integer, fk: "crud_action.crud_action_id", nullable: false, comment: "Crud Action", form_display: true, table_display: true, form_size: 4, order: 1 }
+  trigger_order:              { type: integer, comment: "Trigger Order", table_display: true, form_display: true, form_size: 2, form_order: 5 }
+  active:                     { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 3 }
+  user_id:                    { type: integer, fk: "users.user_id", comment: "Created by"  }
+  app_id:                     { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:                 { type: datetime, comment: "Created at" }
+  updated_at:                 { type: datetime, comment: "Updated at" }
+  excluded:                   { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1832,7 +1860,7 @@ data:
 ## LOG_IP_GEODATA
 ```yaml
 table: crud_action
-description: Example o CRUD Actions Get User log IP GeoData
+description: Example of CRUD Actions Get User log IP GeoData
 cond: 'WHERE crud_action_code = :crud_action_code'
 data:
   crud_action_code: LOG_IP_GEODATA
@@ -1846,6 +1874,16 @@ data:
   user_trigger_icon: globe-alt
   parallel: true
   api_name: IP_GEODATA
+  children: # TO BE ABLE TO TRIGGER A NEW ACTION TO PARSE THE RESPONSE api_response THIS WAY ON SUCCESS 
+    table: action_trigger_action
+    cond: 'WHERE action_trigger_action = :action_trigger_action'
+    data:
+      crud_action_id:             crud_action_id()
+      action_trigger_action:      CALL_HANDLE_IP_GEODATA
+      action_trigger_action_desc: On Success it call the HANDLE_IP_GEODATA Action
+      action_trigger_code:        HANDLE_IP_GEODATA
+      trigger_order:              1
+      active:                     true
 ```
 
 ## API_IP_GEODATA
@@ -1860,6 +1898,23 @@ data:
   api_description:       Get IP Geo Data
   endpoint:              'https://ipinfo.io/{{.data.req_ip}}/json' # api_id api_name db table_pk_field user api_endpoint data action table row_id
   active:                true
+```
+
+## HANDLE_IP_GEODATA
+```yaml
+table: crud_action
+description: Example o CRUD Actions Parsing API response
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: HANDLE_IP_GEODATA
+  crud_action: 'Handle the body "api_response" in the scope'
+  action_type_id: 6
+  err_msg: Error hadle the reponse got from API_IP_GEODATA {{.ip}}!
+  table: user_log
+  db: ADMIN
+  active: true
+  parallel: true
+  etlx_md_template: FileContent(examples/HANDLE_IP_GEODATA.md)
 ```
 
 # ROLE_ACCESS
