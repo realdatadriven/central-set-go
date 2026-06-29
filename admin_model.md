@@ -1376,7 +1376,8 @@ columns:
   num_retries:           { type: integer, default: 3, comment: "Number of Retries", form_display: true, table_display: true, form_size: 3, order: 7 }
   timeout_seconds:       { type: integer, default: 30, comment: "Timeout (seconds)", form_display: true, table_display: true, form_size: 3, order: 8 }
   headers_template:      { type: text, comment: "Headers Template (use @VAR_NAME for environment variables)", form_display: true, form_long_text: true, form_code: json, order: 9 }
-  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 9 }
+  after_sql:             { type: text, comment: "SQL Run After", form_display: true, form_long_text: true, form_code: sql, order: 11 }
+  active:                { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 11 }
   user_id:               { type: integer, fk: "users.user_id", comment: "Created by" }
   app_id:                { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:            { type: datetime, comment: "Created at" }
@@ -1388,7 +1389,7 @@ form_layout:
   allow_in_subform: {api_call_log: true, api_header: true, api_data: true }
   tabs_steps_conf:
     - {label: API Data, fields: [api_id, api_name, api_type, http_request_type, endpoint, active, num_retries, timeout_seconds, api_description]}
-    - {label: Templates, fields: [request_body_template, headers_template]}
+    - {label: Templates, fields: [request_body_template, headers_template, after_sql]}
   sub_form_size: 9
 table_layout:
   default_order: [{ field: api_id, order: ASC }]

@@ -332,6 +332,29 @@ func (app *application) runAPI(params Dict) Dict {
 			"msg":     "Unsupported API type!",
 		}
 	}
+	_data["logs"] = api_logs
+	after_sql, okAfterSQL := api["after_sql"].(string)
+	if okAfterSQL && after_sql != "" {
+		after_sql, err = etlx_engine.RenderTemplate(after_sql, _data)
+		if err != nil {
+			return fmt.Errorf("Error rendering API after sql %v", err.Error())
+		}
+		after_sql = etlx_engine.ReplaceEnvVariable(after_sql)
+		err = app.ExecuteQuery(after_sql, params, _data)
+		if err != nil {
+			success = false
+			/*crud_action_log["success"] = success
+			crud_action_log["log_message"] = fmt.Errorf("Error executing after SQL %s!", err.Error())
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)*/
+			if err != nil {
+				fmt.Printf("Error inserting crud action log for unknown action_type_id for crud_action_id %v: %v", c_action["crud_action_id"], err)
+			}
+			return fmt.Errorf("Error executing after SQL %s!", err.Error())
+		}
+	}
 	// Save API call logs to database
 	insert_query := `insert into api_call_log (api_id, api_name, request_at, response_at, request_body, response_body, response_status, response_message, user_id, app_id, created_at, updated_at, excluded)
 	values (:api_id, :api_name, :request_at, :response_at, :request_body, :response_body, :response_status, :response_message, :user_id, :app_id, :created_at, :updated_at, :excluded)`
