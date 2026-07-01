@@ -128,6 +128,41 @@ func (app *application) RunDeploy(params Dict) Dict {
 		}
 	}
 	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "envKV": tenantEnvKeyPair, "plan": plan, "tenant": tenant, "data": _data}
+
+	// plan_file
+	sql = `select * from "plan_file" where "plan_id" = ? and "active" = true and "excluded" = false`
+	// fmt.Println(sql, _data["plan_id"])
+	plan_file, err := app.GetRowByFilter(sql, params, []any{_data["plan_id"]})
+	_files := map[string]string{}
+	if err != nil {
+		fmt.Println("Error getting the plan files", err.Error())
+	} else {
+		for _, _file := range plan_file {
+			filetml, err := app.RenderTextTemplate(_file.(Dict)["file_template"].(string), _tmpl_data)
+			if err != nil {
+				fmt.Println("Error rendering file template", err.Error())
+				filetml = _file.(Dict)["file_template"].(string)
+			}
+			fname := _file.(Dict)["plan_file"].(string)
+			base := filepath.Base(fname)
+			ext := filepath.Ext(base)
+			base_no_ext := strings.Replace(base, ext, "", 1)
+			temptex, err := os.CreateTemp("", fmt.Sprintf("%s-*.%s", base_no_ext, ext))
+			if err != nil {
+				fmt.Println("Error creating temporary file", err.Error())
+			}
+			// fmt.Println(temptex.Name(), output_path)
+			// defer os.Remove(temptex.Name())
+			defer temptex.Close()
+			_, err = temptex.WriteString(filetml)
+			if err != nil {
+				fmt.Println("Error writing to temporary file", err.Error())
+			}
+			temptex.Close()
+			_files[fname] = temptex.Name()
+		}
+		_tmpl_data["plan_files"] = _files
+	}
 	parsedTmpl, err := app.RenderTextTemplate(plan["terraform_template"].(string), _tmpl_data)
 	if err != nil {
 		return Dict{
@@ -142,7 +177,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 		run.State = json.RawMessage([]byte(terraform_state))
 	}
 	if terraform_lock, ok := _data["terraform_lock"].(string); ok && terraform_lock != "" {
-		// fmt.Println("Lock:", _data["terraform_state"])
+		// fmt.Println("Lock:", __data["terraform_state"])
 		run.Lock = terraform_lock
 	}
 	var res map[string]string
