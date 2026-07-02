@@ -68,6 +68,41 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		_data[key] = val
 	}
 	msg := ""
+	// CHECK CONFITION SQL CONDITION
+	sql_condition, sqlConditionOk := c_action["sql_condition"].(string)
+	if sqlConditionOk && sql_condition != "" {
+		sql_condition, err = etlx_engine.RenderTemplate(sql_condition, _data)
+		if err != nil {
+			return fmt.Errorf("Error rendering sql_condition %v", err.Error())
+		}
+		sql_condition = etlx_engine.ReplaceEnvVariable(sql_condition)
+		res, _, err := app.db.QuerySingleRow(sql_condition, _data)
+		if err != nil {
+			return fmt.Errorf("Error executing sql_condition %v", err.Error())
+		}
+		cond := false
+		if len(*res) > 0 {
+			if _, ok := (*res)["cond"]; !ok {
+				return fmt.Errorf("Error executing sql_condition, 'cond' column not found in result set")
+			} else {
+				cond = app.toBool((*res)["cond"])
+			}
+		}
+		if !cond {
+			success = false
+			msg = fmt.Sprintf("SQL Condition not met for CRUD Action: %v", c_action["crud_action_code"])
+			crud_action_log["success"] = success
+			crud_action_log["log_message"] = fmt.Sprintf("SQL Condition not met for CRUD Action: %v", c_action["crud_action_code"])
+			crud_action_log["executed_at"] = time.Now().In(loc)
+			crud_action_log["created_at"] = time.Now().In(loc)
+			crud_action_log["updated_at"] = time.Now().In(loc)
+			_, err := app.db.ExecuteNamedQuery(insert_crud_action_log_sql, crud_action_log)
+			if err != nil {
+				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err)
+			}
+			return fmt.Errorf(msg)
+		}
+	}
 	if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 		if _, ok := c_action["sql"]; ok {
 			sql_rule := c_action["sql"].(string)

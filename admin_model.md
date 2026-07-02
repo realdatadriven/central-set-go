@@ -1112,7 +1112,6 @@ data:
 form_layout:
   size: 4
 ```
-
 ## CRUD_ACTION
 ```yaml
 table: crud_action
@@ -1120,8 +1119,8 @@ comment: CRUD Action Rules
 tooltip: Dispaches some actions after a crud operation
 columns:
   crud_action_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  crud_action_code:  { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
   crud_action:       { type: varchar, len: 200, nullable: false, comment: "Action", form_display: true, table_display: true, order: 2, form_size: 9 }
+  crud_action_code:  { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
   action_type_id:    { type: integer, fk: "action_type.action_type_id", comment: "Type ID", form_display: true, table_display: true, order: 3, form_size: 2 }
   err_msg:           { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6}
   table:             { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
@@ -1133,6 +1132,7 @@ columns:
   delete:            { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
   user_trigger:      { type: boolean, default: false, comment: "By User", tooltip: "Can be triggered by user", form_display: true, table_display: true, order: 11, form_size: 2 }
   user_trigger_icon: { type: varchar, len: 50, default: false, comment: "By User Icon", tooltip: "User triggered by user ICON", form_display: true, order: 22, form_size: 3, form_hide_cond: "!data?.user_trigger"  }
+  sql_condition:     { type: text, comment: "SQL Condition (SELECT BOOLExpression AS cond)", "tooltip": "select '{{.field_to_chrck}}' = 'value to apply to' as cond", form_display: true, order: 11, form_long_text: true, form_code: sql }
   sql:               { type: text, comment: "SQL Rule", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.action_type_id !== 1"}
   email_template:    { type: text, comment: "Email Template", form_display: true, order: 13, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 2" }
   email_to:          { type: text, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, order: 14, form_size: 6, form_hide_cond: "data?.action_type_id !== 2" }
@@ -1142,13 +1142,12 @@ columns:
   api_name:          { type: varchar, len: 200, comment: "API Name", form_display: true, order: 17, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   pdf_path:          { type: varchar, len: 200, comment: "PDF Path", form_display: true, order: 19, form_size: 9, form_hide_cond: "data?.action_type_id !== 5" }
-  use_latex:         { type: boolean, default: false, comment: "Use Latex", form_display: true, order: 20, form_size: 3, form_hide_cond: "data?.action_type_id !== 5" }
+  use_latex:         { type: boolean, default: false, comment: "Use Latex", form_display: true, table_display: true, order: 20, form_size: 3, form_hide_cond: "data?.action_type_id !== 5" }
   pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: latex, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === true" }
   pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === false" }
   etlx_md_template:  { type: text, comment: "ETLX Template", form_display: true, order: 21, form_long_text: true, form_code: markdown, form_hide_cond: "data?.action_type_id !== 6" }
   after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
-  order:             { type: integer, comment: "Order", form_display: true, table_display: true, order: 24, form_size: 3 }
   user_id:           { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:            { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:        { type: datetime, comment: "Created at" }
@@ -1157,14 +1156,11 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  allow_in_subform: {crud_action_logs: true, action_data: true, action_trigger_action: true}
+  allow_in_subform: {crud_action_logs: true, action_data: true}
   size: 10
   tabs_steps_conf:
-    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel, order]}
-    - {label: Config / Templates, fields: [sql, email_template, email_to, email_subject, api, api_name, api_endpoint, pdf_path, use_latex, pdf_template, pdf_tex_template, etlx_md_template, after_sql]}
-table_layout:
-  default_order:
-    - { field: crud_action_id, order: DESC }  
+    - {label: Action Def, fields: [crud_action, crud_action_code, action_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel]}
+    - {label: Config / Templates, fields: [sql_condition, sql, email_template, email_to, email_subject, api, api_name, api_endpoint, pdf_path, use_latex, pdf_template, pdf_tex_template, etlx_md_template, after_sql]}
 ```
 
 ## ACTION_DATA_TYPE
@@ -1394,7 +1390,7 @@ form_layout:
 table: api
 comment: API Integrations
 columns:
-  api_id:                { type: integer, pk: true, autoincrement: true, comment: "API ID" }
+  api_id:                { type: integer, pk: true, autoincrement: true, start: 1000, comment: "API ID" }
   api_name:              { type: varchar, len: 100, nullable: false, comment: "API Name", form_display: true, table_display: true, form_size: 6, order: 1 }
   api_type_id:           { type: integer, fk: "api_type.api_type_id", nullable: false, comment: "API Type", form_display: true, table_display: true, form_size: 3, order: 2 }
   http_request_type_id:  { type: integer, fk: "http_request_type.http_request_type_id", nullable: false, comment: "HTTP Request Type", form_display: true, table_display: true, form_size: 3, order: 3 }
