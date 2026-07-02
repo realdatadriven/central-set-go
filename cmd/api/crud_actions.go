@@ -56,13 +56,12 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	sql := "select * from action_data where crud_action_id = ? and excluded = false"
 	valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_action["crud_action_id"]})
 	if err != nil {
-		//fmt.Println("Error getting API Data:", err)
-		return fmt.Errorf("Error getting API Data: %s", err)
+		return fmt.Errorf("Error getting ACTION Data: %s", err)
 	}
 	// fmt.Println("ACTION DATA:", valid_data_res)
 	action_data, err := app.GetActionData(params, valid_data_res, _data)
 	if err != nil {
-		return fmt.Errorf("Error getting API Data: %s", err)
+		return fmt.Errorf("Error getting ACTION Data: %s", err)
 	}
 	for key, val := range action_data {
 		_data[key] = val
