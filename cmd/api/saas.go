@@ -149,24 +149,27 @@ func (app *application) RunDeploy(params Dict) Dict {
 	// plan_file
 	sql = `select * from "plan_file" where "plan_id" = ? and "active" = true and "excluded" = false`
 	// fmt.Println(sql, _data["plan_id"])
-	plan_file, err := app.GetRowByFilter(sql, params, []any{_data["plan_id"]})
+	plan_file, err := app.GetRowsByFilter(sql, params, []any{_data["plan_id"]})
 	_files := map[string]string{}
 	if err != nil {
 		fmt.Println("Error getting the plan files", err.Error())
 	} else {
 		for _, _file := range plan_file {
-			filetml, err := app.RenderTextTemplate(_file.(Dict)["file_template"].(string), _tmpl_data)
-			if err != nil {
-				fmt.Println("Error rendering file template", err.Error())
-				filetml = _file.(Dict)["file_template"].(string)
-			}
-			fname := _file.(Dict)["plan_file"].(string)
-			base := filepath.Base(fname)
+			fname := _file["plan_file"].(string)
+			// file name replace the last _ with . and remove the first part before the last
+			name := strings.Replace(fname, "_", ".", -1)
+			base := filepath.Base(name)
 			ext := filepath.Ext(base)
 			base_no_ext := strings.Replace(base, ext, "", 1)
 			temptex, err := os.CreateTemp("", fmt.Sprintf("%s-*.%s", base_no_ext, ext))
 			if err != nil {
-				fmt.Println("Error creating temporary file", err.Error())
+				fmt.Println("Error creating temporary file", fname, temptex.Name(), err.Error())
+			}
+			fmt.Println("FNAME:", fname, temptex.Name())
+			filetml, err := app.RenderTextTemplate(_file["file_template"].(string), _tmpl_data)
+			if err != nil {
+				fmt.Println("Error rendering file template", err.Error())
+				filetml = _file["file_template"].(string)
 			}
 			// fmt.Println(temptex.Name(), output_path)
 			// defer os.Remove(temptex.Name())
