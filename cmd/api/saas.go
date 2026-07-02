@@ -119,6 +119,15 @@ func (app *application) RunDeploy(params Dict) Dict {
 	for _, v := range tenantEnv {
 		tenantEnvKeyPair[v["env_name"].(string)] = v["env_value"].(string)
 	}
+	sql = `select * from "sys_env" where "tenant_id" = ? and "active" = true and "excluded" = false`
+	tenantSysEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
+	if err != nil {
+		fmt.Println("sys_env err:", err)
+	}
+	tenantSysEnvKeyPair := map[string]any{}
+	for _, v := range tenantSysEnv {
+		tenantSysEnvKeyPair[v["env_name"].(string)] = v["env_value"].(string)
+	}
 	//fmt.Println(tenant, tenantEnv)
 	if _, ok := plan["terraform_template"].(string); !ok {
 		msg, _ := app.i18n.T("unable-to-match-plan-id", Dict{})
@@ -127,8 +136,16 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
-	_tmpl_data := map[string]any{"tenant_id": tenantID, "env": tenantEnv, "envKV": tenantEnvKeyPair, "plan": plan, "tenant": tenant, "data": _data}
-
+	_tmpl_data := map[string]any{
+		"tenant_id": tenantID,
+		"env":       tenantEnv,
+		"envKV":     tenantEnvKeyPair,
+		"sysEnv":    tenantSysEnv,
+		"sysEnvKV":  tenantSysEnvKeyPair,
+		"plan":      plan,
+		"tenant":    tenant,
+		"data":      _data,
+	}
 	// plan_file
 	sql = `select * from "plan_file" where "plan_id" = ? and "active" = true and "excluded" = false`
 	// fmt.Println(sql, _data["plan_id"])

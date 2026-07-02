@@ -1761,7 +1761,7 @@ data:
   update: true
   delete: true
   parallel: true
-  api: 'run/process_user/{{._action}}/{{.user_id}}'
+  api: 'run/process_user/{{.action}}/{{.user_id}}'
 ```
 
 ## EX_CRUD_ACTION_EXTERNAL_API_CALL
