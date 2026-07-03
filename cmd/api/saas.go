@@ -161,7 +161,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 			base := filepath.Base(name)
 			ext := filepath.Ext(base)
 			base_no_ext := strings.Replace(base, ext, "", 1)
-			temptex, err := os.CreateTemp("", fmt.Sprintf("%s-*.%s", base_no_ext, ext))
+			temptex, err := os.CreateTemp("", fmt.Sprintf("%s-*%s", base_no_ext, ext))
 			if err != nil {
 				fmt.Println("Error creating temporary file", fname, temptex.Name(), err.Error())
 			}
@@ -185,9 +185,10 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	parsedTmpl, err := app.RenderTextTemplate(plan["terraform_template"].(string), _tmpl_data)
 	if err != nil {
+		fmt.Print("Terraform Template Parse Err:", err.Error())
 		return Dict{
 			"success": false,
-			"msg":     "terraform_template" + err.Error(),
+			"msg":     "terraform_template Err:" + err.Error(),
 		}
 	}
 	// fmt.Printf(parsedTmpl)

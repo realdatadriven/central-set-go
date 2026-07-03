@@ -818,12 +818,35 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
+				params["data"].(Dict)["action"] = act
+				data = app.RunDeploy(params)
+			}
+		} else if app.contains([]any{"start", "str", "boot"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				params["data"].(Dict)["action"] = act
+				data = app.RunDeploy(params)
+			}
+		} else if app.contains([]any{"stop", "pause", "sp"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				params["data"].(Dict)["action"] = act
+				data = app.RunDeploy(params)
+			}
+		} else if app.contains([]any{"restart", "rs", "reboot"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				params["data"].(Dict)["action"] = act
 				data = app.RunDeploy(params)
 			}
 		} else if app.contains([]any{"cancel", "destroy", "quit", "drop"}, act) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
+				params["data"].(Dict)["action"] = act
 				data = app.RunDeploy(params)
 			}
 		} else {
