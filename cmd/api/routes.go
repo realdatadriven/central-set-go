@@ -67,16 +67,25 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/notify", broker.NotifyHandler)*/
 
 	// Handler for static files
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets"))))
+	// Handler for static files with fallback to embedded assets
+	// Tries filesystem first (for development/uploads), then embedded files
+	fallbackServer := NewFallbackFileServer()
+	mux.Handle("/static/", http.StripPrefix("/static/", fallbackServer))
+	mux.Handle("/assets/", http.StripPrefix("/assets/", fallbackServer))
+	
 	if app.config.useS3 {
 		mux.HandleFunc("/uploads/", app.S3Handler)
 	} else {
 		mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("static/uploads"))))
 	}
-	// Handler the root (index.html)
+	
+	// Handler the root (index.html) - try filesystem first, then embedded
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/index.html")
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		ServeStaticFile(w, r, "index.html")
 	})
 
 	// AI ASSISTANT ENDPOINTS
