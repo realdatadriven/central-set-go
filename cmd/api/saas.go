@@ -205,7 +205,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	switch action {
 	case "deploy":
 		//res, err = app.DeployTerraformForTenant(params, tenantID, run)
-		res, err = app.DeployOpenTofuForTenant(params, tenantID, run)
+		res, err = app.DeployOpenTofuForTenant(params, tenantID, run, action)
 		_json_out, _ := json.Marshal(res)
 		_data["tf_public_ip"] = rawMessageToString(json.RawMessage(res["public_ip"]))
 		_data["tf_public_dns"] = ensureHTTPPrefix(rawMessageToString(json.RawMessage(res["public_dns"])))
@@ -214,8 +214,10 @@ func (app *application) RunDeploy(params Dict) Dict {
 		_data["deployed"] = true
 	case "cancel", "destroy":
 		//err = app.DestroyTerraform(params, tenantID, run)
-		err = app.DestroyOpenTofu(params, tenantID, run)
-		_data["deployed"] = false
+		err = app.DestroyOpenTofu(params, tenantID, run, action)
+		if err != nil {
+			_data["deployed"] = false
+		}
 	}
 	msg, _ := app.i18n.T("success", Dict{})
 	_data["tf_err_msg"] = nil
@@ -245,7 +247,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 }
 
-func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run *TerraformRun) (map[string]string, error) {
+func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run *TerraformRun, action string) (map[string]string, error) {
 	workDir, _ := os.MkdirTemp("", "tf-*")
 	fmt.Println("Temp TF Dir:", workDir)
 	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
@@ -317,7 +319,16 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 		}
 	}
 	//fmt.Println("Init Pass")
-	if err := tf.Apply(context.Background()); err != nil {
+	opts := []tfexec.ApplyOption{
+		tfexec.Var(fmt.Sprintf("action=%s", action)),
+		//tfexec.Var("region=eu-west-1"),
+		//tfexec.Var("instance_count=3"),
+		//tfexec.Var(fmt.Sprintf("environment=%s", "staging")),
+		//tfexec.VarFile("prod.tfvars"), // optional, if you also have a vars file
+		//tfexec.Parallelism(5),
+		//tfexec.Refresh(true),
+	}
+	if err := tf.Apply(context.Background(), opts...); err != nil {
 		stateBytes, _err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 		if _err == nil {
 			run.State = json.RawMessage(stateBytes)
@@ -363,7 +374,7 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 	return result, nil
 }
 
-func (app *application) DeployOpenTofuForTenant(params Dict, tenantID any, run *TerraformRun) (map[string]string, error) {
+func (app *application) DeployOpenTofuForTenant(params Dict, tenantID any, run *TerraformRun, action string) (map[string]string, error) {
 	workDir, _ := os.MkdirTemp("", "tofu-*")
 	fmt.Println("Temp Tofu Dir:", workDir)
 	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
@@ -435,7 +446,16 @@ func (app *application) DeployOpenTofuForTenant(params Dict, tenantID any, run *
 		}
 	}
 	//fmt.Println("Init Pass")
-	if err := tf.Apply(context.Background()); err != nil {
+	opts := []tfexec.ApplyOption{
+		tfexec.Var(fmt.Sprintf("action=%s", action)),
+		//tfexec.Var("region=eu-west-1"),
+		//tfexec.Var("instance_count=3"),
+		//tfexec.Var(fmt.Sprintf("environment=%s", "staging")),
+		//tfexec.VarFile("prod.tfvars"), // optional, if you also have a vars file
+		//tfexec.Parallelism(5),
+		//tfexec.Refresh(true),
+	}
+	if err := tf.Apply(context.Background(), opts...); err != nil {
 		stateBytes, _err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 		if _err == nil {
 			run.State = json.RawMessage(stateBytes)
@@ -513,7 +533,7 @@ func (app *application) RenderTextTemplate(tmplStr string, data map[string]any) 
 	return buf.String(), nil
 }
 
-func (app *application) DestroyTerraform(params Dict, tenantID any, run *TerraformRun) error {
+func (app *application) DestroyTerraform(params Dict, tenantID any, run *TerraformRun, action string) error {
 	// 1. Create temp dir
 	workDir, _ := os.MkdirTemp("", "tf-*")
 	fmt.Println("Temp TF Dir:", workDir)
@@ -582,7 +602,16 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 		fmt.Printf("resfreh failed: %s", err)
 		return fmt.Errorf("resfreh failed: %w", err)
 	}
-	if err := tf.Destroy(context.Background()); err != nil {
+	opts := []tfexec.DestroyOption{
+		tfexec.Var(fmt.Sprintf("action=%s", action)),
+		//tfexec.Var("region=eu-west-1"),
+		//tfexec.Var("instance_count=3"),
+		//tfexec.Var(fmt.Sprintf("environment=%s", "staging")),
+		//tfexec.VarFile("prod.tfvars"), // optional, if you also have a vars file
+		//tfexec.Parallelism(5),
+		//tfexec.Refresh(true),
+	}
+	if err := tf.Destroy(context.Background(), opts...); err != nil {
 		stateBytes, _err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 		if _err == nil {
 			run.State = json.RawMessage(stateBytes)
@@ -604,7 +633,7 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 	return nil
 }
 
-func (app *application) DestroyOpenTofu(params Dict, tenantID any, run *TerraformRun) error {
+func (app *application) DestroyOpenTofu(params Dict, tenantID any, run *TerraformRun, action string) error {
 	// 1. Create temp dir
 	workDir, _ := os.MkdirTemp("", "tofu-*")
 	fmt.Println("Temp Tofu Dir:", workDir)
@@ -673,7 +702,16 @@ func (app *application) DestroyOpenTofu(params Dict, tenantID any, run *Terrafor
 		fmt.Printf("refresh failed: %s", err)
 		return fmt.Errorf("refresh failed: %w", err)
 	}
-	if err := tf.Destroy(context.Background()); err != nil {
+	opts := []tfexec.DestroyOption{
+		tfexec.Var(fmt.Sprintf("action=%s", action)),
+		//tfexec.Var("region=eu-west-1"),
+		//tfexec.Var("instance_count=3"),
+		//tfexec.Var(fmt.Sprintf("environment=%s", "staging")),
+		//tfexec.VarFile("prod.tfvars"), // optional, if you also have a vars file
+		//tfexec.Parallelism(5),
+		//tfexec.Refresh(true),
+	}
+	if err := tf.Destroy(context.Background(), opts...); err != nil {
 		stateBytes, _err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 		if _err == nil {
 			run.State = json.RawMessage(stateBytes)

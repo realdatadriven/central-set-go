@@ -21,7 +21,7 @@
       ],
       "body": {
         "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"username\": \"root\", \n    \"password\": \"1234\"\n  }\n}"
       },
       "auth": {
         "type": "none"
@@ -49,13 +49,13 @@
           "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
           "access-control-allow-origin": "*",
           "content-encoding": "gzip",
-          "content-length": "723",
+          "content-length": "724",
           "content-type": "application/json",
-          "date": "Sat, 04 Jul 2026 19:03:47 GMT",
+          "date": "Sat, 04 Jul 2026 19:19:31 GMT",
           "vary": "Authorization"
         },
-        "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 0,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": null,\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:03:47-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc4ODM3NTgyNy42NDk1Nzk1LCJuYmYiOjE3ODMxOTE4MjcuNjQ5NTgxLCJpYXQiOjE3ODMxOTE4MjcuNjQ5NTc5OH0.sORsmcmUR8Ieggq5Jdhi8zAFMRQoC10ZXbgk6Tz6AI0\"\n}\n",
-        "time": 292,
+        "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 0,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": null,\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:19:31-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc4ODM3Njc3MS42NTE3MjYsIm5iZiI6MTc4MzE5Mjc3MS42NTE3MjcyLCJpYXQiOjE3ODMxOTI3NzEuNjUxNzI2NX0.kEa5B2G9y5dWrmSljYzYVU0PfmlQv-QtIvQrzQRkvao\"\n}\n",
+        "time": 258,
         "size": 1132,
         "actualRequest": {
           "method": "POST",
@@ -64,7 +64,7 @@
             "Accept": "application/json",
             "Content-Type": "application/json"
           },
-          "body": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}",
+          "body": "{\n  \"lang\": \"pt\",\n  \"data\": {\n    \"username\": \"root\", \n    \"password\": \"1234\"\n  }\n}",
           "protocol": "HTTP/1.1",
           "certificateNames": "System Trust Store"
         },
@@ -275,11 +275,11 @@
     }
   ],
   "groups": [],
-  "activeTabId": "1783190597008nl2c",
+  "activeTabId": "178319070591889yh",
   "currentView": "requests",
   "sidebarTab": "collections",
-  "sidebarCollapsed": true,
-  "responseTab": "headers",
+  "sidebarCollapsed": false,
+  "responseTab": "body",
   "layoutMode": "horizontal",
   "splitRatio": 0.5,
   "horizontalSplitRatio": 0.5,

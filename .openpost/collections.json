@@ -5,10 +5,10 @@
     "folders": [],
     "requests": [
       {
-        "id": "1782657989687g6uk",
-        "name": "C7.SSE",
-        "method": "GET",
-        "url": "http://localhost/sse",
+        "id": "1783190705616",
+        "name": "LOGIN",
+        "method": "POST",
+        "url": "http://localhost:4444/dyn_api/login/index",
         "params": [],
         "headers": [
           {
@@ -23,7 +23,8 @@
           }
         ],
         "body": {
-          "type": "none"
+          "type": "json",
+          "raw": "{\n  \"lang\": \"pt\",\n  \"data\": {\n    \"username\": \"root\", \n    \"password\": \"1234\"\n  }\n}"
         },
         "auth": {
           "type": "none"
@@ -73,10 +74,10 @@
         "inheritAuth": true
       },
       {
-        "id": "1783190705616",
-        "name": "LOGIN",
-        "method": "POST",
-        "url": "http://localhost:4444/dyn_api/login/index",
+        "id": "1782657989687g6uk",
+        "name": "C7.SSE",
+        "method": "GET",
+        "url": "http://localhost/sse",
         "params": [],
         "headers": [
           {
@@ -91,8 +92,7 @@
           }
         ],
         "body": {
-          "type": "json",
-          "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
+          "type": "none"
         },
         "auth": {
           "type": "none"
