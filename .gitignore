@@ -10,6 +10,7 @@ static/uploads/
 *.xls*
 *.db
 *.sqlite
+database/*.db
 ADMIN.db
 dist
 build
@@ -49,3 +50,4 @@ saas_model.md
 !docs/public/install.sh
 c7.service
 saas/
+database/ADMIN.db
