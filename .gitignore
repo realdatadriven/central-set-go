@@ -10,11 +10,11 @@ static/uploads/
 *.xls*
 *.db
 *.sqlite
-!ADMIN.db
+ADMIN.db
 dist
 build
 *.duckdb
-!ADMIN.duckdb
+ADMIN.duckdb
 *.wal
 *.ipynb
 !db.ipynb
