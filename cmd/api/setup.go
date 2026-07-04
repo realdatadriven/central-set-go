@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/realdatadriven/central-set-go/assets"
 	"github.com/realdatadriven/etlx"
@@ -11,11 +10,17 @@ import (
 
 func (app *application) setupWithModel(model string) error {
 	var content []byte
+	// if model is adm, admin, ADMIN, adm, root then rename it to admin_model.md
+	if model == "adm" || model == "admin" || model == "ADMIN" || model == "Adm" || model == "root" {
+		model = "admin_model.md"
+	} else if model == "etlx" || model == "ETLX" || model == "etlX" || model == "Etlx" {
+		model = "etlx_model.md"
+	}
 	content, err := os.ReadFile(fmt.Sprintf(`%s`, model))
 	if err != nil {
 		content, err = os.ReadFile(fmt.Sprintf(`database/%s`, model))
 		if err != nil {
-			content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`setup/%s`, model))
+			content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`models/%s`, model))
 			if err != nil {
 				return err
 			}
@@ -36,11 +41,11 @@ func (app *application) setupWithModel(model string) error {
 	return nil
 }
 
-// Read SQL file and execute each query delimited by semicolon
+/*/ Read SQL file and execute each query delimited by semicolon
 func (app *application) setupDB(filename string, dbname string, embedded bool) error {
 	var content []byte
 	var err error
-	fmt.Printf(`database/%s`, filename)
+	// fmt.Printf(`database/%s`, filename)
 	content, err = os.ReadFile(fmt.Sprintf(`database/%s`, filename))
 	if embedded && err != nil {
 		content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`setup/%s`, filename))
@@ -55,10 +60,6 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		return fmt.Errorf("geting the connection to %s: %w", dbname, err)
 	}
 	defer newDB.Close()
-	/*_, err = newDB.ExecuteQuery(string(content))
-	if err != nil {
-		return fmt.Errorf("execution failed: %w", err)
-	}*/
 	for _, query := range queries {
 		trimmedQuery := strings.TrimSpace(query)
 		if trimmedQuery == "" {
@@ -71,24 +72,6 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 	}
 	csapp := fmt.Sprintf(`database/%s.%s.csapp`, dbname, app.config.db.driverName)
-	/*/ PARQUET STYLE
-	if app.fileExists(csapp) {
-		ddb, _ := etlx.GetDB("duckdb:")
-		defer ddb.Close()
-		sql := fmt.Sprintf(`select * from read_parquet('%s')`, csapp)
-		// fmt.Println(sql)
-		res, _, err := ddb.QueryMultiRows(sql)
-		if err != nil {
-			return fmt.Errorf("failed to load data file %s: %w", csapp, err)
-		}
-		for _, d := range *res {
-			// fmt.Println(d["query"].(string))
-			_, err := ddb.ExecuteQuery(d["query"].(string))
-			if err != nil {
-				return fmt.Errorf("failed execute data loading query %s: %w", d["query"], err)
-			}
-		}
-	}*/
 	// DUCKDB STYLE
 	//fmt.Println("Data File:", app.fileExists(csapp), csapp)
 	if app.fileExists(csapp) {
@@ -145,7 +128,7 @@ func (app *application) setupDB(filename string, dbname string, embedded bool) e
 		}
 	}
 	return nil
-}
+}*/
 
 // Execute a single SQL query
 func (app *application) executeSQLQuery(query string, db etlx.DBInterface) error {

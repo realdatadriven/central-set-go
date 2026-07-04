@@ -173,13 +173,41 @@ func run(logger *slog.Logger) error {
 	showVersion := flag.Bool("version", false, "display version and exit")
 	initdb := flag.Bool("init", false, "initialize db")
 	updatedb := flag.Bool("update", false, "update the db")
-	dbname := flag.String("dbname", "ADMIN", "main db name")
 	model := flag.String("model", "admin_model.md", "initialize the db with the provided model (only used if init flag is set)")
-	embedded := flag.Bool("embedded", true, "use the embedded db")
+	web := flag.Int("web", 4444, "port to run the web server")
+	flight := flag.Int("flight", 50010, "port to run the arrow flight server")
+	sse := flag.Int("sse", 5555, "port to run the SSE server")
 	flag.Parse()
 	if *showVersion {
 		fmt.Printf("version: %s\n", version.Get())
 		return nil
+	}
+	if *web != 4444 {
+		cfg.httpPort = *web
+		cfg.frontend_url = fmt.Sprintf("http://localhost:%d", *web)
+		os.Setenv("FRONTEND_URL", cfg.frontend_url)
+		cfg.baseURL = fmt.Sprintf("http://localhost:%d", *web)
+		os.Setenv("BASE_URL", cfg.baseURL)
+	}
+	if *flight != 50010 {
+		os.Setenv("ARROW_FLIGHT_ADDR", fmt.Sprintf("0.0.0.0:%d", *flight))
+	}
+	if *sse != 5555 {
+		os.Setenv("SSE_SERVER_PORT", fmt.Sprintf("%d", *sse))
+	}
+	// create cfg.upload_path if it doesn't exist
+	if _, err := os.Stat(cfg.upload_path); os.IsNotExist(err) {
+		err := os.MkdirAll(cfg.upload_path, 0755)
+		if err != nil {
+			return fmt.Errorf("failed to create upload path: %w", err)
+		} else {
+			if _, err := os.Stat(cfg.upload_path + "/tmp"); os.IsNotExist(err) {
+				err := os.MkdirAll(cfg.upload_path+"/tmp", 0755)
+				if err != nil {
+					return fmt.Errorf("failed to create upload path: %w", err)
+				}
+			}
+		}
 	}
 	//db, err := database.New(cfg.db.driverName, cfg.db.dsn, cfg.db.automigrate)
 	db, err := etlx.New(cfg.db.driverName, cfg.db.dsn)
@@ -270,18 +298,18 @@ func run(logger *slog.Logger) error {
 	}
 	// err = db.Ping()
 	if *initdb /*&& err != nil*/ {
-		if *model == "" {
+		/*if *model == "" {
 			fname := fmt.Sprintf(`%s.%s.sql`, *dbname, db.GetDriverName())
 			err := app.setupDB(fname, *dbname, *embedded)
 			if err != nil {
 				fmt.Printf("error setingup the DB: %v\n", err)
 			}
-		} else {
-			err := app.setupWithModel(*model)
-			if err != nil {
-				fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
-			}
+		} else {*/
+		err := app.setupWithModel(*model)
+		if err != nil {
+			fmt.Printf("error setingup the DB with model %s: %v\n", *model, err)
 		}
+		//}
 		return nil
 	} else if *updatedb && *model != "" {
 		err := app.setupWithModel(*model)

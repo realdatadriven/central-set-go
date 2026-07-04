@@ -652,7 +652,6 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	// fmt.Println(table, user_id, pk, args, total, query)
 	//data := map[string]any{}
 	msg, _ := app.i18n.T("success", map[string]any{})
-
 	res := map[string]any{
 		"success": true,
 		"msg":     msg,
