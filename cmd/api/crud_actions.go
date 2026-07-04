@@ -413,14 +413,13 @@ func (app *application) GetActionData(params Dict, valid_data_res []Dict, _data 
 			} else {
 				odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
 			}
-			fmt.Println(action_data["odata_path"], odata_path)
+			// fmt.Println(action_data["odata_path"], odata_path)
 			sigle_row_obj := app.toBool(action_data["sigle_row_obj"])
-			db, table, query, err := parsePath(odata_path)
-			fmt.Println(db, table, query)
+			// fmt.Println(db, table, query)
 			if err != nil {
 				return nil, err
 			}
-			results, err := app.OData2C7Read(params, db, table, query)
+			results, err := app.OData2C7Read(params, odata_path)
 			if err != nil {
 				return nil, err
 			}
@@ -458,12 +457,10 @@ func (app *application) GetValidationData(params Dict, valid_data_res []Dict, _d
 		}
 		// fmt.Println(validation_data["odata_path"], odata_path)
 		sigle_row_obj := app.toBool(validation_data["sigle_row_obj"])
-		db, table, query, err := parsePath(odata_path)
-		fmt.Println(db, table, query)
 		if err != nil {
 			return nil, err
 		}
-		results, err := app.OData2C7Read(params, db, table, query)
+		results, err := app.OData2C7Read(params, odata_path)
 		if err != nil {
 			return nil, err
 		}

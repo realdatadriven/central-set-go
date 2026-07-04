@@ -50,14 +50,12 @@ func (app *application) GetAPIData(params Dict, api_data_res []Dict, _data Dict)
 			} else {
 				odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
 			}
-			fmt.Println(api_data["odata_path"], odata_path)
+			// fmt.Println(api_data["odata_path"], odata_path)
 			sigle_row_obj := app.toBool(api_data["sigle_row_obj"])
-			db, table, query, err := parsePath(odata_path)
-			fmt.Println(db, table, query)
 			if err != nil {
 				return nil, err
 			}
-			results, err := app.OData2C7Read(params, db, table, query)
+			results, err := app.OData2C7Read(params, odata_path)
 			if err != nil {
 				return nil, err
 			}
@@ -158,7 +156,7 @@ func (app *application) runAPI(params Dict) Dict {
 			}
 		}
 	}
-	fmt.Println(1, api_id, api_name, endpoint)
+	// fmt.Println(1, api_id, api_name, endpoint)
 	_sql := "select * from api_header where api_id = ? and excluded = false and active = true"
 	api_headers, err := app.AdminGetRowsByFilter(_sql, []any{api_id})
 	if err != nil {

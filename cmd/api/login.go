@@ -438,6 +438,11 @@ func (app *application) _login(params Dict) Dict {
 	_data := Dict{}
 	if _, ok := params["data"]; ok {
 		_data = params["data"].(Dict)
+	} else {
+		return Dict{
+			"success": false,
+			"msg":     "No \"data\" parameter provided in your message body!",
+		}
 	}
 	if app.IsEmpty(_data) {
 		msg, _ := app.i18n.T("no-data", Dict{})
@@ -516,10 +521,18 @@ func (app *application) _login(params Dict) Dict {
 		}
 	} else {
 		user, found, err = app.db.GetUserByNameOrEmail(username)
-		if err != nil || len(user) == 0 {
+		if err != nil {
 			return Dict{
 				"success": false,
 				"msg":     err.Error(),
+			}
+		}
+
+		if len(user) == 0 {
+			msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
+			return Dict{
+				"success": false,
+				"msg":     msg,
 			}
 		}
 		// check if active is true

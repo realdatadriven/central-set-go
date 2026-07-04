@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/realdatadriven/central-set-go/internal/response"
 )
 
 func ParseODataQuery(q url.Values /*r *http.Request*/) (Dict, error) {
@@ -492,28 +494,52 @@ func isXMLMetadataRequest(r *http.Request) bool {
 	return strings.Contains(accept, "application/xml") ||
 		strings.Contains(accept, "application/atom+xml")
 }
-func (app *application) OData2C7Read(params Dict, db, table string, odata_path url.Values) ([]Dict, error) {
+func (app *application) ODataRead(params Dict, odata_path string) Dict {
+	db, table, query, err := parsePath(odata_path)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     "Failed to parse OData path!",
+		}
+	}
 	sql := `select * from app where (app = ? or db = ?) and excluded = false`
 	_app, err := app.AdminGetRowByFilter(sql, []any{db, table})
 	if err != nil {
-		return nil, err
+		return Dict{
+			"success": false,
+			"msg":     "Failed to fetch APP!",
+		}
 	}
-	odata_params, err := ParseODataQuery(odata_path)
+	if len(_app) == 0 {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("APP associated with db %s not found!", db),
+		}
+	}
+	odata_params, err := ParseODataQuery(query)
 	if err != nil {
-		return nil, err
+		return Dict{
+			"success": false,
+			"msg":     "Failed to parse OData query!",
+		}
 	}
 	csParams, err := ODataToCentralParams(odata_params)
 	if err != nil {
-		return nil, err
+		return Dict{
+			"success": false,
+			"msg":     "Failed to convert OData parameters!",
+		}
 	}
-	var data Dict
 	params["app"] = _app
 	params["data"].(Dict)["db"] = db
 	params["data"].(Dict)["table"] = table
 	for key, val := range csParams {
 		params["data"].(Dict)[key] = val
 	}
-	data = app.read(params)
+	return app.read(params)
+}
+func (app *application) OData2C7Read(params Dict, odata_path string) ([]Dict, error) {
+	data := app.ODataRead(params, odata_path)
 	if !data["success"].(bool) {
 		return nil, fmt.Errorf("%s", data["msg"])
 	}
@@ -521,6 +547,30 @@ func (app *application) OData2C7Read(params Dict, db, table string, odata_path u
 		return nil, fmt.Errorf("%s", data["msg"])
 	}
 	return data["data"].([]Dict), nil
+}
+func (app *application) read_odata(w http.ResponseWriter, r *http.Request) {
+	db := r.PathValue("db")
+	table := r.PathValue("table")
+	q := r.URL.Query()
+	token := app.verifyToken(r)
+	params := Dict{
+		"lang": "en",
+		"data": Dict{},
+	}
+	if token["success"].(bool) {
+		params["user"] = *(contextGetAuthenticatedUser(r))
+	} else {
+		err := response.JSON(w, http.StatusOK, token)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+	data := app.ODataRead(params, fmt.Sprintf(`%s/%s/?%s`, db, table, q.Encode()))
+	err := response.JSON(w, http.StatusOK, data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	db := r.PathValue("db")

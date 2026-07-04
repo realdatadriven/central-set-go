@@ -29,6 +29,75 @@
           "type": "none"
         },
         "inheritAuth": true
+      },
+      {
+        "id": "1783190596706",
+        "name": "ODATA_READ",
+        "method": "GET",
+        "url": "http://localhost:4444/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
+        "params": [
+          {
+            "key": "$filter",
+            "value": "app_id eq 3",
+            "enabled": true
+          },
+          {
+            "key": "$schema",
+            "value": "true",
+            "enabled": true
+          }
+        ],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
+      },
+      {
+        "id": "1783190705616",
+        "name": "LOGIN",
+        "method": "POST",
+        "url": "http://localhost:4444/dyn_api/login/index",
+        "params": [],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "json",
+          "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
       }
     ],
     "variables": []

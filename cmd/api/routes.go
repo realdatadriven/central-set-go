@@ -72,13 +72,13 @@ func (app *application) routes() http.Handler {
 	fallbackServer := NewFallbackFileServer()
 	mux.Handle("/static/", http.StripPrefix("/static/", fallbackServer))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fallbackServer))
-	
+
 	if app.config.useS3 {
 		mux.HandleFunc("/uploads/", app.S3Handler)
 	} else {
 		mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("static/uploads"))))
 	}
-	
+
 	// Handler the root (index.html) - try filesystem first, then embedded
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
@@ -118,6 +118,10 @@ func (app *application) routes() http.Handler {
 	// ODATA HANDDLER
 	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}", app.odata_api)
+	mux.HandleFunc("GET /read_odata/{db}/{table}", app.read_odata)
+	mux.HandleFunc("GET /read/{db}/{table}", app.read_odata)
+	mux.HandleFunc("GET /rodata/{db}/{table}", app.read_odata)
+	mux.HandleFunc("GET /odataodata/{db}/{table}", app.read_odata)
 
 	// JOBS RUN ENDPOINTS
 	mux.HandleFunc("GET /etlx/run/{name}", app.run_etlx_run_by_name)

@@ -345,7 +345,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						fmt.Printf("Error getting Validation Data: %s", err)
 					} else {
 						for key, val := range validation_data {
-							fmt.Println("VALIDATION DATA:", key, val)
+							//fmt.Println("VALIDATION DATA:", key, val)
 							_data[key] = val
 						}
 					}

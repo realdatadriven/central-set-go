@@ -104,5 +104,1002 @@
       "size": 19,
       "cookies": []
     }
+  },
+  {
+    "id": "1783190677084",
+    "timestamp": 1783190677084,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "76",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:44:37 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"No token received!\",\n\t\"success\": false\n}\n",
+      "time": 49,
+      "size": 52,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783190774924",
+    "timestamp": 1783190774924,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"username\": \"root\", \"password\": 1234}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "43",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 04 Jul 2026 18:46:14 GMT",
+        "vary": "Authorization",
+        "x-content-type-options": "nosniff"
+      },
+      "body": "404 page not found\n",
+      "time": 53,
+      "size": 19,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783190790488",
+    "timestamp": 1783190790488,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"username\": \"root\", \"password\": 1234}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "119",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:46:30 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Server Err: The server encountered a problem and could not process your request\",\n\t\"success\": false\n}\n",
+      "time": 53,
+      "size": 113,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191161380",
+    "timestamp": 1783191161380,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"username\": \"root\", \"password\": 1234}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:52:41 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 39,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191195677",
+    "timestamp": 1783191195677,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:53:15 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 265,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191209124",
+    "timestamp": 1783191209124,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:53:29 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 294,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191216903",
+    "timestamp": 1783191216903,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:53:36 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 266,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191218303",
+    "timestamp": 1783191218303,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "97",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:53:38 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Account is inactive, please contact the admin!\",\n\t\"success\": false\n}\n",
+      "time": 47,
+      "size": 80,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191232726",
+    "timestamp": 1783191232726,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"Aa123456!\"}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "97",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:53:52 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Account is inactive, please contact the admin!\",\n\t\"success\": false\n}\n",
+      "time": 30,
+      "size": 80,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191319423",
+    "timestamp": 1783191319423,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"Aa123456!\"}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 18:55:19 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 263,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191744195",
+    "timestamp": 1783191744195,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"Aa123456!\"}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:02:24 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 262,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191756781",
+    "timestamp": 1783191756781,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "782",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:02:36 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 2,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": \"2026-07-04T18:02:24.183005955-01:00\",\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:02:36-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE\"\n}\n",
+      "time": 271,
+      "size": 1213,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191780643",
+    "timestamp": 1783191780643,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"username\": \"root\", \"password\": \"1234\"}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "85",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:03:00 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
+      "time": 75,
+      "size": 61,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191827662",
+    "timestamp": 1783191827662,
+    "request": {
+      "id": "1783190705616",
+      "name": "LOGIN",
+      "method": "POST",
+      "url": "http://localhost:4444/dyn_api/login/index",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "723",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:03:47 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 0,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": null,\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:03:47-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc4ODM3NTgyNy42NDk1Nzk1LCJuYmYiOjE3ODMxOTE4MjcuNjQ5NTgxLCJpYXQiOjE3ODMxOTE4MjcuNjQ5NTc5OH0.sORsmcmUR8Ieggq5Jdhi8zAFMRQoC10ZXbgk6Tz6AI0\"\n}\n",
+      "time": 292,
+      "size": 1132,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191845866",
+    "timestamp": 1783191845866,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "75",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:04:05 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Token is invalid!\",\n\t\"success\": false\n}\n",
+      "time": 37,
+      "size": 51,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783191904173",
+    "timestamp": 1783191904173,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "119",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:05:04 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Server Err: The server encountered a problem and could not process your request\",\n\t\"success\": false\n}\n",
+      "time": 28,
+      "size": 113,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783192023662",
+    "timestamp": 1783192023662,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "474",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:07:03 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"app_id\",\n\t\t\"app\",\n\t\t\"app_desc\",\n\t\t\"version\",\n\t\t\"email\",\n\t\t\"db\",\n\t\t\"attach_logo\",\n\t\t\"category\",\n\t\t\"config\",\n\t\t\"user_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"SAAS\\\"\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\",\n\t\t\t\"version\": \"SAAS Model\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {},\n\t\"sql\": \"SELECT  \\\"app\\\".*,\\\"users\\\".\\\"username\\\" AS \\\"username\\\" FROM \\\"app\\\" LEFT OUTER JOIN \\\"users\\\" \\\"users\\\" ON \\\"users\\\".\\\"user_id\\\" = \\\"app\\\".\\\"user_id\\\" WHERE (\\\"app\\\".\\\"excluded\\\" IS FALSE AND \\\"app\\\".\\\"app_id\\\" = ?) LIMIT 10 OFFSET 0\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+      "time": 64,
+      "size": 936,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783192065177",
+    "timestamp": 1783192065177,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3&$schema=true",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "true",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:07:45 GMT",
+        "transfer-encoding": "chunked",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"app_id\",\n\t\t\"app\",\n\t\t\"app_desc\",\n\t\t\"version\",\n\t\t\"email\",\n\t\t\"db\",\n\t\t\"attach_logo\",\n\t\t\"category\",\n\t\t\"config\",\n\t\t\"user_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"SAAS\\\"\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\",\n\t\t\t\"version\": \"SAAS Model\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {},\n\t\"schema\": {\n\t\t\"_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"requires_rla\": false,\n\t\t\t\"table\": \"app\",\n\t\t\t\"table_desc\": \"Applications\",\n\t\t\t\"table_id\": 5,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"comment\": \"Applications\",\n\t\t\"crud_actions\": null,\n\t\t\"custom_form\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"app\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"App Name\\\",\\\"name\\\":\\\"app\\\",\\\"order\\\":1,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":9,\\\"sizelg\\\":9,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"version\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Version\\\",\\\"name\\\":\\\"version\\\",\\\"order\\\":2,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"app_desc\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"markdown\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"app_desc\\\",\\\"order\\\":3,\\\"pk\\\":false,\\\"rendermd\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"email\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Email\\\",\\\"name\\\":\\\"email\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"regex_val\\\":\\\"^\\\\\\\\w+([\\\\\\\\.-]?\\\\\\\\w+)*@\\\\\\\\w+([\\\\\\\\.-]?\\\\\\\\w+)*(\\\\\\\\.\\\\\\\\w{2,3})+$\\\",\\\"required\\\":false,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"db\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Database\\\",\\\"name\\\":\\\"db\\\",\\\"order\\\":5,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"attach_logo\\\":{\\\"att\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Logo\\\",\\\"name\\\":\\\"attach_logo\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"category\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Category\\\",\\\"name\\\":\\\"category\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"config\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"json\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Config\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"config\\\",\\\"order\\\":8,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"username\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"name_org\\\":\\\"user_id\\\",\\\"order\\\":9,\\\"pk\\\":false,\\\"ref_field\\\":\\\"user_id\\\",\\\"ref_table\\\":\\\"users\\\",\\\"referred_pk\\\":\\\"user_id\\\",\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"created_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":10,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"updated_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":11,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"excluded\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":12,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12}},\\\"layout\\\":{\\\"__order\\\":[\\\"tabs_steps\\\",\\\"form_in_popup\\\",\\\"size\\\",\\\"allow_in_subform\\\",\\\"tabs_steps_conf\\\",\\\"sub_form_size\\\"],\\\"allow_in_subform\\\":{\\\"__order\\\":[\\\"menu\\\",\\\"role_app\\\"],\\\"menu\\\":true,\\\"role_app\\\":true},\\\"form_in_popup\\\":false,\\\"size\\\":9,\\\"sub_form_size\\\":9,\\\"tabs_steps\\\":\\\"tabs\\\",\\\"tabs_steps_conf\\\":[{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"app\\\",\\\"app_desc\\\",\\\"version\\\",\\\"email\\\",\\\"db\\\",\\\"attach_logo\\\",\\\"category\\\"],\\\"label\\\":\\\"App\\\"},{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"config\\\"],\\\"label\\\":\\\"Config\\\"}]},\\\"extra_options\\\":[]}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_form_id\": 5,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"app\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"custom_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"app\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"App Name\\\",\\\"name\\\":\\\"app\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"version\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Version\\\",\\\"name\\\":\\\"version\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"app_desc\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"name\\\":\\\"app_desc\\\",\\\"order\\\":3,\\\"pk\\\":false},\\\"email\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Email\\\",\\\"name\\\":\\\"email\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"db\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Database\\\",\\\"name\\\":\\\"db\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"attach_logo\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Logo\\\",\\\"name\\\":\\\"attach_logo\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"category\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Category\\\",\\\"name\\\":\\\"category\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"config\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Config\\\",\\\"name\\\":\\\"config\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"username\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":11,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":12,\\\"pk\\\":false}},\\\"layout\\\":{\\\"__order\\\":[\\\"allow_in_submenu\\\",\\\"default_order\\\",\\\"allow_import\\\"],\\\"allow_import\\\":false,\\\"allow_in_submenu\\\":{\\\"__order\\\":[\\\"menu\\\"],\\\"menu\\\":true},\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"app_id\\\",\\\"order\\\":\\\"DESC\\\"}]},\\\"extra_options\\\":[{\\\"__order\\\":[\\\"size\\\",\\\"component\\\",\\\"label\\\",\\\"data\\\",\\\"icon\\\",\\\"pop_up\\\",\\\"main\\\"],\\\"component\\\":\\\"AdminApps\\\",\\\"data\\\":\\\"{ \\\\\\\"profile\\\\\\\": false, \\\\\\\"actions\\\\\\\": [ { \\\\\\\"type\\\\\\\": \\\\\\\"btn\\\\\\\", \\\\\\\"icon\\\\\\\": \\\\\\\"refresh\\\\\\\", \\\\\\\"name\\\\\\\": \\\\\\\"REFRESH\\\\\\\", \\\\\\\"class\\\\\\\": \\\\\\\"btn-sm text-info\\\\\\\", \\\\\\\"label\\\\\\\": \\\\\\\"crud.refresh\\\\\\\", \\\\\\\"action\\\\\\\": null }, { \\\\\\\"type\\\\\\\": \\\\\\\"btn\\\\\\\", \\\\\\\"icon\\\\\\\": \\\\\\\"save\\\\\\\", \\\\\\\"name\\\\\\\": \\\\\\\"SAVE\\\\\\\", \\\\\\\"class\\\\\\\": \\\\\\\"btn-sm text-info\\\\\\\", \\\\\\\"label\\\\\\\": \\\\\\\"crud.save\\\\\\\", \\\\\\\"action\\\\\\\": null } ] }\\\",\\\"icon\\\":\\\"cog\\\",\\\"label\\\":\\\"admin_apps\\\",\\\"main\\\":true,\\\"pop_up\\\":false,\\\"size\\\":12}]}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_table_id\": 5,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"app\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"database\": \"ADMIN\",\n\t\t\"fields\": {\n\t\t\t\"app\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"App Name\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app\",\n\t\t\t\t\"field_order\": 2,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 43,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_desc\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Description\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_desc\",\n\t\t\t\t\"field_order\": 3,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app_desc\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 44,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"autoincrement\": true,\n\t\t\t\t\"comment\": \"App ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_order\": 1,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": true,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 42,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"attach_logo\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Logo\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"attach_logo\",\n\t\t\t\t\"field_order\": 7,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"attach_logo\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 48,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"category\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Category\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"category\",\n\t\t\t\t\"field_order\": 8,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"category\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 49,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"config\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Config\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"config\",\n\t\t\t\t\"field_order\": 9,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"config\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 50,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Created at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_order\": 11,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"created_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 52,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"db\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Database\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"db\",\n\t\t\t\t\"field_order\": 6,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"db\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 47,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"email\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Email\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"email\",\n\t\t\t\t\"field_order\": 5,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"email\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 46,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Excluded\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_order\": 13,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"excluded\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 54,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Updated at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_order\": 12,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"updated_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 53,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"User ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_order\": 10,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"user_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"users\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"users\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"user_id\",\n\t\t\t\t\"referred_table\": \"users\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 51,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"version\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Version\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"version\",\n\t\t\t\t\"field_order\": 4,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"version\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 45,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"fields_order\": [\n\t\t\t\"app_id\",\n\t\t\t\"app\",\n\t\t\t\"app_desc\",\n\t\t\t\"version\",\n\t\t\t\"email\",\n\t\t\t\"db\",\n\t\t\t\"attach_logo\",\n\t\t\t\"category\",\n\t\t\t\"config\",\n\t\t\t\"user_id\",\n\t\t\t\"created_at\",\n\t\t\t\"updated_at\",\n\t\t\t\"excluded\"\n\t\t],\n\t\t\"pk\": \"app_id\",\n\t\t\"table\": \"app\",\n\t\t\"table_id\": 5,\n\t\t\"translate_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"lang\": \"en\",\n\t\t\t\"table\": \"app\",\n\t\t\t\"table_org_desc\": \"Applications\",\n\t\t\t\"table_tooltip\": null,\n\t\t\t\"table_transl_desc\": \"Applications\",\n\t\t\t\"transl_tbl_id\": 5,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"translate_table_field\": {\n\t\t\t\"app\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app\",\n\t\t\t\t\"field_org_desc\": \"App Name\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App Name\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 43,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_desc\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_desc\",\n\t\t\t\t\"field_org_desc\": \"Description\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Description\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 44,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_org_desc\": \"App ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 42,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"attach_logo\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"attach_logo\",\n\t\t\t\t\"field_org_desc\": \"Logo\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Logo\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 48,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"category\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"category\",\n\t\t\t\t\"field_org_desc\": \"Category\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Category\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 49,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"config\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"config\",\n\t\t\t\t\"field_org_desc\": \"Config\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Config\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 50,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_org_desc\": \"Created at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Created at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 52,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"db\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"db\",\n\t\t\t\t\"field_org_desc\": \"Database\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Database\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 47,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"email\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"email\",\n\t\t\t\t\"field_org_desc\": \"Email\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Email\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 46,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_org_desc\": \"Excluded\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Excluded\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 54,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_org_desc\": \"Updated at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Updated at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 53,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_org_desc\": \"User ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"User ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 51,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"version\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"version\",\n\t\t\t\t\"field_org_desc\": \"Version\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Version\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 45,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"validations\": null\n\t},\n\t\"sql\": \"SELECT  \\\"app\\\".*,\\\"users\\\".\\\"username\\\" AS \\\"username\\\" FROM \\\"app\\\" LEFT OUTER JOIN \\\"users\\\" \\\"users\\\" ON \\\"users\\\".\\\"user_id\\\" = \\\"app\\\".\\\"user_id\\\" WHERE (\\\"app\\\".\\\"excluded\\\" IS FALSE AND \\\"app\\\".\\\"app_id\\\" = ?) LIMIT 10 OFFSET 0\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+      "time": 58,
+      "size": 20721,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1783192110709",
+    "timestamp": 1783192110709,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "http://localhost:4444/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "true",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sat, 04 Jul 2026 19:08:30 GMT",
+        "transfer-encoding": "chunked",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"menu_id\",\n\t\t\"menu\",\n\t\t\"menu_desc\",\n\t\t\"menu_icon\",\n\t\t\"menu_order\",\n\t\t\"menu_config\",\n\t\t\"app_id\",\n\t\t\"active\",\n\t\t\"user_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"excluded\": false,\n\t\t\t\"menu\": \"Dashboards\",\n\t\t\t\"menu_config\": \"{\\\"label\\\": \\\"dashboard\\\",\\\"tooltip\\\": \\\"dashboard_desc\\\",\\\"load_items\\\": {\\\"table\\\": \\\"dashboard\\\",\\\"tables\\\": [\\\"dashboard\\\"]}}\",\n\t\t\t\"menu_desc\": \"Dashboards\",\n\t\t\t\"menu_icon\": \"document-report\",\n\t\t\t\"menu_id\": 10,\n\t\t\t\"menu_order\": 1,\n\t\t\t\"updated_at\": \"2026-07-03T19:41:20.367422331-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\"\n\t\t},\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"excluded\": false,\n\t\t\t\"menu\": \"SASS\",\n\t\t\t\"menu_config\": \"\",\n\t\t\t\"menu_desc\": \"SASS\",\n\t\t\t\"menu_icon\": \"server-stack\",\n\t\t\t\"menu_id\": 11,\n\t\t\t\"menu_order\": 2,\n\t\t\t\"updated_at\": \"2026-07-03T19:41:20.367422331-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {},\n\t\"schema\": {\n\t\t\"_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"requires_rla\": false,\n\t\t\t\"table\": \"menu\",\n\t\t\t\"table_desc\": \"Menus\",\n\t\t\t\"table_id\": 6,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"comment\": \"Menus\",\n\t\t\"crud_actions\": null,\n\t\t\"custom_form\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"menu\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu\\\",\\\"name\\\":\\\"menu\\\",\\\"order\\\":1,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_desc\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"name\\\":\\\"menu_desc\\\",\\\"order\\\":2,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":7,\\\"sizelg\\\":7,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"app\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app\\\",\\\"name_org\\\":\\\"app_id\\\",\\\"order\\\":3,\\\"pk\\\":false,\\\"ref_field\\\":\\\"app_id\\\",\\\"ref_table\\\":\\\"app\\\",\\\"referred_pk\\\":\\\"app_id\\\",\\\"required\\\":true,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_icon\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Icon\\\",\\\"name\\\":\\\"menu_icon\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_order\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Order\\\",\\\"name\\\":\\\"menu_order\\\",\\\"order\\\":5,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"active\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_config\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"json\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu Config\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"menu_config\\\",\\\"order\\\":7,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12,\\\"use_label\\\":true},\\\"username\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"name_org\\\":\\\"user_id\\\",\\\"order\\\":8,\\\"pk\\\":false,\\\"ref_field\\\":\\\"user_id\\\",\\\"ref_table\\\":\\\"users\\\",\\\"referred_pk\\\":\\\"user_id\\\",\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"created_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":9,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"updated_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":10,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"excluded\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":11,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12}},\\\"layout\\\":{\\\"__order\\\":[\\\"tabs_steps\\\",\\\"form_in_popup\\\",\\\"size\\\",\\\"allow_in_subform\\\",\\\"tabs_steps_conf\\\"],\\\"allow_in_subform\\\":{\\\"__order\\\":[\\\"menu_table\\\"],\\\"menu_table\\\":true},\\\"form_in_popup\\\":false,\\\"size\\\":8,\\\"tabs_steps\\\":\\\"tabs\\\",\\\"tabs_steps_conf\\\":[]}}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_form_id\": 6,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"menu\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"custom_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"menu\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu\\\",\\\"name\\\":\\\"menu\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"menu_desc\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"name\\\":\\\"menu_desc\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"app\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app\\\",\\\"order\\\":3,\\\"pk\\\":false},\\\"menu_icon\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Icon\\\",\\\"name\\\":\\\"menu_icon\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"menu_order\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Order\\\",\\\"name\\\":\\\"menu_order\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"active\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"menu_config\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu Config\\\",\\\"name\\\":\\\"menu_config\\\",\\\"order\\\":7,\\\"pk\\\":false},\\\"username\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":11,\\\"pk\\\":false}},\\\"layout\\\":{\\\"__order\\\":[\\\"allow_in_submenu\\\",\\\"default_order\\\",\\\"allow_import\\\"],\\\"allow_import\\\":false,\\\"allow_in_submenu\\\":{\\\"__order\\\":[\\\"menu_table\\\"],\\\"menu_table\\\":true},\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"app_id\\\",\\\"order\\\":\\\"ASC\\\"},{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"menu_order\\\",\\\"order\\\":\\\"ASC\\\"}]}}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_table_id\": 6,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"menu\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"database\": \"ADMIN\",\n\t\t\"fields\": {\n\t\t\t\"active\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Active\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": \"1\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_order\": 8,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"active\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 62,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"App ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_order\": 7,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"app_id\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"app\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"app\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"app_id\",\n\t\t\t\t\"referred_table\": \"app\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 61,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Created at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_order\": 10,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"created_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 64,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Excluded\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_order\": 12,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"excluded\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 66,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Menu\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu\",\n\t\t\t\t\"field_order\": 2,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 56,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_config\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Menu Config\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_config\",\n\t\t\t\t\"field_order\": 6,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_config\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 60,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_desc\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Description\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_desc\",\n\t\t\t\t\"field_order\": 3,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_desc\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 57,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_icon\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Icon\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_icon\",\n\t\t\t\t\"field_order\": 4,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_icon\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 58,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_id\": {\n\t\t\t\t\"autoincrement\": true,\n\t\t\t\t\"comment\": \"Menu ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_id\",\n\t\t\t\t\"field_order\": 1,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": true,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 55,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_order\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Order\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_order\",\n\t\t\t\t\"field_order\": 5,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_order\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 59,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Updated at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_order\": 11,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"updated_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 65,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"User ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_order\": 9,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"user_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"users\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"users\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"user_id\",\n\t\t\t\t\"referred_table\": \"users\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 63,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"fields_order\": [\n\t\t\t\"menu_id\",\n\t\t\t\"menu\",\n\t\t\t\"menu_desc\",\n\t\t\t\"menu_icon\",\n\t\t\t\"menu_order\",\n\t\t\t\"menu_config\",\n\t\t\t\"app_id\",\n\t\t\t\"active\",\n\t\t\t\"user_id\",\n\t\t\t\"created_at\",\n\t\t\t\"updated_at\",\n\t\t\t\"excluded\"\n\t\t],\n\t\t\"pk\": \"menu_id\",\n\t\t\"table\": \"menu\",\n\t\t\"table_id\": 6,\n\t\t\"translate_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"lang\": \"en\",\n\t\t\t\"table\": \"menu\",\n\t\t\t\"table_org_desc\": \"Menus\",\n\t\t\t\"table_tooltip\": null,\n\t\t\t\"table_transl_desc\": \"Menus\",\n\t\t\t\"transl_tbl_id\": 6,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"translate_table_field\": {\n\t\t\t\"active\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_org_desc\": \"Active\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Active\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 62,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_org_desc\": \"App ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 61,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_org_desc\": \"Created at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Created at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 64,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_org_desc\": \"Excluded\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Excluded\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 66,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu\",\n\t\t\t\t\"field_org_desc\": \"Menu\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Menu\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 56,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_config\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_config\",\n\t\t\t\t\"field_org_desc\": \"Menu Config\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Menu Config\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 60,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_desc\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_desc\",\n\t\t\t\t\"field_org_desc\": \"Description\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Description\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 57,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_icon\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_icon\",\n\t\t\t\t\"field_org_desc\": \"Icon\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Icon\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 58,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_id\",\n\t\t\t\t\"field_org_desc\": \"Menu ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Menu ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 55,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_order\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_order\",\n\t\t\t\t\"field_org_desc\": \"Order\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Order\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 59,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_org_desc\": \"Updated at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Updated at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 65,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_org_desc\": \"User ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"User ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 63,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"validations\": [\n\t\t\t{\n\t\t\t\t\"active\": true,\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"create\": true,\n\t\t\t\t\"created_at\": \"2026-06-21T13:47:54.305308247-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"delete\": false,\n\t\t\t\t\"err_msg\": \"Menu \\\"{{.menu}}\\\" already exists for app \\\"{{.appdata.app}}\\\" (app_id = {{.app_id}})!\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"read\": false,\n\t\t\t\t\"sql\": \"select * from menu where menu = :menu and app_id = :app_id and excluded = false\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"update\": false,\n\t\t\t\t\"updated_at\": \"2026-07-04T17:18:01.87228087-01:00\",\n\t\t\t\t\"user_id\": 1,\n\t\t\t\t\"valid_criticity_id\": 4,\n\t\t\t\t\"valid_reaction_id\": 2,\n\t\t\t\t\"validation\": \"Ensure menu uniqueness for a specific app\",\n\t\t\t\t\"validation_code\": \"APP_MENU_UNIQUENESS\",\n\t\t\t\t\"validation_id\": 2\n\t\t\t}\n\t\t]\n\t},\n\t\"sql\": \"SELECT  \\\"menu\\\".*,\\\"app\\\".\\\"app\\\" AS \\\"app\\\",\\\"users\\\".\\\"username\\\" AS \\\"username\\\" FROM \\\"menu\\\" LEFT OUTER JOIN \\\"app\\\" \\\"app\\\" ON \\\"app\\\".\\\"app_id\\\" = \\\"menu\\\".\\\"app_id\\\"\\nLEFT OUTER JOIN \\\"users\\\" \\\"users\\\" ON \\\"users\\\".\\\"user_id\\\" = \\\"menu\\\".\\\"user_id\\\" WHERE (\\\"menu\\\".\\\"excluded\\\" IS FALSE AND \\\"app\\\".\\\"app_id\\\" = ?) LIMIT 10 OFFSET 0\",\n\t\"success\": true,\n\t\"total\": 2\n}\n",
+      "time": 39,
+      "size": 20114,
+      "cookies": []
+    }
   }
 ]
