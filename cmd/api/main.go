@@ -209,6 +209,12 @@ func run(logger *slog.Logger) error {
 			}
 		}
 	}
+	if _, err := os.Stat(env.GetString("DB_EMBEDED_DIR", "database")); os.IsNotExist(err) {
+		err := os.MkdirAll(env.GetString("DB_EMBEDED_DIR", "database"), 0755)
+		if err != nil {
+			return fmt.Errorf("failed to create embedded db path: %w", err)
+		}
+	}
 	//db, err := database.New(cfg.db.driverName, cfg.db.dsn, cfg.db.automigrate)
 	db, err := etlx.New(cfg.db.driverName, cfg.db.dsn)
 	//db, err := etlx.GetDB(cfg.db.driverName)

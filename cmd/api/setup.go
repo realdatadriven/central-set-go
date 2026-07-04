@@ -18,13 +18,13 @@ func (app *application) setupWithModel(model string) error {
 	}
 	content, err := os.ReadFile(fmt.Sprintf(`%s`, model))
 	if err != nil {
-		content, err = os.ReadFile(fmt.Sprintf(`database/%s`, model))
+		//content, err = os.ReadFile(fmt.Sprintf(`database/%s`, model))
+		//if err != nil {
+		content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`models/%s`, model))
 		if err != nil {
-			content, err = assets.EmbeddedFiles.ReadFile(fmt.Sprintf(`models/%s`, model))
-			if err != nil {
-				return err
-			}
+			return err
 		}
+		//}
 	}
 	// Process the model content as needed
 	params := Dict{
