@@ -18,6 +18,15 @@ func (app *application) containsInt(slice []any, element any) bool {
 	}
 	return false
 }
+
+func (app *application) isSafeSQLIdentifier(value string) bool {
+	if value == "" {
+		return false
+	}
+	ok, err := regexp.MatchString(`^[A-Za-z_][A-Za-z0-9_]*$`, value)
+	return err == nil && ok
+}
+
 func (app *application) getRLAIds(rla_access []map[string]any, table, access_type string, my_ids []any) []any {
 	data := []any{}
 	for _, v := range rla_access {
@@ -120,8 +129,20 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	if _, ok := params["data"].(Dict)["schema"]; ok {
 		table_schema = params["data"].(Dict)["schema"].(string)
 	}
+	if !app.isSafeSQLIdentifier(table) {
+		return map[string]any{
+			"success": false,
+			"msg":     "Invalid table identifier",
+		}
+	}
 	schm := ""
 	if table_schema != "" {
+		if !app.isSafeSQLIdentifier(table_schema) {
+			return map[string]any{
+				"success": false,
+				"msg":     "Invalid schema identifier",
+			}
+		}
 		schm = fmt.Sprintf(`%s.`, table_schema)
 	}
 	// FIELDS
