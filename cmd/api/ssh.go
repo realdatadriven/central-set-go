@@ -17,7 +17,7 @@ type Runner struct {
 func NewSSH(host, user, keyFile string) (*Runner, error) {
 	key, err := os.ReadFile(keyFile)
 	if err != nil {
-		return nil, err
+		key = []byte(keyFile)
 	}
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {

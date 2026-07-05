@@ -82,6 +82,191 @@ func opentofuCachePath() (string, error) {
 	return cacheDir, nil
 }
 
+// USING SSH TO START STOP SERVICES ON THE REMOTE SERVER
+/* schemas
+## SUBS_SERVER
+```yaml
+table: subs_server
+comment: Subscription Server
+columns:
+  subs_server_id:   { type: integer, pk: true, autoincrement: true, comment: "Subscription Server ID" }
+  subs_server:      { type: varchar, len: 200, unique: false, nullable: false, comment: "Server", order: 2, form_display: true, table_display: true, form_size: 4 }
+  subs_server_user: { type: varchar, len: 200, nullable: false, comment: "User", order: 3, form_size: 3, form_display: true, table_display: true}
+  subs_server_key:  { type: text, nullable: false, comment: "Key", order: 5, form_display: true, table_display: true, form_long_text: true }
+  subscription_id:  { type: integer, fk: "subscription.subscription_id", nullable: false, comment: "Subscription ID", form_display: true, table_display: true, order: 1, form_size: 3 }
+  active:           { type: boolean, default: true, comment: "Active", order: 4, form_display: true, table_display: true, form_size: 2 }
+  user_id:          { type: integer, comment: "Created BY" }
+  created_at:       { type: datetime, comment: "Created at" }
+  updated_at:       { type: datetime, comment: "Updated at" }
+  excluded:         { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+
+## SUBS_SERVER_SERVICE
+```yaml
+table: subs_server_service
+comment: Subscription Server Services
+columns:
+  subs_server_service_id:   { type: integer, pk: true, autoincrement: true, comment: "Server Service ID" }
+  subs_server_service:      { type: varchar, len: 200, unique: false, nullable: false, comment: "Service", order: 3, form_display: true, table_display: true, form_size: 4 }
+  service_start_cmd:        { type: varchar, len: 200, comment: "Start Command", order: 5, form_display: true, table_display: true }
+  service_status_cmd:       { type: varchar, len: 200, comment: "Status Command", order: 5, form_display: true, table_display: true }
+  service_stop_cmd:         { type: varchar, len: 200, comment: "Stop Command", order: 5, form_display: true, table_display: true }
+  service_restart_cmd:      { type: varchar, len: 200, comment: "Restart Command", order: 5, form_display: true, table_display: true }
+  service_logs_cmd:         { type: varchar, len: 200, comment: "Logs Command", order: 5, form_display: true, table_display: true }
+  subs_server_id:           { type: integer, fk: "subs_server.subs_server_id", nullable: false, comment: "Server ID", form_display: true, table_display: true, order: 2, form_size: 3 }
+  subscription_id:          { type: integer, fk: "subscription.subscription_id", nullable: false, comment: "Subscription ID", form_display: true, table_display: true, order: 1, form_size: 3 }
+  active:                   { type: boolean, default: true, comment: "Active", order: 4, form_display: true, table_display: true, form_size: 2 }
+  user_id:                  { type: integer, comment: "Created BY" }
+  created_at:               { type: datetime, comment: "Created at" }
+  updated_at:               { type: datetime, comment: "Updated at" }
+  excluded:                 { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 6
+```
+*/
+func (app *application) HandleService(params Dict, action string) Dict {
+	_data := Dict{}
+	if _, ok := params["data"].(Dict); ok {
+		if _, ok := params["data"].(Dict)["data"]; !ok {
+			msg, _ := app.i18n.T("no-data", Dict{})
+			return Dict{"success": false, "msg": msg}
+		}
+		_data = params["data"].(Dict)["data"].(Dict)
+	} else {
+		msg, _ := app.i18n.T("no-data", Dict{})
+		return Dict{"success": false, "msg": msg}
+	}
+	sql := `select * from "subs_server" where "subscription_id" = ? and "active" = true and "excluded" = false`
+	subsServer, err := app.GetRowsByFilter(sql, params, []any{_data["subscription_id"]})
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	for _, server := range subsServer {
+		sshIntance, err := NewSSH(server["subs_server"].(string), server["subs_server_user"].(string), server["subs_server_key"].(string))
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     err.Error(),
+			}
+		}
+		sql = `select * from "subs_server_service" where subs_server_id = ? AND "subscription_id" = ? and "active" = true and "excluded" = false`
+		subsServerService, err := app.GetRowsByFilter(sql, params, []any{server["subs_server_id"], _data["subscription_id"]})
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     err.Error(),
+			}
+		}
+		for _, service := range subsServerService {
+			switch action {
+			case "start":
+				if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
+					err = sshIntance.Start(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					err = sshIntance.Run(context.Background(), service["service_start_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+			case "stop":
+				if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
+					err = sshIntance.Stop(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					err = sshIntance.Run(context.Background(), service["service_stop_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+			case "restart":
+				if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
+					err = sshIntance.Restart(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					err = sshIntance.Run(context.Background(), service["service_restart_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+			case "status":
+				if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
+					_, err = sshIntance.Status(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					_, err = sshIntance.RunOutput(context.Background(), service["service_status_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+			case "logs":
+				if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
+					_, err = sshIntance.Logs(context.Background(), service["subs_server_service"].(string), 100)
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					_, err = sshIntance.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+			}
+		}
+	}
+	return Dict{
+		"success": true,
+		"msg":     "Action completed successfully",
+	}
+}
+
 func (app *application) RunDeploy(params Dict) Dict {
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
@@ -218,7 +403,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 			_data["deployed"] = false
 			_data["status"] = "has_error"
 		}
-	case "start", "boot", "starup", "restart":
+	/*case "start", "boot", "starup", "restart":
 		res, err = app.DeployOpenTofuForTenant(params, tenantID, run, "restart")
 		if err == nil {
 			_data["deployed"] = true
@@ -229,7 +414,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 		if err == nil {
 			_data["deployed"] = true
 			_data["status"] = "stoped"
-		}
+		}*/
 	case "cancel", "destroy":
 		//err = app.DestroyTerraform(params, tenantID, run)
 		err = app.DestroyOpenTofu(params, tenantID, run, action)
