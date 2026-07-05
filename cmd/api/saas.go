@@ -203,7 +203,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	var res map[string]string
 	switch action {
-	case "deploy":
+	case "deploy", "install":
 		//res, err = app.DeployTerraformForTenant(params, tenantID, run)
 		res, err = app.DeployOpenTofuForTenant(params, tenantID, run, action)
 		_json_out, _ := json.Marshal(res)
@@ -211,12 +211,34 @@ func (app *application) RunDeploy(params Dict) Dict {
 		_data["tf_public_dns"] = ensureHTTPPrefix(rawMessageToString(json.RawMessage(res["public_dns"])))
 		_data["tf_public_url"] = ensureHTTPPrefix(rawMessageToString(json.RawMessage(res["url"])))
 		_data["terraform_outputs"] = string(_json_out)
-		_data["deployed"] = true
+		if err == nil {
+			_data["deployed"] = true
+			_data["status"] = "started"
+		} else {
+			_data["deployed"] = false
+			_data["status"] = "has_error"
+		}
+	case "start", "boot", "starup", "restart":
+		res, err = app.DeployOpenTofuForTenant(params, tenantID, run, "restart")
+		if err == nil {
+			_data["deployed"] = true
+			_data["status"] = "started"
+		}
+	case "stop", "shutdown", "sp", "stp", "pause":
+		res, err = app.DeployOpenTofuForTenant(params, tenantID, run, "stop")
+		if err == nil {
+			_data["deployed"] = true
+			_data["status"] = "stoped"
+		}
 	case "cancel", "destroy":
 		//err = app.DestroyTerraform(params, tenantID, run)
 		err = app.DestroyOpenTofu(params, tenantID, run, action)
 		if err != nil {
+			_data["deployed"] = true
+			_data["status"] = "has_error"
+		} else {
 			_data["deployed"] = false
+			_data["status"] = "destroyed"
 		}
 	}
 	msg, _ := app.i18n.T("success", Dict{})

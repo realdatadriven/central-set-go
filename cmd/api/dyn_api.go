@@ -841,14 +841,14 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				params["data"].(Dict)["action"] = act
 				data = app.RunDeploy(params)
 			}
-		} else if app.contains([]any{"start", "str", "boot"}, act) {
+		} else if app.contains([]any{"start", "str", "boot", "startup"}, act) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
 				params["data"].(Dict)["action"] = act
 				data = app.RunDeploy(params)
 			}
-		} else if app.contains([]any{"stop", "pause", "sp"}, act) {
+		} else if app.contains([]any{"stop", "pause", "sp", "stp", "shutdown"}, act) {
 			if !token["success"].(bool) {
 				data = token
 			} else {
