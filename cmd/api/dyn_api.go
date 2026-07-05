@@ -330,6 +330,25 @@ func (app *application) getLocationFromRequest(r *http.Request, params Dict) *ti
 	return loc
 }
 
+func ClientIP(r *http.Request) string {
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		// X-Forwarded-For may contain multiple IPs:
+		parts := strings.Split(xff, ",")
+		return strings.TrimSpace(parts[0])
+	}
+
+	if xrip := r.Header.Get("X-Real-IP"); xrip != "" {
+		return xrip
+	}
+
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err == nil {
+		return host
+	}
+
+	return r.RemoteAddr
+}
+
 func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	var params Dict
 	ctrl := r.PathValue("ctrl")
@@ -361,10 +380,11 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	token := app.verifyToken(r)
 	//fmt.Println(params["user"].(Dict)["username"].(string), "->", app.toInt(params["user"].(Dict)["user_id"].(float64)), "->", app.toInt(params["user"].(Dict)["role_id"].(float64)))
 	var data Dict
-	_ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	/*_ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
 		fmt.Println(err.Error())
-	}
+	}*/
+	_ip := ClientIP(r)
 	_log := Dict{
 		"action": fmt.Sprintf("%s/%s", ctrl, act),
 		"req_ip": _ip,
