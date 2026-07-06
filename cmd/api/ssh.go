@@ -15,7 +15,7 @@ type Runner struct {
 }
 
 func NewSSH(host, user, keyFile string) (*Runner, error) {
-	key, err := os.ReadFile(keyFile)
+	key, err := os.ReadFile(os.ExpandEnv(keyFile))
 	if err != nil {
 		key = []byte(keyFile)
 	}

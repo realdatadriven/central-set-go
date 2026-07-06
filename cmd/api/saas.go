@@ -186,6 +186,8 @@ func (app *application) HandleService(params Dict, action string) Dict {
 						}
 					}
 				}
+				_data["deployed"] = true
+				_data["status"] = "started"
 			case "stop":
 				if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
 					err = sshIntance.Stop(context.Background(), service["subs_server_service"].(string))
@@ -204,6 +206,8 @@ func (app *application) HandleService(params Dict, action string) Dict {
 						}
 					}
 				}
+				_data["deployed"] = true
+				_data["status"] = "stoped"
 			case "restart":
 				if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
 					err = sshIntance.Restart(context.Background(), service["subs_server_service"].(string))
@@ -222,6 +226,8 @@ func (app *application) HandleService(params Dict, action string) Dict {
 						}
 					}
 				}
+				_data["deployed"] = true
+				_data["status"] = "started"
 			case "status":
 				if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
 					_, err = sshIntance.Status(context.Background(), service["subs_server_service"].(string))
@@ -260,6 +266,16 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				}
 			}
 		}
+	}
+	params["data"].(Dict)["data"] = _data
+	upsert := app.create_update(params)
+	// fmt.Println(upsert)
+	if _, ok := upsert["success"]; !ok {
+		return upsert
+	} else if _, ok := upsert["success"].(bool); !ok {
+		return upsert
+	} else if ok, _ := upsert["success"].(bool); !ok {
+		return upsert
 	}
 	return Dict{
 		"success": true,
@@ -350,7 +366,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 			if err != nil {
 				fmt.Println("Error creating temporary file", fname, temptex.Name(), err.Error())
 			}
-			fmt.Println("FNAME:", fname, temptex.Name())
+			//fmt.Println("FNAME:", fname, temptex.Name())
 			filetml, err := app.RenderTextTemplate(_file["file_template"].(string), _tmpl_data)
 			if err != nil {
 				fmt.Println("Error rendering file template", err.Error())
