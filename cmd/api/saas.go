@@ -158,6 +158,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				"msg":     err.Error(),
 			}
 		}
+		defer sshIntance.Close()
 		sql = `select * from "subs_server_service" where subs_server_id = ? AND "subscription_id" = ? and "active" = true and "excluded" = false`
 		subsServerService, err := app.GetRowsByFilter(sql, params, []any{server["subs_server_id"], _data["subscription_id"]})
 		if err != nil {
