@@ -151,7 +151,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		}
 	}
 	for _, server := range subsServer {
-		sshIntance, err := NewSSH(server["subs_server"].(string), server["subs_server_user"].(string), server["subs_server_key"].(string))
+		sshIntance, err := NewSSH(server["subs_server"].(string), server["subs_server_user"].(string), server["subs_server_key"].(string), server["subs_server_host_key"].(string))
 		if err != nil {
 			return Dict{
 				"success": false,
