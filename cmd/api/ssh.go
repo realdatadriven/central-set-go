@@ -16,7 +16,7 @@ type Runner struct {
 	client *ssh.Client
 }
 
-/*func NewSSH(host, user, keyFile string) (*Runner, error) {
+/*func NewSSHnoKnownHost(host, user, keyFile string) (*Runner, error) {
 	key, err := os.ReadFile(os.ExpandEnv(keyFile))
 	if err != nil {
 		key = []byte(keyFile)
