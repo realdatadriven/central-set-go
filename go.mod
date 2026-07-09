@@ -11,13 +11,13 @@ require (
 	github.com/lmittmann/tint v1.1.3
 	github.com/mattn/go-sqlite3 v1.14.47 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
-	github.com/realdatadriven/etlx v1.154.5
+	github.com/realdatadriven/etlx v1.154.6
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
-	github.com/wneessen/go-mail v0.8.0
+	github.com/wneessen/go-mail v0.8.1
 	github.com/xuri/excelize/v2 v2.11.0
 	github.com/yuangwei/go-i18next v1.0.0
 	golang.org/x/crypto v0.54.0
-	golang.org/x/exp v0.0.0-20260611194520-c48552f49976
+	golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597
 	golang.org/x/text v0.40.0
 )
 
@@ -25,11 +25,11 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/PaddleHQ/paddle-go-sdk/v4 v4.2.0
 	github.com/apache/arrow-go/v18 v18.6.0
-	github.com/aws/aws-sdk-go-v2/config v1.32.28
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.27
+	github.com/aws/aws-sdk-go-v2/config v1.32.29
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.28
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.62.0
 	github.com/aws/aws-sdk-go-v2/service/costexplorer v1.66.0
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.314.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.315.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.105.0
 	github.com/chromedp/cdproto v0.0.0-20260704091341-6ca7914c3938
 	github.com/chromedp/chromedp v0.15.1
@@ -64,7 +64,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.23 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.30 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.31 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.3.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.4.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.32.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.44.0 // indirect
