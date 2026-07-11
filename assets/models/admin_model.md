@@ -1143,8 +1143,8 @@ columns:
   api_endpoint:      { type: varchar, len: 255, comment: "API Endpoint", form_display: true, order: 18, form_size: 4, form_hide_cond: "data?.action_type_id !== 4" }
   pdf_path:          { type: varchar, len: 200, comment: "PDF Path", form_display: true, order: 19, form_size: 9, form_hide_cond: "data?.action_type_id !== 5" }
   use_latex:         { type: boolean, default: false, comment: "Use Latex", form_display: true, table_display: true, order: 20, form_size: 3, form_hide_cond: "data?.action_type_id !== 5" }
-  pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: latex, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === true" }
-  pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 && data?.use_latex === false" }
+  pdf_tex_template:  { type: text, comment: "PDF LaTex Template", form_display: true, order: 21, form_long_text: true, form_code: latex, form_hide_cond: "data?.action_type_id !== 5 || data?.use_latex === false" }
+  pdf_template:      { type: text, comment: "PDF Template", form_display: true, order: 21, form_long_text: true, form_code: html, form_hide_cond: "data?.action_type_id !== 5 || data?.use_latex === true" }
   etlx_md_template:  { type: text, comment: "ETLX Template", form_display: true, order: 21, form_long_text: true, form_code: markdown, form_hide_cond: "data?.action_type_id !== 6" }
   after_sql:         { type: text, comment: "SQL Run After Action", form_display: true, order: 22, form_long_text: true, form_code: sql }
   parallel:          { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
