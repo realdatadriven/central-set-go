@@ -527,7 +527,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		id = _id
 	}
 	if _, ok := _data[pk]; ok {
-		// id = app.toInt(_data[pk])
+		id = app.toInt(_data[pk])
 	} else {
 		_data[pk] = id
 	}
@@ -632,7 +632,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			params["table"] = table
 			params["database"] = database
 			params["pk"] = pk
-			params["id"] = id
+			params["id"] = _data[pk]
 			params["crud_aciton"] = crud_aciton
 			params["user_id"] = user_id
 			if parallel && ok {
