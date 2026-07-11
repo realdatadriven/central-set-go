@@ -42,6 +42,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		"crud_action":      c_action["crud_action"],
 		"table":            table,
 		"db":               database,
+		"pk_field":         pk,
 		"id":               id,
 		"action":           crud_aciton,
 		"action_type":      c_action["action_type_id"],
@@ -50,8 +51,8 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		"started_at":       time.Now().In(loc),
 		"log_data":         "",
 	}
-	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "id", "action", "action_type", "success", "log_message", "log_data", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
-			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :id, :action, :action_type, :success, :log_message, :log_data, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
+	insert_crud_action_log_sql := `INSERT INTO "crud_action_logs" ("crud_action_id", "crud_action_code", "crud_action", "table", "db", "pk_field", "id", "action", "action_type", "success", "log_message", "log_data", "user_id", "app_id", "executed_at", "created_at", "updated_at") 
+			VALUES (:crud_action_id, :crud_action_code, :crud_action, :table, :db, :pk_field, :id, :action, :action_type, :success, :log_message, :log_data, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 	// ACTION DATA TO HELP BUILD THE TEPLATE
 	sql := "select * from action_data where crud_action_id = ? and excluded = false"
 	valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_action["crud_action_id"]})

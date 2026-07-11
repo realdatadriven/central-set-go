@@ -631,10 +631,10 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			params["loc"] = loc
 			params["table"] = table
 			params["database"] = database
-			params["id"] = pk
+			params["pk"] = pk
+			params["id"] = id
 			params["crud_aciton"] = crud_aciton
 			params["user_id"] = user_id
-			params["pk"] = pk
 			if parallel && ok {
 				go func() {
 					err := app.RunCrudAction(params, c_action, _data) //actionRunner(c_action)
