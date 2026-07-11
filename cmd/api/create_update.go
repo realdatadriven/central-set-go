@@ -639,13 +639,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				go func() {
 					err := app.RunCrudAction(params, c_action, _data) //actionRunner(c_action)
 					if err != nil {
-						fmt.Printf("Error runing the action: %s -> %v\n", c_action["crud_action_code"], err.Error())
+						fmt.Printf("Error runing the action: %s -> %s\n", c_action["crud_action_code"], err.Error())
 					}
 				}()
 			} else {
 				err := app.RunCrudAction(params, c_action, _data) // actionRunner(c_action)
 				if err != nil {
-					fmt.Printf("Error runing the action: %s -> %v\n", c_action["crud_action_code"], err.Error())
+					fmt.Printf("Error runing the action: %s -> %s\n", c_action["crud_action_code"], err.Error())
 				}
 			}
 		}
@@ -697,7 +697,7 @@ func (app *application) UserTriggeredCrudAction(params Dict) Dict {
 		if err != nil {
 			return Dict{
 				"success": false,
-				"msg":     fmt.Sprintf("Error runing the action: %s -> %v", c_action["crud_action_code"], err.Error()),
+				"msg":     fmt.Sprintf("Error runing the action: %s -> %s", c_action["crud_action_code"], err.Error()),
 			}
 		}
 	}

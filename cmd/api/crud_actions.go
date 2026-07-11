@@ -75,9 +75,14 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			return fmt.Errorf("Error rendering sql_condition %v", err.Error())
 		}
 		sql_condition = etlx_engine.ReplaceEnvVariable(sql_condition)
-		res, _, err := app.db.QuerySingleRow(sql_condition, _data)
+		// fmt.Println("SQL COND:", sql_condition)
+		query, args, err := etlx_engine.NamedToPositional(sql_condition, _data)
 		if err != nil {
-			return fmt.Errorf("Error executing sql_condition %v", err.Error())
+			return fmt.Errorf("Error preparing sql_condition %s -> %s: %v", c_action["crud_action_code"], sql_condition, err.Error())
+		}
+		res, _, err := app.db.QuerySingleRow(query, args...)
+		if err != nil {
+			return fmt.Errorf("Error executing sql_condition %s -> %s: %v", c_action["crud_action_code"], sql_condition, err.Error())
 		}
 		cond := false
 		if len(*res) > 0 {
@@ -102,10 +107,17 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			return fmt.Errorf(msg)
 		}
 	}
+	// fmt.Println("PASSED COND!")
 	if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 		if _, ok := c_action["sql"]; ok {
-			sql_rule := c_action["sql"].(string)
-			err := app.ExecuteQuery(sql_rule, params, _data)
+			// fmt.Println(c_action["sql"])
+			sql_rule, err := etlx_engine.RenderTemplate(c_action["sql"].(string), _data)
+			if err != nil {
+				return fmt.Errorf("Error rendering sql_condition %v", err.Error())
+			}
+			sql_rule = etlx_engine.ReplaceEnvVariable(sql_rule)
+			// fmt.Println(sql_rule)
+			err = app.ExecuteQuery(sql_rule, params, _data)
 			if err != nil {
 				_data["err"] = err.Error()
 				success = false
@@ -122,8 +134,8 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 				if err2 != nil {
 					fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 				}
-				msg = fmt.Sprintf("Error executing query: %v", err)
-				return fmt.Errorf("Err %w", msg)
+				msg = fmt.Sprintf("Error executing query: %s", err.Error())
+				return fmt.Errorf("Err %s", msg)
 			}
 		}
 	} else if app.toInt(action_type_id) == 2 && okEmail { // SendEmail
