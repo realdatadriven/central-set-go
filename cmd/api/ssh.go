@@ -42,6 +42,7 @@ type Runner struct {
 }*/
 
 func NewSSH(host, user, keyFile, hostKey string) (*Runner, error) {
+	// fmt.Println(host, user, keyFile, hostKey)
 	key, err := os.ReadFile(os.ExpandEnv(keyFile))
 	if err != nil {
 		key = []byte(keyFile)
