@@ -7,7 +7,7 @@
     "root": "./",
     "__root": "/",
     "ws_api": "ws://localhost:5555/ws",
-    "sse_api": "http://localhost:5555/events",
+    "sse_api": "http://localhost:5555/sse",
     "_ws_api": "ws",
     "update_on_backend_change": true,
     "secret_key": "o1KwptgRuXtHd4LsvBu63DDh",

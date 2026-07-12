@@ -1016,7 +1016,9 @@ func (app *application) BroadCastChange(_data Dict) {
 	}
 	// SSE
 	if env.GetBool("SSE_ENABLE", false) {
+		// fmt.Println("SSE_ENABLE:", env.GetBool("SSE_ENABLE", false))
 		if app.SSE_Broker != nil {
+			// fmt.Println("SSE_Broker:", app.SSE_Broker)
 			app.SSE_Broker.NotifyAll(_data)
 		}
 	}

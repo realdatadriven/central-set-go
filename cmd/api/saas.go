@@ -278,6 +278,14 @@ func (app *application) HandleService(params Dict, action string) Dict {
 	} else if ok, _ := upsert["success"].(bool); !ok {
 		return upsert
 	}
+	_, db, _ := app.GetDBNameFromParams(params)
+	bdc := Dict{
+		"type":     "data_change",
+		"database": db,
+		"table":    params["data"].(Dict)["table"],
+	}
+	app.BroadCastChange(bdc)
+	// fmt.Println("BOADCASTED:", bdc)
 	return Dict{
 		"success": true,
 		"msg":     "Action completed successfully",
@@ -456,7 +464,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	//fmt.Println(1, "terraform_state", len(_data["terraform_state"].(string)), "terraform_lock", len(_data["terraform_lock"].(string)), len(run.Lock))
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
-	// fmt.Println(upsert)
+	//fmt.Println(upsert)
 	if _, ok := upsert["success"]; !ok {
 		return upsert
 	} else if _, ok := upsert["success"].(bool); !ok {
@@ -471,6 +479,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 		"table":    params["data"].(Dict)["table"],
 	}
 	app.BroadCastChange(bdc)
+	// fmt.Println("BOADCASTED:", bdc)
 	return Dict{
 		"success": success,
 		"msg":     msg,
