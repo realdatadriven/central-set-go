@@ -72,12 +72,12 @@ func (b *Broker) SSEHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing token", http.StatusUnauthorized)
 		return
 	}*/
-	cookie, err := r.Cookie("session")
+	/*cookie, err := r.Cookie("session")
 	token := ""
 	if err == nil && cookie.Value != "" {
 		token = "Bearer " + cookie.Value
 	}
-	fmt.Println("TOKEN:", token)
+	fmt.Println("TOKEN:", token)*/
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
@@ -110,7 +110,6 @@ func (b *Broker) SSEHandler(w http.ResponseWriter, r *http.Request) {
 			// msg is already []byte from json.Marshal
 			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
-
 		case <-r.Context().Done():
 			return
 		}
@@ -124,14 +123,12 @@ func (b *Broker) NotifyHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing ?msg= parameter", http.StatusBadRequest)
 		return
 	}
-
 	event := map[string]any{
 		"event":   "message",
 		"content": msg,
 		"time":    time.Now().UTC().Format(time.RFC3339),
 		"sender":  "server",
 	}
-
 	b.NotifyAll(event)
 	w.Header().Set("Content-Type", "text/plain")
 	fmt.Fprintln(w, "Message broadcasted to all clients")
