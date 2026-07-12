@@ -986,7 +986,8 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 					"database": _log["db"],
 					"table":    _log["table"],
 				}
-				// WS
+				app.BroadCastChange(_data)
+				/*/ WS
 				if app.WS_ConnectionManager != nil {
 					//manager := app.NewConnectionManager()
 					app.broadcastTableChange(app.WS_ConnectionManager, _data)
@@ -996,7 +997,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 					if app.SSE_Broker != nil {
 						app.SSE_Broker.NotifyAll(_data)
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -1004,6 +1005,20 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	err = response.JSON(w, http.StatusOK, data)
 	if err != nil {
 		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) BroadCastChange(_data Dict) {
+	// WS
+	if app.WS_ConnectionManager != nil {
+		//manager := app.NewConnectionManager()
+		app.broadcastTableChange(app.WS_ConnectionManager, _data)
+	}
+	// SSE
+	if env.GetBool("SSE_ENABLE", false) {
+		if app.SSE_Broker != nil {
+			app.SSE_Broker.NotifyAll(_data)
+		}
 	}
 }
 

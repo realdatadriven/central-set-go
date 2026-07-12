@@ -464,6 +464,13 @@ func (app *application) RunDeploy(params Dict) Dict {
 	} else if ok, _ := upsert["success"].(bool); !ok {
 		return upsert
 	}
+	_, db, _ := app.GetDBNameFromParams(params)
+	bdc := Dict{
+		"type":     "data_change",
+		"database": db,
+		"table":    params["data"].(Dict)["table"],
+	}
+	app.BroadCastChange(bdc)
 	return Dict{
 		"success": success,
 		"msg":     msg,
