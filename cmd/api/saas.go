@@ -13,6 +13,9 @@ import (
 	"strings"
 	texttemplate "text/template"
 	"time"
+	"unicode"
+
+	"golang.org/x/text/unicode/norm"
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hashicorp/terraform-exec/tfexec"
@@ -49,7 +52,7 @@ func rawMessageToString(raw json.RawMessage) string {
 	if err := json.Unmarshal(raw, &str); err != nil {
 		return ""
 	}
-	return str
+	return strings.ReplaceAll(str, `"`, "")
 }
 
 func terraformCachePath() (string, error) {
@@ -82,54 +85,6 @@ func opentofuCachePath() (string, error) {
 	return cacheDir, nil
 }
 
-// USING SSH TO START STOP SERVICES ON THE REMOTE SERVER
-/* schemas
-## SUBS_SERVER
-```yaml
-table: subs_server
-comment: Subscription Server
-columns:
-  subs_server_id:   { type: integer, pk: true, autoincrement: true, comment: "Subscription Server ID" }
-  subs_server:      { type: varchar, len: 200, unique: false, nullable: false, comment: "Server", order: 2, form_display: true, table_display: true, form_size: 4 }
-  subs_server_user: { type: varchar, len: 200, nullable: false, comment: "User", order: 3, form_size: 3, form_display: true, table_display: true}
-  subs_server_key:  { type: text, nullable: false, comment: "Key", order: 5, form_display: true, table_display: true, form_long_text: true }
-  subscription_id:  { type: integer, fk: "subscription.subscription_id", nullable: false, comment: "Subscription ID", form_display: true, table_display: true, order: 1, form_size: 3 }
-  active:           { type: boolean, default: true, comment: "Active", order: 4, form_display: true, table_display: true, form_size: 2 }
-  user_id:          { type: integer, comment: "Created BY" }
-  created_at:       { type: datetime, comment: "Created at" }
-  updated_at:       { type: datetime, comment: "Updated at" }
-  excluded:         { type: boolean, default: false, comment: "Excluded" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 6
-```
-
-## SUBS_SERVER_SERVICE
-```yaml
-table: subs_server_service
-comment: Subscription Server Services
-columns:
-  subs_server_service_id:   { type: integer, pk: true, autoincrement: true, comment: "Server Service ID" }
-  subs_server_service:      { type: varchar, len: 200, unique: false, nullable: false, comment: "Service", order: 3, form_display: true, table_display: true, form_size: 4 }
-  service_start_cmd:        { type: varchar, len: 200, comment: "Start Command", order: 5, form_display: true, table_display: true }
-  service_status_cmd:       { type: varchar, len: 200, comment: "Status Command", order: 5, form_display: true, table_display: true }
-  service_stop_cmd:         { type: varchar, len: 200, comment: "Stop Command", order: 5, form_display: true, table_display: true }
-  service_restart_cmd:      { type: varchar, len: 200, comment: "Restart Command", order: 5, form_display: true, table_display: true }
-  service_logs_cmd:         { type: varchar, len: 200, comment: "Logs Command", order: 5, form_display: true, table_display: true }
-  subs_server_id:           { type: integer, fk: "subs_server.subs_server_id", nullable: false, comment: "Server ID", form_display: true, table_display: true, order: 2, form_size: 3 }
-  subscription_id:          { type: integer, fk: "subscription.subscription_id", nullable: false, comment: "Subscription ID", form_display: true, table_display: true, order: 1, form_size: 3 }
-  active:                   { type: boolean, default: true, comment: "Active", order: 4, form_display: true, table_display: true, form_size: 2 }
-  user_id:                  { type: integer, comment: "Created BY" }
-  created_at:               { type: datetime, comment: "Created at" }
-  updated_at:               { type: datetime, comment: "Updated at" }
-  excluded:                 { type: boolean, default: false, comment: "Excluded" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 6
-```
-*/
 func (app *application) HandleService(params Dict, action string) Dict {
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
@@ -151,14 +106,6 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		}
 	}
 	for _, server := range subsServer {
-		sshIntance, err := NewSSH(server["subs_server"].(string), server["subs_server_user"].(string), server["subs_server_key"].(string), server["subs_server_host_key"].(string))
-		if err != nil {
-			return Dict{
-				"success": false,
-				"msg":     err.Error(),
-			}
-		}
-		defer sshIntance.Close()
 		sql = `select * from "subs_server_service" where subs_server_id = ? AND "subscription_id" = ? and "active" = true and "excluded" = false`
 		subsServerService, err := app.GetRowsByFilter(sql, params, []any{server["subs_server_id"], _data["subscription_id"]})
 		if err != nil {
@@ -167,105 +114,319 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				"msg":     err.Error(),
 			}
 		}
-		for _, service := range subsServerService {
-			switch action {
-			case "start":
-				if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
-					err = sshIntance.Start(context.Background(), service["subs_server_service"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
+		if server["subs_server"].(string) == "localhost" || strings.HasPrefix(server["subs_server"].(string), "127.") {
+			local := NewLocal()
+			svc := NewServiceManager(local)
+			for _, service := range subsServerService {
+				switch action {
+				case "start":
+					if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
+						err = svc.Start(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = svc.Run(context.Background(), service["service_start_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
 						}
 					}
-				} else {
-					err = sshIntance.Run(context.Background(), service["service_start_cmd"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
+					_data["deployed"] = true
+					_data["status"] = "started"
+				case "stop":
+					if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
+						err = svc.Stop(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = svc.Run(context.Background(), service["service_stop_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
 						}
 					}
-				}
-				_data["deployed"] = true
-				_data["status"] = "started"
-			case "stop":
-				if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
-					err = sshIntance.Stop(context.Background(), service["subs_server_service"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
+					_data["deployed"] = true
+					_data["status"] = "stoped"
+				case "restart":
+					if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
+						err = svc.Restart(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = svc.Run(context.Background(), service["service_restart_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
 						}
 					}
-				} else {
-					err = sshIntance.Run(context.Background(), service["service_stop_cmd"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
+					_data["deployed"] = true
+					_data["status"] = "started"
+				case "status":
+					if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
+						_, err = svc.Status(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						_, err = svc.RunOutput(context.Background(), service["service_status_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
 						}
 					}
-				}
-				_data["deployed"] = true
-				_data["status"] = "stoped"
-			case "restart":
-				if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
-					err = sshIntance.Restart(context.Background(), service["subs_server_service"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
+				case "logs":
+					if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
+						_, err = svc.Logs(context.Background(), service["subs_server_service"].(string), 100)
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
 						}
-					}
-				} else {
-					err = sshIntance.Run(context.Background(), service["service_restart_cmd"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
-						}
-					}
-				}
-				_data["deployed"] = true
-				_data["status"] = "started"
-			case "status":
-				if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
-					_, err = sshIntance.Status(context.Background(), service["subs_server_service"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
-						}
-					}
-				} else {
-					_, err = sshIntance.RunOutput(context.Background(), service["service_status_cmd"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
-						}
-					}
-				}
-			case "logs":
-				if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
-					_, err = sshIntance.Logs(context.Background(), service["subs_server_service"].(string), 100)
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
-						}
-					}
-				} else {
-					_, err = sshIntance.RunOutput(context.Background(), service["service_logs_cmd"].(string))
-					if err != nil {
-						return Dict{
-							"success": false,
-							"msg":     err.Error(),
+					} else {
+						_, err = svc.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
 						}
 					}
 				}
 			}
+		} else {
+			sshIntance, err := NewSSH(server["subs_server"].(string), server["subs_server_user"].(string), server["subs_server_key"].(string), server["subs_server_host_key"].(string))
+			if err != nil {
+				return Dict{
+					"success": false,
+					"msg":     err.Error(),
+				}
+			}
+			defer sshIntance.Close()
+			for _, service := range subsServerService {
+				switch action {
+				case "start":
+					if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
+						err = sshIntance.Start(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = sshIntance.Run(context.Background(), service["service_start_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+					_data["deployed"] = true
+					_data["status"] = "started"
+				case "stop":
+					if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
+						err = sshIntance.Stop(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = sshIntance.Run(context.Background(), service["service_stop_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+					_data["deployed"] = true
+					_data["status"] = "stoped"
+				case "restart":
+					if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
+						err = sshIntance.Restart(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = sshIntance.Run(context.Background(), service["service_restart_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+					_data["deployed"] = true
+					_data["status"] = "started"
+				case "status":
+					if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
+						_, err = sshIntance.Status(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						_, err = sshIntance.RunOutput(context.Background(), service["service_status_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+				case "logs":
+					if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
+						_, err = sshIntance.Logs(context.Background(), service["subs_server_service"].(string), 100)
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						_, err = sshIntance.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+				}
+			}
+			/*svc := NewServiceManager(sshIntance)
+			for _, service := range subsServerService {
+				switch action {
+				case "start":
+					if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
+						err = svc.Start(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = svc.Run(context.Background(), service["service_start_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+					_data["deployed"] = true
+					_data["status"] = "started"
+				case "stop":
+					if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
+						err = svc.Stop(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = svc.Run(context.Background(), service["service_stop_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+					_data["deployed"] = true
+					_data["status"] = "stoped"
+				case "restart":
+					if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
+						err = svc.Restart(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						err = svc.Run(context.Background(), service["service_restart_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+					_data["deployed"] = true
+					_data["status"] = "started"
+				case "status":
+					if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
+						_, err = svc.Status(context.Background(), service["subs_server_service"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						_, err = svc.RunOutput(context.Background(), service["service_status_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+				case "logs":
+					if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
+						_, err = svc.Logs(context.Background(), service["subs_server_service"].(string), 100)
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					} else {
+						_, err = svc.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+						if err != nil {
+							return Dict{
+								"success": false,
+								"msg":     err.Error(),
+							}
+						}
+					}
+				}
+			}*/
 		}
 	}
 	params["data"].(Dict)["data"] = _data
@@ -292,6 +453,48 @@ func (app *application) HandleService(params Dict, action string) Dict {
 	}
 }
 
+func DomainName(name string) string {
+	name = strings.ToLower(name)
+	// Decompose accented characters
+	name = norm.NFD.String(name)
+	var b strings.Builder
+	for _, r := range name {
+		// Remove accents
+		if unicode.Is(unicode.Mn, r) {
+			continue
+		}
+		switch {
+		case r >= 'a' && r <= 'z':
+			b.WriteRune(r)
+		case r >= '0' && r <= '9':
+			b.WriteRune(r)
+		case unicode.IsSpace(r) || r == '_' || r == '-':
+			b.WriteRune('_')
+		default:
+			// remove special characters
+		}
+	}
+	// Collapse multiple underscores
+	result := b.String()
+	for strings.Contains(result, "__") {
+		result = strings.ReplaceAll(result, "__", "_")
+	}
+	return strings.Trim(result, "_")
+}
+
+func getSubdomain(plan, tenant, subscription Dict) string {
+	subdomain := ""
+	if plan_name, ok := plan["plan"].(string); ok {
+		subdomain = fmt.Sprintf("%s%d", DomainName(plan_name), subscription["subscription_id"])
+	}
+	if slug, ok := tenant["slug"].(string); ok {
+		subdomain = fmt.Sprintf("%s.%s", subdomain, DomainName(slug))
+	} else {
+		subdomain = fmt.Sprintf("%s.%s", subdomain, DomainName(tenant["tenant"].(string)))
+	}
+	return subdomain
+}
+
 func (app *application) RunDeploy(params Dict) Dict {
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
@@ -314,9 +517,15 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     err.Error(),
 		}
 	}
+	sql = `select * from "plan_service" where "plan_id" = ? and "active" = true and "excluded" = false`
+	plan_service, err := app.GetRowsByFilter(sql, params, []any{plan["plan_id"]})
+	if err != nil {
+		fmt.Println("env err:", err)
+	}
 	tenantID := _data["tenant_id"]
+	subscriptionID := _data["subscription_id"]
 	sql = `select * from "tenant" where "tenant_id" = ? and "active" = true and "excluded" = false`
-	tenant, err := app.GetRowsByFilter(sql, params, []any{tenantID})
+	tenant, err := app.GetRowByFilter(sql, params, []any{tenantID})
 	if err != nil {
 		fmt.Println("tenant err:", err)
 	}
@@ -347,14 +556,16 @@ func (app *application) RunDeploy(params Dict) Dict {
 		}
 	}
 	_tmpl_data := map[string]any{
-		"tenant_id": tenantID,
-		"env":       tenantEnv,
-		"envKV":     tenantEnvKeyPair,
-		"sysEnv":    tenantSysEnv,
-		"sysEnvKV":  tenantSysEnvKeyPair,
-		"plan":      plan,
-		"tenant":    tenant,
-		"data":      _data,
+		"tenant_id":       tenantID,
+		"subscription_id": subscriptionID,
+		"subdomain":       getSubdomain(plan, tenant, _data),
+		"env":             tenantEnv,
+		"envKV":           tenantEnvKeyPair,
+		"sysEnv":          tenantSysEnv,
+		"sysEnvKV":        tenantSysEnvKeyPair,
+		"plan":            plan,
+		"tenant":          tenant,
+		"data":            _data,
 	}
 	// plan_file
 	sql = `select * from "plan_file" where "plan_id" = ? and "active" = true and "excluded" = false`
@@ -479,7 +690,62 @@ func (app *application) RunDeploy(params Dict) Dict {
 		"table":    params["data"].(Dict)["table"],
 	}
 	app.BroadCastChange(bdc)
+	if len(plan_service) > 0 {
+		sql = `select * from "subs_server" where "subscription_id" = ? and "active" = true and "excluded" = false`
+		subsServer, err := app.GetRowsByFilter(sql, params, []any{_data["subscription_id"]})
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg":     err.Error(),
+			}
+		}
+		if len(subsServer) == 0 {
+			params["data"].(Dict)["table"] = "subs_server"
+			params["data"].(Dict)["data"] = Dict{
+				"subs_server":          rawMessageToString(json.RawMessage(res["service_server"])),
+				"subs_server_desc":     rawMessageToString(json.RawMessage(res["service_server"])),
+				"subs_server_user":     rawMessageToString(json.RawMessage(res["service_user"])),
+				"subs_server_key":      rawMessageToString(json.RawMessage(res["service_key"])),
+				"subs_server_host_key": rawMessageToString(json.RawMessage(res["service_host_key"])),
+				"subscription_id":      _data["subscription_id"],
+				"active":               true,
+			}
+			results := app.create_update(params)
+			//fmt.Println(upsert)
+			if _, ok := upsert["success"]; !ok {
+				// return upsert
+			} else if _, ok := upsert["success"].(bool); !ok {
+				//return upsert
+			} else if ok, _ := upsert["success"].(bool); !ok {
+				// return upsert
+			} else {
+				_id := results["inserted_primary_key"]
+				params["data"].(Dict)["table"] = "subs_server_service"
+				auxSrv := []Dict{}
+				for _, _srv := range plan_service {
+					srv, err := app.RenderTextTemplate(_srv["plan_service"].(string), _tmpl_data)
+					if err != nil {
+						// fmt.Print("Terraform Template Parse Err:", err.Error())
+						return Dict{
+							"success": false,
+							"msg":     "plan_service template Err:" + err.Error(),
+						}
+					}
+					auxSrv = append(auxSrv, Dict{
+						"subs_server_service": srv,
+						"subs_server_id":      _id,
+						"subscription_id":     _data["subscription_id"],
+						"active":              true,
+					})
+				}
+				params["data"].(Dict)["data"] = auxSrv
+				results = app.create_update(params)
+			}
+		}
+	}
 	// fmt.Println("BOADCASTED:", bdc)
+	// plan_service
+	//println(subsServer, plan_service)
 	return Dict{
 		"success": success,
 		"msg":     msg,

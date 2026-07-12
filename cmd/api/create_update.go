@@ -514,7 +514,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		_id, err := db.ExecuteNamedQuery(query, _data)
 		//fmt.Println(query)
 		if err != nil {
-			fmt.Println(crud_aciton, pk, _data[pk], query, err)
+			// fmt.Println(crud_aciton, pk, _data[pk], query, err)
 			return Dict{
 				"success": false,
 				"table":   table,
