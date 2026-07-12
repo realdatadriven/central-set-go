@@ -8,10 +8,10 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.12.3 // indirect
-	github.com/lmittmann/tint v1.1.3
+	github.com/lmittmann/tint v1.2.0
 	github.com/mattn/go-sqlite3 v1.14.47 // indirect
 	github.com/pascaldekloe/jwt v1.12.0
-	github.com/realdatadriven/etlx v1.154.8
+	github.com/realdatadriven/etlx v1.154.9
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	github.com/wneessen/go-mail v0.8.1
 	github.com/xuri/excelize/v2 v2.11.0
@@ -39,7 +39,7 @@ require (
 	github.com/hashicorp/terraform-exec v0.25.2
 	github.com/hugr-lab/airport-go v0.2.1
 	github.com/markbates/goth v1.82.0
-	github.com/pkg/sftp v1.13.10
+	github.com/pkg/sftp v1.13.11
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stripe/stripe-go/v84 v84.4.1
 	golang.org/x/time v0.15.0
@@ -120,7 +120,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
-	github.com/yuin/goldmark v1.8.2 // indirect
+	github.com/yuin/goldmark v1.8.4 // indirect
 	github.com/zclconf/go-cty v1.19.0 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.abhg.dev/goldmark/frontmatter v0.3.0 // indirect
