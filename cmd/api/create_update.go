@@ -497,7 +497,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						"success": false,
 						"table":   table,
 						"pk":      pk,
-						"msg":     fmt.Sprintf("Error %s %s %s", crud_aciton, table, err),
+						"msg":     fmt.Sprintf("Error %s %s %s", crud_aciton, table, err.Error()),
 					}
 				}
 			} else {
@@ -505,7 +505,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"success": false,
 					"table":   table,
 					"pk":      pk,
-					"msg":     fmt.Sprintf("Error %s %s %s", crud_aciton, table, err),
+					"msg":     fmt.Sprintf("Error %s %s %s", crud_aciton, table, err.Error()),
 				}
 			}
 		}
@@ -521,7 +521,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"pk":      pk,
 				//"data":    _data,
 				//"sql":     query,
-				"msg": fmt.Sprintf("Error %s %s %s", crud_aciton, table, err),
+				"msg": fmt.Sprintf("Error %s %s %s", crud_aciton, table, err.Error()),
 			}
 		}
 		id = _id
@@ -661,50 +661,5 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 		"inserted_primary_key": id,
 		"data":                 _data,
 		"sql":                  query,
-	}
-}
-
-func (app *application) UserTriggeredCrudAction(params Dict) Dict {
-	table := params["data"].(Dict)["table"]
-	database := params["data"].(Dict)["database"]
-	crud_action_id := params["data"].(Dict)["crud_action_id"]
-	pk := params["data"].(Dict)["pk"]
-	id := params["data"].(Dict)["id"]
-	user_id := params["user"].(Dict)["user_id"]
-	_data := params["data"].(Dict)["data"].(Dict)
-	args := []any{database, table, crud_action_id}
-	crud_aciton := "user_trigger"
-	get_crud_actions_sql := fmt.Sprintf(`SELECT * FROM "crud_action" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND crud_action_id = ? AND "%s" IS TRUE`, crud_aciton)
-	crud_action_rows, err := app.AdminGetRowsByFilter(get_crud_actions_sql, args)
-	if err != nil {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
-		}
-	} else if len(crud_action_rows) == 0 {
-		return Dict{
-			"success": false,
-			"msg":     fmt.Sprintf("No active Actions mached %s %s %d!", database, table, crud_action_id),
-		}
-	} else {
-		c_action := crud_action_rows[0]
-		params["table"] = table
-		params["database"] = database
-		params["id"] = id
-		params["crud_aciton"] = crud_aciton
-		params["user_id"] = user_id
-		params["pk"] = pk
-		err := app.RunCrudAction(params, c_action, _data) // actionRunner(c_action)
-		if err != nil {
-			return Dict{
-				"success": false,
-				"msg":     fmt.Sprintf("Error runing the action: %s -> %s", c_action["crud_action_code"], err.Error()),
-			}
-		}
-	}
-	msg, _ := app.i18n.T("success", Dict{})
-	return Dict{
-		"success": true,
-		"msg":     msg,
 	}
 }
