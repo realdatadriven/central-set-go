@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
+	"path/filepath"
 
 	"github.com/pkg/sftp"
-	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
 
 	"crypto/ed25519"
@@ -336,6 +337,37 @@ func AddKnownHost(host string, port int, knownHosts string) error {
 	defer f.Close()
 	_, err = f.Write(out.Bytes())
 	return err
+}
+
+func EnsureDefaultCredentials(privateKeyPath string) error {
+	if privateKeyPath == "" {
+		return fmt.Errorf("no default ssh key path set (%s)", "SSH_KEY")
+	}
+	privateKeyPath = os.ExpandEnv(privateKeyPath)
+	// Ensure the parent directory exists.
+	if err := os.MkdirAll(filepath.Dir(privateKeyPath), 0700); err != nil {
+		return err
+	}
+	// Already exists.
+	if _, err := os.Stat(privateKeyPath); err == nil {
+		return nil
+	}
+	cred, err := GenerateCredentials()
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(privateKeyPath), 0700); err != nil {
+		return err
+	}
+	// Private key
+	if err := os.WriteFile(privateKeyPath, []byte(cred.PrivateKeyPEM), 0600); err != nil {
+		return err
+	}
+	// Public key
+	if err := os.WriteFile(privateKeyPath+".pub", []byte(cred.PublicKeySSH), 0644); err != nil {
+		return err
+	}
+	return nil
 }
 
 /*cred, err := sshutil.GenerateCredentials()

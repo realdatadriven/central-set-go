@@ -612,7 +612,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 			} else {
 				params["data"] = _data_user
-				return app.confirm_emmail(params)
+				_mail := app.confirm_emmail(params)
+				fmt.Println(_mail["msg"])
 			}
 		}
 	}

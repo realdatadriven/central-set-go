@@ -30,6 +30,7 @@ import (
 	cetypes "github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 
 	"github.com/realdatadriven/central-set-go/assets"
+	"github.com/realdatadriven/central-set-go/internal/env"
 )
 
 type TerraformRun struct {
@@ -40,7 +41,7 @@ type TerraformRun struct {
 
 // func that checks if the link has not prefix http:// or https:// and adds http:// if missing
 func ensureHTTPPrefix(url string) string {
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+	if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "https") {
 		return "http://" + url
 	}
 	return url
@@ -621,6 +622,11 @@ func (app *application) RunDeploy(params Dict) Dict {
 	if terraform_lock, ok := _data["terraform_lock"].(string); ok && terraform_lock != "" {
 		// fmt.Println("Lock:", __data["terraform_state"])
 		run.Lock = terraform_lock
+	}
+	err = EnsureDefaultCredentials(env.GetString("SSH_KEY", ""))
+	if err != nil {
+		fmt.Printf("Err: %s!\n", err.Error())
+		return Dict{"success": false, "msg": fmt.Sprintf("Err: %s!\n", err.Error())}
 	}
 	var res map[string]string
 	switch action {

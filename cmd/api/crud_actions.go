@@ -111,15 +111,16 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	// fmt.Println("PASSED COND!")
 	if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 		if _, ok := c_action["sql"]; ok {
-			// fmt.Println(c_action["sql"])
+			fmt.Println(c_action["sql"])
 			sql_rule, err := etlx_engine.RenderTemplate(c_action["sql"].(string), _data)
 			if err != nil {
 				return fmt.Errorf("Error rendering sql_condition %v", err.Error())
 			}
 			sql_rule = etlx_engine.ReplaceEnvVariable(sql_rule)
-			// fmt.Println(sql_rule)
+			fmt.Println(sql_rule)
 			err = app.ExecuteQuery(sql_rule, params, _data)
 			if err != nil {
+				fmt.Println("SQL ERR:", sql_rule, err.Error())
 				_data["err"] = err.Error()
 				success = false
 				msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
