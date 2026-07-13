@@ -497,7 +497,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						"success": false,
 						"table":   table,
 						"pk":      pk,
-						"msg":     fmt.Sprintf("%s", err),
+						"msg":     fmt.Sprintf("Error %s %s %s", crud_aciton, table, err),
 					}
 				}
 			} else {
@@ -505,7 +505,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"success": false,
 					"table":   table,
 					"pk":      pk,
-					"msg":     fmt.Sprintf("%s", err),
+					"msg":     fmt.Sprintf("Error %s %s %s", crud_aciton, table, err),
 				}
 			}
 		}
@@ -521,7 +521,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"pk":      pk,
 				//"data":    _data,
 				//"sql":     query,
-				"msg": fmt.Sprintf("%s", err),
+				"msg": fmt.Sprintf("Error %s %s %s", crud_aciton, table, err),
 			}
 		}
 		id = _id
