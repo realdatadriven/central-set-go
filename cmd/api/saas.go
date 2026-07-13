@@ -626,7 +626,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	err = EnsureDefaultCredentials(env.GetString("SSH_KEY", ""))
 	if err != nil {
 		fmt.Printf("Err: %s!\n", err.Error())
-		return Dict{"success": false, "msg": fmt.Sprintf("Err: %s!\n", err.Error())}
+		// return Dict{"success": false, "msg": fmt.Sprintf("Err: %s!\n", err.Error())}
 	}
 	var res map[string]string
 	switch action {
@@ -667,6 +667,10 @@ func (app *application) RunDeploy(params Dict) Dict {
 			_data["deployed"] = false
 			_data["status"] = "destroyed"
 		}
+	}
+	err = AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", ""))
+	if err != nil {
+		fmt.Printf("Err adding to nkown host: %s!\n", err.Error())
 	}
 	msg, _ := app.i18n.T("success", Dict{})
 	_data["tf_err_msg"] = nil
