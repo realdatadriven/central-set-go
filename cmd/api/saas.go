@@ -486,7 +486,8 @@ func DomainName(name string) string {
 func getSubdomain(plan, tenant, subscription Dict) string {
 	subdomain := ""
 	if plan_name, ok := plan["plan"].(string); ok {
-		subdomain = fmt.Sprintf("%s%d", DomainName(plan_name), subscription["subscription_id"])
+		// fmt.Println(plan_name, subscription["subscription_id"])
+		subdomain = fmt.Sprintf("%s%d", DomainName(plan_name), toInt(subscription["subscription_id"]))
 	}
 	if slug, ok := tenant["slug"].(string); ok {
 		subdomain = fmt.Sprintf("%s.%s", subdomain, DomainName(slug))
