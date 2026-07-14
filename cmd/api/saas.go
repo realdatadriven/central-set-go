@@ -679,7 +679,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 			_data["status"] = "destroyed"
 		}
 	}
-	err = AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", ""))
+	err = AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", "~/.ssh/known_hosts"))
 	if err != nil {
 		fmt.Printf("Err adding to nkown host: %s!\n", err.Error())
 	}
