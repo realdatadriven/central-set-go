@@ -483,7 +483,7 @@ func DomainName(name string) string {
 	return strings.Trim(result, "_")
 }
 
-func getSubdomain(plan, tenant, subscription Dict) string {
+func (app *application) GetSubdomain(plan, tenant, subscription Dict) string {
 	subdomain := ""
 	// SAAS_SUBDOMAIN_TMPL='{{.plan.plan}}{{.subscription.subscription_id}}.{{.tenant.slug}}'
 	// SAAS_SUBDOMAIN_TMPL='{{.plan.plan}}{{.subscription.subscription_id}}.{{if .tenant.slug}}{{.tenant.slug}}{{else}}{{.tenant.tenant}}{{end}}'
@@ -494,7 +494,7 @@ func getSubdomain(plan, tenant, subscription Dict) string {
 		} else {
 			return DomainName(subtml)
 		}
-	} 
+	}
 	if plan_name, ok := plan["plan"].(string); ok {
 		// fmt.Println(plan_name, subscription["subscription_id"])
 		subdomain = fmt.Sprintf("%s%d", DomainName(plan_name), toInt(subscription["subscription_id"]))
@@ -570,7 +570,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	_tmpl_data := map[string]any{
 		"tenant_id":       tenantID,
 		"subscription_id": subscriptionID,
-		"subdomain":       getSubdomain(plan, tenant, _data),
+		"subdomain":       app.GetSubdomain(plan, tenant, _data),
 		"env":             tenantEnv,
 		"envKV":           tenantEnvKeyPair,
 		"sysEnv":          tenantSysEnv,
