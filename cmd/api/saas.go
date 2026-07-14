@@ -689,7 +689,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	_data["terraform_state"] = string(run.State)
 	_data["terraform_lock"] = string(run.Lock)
-	err2 := AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", "~/.ssh/known_hosts"))
+	err2 := AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", "$HOME/.ssh/known_hosts"))
 	if err2 != nil {
 		fmt.Printf("Err adding to nkown host: %s!\n", err2.Error())
 	}
