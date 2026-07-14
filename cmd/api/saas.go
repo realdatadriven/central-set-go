@@ -679,10 +679,6 @@ func (app *application) RunDeploy(params Dict) Dict {
 			_data["status"] = "destroyed"
 		}
 	}
-	err = AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", "~/.ssh/known_hosts"))
-	if err != nil {
-		fmt.Printf("Err adding to nkown host: %s!\n", err.Error())
-	}
 	msg, _ := app.i18n.T("success", Dict{})
 	_data["tf_err_msg"] = nil
 	success := true
@@ -693,6 +689,10 @@ func (app *application) RunDeploy(params Dict) Dict {
 	}
 	_data["terraform_state"] = string(run.State)
 	_data["terraform_lock"] = string(run.Lock)
+	err2 := AddKnownHost(_data["tf_public_ip"].(string), 22, env.GetString("SSH_HOST_KEY", "~/.ssh/known_hosts"))
+	if err2 != nil {
+		fmt.Printf("Err adding to nkown host: %s!\n", err2.Error())
+	}
 	//fmt.Println(1, "terraform_state", len(_data["terraform_state"].(string)), "terraform_lock", len(_data["terraform_lock"].(string)), len(run.Lock))
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
