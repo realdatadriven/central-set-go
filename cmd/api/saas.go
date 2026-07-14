@@ -492,7 +492,7 @@ func getSubdomain(plan, tenant, subscription Dict) string {
 		if err != nil {
 			fmt.Println("Error rendering SAAS_SUBDOMAIN_TMPL template", err.Error())
 		} else {
-			return subtml
+			return DomainName(subtml)
 		}
 	} 
 	if plan_name, ok := plan["plan"].(string); ok {
@@ -500,9 +500,9 @@ func getSubdomain(plan, tenant, subscription Dict) string {
 		subdomain = fmt.Sprintf("%s%d", DomainName(plan_name), toInt(subscription["subscription_id"]))
 	}
 	if slug, ok := tenant["slug"].(string); ok {
-		subdomain = fmt.Sprintf("%s.%s", subdomain, DomainName(slug))
+		subdomain = fmt.Sprintf("%s%s", subdomain, DomainName(slug))
 	} else {
-		subdomain = fmt.Sprintf("%s.%s", subdomain, DomainName(tenant["tenant"].(string)))
+		subdomain = fmt.Sprintf("%s%s", subdomain, DomainName(tenant["tenant"].(string)))
 	}
 	return subdomain
 }
