@@ -485,6 +485,16 @@ func DomainName(name string) string {
 
 func getSubdomain(plan, tenant, subscription Dict) string {
 	subdomain := ""
+	// SAAS_SUBDOMAIN_TMPL='{{.plan.plan}}{{.subscription.subscription_id}}{{.tenant.slug}}'
+	// SAAS_SUBDOMAIN_TMPL='{{.plan.plan}}{{.subscription.subscription_id}}{{if .tenant.slug}}{{.tenant.slug}}{{else}}{{.tenant.tenant}}{{end}}'
+	if os.Getenv("SAAS_SUBDOMAIN_TMPL") != "" {
+		subtml, err := app.RenderTextTemplate(os.Getenv("SAAS_SUBDOMAIN_TMPL"), Dict{"plan": plan, "tenant": tenant, "subscription": subscription})
+		if err != nil {
+			fmt.Println("Error rendering SAAS_SUBDOMAIN_TMPL template", err.Error())
+		} else {
+			return subtml
+		}
+	} 
 	if plan_name, ok := plan["plan"].(string); ok {
 		// fmt.Println(plan_name, subscription["subscription_id"])
 		subdomain = fmt.Sprintf("%s%d", DomainName(plan_name), toInt(subscription["subscription_id"]))
