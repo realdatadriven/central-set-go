@@ -857,6 +857,22 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				// data = app.RunDeploy(params)
 				data = app.HandleService(params, "stop")
 			}
+		} else if app.contains([]any{"status", "state", "sts"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				params["data"].(Dict)["action"] = act
+				// data = app.RunDeploy(params)
+				data = app.HandleService(params, "status")
+			}
+		} else if app.contains([]any{"logs", "lgs", "lg", "log"}, act) {
+			if !token["success"].(bool) {
+				data = token
+			} else {
+				params["data"].(Dict)["action"] = act
+				// data = app.RunDeploy(params)
+				data = app.HandleService(params, "logs")
+			}
 		} else if app.contains([]any{"restart", "rs", "reboot"}, act) {
 			if !token["success"].(bool) {
 				data = token

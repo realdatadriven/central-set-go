@@ -181,8 +181,9 @@ func (app *application) HandleService(params Dict, action string) Dict {
 					_data["deployed"] = true
 					_data["status"] = "started"
 				case "status":
+					statusData := ""
 					if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
-						_, err = svc.Status(context.Background(), service["subs_server_service"].(string))
+						statusData, err = svc.Status(context.Background(), service["subs_server_service"].(string))
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -190,7 +191,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					} else {
-						_, err = svc.RunOutput(context.Background(), service["service_status_cmd"].(string))
+						statusData, err = svc.RunOutput(context.Background(), service["service_status_cmd"].(string))
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -198,9 +199,15 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					}
+					_data["server_status"] = statusData
 				case "logs":
+					serverLogsData := ""
 					if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
-						_, err = svc.Logs(context.Background(), service["subs_server_service"].(string), 100)
+						lines := 100
+						if _, ok := params["lines"]; ok {
+							lines = app.toInt(params["lines"])
+						}
+						serverLogsData, err = svc.Logs(context.Background(), service["subs_server_service"].(string), lines)
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -208,7 +215,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					} else {
-						_, err = svc.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+						serverLogsData, err = svc.RunOutput(context.Background(), service["service_logs_cmd"].(string))
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -216,6 +223,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					}
+					_data["server_logs"] = serverLogsData
 				}
 			}
 		} else {
@@ -290,8 +298,9 @@ func (app *application) HandleService(params Dict, action string) Dict {
 					_data["deployed"] = true
 					_data["status"] = "started"
 				case "status":
+					statusData := ""
 					if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
-						_, err = sshIntance.Status(context.Background(), service["subs_server_service"].(string))
+						statusData, err = sshIntance.Status(context.Background(), service["subs_server_service"].(string))
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -299,7 +308,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					} else {
-						_, err = sshIntance.RunOutput(context.Background(), service["service_status_cmd"].(string))
+						statusData, err = sshIntance.RunOutput(context.Background(), service["service_status_cmd"].(string))
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -307,9 +316,11 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					}
+					_data["server_status"] = statusData
 				case "logs":
+					serverLogsData := ""
 					if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
-						_, err = sshIntance.Logs(context.Background(), service["subs_server_service"].(string), 100)
+						serverLogsData, err = sshIntance.Logs(context.Background(), service["subs_server_service"].(string), 100)
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -317,7 +328,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					} else {
-						_, err = sshIntance.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+						serverLogsData, err = sshIntance.RunOutput(context.Background(), service["service_logs_cmd"].(string))
 						if err != nil {
 							return Dict{
 								"success": false,
@@ -325,6 +336,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 							}
 						}
 					}
+					_data["server_logs"] = serverLogsData
 				}
 			}
 			/*svc := NewServiceManager(sshIntance)
@@ -447,7 +459,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		"table":    params["data"].(Dict)["table"],
 	}
 	app.BroadCastChange(bdc)
-	fmt.Println("BOADCASTED:", bdc)
+	//fmt.Println("BOADCASTED:", bdc)
 	return Dict{
 		"success": true,
 		"msg":     "Action completed successfully",
