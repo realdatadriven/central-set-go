@@ -447,7 +447,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		"table":    params["data"].(Dict)["table"],
 	}
 	app.BroadCastChange(bdc)
-	// fmt.Println("BOADCASTED:", bdc)
+	fmt.Println("BOADCASTED:", bdc)
 	return Dict{
 		"success": true,
 		"msg":     "Action completed successfully",

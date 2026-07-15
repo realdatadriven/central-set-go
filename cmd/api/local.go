@@ -57,6 +57,7 @@ func NewServiceManager(r CommandRunner) *ServiceManager {
 }
 
 func (s *ServiceManager) systemctl(ctx context.Context, action, service string) error {
+	//fmt.Printf("LOCAL CMD: systemctl --user %s %s\n", action, service)
 	return s.runner.Run(
 		ctx,
 		fmt.Sprintf("systemctl --user %s %s", action, service),
