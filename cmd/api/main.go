@@ -292,7 +292,7 @@ func run(logger *slog.Logger) error {
 		//fmt.Println("ENABLE_OAUTH:", true)
 		auth.InitGoth()
 	}
-
+	// RESTRICT_PATHS
 	if env.GetBool("RESTRICT_PATHS", false) {
 		dir, err := os.Getwd()
 		if err != nil {
@@ -306,6 +306,9 @@ func run(logger *slog.Logger) error {
 		allowed_rw_files := strings.Split(env.GetString("RESTRICT_PATHS_RW_ALLOW_FILES", ""), ",")
 		var ro_dirs []string
 		for _, p := range allowed_ro_paths {
+			if p == "" {
+				continue
+			}
 			if _, err := os.Stat(p); err == nil { // only add paths that exist on this host
 				// fmt.Println("Allow Path: ", p)
 				ro_dirs = append(ro_dirs, p)
@@ -315,6 +318,9 @@ func run(logger *slog.Logger) error {
 		}
 		var ro_files []string
 		for _, f := range allowed_ro_files {
+			if f == "" {
+				continue
+			}
 			if _, err := os.Stat(f); err == nil { // only add paths that exist on this host
 				ro_files = append(ro_files, f)
 			} else {
@@ -323,6 +329,9 @@ func run(logger *slog.Logger) error {
 		}
 		var rw_dirs []string
 		for _, p := range allowed_rw_paths {
+			if p == "" {
+				continue
+			}
 			if _, err := os.Stat(p); err == nil { // only add paths that exist on this host
 				// fmt.Println("Allow Path: ", p)
 				rw_dirs = append(rw_dirs, p)
@@ -332,6 +341,9 @@ func run(logger *slog.Logger) error {
 		}
 		var rw_files []string
 		for _, f := range allowed_rw_files {
+			if f == "" {
+				continue
+			}
 			if _, err := os.Stat(f); err == nil { // only add paths that exist on this host
 				rw_files = append(rw_files, f)
 			} else {
