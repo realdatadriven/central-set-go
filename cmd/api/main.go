@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"runtime/debug"
+	"strings"
 	"sync"
 	"time"
 
@@ -21,6 +22,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/yuangwei/go-i18next"
+
+	"github.com/landlock-lsm/go-landlock/landlock"
 )
 
 var i18n i18next.I18n
@@ -288,6 +291,63 @@ func run(logger *slog.Logger) error {
 	if env.GetBool("ENABLE_OAUTH", false) {
 		//fmt.Println("ENABLE_OAUTH:", true)
 		auth.InitGoth()
+	}
+
+	if env.GetBool("RESTRICT_PATHS", false) {
+		dir, err := os.Getwd()
+		if err != nil {
+			dir = ""
+		}
+		tmp := os.TempDir()
+		// fmt.Println(tmp, dir)
+		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_DIRS", ""), ",")
+		allowed_ro_files := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_FILES", ""), ",")
+		allowed_rw_paths := strings.Split(env.GetString("RESTRICT_PATHS_RW_ALLOW_DIRS", ""), ",")
+		allowed_rw_files := strings.Split(env.GetString("RESTRICT_PATHS_RW_ALLOW_FILES", ""), ",")
+		var ro_dirs []string
+		for _, p := range allowed_ro_paths {
+			if _, err := os.Stat(p); err == nil { // only add paths that exist on this host
+				// fmt.Println("Allow Path: ", p)
+				ro_dirs = append(ro_dirs, p)
+			} else {
+				fmt.Println("landlock.V9.BestEffort().RestrictPaths PATH Err:", p, err)
+			}
+		}
+		var ro_files []string
+		for _, f := range allowed_ro_files {
+			if _, err := os.Stat(f); err == nil { // only add paths that exist on this host
+				ro_files = append(ro_files, f)
+			} else {
+				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
+			}
+		}
+		var rw_dirs []string
+		for _, p := range allowed_rw_paths {
+			if _, err := os.Stat(p); err == nil { // only add paths that exist on this host
+				// fmt.Println("Allow Path: ", p)
+				rw_dirs = append(rw_dirs, p)
+			} else {
+				fmt.Println("landlock.V9.BestEffort().RestrictPaths PATH Err:", p, err)
+			}
+		}
+		var rw_files []string
+		for _, f := range allowed_rw_files {
+			if _, err := os.Stat(f); err == nil { // only add paths that exist on this host
+				rw_files = append(rw_files, f)
+			} else {
+				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
+			}
+		}
+		err = landlock.V9.BestEffort().RestrictPaths(
+			landlock.RWDirs(dir, tmp),
+			landlock.RODirs(ro_dirs...),
+			landlock.ROFiles(ro_files...),
+			landlock.RWDirs(rw_dirs...),
+			landlock.RWFiles(rw_files...),
+		)
+		if err != nil {
+			return fmt.Errorf("landlock.V9.BestEffort().RestrictPaths: %s", err.Error())
+		}
 	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)
