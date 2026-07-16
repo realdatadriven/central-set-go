@@ -309,9 +309,9 @@ func run(logger *slog.Logger) error {
 			if p == "" {
 				continue
 			}
-			if _, err := os.Stat(p); err == nil { // only add paths that exist on this host
-				// fmt.Println("Allow Path: ", p)
-				ro_dirs = append(ro_dirs, p)
+			if _, err := os.Stat(os.ExpandEnv(p)); err == nil { // only add paths that exist on this host
+				// fmt.Println("Allow Path: ", os.ExpandEnv(p))
+				ro_dirs = append(ro_dirs, os.ExpandEnv(p))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths PATH Err:", p, err)
 			}
@@ -321,8 +321,8 @@ func run(logger *slog.Logger) error {
 			if f == "" {
 				continue
 			}
-			if _, err := os.Stat(f); err == nil { // only add paths that exist on this host
-				ro_files = append(ro_files, f)
+			if _, err := os.Stat(os.ExpandEnv(f)); err == nil { // only add paths that exist on this host
+				ro_files = append(ro_files, os.ExpandEnv(f))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
 			}
@@ -332,9 +332,9 @@ func run(logger *slog.Logger) error {
 			if p == "" {
 				continue
 			}
-			if _, err := os.Stat(p); err == nil { // only add paths that exist on this host
+			if _, err := os.Stat(os.ExpandEnv(p)); err == nil { // only add paths that exist on this host
 				// fmt.Println("Allow Path: ", p)
-				rw_dirs = append(rw_dirs, p)
+				rw_dirs = append(rw_dirs, os.ExpandEnv(p))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths PATH Err:", p, err)
 			}
@@ -344,8 +344,8 @@ func run(logger *slog.Logger) error {
 			if f == "" {
 				continue
 			}
-			if _, err := os.Stat(f); err == nil { // only add paths that exist on this host
-				rw_files = append(rw_files, f)
+			if _, err := os.Stat(os.ExpandEnv(f)); err == nil { // only add paths that exist on this host
+				rw_files = append(rw_files, os.ExpandEnv(f))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
 			}
