@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -132,6 +133,7 @@ type application struct {
 	quackPoolMux      sync.RWMutex             // Protect concurrent access to pool
 	quackManager      *QuackManager            // Quack lifecycle manager
 	quackInstanciated bool                     // Quack instanciated flag to avoid multiple instantiation of quack manager and pool in case of multiple calls to run function, as it can happen in licensee app where we validate the license on startup and then periodically, and both operations call run function
+	sizeGuard         *SizeGuard
 }
 
 func run(logger *slog.Logger) error {
@@ -293,12 +295,14 @@ func run(logger *slog.Logger) error {
 		auth.InitGoth()
 	}
 	// RESTRICT_PATHS
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = ""
+	}
+	os.Setenv("CWD", dir)
+	tmp := os.TempDir()
+	os.Setenv("TMP", tmp)
 	if env.GetBool("RESTRICT_PATHS", false) {
-		dir, err := os.Getwd()
-		if err != nil {
-			dir = ""
-		}
-		tmp := os.TempDir()
 		// fmt.Println(tmp, dir)
 		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_DIRS", ""), ",")
 		allowed_ro_files := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_FILES", ""), ",")
@@ -361,13 +365,26 @@ func run(logger *slog.Logger) error {
 			return fmt.Errorf("landlock.V9.BestEffort().RestrictPaths: %s", err.Error())
 		}
 	}
+	// SIZE_GUARD
+	if env.GetBool("SIZE_GUARD", false) {
+		app.sizeGuard := sizeguard.NewSizeGuard(dir, evg.GetInt("SIZE_GUARD_STOP_IN_GB", 10), 30*time.Second) // 10GB, checked every 30s
+		defer app.sizeGuard.Stop()
+	}
+	// CS_GOMAXPROCS || GOMAXPROCS=4 ./yourapp
+	if env.GetInt("CS_GOMAXPROCS", 0) > 0 {
+		runtime.GOMAXPROCS(env.GetInt("CS_GOMAXPROCS", 4))
+	}
+	// CS_GOMEMLIMIT || GOMEMLIMIT=2GiB ./yourapp
+	if env.GetInt("CS_GOMEMLIMIT", 0) > 0 {
+		debug.SetMemoryLimit(env.GetInt("CS_GOMEMLIMIT", 2) << 30)
+	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)
 	// Set tenant environment variables
 	sql := `select * from "env" where "active" = ? and "on_srv_start" = ? and "excluded" = ?`
 	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{true, true, false})
 	if err != nil {
-		fmt.Printf("Error fetching tenant env vars: %v\n", err)
+		// fmt.Printf("Error fetching tenant env vars: %v\n", err)
 	} else {
 		for _, v := range tenantEnv {
 			os.Setenv(v["env_name"].(string), v["env_value"].(string))

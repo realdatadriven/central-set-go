@@ -291,3 +291,18 @@ WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.
 	query = fmt.Sprintf(`UPDATE rate_limits SET request_count = request_count + 1, last_request_time = CURRENT_TIMESTAMP WHERE ip='%s';`, ip)
 	return app.memdb.Exec(query)
 }
+
+func (app *application) sizeGuard(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if app.sizeGuard != nil {		 
+			if err := app.sizeGuard.AllowWrite(); err != nil {
+				fmt.Printf("Size Guard: %s\n", err.Error())
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInsufficientStorage)
+				json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": fmt.Sprintf("Size Guard: %s\n", err.Error())})
+				return
+			}
+		}
+		next.ServeHTTP(rw, r)
+	})
+}
