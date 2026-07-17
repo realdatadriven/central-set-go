@@ -408,8 +408,8 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			}
 		} // else it will be verifyed untill the licence gets validated again
 	}
-	sizeGuardAllowWrite := true
-	if app.sizeGuard != nil {		 
+	/*sizeGuardAllowWrite := true
+	if app.sizeGuard != nil {
 		if err := app.sizeGuard.AllowWrite(); err != nil {
 			fmt.Printf("Size Guard: %s\n", err.Error())
 			data = Dict{
@@ -419,7 +419,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 			} // reject before touching disk
 			sizeGuardAllowWrite = false
 		}
-	}
+	}*/
 	// ROUTES
 	switch ctrl {
 	// handle ctrl = license and act = verify_license that baically just checks the token sent in the header Authorization

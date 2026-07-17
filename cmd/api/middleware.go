@@ -292,9 +292,17 @@ WHEN NOT MATCHED THEN INSERT VALUES (upserts.ip, upserts.request_count, upserts.
 	return app.memdb.Exec(query)
 }
 
-func (app *application) sizeGuard(next http.Handler) http.Handler {
+func isWriteMethod(method string) bool {
+	switch method {
+	case http.MethodPost, http.MethodPut, http.MethodPatch:
+		return true
+	}
+	return false
+}
+
+func (app *application) sizeGuardMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if app.sizeGuard != nil {		 
+		if app.sizeGuard != nil && isWriteMethod(r.Method) {
 			if err := app.sizeGuard.AllowWrite(); err != nil {
 				fmt.Printf("Size Guard: %s\n", err.Error())
 				w.Header().Set("Content-Type", "application/json")
@@ -303,6 +311,6 @@ func (app *application) sizeGuard(next http.Handler) http.Handler {
 				return
 			}
 		}
-		next.ServeHTTP(rw, r)
+		next.ServeHTTP(w, r)
 	})
 }

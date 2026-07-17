@@ -367,7 +367,7 @@ func run(logger *slog.Logger) error {
 	}
 	// SIZE_GUARD
 	if env.GetBool("SIZE_GUARD", false) {
-		app.sizeGuard := sizeguard.NewSizeGuard(dir, evg.GetInt("SIZE_GUARD_STOP_IN_GB", 10), 30*time.Second) // 10GB, checked every 30s
+		app.sizeGuard = NewSizeGuard(dir, env.GetFloat64("SIZE_GUARD_STOP_IN_GB", 10), 30*time.Second) // 10GB, checked every 30s
 		defer app.sizeGuard.Stop()
 	}
 	// CS_GOMAXPROCS || GOMAXPROCS=4 ./yourapp
@@ -376,7 +376,7 @@ func run(logger *slog.Logger) error {
 	}
 	// CS_GOMEMLIMIT || GOMEMLIMIT=2GiB ./yourapp
 	if env.GetInt("CS_GOMEMLIMIT", 0) > 0 {
-		debug.SetMemoryLimit(env.GetInt("CS_GOMEMLIMIT", 2) << 30)
+		debug.SetMemoryLimit(int64(env.GetInt("CS_GOMEMLIMIT", 2)) << 30)
 	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)

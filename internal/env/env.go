@@ -28,6 +28,20 @@ func GetInt(key string, defaultValue int) int {
 	return intValue
 }
 
+func GetFloat64(key string, defaultValue float64) float64 {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return defaultValue
+	}
+
+	floatValue, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return defaultValue
+	}
+
+	return floatValue
+}
+
 func GetBool(key string, defaultValue bool) bool {
 	value, exists := os.LookupEnv(key)
 	if !exists {
