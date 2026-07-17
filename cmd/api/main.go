@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -367,6 +368,14 @@ func run(logger *slog.Logger) error {
 	if env.GetBool("SIZE_GUARD", false) {
 		app.sizeGuard := sizeguard.NewSizeGuard(dir, evg.GetInt("SIZE_GUARD_STOP_IN_GB", 10), 30*time.Second) // 10GB, checked every 30s
 		defer app.sizeGuard.Stop()
+	}
+	// CS_GOMAXPROCS || GOMAXPROCS=4 ./yourapp
+	if env.GetInt("CS_GOMAXPROCS", 0) > 0 {
+		runtime.GOMAXPROCS(env.GetInt("CS_GOMAXPROCS", 4))
+	}
+	// CS_GOMEMLIMIT || GOMEMLIMIT=2GiB ./yourapp
+	if env.GetInt("CS_GOMEMLIMIT", 0) > 0 {
+		debug.SetMemoryLimit(env.GetInt("CS_GOMEMLIMIT", 2) << 30)
 	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)
