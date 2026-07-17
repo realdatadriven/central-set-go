@@ -132,6 +132,7 @@ type application struct {
 	quackPoolMux      sync.RWMutex             // Protect concurrent access to pool
 	quackManager      *QuackManager            // Quack lifecycle manager
 	quackInstanciated bool                     // Quack instanciated flag to avoid multiple instantiation of quack manager and pool in case of multiple calls to run function, as it can happen in licensee app where we validate the license on startup and then periodically, and both operations call run function
+	sizeGuard         *SizeGuard
 }
 
 func run(logger *slog.Logger) error {
@@ -361,6 +362,11 @@ func run(logger *slog.Logger) error {
 		if err != nil {
 			return fmt.Errorf("landlock.V9.BestEffort().RestrictPaths: %s", err.Error())
 		}
+	}
+	// SIZE_GUARD
+	if env.GetBool("SIZE_GUARD", false) {
+		app.sizeGuard := sizeguard.NewSizeGuard(dir, evg.GetInt("SIZE_GUARD_STOP_IN_GB", 10), 30*time.Second) // 10GB, checked every 30s
+		defer app.sizeGuard.Stop()
 	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)

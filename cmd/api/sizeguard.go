@@ -78,7 +78,17 @@ func (g *SizeGuard) Stop() {
 	close(g.stopCh)
 }
 
-/*type SizeGuard struct {
+/*
+guard := sizeguard.NewSizeGuard("/opt/myapp/data", 10.0, 30*time.Second) // 10GB, checked every 30s
+defer guard.Stop()
+
+func writeFile(guard *sizeguard.SizeGuard, path string, data []byte) error {
+	if err := guard.AllowWrite(); err != nil {
+		return err // reject before touching disk
+	}
+	return os.WriteFile(path, data, 0644)
+}
+type SizeGuard struct {
 	maxBytes int64
 	current  atomic.Int64
 	// ...
