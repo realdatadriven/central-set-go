@@ -293,6 +293,7 @@ func run(logger *slog.Logger) error {
 		auth.InitGoth()
 	}
 	// RESTRICT_PATHS
+	os.Setenv("CWD") = os.Getwd()
 	if env.GetBool("RESTRICT_PATHS", false) {
 		dir, err := os.Getwd()
 		if err != nil {
