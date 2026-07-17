@@ -384,7 +384,7 @@ func run(logger *slog.Logger) error {
 	sql := `select * from "env" where "active" = ? and "on_srv_start" = ? and "excluded" = ?`
 	tenantEnv, err := app.AdminGetRowsByFilter(sql, []any{true, true, false})
 	if err != nil {
-		fmt.Printf("Error fetching tenant env vars: %v\n", err)
+		// fmt.Printf("Error fetching tenant env vars: %v\n", err)
 	} else {
 		for _, v := range tenantEnv {
 			os.Setenv(v["env_name"].(string), v["env_value"].(string))
