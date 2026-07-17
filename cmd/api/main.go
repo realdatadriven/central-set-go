@@ -300,8 +300,9 @@ func run(logger *slog.Logger) error {
 		dir = ""
 	}
 	os.Setenv("CWD", dir)
+	tmp := os.TempDir()
+	os.Setenv("TMP", tmp)
 	if env.GetBool("RESTRICT_PATHS", false) {
-		tmp := os.TempDir()
 		// fmt.Println(tmp, dir)
 		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_DIRS", ""), ",")
 		allowed_ro_files := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_FILES", ""), ",")
