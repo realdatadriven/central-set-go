@@ -293,12 +293,12 @@ func run(logger *slog.Logger) error {
 		auth.InitGoth()
 	}
 	// RESTRICT_PATHS
-	os.Setenv("CWD") = os.Getwd()
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = ""
+	}
+	os.Setenv("CWD") = dir
 	if env.GetBool("RESTRICT_PATHS", false) {
-		dir, err := os.Getwd()
-		if err != nil {
-			dir = ""
-		}
 		tmp := os.TempDir()
 		// fmt.Println(tmp, dir)
 		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_DIRS", ""), ",")
