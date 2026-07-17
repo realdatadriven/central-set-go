@@ -176,7 +176,9 @@ func (app *application) routes() http.Handler {
 			app.cors(
 				app.logAccess(
 					app.recoverPanic(
-						app.authenticate(mux),
+						app.sizeGuard(
+							app.authenticate(mux)
+						),
 					),
 				),
 			),
