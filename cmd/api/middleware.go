@@ -298,7 +298,7 @@ func (app *application) sizeGuard(next http.Handler) http.Handler {
 			if err := app.sizeGuard.AllowWrite(); err != nil {
 				fmt.Printf("Size Guard: %s\n", err.Error())
 				w.Header().Set("Content-Type", "application/json")
-				// w.WriteHeader(http.In)
+				w.WriteHeader(http.StatusInsufficientStorage)
 				json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": fmt.Sprintf("Size Guard: %s\n", err.Error())})
 				return
 			}
