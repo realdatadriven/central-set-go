@@ -297,7 +297,7 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		dir = ""
 	}
-	os.Setenv("CWD") = dir
+	os.Setenv("CWD", dir)
 	if env.GetBool("RESTRICT_PATHS", false) {
 		tmp := os.TempDir()
 		// fmt.Println(tmp, dir)
