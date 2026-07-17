@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strings"
@@ -304,18 +305,18 @@ func run(logger *slog.Logger) error {
 	os.Setenv("TMP", tmp)
 	if env.GetBool("RESTRICT_PATHS", false) {
 		// fmt.Println(tmp, dir)
-		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_DIRS", ""), ",")
-		allowed_ro_files := strings.Split(env.GetString("RESTRICT_PATHS_RO_ALLOW_FILES", ""), ",")
-		allowed_rw_paths := strings.Split(env.GetString("RESTRICT_PATHS_RW_ALLOW_DIRS", ""), ",")
-		allowed_rw_files := strings.Split(env.GetString("RESTRICT_PATHS_RW_ALLOW_FILES", ""), ",")
+		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RO_DIRS", ""), ",")
+		allowed_ro_files := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RO_FILES", ""), ",")
+		allowed_rw_paths := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RW_DIRS", ""), ",")
+		allowed_rw_files := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RW_FILES", ""), ",")
 		var ro_dirs []string
 		for _, p := range allowed_ro_paths {
 			if p == "" {
 				continue
 			}
-			if _, err := os.Stat(os.ExpandEnv(p)); err == nil { // only add paths that exist on this host
-				// fmt.Println("Allow Path: ", os.ExpandEnv(p))
-				ro_dirs = append(ro_dirs, os.ExpandEnv(p))
+			if _, err := os.Stat(EnvExpand(p)); err == nil { // only add paths that exist on this host
+				// fmt.Println("Allow Path: ", EnvExpand(p))
+				ro_dirs = append(ro_dirs, EnvExpand(p))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths PATH Err:", p, err)
 			}
@@ -325,20 +326,22 @@ func run(logger *slog.Logger) error {
 			if f == "" {
 				continue
 			}
-			if _, err := os.Stat(os.ExpandEnv(f)); err == nil { // only add paths that exist on this host
-				ro_files = append(ro_files, os.ExpandEnv(f))
+			if _, err := os.Stat(EnvExpand(f)); err == nil { // only add paths that exist on this host
+				ro_files = append(ro_files, EnvExpand(f))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
 			}
 		}
 		var rw_dirs []string
+		// fmt.Println("RESTRICT_PATHS_ALLOW_RW_DIRS:", env.GetString("RESTRICT_PATHS_ALLOW_RW_DIRS", ""))
 		for _, p := range allowed_rw_paths {
+			fmt.Println(p, EnvExpand(p))
 			if p == "" {
 				continue
 			}
-			if _, err := os.Stat(os.ExpandEnv(p)); err == nil { // only add paths that exist on this host
+			if _, err := os.Stat(EnvExpand(p)); err == nil { // only add paths that exist on this host
 				// fmt.Println("Allow Path: ", p)
-				rw_dirs = append(rw_dirs, os.ExpandEnv(p))
+				rw_dirs = append(rw_dirs, EnvExpand(p))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths PATH Err:", p, err)
 			}
@@ -348,12 +351,13 @@ func run(logger *slog.Logger) error {
 			if f == "" {
 				continue
 			}
-			if _, err := os.Stat(os.ExpandEnv(f)); err == nil { // only add paths that exist on this host
-				rw_files = append(rw_files, os.ExpandEnv(f))
+			if _, err := os.Stat(EnvExpand(f)); err == nil { // only add paths that exist on this host
+				rw_files = append(rw_files, EnvExpand(f))
 			} else {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
 			}
 		}
+		fmt.Println("RWDirs:", rw_dirs)
 		err = landlock.V9.BestEffort().RestrictPaths(
 			landlock.RWDirs(dir, tmp),
 			landlock.RODirs(ro_dirs...),
@@ -437,6 +441,21 @@ func run(logger *slog.Logger) error {
 		}()
 	}
 	return app.serveHTTP()
+}
+
+// ExpandRegex replaces $VAR occurrences with the corresponding environment
+// variable value. If the variable doesn't exist, the original $VAR text is
+// left untouched.
+func EnvExpand(s string) string {
+	var reEnvVar = regexp.MustCompile(`\$\w+`)
+	return reEnvVar.ReplaceAllStringFunc(s, func(match string) string {
+		// fmt.Println(match, match[1:])
+		name := match[1:] // strip leading "$"
+		if value, exists := os.LookupEnv(name); exists {
+			return value
+		}
+		return match // leave as-is if not set
+	})
 }
 
 // go run ./cmd/api
