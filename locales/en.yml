@@ -113,3 +113,6 @@ code-not-saved-or-already-used: Code not set or already used!
 account-inactive: 'Account is inactive, please contact the admin!'
 account-deactivated: 'Account is deactivated, please contact the admin!'
 account-locked: 'Account is locked due to too many failed login attempts, please contact the admin!'
+access-key-no-user: No user submited
+access-key-no-expires-dt: No expiration date submited
+access-key-no-description: No description submited

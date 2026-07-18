@@ -454,13 +454,13 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		}
 		serverLogsData := ""
 		logs_ins_sql := `INSERT INT srv_logs_check_hist
-			(srv_logs_check_hist, srv_logs, subs_server_service_id, subs_server_id, subscription_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
-			(:srv_logs_check_hist, :srv_logs, :subs_server_service_id, :subs_server_id, :subscription_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
+			(srv_logs_check_hist, srv_logs, subs_server_service_id, subs_server_id, subscription_id, tenant_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
+			(:srv_logs_check_hist, :srv_logs, :subs_server_service_id, :subs_server_id, :subscription_id, :tenant_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
 		`
 		statusData := ""
 		status_ins_sql := `INSERT INT srv_status_chk_hist
-			(srv_status_chk_hist, srv_status, subs_server_service_id, subs_server_id, subscription_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
-			(:srv_status_chk_hist, :srv_status, :subs_server_service_id, :subs_server_id, :subscription_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
+			(srv_status_chk_hist, srv_status, subs_server_service_id, subs_server_id, subscription_id, tenant_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
+			(:srv_status_chk_hist, :srv_status, :subs_server_service_id, :subs_server_id, :subscription_id, :tenant_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
 		`
 		for _, service := range subsServerService {
 			switch action {
@@ -936,6 +936,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 				"subs_server_key":      rawMessageToString(json.RawMessage(res["service_key"])),
 				"subs_server_host_key": rawMessageToString(json.RawMessage(res["service_host_key"])),
 				"subscription_id":      _data["subscription_id"],
+				"tenant_id":            _data["tenant_id"],
 				"active":               true,
 			}
 			results := app.create_update(params)
@@ -963,6 +964,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 						"subs_server_service": srv,
 						"subs_server_id":      _id,
 						"subscription_id":     _data["subscription_id"],
+						"tenant_id":           _data["tenant_id"],
 						"active":              true,
 					})
 				}
