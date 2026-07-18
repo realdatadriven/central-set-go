@@ -541,6 +541,16 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     err.Error(),
 		}
 	}
+	_, odb, _ := app.GetDBNameFromParams(params)
+	odata_path := fmt.Sprintf(`%s/plan?$filter=plan_id eq %s`, odb, _data["plan_id"])
+	data := app.ODataRead(params, odata_path)
+	if !data["success"].(bool) {
+		return data
+	}
+	if _, ok := data["data"].([]Dict); !ok {
+		return data
+	}
+	// data["data"].([]Dict)
 	sql = `select * from "plan_service" where "plan_id" = ? and "active" = true and "excluded" = false`
 	plan_service, err := app.GetRowsByFilter(sql, params, []any{plan["plan_id"]})
 	if err != nil {
