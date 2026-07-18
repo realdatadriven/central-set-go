@@ -305,7 +305,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 	etlxlib := &etlx.ETLX{Config: config, Params: _params, TimeZone: loc}
 	etlxlib.MetadataOrder = false
 	if order_metadata, ok := _data["order_metadata"].(bool); ok {
-		fmt.Println("order_metadata:", order_metadata)
+		// fmt.Println("order_metadata:", order_metadata)
 		etlxlib.MetadataOrder = order_metadata
 	}
 	config, ok = _data["conf"].(Dict)
@@ -379,7 +379,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 		_dateRef = _data["date_ref"]
 	}
 	var dateRef []time.Time
-	switch _type := _dateRef.(type) {
+	switch _dateRef.(type) {
 	case string:
 		_dt, _ := time.Parse("2006-01-02", _dateRef.(string))
 		dateRef = append(dateRef, _dt)
@@ -390,7 +390,7 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 		}
 	default:
 		dateRef = append(dateRef, time.Now().AddDate(0, 0, -1))
-		fmt.Println("Unable to parse date ref: ", _type, _dateRef)
+		// fmt.Println("Unable to parse date ref: ", _type, _dateRef)
 	}
 	// EXTRA CONFIG
 	extraConf := Dict{}
