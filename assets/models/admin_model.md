@@ -48,6 +48,10 @@ cs_app:
       - {table: crud_action_logs, active: false}
       - {table: action_data_type, active: false}
       - {table: action_data, active: false}
+      - crud_intercept
+      - {table: crud_intercept_logs, active: false}
+      - {table: ntercept_data_type, active: false}
+      - {table: ntercept_data, active: false}
   Arrow Flight:
     menu_icon: paper-airplane
     menu_order: 3
@@ -145,7 +149,7 @@ data:
   - {role_id: 1, role: root, role_desc: "Root role", excluded: false}
   - {role_id: 2, role: no-role, role_desc: "No role set", excluded: false}
   - {role_id: 3, role: tenant, role_desc: "Tenant Role", excluded: false}
-#  - {role_id: 4, role: anonymous, role_desc: "Anonymous role", excluded: false}
+  - {role_id: 4, role: anonymous, role_desc: "Anonymous role", excluded: false}
 form_layout:
   tabs_steps: tabs
   size: 4
@@ -181,7 +185,7 @@ columns:
   excluded:             { type: boolean, default: false, comment: "Excluded" }
 data:
   - {user_id: 1, username: root, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Super, last_name: Admin, email: admin@domain.com, role_id: 1, lang_id: 1, active: true, alter_pass_nxt_login: true, excluded: false}
-#  - {user_id: 2, username: anonymous, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Anonymous, last_name: User, email: anonymous@domain.com, role_id: 4, lang_id: 1, active: true, alter_pass_nxt_login: false, excluded: false}
+  - {user_id: 2, username: anonymous, password: '$2b$12$tfPUUvgU9eHTIvAy/kZo1eW2lrh2rfsX0Qx8YqomZKREoX7sUsbS6', first_name: Anonymous, last_name: User, email: anonymous@domain.com, role_id: 4, lang_id: 1, active: true, alter_pass_nxt_login: false, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -1284,63 +1288,137 @@ form_layout:
   size: 4
 ```
 
-## BATCH_PROCESS
+## INTERCEPT_TYPE
 ```yaml
-table: batch_process
-comment: Processes
-tooltip: Processes that runs automatically in the background
+table: intercept_type
+comment: CRUD intercept Reintercept
 columns:
-  batch_process_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  batch_process:       { type: varchar, len: 200, nullable: false, comment: "Process", form_display: true, table_display: true, order: 2, form_size: 9 }
-  batch_process_code:  { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 2 }
-  batch_process_desc:  { type: text, comment: "Description", form_display: true, table_display: true, order: 1, form_size: 2 }
-  cron:                { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
-  batch_process_order: { type: integer, comment: "Proccess ID", order: 3, form_size: 2 }
-  process_type_id:     { type: integer, fk: "process_type.process_type_id", comment: "Proccess ID", order: 3, form_size: 2 }
-  err_msg:             { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4 }
-  db:                  { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 4 }
-  active:              { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 5 }
-  create:              { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 5 }
-  read:                { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 6 }
-  update:              { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 7 }
-  delete:              { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 8 }
-  sql:                 { type: text, nullable: false, comment: "SQL Rule", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: sql }
-  email_template:      { type: text, nullable: false, comment: "Email Template", form_display: true, table_display: true, order: 4, form_long_text: true, form_code: html }
-  email_to:            { type: text, nullable: false, comment: "Email To", tooltip: "Email list separated with semicolon", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: text }
-  user_id:             { type: integer, fk: "users.user_id", comment: "User ID", order: 10 }
-  app_id:              { type: integer, fk: "app.app_id", comment: "App ID", form_display: true, table_display: true, order: 2 }
-  created_at:          { type: datetime, comment: "Created at", order: 11 }
-  updated_at:          { type: datetime, comment: "Updated at", order: 12 }
-  excluded:            { type: boolean, default: false, comment: "Excluded", order: 13 }
+  intercept_type_id:   { type: integer, pk: true, autoincrement: true, comment: "Type ID" }
+  intercept_type:      { type: varchar, len: 20, nullable: false, unique: true, comment: "Type", form_display: true, table_display: true, order: 1 }
+  intercept_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:          { type: datetime, comment: "Created at" }
+  updated_at:          { type: datetime, comment: "Updated at" }
+  excluded:            { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {intercept_type_id: 1, intercept_type: EncapReadQueryBeforeExec, intercept_type_desc: Encapsulate read query, before execute on condition, excluded: false}
+  - {intercept_type_id: 2, intercept_type: RemoveField, intercept_type_desc: Remove a list of fields for a specicic role / user type, excluded: false}
+form_layout:
+  size: 4
+```
+## CRUD_INTERCEPT
+```yaml
+table: crud_intercept
+comment: CRUD intercept Rules
+tooltip: Dispaches some intercepts after a crud operation
+columns:
+  crud_intercept_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  crud_intercept:       { type: varchar, len: 200, nullable: false, comment: "intercept", form_display: true, table_display: true, order: 2, form_size: 9 }
+  crud_intercept_code:  { type: varchar, len: 200, nullable: false, comment: "Code", form_display: true, table_display: true, order: 1, form_size: 3 }
+  intercept_type_id:    { type: integer, fk: "intercept_type.intercept_type_id", comment: "Type ID", form_display: true, table_display: true, order: 3, form_size: 2 }
+  err_msg:              { type: varchar, len: 200, nullable: false, comment: "Error Message", form_display: true, table_display: true, order: 4, form_size: 6}
+  table:                { type: varchar, len: 200, nullable: false, comment: "Table", form_display: true, table_display: true, order: 5, form_size: 2 }
+  db:                   { type: varchar, len: 200, nullable: false, comment: "Database", form_display: true, table_display: true, order: 6, form_size: 2 }
+  active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  create:               { type: boolean, default: false, comment: "Create", form_display: true, table_display: true, order: 8, form_size: 2 }
+  read:                 { type: boolean, default: false, comment: "Read", form_display: true, table_display: true, order: 9, form_size: 2 }
+  update:               { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
+  delete:               { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
+  sql_condition:        { type: text, comment: "SQL Condition (SELECT BOOLExpression AS cond)", "tooltip": "select '{{.field_to_chrck}}' = 'value to apply to' as cond", form_display: true, order: 11, form_long_text: true, form_code: sql }
+  sql:                  { type: text, comment: "SQL Template ro Encapsulate", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.intercept_type_id !== 1"}
+  field_list:           { type: text, comment: "Field List (JSON Array with)", form_display: true, order: 13, form_long_text: true, form_code: json, form_hide_cond: "data?.intercept_type_id !== 2" }
+  after_sql:            { type: text, comment: "SQL Run After intercept", form_display: true, order: 22, form_long_text: true, form_code: sql }
+  parallel:             { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
+  user_id:              { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:               { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:           { type: datetime, comment: "Created at" }
+  updated_at:           { type: datetime, comment: "Updated at" }
+  excluded:             { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  allow_in_subform: {crud_intercept_logs: true, intercept_data: true}
+  size: 10
+  tabs_steps_conf:
+    - {label: Intercept Def, fields: [crud_intercept, crud_intercept_code, intercept_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel]}
+    - {label: Config / Templates, fields: [sql_condition, sql, field_list, after_sql]}
+```
+
+## INTERCEPT_DATA_TYPE
+```yaml
+table: intercept_data_type
+comment: Intercept DATA Types
+columns:
+  intercept_data_type_id:   { type: integer, pk: true, autoincrement: true, comment: "intercept Type ID" }
+  intercept_data_type:      { type: varchar, len: 50, unique: true, nullable: false, comment: "intercept DATA Type", form_display: true, table_display: true, order: 1 }
+  intercept_data_type_desc: { type: text, comment: "Description", form_display: true, form_long_text: true, table_display: true, order: 2 }
+  created_at:               { type: datetime, comment: "Created at" }
+  updated_at:               { type: datetime, comment: "Updated at" }
+  excluded:                 { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {intercept_data_type_id: 1, intercept_data_type: C7SQLQuery, intercept_data_type_desc: C7 SQL Query, excluded: true}
+  - {intercept_data_type_id: 2, intercept_data_type: C7Read, intercept_data_type_desc: C7 Read, excluded: true}
+  - {intercept_data_type_id: 3, intercept_data_type: C7OData, intercept_data_type_desc: C7 OData, excluded: false}
+form_layout:
+  form_in_popup: true
+  size: 4
+```
+
+## INTERCEPT_DATA
+```yaml
+table: intercept_data
+comment: Interception Data
+columns:
+  intercept_data_id:      { type: integer, pk: true, autoincrement: true, comment: "Intercept Data ID" }
+  intercept_data:         { type: varchar, len: 100, nullable: false, comment: "Intercept Data", form_display: true, table_display: true, form_size: 4, order: 2, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not beging by number, no space or special character!" }
+  intercept_data_desc:    { type: text, comment: "intercept Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
+  intercept_data_type_id: { type: integer, fk: "intercept_data_type.intercept_data_type_id", nullable: false, comment: "intercept Data Type", form_display: true, table_display: true, form_size: 2, order: 3 }
+  crud_intercept_id:      { type: integer, fk: "crud_intercept.crud_intercept_id", nullable: false, comment: "Crud intercept", form_display: true, table_display: true, form_size: 4, order: 1 }
+  intercept_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, form_size: 12, order: 6, form_hide_cond: "data?.intercept_data_type_id !== 1" }
+  odata_path:             { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.intercept_data_type_id !== 3" }
+  sigle_row_obj:          { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  active:                 { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
+  user_id:                { type: integer, fk: "users.user_id", comment: "Created by"  }
+  app_id:                 { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:             { type: datetime, comment: "Created at" }
+  updated_at:             { type: datetime, comment: "Updated at" }
+  excluded:               { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 6
 ```
 
-## BATCH_PROCESS_LOGS
+## CRUD_INTERCEPT_LOGS
 ```yaml
-table: batch_process_logs
-comment: Proccess Logs
+table: crud_intercept_logs
+comment: CRUD Interception Logs
 columns:
-  batch_process_log_id: { type: integer, pk: true, autoincrement: true, comment: "Proccess Log ID" }
-  batch_process_id:     { type: integer, fk: "batch_process.batch_process_id", comment: "Proccess ID", order: 1 }
-  batch_process_code:   { type: varchar, len: 200, comment: "Proccess Code", order: 2 }
-  batch_process:        { type: varchar, len: 200, comment: "Proccess Name", order: 3 }
-  db:                   { type: varchar, len: 200, comment: "Database", order: 5 }
-  process_type:         { type: varchar, len: 20, comment: "Action Type", order: 7 }
-  success:              { type: boolean, default: true, comment: "Success", order: 10 }
-  log_message:          { type: text, comment: "Log Message", order: 11 }
-  user_id:              { type: integer, fk: "users.user_id", comment: "User ID", order: 8 }
-  app_id:               { type: integer, fk: "app.app_id", comment: "App ID", order: 9 }
-  executed_at:          { type: datetime, comment: "Executed At", order: 12 }
-  created_at:           { type: datetime, comment: "Created at", order: 13 }
-  updated_at:           { type: datetime, comment: "Updated at", order: 14 }
-  excluded:             { type: boolean, default: false, comment: "Excluded", order: 15 }
+  crud_intercept_log_id: { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
+  crud_intercept_id:     { type: integer, fk: "crud_intercept.crud_intercept_id", comment: "ID", order: 1 }
+  crud_intercept_code:   { type: varchar, len: 200, comment: "Code", order: 2, form_display: true, table_display: true, form_size: 4 }
+  crud_intercept:        { type: varchar, len: 200, comment: "Name", order: 3, form_display: true, table_display: true, form_size: 8 }
+  table:                 { type: varchar, len: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 3 }
+  db:                    { type: varchar, len: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
+  pk_field:              { type: integer, comment: "PK Filed", order: 5, form_display: true, table_display: true, form_size: 3 }
+  id:                    { type: integer, comment: "Row ID", order: 5, form_display: true, table_display: true, form_size: 3 }
+  intercept:             { type: varchar, len: 10, comment: "intercept", order: 6, form_display: true, table_display: true, form_size: 3 }
+  intercept_type:        { type: varchar, len: 20, comment: "intercept Type", order: 7, form_display: true, table_display: true, form_size: 3 }
+  executed_at:           { type: datetime, comment: "Executed At", order: 8, form_display: true, table_display: true, form_size: 4 }
+  success:               { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 2 }
+  log_message:           { type: text, comment: "Log Message", order: 11, form_display: true, table_display: true, form_long_text: true, form_code: txt }
+  log_data:              { type: text, comment: "Log Data", order: 12, form_display: true, table_display: true, form_long_text: true, form_code: txt }
+  user_id:               { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:                { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:            { type: datetime, comment: "Created at" }
+  updated_at:            { type: datetime, comment: "Updated at" }
+  excluded:              { type: boolean, default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 8
+table_layout:
+  default_order:
+    - { field: crud_intercept_log_id, order: DESC } 
 ```
 
 ## API_TYPE
