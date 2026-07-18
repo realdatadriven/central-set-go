@@ -335,7 +335,7 @@ func run(logger *slog.Logger) error {
 		var rw_dirs []string
 		// fmt.Println("RESTRICT_PATHS_ALLOW_RW_DIRS:", env.GetString("RESTRICT_PATHS_ALLOW_RW_DIRS", ""))
 		for _, p := range allowed_rw_paths {
-			fmt.Println(p, EnvExpand(p))
+			// fmt.Println(p, EnvExpand(p))
 			if p == "" {
 				continue
 			}
