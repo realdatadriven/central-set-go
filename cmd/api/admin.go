@@ -274,13 +274,18 @@ func (app *application) ExtractURLDBName(dsn string) (string, error) {
 }
 
 func (app *application) GetDBNameFromParams(params Dict) (string, string, error) {
+	// fmt.Println(params)
 	var _database any
 	if !app.IsEmpty(params["db"]) {
 		_database = params["db"]
+	} else if !app.IsEmpty(params["database"]) {
+		_database = params["database"]
+	} else if _, ok := params["data"].(Dict); !ok {
 	} else if !app.IsEmpty(params["data"].(Dict)["db"]) {
 		_database = params["data"].(Dict)["db"]
 	} else if !app.IsEmpty(params["data"].(Dict)["database"]) {
 		_database = params["data"].(Dict)["database"]
+	} else if _, ok := params["app"].(Dict); !ok {
 	} else if !app.IsEmpty(params["app"].(Dict)["db"]) {
 		_database = params["app"].(Dict)["db"]
 	} else if !app.IsEmpty(params["app"].(Dict)["db"]) {

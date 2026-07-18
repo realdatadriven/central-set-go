@@ -1245,13 +1245,13 @@ columns:
   crud_action_log_id: { type: integer, pk: true, autoincrement: true, comment: "Log ID" }
   crud_action_id:     { type: integer, fk: "crud_action.crud_action_id", comment: "ID", order: 1 }
   crud_action_code:   { type: varchar, len: 200, comment: "Code", order: 2, form_display: true, table_display: true, form_size: 4 }
-  crud_action:        { type: varchar, len: 200, comment: "Name", order: 3, form_display: true, table_display: true, form_size: 8 }
+  crud_action:        { type: varchar, len: 200, comment: "Name", order: 3, form_display: true, table_display: false, form_size: 8 }
   table:              { type: varchar, len: 200, comment: "Table", order: 4, form_display: true, table_display: true, form_size: 3 }
   db:                 { type: varchar, len: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
-  pk_field:           { type: integer, comment: "PK Filed", order: 5, form_display: true, table_display: true, form_size: 3 }
+  pk_field:           { type: integer, comment: "PK Filed", order: 5, form_display: true, table_display: false, form_size: 3 }
   id:                 { type: integer, comment: "Row ID", order: 5, form_display: true, table_display: true, form_size: 3 }
   action:             { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
-  action_type:        { type: varchar, len: 20, comment: "Action Type", order: 7, form_display: true, table_display: true, form_size: 3 }
+  action_type:        { type: varchar, len: 20, comment: "Action Type", order: 7, form_display: true, table_display: false, form_size: 3 }
   executed_at:        { type: datetime, comment: "Executed At", order: 8, form_display: true, table_display: true, form_size: 4 }
   success:            { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 2 }
   log_message:        { type: text, comment: "Log Message", order: 11, form_display: true, table_display: true, form_long_text: true, form_code: txt }
