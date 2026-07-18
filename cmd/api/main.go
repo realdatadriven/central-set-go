@@ -357,7 +357,7 @@ func run(logger *slog.Logger) error {
 				fmt.Println("landlock.V9.BestEffort().RestrictPaths FILE Err:", f, err)
 			}
 		}
-		fmt.Println("RWDirs:", rw_dirs)
+		//fmt.Println("RWDirs:", rw_dirs)
 		err = landlock.V9.BestEffort().RestrictPaths(
 			landlock.RWDirs(dir, tmp),
 			landlock.RODirs(ro_dirs...),

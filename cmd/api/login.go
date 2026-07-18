@@ -914,6 +914,7 @@ func (app *application) access_key(params Dict) Dict {
 		}
 		_data = params["data"].(Dict)["data"].(Dict)
 	}
+	_table := params["data"].(Dict)["table"]
 	// fmt.Println(_data)
 	if _, ok := _data["access_key_desc"].(string); !ok {
 		msg, _ := app.i18n.T("access-key-no-description", Dict{})
@@ -924,10 +925,85 @@ func (app *application) access_key(params Dict) Dict {
 		return Dict{"success": false, "msg": msg}
 	}
 	if _, ok := _data["for_user_id"]; !ok {
-		msg, _ := app.i18n.T("access-key-no-user", Dict{})
-		return Dict{"success": false, "msg": msg}
+		dyn_login_map_2users := env.GetBool("DYN_LOGIN_TABLE_MAP_TO_USERS", false)
+		dyn_login_table := env.GetString("DYN_LOGIN_TABLE", "")
+		dyn_login_table_id := env.GetString("DYN_LOGIN_USER_ID_FIELD", "")
+		dyn_login_table_email := env.GetString("DYN_LOGIN_EMAIL_FIELD", "")
+		dyn_login_table_active := env.GetString("DYN_LOGIN_ACTIVE_FIELD", "")
+		dyn_login_id_ok := false
+		dyn_id := any(nil)
+		if _, ok := _data[dyn_login_table_id]; ok {
+			dyn_login_id_ok = true
+			dyn_id = any(app.toInt(_data[dyn_login_table_id]))
+		}
+		if dyn_login_map_2users && dyn_login_table != "" && dyn_login_table_id != "" && dyn_login_table_email != "" && dyn_login_id_ok {
+			dyn_login_data, err := app.ODataGetRow(params, dyn_login_table, dyn_login_table_id, dyn_id)
+			if err != nil {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error getting %s/%d: %s", dyn_login_table, dyn_id, err.Error()),
+				}
+			}
+			if len(dyn_login_data) == 0 {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error, no data returned for %s/%d", dyn_login_table, dyn_id),
+				}
+			}
+			if email, ok := dyn_login_data[dyn_login_table_email].(string); !ok || email == "" {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error, no email returned for %s/%d, please contact the admin", dyn_login_table, dyn_id),
+				}
+			}
+			if active, ok := dyn_login_data[dyn_login_table_active]; ok {
+				if !app.toBool(active) {
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("%s/%s: does not seem to be active, please contact the admin", dyn_login_table, dyn_login_data[dyn_login_table_email]),
+					}
+				}
+			} else {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("%s/%s: does not seem to be active, please contact the admin", dyn_login_table, dyn_login_data[dyn_login_table_email]),
+				}
+			}
+			sql := `select * from users where email = ?`
+			dyn_login_eqv_user, err := app.AdminGetRowByFilter(sql, []any{dyn_login_data[dyn_login_table_email]})
+			if err != nil {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error getting the user for %s/%s: %s", dyn_login_table, dyn_login_data[dyn_login_table_email], err.Error()),
+				}
+			}
+			if len(dyn_login_eqv_user) == 0 {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("Error, no user data returned for %s/%s", dyn_login_table, dyn_login_data[dyn_login_table_email]),
+				}
+			}
+			if active, ok := dyn_login_eqv_user["active"]; ok {
+				if !app.toBool(active) {
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("%s/%s: user's does not seem to be active, please contact the admin", dyn_login_table, dyn_login_data[dyn_login_table_email]),
+					}
+				}
+			} else {
+				return Dict{
+					"success": false,
+					"msg":     fmt.Sprintf("%s/%s: users does not seem to be active, please contact the admin", dyn_login_table, dyn_login_data[dyn_login_table_email]),
+				}
+			}
+			_data["for_user_id"] = dyn_login_eqv_user["user_id"]
+			params["data"].(Dict)["table"] = _table
+		} else {
+			msg, _ := app.i18n.T("access-key-no-user", Dict{})
+			return Dict{"success": false, "msg": msg}
+		}
 	}
-	sql := `select * from "users" where "user_id" = ? and  "excluded" = false`
+	sql := `select * from "users" where "user_id" = ? and "excluded" = false`
 	user, err := app.AdminGetRowByID(sql, _data["for_user_id"])
 	if err != nil {
 		return Dict{
@@ -1006,7 +1082,14 @@ func (app *application) access_key(params Dict) Dict {
 	} else if ok, _ := upsert["success"].(bool); !ok {
 		return upsert
 	}
-	// fmt.Println(expiry.Format(time.RFC3339), _data["access_token"])
+	_, db, _ := app.GetDBNameFromParams(params)
+	bdc := Dict{
+		"type":     "data_change",
+		"database": db,
+		"table":    params["data"].(Dict)["table"],
+	}
+	app.BroadCastChange(bdc)
+	//fmt.Println(expiry.Format(time.RFC3339), _data["access_token"])
 	msg, _ := app.i18n.T("success", Dict{})
 	return Dict{
 		"success": true,

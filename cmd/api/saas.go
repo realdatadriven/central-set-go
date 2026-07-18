@@ -108,6 +108,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		msg, _ := app.i18n.T("no-data", Dict{})
 		return Dict{"success": false, "msg": msg}
 	}
+	_table := params["data"].(Dict)["table"]
 	sql := `select * from "subs_server" where "subscription_id" = ? and "active" = true and "excluded" = false`
 	subsServer, err := app.GetRowsByFilter(sql, params, []any{_data["subscription_id"]})
 	if err != nil {
@@ -605,6 +606,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 			_data["server_logs"] = serverLogsData
 		}
 	}
+	params["data"].(Dict)["table"] = _table
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
 	// fmt.Println(upsert)
@@ -686,7 +688,8 @@ func (app *application) GetSubdomain(plan, tenant, subscription Dict) string {
 
 func (app *application) ODataGetRow(params Dict, table, field string, id any) (Dict, error) {
 	_, odb, _ := app.GetDBNameFromParams(params)
-	odata_path := fmt.Sprintf(`%s/%s?$filter=%s eq %d`, odb, table, field, id)
+	odata_path := fmt.Sprintf(`%s/%s?$filter=%s eq %d`, odb, table, field, app.toInt(id))
+	// fmt.Println("ODATA Path", odata_path)
 	data := app.ODataRead(params, odata_path)
 	if !data["success"].(bool) {
 		return nil, fmt.Errorf("%s", data["msg"])
@@ -712,6 +715,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 		msg, _ := app.i18n.T("no-data", Dict{})
 		return Dict{"success": false, "msg": msg}
 	}
+	_table := params["data"].(Dict)["table"]
 	action := params["data"].(Dict)["action"].(string)
 	// sql := `select * from "subscription" where "subscription_id" = ? and "active" = true and "excluded" = false`
 	subs, err := app.ODataGetRow(params, "subscription", "subscription_id", _data["subscription_id"]) //app.GetRowByFilter(sql, params, []any{_data["subscription_id"]})
@@ -900,6 +904,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 	if err2 != nil {
 		fmt.Printf("Err adding to nkown host: %s!\n", err2.Error())
 	}
+	params["data"].(Dict)["table"] = _table
 	//fmt.Println(1, "terraform_state", len(_data["terraform_state"].(string)), "terraform_lock", len(_data["terraform_lock"].(string)), len(run.Lock))
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
