@@ -87,6 +87,16 @@ func opentofuCachePath() (string, error) {
 }
 
 func (app *application) HandleService(params Dict, action string) Dict {
+	var user_id int
+	if _, ok := params["user"].(Dict)["user_id"]; ok {
+		user_id = app.toInt(params["user"].(Dict)["user_id"])
+	}
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
 		if _, ok := params["data"].(Dict)["data"]; !ok {
@@ -115,10 +125,11 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				"msg":     err.Error(),
 			}
 		}
+		var svc *ServiceManager
 		if server["subs_server"].(string) == "localhost" || strings.HasPrefix(server["subs_server"].(string), "127.") {
 			local := NewLocal()
-			svc := NewServiceManager(local)
-			for _, service := range subsServerService {
+			svc = NewServiceManager(local)
+			/*for _, service := range subsServerService {
 				switch action {
 				case "start":
 					if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
@@ -225,7 +236,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 					}
 					_data["server_logs"] = serverLogsData
 				}
-			}
+			}*/
 		} else {
 			sshIntance, err := NewSSH(server["subs_server"].(string), server["subs_server_user"].(string), server["subs_server_key"].(string), server["subs_server_host_key"].(string))
 			if err != nil {
@@ -235,7 +246,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				}
 			}
 			defer sshIntance.Close()
-			for _, service := range subsServerService {
+			/*for _, service := range subsServerService {
 				switch action {
 				case "start":
 					if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
@@ -338,9 +349,9 @@ func (app *application) HandleService(params Dict, action string) Dict {
 					}
 					_data["server_logs"] = serverLogsData
 				}
-			}
-			/*svc := NewServiceManager(sshIntance)
-			for _, service := range subsServerService {
+			}*/
+			svc = NewServiceManager(sshIntance)
+			/*for _, service := range subsServerService {
 				switch action {
 				case "start":
 					if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
@@ -441,6 +452,158 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				}
 			}*/
 		}
+		serverLogsData := ""
+		logs_ins_sql := `INSERT INT srv_logs_check_hist
+			(srv_logs_check_hist, srv_logs, subs_server_service_id, subs_server_id, subscription_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
+			(:srv_logs_check_hist, :srv_logs, :subs_server_service_id, :subs_server_id, :subscription_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
+		`
+		statusData := ""
+		status_ins_sql := `INSERT INT srv_status_chk_hist
+			(srv_status_chk_hist, srv_status, subs_server_service_id, subs_server_id, subscription_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
+			(:srv_status_chk_hist, :srv_status, :subs_server_service_id, :subs_server_id, :subscription_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
+		`
+		for _, service := range subsServerService {
+			switch action {
+			case "start":
+				if _, ok := service["service_start_cmd"].(string); !ok || service["service_start_cmd"].(string) == "" {
+					err = svc.Start(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					err = svc.Run(context.Background(), service["service_start_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+				_data["deployed"] = true
+				_data["status"] = "started"
+			case "stop":
+				if _, ok := service["service_stop_cmd"].(string); !ok || service["service_stop_cmd"].(string) == "" {
+					err = svc.Stop(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					err = svc.Run(context.Background(), service["service_stop_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+				_data["deployed"] = true
+				_data["status"] = "stoped"
+			case "restart":
+				if _, ok := service["service_restart_cmd"].(string); !ok || service["service_restart_cmd"].(string) == "" {
+					err = svc.Restart(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				} else {
+					err = svc.Run(context.Background(), service["service_restart_cmd"].(string))
+					if err != nil {
+						return Dict{
+							"success": false,
+							"msg":     err.Error(),
+						}
+					}
+				}
+				_data["deployed"] = true
+				_data["status"] = "started"
+			case "status":
+				statusData = ""
+				now := time.Now().In(loc)
+				logs := service
+				logs["user_id"] = user_id
+				logs["resquested_at"] = now
+				logs["srv_status_chk_hist"] = fmt.Sprintf("%s %s", service["service_status_cmd"], action, now)
+				logs["err_response_message"] = nil
+				if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
+					statusData, err = svc.Status(context.Background(), service["subs_server_service"].(string))
+					if err != nil {
+						logs["err_response_message"] = err.Error()
+					}
+				} else {
+					statusData, err = svc.RunOutput(context.Background(), service["service_status_cmd"].(string))
+					if err != nil {
+						logs["err_response_message"] = err.Error()
+					}
+				}
+				logs["srv_status"] = statusData
+				logs["response_at"] = time.Now().In(loc)
+				logs["created_at"] = time.Now().In(loc)
+				logs["updated_at"] = time.Now().In(loc)
+				logs["excluded"] = false
+				if logs["err_response_message"] != nil {
+					return Dict{
+						"success": false,
+						"msg":     logs["err_response_message"],
+					}
+				}
+				_, err := app.db.ExecuteNamedQuery(status_ins_sql, logs)
+				if err != nil {
+					fmt.Printf("Err inserting status check logs: %s\n", err.Error())
+				}
+			case "logs":
+				serverLogsData = ""
+				now := time.Now().In(loc)
+				logs := service
+				logs["user_id"] = user_id
+				logs["resquested_at"] = now
+				logs["srv_logs_check_hist"] = fmt.Sprintf("%s %s", service["service_status_cmd"], action, now)
+				logs["err_response_message"] = nil
+				if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
+					lines := 100
+					if _, ok := params["lines"]; ok {
+						lines = app.toInt(params["lines"])
+					}
+					serverLogsData, err = svc.Logs(context.Background(), service["subs_server_service"].(string), lines)
+					if err != nil {
+						logs["err_response_message"] = err.Error()
+					}
+				} else {
+					serverLogsData, err = svc.RunOutput(context.Background(), service["service_logs_cmd"].(string))
+					if err != nil {
+						logs["err_response_message"] = err.Error()
+					}
+				}
+				logs["srv_logs"] = serverLogsData
+				logs["response_at"] = time.Now().In(loc)
+				logs["created_at"] = time.Now().In(loc)
+				logs["updated_at"] = time.Now().In(loc)
+				logs["excluded"] = false
+				if logs["err_response_message"] != nil {
+					return Dict{
+						"success": false,
+						"msg":     logs["err_response_message"],
+					}
+				}
+				_, err := app.db.ExecuteNamedQuery(logs_ins_sql, logs)
+				if err != nil {
+					fmt.Printf("Err inserting status check logs: %s\n", err.Error())
+				}
+			}
+		}
+		if statusData != "" {
+			_data["server_status"] = statusData
+		}
+		if serverLogsData != "" {
+			_data["server_logs"] = serverLogsData
+		}
 	}
 	params["data"].(Dict)["data"] = _data
 	upsert := app.create_update(params)
@@ -519,6 +682,24 @@ func (app *application) GetSubdomain(plan, tenant, subscription Dict) string {
 	return subdomain
 }
 
+//type ReadViaOData struct {params Dict}
+
+func (app *application) ODataGetRow(params Dict, table, field string, id any) (Dict, error) {
+	_, odb, _ := app.GetDBNameFromParams(params)
+	odata_path := fmt.Sprintf(`%s/%s?$filter=%s eq %d`, odb, table, field, id)
+	data := app.ODataRead(params, odata_path)
+	if !data["success"].(bool) {
+		return nil, fmt.Errorf("%s", data["msg"])
+	}
+	if _, ok := data["data"].([]Dict); !ok {
+		return nil, fmt.Errorf("No data returned for %s id %d", table, id)
+	}
+	if len(data["data"].([]Dict)) == 0 {
+		return nil, fmt.Errorf("No data returned for %s id %d", table, id)
+	}
+	return data["data"].([]Dict)[0], nil
+}
+
 func (app *application) RunDeploy(params Dict) Dict {
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
@@ -532,36 +713,40 @@ func (app *application) RunDeploy(params Dict) Dict {
 		return Dict{"success": false, "msg": msg}
 	}
 	action := params["data"].(Dict)["action"].(string)
-	sql := `select * from "plan" where "plan_id" = ? and "active" = true and "excluded" = false`
-	// fmt.Println(sql, _data["plan_id"])
-	plan, err := app.GetRowByFilter(sql, params, []any{_data["plan_id"]})
+	// sql := `select * from "subscription" where "subscription_id" = ? and "active" = true and "excluded" = false`
+	subs, err := app.ODataGetRow(params, "subscription", "subscription_id", _data["subscription_id"]) //app.GetRowByFilter(sql, params, []any{_data["subscription_id"]})
 	if err != nil {
 		return Dict{
 			"success": false,
 			"msg":     err.Error(),
 		}
 	}
-	_, odb, _ := app.GetDBNameFromParams(params)
-	odata_path := fmt.Sprintf(`%s/plan?$filter=plan_id eq %s`, odb, _data["plan_id"])
-	data := app.ODataRead(params, odata_path)
-	if !data["success"].(bool) {
-		return data
+	if len(subs) > 0 {
+		_data = subs
 	}
-	if _, ok := data["data"].([]Dict); !ok {
-		return data
+	// sql := `select * from "plan" where "plan_id" = ? and "active" = true and "excluded" = false`
+	plan, err := app.ODataGetRow(params, "plan", "plan_id", _data["plan_id"]) //app.GetRowByFilter(sql, params, []any{_data["plan_id"]})
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
 	}
 	// data["data"].([]Dict)
-	sql = `select * from "plan_service" where "plan_id" = ? and "active" = true and "excluded" = false`
+	sql := `select * from "plan_service" where "plan_id" = ? and "active" = true and "excluded" = false`
 	plan_service, err := app.GetRowsByFilter(sql, params, []any{plan["plan_id"]})
 	if err != nil {
 		fmt.Println("env err:", err)
 	}
 	tenantID := _data["tenant_id"]
 	subscriptionID := _data["subscription_id"]
-	sql = `select * from "tenant" where "tenant_id" = ? and "active" = true and "excluded" = false`
-	tenant, err := app.GetRowByFilter(sql, params, []any{tenantID})
+	// sql = `select * from "tenant" where "tenant_id" = ? and "active" = true and "excluded" = false`
+	tenant, err := app.ODataGetRow(params, "tenant", "tenant_id", _data["tenant_id"]) // app.GetRowByFilter(sql, params, []any{tenantID})
 	if err != nil {
-		fmt.Println("tenant err:", err)
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
 	}
 	sql = `select * from "env" where "tenant_id" = ? and "on_srv_start" = true and "active" = true and "excluded" = false`
 	tenantEnv, err := app.GetRowsByFilter(sql, params, []any{tenantID})
