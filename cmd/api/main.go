@@ -323,6 +323,7 @@ func run(logger *slog.Logger) error {
 		}
 		var ro_files []string
 		for _, f := range allowed_ro_files {
+			// fmt.Println(f, EnvExpand(f))
 			if f == "" {
 				continue
 			}
@@ -452,7 +453,7 @@ func EnvExpand(s string) string {
 		// fmt.Println(match, match[1:])
 		name := match[1:] // strip leading "$"
 		if value, exists := os.LookupEnv(name); exists {
-			return value
+			return EnvExpand(value)
 		}
 		return match // leave as-is if not set
 	})
