@@ -508,12 +508,13 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s!", c_intercept["crud_intercept_code"], err.Error()),
 				}
 			}
-			if _, ok := ires["conf"].(bool); !ok {
+			if _, ok := ires["cond"].(bool); !ok {
+				fmt.Println(ires)
 			} else if q, ok := ires["output"].(string); ok {
 				query = q
 				_idata["query"] = query
-				fmt.Println("ORIGINAL QUERY:", query_org)
-				fmt.Println("INTERCEPT QUERY:", query)
+				// fmt.Println("ORIGINAL QUERY:", query_org)
+				// fmt.Println("INTERCEPT QUERY:", query)
 			} else {
 				return map[string]any{
 					"success": false,

@@ -664,11 +664,12 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s!", c_intercept["crud_intercept_code"], err.Error()),
 				}
 			}
-			if _, ok := ires["conf"].(bool); !ok {
+			if _, ok := ires["cond"].(bool); !ok {
 			} else if q, ok := ires["output"].(string); ok {
 				query = q
 				_data["read_sql"] = query
-				// fmt.Println("QUERY INTERCEPT:", query)
+				// fmt.Println("ORIGINAL QUERY:", query_org)
+				// fmt.Println("INTERCEPT QUERY:", query)
 			} else {
 				return map[string]any{
 					"success": false,

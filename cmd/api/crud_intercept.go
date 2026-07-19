@@ -103,7 +103,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 				"cond":    cond,
 				"success": true,
 				"msg":     msg,
-				"output":  c_intercept["query"],
+				"output":  _data["query"],
 			}
 			return resp, nil
 		}
@@ -128,7 +128,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 			if err != nil {
 				return nil, fmt.Errorf("Error parsing the rewrite_exec_list %v", err.Error())
 			}
-			query := c_intercept["query"].(string)
+			query := _data["query"].(string)
 			for i, patt := range rewrite_exec_list {
 				switch v := patt.(type) {
 				case string:
