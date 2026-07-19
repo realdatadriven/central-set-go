@@ -454,12 +454,12 @@ func (app *application) HandleService(params Dict, action string) Dict {
 			}*/
 		}
 		serverLogsData := ""
-		logs_ins_sql := `INSERT INT srv_logs_check_hist
+		logs_ins_sql := `INSERT INTO srv_logs_check_hist
 			(srv_logs_check_hist, srv_logs, subs_server_service_id, subs_server_id, subscription_id, tenant_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
 			(:srv_logs_check_hist, :srv_logs, :subs_server_service_id, :subs_server_id, :subscription_id, :tenant_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
 		`
 		statusData := ""
-		status_ins_sql := `INSERT INT srv_status_chk_hist
+		status_ins_sql := `INSERT INTO srv_status_chk_hist
 			(srv_status_chk_hist, srv_status, subs_server_service_id, subs_server_id, subscription_id, tenant_id, resquested_at, response_at, err_response_message, user_id, created_at, updated_at, excluded) VALUES
 			(:srv_status_chk_hist, :srv_status, :subs_server_service_id, :subs_server_id, :subscription_id, :tenant_id, :resquested_at, :response_at, :err_response_message, :user_id, :created_at, :updated_at, :excluded)
 		`
@@ -531,7 +531,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				logs := service
 				logs["user_id"] = user_id
 				logs["resquested_at"] = now
-				logs["srv_status_chk_hist"] = fmt.Sprintf("%s %s", service["service_status_cmd"], action, now)
+				logs["srv_status_chk_hist"] = fmt.Sprintf("%s %s %s", service["subs_server_service"], action, now.Format("2006-01-02 15:04:05"))
 				logs["err_response_message"] = nil
 				if _, ok := service["service_status_cmd"].(string); !ok || service["service_status_cmd"].(string) == "" {
 					statusData, err = svc.Status(context.Background(), service["subs_server_service"].(string))
@@ -555,9 +555,9 @@ func (app *application) HandleService(params Dict, action string) Dict {
 						"msg":     logs["err_response_message"],
 					}
 				}
-				_, err := app.db.ExecuteNamedQuery(status_ins_sql, logs)
+				err := app.ExecuteQuery(status_ins_sql, params, logs)
 				if err != nil {
-					fmt.Printf("Err inserting status check logs: %s\n", err.Error())
+					fmt.Printf("Err inserting status check history: %s\n", err.Error())
 				}
 			case "logs":
 				serverLogsData = ""
@@ -565,7 +565,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 				logs := service
 				logs["user_id"] = user_id
 				logs["resquested_at"] = now
-				logs["srv_logs_check_hist"] = fmt.Sprintf("%s %s", service["service_status_cmd"], action, now)
+				logs["srv_logs_check_hist"] = fmt.Sprintf("%s %s %s", service["subs_server_service"], action, now.Format("2006-01-02 15:04:05"))
 				logs["err_response_message"] = nil
 				if _, ok := service["service_logs_cmd"].(string); !ok || service["service_logs_cmd"].(string) == "" {
 					lines := 100
@@ -593,9 +593,9 @@ func (app *application) HandleService(params Dict, action string) Dict {
 						"msg":     logs["err_response_message"],
 					}
 				}
-				_, err := app.db.ExecuteNamedQuery(logs_ins_sql, logs)
+				err := app.ExecuteQuery(logs_ins_sql, params, logs)
 				if err != nil {
-					fmt.Printf("Err inserting status check logs: %s\n", err.Error())
+					fmt.Printf("Err inserting logs check history: %s\n", err.Error())
 				}
 			}
 		}
@@ -684,8 +684,7 @@ func (app *application) GetSubdomain(plan, tenant, subscription Dict) string {
 	return subdomain
 }
 
-//type ReadViaOData struct {params Dict}
-
+// type ReadViaOData struct {params Dict}
 func (app *application) ODataGetRow(params Dict, table, field string, id any) (Dict, error) {
 	_, odb, _ := app.GetDBNameFromParams(params)
 	odata_path := fmt.Sprintf(`%s/%s?$filter=%s eq %d`, odb, table, field, app.toInt(id))

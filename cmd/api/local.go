@@ -77,10 +77,8 @@ func (s *ServiceManager) Restart(ctx context.Context, service string) error {
 }
 
 func (s *ServiceManager) Status(ctx context.Context, service string) (string, error) {
-	return s.runner.RunOutput(
-		ctx,
-		fmt.Sprintf("systemctl --user status %s --no-pager", service),
-	)
+	fmt.Printf("systemctl --user status %s --no-pager\n", service)
+	return s.runner.RunOutput(ctx, fmt.Sprintf("systemctl --user status %s --no-pager", service))
 }
 
 func (s *ServiceManager) Run(ctx context.Context, cmd string) error {
@@ -100,12 +98,6 @@ func (s *ServiceManager) Disable(ctx context.Context, service string) error {
 }
 
 func (s *ServiceManager) Logs(ctx context.Context, service string, lines int) (string, error) {
-	return s.RunOutput(
-		ctx,
-		fmt.Sprintf(
-			"journalctl --user -u %s -n %d --no-pager",
-			service,
-			lines,
-		),
-	)
+	fmt.Printf("journalctl --user -u %s -n %d --no-pager\n", service, lines)
+	return s.RunOutput(ctx, fmt.Sprintf("journalctl --user -u %s -n %d --no-pager", service, lines))
 }

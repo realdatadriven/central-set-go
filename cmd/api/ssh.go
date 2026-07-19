@@ -218,10 +218,12 @@ func (r *Runner) Disable(ctx context.Context, service string) error {
 }
 
 func (r *Runner) Status(ctx context.Context, service string) (string, error) {
+	fmt.Printf("systemctl --user status %s --no-pager\n", service)
 	return r.RunOutput(ctx, fmt.Sprintf("systemctl --user status %s --no-pager", service))
 }
 
 func (r *Runner) Logs(ctx context.Context, service string, lines int) (string, error) {
+	fmt.Printf("journalctl --user -u %s -n %d --no-pager", service, lines)
 	return r.RunOutput(ctx, fmt.Sprintf("journalctl --user -u %s -n %d --no-pager", service, lines))
 }
 
