@@ -627,15 +627,15 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			"msg":     fmt.Sprintf("Error occurred while fetching crud_actions: %v", err),
 		}*/
 	} else if len(crud_action_rows) > 0 {
+		params["loc"] = loc
+		params["table"] = table
+		params["database"] = database
+		params["pk"] = pk
+		params["id"] = _data[pk]
+		params["crud_aciton"] = crud_aciton
+		params["user_id"] = user_id
 		for _, c_action := range crud_action_rows {
 			parallel, ok := c_action["parallel"].(bool)
-			params["loc"] = loc
-			params["table"] = table
-			params["database"] = database
-			params["pk"] = pk
-			params["id"] = _data[pk]
-			params["crud_aciton"] = crud_aciton
-			params["user_id"] = user_id
 			if parallel && ok {
 				go func() {
 					err := app.RunCrudAction(params, c_action, _data) //actionRunner(c_action)

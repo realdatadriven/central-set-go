@@ -7,7 +7,7 @@ import (
 	"github.com/realdatadriven/etlx"
 )
 
-func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, error) {
+func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict, error) {
 	var loc *time.Location
 	if _, ok := params["location"].(*time.Location); ok {
 		loc = params["location"].(*time.Location)
@@ -20,23 +20,23 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 	crud_aciton := params["crud_aciton"]
 	user_id := params["user_id"]
 	pk := params["pk"]
-	intercept_type_id := c_action["intercept_type_id"]
-	_, okSql := c_action["sql"]
-	_, okFieldList := c_action["field_list"]
-	after_sql, okAfterSQL := c_action["after_sql"].(string)
+	intercept_type_id := c_intercept["intercept_type_id"]
+	_, okSql := c_intercept["sql"]
+	_, okRewriteList := c_intercept["rewrite_exec_list"]
+	after_sql, okAfterSQL := c_intercept["after_sql"].(string)
 	//  register crud_intercept_logs
 	success := true
 	etlx_engine := &etlx.ETLX{}
 	crud_intercept_log := Dict{
-		"crud_intercept_id":   c_action["crud_intercept_id"],
-		"crud_intercept_code": c_action["crud_intercept_code"],
-		"crud_intercept":      c_action["crud_intercept"],
+		"crud_intercept_id":   c_intercept["crud_intercept_id"],
+		"crud_intercept_code": c_intercept["crud_intercept_code"],
+		"crud_intercept":      c_intercept["crud_intercept"],
 		"table":               table,
 		"db":                  database,
 		"pk_field":            pk,
 		"id":                  id,
 		"action":              crud_aciton,
-		"intercept_type":      c_action["intercept_type_id"],
+		"intercept_type":      c_intercept["intercept_type_id"],
 		"user_id":             user_id,
 		"app_id":              params["app"].(Dict)["app_id"],
 		"started_at":          time.Now().In(loc),
@@ -46,7 +46,7 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 			VALUES (:crud_intercept_id, :crud_intercept_code, :crud_intercept, :table, :db, :pk_field, :id, :action, :intercept_type, :success, :log_message, :log_data, :user_id, :app_id, :executed_at, :created_at, :updated_at)`
 	// ACTION DATA TO HELP BUILD THE TEPLATE
 	sql := "select * from intercept_data where crud_intercept_id = ? and excluded = false"
-	valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_action["crud_intercept_id"]})
+	valid_data_res, err := app.AdminGetRowsByFilter(sql, []any{c_intercept["crud_intercept_id"]})
 	if err != nil {
 		return nil, fmt.Errorf("Error getting ACTION Data: %s", err)
 	}
@@ -60,7 +60,7 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 	}
 	msg := ""
 	// CHECK CONFITION SQL CONDITION
-	sql_condition, sqlConditionOk := c_action["sql_condition"].(string)
+	sql_condition, sqlConditionOk := c_intercept["sql_condition"].(string)
 	if sqlConditionOk && sql_condition != "" {
 		sql_condition, err = etlx_engine.RenderTemplate(sql_condition, _data)
 		if err != nil {
@@ -70,11 +70,11 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 		// fmt.Println("SQL COND:", sql_condition)
 		query, args, err := etlx_engine.NamedToPositional(sql_condition, _data)
 		if err != nil {
-			return nil, fmt.Errorf("Error preparing sql_condition %s -> %s: %v", c_action["crud_intercept_code"], sql_condition, err.Error())
+			return nil, fmt.Errorf("Error preparing sql_condition %s -> %s: %v", c_intercept["crud_intercept_code"], sql_condition, err.Error())
 		}
 		res, _, err := app.db.QuerySingleRow(query, args...)
 		if err != nil {
-			return nil, fmt.Errorf("Error executing sql_condition %s -> %s: %v", c_action["crud_intercept_code"], sql_condition, err.Error())
+			return nil, fmt.Errorf("Error executing sql_condition %s -> %s: %v", c_intercept["crud_intercept_code"], sql_condition, err.Error())
 		}
 		cond := false
 		if len(*res) > 0 {
@@ -86,15 +86,15 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 		}
 		if !cond {
 			success = false
-			msg = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v", c_action["crud_intercept_code"])
+			msg = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v", c_intercept["crud_intercept_code"])
 			crud_intercept_log["success"] = success
-			crud_intercept_log["log_message"] = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v", c_action["crud_intercept_code"])
+			crud_intercept_log["log_message"] = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v", c_intercept["crud_intercept_code"])
 			crud_intercept_log["executed_at"] = time.Now().In(loc)
 			crud_intercept_log["created_at"] = time.Now().In(loc)
 			crud_intercept_log["updated_at"] = time.Now().In(loc)
 			_, err := app.db.ExecuteNamedQuery(insert_crud_intercept_log_sql, crud_intercept_log)
 			if err != nil {
-				fmt.Printf("Error inserting CRUD Intercept log for crud_intercept_id %v: %v", c_action["crud_intercept_id"], err)
+				fmt.Printf("Error inserting CRUD Intercept log for crud_intercept_id %v: %v", c_intercept["crud_intercept_id"], err)
 			}
 			return nil, fmt.Errorf(msg)
 		}
@@ -102,19 +102,19 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 	// fmt.Println("PASSED COND!")
 	var output any
 	if app.toInt(intercept_type_id) == 1 && okSql { // EncapReadQueryBeforeExec
-		if _, ok := c_action["sql"]; ok {
-			// fmt.Println(c_action["sql"])
-			intercepted_sql, err := etlx_engine.RenderTemplate(c_action["sql"].(string), _data)
+		if _, ok := c_intercept["sql"]; ok {
+			// fmt.Println(c_intercept["sql"])
+			intercepted_sql, err := etlx_engine.RenderTemplate(c_intercept["sql"].(string), _data)
 			if err != nil {
 				return nil, fmt.Errorf("Error rendering sql_condition %v", err.Error())
 			}
 			intercepted_sql = etlx_engine.ReplaceEnvVariable(intercepted_sql)
 			output = intercepted_sql
 		}
-	} else if app.toInt(intercept_type_id) == 2 && okFieldList { // RemoveField
-		if _, ok := c_action["field_list"].(string); ok {
-			// json_field_list := c_action["field_list"].(string)
-			//field_list := []any{}
+	} else if app.toInt(intercept_type_id) == 2 && okRewriteList { // RemoveField
+		if _, ok := c_intercept["rewrite_exec_list"].(string); ok {
+			// json_rewrite_exec_list := c_intercept["rewrite_exec_list"].(string)
+			//rewrite_exec_list := []any{}
 		}
 	} else {
 		success = false
@@ -127,7 +127,7 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 		crud_intercept_log["updated_at"] = time.Now().In(loc)
 		_, err := app.db.ExecuteNamedQuery(insert_crud_intercept_log_sql, crud_intercept_log)
 		if err != nil {
-			fmt.Printf("Error inserting CRUD Intercept log for unknown intercept_type_id for crud_intercept_id %v: %v", c_action["crud_intercept_id"], err)
+			fmt.Printf("Error inserting CRUD Intercept log for unknown intercept_type_id for crud_intercept_id %v: %v", c_intercept["crud_intercept_id"], err)
 		}
 		return nil, fmt.Errorf(msg)
 	}
@@ -147,14 +147,14 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 			crud_intercept_log["updated_at"] = time.Now().In(loc)
 			_, err := app.db.ExecuteNamedQuery(insert_crud_intercept_log_sql, crud_intercept_log)
 			if err != nil {
-				fmt.Printf("Error inserting CRUD Intercept log for unknown intercept_type_id for crud_intercept_id %v: %v", c_action["crud_intercept_id"], err)
+				fmt.Printf("Error inserting CRUD Intercept log for unknown intercept_type_id for crud_intercept_id %v: %v", c_intercept["crud_intercept_id"], err)
 			}
 			return nil, fmt.Errorf("Error executing after SQL %s!", err.Error())
 		}
 	}
 	crud_intercept_log["success"] = success
 	if msg == "" || success {
-		msg = fmt.Sprintf("CRUD Intercept %s executed successfully", c_action["crud_intercept_code"])
+		msg = fmt.Sprintf("CRUD Intercept %s executed successfully", c_intercept["crud_intercept_code"])
 	}
 	crud_intercept_log["log_message"] = msg
 	crud_intercept_log["executed_at"] = time.Now().In(loc)
@@ -162,7 +162,7 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 	crud_intercept_log["updated_at"] = time.Now().In(loc)
 	_, err = app.db.ExecuteNamedQuery(insert_crud_intercept_log_sql, crud_intercept_log)
 	if err != nil {
-		fmt.Printf("Error inserting CRUD Intercept log for crud_intercept_id %v: %v", c_action["crud_intercept_id"], err)
+		fmt.Printf("Error inserting CRUD Intercept log for crud_intercept_id %v: %v", c_intercept["crud_intercept_id"], err)
 		// Not returning error to avoid interrupting the main CRUD operation flow
 	}
 	if !success {
@@ -175,7 +175,7 @@ func (app *application) RunCrudIntercept(params, c_action, _data Dict) (Dict, er
 		JOIN crud_intercept ca2 ON ca2.crud_intercept_id = at.crud_intercept_id
 		WHERE at.crud_intercept_id = ? AND at.excluded = false AND ca.excluded = false
 		-- ORDER BY at."trigger_order" ASC`
-				crud_intercept_rows, err := app.AdminGetRowsByFilter(get_crud_intercepts_sql, []any{c_action["crud_intercept_id"]})
+				crud_intercept_rows, err := app.AdminGetRowsByFilter(get_crud_intercepts_sql, []any{c_intercept["crud_intercept_id"]})
 				if err != nil {
 					fmt.Printf("Error occurred while fetching crud_intercepts: %v", err)
 				} else if len(crud_intercept_rows) > 0 {

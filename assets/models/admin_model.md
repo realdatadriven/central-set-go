@@ -1327,7 +1327,6 @@ columns:
   sql:                  { type: text, comment: "SQL Template Encapsulate", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.intercept_type_id !== 1"}
   rewrite_exec_list:    { type: text, comment: "Rewrite Exec List (JSON Array with)", form_display: true, order: 13, form_long_text: true, form_code: json, form_hide_cond: "data?.intercept_type_id !== 2" }
   after_sql:            { type: text, comment: "SQL Run After intercept", form_display: true, order: 22, form_long_text: true, form_code: sql }
-  parallel:             { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
   user_id:              { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:               { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:           { type: datetime, comment: "Created at" }
@@ -1340,7 +1339,7 @@ form_layout:
   size: 10
   tabs_steps_conf:
     - {label: Intercept Def, fields: [crud_intercept, crud_intercept_code, intercept_type, err_msg, table, db, active, create, read, update, delete, user_trigger, user_trigger_icon, parallel]}
-    - {label: Config / Templates, fields: [sql_condition, sql, field_list, after_sql]}
+    - {label: Config / Templates, fields: [sql_condition, sql, rewrite_exec_list, after_sql]}
 ```
 
 ## INTERCEPT_DATA_TYPE

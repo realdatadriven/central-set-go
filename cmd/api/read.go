@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/realdatadriven/etlx"
@@ -72,6 +73,12 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	var role_id int
 	if _, ok := params["user"].(map[string]any)["role_id"]; ok {
 		role_id = app.toInt(params["user"].(map[string]any)["role_id"])
+	}
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
 	}
 	/*var app_id int
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
@@ -622,6 +629,43 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	}
 	if limit != -1 {
 		query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
+	}
+	// INTERCEPT READ QUERY
+	_, database, _ := app.GetDBNameFromParams(params)
+	//crud_aciton, table
+	crud_aciton := "read"
+	intercept_data := []any{database, table}
+	get_crud_intercepts_sql := fmt.Sprintf(`SELECT * FROM "crud_intercept" WHERE "intercept_type_id" = 1 AND "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE ORDER BY "db", "table", "order", "crud_intercept_id"`, crud_aciton)
+	crud_intercept_rows, err := app.AdminGetRowsByFilter(get_crud_intercepts_sql, intercept_data)
+	if err != nil {
+		fmt.Printf("Error occurred while fetching crud_intercepts: %v", err)
+	} else if len(crud_intercept_rows) > 0 {
+		params["loc"] = loc
+		params["table"] = table
+		params["database"] = database
+		params["pk"] = pk
+		params["id"] = nil
+		params["crud_aciton"] = crud_aciton
+		params["user_id"] = user_id
+		query_org := query
+		_data := Dict{
+			"read_sql": query,
+			"_user":    params["user"],
+		}
+		for _, c_intercept := range crud_intercept_rows {
+			ires, err := app.RunCrudIntercept(params, c_intercept, _data)
+			if err != nil {
+				return map[string]any{
+					"success": false,
+					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s\n", c_intercept["crud_intercept_code"], err.Error()),
+				}
+			}
+			if q, ok := ires["output"].(string); ok {
+				query = q
+				_data["read_sql"] = query
+				fmt.Println("QUERY INTERCEPT:", query_org, query)
+			}
+		}
 	}
 	//fmt.Println(query)
 	query, args, err := sqlx.In(query, queryParams...)
