@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/realdatadriven/etlx"
@@ -106,15 +108,46 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 			// fmt.Println(c_intercept["sql"])
 			intercepted_sql, err := etlx_engine.RenderTextTemplate(c_intercept["sql"].(string), _data)
 			if err != nil {
-				return nil, fmt.Errorf("Error rendering sql_condition %v", err.Error())
+				return nil, fmt.Errorf("Error rendering sql %v", err.Error())
 			}
 			intercepted_sql = etlx_engine.ReplaceEnvVariable(intercepted_sql)
 			output = intercepted_sql
 		}
 	} else if app.toInt(intercept_type_id) == 2 && okRewriteList { // RemoveField
 		if _, ok := c_intercept["rewrite_exec_list"].(string); ok {
-			// json_rewrite_exec_list := c_intercept["rewrite_exec_list"].(string)
-			//rewrite_exec_list := []any{}
+			json_rewrite_exec_list := c_intercept["rewrite_exec_list"].(string)
+			rewrite_exec_list := []any{}
+			err := json.Unmarshal([]byte(json_rewrite_exec_list), &rewrite_exec_list)
+			if err != nil {
+				return nil, fmt.Errorf("Error parsing the rewrite_exec_list %v", err.Error())
+			}
+			query := c_intercept["query"].(string)
+			for i, patt := range rewrite_exec_list {
+				switch v := patt.(type) {
+				case string:
+					re, err := regexp.Compile(v)
+					if err != nil {
+						return nil, fmt.Errorf("Error in rewrite_exec_list %d (%s) :%s!", i, v, err.Error())
+					}
+					query = re.ReplaceAllString(query, "")
+				case map[string]any:
+					pattern, ok := v["pattern"].(string)
+					if !ok {
+						if err != nil {
+							return nil, fmt.Errorf("Error in rewrite_exec_list %d (%v) :%s!", i, v, "no key pattern")
+						}
+					}
+					replace, _ := v["value"].(string)
+					re, err := regexp.Compile(pattern)
+					if err != nil {
+						return nil, fmt.Errorf("Error in rewrite_exec_list %d (%s) :%s!", i, pattern, err.Error())
+					}
+					query = re.ReplaceAllString(query, replace)
+				default:
+					return nil, fmt.Errorf("Error in rewrite_exec_list %d type %T (%v)!", i, v, v)
+				}
+			}
+			output = query
 		}
 	} else {
 		success = false

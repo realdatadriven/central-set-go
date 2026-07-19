@@ -624,6 +624,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		query = fmt.Sprintf(`%s%s (%s)`, query, _where, app.joinSlice(search_patt, " OR "))
 	}
 	query_total := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, query)
+	// ORDER BY
+	if len(orderBy) > 0 {
+		query = fmt.Sprintf(`%s ORDER BY %s`, query, app.joinSlice(orderBy, ", "))
+	}
+	// LIMIT OFFSET
+	if limit != -1 {
+		query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
+	}
 	// INTERCEPT READ QUERY
 	_, database, _ := app.GetDBNameFromParams(params)
 	//crud_aciton, table
@@ -643,8 +651,9 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		params["user_id"] = user_id
 		query_org := query
 		_data := Dict{
-			"read_sql":  query,
+			"query":     query,
 			"_user":     params["user"],
+			"_app":      params["user"],
 			"query_org": query_org,
 		}
 		for _, c_intercept := range crud_intercept_rows {
@@ -666,14 +675,6 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 				}
 			}
 		}
-	}
-	// ORDER BY
-	if len(orderBy) > 0 {
-		query = fmt.Sprintf(`%s ORDER BY %s`, query, app.joinSlice(orderBy, ", "))
-	}
-	// LIMIT
-	if limit != -1 {
-		query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
 	}
 	//fmt.Println(query)
 	query, args, err := sqlx.In(query, queryParams...)

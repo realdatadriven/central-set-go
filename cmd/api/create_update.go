@@ -478,6 +478,49 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			}
 		}
 	}
+	// INTERCEPT READ QUERY
+	intercept_data := []any{database, table}
+	get_crud_intercepts_sql := fmt.Sprintf(`SELECT * FROM "crud_intercept" WHERE "active" = TRUE AND "db" = ? AND "table" = ? AND "%s" IS TRUE ORDER BY "db", "table", "order", "crud_intercept_id"`, crud_aciton)
+	crud_intercept_rows, err := app.AdminGetRowsByFilter(get_crud_intercepts_sql, intercept_data)
+	if err != nil {
+		fmt.Printf("Error occurred while fetching crud_intercepts: %v", err)
+	} else if len(crud_intercept_rows) > 0 {
+		params["loc"] = loc
+		params["table"] = table
+		params["database"] = database
+		params["pk"] = pk
+		params["id"] = nil
+		params["crud_aciton"] = crud_aciton
+		params["user_id"] = user_id
+		query_org := query
+		_idata := Dict{
+			"data":      _data,
+			"query":     query,
+			"_user":     params["user"],
+			"_app":      params["app"],
+			"query_org": query_org,
+		}
+		for _, c_intercept := range crud_intercept_rows {
+			ires, err := app.RunCrudIntercept(params, c_intercept, _idata)
+			if err != nil {
+				return map[string]any{
+					"success": false,
+					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s!", c_intercept["crud_intercept_code"], err.Error()),
+				}
+			}
+			if q, ok := ires["output"].(string); ok {
+				query = q
+				_idata["query"] = query
+				fmt.Println("ORIGINAL QUERY:", query_org)
+				fmt.Println("INTERCEPT QUERY:", query)
+			} else {
+				return map[string]any{
+					"success": false,
+					"msg":     fmt.Sprintf("Error runing the interception: %s, the interception did not return any output!", c_intercept["crud_intercept_code"]),
+				}
+			}
+		}
+	}
 	//fmt.Println(crud_aciton, pk, _data[pk], query)
 	id := 0
 	if db.GetDriverName() == "postgres" && strings.HasPrefix(query, "INSERT") {

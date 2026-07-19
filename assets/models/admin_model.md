@@ -1325,7 +1325,7 @@ columns:
   delete:               { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
   sql_condition:        { type: text, comment: "SQL Condition (SELECT BOOLExpression AS cond)", "tooltip": "select '{{.field_to_chrck}}' = 'value to apply to' as cond", form_display: true, order: 11, form_long_text: true, form_code: sql }
   sql:                  { type: text, comment: "SQL Template Encapsulate", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.intercept_type_id !== 1"}
-  rewrite_exec_list:    { type: text, comment: "Rewrite Exec List (JSON Array with)", form_display: true, order: 13, form_long_text: true, form_code: json, form_hide_cond: "data?.intercept_type_id !== 2" }
+  rewrite_exec_list:    { type: text, comment: "Rewrite Exec List (JSON Array of string)", tooltip: "with the paterm to replace to empty and object pattern, value, where ", form_display: true, order: 13, form_long_text: true, form_code: json, form_hide_cond: "data?.intercept_type_id !== 2" }
   after_sql:            { type: text, comment: "SQL Run After intercept", form_display: true, order: 22, form_long_text: true, form_code: sql }
   user_id:              { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:               { type: integer, fk: "app.app_id", comment: "App ID" }
