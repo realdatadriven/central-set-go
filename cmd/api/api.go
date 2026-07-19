@@ -44,7 +44,7 @@ func (app *application) GetAPIData(params Dict, api_data_res []Dict, _data Dict)
 			if !ok {
 				return nil, fmt.Errorf("Error, odata_path is not set!")
 			}
-			odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
+			odata_path, err := etlx_engine.RenderTextTemplate(odata_path, _data)
 			if err != nil {
 				odata_path = api_data["odata_path"].(string)
 			} else {
@@ -334,7 +334,7 @@ func (app *application) runAPI(params Dict) Dict {
 	after_sql, okAfterSQL := api["after_sql"].(string)
 	etlx_engine := &etlx.ETLX{}
 	if okAfterSQL && after_sql != "" {
-		after_sql, err = etlx_engine.RenderTemplate(after_sql, _data)
+		after_sql, err = etlx_engine.RenderTextTemplate(after_sql, _data)
 		if err != nil {
 			return Dict{
 				"success": false,

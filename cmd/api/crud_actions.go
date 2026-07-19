@@ -71,7 +71,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	// CHECK CONFITION SQL CONDITION
 	sql_condition, sqlConditionOk := c_action["sql_condition"].(string)
 	if sqlConditionOk && sql_condition != "" {
-		sql_condition, err = etlx_engine.RenderTemplate(sql_condition, _data)
+		sql_condition, err = etlx_engine.RenderTextTemplate(sql_condition, _data)
 		if err != nil {
 			return fmt.Errorf("Error rendering sql_condition %v", err.Error())
 		}
@@ -112,7 +112,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 	if app.toInt(action_type_id) == 1 && okSql { // ExecuteQuery
 		if _, ok := c_action["sql"]; ok {
 			// fmt.Println(c_action["sql"])
-			sql_rule, err := etlx_engine.RenderTemplate(c_action["sql"].(string), _data)
+			sql_rule, err := etlx_engine.RenderTextTemplate(c_action["sql"].(string), _data)
 			if err != nil {
 				return fmt.Errorf("Error rendering sql_condition %v", err.Error())
 			}
@@ -123,7 +123,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 				fmt.Println("SQL ERR:", sql_rule, err.Error())
 				_data["err"] = err.Error()
 				success = false
-				msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+				msg, err = etlx_engine.RenderTextTemplate(c_action["err_msg"].(string), _data)
 				if err != nil {
 					msg = c_action["err_msg"].(string)
 				}
@@ -144,12 +144,12 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		if _, ok := c_action["email_template"]; ok {
 			// Process email template
 			_to, _ := c_action["email_to"].(string)
-			_to_tmpl, _ := etlx_engine.RenderTemplate(_to, _data)
+			_to_tmpl, _ := etlx_engine.RenderTextTemplate(_to, _data)
 			_subject, ok := c_action["email_subject"].(string)
 			if !ok {
 				_subject = fmt.Sprintf("%s - %s", c_action["crud_action_code"], c_action["crud_action"])
 			}
-			subject, _ := etlx_engine.RenderTemplate(_subject, _data)
+			subject, _ := etlx_engine.RenderTextTemplate(_subject, _data)
 			//fmt.Println("Rendered email_to template:", _to, _to_tmpl, subject)
 			to := strings.Split(_to_tmpl, ";")
 			emailParams := Dict{
@@ -174,7 +174,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 				if err2 != nil {
 					fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 				}
-				msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+				msg, err = etlx_engine.RenderTextTemplate(c_action["err_msg"].(string), _data)
 				if err != nil {
 					msg = c_action["err_msg"].(string)
 				}
@@ -182,7 +182,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			}
 		}
 	} else if app.toInt(action_type_id) == 3 && okAPI { // CallAPI
-		_api, err := etlx_engine.RenderTemplate(api.(string), _data)
+		_api, err := etlx_engine.RenderTextTemplate(api.(string), _data)
 		if err == nil {
 			api = _api
 		}
@@ -199,7 +199,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			if err2 != nil {
 				fmt.Printf("Error inserting crud action log for crud_action_id %v: %v", c_action["crud_action_id"], err2)
 			}
-			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			msg, err = etlx_engine.RenderTextTemplate(c_action["err_msg"].(string), _data)
 			if err != nil {
 				msg = c_action["err_msg"].(string)
 			}
@@ -248,7 +248,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		}
 	} else if app.toInt(action_type_id) == 5 && (okPDFPath && (okPDFTmpl || okPDFTexTmpl)) { // GeneratePDF
 		// fmt.Println("GeneratePDF:", pdf_path, pdf_template)
-		output_path, err := etlx_engine.RenderTemplate(pdf_path.(string), _data)
+		output_path, err := etlx_engine.RenderTextTemplate(pdf_path.(string), _data)
 		if err != nil {
 			output_path = pdf_path.(string)
 		}
@@ -258,7 +258,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		if use_latex {
 			latex := pdf_tex_template.(string)
 			//latex = LatexEscape(latex)
-			latex, err = etlx_engine.RenderTemplate(latex, _data)
+			latex, err = etlx_engine.RenderTextTemplate(latex, _data)
 			latex = etlx_engine.ReplaceEnvVariable(latex)
 			if err != nil {
 				return err
@@ -276,7 +276,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 			_data["err"] = err.Error()
 			fmt.Println("GeneratePDF:", err)
 			success = false
-			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			msg, err = etlx_engine.RenderTextTemplate(c_action["err_msg"].(string), _data)
 			if err != nil {
 				msg = c_action["err_msg"].(string)
 			}
@@ -309,7 +309,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		if res["success"].(bool) != true {
 			success = false
 			_data["error"] = res["msg"]
-			msg, err = etlx_engine.RenderTemplate(c_action["err_msg"].(string), _data)
+			msg, err = etlx_engine.RenderTextTemplate(c_action["err_msg"].(string), _data)
 			if err != nil {
 				msg = c_action["err_msg"].(string)
 			}
@@ -340,7 +340,7 @@ func (app *application) RunCrudAction(params, c_action, _data Dict) error {
 		return fmt.Errorf(msg)
 	}
 	if okAfterSQL && after_sql != "" {
-		after_sql, err = etlx_engine.RenderTemplate(after_sql, _data)
+		after_sql, err = etlx_engine.RenderTextTemplate(after_sql, _data)
 		if err != nil {
 			return fmt.Errorf("Error rendering after sql %v", err.Error())
 		}
@@ -466,7 +466,7 @@ func (app *application) GetActionData(params Dict, valid_data_res []Dict, _data 
 			if !ok {
 				return nil, fmt.Errorf("Error, odata_path is not set!")
 			}
-			odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
+			odata_path, err := etlx_engine.RenderTextTemplate(odata_path, _data)
 			if err != nil {
 				odata_path = action_data["odata_path"].(string)
 			} else {
@@ -508,7 +508,7 @@ func (app *application) GetValidationData(params Dict, valid_data_res []Dict, _d
 		if !ok {
 			return nil, fmt.Errorf("Error, odata_path is not set!")
 		}
-		odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
+		odata_path, err := etlx_engine.RenderTextTemplate(odata_path, _data)
 		if err != nil {
 			odata_path = validation_data["odata_path"].(string)
 		} else {

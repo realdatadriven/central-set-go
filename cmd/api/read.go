@@ -624,12 +624,6 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		query = fmt.Sprintf(`%s%s (%s)`, query, _where, app.joinSlice(search_patt, " OR "))
 	}
 	query_total := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, query)
-	if len(orderBy) > 0 {
-		query = fmt.Sprintf(`%s ORDER BY %s`, query, app.joinSlice(orderBy, ", "))
-	}
-	if limit != -1 {
-		query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
-	}
 	// INTERCEPT READ QUERY
 	_, database, _ := app.GetDBNameFromParams(params)
 	//crud_aciton, table
@@ -649,23 +643,37 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		params["user_id"] = user_id
 		query_org := query
 		_data := Dict{
-			"read_sql": query,
-			"_user":    params["user"],
+			"read_sql":  query,
+			"_user":     params["user"],
+			"query_org": query_org,
 		}
 		for _, c_intercept := range crud_intercept_rows {
 			ires, err := app.RunCrudIntercept(params, c_intercept, _data)
 			if err != nil {
 				return map[string]any{
 					"success": false,
-					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s\n", c_intercept["crud_intercept_code"], err.Error()),
+					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s!", c_intercept["crud_intercept_code"], err.Error()),
 				}
 			}
 			if q, ok := ires["output"].(string); ok {
 				query = q
 				_data["read_sql"] = query
-				fmt.Println("QUERY INTERCEPT:", query_org, query)
+				// fmt.Println("QUERY INTERCEPT:", query)
+			} else {
+				return map[string]any{
+					"success": false,
+					"msg":     fmt.Sprintf("Error runing the interception: %s, the interception did not return any output!", c_intercept["crud_intercept_code"]),
+				}
 			}
 		}
+	}
+	// ORDER BY
+	if len(orderBy) > 0 {
+		query = fmt.Sprintf(`%s ORDER BY %s`, query, app.joinSlice(orderBy, ", "))
+	}
+	// LIMIT
+	if limit != -1 {
+		query = fmt.Sprintf(`%s LIMIT %d OFFSET %d`, query, limit, offset)
 	}
 	//fmt.Println(query)
 	query, args, err := sqlx.In(query, queryParams...)

@@ -1400,8 +1400,8 @@ columns:
   db:                    { type: varchar, len: 200, comment: "Database", order: 5, form_display: true, table_display: true, form_size: 3 }
   pk_field:              { type: integer, comment: "PK Filed", order: 5, form_display: true, table_display: true, form_size: 3 }
   id:                    { type: integer, comment: "Row ID", order: 5, form_display: true, table_display: true, form_size: 3 }
-  intercept:             { type: varchar, len: 10, comment: "intercept", order: 6, form_display: true, table_display: true, form_size: 3 }
-  intercept_type:        { type: varchar, len: 20, comment: "intercept Type", order: 7, form_display: true, table_display: true, form_size: 3 }
+  action:                { type: varchar, len: 10, comment: "Action", order: 6, form_display: true, table_display: true, form_size: 3 }
+  intercept_type:        { type: varchar, len: 20, comment: "Intercept Type", order: 7, form_display: true, table_display: true, form_size: 3 }
   executed_at:           { type: datetime, comment: "Executed At", order: 8, form_display: true, table_display: true, form_size: 4 }
   success:               { type: boolean, default: true, comment: "Success", order: 10, form_display: true, table_display: true, form_size: 2 }
   log_message:           { type: text, comment: "Log Message", order: 11, form_display: true, table_display: true, form_long_text: true, form_code: txt }

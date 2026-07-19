@@ -62,7 +62,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 	// CHECK CONFITION SQL CONDITION
 	sql_condition, sqlConditionOk := c_intercept["sql_condition"].(string)
 	if sqlConditionOk && sql_condition != "" {
-		sql_condition, err = etlx_engine.RenderTemplate(sql_condition, _data)
+		sql_condition, err = etlx_engine.RenderTextTemplate(sql_condition, _data)
 		if err != nil {
 			return nil, fmt.Errorf("Error rendering sql_condition %v", err.Error())
 		}
@@ -104,7 +104,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 	if app.toInt(intercept_type_id) == 1 && okSql { // EncapReadQueryBeforeExec
 		if _, ok := c_intercept["sql"]; ok {
 			// fmt.Println(c_intercept["sql"])
-			intercepted_sql, err := etlx_engine.RenderTemplate(c_intercept["sql"].(string), _data)
+			intercepted_sql, err := etlx_engine.RenderTextTemplate(c_intercept["sql"].(string), _data)
 			if err != nil {
 				return nil, fmt.Errorf("Error rendering sql_condition %v", err.Error())
 			}
@@ -132,7 +132,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 		return nil, fmt.Errorf(msg)
 	}
 	if okAfterSQL && after_sql != "" {
-		after_sql, err = etlx_engine.RenderTemplate(after_sql, _data)
+		after_sql, err = etlx_engine.RenderTextTemplate(after_sql, _data)
 		if err != nil {
 			return nil, fmt.Errorf("Error rendering after sql %v", err.Error())
 		}
@@ -219,7 +219,7 @@ func (app *application) GetInterceptData(params Dict, valid_data_res []Dict, _da
 			if !ok {
 				return nil, fmt.Errorf("Error, odata_path is not set!")
 			}
-			odata_path, err := etlx_engine.RenderTemplate(odata_path, _data)
+			odata_path, err := etlx_engine.RenderTextTemplate(odata_path, _data)
 			if err != nil {
 				odata_path = intercept_data["odata_path"].(string)
 			} else {

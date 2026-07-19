@@ -393,14 +393,14 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 						valid = len(res) == 0
 					} else if app.toInt(valid_reaction_id) == 3 && len(res) > 0 {
 						valid = true
-						msg, err = etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
+						msg, err = etlx_engine.RenderTextTemplate(validation["err_msg"].(string), _data)
 						if err != nil {
 							msg = validation["err_msg"].(string)
 						}
 					}
 					//fmt.Printf("Validation %s executed with result: %v. Result rows: %d, valid_reaction_id: %v\n", validation["validation_code"], valid, len(res), valid_reaction_id)
 					if !valid {
-						msg, err := etlx_engine.RenderTemplate(validation["err_msg"].(string), _data)
+						msg, err := etlx_engine.RenderTextTemplate(validation["err_msg"].(string), _data)
 						if err != nil {
 							msg = validation["err_msg"].(string)
 							fmt.Println("Error rendering validation error message template for validation_id", validation["validation_id"], ":", err, validation["err_msg"])
