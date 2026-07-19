@@ -63,6 +63,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 	msg := ""
 	// CHECK CONFITION SQL CONDITION
 	sql_condition, sqlConditionOk := c_intercept["sql_condition"].(string)
+	cond := true
 	if sqlConditionOk && sql_condition != "" {
 		sql_condition, err = etlx_engine.RenderTextTemplate(sql_condition, _data)
 		if err != nil {
@@ -88,7 +89,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 		}
 		if !cond {
 			success = false
-			msg = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v", c_intercept["crud_intercept_code"])
+			msg = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v no need to intercept!", c_intercept["crud_intercept_code"])
 			crud_intercept_log["success"] = success
 			crud_intercept_log["log_message"] = fmt.Sprintf("SQL Condition not met for CRUD Intercept: %v", c_intercept["crud_intercept_code"])
 			crud_intercept_log["executed_at"] = time.Now().In(loc)
@@ -98,7 +99,13 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 			if err != nil {
 				fmt.Printf("Error inserting CRUD Intercept log for crud_intercept_id %v: %v", c_intercept["crud_intercept_id"], err)
 			}
-			return nil, fmt.Errorf(msg)
+			resp := Dict{
+				"cond":    cond,
+				"success": true,
+				"msg":     msg,
+				"output":  c_intercept["query"],
+			}
+			return resp, nil
 		}
 	}
 	// fmt.Println("PASSED COND!")
@@ -234,6 +241,7 @@ func (app *application) RunCrudIntercept(params, c_intercept, _data Dict) (Dict,
 	}
 	msg, _ = app.i18n.T("success", map[string]any{})
 	resp := Dict{
+		"cond":    cond,
 		"success": true,
 		"msg":     msg,
 		"output":  output,

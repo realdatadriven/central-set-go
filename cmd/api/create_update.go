@@ -508,7 +508,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 					"msg":     fmt.Sprintf("Error runing the interception: %s -> %s!", c_intercept["crud_intercept_code"], err.Error()),
 				}
 			}
-			if q, ok := ires["output"].(string); ok {
+			if _, ok := ires["conf"].(bool); !ok {
+			} else if q, ok := ires["output"].(string); ok {
 				query = q
 				_idata["query"] = query
 				fmt.Println("ORIGINAL QUERY:", query_org)
