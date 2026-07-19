@@ -1,0 +1,8 @@
+{{ define "header" }}
+<header class="site-header">
+  <a class="brand" href="/dynui/{{ .Site.ui_slug }}">{{ .Site.ui_name }}</a>
+  <nav aria-label="Primary navigation">
+    {{ range .Site.Navigation }}<a href="{{ .href }}">{{ .label }}</a>{{ end }}
+  </nav>
+</header>
+{{ end }}

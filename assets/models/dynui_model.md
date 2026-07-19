@@ -277,3 +277,314 @@ For the `products` page-data row, `odata_path` can be
 should render this stored Go template only after it has safely interpolated
 route values, such as `{{ .Route.PathParams.product_id }}`, and should never
 accept an OData path or template name directly from the browser.
+
+# DYNUI_DATA
+```yaml
+name: DYNUI_DATA
+description: Starter storefront UI backed by the STORE model
+database: DYNUI
+runs_as: MODEL_DATA
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## DYNUI_STORE
+```yaml
+table: dynui
+description: Add the sample store website
+cond: 'WHERE ui_slug = :ui_slug AND excluded = false'
+data:
+  dynui_id: 1
+  ui_slug: store
+  ui_name: Sample Store
+  ui_desc: Starter template-driven storefront using STORE as its backend
+  default_locale: en
+  default_page_id: 1
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PARTIAL_HEADER
+```yaml
+table: dynui_partial
+description: Add the store header partial
+cond: 'WHERE dynui_id = :dynui_id AND dynui_partial = :dynui_partial AND excluded = false'
+data:
+  dynui_partial_id: 1
+  dynui_id: 1
+  dynui_partial: header
+  dynui_partial_desc: Site header and primary navigation
+  partial_template: FileContent(dynui/store/partials/header.html)
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PARTIAL_FOOTER
+```yaml
+table: dynui_partial
+description: Add the store footer partial
+cond: 'WHERE dynui_id = :dynui_id AND dynui_partial = :dynui_partial AND excluded = false'
+data:
+  dynui_partial_id: 2
+  dynui_id: 1
+  dynui_partial: footer
+  dynui_partial_desc: Site footer
+  partial_template: FileContent(dynui/store/partials/footer.html)
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PAGE_HOME
+```yaml
+table: dynui_page
+description: Add the store home page
+cond: 'WHERE dynui_id = :dynui_id AND page_key = :page_key AND excluded = false'
+data:
+  dynui_page_id: 1
+  dynui_id: 1
+  page_key: home
+  page_title: Sample Store
+  meta_description: Welcome to the sample store
+  page_template: FileContent(dynui/store/pages/home.html)
+  cache_seconds: 60
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PAGE_PRODUCTS
+```yaml
+table: dynui_page
+description: Add the store products page
+cond: 'WHERE dynui_id = :dynui_id AND page_key = :page_key AND excluded = false'
+data:
+  dynui_page_id: 2
+  dynui_id: 1
+  page_key: products
+  page_title: Products
+  meta_description: Browse available products
+  page_template: FileContent(dynui/store/pages/products.html)
+  cache_seconds: 60
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PAGE_PRODUCT
+```yaml
+table: dynui_page
+description: Add the store product detail page
+cond: 'WHERE dynui_id = :dynui_id AND page_key = :page_key AND excluded = false'
+data:
+  dynui_page_id: 3
+  dynui_id: 1
+  page_key: product
+  page_title: Product
+  meta_description: Product details
+  page_template: FileContent(dynui/store/pages/product.html)
+  cache_seconds: 60
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_ROUTE_HOME
+```yaml
+table: dynui_route
+description: Add the store home route
+cond: 'WHERE route_key = :route_key AND excluded = false'
+data:
+  dynui_route_id: 1
+  dynui_id: 1
+  route_key: store-home
+  route_path: /
+  http_method: GET
+  dynui_page_id: 1
+  requires_auth: false
+  sort_order: 1
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_ROUTE_PRODUCTS
+```yaml
+table: dynui_route
+description: Add the store product-list route
+cond: 'WHERE route_key = :route_key AND excluded = false'
+data:
+  dynui_route_id: 2
+  dynui_id: 1
+  route_key: store-products
+  route_path: /products
+  http_method: GET
+  dynui_page_id: 2
+  requires_auth: false
+  sort_order: 2
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_ROUTE_PRODUCT
+```yaml
+table: dynui_route
+description: Add the store product-detail route
+cond: 'WHERE route_key = :route_key AND excluded = false'
+data:
+  dynui_route_id: 3
+  dynui_id: 1
+  route_key: store-product
+  route_path: /products/:product_id
+  http_method: GET
+  dynui_page_id: 3
+  requires_auth: false
+  sort_order: 3
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PAGE_DATA_FEATURED_PRODUCTS
+```yaml
+table: dynui_page_data
+description: Load featured products for the home page from STORE
+cond: 'WHERE dynui_page_id = :dynui_page_id AND dynui_page_data = :dynui_page_data AND excluded = false'
+data:
+  dynui_page_data_id: 1
+  dynui_page_data: products
+  dynui_page_data_desc: Active products shown on the home page
+  dynui_page_id: 1
+  odata_path: 'STORE/product?$filter=active eq true&$top=6&$orderby=product_name asc'
+  sigle_row_obj: false
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PAGE_DATA_PRODUCTS
+```yaml
+table: dynui_page_data
+description: Load products for the product-list page from STORE
+cond: 'WHERE dynui_page_id = :dynui_page_id AND dynui_page_data = :dynui_page_data AND excluded = false'
+data:
+  dynui_page_data_id: 2
+  dynui_page_data: products
+  dynui_page_data_desc: Active products shown on the products page
+  dynui_page_id: 2
+  odata_path: 'STORE/product?$filter=active eq true&$top=48&$orderby=product_name asc'
+  sigle_row_obj: false
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_PAGE_DATA_PRODUCT
+```yaml
+table: dynui_page_data
+description: Load one product using the product_id path parameter
+cond: 'WHERE dynui_page_id = :dynui_page_id AND dynui_page_data = :dynui_page_data AND excluded = false'
+data:
+  dynui_page_data_id: 3
+  dynui_page_data: product
+  dynui_page_data_desc: Product selected from the route
+  dynui_page_id: 3
+  odata_path: 'STORE/product?$filter=product_id eq {{.Route.PathParams.product_id}}'
+  sigle_row_obj: true
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
+
+## DYNUI_NAVIGATION_STORE
+```yaml
+table: dynui_navigation
+description: Add the store navigation links
+cond: 'WHERE dynui_id = :dynui_id AND label = :label AND excluded = false'
+data:
+  dynui_navigation_id: 1
+  dynui_id: 1
+  label: Home
+  href: /dynui/store
+  sort_order: 1
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+children:
+  table: dynui_navigation
+  cond: 'WHERE dynui_id = :dynui_id AND label = :label AND excluded = false'
+  data:
+    dynui_navigation_id: 2
+    dynui_id: 1
+    label: Products
+    href: /dynui/store/products
+    sort_order: 2
+    active: true
+    user_id: 1
+    app_id: appId()
+    created_at: Now()
+    updated_at: Now()
+    excluded: false
+```
+
+## DYNUI_ASSET_STORE_CSS
+```yaml
+table: dynui_asset
+description: Add the store stylesheet as a database asset
+cond: 'WHERE dynui_id = :dynui_id AND asset_path = :asset_path AND excluded = false'
+data:
+  dynui_asset_id: 1
+  dynui_id: 1
+  asset_path: assets/store.css
+  mime_type: text/css; charset=utf-8
+  content_encoding: utf-8
+  asset_content: FileContent(dynui/store/assets/store.css)
+  cache_seconds: 86400
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+```
