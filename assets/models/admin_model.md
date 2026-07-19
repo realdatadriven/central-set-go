@@ -1301,7 +1301,7 @@ columns:
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
   - {intercept_type_id: 1, intercept_type: EncapReadQueryBeforeExec, intercept_type_desc: Encapsulate read query, before execute on condition, excluded: false}
-  - {intercept_type_id: 2, intercept_type: RemoveField, intercept_type_desc: Remove a list of fields for a specicic role / user type, excluded: false}
+  - {intercept_type_id: 2, intercept_type: ReWriteDMLQueryBeforeExec, intercept_type_desc: Remove escrever Qery Antes de Executar, excluded: false}
 form_layout:
   size: 4
 ```
@@ -1324,8 +1324,8 @@ columns:
   update:               { type: boolean, default: false, comment: "Update", form_display: true, table_display: true, order: 10, form_size: 2 }
   delete:               { type: boolean, default: false, comment: "Delete", form_display: true, table_display: true, order: 11, form_size: 2 }
   sql_condition:        { type: text, comment: "SQL Condition (SELECT BOOLExpression AS cond)", "tooltip": "select '{{.field_to_chrck}}' = 'value to apply to' as cond", form_display: true, order: 11, form_long_text: true, form_code: sql }
-  sql:                  { type: text, comment: "SQL Template ro Encapsulate", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.intercept_type_id !== 1"}
-  field_list:           { type: text, comment: "Field List (JSON Array with)", form_display: true, order: 13, form_long_text: true, form_code: json, form_hide_cond: "data?.intercept_type_id !== 2" }
+  sql:                  { type: text, comment: "SQL Template Encapsulate", form_display: true, order: 12, form_long_text: true, form_code: sql, form_hide_cond: "data?.intercept_type_id !== 1"}
+  rewrite_exec_list:    { type: text, comment: "Rewrite Exec List (JSON Array with)", form_display: true, order: 13, form_long_text: true, form_code: json, form_hide_cond: "data?.intercept_type_id !== 2" }
   after_sql:            { type: text, comment: "SQL Run After intercept", form_display: true, order: 22, form_long_text: true, form_code: sql }
   parallel:             { type: boolean, default: false, comment: "Run Parallel", form_display: true, table_display: true, order: 23, form_size: 3 }
   user_id:              { type: integer, fk: "users.user_id", comment: "User ID" }
