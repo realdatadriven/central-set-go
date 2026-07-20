@@ -303,9 +303,9 @@ func run(logger *slog.Logger) error {
 		auth.InitGoth()
 	}
 	// RESTRICT_PATHS
-	dir, err := os.Getwd()
+	/*dir, err := os.Getwd()
 	if err != nil {dir = ""}
-	tmp := os.TempDir()
+	tmp := os.TempDir()*/
 	if env.GetBool("RESTRICT_PATHS", false) {
 		// fmt.Println(tmp, dir)
 		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RO_DIRS", ""), ",")
@@ -363,7 +363,7 @@ func run(logger *slog.Logger) error {
 		}
 		//fmt.Println("RWDirs:", rw_dirs)
 		err = landlock.V9.BestEffort().RestrictPaths(
-			landlock.RWDirs(dir, tmp),
+			// landlock.RWDirs(dir, tmp),
 			landlock.RODirs(ro_dirs...),
 			landlock.ROFiles(ro_files...),
 			landlock.RWDirs(rw_dirs...),
