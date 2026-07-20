@@ -116,3 +116,4 @@ account-locked: 'Account is locked due to too many failed login attempts, please
 access-key-no-user: No user submited
 access-key-no-expires-dt: No expiration date submited
 access-key-no-description: No description submited
+reset-pass-success: Password reset with success!

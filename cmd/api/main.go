@@ -30,7 +30,7 @@ import (
 
 var i18n i18next.I18n
 
-func main() {	
+func main() {
 	dir, err := os.Getwd()
 	if err != nil {
 		dir = ""
@@ -45,8 +45,8 @@ func main() {
 	}
 	//httpPort := os.Getenv("HTTP_PORT")
 	//fmt.Printf("HTTP_PORT: %s\n", httpPort)
-	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{Level: slog.LevelDebug}))
-	err := run(logger)
+	logger := slog.New(tint.NewTextHandler(os.Stdout, &tint.Options{Level: slog.LevelDebug}))
+	err = run(logger)
 	if err != nil {
 		trace := string(debug.Stack())
 		logger.Error(err.Error(), "trace", trace)
@@ -303,9 +303,11 @@ func run(logger *slog.Logger) error {
 		auth.InitGoth()
 	}
 	// RESTRICT_PATHS
-	/*dir, err := os.Getwd()
-	if err != nil {dir = ""}
-	tmp := os.TempDir()*/
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = ""
+	}
+	// tmp := os.TempDir()
 	if env.GetBool("RESTRICT_PATHS", false) {
 		// fmt.Println(tmp, dir)
 		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RO_DIRS", ""), ",")
