@@ -30,7 +30,14 @@ import (
 
 var i18n i18next.I18n
 
-func main() {
+func main() {	
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = ""
+	}
+	os.Setenv("CWD", dir)
+	tmp := os.TempDir()
+	os.Setenv("TMP", tmp)
 	// Load .env file
 	_err := godotenv.Load()
 	if _err != nil {
@@ -297,12 +304,8 @@ func run(logger *slog.Logger) error {
 	}
 	// RESTRICT_PATHS
 	dir, err := os.Getwd()
-	if err != nil {
-		dir = ""
-	}
-	os.Setenv("CWD", dir)
+	if err != nil {dir = ""}
 	tmp := os.TempDir()
-	os.Setenv("TMP", tmp)
 	if env.GetBool("RESTRICT_PATHS", false) {
 		// fmt.Println(tmp, dir)
 		allowed_ro_paths := strings.Split(env.GetString("RESTRICT_PATHS_ALLOW_RO_DIRS", ""), ",")
