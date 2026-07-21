@@ -11,6 +11,12 @@ import (
 	"github.com/realdatadriven/central-set-go/assets"
 )
 
+/*func init() {
+	mime.AddExtensionType(".js", "text/javascript")
+	mime.AddExtensionType(".mjs", "text/javascript")
+	mime.AddExtensionType(".css", "text/css")
+}*/
+
 // NewFallbackFileServer creates a file server that tries the filesystem first,
 // then falls back to embedded files. This allows dynamic uploads while serving
 // static assets from either disk or the embedded filesystem.
@@ -28,6 +34,10 @@ func NewFallbackFileServer() http.Handler {
 		if tryFilesystem(w, r, path) {
 			return
 		}
+
+		/*if strings.HasSuffix(r.URL.Path, ".js") {
+			w.Header().Set("Content-Type", "text/javascript")
+		}*/
 
 		// Fall back to embedded files
 		tryEmbedded(w, r, path)
