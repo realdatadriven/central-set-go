@@ -6,7 +6,7 @@
 name: SURVEY
 description: Custom Survey Builder Model
 runs_as: MODEL
-conn: 'sqlite3:database/SURVEY.db'
+databse: SURVEY
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
@@ -207,21 +207,22 @@ table_layout:
 name: DATA
 description: DATA Model Survey Builder - seed default question types
 runs_as: MODEL_DATA
-conn: 'sqlite3:database/SURVEY.db'
+databse: SURVEY
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
 ## QUESTION_TYPES
 ```yaml
 table: question_type
 description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
+cond: 'WHERE question_type_id = :question_type_id'
 data:
   - question_type_id: 1
     type_name: text
     label: Single-line text
     icon: bars-3-bottom-left
     settings_schema: '{"min_length": "int", "max_length": "int", "regex_pattern": "string"}'
-  active: true
+    active: true
   - question_type_id: 2
     type_name: textarea
     label: Multi-line text
