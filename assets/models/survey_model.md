@@ -13,18 +13,30 @@ _drop_all: checkfirst
 update_table_metadata: true
 active: true
 cs_app:
+  Dashboards:
+    menu_icon: document-report
+    menu_order: 1
+    active: true
+    menu_config: '{"label": "dashboard","tooltip": "dashboard_desc","load_items": {"table": "dashboard","tables": ["dashboard"]}}'
+    tables:
+      - dashboard
   Survey Builder:
     menu_icon: clipboard-document-list
-    menu_order: 10
+    menu_order: 2
     active: true
-    menu_config: '{"label": "survey_builder", "tooltip": "survey_builder_desc", "load_items": {"table": "survey", "tables": ["survey", "page", "question", "choice", "condition", "question_type", "response"]}}'
+    menu_config: '{"label": "survey","tooltip": "description","load_items": {"table": "survey","tables": ["survey"]}}'
     tables:
       - survey
-      - page
-      - question
-      - choice
-      - condition
-      - question_type
+      - {table: page, active: false}
+      - {table: question, active: false}
+      - {table: choice, active: false}
+      - {table: condition, active: false}
+      - {table: question_type, active: false}
+  Survey Response:
+    menu_icon: clipboard-document-list
+    menu_order: 3
+    active: true
+    tables:
       - response
 ```
 
@@ -50,6 +62,32 @@ form_layout:
   sub_form_size: 9
 table_layout:
   default_order: [{field: type_name, order: ASC}]
+```
+
+## DASHBOARD
+```yaml
+table: dashboard
+comment: Dashboards
+columns:
+  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
+  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, form_size: 8, order: 1 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 5 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, order: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 3 }
+  user_id:        { type: integer, comment: "User ID" }
+  app_id:         { type: integer, comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: order, order: ASC}]
+table_extra_options:
+  - { component: EvidenceDash, label: dashboard, intercept_r: true, size: 12 }
 ```
 
 ## SURVEY
