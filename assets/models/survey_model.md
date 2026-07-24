@@ -210,170 +210,82 @@ runs_as: MODEL_DATA
 conn: 'sqlite3:database/SURVEY.db'
 ```
 
-## question_type-1
+## QUESTION_TYPES
 ```yaml
 table: question_type
 description: Seed input types
 cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
 data:
-  question_type_id: 1
-  type_name: text
-  label: Single-line text
-  icon: bars-3-bottom-left
-  settings_schema: '{"min_length": "int", "max_length": "int", "regex_pattern": "string"}'
+  - question_type_id: 1
+    type_name: text
+    label: Single-line text
+    icon: bars-3-bottom-left
+    settings_schema: '{"min_length": "int", "max_length": "int", "regex_pattern": "string"}'
   active: true
-```
-
-## question_type-2
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 2
-  type_name: textarea
-  label: Multi-line text
-  icon: bars-3-bottom-left
-  settings_schema: '{"min_length": "int", "max_length": "int", "rows": "int", "cols": "int"}'
-  active: true
-```
-
-## question_type-3
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 3
-  type_name: number
-  label: Number
-  icon: hashtag
-  settings_schema: '{"min_value": "number", "max_value": "number", "step": "number"}'
-  active: true
-```
-
-## question_type-4
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 4
-  type_name: radio
-  label: Single choice
-  icon: check-circle
-  settings_schema: '{"choices": "array"}'
-  active: true
-```
-
-## question_type-5
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 5
-  type_name: checkbox
-  label: Multiple choice
-  icon: check
-  settings_schema: '{"choices": "array", "min_selected": "int", "max_selected": "int"}'
-  active: true
-```
-
-## question_type-6
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 6
-  type_name: dropdown
-  label: Dropdown
-  icon: chevron-down
-  settings_schema: '{"choices": "array", "is_searchable": "bool"}'
-  active: true
-```
-
-## question_type-7
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 7
-  type_name: date
-  label: Date
-  icon: calendar
-  settings_schema: '{"min_date": "date", "max_date": "date", "date_format": "string"}'
-  active: true
-```
-
-## question_type-8
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 8
-  type_name: email
-  label: Email
-  icon: at-symbol
-  settings_schema: '{"regex_pattern": "string"}'
-  active: true
-```
-
-## question_type-9
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 9
-  type_name: url
-  label: URL
-  icon: link
-  settings_schema: '{"regex_pattern": "string"}'
-  active: true
-```
-
-## question_type-10
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 10
-  type_name: file
-  label: File upload
-  icon: paper-clip
-  settings_schema: '{"allowed_file_types": "array", "max_file_size": "int", "max_files": "int"}'
-  active: true
-```
-
-## question_type-11
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 11
-  type_name: rating
-  label: Rating
-  icon: star
-  settings_schema: '{"min_rating": "int", "max_rating": "int", "step": "int"}'
-  active: true
-```
-
-## question_type-12
-```yaml
-table: question_type
-description: Seed input types
-cond: 'WHERE question_type_id = :question_type_id AND type_name = :type_name AND excluded = false'
-data:
-  question_type_id: 12
-  type_name: slider
-  label: Range slider
-  icon: adjustments-horizontal
-  settings_schema: '{"min_value": "number", "max_value": "number", "step": "number"}'
-  active: true
+  - question_type_id: 2
+    type_name: textarea
+    label: Multi-line text
+    icon: bars-3-bottom-left
+    settings_schema: '{"min_length": "int", "max_length": "int", "rows": "int", "cols": "int"}'
+    active: true
+  - question_type_id: 3
+    type_name: number
+    label: Number
+    icon: hashtag
+    settings_schema: '{"min_value": "number", "max_value": "number", "step": "number"}'
+    active: true
+  - question_type_id: 4
+    type_name: radio
+    label: Single choice
+    icon: check-circle
+    settings_schema: '{"choices": "array"}'
+    active: true
+  - question_type_id: 5
+    type_name: checkbox
+    label: Multiple choice
+    icon: check
+    settings_schema: '{"choices": "array", "min_selected": "int", "max_selected": "int"}'
+    active: true
+  - question_type_id: 6
+    type_name: dropdown
+    label: Dropdown
+    icon: chevron-down
+    settings_schema: '{"choices": "array", "is_searchable": "bool"}'
+    active: true
+  - question_type_id: 7
+    type_name: date
+    label: Date
+    icon: calendar
+    settings_schema: '{"min_date": "date", "max_date": "date", "date_format": "string"}'
+    active: true
+  - question_type_id: 8
+    type_name: email
+    label: Email
+    icon: at-symbol
+    settings_schema: '{"regex_pattern": "string"}'
+    active: true
+  - question_type_id: 9
+    type_name: url
+    label: URL
+    icon: link
+    settings_schema: '{"regex_pattern": "string"}'
+    active: true
+  - question_type_id: 10
+    type_name: file
+    label: File upload
+    icon: paper-clip
+    settings_schema: '{"allowed_file_types": "array", "max_file_size": "int", "max_files": "int"}'
+    active: true
+  - question_type_id: 11
+    type_name: rating
+    label: Rating
+    icon: star
+    settings_schema: '{"min_rating": "int", "max_rating": "int", "step": "int"}'
+    active: true
+  - question_type_id: 12
+    type_name: slider
+    label: Range slider
+    icon: adjustments-horizontal
+    settings_schema: '{"min_value": "number", "max_value": "number", "step": "number"}'
+    active: true
 ```
