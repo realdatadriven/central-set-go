@@ -6,7 +6,7 @@
 name: SURVEY
 description: Custom Survey Builder Model
 runs_as: MODEL
-database: SURVEY
+conn: 'sqlite3:database/SURVEY.db'
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
@@ -17,7 +17,7 @@ cs_app:
     menu_icon: clipboard-document-list
     menu_order: 10
     active: true
-    menu_config: '{"label": "survey_builder", "tooltip": "survey_builder_desc", "load_items": {"table": "survey", "tables": ["survey", "page", "question", "choice", "condition", "question_type"]}}'
+    menu_config: '{"label": "survey_builder", "tooltip": "survey_builder_desc", "load_items": {"table": "survey", "tables": ["survey", "page", "question", "choice", "condition", "question_type", "response"]}}'
     tables:
       - survey
       - page
@@ -25,6 +25,7 @@ cs_app:
       - choice
       - condition
       - question_type
+      - response
 ```
 
 ## QUESTION_TYPE
@@ -38,6 +39,7 @@ columns:
   icon:             { type: varchar(50),  comment: "Icon",              form_display: true, form_size: 4 }
   settings_schema:  { type: text,         comment: "Allowed settings (JSON schema) for this input type", form_display: true, form_long_text: true, form_code: json }
   active:           { type: boolean,      default: true, comment: "Active", form_display: true, table_display: true, form_size: 3 }
+  user_id:          { type: integer,      comment: "Created by" }
   created_at:       { type: datetime,     comment: "Created at" }
   updated_at:       { type: datetime,     comment: "Updated at" }
   excluded:         { type: boolean,      default: false, comment: "Excluded" }
@@ -45,7 +47,6 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
   default_order: [{field: type_name, order: ASC}]
@@ -60,6 +61,7 @@ columns:
   title:       { type: varchar(255), nullable: false, comment: "Title",       form_display: true, table_display: true, form_size: 6 }
   description: { type: text,         comment: "Description",                 form_display: true, table_display: true, form_long_text: true, form_size: 9 }
   status:      { type: varchar(50),  default: draft, comment: "Status: draft | published | archived", form_display: true, table_display: true, form_size: 3 }
+  user_id:     { type: integer,      comment: "Created by" }
   created_at:  { type: datetime,     default: Now(), comment: "Created at",   table_display: true }
   updated_at:  { type: datetime,     default: Now(), on_update: Now(), comment: "Updated at" }
   excluded:    { type: boolean,      default: false, comment: "Excluded" }
@@ -67,10 +69,8 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf:
-    - { key: general,  label: "Details", fields: [title, description, status] }
-    - { key: pages,    label: "Pages",   sub_form: page,     sub_form_fk: survey_id }
   sub_form_size: 12
+  allow_in_subform: {page: true }
 table_layout:
   default_order: [{field: updated_at, order: DESC}]
 table_extra_options:
@@ -87,15 +87,16 @@ columns:
   page_order:  { type: integer,      nullable: false, default: 1, comment: "Order", form_display: true, table_display: true, form_size: 3 }
   title:       { type: varchar(255), comment: "Title",       form_display: true, table_display: true, form_size: 6 }
   description: { type: text,         comment: "Description / instructions", form_display: true, form_long_text: true, form_size: 9 }
+  user_id:     { type: integer,      comment: "Created by" }
+  created_at:  { type: datetime,     comment: "Created at" }
+  updated_at:  { type: datetime,     comment: "Updated at" }
   excluded:    { type: boolean,      default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf:
-    - { key: general,   label: "Details",   fields: [survey_id, page_order, title, description] }
-    - { key: questions, label: "Questions", sub_form: question, sub_form_fk: page_id }
   sub_form_size: 12
+  allow_in_subform: {page: true }
 table_layout:
   default_order: [{field: survey_id, order: ASC}, {field: page_order, order: ASC}]
 ```
@@ -114,17 +115,16 @@ columns:
   placeholder:      { type: varchar(255), comment: "Placeholder", form_display: true, form_size: 5 }
   default_value:    { type: text,         comment: "Default value", form_display: true, form_size: 5 }
   settings_json:    { type: text,         comment: "Type-specific settings (min/max, rows, regex, choices flags, ...)", form_display: true, form_long_text: true, form_code: json }
+  user_id:          { type: integer,      comment: "Created by" }
+  created_at:       { type: datetime,     comment: "Created at" }
+  updated_at:       { type: datetime,     comment: "Updated at" }
   excluded:         { type: boolean,      default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  tabs_steps_conf:
-    - { key: general,    label: "Question",   fields: [page_id, question_order, text, question_type_id, is_required, placeholder, default_value] }
-    - { key: settings,   label: "Settings",    fields: [settings_json] }
-    - { key: choices,    label: "Choices",     sub_form: choice,    sub_form_fk: question_id }
-    - { key: conditions, label: "Conditions",  sub_form: condition, sub_form_fk: source_question_id }
   sub_form_size: 12
+  allow_in_subform: {page: true }
 table_layout:
   default_order: [{field: page_id, order: ASC}, {field: question_order, order: ASC}]
 ```
@@ -139,12 +139,14 @@ columns:
   value:        { type: varchar(255), nullable: false, comment: "Internal value", form_display: true, table_display: true, form_size: 3 }
   text:         { type: varchar(255), nullable: false, comment: "Display text",  form_display: true, table_display: true, form_size: 4 }
   choice_order: { type: integer,      nullable: false, default: 1, comment: "Order", form_display: true, table_display: true, form_size: 2 }
+  user_id:      { type: integer,      comment: "Created by" }
+  created_at:   { type: datetime,     comment: "Created at" }
+  updated_at:   { type: datetime,     comment: "Updated at" }
   excluded:     { type: boolean,      default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: true
   size: 6
-  tabs_steps_conf: []
   sub_form_size: 9
 table_layout:
   default_order: [{field: question_id, order: ASC}, {field: choice_order, order: ASC}]
@@ -164,17 +166,40 @@ columns:
   action:              { type: varchar(50),  nullable: false, comment: "show | hide | enable | disable | set_value | set_required", form_display: true, table_display: true, form_size: 3 }
   action_value:        { type: text,         comment: "Value to set when action = set_value", form_display: true, form_size: 8 }
   logic_json:          { type: text,         comment: "Optional nested AND/OR rule tree (overrides operator/value/source_question_id when set)", form_display: true, form_long_text: true, form_code: json }
+  user_id:             { type: integer,      comment: "Created by" }
+  created_at:          { type: datetime,     comment: "Created at" }
+  updated_at:          { type: datetime,     comment: "Updated at" }
   excluded:            { type: boolean,      default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
   form_in_popup: true
   size: 8
-  tabs_steps_conf:
-    - { key: simple,   label: "Simple rule", fields: [target_type, target_id, source_question_id, operator, value, action, action_value] }
-    - { key: advanced, label: "Advanced (AND/OR)", fields: [logic_json] }
   sub_form_size: 9
 table_layout:
   default_order: [{field: source_question_id, order: ASC}]
+```
+
+## RESPONSE
+```yaml
+table: response
+comment: Survey Responses (raw submissions)
+columns:
+  response_id: { type: integer,      pk: true, autoincrement: true, comment: "ID" }
+  survey_id:   { type: integer,      fk: "survey.survey_id", nullable: false, comment: "Survey", form_display: true, table_display: true, form_size: 4 }
+  ip:          { type: varchar(45),  comment: "Submitter IP",    form_display: true, table_display: true, form_size: 3 }
+  email:       { type: varchar(255), comment: "Submitter email", form_display: true, table_display: true, form_size: 4 }
+  raw_json:    { type: text,         comment: "Raw response payload, as submitted", form_display: true, form_long_text: true, form_code: json }
+  user_id:     { type: integer,      comment: "Created by" }
+  created_at:  { type: datetime,     default: Now(), comment: "Submitted at", table_display: true }
+  updated_at:  { type: datetime,     comment: "Updated at" }
+  excluded:    { type: boolean,      default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  sub_form_size: 12
+table_layout:
+  default_order: [{field: created_at, order: DESC}]
 ```
 
 # DATA
