@@ -5,7 +5,7 @@
       "tabKind": "request",
       "name": "LOGIN",
       "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
+      "url": "{{base_url}}/dyn_api/login/index",
       "params": [],
       "headers": [
         {
@@ -90,7 +90,7 @@
       "tabKind": "request",
       "name": "SSE",
       "method": "GET",
-      "url": "http://localhost/sse/events",
+      "url": "http://localhost:5555/sse",
       "params": [],
       "headers": [
         {
@@ -124,36 +124,9 @@
       "proxyId": null,
       "certificateConfig": null,
       "inheritCertificate": false,
-      "response": {
-        "status": 404,
-        "statusText": "Not Found",
-        "headers": {
-          "access-control-allow-headers": "Content-Type, Authorization, enctype",
-          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "access-control-allow-origin": "*",
-          "content-length": "19",
-          "content-type": "text/plain; charset=utf-8",
-          "date": "Sun, 28 Jun 2026 14:54:24 GMT",
-          "x-content-type-options": "nosniff"
-        },
-        "body": "404 page not found\n",
-        "time": 37,
-        "size": 19,
-        "actualRequest": {
-          "method": "GET",
-          "url": "http://localhost/sse/events",
-          "headers": {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-          },
-          "body": null,
-          "protocol": "HTTP/1.1",
-          "certificateNames": "System Trust Store"
-        },
-        "cookies": []
-      },
+      "response": null,
       "error": null,
-      "loading": false,
+      "loading": true,
       "wsConnected": false,
       "wsUrl": null,
       "wsMessages": [],
@@ -173,7 +146,7 @@
       "tabKind": "request",
       "name": "ODATA_READ",
       "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
+      "url": "{{base_url}}/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
       "params": [
         {
           "key": "$filter",
@@ -199,7 +172,7 @@
         },
         {
           "key": "Authorization",
-          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
+          "value": "Bearer {{token}}",
           "enabled": true
         }
       ],
@@ -268,10 +241,1537 @@
       "grpcConnected": false,
       "grpcStreaming": false,
       "responseTab": "body"
+    },
+    {
+      "id": "17850694201175mke",
+      "tabKind": "request",
+      "name": "login",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/login",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": \"Aa123456!\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "headers",
+      "sourceRequestId": "thunder-454b07bd-a09c-4c03-a324-1a78ce942a2d",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "content-encoding": "gzip",
+          "content-length": "769",
+          "content-type": "application/json",
+          "date": "Sun, 26 Jul 2026 12:40:51 GMT",
+          "vary": "Authorization"
+        },
+        "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 1,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": \"2026-07-26T11:37:07.838316729-01:00\",\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-24T11:40:51-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoxLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMjZUMTE6Mzc6MDcuODM4MzE2NzI5LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwMjUzNjUxLjkyNjE5ODUsIm5iZiI6MTc4NTA2OTY1MS45MjYxOTksImlhdCI6MTc4NTA2OTY1MS45MjYxOTg3fQ.vgZaGkCqgdNfYbZXy0prB3EU7hsL3WzSZNHji5J6Wr0\"\n}\n",
+        "time": 289,
+        "size": 1212,
+        "actualRequest": {
+          "method": "POST",
+          "url": "http://127.0.0.1:4444/dyn_api/login/login",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": \"Aa123456!\"\n    }\n}",
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 4
+          },
+          {
+            "name": "Auth",
+            "duration": 0
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 289
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785069668496i6pp",
+      "tabKind": "request",
+      "name": "apps",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/admin/apps",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\"\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-91ddc6db-f274-4e0f-868c-d6e784179136",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "content-encoding": "gzip",
+          "content-length": "471",
+          "content-type": "application/json",
+          "date": "Sun, 26 Jul 2026 12:47:38 GMT",
+          "vary": "Authorization"
+        },
+        "body": "{\n\t\"data\": [\n\t\t{\n\t\t\t\"app\": \"ADMIN\",\n\t\t\t\"app_desc\": \"Admin\",\n\t\t\t\"app_id\": 1,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": \"Admin\",\n\t\t\t\"config\": \"{\\n  \\\"css_vars\\\": {\\n    \\\"--p\\\": \\\"55% 0.3 240\\\", \\n    \\\"--pc\\\": \\\"98% 0.01 240\\\", \\n    \\\"--s\\\": \\\"70% 0.25 200\\\", \\n    \\\"--sc\\\": \\\"98% 0.01 200\\\", \\n    \\\"--a\\\": \\\"65% 0.25 160\\\", \\n    \\\"--ac\\\": \\\"98% 0.01 160\\\"\\n  }\\n}\\n\",\n\t\t\t\"created_at\": \"2026-07-19T08:55:38.19277293-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-19T09:58:41.723701153-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"version\": \"1.0.0\"\n\t\t},\n\t\t{\n\t\t\t\"app\": \"ETLX\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"ETLX\\\"\",\n\t\t\t\"app_id\": 2,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-19T08:56:02.004906776-01:00\",\n\t\t\t\"db\": \"ETLX\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-19T08:56:02.004906776-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"version\": \"ETLX Model\"\n\t\t},\n\t\t{\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"SAAS\\\"\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.560188824-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-19T08:56:14.560188824-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"version\": \"SAAS Model\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"success\": true\n}\n",
+        "time": 70,
+        "size": 1390,
+        "actualRequest": {
+          "method": "POST",
+          "url": "http://127.0.0.1:4444/dyn_api/admin/apps",
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoxLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMjZUMTE6Mzc6MDcuODM4MzE2NzI5LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwMjUzNjUxLjkyNjE5ODUsIm5iZiI6MTc4NTA2OTY1MS45MjYxOTksImlhdCI6MTc4NTA2OTY1MS45MjYxOTg3fQ.vgZaGkCqgdNfYbZXy0prB3EU7hsL3WzSZNHji5J6Wr0"
+          },
+          "body": "{\n    \"lang\": \"en\"\n}",
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 3
+          },
+          {
+            "name": "Auth",
+            "duration": 0
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 70
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "17850700265507n2q",
+      "tabKind": "collection",
+      "name": "C7",
+      "method": "GET",
+      "url": "",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": null,
+      "sourceCollectionId": null,
+      "sourceFolderPath": null,
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": "1782657989686",
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070152192v4xi",
+      "tabKind": "request",
+      "name": "tables",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/admin/tables",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"db--\": {\n      \"drivername\": \"sqlite\",\n      \"dsn\": \"ADM\"\n    },\n    \"data\": {\n        \"table\": \"app\",\n        \"table--.\": [\"lang\", \"app\"]\n    },\n    \"app\": {\n        \"app_id\": 1,\n        \"app\": \"ADMIN\",\n        \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-690c1c31-2735-4701-b877-5f73aeefeedc",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "17850701534397olx",
+      "tabKind": "request",
+      "name": "menus",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/admin/menu",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-5612a4f0-b7ab-4ecd-bb4a-9f2c9cb89f0f",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070154752jshy",
+      "tabKind": "request",
+      "name": "crud.read",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/crud/read",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"distinct--\": true,\n        \"join--\": \"none|all\",\n        \"table\": \"menu\",\n        \"limit\": 11,\n        \"offset\": 0,\n        \"fields--\": [\"user_log_id\", \"user_id\", \"action\"],\n        \"filters--\": [\n            {\"field\":\"lang_id\", \"cond\": \"=\", \"value\": 3},\n            {\"field\":\"menu_id\", \"cond\": \"=\", \"value\": 3}\n            \n        ],\n        \"order_by\": [\n            {\"field\":\"lang_id2\", \"order\": \"DESC\"}\n        ],\n        \"pattern--\": \"brasil\"\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"version\": \"1.0.0\",\n      \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-8b5b7357-3ef2-4393-8a56-4e34074a69da",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070156003jzs0",
+      "tabKind": "request",
+      "name": "crud.create",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/crud/create",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"table\": \"lang\",\n        \"data\": {\n          \"lang\": \"es4\",\n          \"lang_desc\": \"Português\"\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-f7ef1af7-22b1-46a2-91c2-8c30e76247ca",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070157165qt38",
+      "tabKind": "request",
+      "name": "crud.update",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/crud/update",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"table\": \"lang\",\n        \"data\": {\n          \"lang_id\": 3,\n          \"lang\": \"pt_BR\",\n          \"lang_desc\": \"Português Brasil\",\n          \"created_at\": \"2022-07-22T10:32:00.791024\",\n          \"updated_at\": \"2022-07-22T10:33:22.185972\"\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-36db66ab-1fe8-4b4c-bc4c-72a2400a5d38",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "178507015825093iq",
+      "tabKind": "request",
+      "name": "crud.delete",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/crud/delete",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"table\": \"lang\",\n        \"data\": {\n          \"lang_id\": 3,\n          \"exclude\": true,\n          \"permanently--\": true\n        }\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-d1d80612-4de5-4021-be46-675b810c3214",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070159353h2h5",
+      "tabKind": "request",
+      "name": "crud.query",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/crud/query",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"data\": {\n        \"db\": \"DB.duckdb\",\n        \"limit\": 10,\n        \"offset\": 0,\n        \"query\": \"select * from \\\"table_name\\\"\"\n    },\n    \"app\": {\n      \"app_id\": 1,\n      \"app\": \"ADMIN\",\n      \"app_desc\": \"Admin\",\n      \"version\": \"1.0.0\",\n      \"email\": null,\n      \"db\": \"ADMIN\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-5b92a3b7-7c11-49e9-a92f-443ac38f8388",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070160673uv1l",
+      "tabKind": "request",
+      "name": "alter_pass",
+      "method": "POST",
+      "url": "{{legacy_base_url}}/api/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\",\n    \"controller\": \"login\",\n    \"action\": \"alter_pass\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": 12344654,\n        \"new_password\": 1234\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-20b49ca9-1022-4dd5-b736-a8b0470c1201",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785070166510thod",
+      "tabKind": "request",
+      "name": "uploads",
+      "method": "POST",
+      "url": "{{base_url}}/upload",
+      "params": [],
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "form-data",
+        "formData": [
+          {
+            "key": "lang",
+            "value": "pt",
+            "enabled": true
+          },
+          {
+            "key": "tmp",
+            "value": "true",
+            "enabled": true
+          },
+          {
+            "key": "path",
+            "value": "xxxx",
+            "enabled": true
+          }
+        ]
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-6d32e924-d346-4333-88cb-8bf4e63caa94",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "178507016886940gi",
+      "tabKind": "request",
+      "name": "chk_token",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/chk_token",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\"\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "thunder-0b2067bc-a03d-4960-809b-54c9d41af5f9",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-thunder-go-migrated"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071258034zlj8",
+      "tabKind": "request",
+      "name": "ALTER_PASS",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/alter_pass",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"username\": \"root\",\n    \"password\": \"current-password\",\n    \"new_password\": \"NewPassword1!\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-login-alter-pass",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-authentication"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "17850712605098f5d",
+      "tabKind": "request",
+      "name": "RECOVER_PASS",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/recover_pass",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"email\": \"user@example.com\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-login-recover-pass",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-authentication"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071276722ukzo",
+      "tabKind": "request",
+      "name": "RESET_PASS",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/reset_pass",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"token\": \"{{reset_token}}\",\n    \"new_password\": \"NewPassword1!\",\n    \"confirm_password\": \"NewPassword1!\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-login-reset-pass",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-authentication"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071287895f6ui",
+      "tabKind": "request",
+      "name": "SIGNUP",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/signup",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"username\": \"new-user\",\n    \"email\": \"new-user@example.com\",\n    \"password\": \"NewPassword1!\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-login-signup",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-authentication"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071299019jhwl",
+      "tabKind": "request",
+      "name": "VALIDATE_CODE",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/validate_code",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"username\": \"root\",\n    \"code\": \"enter-2fa-code\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-login-validate-code",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-authentication"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071310922ztr1",
+      "tabKind": "request",
+      "name": "CONFIG",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/etlx/config",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"conf\": \"# Paste ETLX markdown configuration here\"\n  },\n  \"params\": {}\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-etlx-config",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-etlx"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071326453nge4",
+      "tabKind": "request",
+      "name": "RUN",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/etlx/run",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"conf\": {},\n    \"date_ref\": \"2026-07-26\",\n    \"clean\": false,\n    \"drop\": false,\n    \"rows\": false,\n    \"only\": [],\n    \"skip\": [],\n    \"steps\": []\n  },\n  \"params\": {}\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-etlx-run",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-etlx"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071341667b1cn",
+      "tabKind": "request",
+      "name": "PARSE_RUN",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/etlx/parse_run",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"conf\": \"# Paste ETLX markdown configuration here\",\n    \"date_ref\": \"2026-07-26\"\n  },\n  \"params\": {}\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-etlx-parse-run",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-etlx"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071348989y1hh",
+      "tabKind": "request",
+      "name": "RUN_BY_NAME",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/etlx/run_by_name",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"name\": \"{{etlx_name}}\",\n    \"etlx_id\": \"{{etlx_id}}\",\n    \"date_ref\": \"2026-07-26\"\n  },\n  \"params\": {}\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-etlx-run-by-name",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-etlx"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
+    },
+    {
+      "id": "1785071359513q1ev",
+      "tabKind": "request",
+      "name": "QUERY_MD",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/etlx/query_md",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"etlx_id\": \"{{etlx_id}}\",\n    \"table\": \"etlx\",\n    \"db\": \"ETLX\"\n  },\n  \"params\": {}\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "body",
+      "responseTab": "body",
+      "sourceRequestId": "c7-etlx-query-md",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-etlx"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
     }
   ],
   "groups": [],
-  "activeTabId": "1783190597008nl2c",
+  "activeTabId": "1785071359513q1ev",
   "currentView": "requests",
   "sidebarTab": "collections",
   "sidebarCollapsed": false,

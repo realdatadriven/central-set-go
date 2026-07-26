@@ -1199,5 +1199,238 @@
       "size": 1132,
       "cookies": []
     }
+  },
+  {
+    "id": "1785069427856",
+    "timestamp": 1785069427856,
+    "request": {
+      "id": "thunder-454b07bd-a09c-4c03-a324-1a78ce942a2d",
+      "name": "login",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/login",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": \"1234\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "87",
+        "content-type": "application/json",
+        "date": "Sun, 26 Jul 2026 12:37:07 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"User ou password incorrectos!\",\n\t\"success\": false\n}\n",
+      "time": 289,
+      "size": 63,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1785069651946",
+    "timestamp": 1785069651946,
+    "request": {
+      "id": "thunder-454b07bd-a09c-4c03-a324-1a78ce942a2d",
+      "name": "login",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/login",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"pt\",\n    \"data\": {\n        \"username\": \"root\",\n        \"password\": \"Aa123456!\"\n    }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "769",
+        "content-type": "application/json",
+        "date": "Sun, 26 Jul 2026 12:40:51 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 1,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": \"2026-07-26T11:37:07.838316729-01:00\",\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-24T11:40:51-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoxLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMjZUMTE6Mzc6MDcuODM4MzE2NzI5LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwMjUzNjUxLjkyNjE5ODUsIm5iZiI6MTc4NTA2OTY1MS45MjYxOTksImlhdCI6MTc4NTA2OTY1MS45MjYxOTg3fQ.vgZaGkCqgdNfYbZXy0prB3EU7hsL3WzSZNHji5J6Wr0\"\n}\n",
+      "time": 289,
+      "size": 1212,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1785069753106",
+    "timestamp": 1785069753106,
+    "request": {
+      "id": "thunder-91ddc6db-f274-4e0f-868c-d6e784179136",
+      "name": "apps",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/admin/apps",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\"\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "75",
+        "content-type": "application/json",
+        "date": "Sun, 26 Jul 2026 12:42:33 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Token is invalid!\",\n\t\"success\": false\n}\n",
+      "time": 42,
+      "size": 51,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1785070058319",
+    "timestamp": 1785070058319,
+    "request": {
+      "id": "thunder-91ddc6db-f274-4e0f-868c-d6e784179136",
+      "name": "apps",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/admin/apps",
+      "params": [],
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"lang\": \"en\"\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "471",
+        "content-type": "application/json",
+        "date": "Sun, 26 Jul 2026 12:47:38 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"data\": [\n\t\t{\n\t\t\t\"app\": \"ADMIN\",\n\t\t\t\"app_desc\": \"Admin\",\n\t\t\t\"app_id\": 1,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": \"Admin\",\n\t\t\t\"config\": \"{\\n  \\\"css_vars\\\": {\\n    \\\"--p\\\": \\\"55% 0.3 240\\\", \\n    \\\"--pc\\\": \\\"98% 0.01 240\\\", \\n    \\\"--s\\\": \\\"70% 0.25 200\\\", \\n    \\\"--sc\\\": \\\"98% 0.01 200\\\", \\n    \\\"--a\\\": \\\"65% 0.25 160\\\", \\n    \\\"--ac\\\": \\\"98% 0.01 160\\\"\\n  }\\n}\\n\",\n\t\t\t\"created_at\": \"2026-07-19T08:55:38.19277293-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-19T09:58:41.723701153-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"version\": \"1.0.0\"\n\t\t},\n\t\t{\n\t\t\t\"app\": \"ETLX\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"ETLX\\\"\",\n\t\t\t\"app_id\": 2,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-19T08:56:02.004906776-01:00\",\n\t\t\t\"db\": \"ETLX\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-19T08:56:02.004906776-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"version\": \"ETLX Model\"\n\t\t},\n\t\t{\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"SAAS\\\"\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.560188824-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-19T08:56:14.560188824-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"version\": \"SAAS Model\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"success\": true\n}\n",
+      "time": 70,
+      "size": 1390,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1785070352640",
+    "timestamp": 1785070352640,
+    "request": {
+      "id": "1782657989687g6uk",
+      "name": "SSE",
+      "method": "GET",
+      "url": "http://localhost:5555/sse/events",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-length": "19",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sun, 26 Jul 2026 12:52:32 GMT",
+        "x-content-type-options": "nosniff"
+      },
+      "body": "404 page not found\n",
+      "time": 46,
+      "size": 19,
+      "cookies": []
+    }
   }
 ]
