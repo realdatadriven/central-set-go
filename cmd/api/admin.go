@@ -167,15 +167,15 @@ func (app *application) menu(params Dict) Dict {
 		WHERE menu_table.app_id = ?
 			AND role_app_menu_table.role_id IN (?)
 			AND (
-				role_app_menu_table.read = TRUE
-				OR role_app_menu_table.create = TRUE
+				role_app_menu_table."read" = TRUE
+				OR role_app_menu_table."create" = TRUE
 			)
 			AND role_app_menu_table.excluded = FALSE
 			AND menu_table.excluded = FALSE
 			AND (role_app_menu_table.table_id, role_app_menu_table.menu_id, role_app_menu_table.app_id, role_app_menu_table.updated_at) IN (
 				SELECT table_id, menu_id, app_id, MAX(updated_at)
 				FROM role_app_menu_table
-				WHERE (role_app_menu_table.read = TRUE OR role_app_menu_table.create = TRUE)
+				WHERE (role_app_menu_table."read" = TRUE OR role_app_menu_table."create" = TRUE)
 					AND role_id IN (?)
 					AND excluded = FALSE
 				GROUP BY table_id, menu_id, app_id
@@ -190,9 +190,10 @@ func (app *application) menu(params Dict) Dict {
 	}
 	_menu_table, _, err := app.db.QueryMultiRows(query, args...)
 	if err != nil {
+
 		return Dict{
 			"success": false,
-			"msg":     fmt.Sprintf("%s", err),
+			"msg":     fmt.Sprintf("Error getting menus: %s", err),
 		}
 	}
 	// TABLES
