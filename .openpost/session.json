@@ -1751,7 +1751,54 @@
       "proxyId": null,
       "certificateConfig": null,
       "inheritCertificate": false,
-      "response": null,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "content-encoding": "gzip",
+          "content-length": "108",
+          "content-type": "application/json",
+          "date": "Sun, 26 Jul 2026 13:12:05 GMT",
+          "vary": "Authorization"
+        },
+        "body": "{\n\t\"msg\": \"ETLX ID  does not exists or you don have access to it!\",\n\t\"success\": false\n}\n",
+        "time": 55,
+        "size": 88,
+        "actualRequest": {
+          "method": "POST",
+          "url": "http://127.0.0.1:4444/dyn_api/etlx/query_md",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoxLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMjZUMTE6Mzc6MDcuODM4MzE2NzI5LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwMjUzNjUxLjkyNjE5ODUsIm5iZiI6MTc4NTA2OTY1MS45MjYxOTksImlhdCI6MTc4NTA2OTY1MS45MjYxOTg3fQ.vgZaGkCqgdNfYbZXy0prB3EU7hsL3WzSZNHji5J6Wr0"
+          },
+          "body": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"etlx_id\": \"\",\n    \"table\": \"etlx\",\n    \"db\": \"ETLX\"\n  },\n  \"params\": {}\n}",
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 4
+          },
+          {
+            "name": "Auth",
+            "duration": 1
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 55
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
       "error": null,
       "loading": false,
       "wsConnected": false,
