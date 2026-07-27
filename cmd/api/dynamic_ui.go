@@ -62,10 +62,8 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	}
 
 	// 1) resolve the website (`ui` row)
-	ui, err := app.AdminGetRowByFilter(
-		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
-		[]any{uiSlug, uiSlug},
-	)
+	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
+	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui: %s", err)}
 	}
@@ -73,19 +71,14 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		return Dict{"success": false, "msg": fmt.Sprintf("ui %q not found", uiSlug)}
 	}
 	uiID := ui["ui_id"]
-
 	// 2) resolve the page: explicit page_key, or the default_page = true one
 	var page Dict
 	if pageKey != "" {
-		page, err = app.AdminGetRowByFilter(
-			`select * from "ui_page" where ui_id = ? and page_key = ? and active = true and excluded = false`,
-			[]any{uiID, pageKey},
-		)
+		sql = `select * from "ui_page" where ui_id = ? and page_key = ? and active = true and excluded = false`
+		page, err = app.GetRowByFilter(sql, params, []any{uiID, pageKey})
 	} else {
-		page, err = app.AdminGetRowByFilter(
-			`select * from "ui_page" where ui_id = ? and default_page = true and active = true and excluded = false`,
-			[]any{uiID},
-		)
+		sql = `select * from "ui_page" where ui_id = ? and default_page = true and active = true and excluded = false`
+		page, err = app.GetRowByFilter(sql, params, []any{uiID, pageKey})
 	}
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_page: %s", err)}
@@ -98,16 +91,12 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		return Dict{"success": false, "msg": msg}
 	}
 	pageID := page["ui_page_id"]
-
 	// 3) active partials for this ui, in a stable order
-	partials, err := app.AdminGetRowsByFilter(
-		`select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`,
-		[]any{uiID},
-	)
+	sql = `select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`
+	partials, err := app.GetRowsByFilter(sql, params, []any{uiID})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial: %s", err)}
 	}
-
 	// 4) build template data: resolve ui_page_data first, then every active
 	// partial's ui_partial_data, each keyed by its own data name.
 	tmplData := Dict{
@@ -115,11 +104,8 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		"Page":       page,
 		"PathParams": pathParams,
 	}
-
-	pageDataRows, err := app.AdminGetRowsByFilter(
-		`select * from "ui_page_data" where ui_page_id = ? and active = true and excluded = false`,
-		[]any{pageID},
-	)
+	sql = `select * from "ui_page_data" where ui_page_id = ? and active = true and excluded = false`
+	pageDataRows, err := app.GetRowsByFilter(sql, params, []any{pageID})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_page_data: %s", err)}
 	}
@@ -128,10 +114,8 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	}
 
 	for _, p := range partials {
-		partialDataRows, perr := app.AdminGetRowsByFilter(
-			`select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`,
-			[]any{p["ui_partial_id"]},
-		)
+		sql = `select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`
+		partialDataRows, perr := app.GetRowsByFilter(sql, params, []any{p["ui_partial_id"]})
 		if perr != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial_data: %s", perr)}
 		}
@@ -404,6 +388,7 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 	params := Dict{
 		"lang": "en",
 		"data": Dict{
+			"db":          "UI",
 			"ui_slug":     r.PathValue("ui_slug"),
 			"page_key":    r.PathValue("page_key"),
 			"path_params": pathParams,
@@ -484,11 +469,8 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 	if assetPath == "" {
 		return Dict{"success": false, "msg": `"asset_path" is required`}
 	}
-
-	ui, err := app.AdminGetRowByFilter(
-		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
-		[]any{uiSlug, uiSlug},
-	)
+	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
+	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui: %s", err)}
 	}
