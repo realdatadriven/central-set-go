@@ -22,13 +22,6 @@ import (
 // static assets from either disk or the embedded filesystem.
 func NewFallbackFileServer() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasSuffix(path, ".js") ||
-			strings.HasSuffix(path, ".css") ||
-			strings.HasSuffix(path, ".png") ||
-			strings.HasSuffix(path, ".svg") {
-			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-		}
-		path := filepath.Clean(r.URL.Path)
 
 		// Prevent directory traversal
 		if filepath.IsAbs(path) || path == "" || path == "." {
@@ -44,6 +37,14 @@ func NewFallbackFileServer() http.Handler {
 		/*if strings.HasSuffix(r.URL.Path, ".js") {
 			w.Header().Set("Content-Type", "text/javascript")
 		}*/
+		
+		if strings.HasSuffix(path, ".js") ||
+			strings.HasSuffix(path, ".css") ||
+			strings.HasSuffix(path, ".png") ||
+			strings.HasSuffix(path, ".svg") {
+			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		}
+		path := filepath.Clean(r.URL.Path)
 
 		// Fall back to embedded files
 		tryEmbedded(w, r, path)
