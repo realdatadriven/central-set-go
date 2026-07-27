@@ -154,6 +154,10 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /auth/{provider}/login", app.GothLoginHandler)
 	mux.HandleFunc("GET /auth/{provider}/callback", app.GothCallbackHandler)
 
+	// DYN UI
+	mux.HandleFunc("GET /ui/{ui_slug}", app.serve_ui_page)
+	mux.HandleFunc("GET /ui/{ui_slug}/{page_key}", app.serve_ui_page)
+	mux.HandleFunc("GET /ui/{ui_slug}/partial/{partial_name}", app.serve_ui_partial)
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
 	/*/ OPEN TELEMETRY
