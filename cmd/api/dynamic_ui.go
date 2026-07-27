@@ -2,10 +2,13 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strings"
 	"text/template"
 	texttemplate "text/template"
+	"time"
 	// OPEN TELEMETRY
 	//"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
@@ -440,4 +443,165 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 	}
 	w.Header().Set("Content-Type", res["content_type"].(string))
 	w.Write([]byte(res["data"].(string)))
+}
+
+// RenderUIAsset resolves a single `ui_asset` row for a given `ui` by its
+// relative asset_path (e.g. "assets/store.css"), decodes its content
+// according to content_encoding, and returns it ready to be written to an
+// http.ResponseWriter (or fed to http.ServeContent) — including a parsed
+// last_modified time (from updated_at) for browser caching.
+//
+// params["data"] is expected to contain:
+//
+//	ui_slug / ui_name : string - required, identifies the `ui` row.
+//	asset_path        : string - required, matches ui_asset.asset_path.
+//
+// On success, returns:
+//
+//	Dict{
+//	  "success":       true,
+//	  "data":          []byte,          // decoded asset content
+//	  "mime_type":     string,
+//	  "cache_seconds": int,
+//	  "checksum":      string,          // "" if not stored
+//	  "last_modified": time.Time,       // zero value if updated_at is absent/unparsable
+//	  "asset":         Dict,            // the raw ui_asset row
+//	}
+func (app *application) RenderUIAsset(params Dict) Dict {
+	data, ok := params["data"].(Dict)
+	if !ok {
+		return Dict{"success": false, "msg": `missing "data" params`}
+	}
+
+	uiSlug, _ := data["ui_slug"].(string)
+	if uiSlug == "" {
+		uiSlug, _ = data["ui_name"].(string)
+	}
+	if uiSlug == "" {
+		return Dict{"success": false, "msg": `"ui_slug" or "ui_name" is required`}
+	}
+	assetPath, _ := data["asset_path"].(string)
+	if assetPath == "" {
+		return Dict{"success": false, "msg": `"asset_path" is required`}
+	}
+
+	ui, err := app.AdminGetRowByFilter(
+		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
+		[]any{uiSlug, uiSlug},
+	)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui: %s", err)}
+	}
+	if len(ui) == 0 {
+		return Dict{"success": false, "msg": fmt.Sprintf("ui %q not found", uiSlug)}
+	}
+	uiID := ui["ui_id"]
+
+	asset, err := app.AdminGetRowByFilter(
+		`select * from "ui_asset" where ui_id = ? and asset_path = ? and active = true and excluded = false`,
+		[]any{uiID, assetPath},
+	)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_asset: %s", err)}
+	}
+	if len(asset) == 0 {
+		return Dict{"success": false, "msg": fmt.Sprintf("asset %q not found for ui %q", assetPath, uiSlug)}
+	}
+
+	content, _ := asset["asset_content"].(string)
+	encoding, _ := asset["content_encoding"].(string)
+	var raw []byte
+	if strings.EqualFold(encoding, "base64") {
+		decoded, derr := base64.StdEncoding.DecodeString(content)
+		if derr != nil {
+			return Dict{"success": false, "msg": fmt.Sprintf("failed to decode asset %q: %s", assetPath, derr)}
+		}
+		raw = decoded
+	} else {
+		raw = []byte(content)
+	}
+
+	mimeType, _ := asset["mime_type"].(string)
+	if mimeType == "" {
+		mimeType = "application/octet-stream"
+	}
+	cacheSeconds := app.toInt(asset["cache_seconds"])
+	checksum, _ := asset["checksum"].(string)
+	lastModified, _ := app.toTime(asset["updated_at"])
+
+	return Dict{
+		"success":       true,
+		"data":          raw,
+		"mime_type":     mimeType,
+		"cache_seconds": cacheSeconds,
+		"checksum":      checksum,
+		"last_modified": lastModified,
+		"asset":         asset,
+	}
+}
+
+// serve_ui_asset is the HTTP handler for GET /ui/{ui_slug}/static/{asset...}
+// (register the route with the trailing "..." wildcard so asset paths like
+// "assets/img/logo.png" match as a single value). It defers conditional-GET
+// (If-None-Match / If-Modified-Since) and Range handling to
+// http.ServeContent: the ETag comes from the asset's stored checksum when
+// present, and Last-Modified from updated_at.
+func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
+	params := Dict{
+		"data": Dict{
+			"ui_slug":    r.PathValue("ui_slug"),
+			"asset_path": r.PathValue("asset"),
+		},
+	}
+	res := app.RenderUIAsset(params)
+	if success, _ := res["success"].(bool); !success {
+		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
+		return
+	}
+
+	if mimeType, _ := res["mime_type"].(string); mimeType != "" {
+		w.Header().Set("Content-Type", mimeType)
+	}
+	if secs := app.toInt(res["cache_seconds"]); secs > 0 {
+		w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", secs))
+	}
+	if checksum, _ := res["checksum"].(string); checksum != "" {
+		w.Header().Set("ETag", fmt.Sprintf(`"%s"`, checksum))
+	}
+
+	// ServeContent reads any ETag already set above to answer If-None-Match,
+	// compares lastModified against If-Modified-Since, and handles Range
+	// requests — all for free.
+	lastModified, _ := res["last_modified"].(time.Time)
+	raw, _ := res["data"].([]byte)
+	http.ServeContent(w, r, r.PathValue("asset"), lastModified, bytes.NewReader(raw))
+}
+
+// toTime best-effort converts common datetime representations returned by
+// different DB drivers (time.Time, RFC3339/"YYYY-MM-DD HH:MM:SS" strings,
+// unix epoch numbers) into a time.Time. Returns the zero time and false when
+// the value is absent or unrecognized — callers (e.g. serve_ui_asset) should
+// treat the zero value as "no Last-Modified available" rather than an error.
+func (app *application) toTime(v any) (time.Time, bool) {
+	switch val := v.(type) {
+	case time.Time:
+		return val, true
+	case string:
+		layouts := []string{
+			time.RFC3339,
+			"2006-01-02 15:04:05",
+			"2006-01-02T15:04:05",
+			"2006-01-02",
+		}
+		for _, layout := range layouts {
+			if t, err := time.Parse(layout, val); err == nil {
+				return t, true
+			}
+		}
+	case int64:
+		return time.Unix(val, 0), true
+	case float64:
+		return time.Unix(int64(val), 0), true
+	}
+	return time.Time{}, false
 }

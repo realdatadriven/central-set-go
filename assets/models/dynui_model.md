@@ -48,7 +48,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 9
   allow_in_subform: {ui_route: true, ui_page: true, ui_partial: true, ui_asset: true}
   tabs_steps_conf:
     - {label: Website, fields: [ui_slug, ui_name, ui_desc, default_locale, active]}
@@ -67,7 +67,7 @@ columns:
   ui_partial_desc:   { type: text, comment: "Partial Description", form_display: true, table_display: true, form_long_text: true, order: 3 }
   partial_template:  { type: text, nullable: false, comment: "Partial Template", form_display: true, form_long_text: true, form_code: html, order: 4 }
   active:            { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 5 }
-  ui_id:             { type: integer, fk: "dynui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
+  ui_id:             { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
   user_id:           { type: integer, comment: "User ID" }
   app_id:            { type: integer, comment: "App ID" }
   created_at:        { type: datetime, comment: "Created At" }
@@ -76,7 +76,7 @@ columns:
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
-  size: 6
+  size: 9
   allow_in_subform: {ui_partial_data: true}
   tabs_steps_conf:
     - {label: Partial, fields: [ui_id, ui_partial, ui_partial_desc, active]}
@@ -123,7 +123,7 @@ columns:
   cache_seconds:    { type: integer, default: 0, comment: "Public Cache Seconds", form_display: true, table_display: true, form_size: 3, order: 6 }
   default_page:     { type: boolean, default: true, comment: "Default Page", form_display: true, table_display: true, form_size: 2, order: 7 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 8 }
-  ui_id:            { type: integer, fk: "dynui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
+  ui_id:            { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
   user_id:          { type: integer, comment: "User ID" }
   app_id:           { type: integer, comment: "App ID" }
   created_at:       { type: datetime, comment: "Created At" }
@@ -172,7 +172,7 @@ comment: UI Asset
 tooltip: Store UTF-8 assets directly or binary assets as base64 text. The content is database-backed, not a filesystem path.
 columns:
   ui_asset_id:      { type: integer, pk: true, autoincrement: true, comment: "Asset ID" }
-  ui_id:            { type: integer, fk: "dynui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
+  ui_id:            { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
   asset_path:       { type: varchar, len: 500, nullable: false, comment: "Relative Asset Path", form_display: true, table_display: true, form_size: 5, order: 2 }
   mime_type:        { type: varchar, len: 150, nullable: false, comment: "MIME Type", form_display: true, table_display: true, form_size: 3, order: 3 }
   content_encoding: { type: varchar, len: 20, default: "utf-8", nullable: false, comment: "Encoding", form_display: true, table_display: true, form_size: 2, order: 4 }
@@ -204,24 +204,23 @@ accept C7 OData path or template name directly from the browser.
 # UI_DATA
 ```yaml
 name: UI_DATA
-description: Starter storefront UI backed by the STORE model
+description: Minimal single-page example with header/footer partials
 database: UI
 runs_as: MODEL_DATA
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
-## UI_STORE
+## UI_DEMO
 ```yaml
-table: dynui
-description: Add the sample store website
+table: ui
+description: Add the demo website
 cond: 'WHERE ui_slug = :ui_slug AND excluded = false'
 data:
   ui_id: 1
-  ui_slug: store
-  ui_name: Sample Store
-  ui_desc: Starter template-driven storefront using STORE as its backend
+  ui_slug: demo
+  ui_name: Demo Site
+  ui_desc: Minimal example used to test one page with header/footer partials
   default_locale: en
-  default_page_id: 1
   active: true
   user_id: 1
   app_id: appId()
@@ -233,14 +232,21 @@ data:
 ## UI_PARTIAL_HEADER
 ```yaml
 table: ui_partial
-description: Add the store header partial
+description: Add the demo header partial
 cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
 data:
   ui_partial_id: 1
   ui_id: 1
   ui_partial: header
   ui_partial_desc: Site header and primary navigation
-  partial_template: FileContent(dynui/store/partials/header.html)
+  partial_template: |
+    <header style="padding:1rem;background:#222;color:#fff;">
+      <strong>{{.UI.ui_name}}</strong>
+      <nav style="float:right;">
+        <a href="/ui/demo" style="color:#fff;margin-left:1rem;">Home</a>
+        <a href="/ui/demo/about" style="color:#fff;margin-left:1rem;">About</a>
+      </nav>
+    </header>
   active: true
   user_id: 1
   app_id: appId()
@@ -252,14 +258,17 @@ data:
 ## UI_PARTIAL_FOOTER
 ```yaml
 table: ui_partial
-description: Add the store footer partial
+description: Add the demo footer partial
 cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
 data:
   ui_partial_id: 2
   ui_id: 1
   ui_partial: footer
   ui_partial_desc: Site footer
-  partial_template: FileContent(dynui/store/partials/footer.html)
+  partial_template: |
+    <footer style="padding:1rem;background:#eee;margin-top:2rem;color:#555;">
+      &copy; {{.UI.ui_name}} &middot; built with central-set-go
+    </footer>
   active: true
   user_id: 1
   app_id: appId()
@@ -271,239 +280,26 @@ data:
 ## UI_PAGE_HOME
 ```yaml
 table: ui_page
-description: Add the store home page
+description: Add the demo home page (default page for the demo ui)
 cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
 data:
   ui_page_id: 1
   ui_id: 1
   page_key: home
-  page_title: Sample Store
-  meta_description: Welcome to the sample store
-  page_template: FileContent(dynui/store/pages/home.html)
-  cache_seconds: 60
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_PAGE_PRODUCTS
-```yaml
-table: ui_page
-description: Add the store products page
-cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
-data:
-  ui_page_id: 2
-  ui_id: 1
-  page_key: products
-  page_title: Products
-  meta_description: Browse available products
-  page_template: FileContent(dynui/store/pages/products.html)
-  cache_seconds: 60
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_PAGE_PRODUCT
-```yaml
-table: ui_page
-description: Add the store product detail page
-cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
-data:
-  ui_page_id: 3
-  ui_id: 1
-  page_key: product
-  page_title: Product
-  meta_description: Product details
-  page_template: FileContent(dynui/store/pages/product.html)
-  cache_seconds: 60
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_ROUTE_HOME
-```yaml
-table: ui_route
-description: Add the store home route
-cond: 'WHERE route_key = :route_key AND excluded = false'
-data:
-  ui_route_id: 1
-  ui_id: 1
-  route_key: store-home
-  route_path: /
-  http_method: GET
-  ui_page_id: 1
-  requires_auth: false
-  sort_order: 1
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_ROUTE_PRODUCTS
-```yaml
-table: ui_route
-description: Add the store product-list route
-cond: 'WHERE route_key = :route_key AND excluded = false'
-data:
-  ui_route_id: 2
-  ui_id: 1
-  route_key: store-products
-  route_path: /products
-  http_method: GET
-  ui_page_id: 2
-  requires_auth: false
-  sort_order: 2
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_ROUTE_PRODUCT
-```yaml
-table: ui_route
-description: Add the store product-detail route
-cond: 'WHERE route_key = :route_key AND excluded = false'
-data:
-  ui_route_id: 3
-  ui_id: 1
-  route_key: store-product
-  route_path: /products/:product_id
-  http_method: GET
-  ui_page_id: 3
-  requires_auth: false
-  sort_order: 3
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_PAGE_DATA_FEATURED_PRODUCTS
-```yaml
-table: ui_page_data
-description: Load featured products for the home page from STORE
-cond: 'WHERE ui_page_id = :ui_page_id AND ui_page_data = :ui_page_data AND excluded = false'
-data:
-  ui_page_data_id: 1
-  ui_page_data: products
-  ui_page_data_desc: Active products shown on the home page
-  ui_page_id: 1
-  odata_path: 'STORE/product?$filter=active eq true&$top=6&$orderby=product_name asc'
-  sigle_row_obj: false
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_PAGE_DATA_PRODUCTS
-```yaml
-table: ui_page_data
-description: Load products for the product-list page from STORE
-cond: 'WHERE ui_page_id = :ui_page_id AND ui_page_data = :ui_page_data AND excluded = false'
-data:
-  ui_page_data_id: 2
-  ui_page_data: products
-  ui_page_data_desc: Active products shown on the products page
-  ui_page_id: 2
-  odata_path: 'STORE/product?$filter=active eq true&$top=48&$orderby=product_name asc'
-  sigle_row_obj: false
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_PAGE_DATA_PRODUCT
-```yaml
-table: ui_page_data
-description: Load one product using the product_id path parameter
-cond: 'WHERE ui_page_id = :ui_page_id AND ui_page_data = :ui_page_data AND excluded = false'
-data:
-  ui_page_data_id: 3
-  ui_page_data: product
-  ui_page_data_desc: Product selected from the route
-  ui_page_id: 3
-  odata_path: 'STORE/product?$filter=product_id eq {{.Route.PathParams.product_id}}'
-  sigle_row_obj: true
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-```
-
-## UI_NAVIGATION_STORE
-```yaml
-table: ui_navigation
-description: Add the store navigation links
-cond: 'WHERE ui_id = :ui_id AND label = :label AND excluded = false'
-data:
-  ui_navigation_id: 1
-  ui_id: 1
-  label: Home
-  href: /dynui/store
-  sort_order: 1
-  active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
-children:
-  table: ui_navigation
-  cond: 'WHERE ui_id = :ui_id AND label = :label AND excluded = false'
-  data:
-    ui_navigation_id: 2
-    ui_id: 1
-    label: Products
-    href: /dynui/store/products
-    sort_order: 2
-    active: true
-    user_id: 1
-    app_id: appId()
-    created_at: Now()
-    updated_at: Now()
-    excluded: false
-```
-
-## UI_ASSET_STORE_CSS
-```yaml
-table: ui_asset
-description: Add the store stylesheet as a database asset
-cond: 'WHERE ui_id = :ui_id AND asset_path = :asset_path AND excluded = false'
-data:
-  ui_asset_id: 1
-  ui_id: 1
-  asset_path: assets/store.css
-  mime_type: text/css; charset=utf-8
-  content_encoding: utf-8
-  asset_content: FileContent(dynui/store/assets/store.css)
-  cache_seconds: 86400
+  page_title: Welcome
+  meta_description: Minimal single-page demo
+  page_template: |
+    {{template "header" .}}
+    <main style="padding:1rem;">
+      <h1>{{.Page.page_title}}</h1>
+      <p>{{.Page.meta_description}}</p>
+      <p>This page is served straight out of the database — the header and
+      footer above are separate <code>ui_partial</code> rows parsed together
+      with this <code>ui_page.page_template</code>.</p>
+    </main>
+    {{template "footer" .}}
+  cache_seconds: 0
+  default_page: true
   active: true
   user_id: 1
   app_id: appId()
