@@ -9,9 +9,24 @@ import (
 	"text/template"
 	texttemplate "text/template"
 	"time"
+
+	"github.com/realdatadriven/central-set-go/internal/env"
 	// OPEN TELEMETRY
 	//"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
+
+func (app *application) getAnonymous() Dict {
+	return Dict{"user_id": 2, "username": "anonymous", "role_id": 4, "active": true}
+}
+
+func (app *application) getUser(r *http.Request) (Dict, error) {
+	cookie, err := r.Cookie("session")
+	if err != nil {
+		return nil, err
+	}
+	token := "Bearer " + cookie.Value
+	return app.verifyTokenString(token)
+}
 
 // RenderUIPage resolves a `ui` website + one of its `ui_page` rows, fetches
 // every data source needed by the page and by its active `ui_partial` rows
@@ -47,7 +62,6 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	if !ok {
 		return Dict{"success": false, "msg": `missing "data" params`}
 	}
-
 	uiSlug, _ := data["ui_slug"].(string)
 	if uiSlug == "" {
 		uiSlug, _ = data["ui_name"].(string)
@@ -60,7 +74,6 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	if pathParams == nil {
 		pathParams = Dict{}
 	}
-
 	// 1) resolve the website (`ui` row)
 	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
 	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
@@ -90,6 +103,11 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		}
 		return Dict{"success": false, "msg": msg}
 	}
+	// login_required
+	if app.toBool(page["login_required"]) && app.toInt(params["user"].(Dict)["role_id"]) == 4 {
+		msg := fmt.Sprintf("page %q requires login", pageKey)
+		return Dict{"success": false, "msg": msg, "login_required": true}
+	}
 	pageID := page["ui_page_id"]
 	// 3) active partials for this ui, in a stable order
 	sql = `select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`
@@ -112,7 +130,6 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	if msg := app.resolveUIData(params, pageDataRows, "ui_page_data", pathParams, tmplData); msg != "" {
 		return Dict{"success": false, "msg": msg}
 	}
-
 	for _, p := range partials {
 		sql = `select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`
 		partialDataRows, perr := app.GetRowsByFilter(sql, params, []any{p["ui_partial_id"]})
@@ -123,7 +140,6 @@ func (app *application) RenderUIPage(params Dict) Dict {
 			return Dict{"success": false, "msg": msg}
 		}
 	}
-
 	// 5) parse the page template plus every active partial as named templates
 	// so the page template can invoke them, e.g. {{template "header" .}}.
 	pageTemplate, _ := page["page_template"].(string)
@@ -141,12 +157,10 @@ func (app *application) RenderUIPage(params Dict) Dict {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to parse partial %q: %s", name, err)}
 		}
 	}
-
 	var out bytes.Buffer
 	if err := tset.ExecuteTemplate(&out, "__page__", tmplData); err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to render page: %s", err)}
 	}
-
 	return Dict{
 		"success":       true,
 		"data":          out.String(),
@@ -191,7 +205,6 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	if !ok {
 		return Dict{"success": false, "msg": `missing "data" params`}
 	}
-
 	uiSlug, _ := data["ui_slug"].(string)
 	if uiSlug == "" {
 		uiSlug, _ = data["ui_name"].(string)
@@ -210,7 +223,6 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	if pathParams == nil {
 		pathParams = Dict{}
 	}
-
 	// 1) resolve the website (`ui` row)
 	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
 	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
@@ -221,11 +233,10 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 		return Dict{"success": false, "msg": fmt.Sprintf("ui %q not found", uiSlug)}
 	}
 	uiID := ui["ui_id"]
-
 	// 2) every active partial for this ui, so cross-partial {{template}} calls
 	// keep working; the requested one must be among them.
 	sql = `select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`
-	partials, err := app.GetRowByFilter(sql, params, []any{uiID})
+	partials, err := app.GetRowsByFilter(sql, params, []any{uiID})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial: %s", err)}
 	}
@@ -239,7 +250,6 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	if target == nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("partial %q not found for ui %q", partialName, uiSlug)}
 	}
-
 	// 3) resolve ui_partial_data for every active partial (not just the
 	// requested one), so nested partial calls have their data available too.
 	tmplData := Dict{
@@ -248,7 +258,7 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	}
 	for _, p := range partials {
 		sql = `select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`
-		partialDataRows, perr := app.GetRowByFilter(sql, params, []any{p["ui_partial_id"]})
+		partialDataRows, perr := app.GetRowsByFilter(sql, params, []any{p["ui_partial_id"]})
 		if perr != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial_data: %s", perr)}
 		}
@@ -256,7 +266,6 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 			return Dict{"success": false, "msg": msg}
 		}
 	}
-
 	// 4) parse every active partial as a named template, then execute only
 	// the requested one.
 	tset := template.New(partialName)
@@ -276,12 +285,10 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to parse partial %q: %s", name, perr)}
 		}
 	}
-
 	var out bytes.Buffer
 	if err := tset.ExecuteTemplate(&out, partialName, tmplData); err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to render partial %q: %s", partialName, err)}
 	}
-
 	return Dict{
 		"success":      true,
 		"data":         out.String(),
@@ -304,12 +311,10 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		if name == "" || odataPath == "" {
 			continue
 		}
-
 		resolvedPath, err := app.renderODataPath(odataPath, pathParams)
 		if err != nil {
 			return fmt.Sprintf("failed to resolve odata_path for %q: %s", name, err)
 		}
-
 		// fresh params per call: app.ODataRead writes db/table/filters into
 		// params["data"], so each data source needs its own Dict.
 		callParams := Dict{"data": Dict{}}
@@ -322,12 +327,10 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		if l, ok := base["location"]; ok {
 			callParams["location"] = l
 		}
-
 		res := app.ODataRead(callParams, resolvedPath)
 		if success, ok := res["success"].(bool); !ok || !success {
 			return fmt.Sprintf("failed to load %q: %v", name, res["msg"])
 		}
-
 		single := app.toBool(row["sigle_row_obj"])
 		switch d := res["data"].(type) {
 		case Dict:
@@ -380,8 +383,14 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 		pathParams[k] = q.Get(k)
 	}
 	// anonymous
+	user := app.getAnonymous()
+	userFromSess, err := app.getUser(r)
+	if err != nil {
+		user = userFromSess
+	}
 	params := Dict{
 		"lang": "en",
+		"user": user,
 		"data": Dict{
 			"db":          env.GetString("UIDB", "UI"),
 			"ui_slug":     r.PathValue("ui_slug"),
@@ -407,9 +416,16 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 	for k := range q {
 		pathParams[k] = q.Get(k)
 	}
+	user := app.getAnonymous()
+	userFromSess, err := app.getUser(r)
+	if err != nil {
+		user = userFromSess
+	}
 	params := Dict{
 		"lang": "en",
+		"user": user,
 		"data": Dict{
+			"db":           env.GetString("UIDB", "UI"),
 			"ui_slug":      r.PathValue("ui_slug"),
 			"partial_name": r.PathValue("partial_name"),
 			"path_params":  pathParams,
@@ -522,6 +538,7 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 	params := Dict{
 		"data": Dict{
+			"db":         env.GetString("UIDB", "UI"),
 			"ui_slug":    r.PathValue("ui_slug"),
 			"asset_path": r.PathValue("asset"),
 		},
@@ -610,11 +627,15 @@ func (app *application) toTime(v any) (time.Time, bool) {
 // cookie exactly like the one set below.
 func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
- 
-	ui, err := app.GetRowByFilter(sql, params, 
-		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
-		[]any{uiSlug, uiSlug},
-	)
+	params := Dict{
+		"data": Dict{
+			"db":         env.GetString("UIDB", "UI"),
+			"ui_slug":    r.PathValue("ui_slug"),
+			"asset_path": r.PathValue("asset"),
+		},
+	}
+	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
+	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
 	if err != nil {
 		app.writeHTMLError(w, http.StatusInternalServerError, fmt.Sprintf("failed to fetch ui: %s", err))
 		return
@@ -623,7 +644,7 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusNotFound, fmt.Sprintf("ui %q not found", uiSlug))
 		return
 	}
- 
+
 	if err := r.ParseForm(); err != nil {
 		app.writeHTMLError(w, http.StatusBadRequest, "Invalid form submission.")
 		return
@@ -634,14 +655,12 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusBadRequest, "Email and password are required.")
 		return
 	}
- 
 	res := app.dynamic_login(Dict{
 		"data": Dict{
 			"email":    email,
 			"password": password,
 		},
 	})
- 
 	success, _ := res["success"].(bool)
 	if !success {
 		msg, _ := res["msg"].(string)
@@ -651,7 +670,6 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return
 	}
- 
 	token, _ := res["token"].(string)
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
