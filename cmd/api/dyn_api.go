@@ -1225,11 +1225,11 @@ func (app *application) verifyTokenString(authorizationHeader string) (Dict, err
 			return nil, fmt.Errorf("Token AcceptAudience is invalid: %w", app.config.baseURL)
 		}
 		var user Dict
-		// fmt.Println(claims.Subject)
 		err2 := json.Unmarshal([]byte(claims.Subject), &user)
 		if err2 != nil {
 			return nil, fmt.Errorf("Error unmarshaling token subject: %w", err)
 		}
+		// fmt.Println("USER:", user)
 		return user, nil
 	}
 	return nil, fmt.Errorf("No token received: %w", "")

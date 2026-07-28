@@ -458,6 +458,8 @@ func (app *application) _login(params Dict) Dict {
 		username = _data["user"].(string)
 	} else if _, ok := _data["u"].(string); ok {
 		username = _data["u"].(string)
+	} else if _, ok := _data["email"].(string); ok {
+		username = _data["email"].(string)
 	}
 	pass := ""
 	if _, ok := _data["password"].(string); ok {
@@ -527,7 +529,7 @@ func (app *application) _login(params Dict) Dict {
 				"msg":     err.Error(),
 			}
 		}
-
+		//fmt.Println(user)
 		if len(user) == 0 {
 			msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
 			return Dict{

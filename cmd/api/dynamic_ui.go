@@ -11,8 +11,6 @@ import (
 	"time"
 
 	"github.com/realdatadriven/central-set-go/internal/env"
-	// OPEN TELEMETRY
-	//"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 func (app *application) getAnonymous() Dict {
@@ -24,8 +22,81 @@ func (app *application) getUser(r *http.Request) (Dict, error) {
 	if err != nil {
 		return nil, err
 	}
-	token := "Bearer " + cookie.Value
-	return app.verifyTokenString(token)
+	return app.verifyTokenString(cookie.Value)
+}
+
+func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	pathParams := Dict{}
+	for k := range q {
+		pathParams[k] = q.Get(k)
+	}
+	// anonymous
+	user := app.getAnonymous()
+	userFromSess, err := app.getUser(r)
+	if err == nil {
+		// fmt.Println("USER:", userFromSess)
+		if r.PathValue("page_key") == "login" {
+			// w.Header().Set("HX-Redirect", "/ui/"+r.PathValue("ui_slug"))
+			// w.WriteHeader(http.StatusOK)
+			http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+			return
+		}
+		user = userFromSess
+	} else {
+		fmt.Println("ERR:", err)
+	}
+	params := Dict{
+		"lang": "en",
+		"user": user,
+		"data": Dict{
+			"db":          env.GetString("UIDB", "UI"),
+			"ui_slug":     r.PathValue("ui_slug"),
+			"page_key":    r.PathValue("page_key"),
+			"path_params": pathParams,
+		},
+	}
+	res := app.RenderUIPage(params)
+	if success, _ := res["success"].(bool); !success {
+		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
+		return
+	}
+	if secs := app.toInt(res["cache_seconds"]); secs > 0 {
+		w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", secs))
+	}
+	w.Header().Set("Content-Type", res["content_type"].(string))
+	w.Write([]byte(res["data"].(string)))
+}
+
+func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	pathParams := Dict{}
+	for k := range q {
+		pathParams[k] = q.Get(k)
+	}
+	user := app.getAnonymous()
+	userFromSess, err := app.getUser(r)
+	if err != nil {
+		user = userFromSess
+	}
+	params := Dict{
+		"lang": "en",
+		"user": user,
+		"data": Dict{
+			"db":           env.GetString("UIDB", "UI"),
+			"ui_slug":      r.PathValue("ui_slug"),
+			"partial_name": r.PathValue("partial_name"),
+			"path_params":  pathParams,
+		},
+	}
+	// same token/user pattern as read_odata, if the partial is auth-gated
+	res := app.RenderUIPartial(params)
+	if success, _ := res["success"].(bool); !success {
+		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", res["content_type"].(string))
+	w.Write([]byte(res["data"].(string)))
 }
 
 // RenderUIPage resolves a `ui` website + one of its `ui_page` rows, fetches
@@ -376,71 +447,6 @@ func (app *application) renderODataPath(odataPath string, pathParams Dict) (stri
 	return out.String(), nil
 }
 
-func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	pathParams := Dict{}
-	for k := range q {
-		pathParams[k] = q.Get(k)
-	}
-	// anonymous
-	user := app.getAnonymous()
-	userFromSess, err := app.getUser(r)
-	if err != nil {
-		user = userFromSess
-	}
-	params := Dict{
-		"lang": "en",
-		"user": user,
-		"data": Dict{
-			"db":          env.GetString("UIDB", "UI"),
-			"ui_slug":     r.PathValue("ui_slug"),
-			"page_key":    r.PathValue("page_key"),
-			"path_params": pathParams,
-		},
-	}
-	res := app.RenderUIPage(params)
-	if success, _ := res["success"].(bool); !success {
-		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
-		return
-	}
-	if secs := app.toInt(res["cache_seconds"]); secs > 0 {
-		w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", secs))
-	}
-	w.Header().Set("Content-Type", res["content_type"].(string))
-	w.Write([]byte(res["data"].(string)))
-}
-
-func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	pathParams := Dict{}
-	for k := range q {
-		pathParams[k] = q.Get(k)
-	}
-	user := app.getAnonymous()
-	userFromSess, err := app.getUser(r)
-	if err != nil {
-		user = userFromSess
-	}
-	params := Dict{
-		"lang": "en",
-		"user": user,
-		"data": Dict{
-			"db":           env.GetString("UIDB", "UI"),
-			"ui_slug":      r.PathValue("ui_slug"),
-			"partial_name": r.PathValue("partial_name"),
-			"path_params":  pathParams,
-		},
-	}
-	// same token/user pattern as read_odata, if the partial is auth-gated
-	res := app.RenderUIPartial(params)
-	if success, _ := res["success"].(bool); !success {
-		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
-		return
-	}
-	w.Header().Set("Content-Type", res["content_type"].(string))
-	w.Write([]byte(res["data"].(string)))
-}
-
 // RenderUIAsset resolves a single `ui_asset` row for a given `ui` by its
 // relative asset_path (e.g. "assets/store.css"), decodes its content
 // according to content_encoding, and returns it ready to be written to an
@@ -627,7 +633,15 @@ func (app *application) toTime(v any) (time.Time, bool) {
 // cookie exactly like the one set below.
 func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
+	_, err := app.getUser(r)
+	if err != nil {
+		// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+		// w.WriteHeader(http.StatusOK)
+		http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+		return
+	}
 	params := Dict{
+		"lang": "en",
 		"data": Dict{
 			"db":         env.GetString("UIDB", "UI"),
 			"ui_slug":    r.PathValue("ui_slug"),
@@ -655,15 +669,16 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusBadRequest, "Email and password are required.")
 		return
 	}
-	res := app.dynamic_login(Dict{
+	res := app._login(Dict{
 		"data": Dict{
-			"email":    email,
+			"username": email,
 			"password": password,
 		},
 	})
 	success, _ := res["success"].(bool)
 	if !success {
 		msg, _ := res["msg"].(string)
+		// fmt.Println(msg)
 		if msg == "" {
 			msg = "Invalid email or password."
 		}
@@ -679,8 +694,9 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 	})
-	w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
-	w.WriteHeader(http.StatusOK)
+	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+	// w.WriteHeader(http.StatusOK)
+	http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
 }
 
 // writeHTMLError writes a small HTML fragment (a DaisyUI alert) with the

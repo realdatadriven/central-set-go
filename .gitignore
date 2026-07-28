@@ -52,3 +52,4 @@ c7.service
 saas/
 database/ADMIN.db
 .duckdb
+ui
