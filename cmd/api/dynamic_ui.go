@@ -212,10 +212,8 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	}
 
 	// 1) resolve the website (`ui` row)
-	ui, err := app.AdminGetRowByFilter(
-		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
-		[]any{uiSlug, uiSlug},
-	)
+	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
+	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui: %s", err)}
 	}
@@ -226,10 +224,8 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 
 	// 2) every active partial for this ui, so cross-partial {{template}} calls
 	// keep working; the requested one must be among them.
-	partials, err := app.AdminGetRowsByFilter(
-		`select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`,
-		[]any{uiID},
-	)
+	sql = `select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`
+	partials, err :=app.GetRowByFilter(sql, params, []any{uiID})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial: %s", err)}
 	}
@@ -388,7 +384,7 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 	params := Dict{
 		"lang": "en",
 		"data": Dict{
-			"db":          "UI",
+			"db":          env.GetString("UIDB", "UI"),
 			"ui_slug":     r.PathValue("ui_slug"),
 			"page_key":    r.PathValue("page_key"),
 			"path_params": pathParams,
@@ -479,7 +475,7 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 	}
 	uiID := ui["ui_id"]
 
-	asset, err := app.AdminGetRowByFilter(
+	asset, err := app.GetRowByFilter(sql, params, 
 		`select * from "ui_asset" where ui_id = ? and asset_path = ? and active = true and excluded = false`,
 		[]any{uiID, assetPath},
 	)
@@ -620,7 +616,7 @@ func (app *application) toTime(v any) (time.Time, bool) {
 func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
  
-	ui, err := app.AdminGetRowByFilter(
+	ui, err := app.GetRowByFilter(sql, params, 
 		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
 		[]any{uiSlug, uiSlug},
 	)

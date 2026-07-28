@@ -39,6 +39,7 @@ columns:
   ui_name:          { type: varchar, len: 200, nullable: false, comment: "Website Name", form_display: true, table_display: true, form_size: 5, order: 2 }
   ui_desc:          { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, order: 3 }
   default_locale:   { type: varchar, len: 10, default: "en", comment: "Default Locale", form_display: true, table_display: true, form_size: 3, order: 4 }
+#  database:         { type: varchar, len: 50, default: "en", comment: "Database", form_display: true, table_display: true, form_size: 3, order: 4 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 6 }
   user_id:          { type: integer, comment: "User ID" }
   app_id:           { type: integer, comment: "App ID" }
