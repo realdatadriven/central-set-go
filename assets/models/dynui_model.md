@@ -122,6 +122,7 @@ columns:
   page_template:    { type: text, nullable: false, comment: "Page Template", form_display: true, form_long_text: true, form_code: html, order: 5 }
   cache_seconds:    { type: integer, default: 0, comment: "Public Cache Seconds", form_display: true, table_display: true, form_size: 3, order: 6 }
   default_page:     { type: boolean, default: true, comment: "Default Page", form_display: true, table_display: true, form_size: 2, order: 7 }
+  requires_login:   { type: boolean, default: false, comment: "Requires Login", form_display: true, table_display: true, form_size: 2, order: 7 }
   active:           { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 8 }
   ui_id:            { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
   user_id:          { type: integer, comment: "User ID" }
@@ -135,7 +136,7 @@ form_layout:
   size: 9
   allow_in_subform: {ui_page_data: true}
   tabs_steps_conf:
-    - {label: Page, fields: [ui_id, page_key, page_title, meta_description, cache_seconds, default_page, active]}
+    - {label: Page, fields: [ui_id, page_key, page_title, meta_description, cache_seconds, default_page, requires_login, active]}
     - {label: Template, fields: [page_template]}
 table_layout:
   default_order: [{field: ui_page_id, order: DESC}]
