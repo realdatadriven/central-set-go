@@ -587,3 +587,98 @@ func (app *application) toTime(v any) (time.Time, bool) {
 	}
 	return time.Time{}, false
 }
+
+// serve_ui_login is the HTTP handler for POST /ui/{ui_slug}/login. It's the
+// endpoint the login page's htmx form posts to (application/x-www-form-
+// urlencoded, not JSON), and it responds accordingly: no JSON in, no JSON
+// out.
+//
+// It confirms the `ui` exists, then delegates the actual credential check to
+// the existing app.dynamic_login (same username/password/JWT-issuing logic
+// used elsewhere in the app), against the default "users" table.
+//
+//   - On success: sets an HttpOnly "session" cookie holding the JWT, and
+//     sends an HX-Redirect response header - htmx does a full browser
+//     navigation to that URL (which is what you want here anyway, since the
+//     cookie only takes effect on the next request/navigation).
+//   - On failure: writes a normal HTML error fragment (a DaisyUI alert) with
+//     a non-2xx status - no JSON envelope. The login page's form is set up
+//     with hx-target="#login-error" hx-swap="innerHTML", plus a small
+//     htmx.config.responseHandling tweak so htmx still swaps the body in
+//     even though the status is 4xx (by default it wouldn't).
+//
+// Wire it up alongside the read-only /ui routes - note it's a plain handler
+// (not RenderUIPage/RenderUIPartial), since it performs a real auth check
+// and sets a cookie rather than rendering a stored template:
+//
+//	mux.HandleFunc("POST /ui/{ui_slug}/login", app.serve_ui_login)
+//
+// For the cookie to actually authenticate subsequent requests, uncomment the
+// cookie->Authorization fallback already sitting in app.authenticate
+// (middleware.go) - it's currently commented out, reading a "session"
+// cookie exactly like the one set below.
+func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
+	uiSlug := r.PathValue("ui_slug")
+ 
+	ui, err := app.AdminGetRowByFilter(
+		`select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`,
+		[]any{uiSlug, uiSlug},
+	)
+	if err != nil {
+		app.writeHTMLError(w, http.StatusInternalServerError, fmt.Sprintf("failed to fetch ui: %s", err))
+		return
+	}
+	if len(ui) == 0 {
+		app.writeHTMLError(w, http.StatusNotFound, fmt.Sprintf("ui %q not found", uiSlug))
+		return
+	}
+ 
+	if err := r.ParseForm(); err != nil {
+		app.writeHTMLError(w, http.StatusBadRequest, "Invalid form submission.")
+		return
+	}
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
+	if email == "" || password == "" {
+		app.writeHTMLError(w, http.StatusBadRequest, "Email and password are required.")
+		return
+	}
+ 
+	res := app.dynamic_login(Dict{
+		"data": Dict{
+			"email":    email,
+			"password": password,
+		},
+	})
+ 
+	success, _ := res["success"].(bool)
+	if !success {
+		msg, _ := res["msg"].(string)
+		if msg == "" {
+			msg = "Invalid email or password."
+		}
+		app.writeHTMLError(w, http.StatusUnauthorized, msg)
+		return
+	}
+ 
+	token, _ := res["token"].(string)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session",
+		Value:    token,
+		HttpOnly: true,
+		Secure:   true, // set false only for local http (non-TLS) development
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+	})
+	w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+	w.WriteHeader(http.StatusOK)
+}
+
+// writeHTMLError writes a small HTML fragment (a DaisyUI alert) with the
+// given status code - used instead of a JSON body since the login form is
+// posted by htmx and expects HTML back, not JSON.
+func (app *application) writeHTMLError(w http.ResponseWriter, status int, msg string) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+	fmt.Fprintf(w, `<div class="alert alert-error"><span>%s</span></div>`, template.HTMLEscapeString(msg))
+}
