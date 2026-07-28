@@ -225,7 +225,7 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	// 2) every active partial for this ui, so cross-partial {{template}} calls
 	// keep working; the requested one must be among them.
 	sql = `select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`
-	partials, err :=app.GetRowByFilter(sql, params, []any{uiID})
+	partials, err := app.GetRowByFilter(sql, params, []any{uiID})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial: %s", err)}
 	}
@@ -247,10 +247,8 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 		"PathParams": pathParams,
 	}
 	for _, p := range partials {
-		partialDataRows, perr := app.AdminGetRowsByFilter(
-			`select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`,
-			[]any{p["ui_partial_id"]},
-		)
+		sql = `select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`
+		partialDataRows, perr := app.GetRowByFilter(sql, params, []any{p["ui_partial_id"]})
 		if perr != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial_data: %s", perr)}
 		}
@@ -381,6 +379,7 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 	for k := range q {
 		pathParams[k] = q.Get(k)
 	}
+	// anonymous
 	params := Dict{
 		"lang": "en",
 		"data": Dict{
@@ -474,18 +473,14 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 		return Dict{"success": false, "msg": fmt.Sprintf("ui %q not found", uiSlug)}
 	}
 	uiID := ui["ui_id"]
-
-	asset, err := app.GetRowByFilter(sql, params, 
-		`select * from "ui_asset" where ui_id = ? and asset_path = ? and active = true and excluded = false`,
-		[]any{uiID, assetPath},
-	)
+	sql = `select * from "ui_asset" where ui_id = ? and asset_path = ? and active = true and excluded = false`
+	asset, err := app.GetRowByFilter(sql, params, []any{uiID, assetPath})
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_asset: %s", err)}
 	}
 	if len(asset) == 0 {
 		return Dict{"success": false, "msg": fmt.Sprintf("asset %q not found for ui %q", assetPath, uiSlug)}
 	}
-
 	content, _ := asset["asset_content"].(string)
 	encoding, _ := asset["content_encoding"].(string)
 	var raw []byte
