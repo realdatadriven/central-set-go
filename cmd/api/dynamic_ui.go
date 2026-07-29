@@ -685,10 +685,14 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return
 	}
+	// 2. Generate a unique session ID
+	sessionID := generateSessionID()
+	// 3. Save user data to the server-side store
 	token, _ := res["token"].(string)
+	app.SessionStore.data.Store(sessionID, token)
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
-		Value:    token,
+		Value:    sessionID,
 		HttpOnly: true,
 		Secure:   true, // set false only for local http (non-TLS) development
 		SameSite: http.SameSiteLaxMode,
@@ -698,6 +702,104 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	// w.WriteHeader(http.StatusOK)
 	http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
 }
+
+/*package main
+
+import (
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
+	"net/http"
+	"sync"
+	"time"
+)
+
+// SessionStore holds session data securely on the server
+type SessionStore struct {
+	data sync.Map
+}
+
+// Global session store instance
+var sessions = &SessionStore{}
+
+// generateSessionID creates a cryptographically secure random string
+func generateSessionID() string {
+	b := make([]byte, 32)
+	_, _ = rand.Read(b) // In production, handle errors appropriately
+	return base64.URLEncoding.EncodeToString(b)
+}
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	// 1. Simulate authentication success
+	userID := "user_12345"
+
+	// 2. Generate a unique session ID
+	sessionID := generateSessionID()
+
+	// 3. Save user data to the server-side store
+	sessions.data.Store(sessionID, userID)
+
+	// 4. Issue the session cookie to the client
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * time.Minute),
+		HttpOnly: true, // Prevents XSS attacks
+		Secure:   true, // Forces HTTPS
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	fmt.Fprintln(w, "Logged in successfully!")
+}
+
+func dashboardHandler(w http.ResponseWriter, r *http.Request) {
+	// 1. Retrieve the session cookie from the request
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		http.Error(w, "Unauthorized: No session cookie found", http.StatusUnauthorized)
+		return
+	}
+
+	// 2. Look up the session ID in the server-side store
+	userID, exists := sessions.data.Load(cookie.Value)
+	if !exists {
+		http.Error(w, "Unauthorized: Invalid or expired session", http.StatusUnauthorized)
+		return
+	}
+
+	// 3. Serve protected data
+	fmt.Fprintf(w, "Welcome to your dashboard, %s!", userID.(string))
+}
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_id")
+	if err == nil {
+		// 1. Delete session from the server store
+		sessions.data.Delete(cookie.Value)
+	}
+
+	// 2. Expire the cookie on the client browser immediately
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1, // Forces immediate deletion
+		HttpOnly: true,
+	})
+
+	fmt.Fprintln(w, "Logged out successfully!")
+}
+
+func main() {
+	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/dashboard", dashboardHandler)
+	http.HandleFunc("/logout", logoutHandler)
+
+	fmt.Println("Server starting on :8080...")
+	_ = http.ListenAndServe(":8080", nil)
+}
+*/
 
 // writeHTMLError writes a small HTML fragment (a DaisyUI alert) with the
 // given status code - used instead of a JSON body since the login form is

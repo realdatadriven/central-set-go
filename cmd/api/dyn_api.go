@@ -18,6 +18,12 @@ import (
 	"github.com/pascaldekloe/jwt"
 )
 
+func generateSessionID() string {
+	b := make([]byte, 32)
+	_, _ = rand.Read(b) // In production, handle errors appropriately
+	return base64.URLEncoding.EncodeToString(b)
+}
+
 func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
 	params := Dict{}
 	request.DecodeJSON(w, r, &params)
