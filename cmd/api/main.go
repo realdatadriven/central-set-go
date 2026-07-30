@@ -38,11 +38,22 @@ func main() {
 	os.Setenv("CWD", dir)
 	tmp := os.TempDir()
 	os.Setenv("TMP", tmp)
-	// Load .env file
+	/*/ Load .env
+	dotEnv := flag.String("env", ".env", ".env file path")
+	flag.Parse()
+	fmt.Println(*dotEnv)
+	_, err = os.Stat(*dotEnv)
+	if err == nil {
+		_err := godotenv.Load(*dotEnv)
+		if _err != nil {
+			slog.Error(fmt.Errorf("Error loading .env file %s", *dotEnv).Error())
+		}
+	} else {*/
 	_err := godotenv.Load()
 	if _err != nil {
 		slog.Error("Error loading .env file")
 	}
+	//}
 	//httpPort := os.Getenv("HTTP_PORT")
 	//fmt.Printf("HTTP_PORT: %s\n", httpPort)
 	logger := slog.New(tint.NewTextHandler(os.Stdout, &tint.Options{Level: slog.LevelDebug}))
@@ -146,7 +157,7 @@ type application struct {
 	quackManager      *QuackManager            // Quack lifecycle manager
 	quackInstanciated bool                     // Quack instanciated flag to avoid multiple instantiation of quack manager and pool in case of multiple calls to run function, as it can happen in licensee app where we validate the license on startup and then periodically, and both operations call run function
 	sizeGuard         *SizeGuard
-	SessionStore *SessionStore
+	SessionStore      *SessionStore
 }
 
 func run(logger *slog.Logger) error {
