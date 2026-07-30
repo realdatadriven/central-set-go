@@ -161,6 +161,15 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /ui/{ui_slug}/static/{asset...}", app.serve_ui_asset)
 	mux.HandleFunc("POST /ui/{ui_slug}/login", app.serve_ui_login)
 	mux.HandleFunc("POST /ui/{ui_slug}/logout", app.logoutHandler)
+
+	// REST CRUD
+	mux.HandleFunc("GET /crud/{db}/{table}", app.crud_api)
+	mux.HandleFunc("GET /crud/{db}/{table}/{id}", app.crud_api)
+
+	mux.HandleFunc("POST /crud/{db}/{table}", app.crud_api)
+	mux.HandleFunc("PUT /crud/{db}/{table}/{id}", app.crud_api)
+	mux.HandleFunc("PATCH /crud/{db}/{table}/{id}", app.crud_api)
+	mux.HandleFunc("DELETE /crud/{db}/{table}/{id}", app.crud_api)
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
 	/*/ OPEN TELEMETRY

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/realdatadriven/etlx"
+
 	"github.com/realdatadriven/central-set-go/internal/response"
 )
 
@@ -42,42 +44,46 @@ func (app *application) crudRequestData(r *http.Request) (Dict, error) {
 	return data, nil
 }
 
-func (app *application) crudPrimaryKey(db, table string) (string, error) {
-	sql := `
-		SELECT pk
-		FROM table_schema
-		WHERE db = ?
-		  AND table = ?
-		  AND excluded = false
-		  AND pk IS NOT NULL
-		  AND pk != ''
-		ORDER BY field_order
-		LIMIT 1
-	`
-
-	row, err := app.AdminGetRowByFilter(sql, []any{db, table})
+func (app *application) crudPrimaryKey(params Dict, db, table string) (string, error) {
+	dsn, _, err := app.GetDBNameFromParams(params)
 	if err != nil {
-		return "", fmt.Errorf("failed to resolve primary key: %w", err)
+		return "", fmt.Errorf("failed to query for PK Field %s %s: %w", db, table, err)
 	}
-
-	if len(row) == 0 {
-		return "", fmt.Errorf(
-			"table %s.%s does not have a primary key",
-			db,
-			table,
-		)
+	dbConn, err := etlx.GetDB(dsn)
+	if err != nil {
+		return "", fmt.Errorf("failed to query for PK Field %s %s: %w", db, table, err)
 	}
-
-	pk, ok := row["pk"].(string)
-	if !ok || pk == "" {
-		return "", fmt.Errorf(
-			"unable to resolve primary key for %s.%s",
-			db,
-			table,
-		)
+	etlx_engine := &etlx.ETLX{}
+	dialect := etlx_engine.GetDialect(dbConn.GetDriverName())
+	pksql := dialect.GetPrimaryKeyAutoIncrementQuery(table)
+	pk, _, err := dbConn.QuerySingleRow(pksql, []any{}...)
+	if err != nil {
+		return "", fmt.Errorf("failed to query for PK Field %s %s: %w", table, pksql, err)
 	}
+	if len(*pk) == 0 {
+		return "", fmt.Errorf("failed to get the PK Field %s %s", table, pksql)
+	}
+	pkfield, ok := (*pk)["column_name"].(string)
+	if !ok {
+		return "", fmt.Errorf("failed to get the PK Field %s %s", table, pksql)
+	}
+	return pkfield, nil
+}
 
-	return pk, nil
+func (app *application) getPKFromSchema(db, table string) (string, error) {
+	sql := `select field as column_name from schema where db = ? and "table" = ? and pk = true`
+	pk, err := app.AdminGetRowByFilter(sql, []any{db, table})
+	if err != nil {
+		return "", fmt.Errorf("failed to query for PK Field %s %s: %w", db, table, err)
+	}
+	if len(pk) == 0 {
+		return "", fmt.Errorf("failed to get the PK Field %s %s", db, table)
+	}
+	pkfield, ok := pk["column_name"].(string)
+	if !ok {
+		return "", fmt.Errorf("failed to get the PK Field %s %s", db, table)
+	}
+	return pkfield, nil
 }
 
 func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
@@ -99,10 +105,10 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
 	}
 	// GET follows the existing OData read pattern.
 	if r.Method == http.MethodGet {
-		odataPath := fmt.Sprintf("%s/%s/", db, table)
+		odataPath := fmt.Sprintf("%s/%s", db, table)
 		if id != "" {
 			// Resolve the primary key and turn /{id} into an OData filter.
-			pk, err := app.crudPrimaryKey(db, table)
+			pk, err := app.getPKFromSchema(db, table)
 			if err != nil {
 				_ = response.JSON(w, http.StatusBadRequest, Dict{
 					"success": false,
@@ -130,7 +136,7 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
 	// For PUT/PATCH/DELETE /crud/{db}/{table}/{id},
 	// put the URL id into the table's actual primary-key field.
 	if id != "" {
-		pk, err := app.crudPrimaryKey(db, table)
+		pk, err := app.getPKFromSchema(db, table)
 		if err != nil {
 			_ = response.JSON(w, http.StatusBadRequest, Dict{
 				"success": false,
