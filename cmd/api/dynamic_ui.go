@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/base64"
 	"fmt"
 	"net/http"
@@ -17,6 +18,12 @@ func (app *application) getAnonymous() Dict {
 	return Dict{"user_id": 2, "username": "anonymous", "role_id": 4, "active": true}
 }
 
+func generateSessionID() string {
+	b := make([]byte, 32)
+	_, _ = rand.Read(b) // In production, handle errors appropriately
+	return base64.URLEncoding.EncodeToString(b)
+}
+
 func (app *application) getUser(r *http.Request) (Dict, error) {
 	/*cookie, err := r.Cookie("session")
 	if err != nil {
@@ -27,7 +34,7 @@ func (app *application) getUser(r *http.Request) (Dict, error) {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		// http.Error(w, "Unauthorized: No session cookie found", http.StatusUnauthorized)
-		return  nil, fmt.Errorf("Unauthorized: No session cookie found")
+		return nil, fmt.Errorf("Unauthorized: No session cookie found")
 	}
 	// 2. Look up the session ID in the server-side store
 	user, exists := app.SessionStore.data.Load(cookie.Value)
@@ -35,7 +42,10 @@ func (app *application) getUser(r *http.Request) (Dict, error) {
 		// http.Error(w, "Unauthorized: Invalid or expired session", http.StatusUnauthorized)
 		return nil, fmt.Errorf("Unauthorized: Invalid or expired session")
 	}
-	return user, nil
+	if _, ok := user.(Dict); !ok {
+		return nil, fmt.Errorf("Unauthorized: Unable to get the user data from session")
+	}
+	return user.(Dict), nil
 }
 
 func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {

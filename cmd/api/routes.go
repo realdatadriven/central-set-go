@@ -160,6 +160,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /ui/{ui_slug}/partial/{partial_name}", app.serve_ui_partial)
 	mux.HandleFunc("GET /ui/{ui_slug}/static/{asset...}", app.serve_ui_asset)
 	mux.HandleFunc("POST /ui/{ui_slug}/login", app.serve_ui_login)
+	mux.HandleFunc("POST /ui/{ui_slug}/logout", app.logoutHandler)
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
 	/*/ OPEN TELEMETRY

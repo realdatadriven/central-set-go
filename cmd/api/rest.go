@@ -1,15 +1,12 @@
 package main
 
 import (
-	"io"
-	"io/fs"
+	"encoding/json"
+	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
-	"time"
 
-	"github.com/realdatadriven/central-set-go/assets"
+	"github.com/realdatadriven/central-set-go/internal/response"
 )
 
 func (app *application) crudRequestData(r *http.Request) (Dict, error) {
@@ -45,16 +42,43 @@ func (app *application) crudRequestData(r *http.Request) (Dict, error) {
 	return data, nil
 }
 
-package main
+func (app *application) crudPrimaryKey(db, table string) (string, error) {
+	sql := `
+		SELECT pk
+		FROM table_schema
+		WHERE db = ?
+		  AND table = ?
+		  AND excluded = false
+		  AND pk IS NOT NULL
+		  AND pk != ''
+		ORDER BY field_order
+		LIMIT 1
+	`
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"strings"
+	row, err := app.AdminGetRowByFilter(sql, []any{db, table})
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve primary key: %w", err)
+	}
 
-	"github.com/realdatadriven/central-set-go/internal/response"
-)
+	if len(row) == 0 {
+		return "", fmt.Errorf(
+			"table %s.%s does not have a primary key",
+			db,
+			table,
+		)
+	}
+
+	pk, ok := row["pk"].(string)
+	if !ok || pk == "" {
+		return "", fmt.Errorf(
+			"unable to resolve primary key for %s.%s",
+			db,
+			table,
+		)
+	}
+
+	return pk, nil
+}
 
 func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
 	db := r.PathValue("db")
@@ -86,9 +110,9 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
 				})
 				return
 			}
-			odataPath = fmt.Sprintf("%s/%s/?$filter=%s eq %s",db,table,pk,id)
+			odataPath = fmt.Sprintf("%s/%s/?$filter=%s eq %s", db, table, pk, id)
 		} else if r.URL.RawQuery != "" {
-			odataPath = fmt.Sprintf("%s/%s/?%s",db,table,r.URL.RawQuery)
+			odataPath = fmt.Sprintf("%s/%s/?%s", db, table, r.URL.RawQuery)
 		}
 		data := app.ODataRead(params, odataPath)
 		_ = response.JSON(w, http.StatusOK, data)
