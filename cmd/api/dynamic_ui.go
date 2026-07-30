@@ -18,11 +18,24 @@ func (app *application) getAnonymous() Dict {
 }
 
 func (app *application) getUser(r *http.Request) (Dict, error) {
-	cookie, err := r.Cookie("session")
+	/*cookie, err := r.Cookie("session")
 	if err != nil {
 		return nil, err
 	}
-	return app.verifyTokenString(cookie.Value)
+	return app.verifyTokenString(cookie.Value)*/
+	// 1. Retrieve the session cookie from the request
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		// http.Error(w, "Unauthorized: No session cookie found", http.StatusUnauthorized)
+		return  nil, fmt.Errorf("Unauthorized: No session cookie found")
+	}
+	// 2. Look up the session ID in the server-side store
+	user, exists := app.SessionStore.data.Load(cookie.Value)
+	if !exists {
+		// http.Error(w, "Unauthorized: Invalid or expired session", http.StatusUnauthorized)
+		return nil, fmt.Errorf("Unauthorized: Invalid or expired session")
+	}
+	return user, nil
 }
 
 func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
@@ -688,19 +701,46 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	// 2. Generate a unique session ID
 	sessionID := generateSessionID()
 	// 3. Save user data to the server-side store
-	token, _ := res["token"].(string)
-	app.SessionStore.data.Store(sessionID, token)
-	http.SetCookie(w, &http.Cookie{
+	// token, _ := res["token"].(string)
+	app.SessionStore.data.Store(sessionID, res["data"])
+	/*http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    sessionID,
 		HttpOnly: true,
 		Secure:   true, // set false only for local http (non-TLS) development
 		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
+	})*/
+	// 4. Issue the session cookie to the client
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * time.Minute),
+		HttpOnly: true, // Prevents XSS attacks
+		Secure:   true, // Forces HTTPS
+		SameSite: http.SameSiteStrictMode,
 	})
 	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 	// w.WriteHeader(http.StatusOK)
 	http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+}
+
+func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_id")
+	if err == nil {
+		// 1. Delete session from the server store
+		app.SessionStore.data.Delete(cookie.Value)
+	}
+	// 2. Expire the cookie on the client browser immediately
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1, // Forces immediate deletion
+		HttpOnly: true,
+	})
+	fmt.Fprintln(w, "Logged out successfully!")
 }
 
 /*package main
