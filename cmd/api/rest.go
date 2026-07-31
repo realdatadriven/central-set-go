@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"github.com/realdatadriven/etlx"
+	"text/template"
 
 	"github.com/realdatadriven/central-set-go/internal/response"
+	"github.com/realdatadriven/etlx"
 )
 
 func (app *application) crudRequestData(r *http.Request) (Dict, error) {
@@ -86,22 +86,76 @@ func (app *application) getPKFromSchema(db, table string) (string, error) {
 	return pkfield, nil
 }
 
-func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
+func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request) {
+	crud := app.crud_api(w, r)
+	contentType := strings.ToLower(r.Header.Get("Content-Type"))
+	if strings.Contains(contentType, "application/json") {
+		if err := response.JSON(w, http.StatusOK, crud); err != nil {
+			app.serverError(w, r, err)
+		}
+	} else {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if success, ok := crud["success"].(bool); ok && !success {
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		fmt.Fprintf(w, `%s`, template.HTMLEscapeString(crud["msg"].(string)))
+	}
+	return
+}
+
+func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 	db := r.PathValue("db")
 	table := r.PathValue("table")
 	id := r.PathValue("id")
 	user := app.getAnonymous()
-	userFromSess, err := app.getUser(r)
+	contentType := strings.ToLower(r.Header.Get("Content-Type"))
+	if strings.Contains(contentType, "application/json") {
+		token := app.verifyToken(r)
+		if !token["success"].(bool) {
+			// return token
+		} else if _user := contextGetAuthenticatedUser(r); _user != nil {
+			user = *_user
+		}
+	} else {
+		userFromSess, err := app.getUser(r)
+		if err != nil {
+			user = userFromSess
+		}
+	}
+	sql := `select * from app where (app = ? or db = ?) and excluded = false`
+	_app, err := app.AdminGetRowByFilter(sql, []any{db, db})
 	if err != nil {
-		user = userFromSess
+		return Dict{
+			"success": false,
+			"msg":     "Failed to fetch APP!",
+		}
+	}
+	if len(_app) == 0 {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("APP associated with db %s not found!", db),
+		}
 	}
 	params := Dict{
 		"lang": "en",
 		"user": user,
+		"app":  _app,
 		"data": Dict{
 			"db":    db,
 			"table": table,
 		},
+	}
+	loc := app.getLocationFromRequest(r, params)
+	params["location"] = loc
+	lang := "en"
+	if _, ok := params["lang"]; ok {
+		lang = params["lang"].(string)
+	}
+	err = app.i18n.ChangeLanguage(lang)
+	if err != nil {
+		fmt.Println(err)
 	}
 	// GET follows the existing OData read pattern.
 	if r.Method == http.MethodGet {
@@ -110,39 +164,35 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
 			// Resolve the primary key and turn /{id} into an OData filter.
 			pk, err := app.getPKFromSchema(db, table)
 			if err != nil {
-				_ = response.JSON(w, http.StatusBadRequest, Dict{
+				return Dict{
 					"success": false,
 					"msg":     err.Error(),
-				})
-				return
+				}
 			}
 			odataPath = fmt.Sprintf("%s/%s/?$filter=%s eq %s", db, table, pk, id)
 		} else if r.URL.RawQuery != "" {
 			odataPath = fmt.Sprintf("%s/%s/?%s", db, table, r.URL.RawQuery)
 		}
 		data := app.ODataRead(params, odataPath)
-		_ = response.JSON(w, http.StatusOK, data)
-		return
+		return data
 	}
 	// Everything other than GET becomes create_update.
 	data, err := app.crudRequestData(r)
 	if err != nil {
-		_ = response.JSON(w, http.StatusBadRequest, Dict{
+		return Dict{
 			"success": false,
 			"msg":     err.Error(),
-		})
-		return
+		}
 	}
 	// For PUT/PATCH/DELETE /crud/{db}/{table}/{id},
 	// put the URL id into the table's actual primary-key field.
 	if id != "" {
 		pk, err := app.getPKFromSchema(db, table)
 		if err != nil {
-			_ = response.JSON(w, http.StatusBadRequest, Dict{
+			return Dict{
 				"success": false,
 				"msg":     err.Error(),
-			})
-			return
+			}
 		}
 		data[pk] = id
 	}
@@ -151,10 +201,5 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) {
 		data["_to_delete"] = true
 	}
 	params["data"].(Dict)["data"] = data
-	result := app.create_update(params)
-	status := http.StatusOK
-	if success, ok := result["success"].(bool); ok && !success {
-		status = http.StatusBadRequest
-	}
-	_ = response.JSON(w, status, result)
+	return app.create_update(params)
 }

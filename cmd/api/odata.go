@@ -503,7 +503,7 @@ func (app *application) ODataRead(params Dict, odata_path string) Dict {
 		}
 	}
 	sql := `select * from app where (app = ? or db = ?) and excluded = false`
-	_app, err := app.AdminGetRowByFilter(sql, []any{db, table})
+	_app, err := app.AdminGetRowByFilter(sql, []any{db, db})
 	if err != nil {
 		return Dict{
 			"success": false,
