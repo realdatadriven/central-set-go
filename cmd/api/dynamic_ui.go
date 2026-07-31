@@ -711,8 +711,10 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	// 2. Generate a unique session ID
 	sessionID := generateSessionID()
 	// 3. Save user data to the server-side store
-	// token, _ := res["token"].(string)
-	app.SessionStore.data.Store(sessionID, res["data"])
+	token, _ := res["token"].(string)
+	_data := res["data"].(Dict)
+	_data["token"] = token
+	app.SessionStore.data.Store(sessionID, _data)
 	// 4. Issue the session cookie to the client
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
