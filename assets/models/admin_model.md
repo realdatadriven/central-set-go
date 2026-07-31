@@ -173,8 +173,8 @@ columns:
   lang_id:              { type: integer, fk: "lang.lang_id", comment: "Lang ID", form_display: true, table_display: true, form_size: 4, order: 8 }
   timezone:             { type: varchar, len: 50, comment: "Timezone", form_display: true, form_size: 4, order: 9 }
   attach_profile_pic:   { type: varchar, len: 200, comment: "Profile Picture", form_display: true, table_display: true, form_size: 3, form_att: true, order: 10 }
-  failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: false, form_size: 3, form_att: true, order: 10 }
-  last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: false, form_size: 3, form_att: true, order: 10 }
+  failed_login_attmpt:  { type: integer, comment: "# Failed Login Attempts", form_display: true, table_display: false, form_size: 3, order: 10 }
+  last_failed_login:    { type: datetime, comment: "Last Failed Login Attempts", form_display: true, table_display: false, form_size: 3, order: 10 }
   active:               { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 3, order: 11 }
   alter_pass_nxt_login: { type: boolean, default: false, comment: "Alter Password on next login", form_display: true, order: 12, form_size: 4 }
   enable_2f_auth:       { type: boolean, default: false, comment: "Enable Two Factor Auth.", form_display: true, order: 13, form_size: 3 }
