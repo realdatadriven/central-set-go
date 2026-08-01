@@ -184,7 +184,7 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 	}
 	// Everything other than GET becomes create_update.
 	data, err := app.crudRequestData(r)
-	if err != nil {
+	if err != nil && r.Method != http.MethodDelete {
 		return Dict{
 			"success": false,
 			"msg":     err.Error(),
@@ -201,6 +201,15 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 			}
 		}
 		data[pk] = id
+		if r.Method == http.MethodDelete {
+			data["exclided"] = true
+		}
+	} else if r.Method == http.MethodDelete || r.Method == http.MethodPut || r.Method == http.MethodPatch {
+		// For DELETE /crud/{db}/{table}, require the primary key in the request body.
+		return Dict{
+			"success": false,
+			"msg":     "Missing primary key id for the action.",
+		}
 	}
 	// DELETE uses the existing C7 CRUD deletion mechanism.
 	if r.Method == http.MethodDelete {
