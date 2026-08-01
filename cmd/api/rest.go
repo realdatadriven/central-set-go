@@ -109,11 +109,11 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 	db := r.PathValue("db")
 	table := r.PathValue("table")
 	id := r.PathValue("id")
-	/*q := r.URL.Query()
+	q := r.URL.Query()
 	pathParams := Dict{}
 	for k := range q {
 		pathParams[k] = q.Get(k)
-	}*/
+	}
 	user := app.getAnonymous()
 	contentType := strings.ToLower(r.Header.Get("Content-Type"))
 	if strings.Contains(contentType, "application/json") {
@@ -148,8 +148,9 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 		"user": user,
 		"app":  _app,
 		"data": Dict{
-			"db":    db,
-			"table": table,
+			"db":         db,
+			"table":      table,
+			"pathParams": pathParams,
 		},
 	}
 	loc := app.getLocationFromRequest(r, params)

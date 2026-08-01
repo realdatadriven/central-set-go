@@ -156,17 +156,24 @@ func (app *application) routes() http.Handler {
 
 	// DYN UI
 	mux.HandleFunc("GET /ui/{ui_slug}", app.serve_ui_page)
+	mux.HandleFunc("GET /ui/{ui_slug}/", app.serve_ui_page)
 	mux.HandleFunc("GET /ui/{ui_slug}/{page_key}", app.serve_ui_page)
+	mux.HandleFunc("GET /ui/{ui_slug}/{page_key}/", app.serve_ui_page)
 	mux.HandleFunc("GET /ui/{ui_slug}/partial/{partial_name}", app.serve_ui_partial)
+	mux.HandleFunc("GET /ui/{ui_slug}/partial/{partial_name}/", app.serve_ui_partial)
 	mux.HandleFunc("GET /ui/{ui_slug}/static/{asset...}", app.serve_ui_asset)
 	mux.HandleFunc("POST /ui/{ui_slug}/login", app.serve_ui_login)
+	mux.HandleFunc("POST /ui/{ui_slug}/login/", app.serve_ui_login)
 	mux.HandleFunc("POST /ui/{ui_slug}/logout", app.logoutHandler)
+	mux.HandleFunc("POST /ui/{ui_slug}/logout/", app.logoutHandler)
 
 	// REST CRUD
 	mux.HandleFunc("GET /crud/{db}/{table}", app.crud_api_handler)
+	mux.HandleFunc("GET /crud/{db}/{table}/", app.crud_api_handler)
 	mux.HandleFunc("GET /crud/{db}/{table}/{id}", app.crud_api_handler)
 	// CRUD REST
 	mux.HandleFunc("POST /crud/{db}/{table}", app.crud_api_handler)
+	mux.HandleFunc("POST /crud/{db}/{table}/", app.crud_api_handler)
 	mux.HandleFunc("PUT /crud/{db}/{table}/{id}", app.crud_api_handler)
 	mux.HandleFunc("PATCH /crud/{db}/{table}/{id}", app.crud_api_handler)
 	mux.HandleFunc("DELETE /crud/{db}/{table}/{id}", app.crud_api_handler)
