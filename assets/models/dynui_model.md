@@ -379,6 +379,33 @@ data:
   excluded: false
 ```
 
+## UI_PARTIAL_CRUD
+```yaml
+table: ui_partial
+description: Add the RealDataDriven CRUD partial
+cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
+data:
+  ui_partial_id: 3
+  ui_id: 1
+  ui_partial: crud
+  ui_partial_desc: Crud with open-source links and copyright
+  partial_template: FileContent(ui/parts/general_crud.html)
+  active: true
+  user_id: 1
+  app_id: appId()
+  created_at: Now()
+  updated_at: Now()
+  excluded: false
+  children:
+    table: ui_partial_data
+    data:
+      ui_partial_data:      crud_data
+      ui_partial_data_desc: CRUD Data
+      odata_path:           '{{.query}}'
+      ui_partial_id:        ui_partial_id()
+      ui_id:                ui_id()
+```
+
 ## UI_PAGE_HOME
 ```yaml
 table: ui_page

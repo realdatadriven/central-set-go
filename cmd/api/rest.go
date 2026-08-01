@@ -71,7 +71,7 @@ func (app *application) crudPrimaryKey(params Dict, db, table string) (string, e
 }
 
 func (app *application) getPKFromSchema(db, table string) (string, error) {
-	sql := `select field as column_name from schema where db = ? and "table" = ? and pk = true`
+	sql := `select field as column_name from table_schema where db = ? and "table" = ? and pk = true`
 	pk, err := app.AdminGetRowByFilter(sql, []any{db, table})
 	if err != nil {
 		return "", fmt.Errorf("failed to query for PK Field %s %s: %w", db, table, err)
