@@ -539,7 +539,7 @@ data:
       action_data_type_id: 3
       crud_action_id: crud_action_id()
       odata_path: "STORE/customer?$filter=customer_id eq {{.customer_id}}"
-      sigle_row_obj: true
+      single_row_obj: true
       active: true
       user_id: 1
       app_id: appId()
@@ -580,7 +580,7 @@ data:
       action_data_type_id: 3
       crud_action_id: crud_action_id()
       odata_path: "STORE/customer?$filter=customer_id eq {{.customer_id}}"
-      sigle_row_obj: true
+      single_row_obj: true
       active: true
       user_id: 1
       app_id: appId()

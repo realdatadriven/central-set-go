@@ -399,7 +399,7 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 // nameCol ("ui_page_data" or "ui_partial_data") through app.ODataRead, after
 // resolving any {{.PathParams.xxx}} placeholders in its odata_path. The
 // result is stored in tmplData under the row's own data-name, as a single
-// Dict when sigle_row_obj is true, or as a []Dict otherwise. Returns a
+// Dict when single_row_obj is true, or as a []Dict otherwise. Returns a
 // non-empty error message on failure, "" on success.
 func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pathParams Dict, tmplData Dict) string {
 	for _, row := range rows {
@@ -408,10 +408,12 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		if name == "" || odataPath == "" {
 			continue
 		}
+		fmt.Println("ODATA PATH:", odataPath)
 		resolvedPath, err := app.renderODataPath(odataPath, pathParams)
 		if err != nil {
 			return fmt.Sprintf("failed to resolve odata_path for %q: %s", name, err)
 		}
+		fmt.Println("ODATA PATH:", resolvedPath)
 		// fresh params per call: app.ODataRead writes db/table/filters into
 		// params["data"], so each data source needs its own Dict.
 		callParams := Dict{"data": Dict{}}
@@ -428,7 +430,7 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		if success, ok := res["success"].(bool); !ok || !success {
 			return fmt.Sprintf("failed to load %q: %v", name, res["msg"])
 		}
-		single := app.toBool(row["sigle_row_obj"])
+		single := app.toBool(row["single_row_obj"])
 		switch d := res["data"].(type) {
 		case Dict:
 			if single {

@@ -95,7 +95,7 @@ columns:
   ui_partial_data:      { type: varchar, len: 100, nullable: false, comment: "Data Name", form_display: true, table_display: true, form_size: 6, order: 3, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not begin with a number; use letters, numbers and underscores." }
   ui_partial_data_desc: { type: text, comment: "Data Description", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 7 }
   odata_path:           { type: text, nullable: false, comment: "OData Path", form_display: true, table_display: true, form_size: 8, order: 6 }
-  sigle_row_obj:        { type: boolean, default: false, comment: "Single Row", form_display: true, table_display: true, form_size: 2, form_order: 5 }
+  single_row_obj:        { type: boolean, default: false, comment: "Single Row", form_display: true, table_display: true, form_size: 2, form_order: 5 }
   active:               { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   ui_partial_id:        { type: integer, fk: "ui_partial.ui_partial_id", nullable: false, comment: "Partial", form_display: true, table_display: true, form_size: 3, order: 2 }
   ui_id:                { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
@@ -153,7 +153,7 @@ columns:
   ui_page_data:      { type: varchar, len: 100, nullable: false, comment: "Data Name", form_display: true, table_display: true, form_size: 4, order: 3, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not begin with a number; use letters, numbers and underscores." }
   ui_page_data_desc: { type: text, comment: "Data Description", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 7 }
   odata_path:        { type: text, nullable: false, comment: "OData Path", form_display: true, table_display: true, form_size: 10, order: 5 }
-  sigle_row_obj:     { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 3, order: 6 }
+  single_row_obj:     { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 3, order: 6 }
   active:            { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, order: 4 }
   ui_page_id:        { type: integer, fk: "ui_page.ui_page_id", nullable: false, comment: "Page", form_display: true, table_display: true, form_size: 3, order: 2 }
   ui_id:             { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }

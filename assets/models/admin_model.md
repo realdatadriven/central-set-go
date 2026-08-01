@@ -1052,7 +1052,7 @@ columns:
   validation_data_desc:    { type: text, comment: "Validation Data Desc", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 5 }
   validation_id:           { type: integer, fk: "validation.validation_id", nullable: false, comment: "Validation", form_display: true, table_display: true, form_size: 4, order: 1 }  
   odata_path:              { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9 }
-  sigle_row_obj:           { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  single_row_obj:           { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:                  { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:                 { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:                  { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1201,7 +1201,7 @@ columns:
   read_table:          { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
   read_params_json:    { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
   odata_path:          { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
-  sigle_row_obj:       { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  single_row_obj:       { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:              { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:             { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:              { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1374,7 +1374,7 @@ columns:
   crud_intercept_id:      { type: integer, fk: "crud_intercept.crud_intercept_id", nullable: false, comment: "Crud intercept", form_display: true, table_display: true, form_size: 4, order: 1 }
   intercept_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, form_size: 12, order: 6, form_hide_cond: "data?.intercept_data_type_id !== 1" }
   odata_path:             { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.intercept_data_type_id !== 3" }
-  sigle_row_obj:          { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  single_row_obj:          { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:                 { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:                { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:                 { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1556,7 +1556,7 @@ columns:
   read_table:       { type: varchar, len: 50, comment: "Read Table", form_display: true, form_long_text: true, form_code: sql, form_size: 3, order: 7, form_hide_cond: "data?.action_data_type_id !== 2" }
   read_params_json: { type: text, comment: "Read Params (JSON)", form_display: true, form_long_text: true, form_code: json, form_size: 12, order: 8, form_hide_cond: "data?.action_data_type_id !== 2" }
   odata_path:       { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.action_data_type_id !== 3" }
-  sigle_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  single_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:           { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:          { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:           { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1715,7 +1715,7 @@ data:
       validation_data_desc:  Associated App Data
       validation_id:         validation_id()
       odata_path:            "ADMIN/app?$filter=app_id eq {{.app_id}}"
-      sigle_row_obj:         true
+      single_row_obj:         true
       active:                true
       user_id:               1
       app_id:                appId()
@@ -1889,7 +1889,7 @@ data:
       action_data_type_id: 3
       crud_action_id:      crud_action_id()
       odata_path:          "ADMIN/role?$filter=role_id eq {{.role_id}}"
-      sigle_row_obj:       true
+      single_row_obj:       true
       active:              true
       user_id:             1
       app_id:              appId()
@@ -1927,7 +1927,7 @@ data:
       action_data_type_id: 3
       crud_action_id:      crud_action_id()
       odata_path:          "ADMIN/role?$filter=role_id eq {{.role_id}}"
-      sigle_row_obj:       true
+      single_row_obj:       true
       active:              true
 ```
 

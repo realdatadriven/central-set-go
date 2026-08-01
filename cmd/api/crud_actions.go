@@ -473,7 +473,7 @@ func (app *application) GetActionData(params Dict, valid_data_res []Dict, _data 
 				odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
 			}
 			// fmt.Println(action_data["odata_path"], odata_path)
-			sigle_row_obj := app.toBool(action_data["sigle_row_obj"])
+			single_row_obj := app.toBool(action_data["single_row_obj"])
 			// fmt.Println(db, table, query)
 			if err != nil {
 				return nil, err
@@ -482,7 +482,7 @@ func (app *application) GetActionData(params Dict, valid_data_res []Dict, _data 
 			if err != nil {
 				return nil, err
 			}
-			if sigle_row_obj {
+			if single_row_obj {
 				aux := Dict{}
 				if len(results) > 0 {
 					aux = results[0]
@@ -515,7 +515,7 @@ func (app *application) GetValidationData(params Dict, valid_data_res []Dict, _d
 			odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
 		}
 		// fmt.Println(validation_data["odata_path"], odata_path)
-		sigle_row_obj := app.toBool(validation_data["sigle_row_obj"])
+		single_row_obj := app.toBool(validation_data["single_row_obj"])
 		if err != nil {
 			return nil, err
 		}
@@ -523,7 +523,7 @@ func (app *application) GetValidationData(params Dict, valid_data_res []Dict, _d
 		if err != nil {
 			return nil, err
 		}
-		if sigle_row_obj {
+		if single_row_obj {
 			aux := Dict{}
 			if len(results) > 0 {
 				aux = results[0]

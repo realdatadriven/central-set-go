@@ -267,7 +267,7 @@ func (app *application) GetInterceptData(params Dict, valid_data_res []Dict, _da
 				odata_path = etlx_engine.ReplaceEnvVariable(odata_path)
 			}
 			// fmt.Println(intercept_data["odata_path"], odata_path)
-			sigle_row_obj := app.toBool(intercept_data["sigle_row_obj"])
+			single_row_obj := app.toBool(intercept_data["single_row_obj"])
 			// fmt.Println(db, table, query)
 			if err != nil {
 				return nil, err
@@ -276,7 +276,7 @@ func (app *application) GetInterceptData(params Dict, valid_data_res []Dict, _da
 			if err != nil {
 				return nil, err
 			}
-			if sigle_row_obj {
+			if single_row_obj {
 				aux := Dict{}
 				if len(results) > 0 {
 					aux = results[0]
