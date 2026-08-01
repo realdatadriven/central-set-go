@@ -100,7 +100,7 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 	}
 	user := app.getAnonymous()
 	userFromSess, err := app.getUser(r)
-	if err != nil {
+	if err == nil {
 		user = userFromSess
 	}
 	params := Dict{
@@ -111,6 +111,7 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 			"ui_slug":      r.PathValue("ui_slug"),
 			"partial_name": r.PathValue("partial_name"),
 			"path_params":  pathParams,
+			"raw_query":    r.URL.RawQuery,
 		},
 	}
 	// same token/user pattern as read_odata, if the partial is auth-gated
@@ -350,6 +351,7 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	tmplData := Dict{
 		"UI":         ui,
 		"PathParams": pathParams,
+		"query":      data["raw_query"],
 	}
 	for _, p := range partials {
 		sql = `select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`
