@@ -11,6 +11,7 @@ import (
 	texttemplate "text/template"
 	"time"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/realdatadriven/central-set-go/internal/env"
 )
 
@@ -237,7 +238,7 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	// 5) parse the page template plus every active partial as named templates
 	// so the page template can invoke them, e.g. {{template "header" .}}.
 	pageTemplate, _ := page["page_template"].(string)
-	tset, err := template.New("__page__").Parse(pageTemplate)
+	tset, err := template.New("__page__").Funcs(sprig.FuncMap()).Parse(pageTemplate)
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to parse page_template: %s", err)}
 	}
@@ -247,7 +248,7 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		if name == "" {
 			continue
 		}
-		if _, err := tset.New(name).Parse(body); err != nil {
+		if _, err := tset.New(name).Funcs(sprig.FuncMap()).Parse(body); err != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to parse partial %q: %s", name, err)}
 		}
 	}
@@ -362,7 +363,7 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	}
 	// 4) parse every active partial as a named template, then execute only
 	// the requested one.
-	tset := template.New(partialName)
+	tset := template.New(partialName).Funcs(sprig.FuncMap())
 	for _, p := range partials {
 		name, _ := p["ui_partial"].(string)
 		body, _ := p["partial_template"].(string)
