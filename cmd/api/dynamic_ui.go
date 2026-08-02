@@ -55,6 +55,8 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 	for k := range q {
 		pathParams[k] = q.Get(k)
 	}
+	//r.URL.Path
+
 	// anonymous
 	user := app.getAnonymous()
 	userFromSess, err := app.getUser(r)
@@ -408,7 +410,7 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		if name == "" || odataPath == "" {
 			continue
 		}
-		fmt.Println("ODATA PATH:", odataPath)
+		fmt.Println("ODATA PATH:", odataPath, pathParams)
 		resolvedPath, err := app.renderODataPath(odataPath, pathParams)
 		if err != nil {
 			return fmt.Sprintf("failed to resolve odata_path for %q: %s", name, err)
@@ -434,27 +436,27 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		switch d := res["data"].(type) {
 		case Dict:
 			if single {
-				tmplData[name] = d
+				tmplData[name] = res
 			} else {
-				tmplData[name] = []Dict{d}
+				tmplData[name] = res
+				tmplData[name].(Dict)["data"] = []Dict{d}
 			}
 		case []Dict:
 			if single {
 				if len(d) > 0 {
-					tmplData[name] = d[0]
+					tmplData[name] = res
+					tmplData[name].(Dict)["data"] = d[0]
 				} else {
-					tmplData[name] = Dict{}
+					tmplData[name] = res
+					tmplData[name].(Dict)["data"] = Dict{}
 				}
 			} else {
-				tmplData[name] = d
+				tmplData[name] = res
 			}
 		default:
-			if single {
-				tmplData[name] = Dict{}
-			} else {
-				tmplData[name] = []Dict{}
-			}
+			tmplData[name] = res
 		}
+		fmt.Println("ODataRead result for", name, ":", tmplData[name])
 	}
 	return ""
 }

@@ -147,7 +147,7 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 			}
 		}
 		for _, row := range *result {
-			fmt.Println("TABLE:", row["table"])
+			// fmt.Println("TABLE:", row["table"])
 			data[row["table"].(string)] = row
 		}
 	}
