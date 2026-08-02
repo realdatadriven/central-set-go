@@ -211,10 +211,17 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	}
 	pageID := page["ui_page_id"]
 	// 3) active partials for this ui, in a stable order
-	sql = `select * from "ui_partial" where ui_id = ? and active = true and excluded = false order by ui_partial_id asc`
-	partials, err := app.GetRowsByFilter(sql, params, []any{uiID})
+	sql = `select up.*
+	from "ui_page_partial" upp
+	join "ui_partial" up on upp.ui_partial_id = up.ui_partial_id
+	where upp.ui_page_id = ? 
+		and upp.ui_id = ? 
+		and upp.active = true 
+		and upp.excluded = false 
+	order by up.ui_partial_id asc`
+	partials, err := app.GetRowsByFilter(sql, params, []any{pageID, uiID})
 	if err != nil {
-		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_partial: %s", err)}
+		return Dict{"success": false, "msg": fmt.Sprintf("failed to fetch ui_page_partial: %s", err)}
 	}
 	// 4) build template data: resolve ui_page_data first, then every active
 	// partial's ui_partial_data, each keyed by its own data name.

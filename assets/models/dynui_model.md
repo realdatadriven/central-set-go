@@ -95,7 +95,7 @@ columns:
   ui_partial_data:      { type: varchar, len: 100, nullable: false, comment: "Data Name", form_display: true, table_display: true, form_size: 6, order: 3, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not begin with a number; use letters, numbers and underscores." }
   ui_partial_data_desc: { type: text, comment: "Data Description", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 7 }
   odata_path:           { type: text, nullable: false, comment: "OData Path", form_display: true, table_display: true, form_size: 8, order: 6 }
-  single_row_obj:        { type: boolean, default: false, comment: "Single Row", form_display: true, table_display: true, form_size: 2, form_order: 5 }
+  single_row_obj:       { type: boolean, default: false, comment: "Single Row", form_display: true, table_display: true, form_size: 2, form_order: 5 }
   active:               { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   ui_partial_id:        { type: integer, fk: "ui_partial.ui_partial_id", nullable: false, comment: "Partial", form_display: true, table_display: true, form_size: 3, order: 2 }
   ui_id:                { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
@@ -135,7 +135,7 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  allow_in_subform: {ui_page_data: true}
+  allow_in_subform: {ui_page_data: true, ui_page_partial: true}
   tabs_steps_conf:
     - {label: Page, fields: [ui, page_key, page_title, meta_description, cache_seconds, default_page, login_required, active]}
     - {label: Template, fields: [page_template]}
@@ -153,7 +153,7 @@ columns:
   ui_page_data:      { type: varchar, len: 100, nullable: false, comment: "Data Name", form_display: true, table_display: true, form_size: 4, order: 3, form_regex_val: "^[A-Za-z_][A-Za-z0-9_]*$", form_val_msg: "Must not begin with a number; use letters, numbers and underscores." }
   ui_page_data_desc: { type: text, comment: "Data Description", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 7 }
   odata_path:        { type: text, nullable: false, comment: "OData Path", form_display: true, table_display: true, form_size: 10, order: 5 }
-  single_row_obj:     { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 3, order: 6 }
+  single_row_obj:    { type: boolean, default: false, comment: "Single Row Object", form_display: true, table_display: true, form_size: 3, order: 6 }
   active:            { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, order: 4 }
   ui_page_id:        { type: integer, fk: "ui_page.ui_page_id", nullable: false, comment: "Page", form_display: true, table_display: true, form_size: 3, order: 2 }
   ui_id:             { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 3, order: 1 }
@@ -166,6 +166,29 @@ form_layout:
   size: 6
 table_layout:
   default_order: [{field: ui_page_data_id, order: ASC}]
+```
+
+## UI_PAGE_PARTIAL
+```yaml
+table: ui_page_partial
+comment: UI Page Partial
+tooltip: Partial to be available to the page
+columns:
+  ui_page_partial_id: { type: integer, pk: true, autoincrement: true, comment: "Page Partial ID" }
+  ui_page_partial:    { type: varchar, len: 100, nullable: false, comment: "Page Partial", form_display: true, table_display: true, form_size: 9, order: 4 }
+  active:             { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 3, order: 5 }
+  ui_partial_id:      { type: integer, fk: "ui_partial.ui_partial_id", nullable: false, comment: "Partial", form_display: true, table_display: true, form_size: 4, order: 3 }
+  ui_page_id:         { type: integer, fk: "ui_page.ui_page_id", nullable: false, comment: "Page", form_display: true, table_display: true, form_size: 4, order: 2 }
+  ui_id:              { type: integer, fk: "ui.ui_id", nullable: false, comment: "Website", form_display: true, table_display: true, form_size: 4, order: 1 }
+  user_id:            { type: integer, comment: "User ID" }
+  app_id:             { type: integer, comment: "App ID" }
+  created_at:         { type: datetime, comment: "Created At" }
+  updated_at:         { type: datetime, comment: "Updated At" }
+  excluded:           { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  size: 5
+table_layout:
+  default_order: [{field: ui_page_partial_id, order: ASC}]
 ```
 
 ## UI_ASSET
@@ -477,3 +500,16 @@ data:
   excluded: false
 ```
 
+## UI_ASSET_EX
+```yaml
+table: ui_asset
+description: Add the ui asset example
+cond: 'WHERE ui_id = :ui_id AND asset_path = :asset_path AND excluded = false'
+data:
+  asset_path:       logo.svg
+  mime_type:        MimeType(assets/static/img/logo.svg)
+  content_encoding: utf-8
+  asset_content:    FileContent(assets/static/img/logo.svg)
+  active:           true
+  ui_id:            1
+```
