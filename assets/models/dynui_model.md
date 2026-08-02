@@ -399,11 +399,18 @@ data:
   children:
     table: ui_partial_data
     data:
-      ui_partial_data:      crud_data
+      ui_partial_data: crud_data
       ui_partial_data_desc: CRUD Data
-      odata_path:           '{{.PathParams.db}}/{{.PathParams.table}}'
-      ui_partial_id:        ui_partial_id()
-      ui_id:                ui_id()
+      odata_path: |
+        {{.PathParams.db}}/{{.PathParams.table}}?
+          {{if .PathParams.select}}&$select={{.PathParams.select}}{{end}}
+          {{if .PathParams.filter}}&$filter={{.PathParams.filter}}{{end}}
+          {{if .PathParams.top}}&$top={{.PathParams.top}}{{end}}
+          {{if .PathParams.skip}}&$skip={{.PathParams.skip}}{{end}}
+          {{if .PathParams.schema}}&$schema={{.PathParams.schema}}{{end}}
+          {{if .PathParams.format}}&$format={{.PathParams.format}}{{end}}
+      ui_partial_id: ui_partial_id()
+      ui_id: ui_id()
 ```
 
 ## UI_PAGE_HOME

@@ -5,7 +5,10 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"maps"
 	"net/http"
+	"regexp"
+	"slices"
 	"strings"
 	"text/template"
 	texttemplate "text/template"
@@ -456,7 +459,8 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		default:
 			tmplData[name] = res
 		}
-		fmt.Println("ODataRead result for", name, ":", tmplData[name])
+		fmt.Println("DATA:", tmplData[name].(Dict)["msg"], tmplData[name].(Dict)["data"])
+		fmt.Println("ODataRead result for", name, ":", slices.Collect(maps.Keys(tmplData[name].(Dict))))
 	}
 	return ""
 }
@@ -474,7 +478,12 @@ func (app *application) renderODataPath(odataPath string, pathParams Dict) (stri
 	if err := t.Execute(&out, Dict{"PathParams": pathParams}); err != nil {
 		return "", err
 	}
-	return out.String(), nil
+	_path := strings.ReplaceAll(out.String(), "\r\n", "")
+	_path = strings.ReplaceAll(_path, "\n", "")
+	_path = strings.ReplaceAll(_path, "\r", "")
+	re := regexp.MustCompile(`\s+`)
+	_path = strings.TrimSpace(re.ReplaceAllString(_path, " "))
+	return _path, nil
 }
 
 // RenderUIAsset resolves a single `ui_asset` row for a given `ui` by its
