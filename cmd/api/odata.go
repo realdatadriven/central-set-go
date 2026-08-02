@@ -94,6 +94,7 @@ func ODataToCentralParams(odata Dict) (Dict, error) {
 	}
 	// $schema = true
 	if v, ok := odata["$schema"]; ok {
+		// fmt.Println("OData $schema:", v)
 		if b, err := strconv.ParseBool(v.(string)); err == nil {
 			out["include_schema"] = b
 		}

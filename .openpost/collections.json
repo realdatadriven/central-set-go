@@ -758,6 +758,58 @@
           "type": "none"
         },
         "inheritAuth": true
+      },
+      {
+        "id": "88439063-2f1c-47eb-8f95-c6e88067648f",
+        "name": "UI PARTIAL",
+        "method": "GET",
+        "url": "{{base_url}}/ui/rdd/partial/crud?db=SAAS&table=plan&$filter=plan_id eq 2&$schema=true",
+        "params": [
+          {
+            "key": "db",
+            "value": "SAAS",
+            "enabled": true
+          },
+          {
+            "key": "table",
+            "value": "plan",
+            "enabled": true
+          },
+          {
+            "key": "$filter",
+            "value": "plan_id eq 2",
+            "enabled": true
+          },
+          {
+            "key": "$schema",
+            "value": "true",
+            "enabled": true
+          }
+        ],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
       }
     ],
     "variables": [
