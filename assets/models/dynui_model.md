@@ -506,10 +506,16 @@ table: ui_asset
 description: Add the ui asset example
 cond: 'WHERE ui_id = :ui_id AND asset_path = :asset_path AND excluded = false'
 data:
-  asset_path:       logo.svg
-  mime_type:        MimeType(assets/static/img/logo.svg)
-  content_encoding: utf-8
-  asset_content:    FileContent(assets/static/img/logo.svg)
-  active:           true
-  ui_id:            1
+  - asset_path:       logo.svg
+    mime_type:        MimeType(assets/static/img/logo.svg)
+    content_encoding: utf-8
+    asset_content:    FileContent(assets/static/img/logo.svg)
+    active:           true
+    ui_id:            1
+  - asset_path:       logo.png
+    mime_type:        MimeType(assets/static/img/logo.png)
+    content_encoding: utf-8
+    asset_content:    Base64(assets/static/img/logo.png)
+    active:           true
+    ui_id:            1
 ```
