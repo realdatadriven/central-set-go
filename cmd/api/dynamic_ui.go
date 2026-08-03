@@ -59,7 +59,6 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 		pathParams[k] = q.Get(k)
 	}
 	//r.URL.Path
-
 	// anonymous
 	user := app.getAnonymous()
 	userFromSess, err := app.getUser(r)
@@ -349,12 +348,6 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	}
 }
 
-// resolveUIData fetches, for every row in `rows`, the data source named by
-// nameCol ("ui_page_data" or "ui_partial_data") through app.ODataRead, after
-// resolving any {{.PathParams.xxx}} placeholders in its odata_path. The
-// result is stored in tmplData under the row's own data-name, as a single
-// Dict when single_row_obj is true, or as a []Dict otherwise. Returns a
-// non-empty error message on failure, "" on success.
 func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pathParams Dict, tmplData Dict) string {
 	for _, row := range rows {
 		name, _ := row[nameCol].(string)
@@ -414,9 +407,6 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 	return ""
 }
 
-// renderODataPath executes odata_path as a text/template, giving stored
-// odata_path values access to path/route params, e.g.
-//
 //	STORE/product?$filter=product_id eq {{.PathParams.product_id}}
 func (app *application) renderODataPath(odataPath string, pathParams Dict) (string, error) {
 	t, err := texttemplate.New("odata_path").Parse(odataPath)
@@ -502,11 +492,6 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 }
 
 // serve_ui_asset is the HTTP handler for GET /ui/{ui_slug}/static/{asset...}
-// (register the route with the trailing "..." wildcard so asset paths like
-// "assets/img/logo.png" match as a single value). It defers conditional-GET
-// (If-None-Match / If-Modified-Since) and Range handling to
-// http.ServeContent: the ETag comes from the asset's stored checksum when
-// present, and Last-Modified from updated_at.
 func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 	params := Dict{
 		"data": Dict{
@@ -539,11 +524,6 @@ func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 	http.ServeContent(w, r, r.PathValue("asset"), lastModified, bytes.NewReader(raw))
 }
 
-// toTime best-effort converts common datetime representations returned by
-// different DB drivers (time.Time, RFC3339/"YYYY-MM-DD HH:MM:SS" strings,
-// unix epoch numbers) into a time.Time. Returns the zero time and false when
-// the value is absent or unrecognized — callers (e.g. serve_ui_asset) should
-// treat the zero value as "no Last-Modified available" rather than an error.
 func (app *application) toTime(v any) (time.Time, bool) {
 	switch val := v.(type) {
 	case time.Time:
@@ -664,8 +644,6 @@ func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // writeHTMLError writes a small HTML fragment (a DaisyUI alert) with the
-// given status code - used instead of a JSON body since the login form is
-// posted by htmx and expects HTML back, not JSON.
 func (app *application) writeHTMLError(w http.ResponseWriter, status int, msg string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
