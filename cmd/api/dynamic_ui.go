@@ -29,12 +29,12 @@ func generateSessionID() string {
 }
 
 func (app *application) getUser(r *http.Request) (Dict, error) {
-	/*cookie, err := r.Cookie("session")
+	cookie, err := r.Cookie("session")
 	if err != nil {
 		return nil, err
 	}
-	return app.verifyTokenString(cookie.Value)*/
-	// 1. Retrieve the session cookie from the request
+	return app.verifyTokenString(cookie.Value)
+	/*/ 1. Retrieve the session cookie from the request
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		// http.Error(w, "Unauthorized: No session cookie found", http.StatusUnauthorized)
@@ -49,7 +49,8 @@ func (app *application) getUser(r *http.Request) (Dict, error) {
 	if _, ok := user.(Dict); !ok {
 		return nil, fmt.Errorf("Unauthorized: Unable to get the user data from session")
 	}
-	return user.(Dict), nil
+	fmt.Println("session_id", cookie.Value, user.(Dict)["username"], user.(Dict)["user_id"], user.(Dict)["role_id"])
+	return user.(Dict), nil*/
 }
 
 func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
@@ -407,7 +408,7 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 	return ""
 }
 
-//	STORE/product?$filter=product_id eq {{.PathParams.product_id}}
+// STORE/product?$filter=product_id eq {{.PathParams.product_id}}
 func (app *application) renderODataPath(odataPath string, pathParams Dict) (string, error) {
 	t, err := texttemplate.New("odata_path").Parse(odataPath)
 	if err != nil {
@@ -599,29 +600,41 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return
 	}
-	// 2. Generate a unique session ID
-	sessionID := generateSessionID()
-	// 3. Save user data to the server-side store
 	token, _ := res["token"].(string)
-	_data := res["data"].(Dict)
-	_data["token"] = token
-	app.SessionStore.data.Store(sessionID, _data)
-	// 4. Issue the session cookie to the client
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
-		Value:    sessionID,
+		Name:     "session",
+		Value:    token,
 		Path:     "/",
 		Expires:  time.Now().Add(30 * time.Minute),
 		HttpOnly: true, // Prevents XSS attacks
 		Secure:   true, // Forces HTTPS
 		SameSite: http.SameSiteStrictMode,
 	})
+	/*
+		// 2. Generate a unique session ID
+		sessionID := generateSessionID()
+		// 3. Save user data to the server-side store
+		// _data := res["data"].(Dict)
+		_data["token"] = token
+		// fmt.Println("Loggedin SessionID", sessionID)
+		app.SessionStore.data.Store(sessionID, _data)
+		// 4. Issue the session cookie to the client
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_id",
+			Value:    sessionID,
+			Path:     "/",
+			Expires:  time.Now().Add(30 * time.Minute),
+			HttpOnly: true, // Prevents XSS attacks
+			Secure:   true, // Forces HTTPS
+			SameSite: http.SameSiteStrictMode,
+		})*/
 	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 	// w.WriteHeader(http.StatusOK)
 	http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
 }
 
 func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	//uiSlug := r.PathValue("ui_slug")
 	cookie, err := r.Cookie("session_id")
 	if err == nil {
 		// 1. Delete session from the server store
