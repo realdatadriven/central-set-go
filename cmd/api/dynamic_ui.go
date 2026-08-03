@@ -129,35 +129,6 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 	w.Write([]byte(res["data"].(string)))
 }
 
-// RenderUIPage resolves a `ui` website + one of its `ui_page` rows, fetches
-// every data source needed by the page and by its active `ui_partial` rows
-// (via app.ODataRead), and renders the final HTML by parsing the page
-// template together with all active partial templates.
-//
-// params["data"] is expected to contain:
-//
-//	ui_slug / ui_name : string  - required, identifies the `ui` row.
-//	page_key          : string  - optional. When empty, the `ui_page` row
-//	                    with default_page = true is served instead.
-//	path_params       : Dict    - optional. Route/path values made available
-//	                    to odata_path templates as {{.PathParams.xxx}},
-//	                    e.g. odata_path:
-//	                    "STORE/product?$filter=product_id eq {{.PathParams.product_id}}"
-//
-// Any other keys already on params (user, lang, location, ...) are copied,
-// unchanged, into every app.ODataRead call so permissions/RLA behave exactly
-// like they do on the regular /odata and /read_odata endpoints.
-//
-// On success, returns:
-//
-//	Dict{
-//	  "success":      true,
-//	  "data":         "<rendered html>",
-//	  "content_type": "text/html; charset=utf-8",
-//	  "cache_seconds": <ui_page.cache_seconds>,
-//	  "ui":           <ui row>,
-//	  "page":         <ui_page row>,
-//	}
 func (app *application) RenderUIPage(params Dict) Dict {
 	data, ok := params["data"].(Dict)
 	if !ok {
@@ -279,35 +250,6 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	}
 }
 
-// RenderUIPartial resolves a single `ui_partial` by name for a given `ui`
-// and renders it standalone (no page_template wrapper) — intended for htmx
-// requests that fetch or refresh just one fragment of a page, e.g.
-// GET /ui/{ui_slug}/partial/{partial_name}.
-//
-// params["data"] is expected to contain:
-//
-//	ui_slug / ui_name : string  - required, identifies the `ui` row.
-//	partial_name / ui_partial : string - required, identifies the `ui_partial`
-//	                    row (the ui_partial column, e.g. "header").
-//	path_params       : Dict    - optional, same as RenderUIPage: made
-//	                    available to odata_path templates as
-//	                    {{.PathParams.xxx}}.
-//
-// Every other active partial for the same `ui` is parsed into the same
-// template set (and its own ui_partial_data resolved) so that, if the
-// requested partial invokes another one via {{template "name" .}}, that
-// nested lookup still resolves. Only the requested partial is executed as
-// the response body.
-//
-// On success, returns:
-//
-//	Dict{
-//	  "success":      true,
-//	  "data":         "<rendered html fragment>",
-//	  "content_type": "text/html; charset=utf-8",
-//	  "ui":           <ui row>,
-//	  "partial":      <ui_partial row>,
-//	}
 func (app *application) RenderUIPartial(params Dict) Dict {
 	data, ok := params["data"].(Dict)
 	if !ok {
@@ -493,28 +435,6 @@ func (app *application) renderODataPath(odataPath string, pathParams Dict) (stri
 	return _path, nil
 }
 
-// RenderUIAsset resolves a single `ui_asset` row for a given `ui` by its
-// relative asset_path (e.g. "assets/store.css"), decodes its content
-// according to content_encoding, and returns it ready to be written to an
-// http.ResponseWriter (or fed to http.ServeContent) — including a parsed
-// last_modified time (from updated_at) for browser caching.
-//
-// params["data"] is expected to contain:
-//
-//	ui_slug / ui_name : string - required, identifies the `ui` row.
-//	asset_path        : string - required, matches ui_asset.asset_path.
-//
-// On success, returns:
-//
-//	Dict{
-//	  "success":       true,
-//	  "data":          []byte,          // decoded asset content
-//	  "mime_type":     string,
-//	  "cache_seconds": int,
-//	  "checksum":      string,          // "" if not stored
-//	  "last_modified": time.Time,       // zero value if updated_at is absent/unparsable
-//	  "asset":         Dict,            // the raw ui_asset row
-//	}
 func (app *application) RenderUIAsset(params Dict) Dict {
 	data, ok := params["data"].(Dict)
 	if !ok {
@@ -648,42 +568,16 @@ func (app *application) toTime(v any) (time.Time, bool) {
 	return time.Time{}, false
 }
 
-// serve_ui_login is the HTTP handler for POST /ui/{ui_slug}/login. It's the
-// endpoint the login page's htmx form posts to (application/x-www-form-
-// urlencoded, not JSON), and it responds accordingly: no JSON in, no JSON
-// out.
-//
-// It confirms the `ui` exists, then delegates the actual credential check to
-// the existing app.dynamic_login (same username/password/JWT-issuing logic
-// used elsewhere in the app), against the default "users" table.
-//
-//   - On success: sets an HttpOnly "session" cookie holding the JWT, and
-//     sends an HX-Redirect response header - htmx does a full browser
-//     navigation to that URL (which is what you want here anyway, since the
-//     cookie only takes effect on the next request/navigation).
-//   - On failure: writes a normal HTML error fragment (a DaisyUI alert) with
-//     a non-2xx status - no JSON envelope. The login page's form is set up
-//     with hx-target="#login-error" hx-swap="innerHTML", plus a small
-//     htmx.config.responseHandling tweak so htmx still swaps the body in
-//     even though the status is 4xx (by default it wouldn't).
-//
-// Wire it up alongside the read-only /ui routes - note it's a plain handler
-// (not RenderUIPage/RenderUIPartial), since it performs a real auth check
-// and sets a cookie rather than rendering a stored template:
-//
-//	mux.HandleFunc("POST /ui/{ui_slug}/login", app.serve_ui_login)
-//
-// For the cookie to actually authenticate subsequent requests, uncomment the
-// cookie->Authorization fallback already sitting in app.authenticate
-// (middleware.go) - it's currently commented out, reading a "session"
-// cookie exactly like the one set below.
 func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
 	_, err := app.getUser(r)
-	if err != nil {
-		// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
-		// w.WriteHeader(http.StatusOK)
-		http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+	if err == nil {
+		if r.Header.Get("HX-Request") {
+			w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+			w.WriteHeader(http.StatusOK)
+		} else {
+			http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+		}
 		return
 	}
 	params := Dict{
@@ -704,7 +598,6 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusNotFound, fmt.Sprintf("ui %q not found", uiSlug))
 		return
 	}
-
 	if err := r.ParseForm(); err != nil {
 		app.writeHTMLError(w, http.StatusBadRequest, "Invalid form submission.")
 		return
