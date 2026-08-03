@@ -513,9 +513,9 @@ data:
     active:           true
     ui_id:            1
   - asset_path:       logo.png
-    mime_type:        MimeType(assets/static/img/logo.png)
+    mime_type:        MimeType(assets/static/img/icon.png)
     content_encoding: utf-8
-    asset_content:    Base64(assets/static/img/logo.png)
+    asset_content:    Base64(assets/static/img/icon.png)
     active:           true
     ui_id:            1
 ```
