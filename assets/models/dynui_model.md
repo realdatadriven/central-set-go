@@ -50,7 +50,7 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  allow_in_subform: {ui_route: true, ui_page: true, ui_partial: true, ui_asset: true}
+  allow_in_subform: {ui_page: true, ui_partial: true, ui_asset: true}
 #  tabs_steps_conf: [{label: Website, fields: [ui_slug, ui_name, ui_desc, default_locale, active]}]
 table_layout:
   default_order: [{field: ui_id, order: DESC}]
