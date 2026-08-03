@@ -513,7 +513,7 @@ func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 	}
 	// ServeContent reads any ETag already set above to answer If-None-Match,
 	// compares lastModified against If-Modified-Since, and handles Range
-	// requests — all for free.
+	// requests - all for free.
 	lastModified, _ := res["last_modified"].(time.Time)
 	raw, _ := res["data"].([]byte)
 	http.ServeContent(w, r, r.PathValue("asset"), lastModified, bytes.NewReader(raw))
