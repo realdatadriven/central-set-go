@@ -430,7 +430,6 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 	if !ok {
 		return Dict{"success": false, "msg": `missing "data" params`}
 	}
-
 	uiSlug, _ := data["ui_slug"].(string)
 	if uiSlug == "" {
 		uiSlug, _ = data["ui_name"].(string)
@@ -471,7 +470,6 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 	} else {
 		raw = []byte(content)
 	}
-
 	mimeType, _ := asset["mime_type"].(string)
 	if mimeType == "" {
 		mimeType = "application/octet-stream"
@@ -479,7 +477,6 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 	cacheSeconds := app.toInt(asset["cache_seconds"])
 	checksum, _ := asset["checksum"].(string)
 	lastModified, _ := app.toTime(asset["updated_at"])
-
 	return Dict{
 		"success":       true,
 		"data":          raw,
@@ -505,7 +502,6 @@ func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
 		return
 	}
-
 	if mimeType, _ := res["mime_type"].(string); mimeType != "" {
 		w.Header().Set("Content-Type", mimeType)
 	}
@@ -515,7 +511,6 @@ func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 	if checksum, _ := res["checksum"].(string); checksum != "" {
 		w.Header().Set("ETag", fmt.Sprintf(`"%s"`, checksum))
 	}
-
 	// ServeContent reads any ETag already set above to answer If-None-Match,
 	// compares lastModified against If-Modified-Since, and handles Range
 	// requests — all for free.
