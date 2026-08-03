@@ -552,7 +552,7 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
 	_, err := app.getUser(r)
 	if err == nil {
-		if r.Header.Get("HX-Request") {
+		if r.Header.Get("HX-Request") == "true" {
 			w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 			w.WriteHeader(http.StatusOK)
 		} else {
