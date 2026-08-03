@@ -489,7 +489,7 @@ data:
   page_key: login
   page_title: Log in - RealDataDriven
   meta_description: Log in to your RealDataDriven account
-  page_template: FileContent(ui/login.html)
+  page_template: FileContent(ui/auth/design-2-login.html)
   cache_seconds: 0
   default_page: false
   active: true
