@@ -14,15 +14,15 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-// internal/certdump/config.go
-type Config struct {
+// internal/certdump/CertDumpConfig.go
+type CertDumpConfig struct {
 	Enabled   bool
 	AcmeJSON  string
 	Domains   []string
 	OutputDir string
 }
-func LoadConfig() Config {
-	return Config{
+func CertDumpLoadConfig() CertDumpConfig {
+	return CertDumpConfig{
 		Enabled: parseBool(os.Getenv("ENABLE_TRAEFIK_CERT_DUMP")),
 		AcmeJSON: os.Getenv("TRAEFIK_ACME_JSON_PATH"),
 		Domains: splitCSV(os.Getenv("TRAEFIK_DOMAINS")),
@@ -110,7 +110,7 @@ func atomicWrite(path string, data []byte, mode os.FileMode) error {
 }
 
 // internal/certdump/watcher.go
-func Watch(ctx context.Context, cfg Config) error {
+func CertDumpWatch(ctx context.Context, cfg CertDumpConfig) error {
 	if err := DumpCertificates(cfg.AcmeJSON, cfg.Domains, cfg.OutputDir); err != nil {
 		return err
 	}
@@ -141,20 +141,11 @@ func Watch(ctx context.Context, cfg Config) error {
 	}
 }
 /*
-ctx := context.Background()
-certCfg := certdump.LoadConfig()
-if certCfg.Enabled {
-	go func(){
-		err := certdump.Watch(ctx, certCfg)
-		if err != nil {
-			log.Println("cert watcher stopped:", err)
-		}
-	}()
-}*/
+*/
 
 /*
 ENABLE_TRAEFIK_CERT_DUMP=true
-TRAEFIK_ACME_JSON_PATH=/home/clovis/c7/traefik/acme.json
+TRAEFIK_ACME_JSON_PATH=/home/ubuntu/c7/traefik/acme.json
 TRAEFIK_DOMAINS=mail.csete.online,demo.csete.online
 TRAEFIK_CERT_DUMPS=./certs
 */

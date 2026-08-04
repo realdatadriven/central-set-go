@@ -404,6 +404,17 @@ func run(logger *slog.Logger) error {
 	if env.GetInt("CS_GOMEMLIMIT", 0) > 0 {
 		debug.SetMemoryLimit(int64(env.GetInt("CS_GOMEMLIMIT", 2)) << 30)
 	}
+	// DUMP CERT FROM TREFIK
+	ctx := context.Background()
+	certCfg := CertDumpLoadConfig()
+	if certCfg.Enabled {
+		go func(){
+			err := CertDumpWatch(ctx, certCfg)
+			if err != nil {
+				log.Println("cert watcher stopped:", err)
+			}
+		}()
+	}
 	// golang get current time - 24 hours
 	//app.lastLicenseValidation = time.Now().Add(-24 * time.Hour)
 	// Set tenant environment variables
