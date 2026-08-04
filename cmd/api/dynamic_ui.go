@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"maps"
 	"net/http"
+	"os"
 	"regexp"
 	"slices"
 	"strings"
@@ -29,28 +30,31 @@ func generateSessionID() string {
 }
 
 func (app *application) getUser(r *http.Request) (Dict, error) {
-	cookie, err := r.Cookie("session")
-	if err != nil {
-		return nil, err
+	if os.Getenv("COOKIE_MODE") == "TOKEN" {
+		cookie, err := r.Cookie("session")
+		if err != nil {
+			return nil, err
+		}
+		return app.verifyTokenString(cookie.Value)
+	} else {
+		// 1. Retrieve the session cookie from the request
+		cookie, err := r.Cookie("session_id")
+		if err != nil {
+			// http.Error(w, "Unauthorized: No session cookie found", http.StatusUnauthorized)
+			return nil, fmt.Errorf("Unauthorized: No session cookie found")
+		}
+		// 2. Look up the session ID in the server-side store
+		user, exists := app.SessionStore.data.Load(cookie.Value)
+		if !exists {
+			// http.Error(w, "Unauthorized: Invalid or expired session", http.StatusUnauthorized)
+			return nil, fmt.Errorf("Unauthorized: Invalid or expired session")
+		}
+		if _, ok := user.(Dict); !ok {
+			return nil, fmt.Errorf("Unauthorized: Unable to get the user data from session")
+		}
+		fmt.Println("session_id", cookie.Value, user.(Dict)["username"], user.(Dict)["user_id"], user.(Dict)["role_id"])
+		return user.(Dict), nil
 	}
-	return app.verifyTokenString(cookie.Value)
-	/*/ 1. Retrieve the session cookie from the request
-	cookie, err := r.Cookie("session_id")
-	if err != nil {
-		// http.Error(w, "Unauthorized: No session cookie found", http.StatusUnauthorized)
-		return nil, fmt.Errorf("Unauthorized: No session cookie found")
-	}
-	// 2. Look up the session ID in the server-side store
-	user, exists := app.SessionStore.data.Load(cookie.Value)
-	if !exists {
-		// http.Error(w, "Unauthorized: Invalid or expired session", http.StatusUnauthorized)
-		return nil, fmt.Errorf("Unauthorized: Invalid or expired session")
-	}
-	if _, ok := user.(Dict); !ok {
-		return nil, fmt.Errorf("Unauthorized: Unable to get the user data from session")
-	}
-	fmt.Println("session_id", cookie.Value, user.(Dict)["username"], user.(Dict)["user_id"], user.(Dict)["role_id"])
-	return user.(Dict), nil*/
 }
 
 func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
@@ -550,7 +554,7 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		if r.Header.Get("HX-Request") == "true" {
 			w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
-			w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusNoContent)
 		} else {
 			http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
 		}
@@ -601,20 +605,21 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token, _ := res["token"].(string)
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
-		Value:    token,
-		Path:     "/",
-		Expires:  time.Now().Add(30 * time.Minute),
-		HttpOnly: true, // Prevents XSS attacks
-		Secure:   true, // Forces HTTPS
-		SameSite: http.SameSiteStrictMode,
-	})
-	/*
+	if os.Getenv("COOKIE_MODE") == "TOKEN" {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session",
+			Value:    token,
+			Path:     "/",
+			Expires:  time.Now().Add(30 * time.Minute),
+			HttpOnly: true, // Prevents XSS attacks
+			Secure:   true, // Forces HTTPS
+			SameSite: http.SameSiteStrictMode,
+		})
+	} else {
 		// 2. Generate a unique session ID
 		sessionID := generateSessionID()
 		// 3. Save user data to the server-side store
-		// _data := res["data"].(Dict)
+		_data := res["data"].(Dict)
 		_data["token"] = token
 		// fmt.Println("Loggedin SessionID", sessionID)
 		app.SessionStore.data.Store(sessionID, _data)
@@ -627,27 +632,47 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true, // Prevents XSS attacks
 			Secure:   true, // Forces HTTPS
 			SameSite: http.SameSiteStrictMode,
-		})*/
+		})
+	}
 	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 	// w.WriteHeader(http.StatusOK)
-	http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+	}
 }
 
+// COOKIE_MODE
+
 func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
-	//uiSlug := r.PathValue("ui_slug")
-	cookie, err := r.Cookie("session_id")
-	if err == nil {
-		// 1. Delete session from the server store
-		app.SessionStore.data.Delete(cookie.Value)
+	if os.Getenv("COOKIE_MODE") == "TOKEN" {
+		_, err := r.Cookie("session")
+		if err == nil {
+			http.SetCookie(w, &http.Cookie{
+				Name:     "session",
+				Value:    "",
+				Path:     "/",
+				MaxAge:   -1, // Forces immediate deletion
+				HttpOnly: true,
+			})
+		}
+	} else {
+		cookie, err := r.Cookie("session_id")
+		if err == nil {
+			// 1. Delete session from the server store
+			app.SessionStore.data.Delete(cookie.Value)
+		}
+		// 2. Expire the cookie on the client browser immediately
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_id",
+			Value:    "",
+			Path:     "/",
+			MaxAge:   -1, // Forces immediate deletion
+			HttpOnly: true,
+		})
 	}
-	// 2. Expire the cookie on the client browser immediately
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
-		Value:    "",
-		Path:     "/",
-		MaxAge:   -1, // Forces immediate deletion
-		HttpOnly: true,
-	})
 	fmt.Fprintln(w, "Logged out successfully!")
 }
 
