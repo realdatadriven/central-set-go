@@ -52,7 +52,7 @@ func (app *application) getUser(r *http.Request) (Dict, error) {
 		if _, ok := user.(Dict); !ok {
 			return nil, fmt.Errorf("Unauthorized: Unable to get the user data from session")
 		}
-		fmt.Println("session_id", cookie.Value, user.(Dict)["username"], user.(Dict)["user_id"], user.(Dict)["role_id"])
+		// fmt.Println("session_id", cookie.Value, user.(Dict)["username"], user.(Dict)["user_id"], user.(Dict)["role_id"])
 		return user.(Dict), nil
 	}
 }
