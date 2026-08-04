@@ -1452,6 +1452,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 	// Completes the flow: exchanges code, fetches user info
 	gu, err := gothic.CompleteUserAuth(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
 	if err != nil {
+		fmt.Println(1, "gothic.CompleteUserAuth:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

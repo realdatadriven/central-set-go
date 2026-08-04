@@ -77,7 +77,7 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 		}
 		user = userFromSess
 	} else {
-		fmt.Println("ERR:", err)
+		// fmt.Println("ERR:", err)
 	}
 	params := Dict{
 		"lang": "en",
@@ -204,6 +204,7 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		"UI":         ui,
 		"Page":       page,
 		"PathParams": pathParams,
+		"config":     Dict{"frontend_url": app.config.frontend_url},
 	}
 	sql = `select * from "ui_page_data" where ui_page_id = ? and active = true and excluded = false`
 	pageDataRows, err := app.GetRowsByFilter(sql, params, []any{pageID})
@@ -644,9 +645,18 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// COOKIE_MODE
-
 func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	uiSlug := r.PathValue("ui_slug")
+	_, err := app.getUser(r)
+	if err != nil {
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Redirect", "/ui/"+uiSlug+"/login")
+			w.WriteHeader(http.StatusNoContent)
+		} else {
+			http.Redirect(w, r, "/ui/"+uiSlug+"/login", http.StatusSeeOther)
+		}
+		return
+	}
 	if os.Getenv("COOKIE_MODE") == "TOKEN" {
 		_, err := r.Cookie("session")
 		if err == nil {
