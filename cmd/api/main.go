@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"flag"
 	"fmt"
@@ -405,13 +406,12 @@ func run(logger *slog.Logger) error {
 		debug.SetMemoryLimit(int64(env.GetInt("CS_GOMEMLIMIT", 2)) << 30)
 	}
 	// DUMP CERT FROM TREFIK
-	ctx := context.Background()
 	certCfg := CertDumpLoadConfig()
 	if certCfg.Enabled {
-		go func(){
-			err := CertDumpWatch(ctx, certCfg)
+		go func() {
+			err := CertDumpWatch(context.Background(), certCfg)
 			if err != nil {
-				log.Println("cert watcher stopped:", err)
+				fmt.Println("cert watcher stopped:", err)
 			}
 		}()
 	}

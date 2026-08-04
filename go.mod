@@ -34,6 +34,7 @@ require (
 	github.com/chromedp/cdproto v0.0.0-20260719223732-95f6af754cfe
 	github.com/chromedp/chromedp v0.16.0
 	github.com/duckdb/duckdb-go/v2 v2.10505.0
+	github.com/fsnotify/fsnotify v1.10.1
 	github.com/go-ldap/ldap/v3 v3.4.14
 	github.com/gorilla/sessions v1.4.0
 	github.com/hashicorp/terraform-exec v0.25.2

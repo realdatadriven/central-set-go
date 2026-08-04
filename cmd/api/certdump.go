@@ -1,14 +1,13 @@
-
 package main
 
 import (
-	"os"
-	"strings"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
-	"context"
+	"strings"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
@@ -21,11 +20,12 @@ type CertDumpConfig struct {
 	Domains   []string
 	OutputDir string
 }
+
 func CertDumpLoadConfig() CertDumpConfig {
 	return CertDumpConfig{
-		Enabled: parseBool(os.Getenv("ENABLE_TRAEFIK_CERT_DUMP")),
-		AcmeJSON: os.Getenv("TRAEFIK_ACME_JSON_PATH"),
-		Domains: splitCSV(os.Getenv("TRAEFIK_DOMAINS")),
+		Enabled:   parseBool(os.Getenv("ENABLE_TRAEFIK_CERT_DUMP")),
+		AcmeJSON:  os.Getenv("TRAEFIK_ACME_JSON_PATH"),
+		Domains:   splitCSV(os.Getenv("TRAEFIK_DOMAINS")),
 		OutputDir: os.Getenv("TRAEFIK_CERT_DUMPS"),
 	}
 }
@@ -53,18 +53,20 @@ type resolver struct {
 }
 
 type certificate struct {
-	Domain struct {Main string `json:"main"`} `json:"domain"`
+	Domain struct {
+		Main string `json:"main"`
+	} `json:"domain"`
 	Certificate string `json:"certificate"`
-	Key string `json:"key"`
+	Key         string `json:"key"`
 }
 
-func DumpCertificates(acmeJSON string,domains []string,output string) error {
+func DumpCertificates(acmeJSON string, domains []string, output string) error {
 	data, err := os.ReadFile(acmeJSON)
 	if err != nil {
 		return err
 	}
 	var raw map[string]resolver
-	if err := json.Unmarshal(data,&raw); err != nil {
+	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 	domainSet := map[string]bool{}
@@ -129,7 +131,7 @@ func CertDumpWatch(ctx context.Context, cfg CertDumpConfig) error {
 			if event.Name != cfg.AcmeJSON {
 				continue
 			}
-			if event.Op&(fsnotify.Write| fsnotify.Create| fsnotify.Rename) != 0 {
+			if event.Op&(fsnotify.Write|fsnotify.Create|fsnotify.Rename) != 0 {
 				time.Sleep(time.Second)
 				DumpCertificates(cfg.AcmeJSON, cfg.Domains, cfg.OutputDir)
 			}
@@ -140,12 +142,3 @@ func CertDumpWatch(ctx context.Context, cfg CertDumpConfig) error {
 		}
 	}
 }
-/*
-*/
-
-/*
-ENABLE_TRAEFIK_CERT_DUMP=true
-TRAEFIK_ACME_JSON_PATH=/home/ubuntu/c7/traefik/acme.json
-TRAEFIK_DOMAINS=mail.csete.online,demo.csete.online
-TRAEFIK_CERT_DUMPS=./certs
-*/

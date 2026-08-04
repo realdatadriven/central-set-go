@@ -44,7 +44,7 @@ node_modules
 .hugo_build.lock
 *.sh
 *.log
-ssl-/
+ssl
 saas_model.md
 !docs/assets/install.sh
 !docs/public/install.sh
