@@ -25,6 +25,7 @@ cs_app:
       - {table: ui_partial_data, active: false}
       - {table: ui_page, active: false}
       - {table: ui_page_data, active: false}
+      - {table: ui_page_partial, active: false}
       - {table: ui_asset, active: false}
 ```
 
