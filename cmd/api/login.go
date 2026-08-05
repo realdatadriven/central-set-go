@@ -1680,16 +1680,33 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 			fmt.Fprintf(w, `%s`, template.HTMLEscapeString(msg))
 			return
 		}
-		if env.GetBool("OAUTH_DYN_LOGIN_TABLE_FILL", false) {
-			/*DYN_LOGIN_DB=SAAS
-			DYN_LOGIN_TABLE=tenant
-			DYN_LOGIN_TABLE_MAP_TO_USERS=true
-			DYN_LOGIN_USER_ID_FIELD=tenant_id
-			DYN_LOGIN_EMAIL_FIELD=email
-			DYN_LOGIN_ROLE_ID=4
-			DYN_LOGIN_USERNAME_FIELD=tenant
-			DYN_LOGIN_PASSWORD_FIELD=password
-			DYN_LOGIN_ACTIVE_FIELD=active*/
+		if env.GetBool("OAUTH_DYN_LOGIN_TABLE_FILL", false) && env.GetBool("DYN_LOGIN_TABLE_MAP_TO_USERS", false) {
+			dyn_db := env.GetString("DYN_LOGIN_DB", "")
+			dyn_login_table := env.GetString("DYN_LOGIN_TABLE", "")
+			dyn_login_table_map_to_users := env.GetBool("DYN_LOGIN_TABLE_MAP_TO_USERS", false)
+			dyn_login_table_user_id := env.GetString("DYN_LOGIN_USER_ID_FIELD", "")
+			dyn_login_table_email := env.GetString("DYN_LOGIN_EMAIL_FIELD", "")
+			dyn_login_table_username := env.GetString("DYN_LOGIN_USERNAME_FIELD", "")
+			dyn_login_table_active := env.GetString("DYN_LOGIN_ACTIVE_FIELD", "")
+			fmt.Println("DYN_LOGIN_TABLE_MAP_TO_USERS:", dyn_login_table_map_to_users, dyn_db, dyn_login_table, dyn_login_table_user_id, dyn_login_table_email, dyn_login_table_username, dyn_login_table_active)
+			if dyn_db != "" && dyn_login_table != "" && dyn_login_table_map_to_users && dyn_login_table_user_id != "" && dyn_login_table_email != "" && dyn_login_table_username != "" && dyn_login_table_active != "" {
+				sql := fmt.Sprintf(`select * from %s where %s = ?`, dyn_login_table, dyn_login_table_email)
+				dyn_login_data, err := app.GetRowByFilter(sql, Dict{"db": dyn_db}, []any{gu.Email})
+				if err != nil {
+					fmt.Println("Error getting the user for", dyn_login_table, gu.Email, err.Error())
+				} else if len(dyn_login_data) == 0 {
+					insert := fmt.Sprintf(`INSERT INTO %s (%s, %s, %s) VALUES (:name, :email, :active)`, dyn_login_table, dyn_login_table_username, dyn_login_table_email, dyn_login_table_active)
+					data := Dict{
+						"name":   gu.Name,
+						"email":  gu.Email,
+						"active": true,
+					}
+					err = app.ExecuteQuery(insert, Dict{"db": dyn_db}, data)
+					if err != nil {
+						fmt.Println("Error inserting the user for", dyn_login_table, gu.Email, err.Error())
+					}
+				}
+			}
 		}
 	}
 	user["oauth"] = true

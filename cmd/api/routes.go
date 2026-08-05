@@ -159,6 +159,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /ui/{ui_slug}/login/", app.serve_ui_login)
 	mux.HandleFunc("GET /ui/{ui_slug}/logout", app.logoutHandler)
 	mux.HandleFunc("GET /ui/{ui_slug}/logout/", app.logoutHandler)
+	mux.HandleFunc("POST /ui/{ui_slug}/logout", app.logoutHandler)
+	mux.HandleFunc("POST /ui/{ui_slug}/logout/", app.logoutHandler)
 	mux.HandleFunc("GET /ui/{ui_slug}", app.serve_ui_page)
 	mux.HandleFunc("GET /ui/{ui_slug}/", app.serve_ui_page)
 	mux.HandleFunc("GET /ui/{ui_slug}/{page_key}", app.serve_ui_page)

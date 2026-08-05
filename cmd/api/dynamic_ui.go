@@ -205,6 +205,7 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		"Page":       page,
 		"PathParams": pathParams,
 		"config":     Dict{"frontend_url": app.config.frontend_url},
+		"user":       params["user"],
 	}
 	sql = `select * from "ui_page_data" where ui_page_id = ? and active = true and excluded = false`
 	pageDataRows, err := app.GetRowsByFilter(sql, params, []any{pageID})
@@ -311,6 +312,8 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 		"UI":         ui,
 		"PathParams": pathParams,
 		"query":      data["raw_query"],
+		"config":     Dict{"frontend_url": app.config.frontend_url},
+		"user":       params["user"],
 	}
 	for _, p := range partials {
 		sql = `select * from "ui_partial_data" where ui_partial_id = ? and active = true and excluded = false`
