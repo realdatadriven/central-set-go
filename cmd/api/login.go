@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/go-ldap/ldap/v3"
@@ -1578,7 +1579,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 		Path:     "/",
 	})
 	w.Header().Set("X-Auth-Provider", provider)      // ← optional
-	w.Header().Set("X-Auth-Token", string(jwtBytes)) // ← optional	
+	w.Header().Set("X-Auth-Token", string(jwtBytes)) // ← optional
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusNoContent)
@@ -1587,6 +1588,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// Clone of GothCallbackHandler but for hypermedia response insted of json, to work with things like htmx
 func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	provider := r.PathValue("provider")
 	if provider == "" {
@@ -1653,24 +1655,22 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 			"excluded":   false,
 		}
 		_, err = app.db.ExecuteNamedQuery(query, data)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err != nil {
 			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusTooManyRequests)
-			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": msg})
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, `%s`, template.HTMLEscapeString(msg))
 			return
 		}
 		user, found, err = app.db.GetUserByNameOrEmail(gu.Email)
 		if err != nil {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusTooManyRequests)
-			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, `%s`, template.HTMLEscapeString(err.Error()))
 			return
 		} else if !found || len(user) == 0 {
 			msg, _ := app.i18n.T("user-not-found", Dict{"email": gu.Name})
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusTooManyRequests)
-			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": msg})
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, `%s`, template.HTMLEscapeString(msg))
 			return
 		}
 	}
@@ -1685,9 +1685,8 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 	var claims jwt.Claims
 	json_user, err := json.Marshal(user)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusTooManyRequests)
-		json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `%s`, template.HTMLEscapeString(err.Error()))
 		return
 	}
 	claims.Subject = string(json_user)
@@ -1703,9 +1702,8 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 	claims.Audiences = []string{app.config.frontend_url}
 	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secretKey))
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusTooManyRequests)
-		json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `%s`, template.HTMLEscapeString(err.Error()))
 		return
 	}
 
@@ -1718,11 +1716,31 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 		Path:     "/",
 	})
 	w.Header().Set("X-Auth-Provider", provider)      // ← optional
-	w.Header().Set("X-Auth-Token", string(jwtBytes)) // ← optional	
-	if r.Header.Get("HX-Request") == "true" {
+	w.Header().Set("X-Auth-Token", string(jwtBytes)) // ← optional
+	/*if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		http.Redirect(w, r, "/", http.StatusFound)
+	}*/
+	redirectRootHandler(w, r)
+}
+
+func redirectRootHandler(w http.ResponseWriter, r *http.Request) {
+	// 1. Determine scheme (http vs https)
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	} else if forward := r.Header.Get("X-Forwarded-Proto"); forward != "" {
+		scheme = forward
+	}
+	// 2. Build root-only URL (Scheme + Host + trailing slash)
+	rootURL := fmt.Sprintf("%s://%s/", scheme, r.Host)
+	// 3. Issue a 303 See Other redirect (cleanest for refreshing post-actions)
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", rootURL)
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		http.Redirect(w, r, rootURL, http.StatusSeeOther)
 	}
 }
