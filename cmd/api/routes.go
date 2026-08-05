@@ -168,8 +168,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /ui/{ui_slug}/static/{asset...}", app.serve_ui_asset)
 	mux.HandleFunc("GET /ui/{ui_slug}/asset/{asset...}", app.serve_ui_asset)
 	// OAUTH2
-	mux.HandleFunc("GET /ui/{ui_slug}/auth/{provider}/login", app.GothLoginHandler)
-	mux.HandleFunc("GET /ui/{ui_slug}/auth/{provider}/callback", app.HyperMGothCallbackHandler)
+	mux.HandleFunc("GET /ui/{ui_slug}/oauth/{provider}/login", app.GothLoginHandler)
+	mux.HandleFunc("GET /ui/{ui_slug}/oauth/{provider}/callback", app.HyperMGothCallbackHandler)
 	// REST CRUD
 	mux.HandleFunc("GET /crud/{db}/{table}", app.crud_api_handler)
 	mux.HandleFunc("GET /crud/{db}/{table}/", app.crud_api_handler)

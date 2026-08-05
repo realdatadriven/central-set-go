@@ -1439,6 +1439,9 @@ func (app *application) GothLoginHandler(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	/*for _, c := range w.Header().Values("Set-Cookie") {
+		fmt.Println("gothic.GetAuthURL Cookie:", c)
+	}*/
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", url)
 		w.WriteHeader(http.StatusNoContent)
@@ -1453,11 +1456,12 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "provider missing from path", http.StatusBadRequest)
 		return
 	}
+	// fmt.Println("GothCallbackHandler Cookie:", r.Header.Get("Cookie"))
 	//fmt.Println("CALLBACK PROVIDER:", provider)
 	// Completes the flow: exchanges code, fetches user info
 	gu, err := gothic.CompleteUserAuth(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
 	if err != nil {
-		fmt.Println(1, "gothic.CompleteUserAuth:", err)
+		fmt.Println(11, "gothic.CompleteUserAuth:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -1501,17 +1505,18 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 			last_name = gu.Name
 		}
 		data := Dict{
-			"username":   username,
-			"first_name": first_name,
-			"last_name":  last_name,
-			"email":      gu.Email,
-			"password":   pass,
-			"role_id":    role_id,
-			"lang_id":    1,
-			"active":     true,
-			"created_at": time.Now(),
-			"updated_at": time.Now(),
-			"excluded":   false,
+			"username":             username,
+			"first_name":           first_name,
+			"last_name":            last_name,
+			"email":                gu.Email,
+			"password":             pass,
+			"role_id":              role_id,
+			"lang_id":              1,
+			"active":               true,
+			"alter_pass_nxt_login": false,
+			"created_at":           time.Now(),
+			"updated_at":           time.Now(),
+			"excluded":             false,
 		}
 		_, err = app.db.ExecuteNamedQuery(query, data)
 		if err != nil {
@@ -1590,26 +1595,29 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 
 // Clone of GothCallbackHandler but for hypermedia response insted of json, to work with things like htmx
 func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	provider := r.PathValue("provider")
+	// fmt.Println("GothCallbackHandler Cookie:", r.Header.Get("Cookie"))
 	if provider == "" {
-		http.Error(w, "provider missing from path", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `%s`, template.HTMLEscapeString("provider missing from path"))
 		return
 	}
-	//fmt.Println("CALLBACK PROVIDER:", provider)
+	// fmt.Println("CALLBACK PROVIDER:", provider, gothic.ProviderParamKey)
 	// Completes the flow: exchanges code, fetches user info
 	gu, err := gothic.CompleteUserAuth(w, r.WithContext(context.WithValue(r.Context(), gothic.ProviderParamKey, provider)))
 	if err != nil {
-		fmt.Println(1, "gothic.CompleteUserAuth:", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(12, "gothic.CompleteUserAuth:", provider, err)
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `%s`, template.HTMLEscapeString(err.Error()))
 		return
 	}
 
 	//fmt.Println(gu.Name, gu.Email, gu.FirstName, gu.LastName, gu.ExpiresAt)
 	user, found, err := app.db.GetUserByNameOrEmail(gu.Email)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusTooManyRequests)
-		json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": err.Error()})
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `%s`, template.HTMLEscapeString(err.Error()))
 		return
 	}
 	if !found || len(user) == 0 {
@@ -1619,9 +1627,8 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 		pass, err := password.Hash(app.randomString(8))
 		if err != nil {
 			msg, _ := app.i18n.T("password-hash-error", Dict{})
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusTooManyRequests)
-			json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": msg})
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, `%s`, template.HTMLEscapeString(msg))
 			return
 		}
 		role_id := env.GetInt("OAUTH_DEFAULT_ROLE_ID", 2)
@@ -1642,20 +1649,20 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 			last_name = gu.Name
 		}
 		data := Dict{
-			"username":   username,
-			"first_name": first_name,
-			"last_name":  last_name,
-			"email":      gu.Email,
-			"password":   pass,
-			"role_id":    role_id,
-			"lang_id":    1,
-			"active":     true,
-			"created_at": time.Now(),
-			"updated_at": time.Now(),
-			"excluded":   false,
+			"username":             username,
+			"first_name":           first_name,
+			"last_name":            last_name,
+			"email":                gu.Email,
+			"password":             pass,
+			"role_id":              role_id,
+			"lang_id":              1,
+			"active":               true,
+			"alter_pass_nxt_login": false,
+			"created_at":           time.Now(),
+			"updated_at":           time.Now(),
+			"excluded":             false,
 		}
 		_, err = app.db.ExecuteNamedQuery(query, data)
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err != nil {
 			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
 			w.WriteHeader(http.StatusBadRequest)
@@ -1672,6 +1679,17 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, `%s`, template.HTMLEscapeString(msg))
 			return
+		}
+		if env.GetBool("OAUTH_DYN_LOGIN_TABLE_FILL", false) {
+			/*DYN_LOGIN_DB=SAAS
+			DYN_LOGIN_TABLE=tenant
+			DYN_LOGIN_TABLE_MAP_TO_USERS=true
+			DYN_LOGIN_USER_ID_FIELD=tenant_id
+			DYN_LOGIN_EMAIL_FIELD=email
+			DYN_LOGIN_ROLE_ID=4
+			DYN_LOGIN_USERNAME_FIELD=tenant
+			DYN_LOGIN_PASSWORD_FIELD=password
+			DYN_LOGIN_ACTIVE_FIELD=active*/
 		}
 	}
 	user["oauth"] = true
@@ -1728,6 +1746,7 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 
 func redirectRootHandler(w http.ResponseWriter, r *http.Request) {
 	// 1. Determine scheme (http vs https)
+	provider := r.PathValue("provider")
 	scheme := "http"
 	if r.TLS != nil {
 		scheme = "https"
@@ -1735,7 +1754,9 @@ func redirectRootHandler(w http.ResponseWriter, r *http.Request) {
 		scheme = forward
 	}
 	// 2. Build root-only URL (Scheme + Host + trailing slash)
-	rootURL := fmt.Sprintf("%s://%s/", scheme, r.Host)
+	rootURL := fmt.Sprintf("%s://%s%s", scheme, r.Host, r.URL.Path)
+	rootURL = strings.TrimSuffix(rootURL, "/oauth/"+provider+"/callback")
+	// fmt.Println("Redirect URL:", rootURL)
 	// 3. Issue a 303 See Other redirect (cleanest for refreshing post-actions)
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", rootURL)

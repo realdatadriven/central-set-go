@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/gorilla/sessions"
@@ -12,6 +13,7 @@ import (
 	"github.com/markbates/goth/providers/github"
 	"github.com/markbates/goth/providers/google"
 	"github.com/markbates/goth/providers/openidConnect"
+	"github.com/realdatadriven/central-set-go/internal/env"
 )
 
 // generateState – simple secure random state (you can also add PKCE here)
@@ -82,11 +84,12 @@ func InitGoth() error {
 	// Session store setup (required!)
 	// Use secure random key in production (32+ bytes)
 	fall_back_secret, _ := generateState()
-	// println("fall_back_secret:", fall_back_secret)
-	store := sessions.NewCookieStore([]byte(os.Getenv("OAUTH_SESSION_SECRET") + fall_back_secret))
+	println("InitGoth Called:", fall_back_secret)
+	store := sessions.NewCookieStore([]byte(env.GetString("OAUTH_SESSION_SECRET", fall_back_secret)))
 	store.Options.HttpOnly = true
 	store.Options.Secure = os.Getenv("ENV") == "production" // only HTTPS in prod
 	//store.Options.Domain = http.SameSiteLaxMode
+	store.Options.SameSite = http.SameSiteLaxMode
 	store.Options.Path = "/"
 	gothic.Store = store // gothic is goth's session helper*/
 
