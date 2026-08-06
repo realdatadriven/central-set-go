@@ -107,8 +107,8 @@ columns:
   description: { type: text,         comment: "Description",                 form_display: true, table_display: true, form_long_text: true, form_size: 9 }
   status:      { type: varchar(50),  default: draft, comment: "Status: draft | published | archived", form_display: true, table_display: true, form_size: 3 }
   user_id:     { type: integer,      comment: "Created by" }
-  created_at:  { type: datetime,     default: Now(), comment: "Created at",   table_display: true }
-  updated_at:  { type: datetime,     default: Now(), on_update: Now(), comment: "Updated at" }
+  created_at:  { type: datetime,     comment: "Created at",   table_display: true }
+  updated_at:  { type: datetime,     comment: "Updated at" }
   excluded:    { type: boolean,      default: false, comment: "Excluded" }
 form_layout:
   tabs_steps: tabs
@@ -224,18 +224,46 @@ table_layout:
   default_order: [{field: source_question_id, order: ASC}]
 ```
 
+
+## SURVEY_JSON
+```yaml
+table: survey_json
+comment: Surveys JSON
+columns:
+  survey_id:    { type: integer,      pk: true, autoincrement: true, comment: "ID" }
+  title:        { type: varchar(255), nullable: false, comment: "Title",       form_display: true, table_display: true, form_size: 9, form_order: 1 }
+  description:  { type: text,         comment: "Description",                 form_display: true, table_display: true, form_long_text: true, form_order: 3 }
+  status:       { type: varchar(50),  default: draft, comment: "Status: draft | published | archived", form_display: true, table_display: true, form_size: 3, form_order: 2 }
+  survey_json:  { type: text,         comment: "JSON Spec", form_display: true, table_display: true, form_long_text: true, form_code: json }
+  survey_theme: { type: text,         comment: "JSON Theme", form_display: true, table_display: true, form_long_text: true, form_code: json }
+  user_id:      { type: integer,      comment: "Created by" }
+  created_at:   { type: datetime,     comment: "Created at" }
+  updated_at:   { type: datetime,     comment: "Updated at" }
+  excluded:     { type: boolean,      default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  tabs_steps_conf:
+    - {label: Survey, fields: [title, status, description]}
+    - {label: Survey JSON, fields: [survey_json]}
+    - {label: Theme JSON, fields: [survey_theme]}
+table_layout:
+  default_order: [{field: survey_id, order: DESC}]
+```
+
 ## RESPONSE
 ```yaml
 table: response
 comment: Survey Responses (raw submissions)
 columns:
   response_id: { type: integer,      pk: true, autoincrement: true, comment: "ID" }
-  survey_id:   { type: integer,      fk: "survey.survey_id", nullable: false, comment: "Survey", form_display: true, table_display: true, form_size: 4 }
+  survey_id:   { type: integer,      fk: "survey_json.survey_id", nullable: false, comment: "Survey", form_display: true, table_display: true, form_size: 4 }
   ip:          { type: varchar(45),  comment: "Submitter IP",    form_display: true, table_display: true, form_size: 3 }
   email:       { type: varchar(255), comment: "Submitter email", form_display: true, table_display: true, form_size: 4 }
   raw_json:    { type: text,         comment: "Raw response payload, as submitted", form_display: true, form_long_text: true, form_code: json }
   user_id:     { type: integer,      comment: "Created by" }
-  created_at:  { type: datetime,     default: Now(), comment: "Submitted at", table_display: true }
+  created_at:  { type: datetime,     comment: "Submitted at", table_display: true }
   updated_at:  { type: datetime,     comment: "Updated at" }
   excluded:    { type: boolean,      default: false, comment: "Excluded" }
 form_layout:
@@ -254,6 +282,19 @@ description: DATA Model Survey Builder - seed default question types
 runs_as: MODEL_DATA
 databse: SURVEY
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## SURVEY_JSON
+```yaml
+table: survey_json
+description: Survey JSON Example
+cond: 'WHERE title = :title'
+data:
+  title: HOTEL BY THE SEA
+  description: 1901 Thornridge Cir. Shiloh, Hawaii 81063 +1 (808) 555-0111
+  status: dreaft
+  survey_json: FileContent(assets/survey/survey.json)  
+  survey_theme: FileContent(assets/survey/theme.json)
 ```
 
 ## QUESTION_TYPES
