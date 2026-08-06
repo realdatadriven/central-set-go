@@ -520,3 +520,38 @@ data:
     active:           true
     ui_id:            1
 ```
+
+## SURVEY
+```yaml
+table: ui
+description: Add a survey page
+cond: 'WHERE ui_slug = :ui_slug AND excluded = false'
+data:
+  ui_slug: survey
+  ui_name: Survey
+  ui_desc: Survey
+  default_locale: en
+  active: true
+  children:
+    table: ui_page
+    description: Add the default page
+    cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+    data:
+      ui_id: ui_id()
+      page_key: survey
+      page_title: Survey
+      meta_description: Survey
+      page_template: FileContent(assets/survey/survey.html)
+      cache_seconds: 60
+      default_page: true
+      active: true
+      children:
+        table: ui_page_data
+        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id AND AND '
+        data:
+          ui_page_data: survey_data
+          ui_page_data_desc: Survey Data
+          odata_path: SURVEY/survey_json?$filter={{.PathParams.id}}
+          ui_page_id: ui_page_id()
+          ui_id: ui_id()
+```

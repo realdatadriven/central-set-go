@@ -284,19 +284,6 @@ databse: SURVEY
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
-## SURVEY_JSON
-```yaml
-table: survey_json
-description: Survey JSON Example
-cond: 'WHERE title = :title'
-data:
-  title: HOTEL BY THE SEA
-  description: 1901 Thornridge Cir. Shiloh, Hawaii 81063 +1 (808) 555-0111
-  status: dreaft
-  survey_json: FileContent(assets/survey/survey.json)  
-  survey_theme: FileContent(assets/survey/theme.json)
-```
-
 ## QUESTION_TYPES
 ```yaml
 table: question_type
@@ -375,4 +362,17 @@ data:
     icon: adjustments-horizontal
     settings_schema: '{"min_value": "number", "max_value": "number", "step": "number"}'
     active: true
+```
+
+## SURVEY_JSON
+```yaml
+table: survey_json
+description: Survey JSON Example
+cond: 'WHERE title = :title'
+data:
+  title: HOTEL BY THE SEA
+  description: 1901 Thornridge Cir. Shiloh, Hawaii 81063 +1 (808) 555-0111
+  status: dreaft
+  survey_json: FileContent(assets/survey/survey.json)  
+  survey_theme: FileContent(assets/survey/theme.json)
 ```
