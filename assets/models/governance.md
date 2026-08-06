@@ -27,6 +27,45 @@ The schema is structured into 8 modular, normalized tables with foreign key cons
                                                                      (Table & Column Level PII/Sensitivity)
 ```
 
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
+flowchart TD
+    Stakeholders["Stakeholders  
+(Owners / Stewards)"]
+    BusinessUnits["Business Units"]
+    Domains["Domains"]
+    DataSources["Data Sources"]
+    AssetSchemas["Asset Schemas"]
+    DataAssets["Data Assets"]
+    AssetFields["Asset Fields"]
+    GlossaryTerms["Glossary Terms"]
+    TermMappings["Term Mappings  
+(Asset & Field Mappings)"]
+    Tags["Tags / Classifications  
+(Table & Column Level PII/Sensitivity)"]
+
+    Stakeholders --> BusinessUnits
+    Stakeholders --> Domains
+    BusinessUnits --> Domains
+    Domains --> DataSources
+    Domains --> GlossaryTerms
+    DataSources --> AssetSchemas
+    AssetSchemas --> DataAssets
+    DataAssets --> AssetFields
+    
+    DataAssets --> TermMappings
+    AssetFields --> TermMappings
+    TermMappings --> GlossaryTerms
+    
+    DataAssets --> Tags
+    AssetFields --> Tags
+    TermMappings --> Tags
+```
+
 ---
 
 ## Detailed Table Breakdown
