@@ -18,7 +18,7 @@ cs_app:
       - business_units
       - domains
       - glossary_terms
-      - data_sources
+      - catalog_assets
       - asset_schemas
       - data_assets
       - asset_fields
@@ -53,8 +53,17 @@ columns:
   full_name: { type: varchar, len: 150, nullable: false, comment: "Name", tooltip: "Full name of the stakeholder.", form_display: true, table_display: true, order: 3 }
   title: { type: varchar, len: 100, comment: "Title", tooltip: "Job title or role description of the stakeholder.", form_display: true, table_display: true, order: 4 }
   slack_handle: { type: varchar, len: 50, comment: "Slack", tooltip: "Internal Slack username or handle for rapid communication.", form_display: true, table_display: true, order: 5 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the stakeholder record was created.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the stakeholder record was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {domains: true, catalog_assets: true, glossary_terms: true}
+table_layout:
+  default_order: [{field: stakeholder_id, order: DESC}]
 ```
 
 ## BUSINESS_UNITS
@@ -66,7 +75,17 @@ columns:
   business_unit_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the business unit.", form_display: true, table_display: true, order: 1 }
   name: { type: varchar, len: 100, nullable: false, unique: true, comment: "Name", tooltip: "Name of the business unit.", form_display: true, table_display: true, order: 2 }
   description: { type: text, comment: "Description", tooltip: "Detailed description of the business unit scope and responsibilities.", form_display: true, table_display: true, order: 3 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the business unit was recorded.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the business unit was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {domains: true}
+table_layout:
+  default_order: [{field: business_unit_id, order: DESC}]
 ```
 
 ## DOMAINS
@@ -80,8 +99,17 @@ columns:
   name: { type: varchar, len: 100, nullable: false, unique: true, comment: "Name", tooltip: "Name of the domain.", form_display: true, table_display: true, order: 3 }
   description: { type: text, comment: "Description", tooltip: "Detailed description of the data domain boundary.", form_display: true, table_display: true, order: 4 }
   domain_lead_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Lead", tooltip: "Foreign key referencing the stakeholder acting as domain lead.", form_display: true, table_display: true, order: 5 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the domain was created.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the domain was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {glossary_terms: true, catalog_assets: true}
+table_layout:
+  default_order: [{field: domain_id, order: DESC}]
 ```
 
 ## TAG_CATEGORIES
@@ -93,6 +121,17 @@ columns:
   category_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the tag category.", form_display: true, table_display: true, order: 1 }
   name: { type: varchar, len: 50, nullable: false, unique: true, comment: "Name", tooltip: "Name of the tag category such as Sensitivity or Data Tier.", form_display: true, table_display: true, order: 2 }
   description: { type: text, comment: "Description", tooltip: "Description of what this category classifies.", form_display: true, table_display: true, order: 3 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the tag category was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the tag category was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {tags: true}
+table_layout:
+  default_order: [{field: category_id, order: DESC}]
 ```
 
 ## TAGS
@@ -105,7 +144,16 @@ columns:
   category_id: { type: integer, fk: "tag_categories.category_id", comment: "Category", tooltip: "Foreign key referencing the parent tag category.", form_display: true, table_display: true, order: 2 }
   name: { type: varchar, len: 100, nullable: false, unique: true, comment: "Name", tooltip: "Name of the tag such as PII, Confidential, or Gold-Tier.", form_display: true, table_display: true, order: 3 }
   description: { type: text, comment: "Description", tooltip: "Definition and criteria for applying this tag.", form_display: true, table_display: true, order: 4 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the tag was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the tag was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: tag_id, order: DESC}]
 ```
 
 ## GLOSSARY_TERMS
@@ -121,37 +169,74 @@ columns:
   business_rules: { type: text, comment: "Rules", tooltip: "Calculation logic, constraints, or qualitative rules defining the term.", form_display: true, table_display: true, order: 5 }
   status: { type: varchar, len: 30, default: "Draft", comment: "Status", tooltip: "Lifecycle status of the term such as Draft, Approved, or Deprecated.", form_display: true, table_display: true, order: 6 }
   steward_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Steward", tooltip: "Foreign key referencing the business steward responsible for the term.", form_display: true, table_display: true, order: 7 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the term was created.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the term was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {asset_term_mappings: true, field_term_mappings: true}
+table_layout:
+  default_order: [{field: term_id, order: DESC}]
 ```
 
-## DATA_SOURCES
+## CATALOG_ASSETS
 ```yaml
-table: data_sources
-comment: Data Source
-tooltip: Physical or cloud data storage systems containing datasets.
+table: catalog_assets
+comment: Catalog Asset
+tooltip: Broad catalog of business and technical assets such as tables, views, streams, pipelines, dashboards, topics, and models.
 columns:
-  source_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the data source.", form_display: true, table_display: true, order: 1 }
-  name: { type: varchar, len: 100, nullable: false, unique: true, comment: "Name", tooltip: "Name of the data source instance such as Production PostgreSQL or Snowflake DW.", form_display: true, table_display: true, order: 2 }
-  source_type: { type: varchar, len: 50, nullable: false, comment: "Type", tooltip: "Technology platform type such as PostgreSQL, Snowflake, S3, BigQuery, or Kafka.", form_display: true, table_display: true, order: 3 }
-  connection_uri: { type: text, comment: "URI", tooltip: "Connection endpoint or URI with credentials scrubbed.", form_display: true, table_display: true, order: 4 }
-  domain_id: { type: integer, fk: "domains.domain_id", comment: "Domain", tooltip: "Foreign key referencing the domain owning this source.", form_display: true, table_display: true, order: 5 }
-  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Owner", tooltip: "Foreign key referencing the technical owner responsible for infrastructure.", form_display: true, table_display: true, order: 6 }
-  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the source was registered.", form_display: false, table_display: true }
-  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the source metadata was last updated.", form_display: false, table_display: true }
+  asset_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the catalog asset.", form_display: true, table_display: true, order: 1 }
+  domain_id: { type: integer, fk: "domains.domain_id", comment: "Domain", tooltip: "Foreign key referencing the domain owning this asset.", form_display: true, table_display: true, order: 2 }
+  name: { type: varchar, len: 255, nullable: false, comment: "Name", tooltip: "Display name of the asset.", form_display: true, table_display: true, order: 3 }
+  asset_type: { type: varchar, len: 50, nullable: false, comment: "Type", tooltip: "Asset category such as Table, View, Stream, Pipeline, Dashboard, Topic, or Model.", form_display: true, table_display: true, order: 4 }
+  layer_path: { type: varchar, len: 500, comment: "Layer Path", tooltip: "Logical path of the asset such as snowflake.analytics_prod.finance.fct_revenue or airflow.dags.sync_customer.", form_display: true, table_display: true, order: 5 }
+  description: { type: text, comment: "Description", tooltip: "Business and technical description of the asset.", form_display: true, table_display: true, order: 6 }
+  business_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Business Owner", tooltip: "Foreign key referencing the business owner responsible for the asset.", form_display: true, table_display: true, order: 7 }
+  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the asset.", form_display: true, table_display: true, order: 8 }
+  row_count: { type: integer, comment: "Rows", tooltip: "Latest observed row count for table-like assets.", form_display: true, table_display: true, order: 9 }
+  bytes_size: { type: integer, comment: "Size", tooltip: "Latest observed storage size in bytes for table-like assets.", form_display: true, table_display: true, order: 10 }
+  orchestrator_type: { type: varchar, len: 50, comment: "Orchestrator", tooltip: "Platform used for pipelines such as Airflow, dbt, or Dagster.", form_display: true, table_display: true, order: 11 }
+  schedule_cron: { type: varchar, len: 100, comment: "Schedule", tooltip: "Cron expression for scheduled execution.", form_display: true, table_display: true, order: 12 }
+  code_repo_url: { type: text, comment: "Repo URL", tooltip: "Link to the source code repository for the asset.", form_display: true, table_display: true, order: 13 }
+  bi_tool_type: { type: varchar, len: 50, comment: "BI Tool", tooltip: "Business intelligence tool type such as Tableau, Looker, or PowerBI.", form_display: true, table_display: true, order: 14 }
+  dashboard_url: { type: text, comment: "Dashboard URL", tooltip: "Web link to the dashboard or report.", form_display: true, table_display: true, order: 15 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the catalog asset was registered.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the catalog asset was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {asset_schemas: true, data_assets: true}
+table_layout:
+  default_order: [{field: asset_id, order: DESC}]
 ```
 
 ## ASSET_SCHEMAS
 ```yaml
 table: asset_schemas
 comment: Asset Schema
-tooltip: Database schema or dataset grouping within a data source.
+tooltip: Database schema or dataset grouping within a catalog asset when the asset is a database-like source.
 columns:
   schema_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the schema.", form_display: true, table_display: true, order: 1 }
-  source_id: { type: integer, fk: "data_sources.source_id", comment: "Source", tooltip: "Foreign key referencing the parent data source.", form_display: true, table_display: true, order: 2 }
+  catalog_asset_id: { type: integer, fk: "catalog_assets.asset_id", comment: "Catalog Asset", tooltip: "Foreign key referencing the parent catalog asset.", form_display: true, table_display: true, order: 2 }
   name: { type: varchar, len: 150, nullable: false, comment: "Name", tooltip: "Name of the schema or namespace such as public or finance_mart.", form_display: true, table_display: true, order: 3 }
   description: { type: text, comment: "Description", tooltip: "Description of the data contents within this schema.", form_display: true, table_display: true, order: 4 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the schema was recorded.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the schema was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {data_assets: true}
+table_layout:
+  default_order: [{field: schema_id, order: DESC}]
 ```
 
 ## DATA_ASSETS
@@ -169,8 +254,17 @@ columns:
   technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the ETL or pipeline.", form_display: true, table_display: true, order: 7 }
   row_count: { type: integer, comment: "Rows", tooltip: "Latest observed total row count.", form_display: true, table_display: true, order: 8 }
   bytes_size: { type: integer, comment: "Size", tooltip: "Latest observed storage size in bytes.", form_display: true, table_display: true, order: 9 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the asset was registered.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the asset metadata was last refreshed.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {asset_fields: true, asset_tag_mappings: true, asset_term_mappings: true}
+table_layout:
+  default_order: [{field: asset_id, order: DESC}]
 ```
 
 ## ASSET_FIELDS
@@ -189,7 +283,19 @@ columns:
   is_foreign_key: { type: boolean, default: false, comment: "FK", tooltip: "Flag indicating whether this field acts as a foreign key.", form_display: true, table_display: true, order: 8 }
   foreign_key_target_field_id: { type: integer, fk: "asset_fields.field_id", comment: "Target", tooltip: "Self-referencing foreign key linking this column directly to its target primary key field.", form_display: true, table_display: true, order: 9 }
   description: { type: text, comment: "Description", tooltip: "Column-level documentation explaining the meaning of the data stored.", form_display: true, table_display: true, order: 10 }
+  business_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Business Owner", tooltip: "Foreign key referencing the business owner responsible for asset data quality and meaning.", form_display: true, table_display: true, order: 6 }
+  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the ETL or pipeline.", form_display: true, table_display: true, order: 7 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the field metadata was recorded.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the field metadata was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {field_tag_mappings: true, field_term_mappings: true}
+table_layout:
+  default_order: [{field: field_id, order: DESC}]
 ```
 
 ## ASSET_TERM_MAPPINGS
@@ -200,6 +306,16 @@ tooltip: Associates data assets with business glossary terms they embody.
 columns:
   asset_id: { type: integer, fk: "data_assets.asset_id", comment: "Asset", tooltip: "Foreign key referencing the data asset.", form_display: true, table_display: true, order: 1 }
   term_id: { type: integer, fk: "glossary_terms.term_id", comment: "Term", tooltip: "Foreign key referencing the glossary term.", form_display: true, table_display: true, order: 2 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the mapping was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the mapping was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: asset_id, order: DESC}]
 ```
 
 ## FIELD_TERM_MAPPINGS
@@ -210,6 +326,16 @@ tooltip: Associates specific columns or fields with glossary terms.
 columns:
   field_id: { type: integer, fk: "asset_fields.field_id", comment: "Field", tooltip: "Foreign key referencing the asset field or column.", form_display: true, table_display: true, order: 1 }
   term_id: { type: integer, fk: "glossary_terms.term_id", comment: "Term", tooltip: "Foreign key referencing the glossary term.", form_display: true, table_display: true, order: 2 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the mapping was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the mapping was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: field_id, order: DESC}]
 ```
 
 ## ASSET_TAG_MAPPINGS
@@ -220,6 +346,16 @@ tooltip: Applies tags and classifications to data assets.
 columns:
   asset_id: { type: integer, fk: "data_assets.asset_id", comment: "Asset", tooltip: "Foreign key referencing the data asset.", form_display: true, table_display: true, order: 1 }
   tag_id: { type: integer, fk: "tags.tag_id", comment: "Tag", tooltip: "Foreign key referencing the tag.", form_display: true, table_display: true, order: 2 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the mapping was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the mapping was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: asset_id, order: DESC}]
 ```
 
 ## FIELD_TAG_MAPPINGS
@@ -230,6 +366,16 @@ tooltip: Applies granular classifications at the individual column level.
 columns:
   field_id: { type: integer, fk: "asset_fields.field_id", comment: "Field", tooltip: "Foreign key referencing the asset field or column.", form_display: true, table_display: true, order: 1 }
   tag_id: { type: integer, fk: "tags.tag_id", comment: "Tag", tooltip: "Foreign key referencing the tag.", form_display: true, table_display: true, order: 2 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the mapping was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the mapping was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: field_id, order: DESC}]
 ```
 
 ## DATA_QUALITY_RULES
@@ -244,7 +390,17 @@ columns:
   rule_type: { type: varchar, len: 50, nullable: false, comment: "Type", tooltip: "Type of assertion such as NotNull, Unique, Range, Freshness, or Expression.", form_display: true, table_display: true, order: 4 }
   rule_expression: { type: text, nullable: false, comment: "Expression", tooltip: "Executable condition or expression such as NULL_COUNT == 0 or VALUE >= 0.", form_display: true, table_display: true, order: 5 }
   severity: { type: varchar, len: 20, default: "Warning", comment: "Severity", tooltip: "Alert severity level if the rule fails.", form_display: true, table_display: true, order: 6 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the rule was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the rule was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {data_quality_executions: true}
+table_layout:
+  default_order: [{field: rule_id, order: DESC}]
 ```
 
 ## DATA_QUALITY_EXECUTIONS
@@ -260,4 +416,14 @@ columns:
   total_records_checked: { type: integer, comment: "Checked", tooltip: "Total number of records scanned during execution.", form_display: true, table_display: true, order: 5 }
   executed_at: { type: datetime, comment: "Executed", tooltip: "Timestamp when the quality check was executed.", form_display: false, table_display: true }
   error_message: { type: text, comment: "Error", tooltip: "Error details if the execution failed due to system exception.", form_display: true, table_display: true, order: 6 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the execution was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the execution was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: execution_id, order: DESC}]
 ```
