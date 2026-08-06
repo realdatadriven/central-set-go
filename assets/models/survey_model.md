@@ -32,9 +32,16 @@ cs_app:
       - {table: choice, active: false}
       - {table: condition, active: false}
       - {table: question_type, active: false}
-  Survey Response:
+  Survey JSON:
     menu_icon: clipboard-document-list
     menu_order: 3
+    active: true
+    menu_config: '{"label": "survey","tooltip": "description","load_items": {"table": "survey","tables": ["survey"]}}'
+    tables:
+      - survey_json
+  Survey Response:
+    menu_icon: clipboard-document-list
+    menu_order: 4
     active: true
     tables:
       - response
