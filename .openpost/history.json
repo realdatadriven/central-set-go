@@ -1,1100 +1,5 @@
 [
   {
-    "id": "1783190677084",
-    "timestamp": 1783190677084,
-    "request": {
-      "id": "1783190596706",
-      "name": "ODATA_READ",
-      "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
-      "params": [
-        {
-          "key": "$filter",
-          "value": "app_id eq 3",
-          "enabled": true
-        }
-      ],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "76",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:44:37 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"No token received!\",\n\t\"success\": false\n}\n",
-      "time": 49,
-      "size": 52,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783190774924",
-    "timestamp": 1783190774924,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"username\": \"root\", \"password\": 1234}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 404,
-      "statusText": "Not Found",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "43",
-        "content-type": "text/plain; charset=utf-8",
-        "date": "Sat, 04 Jul 2026 18:46:14 GMT",
-        "vary": "Authorization",
-        "x-content-type-options": "nosniff"
-      },
-      "body": "404 page not found\n",
-      "time": 53,
-      "size": 19,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783190790488",
-    "timestamp": 1783190790488,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"username\": \"root\", \"password\": 1234}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 500,
-      "statusText": "Internal Server Error",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "119",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:46:30 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"Server Err: The server encountered a problem and could not process your request\",\n\t\"success\": false\n}\n",
-      "time": 53,
-      "size": 113,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191161380",
-    "timestamp": 1783191161380,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"username\": \"root\", \"password\": 1234}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:52:41 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 39,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191195677",
-    "timestamp": 1783191195677,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:53:15 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 265,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191209124",
-    "timestamp": 1783191209124,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:53:29 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 294,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191216903",
-    "timestamp": 1783191216903,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:53:36 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 266,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191218303",
-    "timestamp": 1783191218303,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": 1234}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "97",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:53:38 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"Account is inactive, please contact the admin!\",\n\t\"success\": false\n}\n",
-      "time": 47,
-      "size": 80,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191232726",
-    "timestamp": 1783191232726,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"Aa123456!\"}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "97",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:53:52 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"Account is inactive, please contact the admin!\",\n\t\"success\": false\n}\n",
-      "time": 30,
-      "size": 80,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191319423",
-    "timestamp": 1783191319423,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"Aa123456!\"}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 18:55:19 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 263,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191744195",
-    "timestamp": 1783191744195,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"Aa123456!\"}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:02:24 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 262,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191756781",
-    "timestamp": 1783191756781,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "782",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:02:36 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 2,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": \"2026-07-04T18:02:24.183005955-01:00\",\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:02:36-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE\"\n}\n",
-      "time": 271,
-      "size": 1213,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191780643",
-    "timestamp": 1783191780643,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"username\": \"root\", \"password\": \"1234\"}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "85",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:03:00 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"User or password incorrect!\",\n\t\"success\": false\n}\n",
-      "time": 75,
-      "size": 61,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191827662",
-    "timestamp": 1783191827662,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\"data\": {\"username\": \"root\", \"password\": \"1234\"}}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "723",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:03:47 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 0,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": null,\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:03:47-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc4ODM3NTgyNy42NDk1Nzk1LCJuYmYiOjE3ODMxOTE4MjcuNjQ5NTgxLCJpYXQiOjE3ODMxOTE4MjcuNjQ5NTc5OH0.sORsmcmUR8Ieggq5Jdhi8zAFMRQoC10ZXbgk6Tz6AI0\"\n}\n",
-      "time": 292,
-      "size": 1132,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191845866",
-    "timestamp": 1783191845866,
-    "request": {
-      "id": "1783190596706",
-      "name": "ODATA_READ",
-      "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
-      "params": [
-        {
-          "key": "$filter",
-          "value": "app_id eq 3",
-          "enabled": true
-        }
-      ],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Authorization",
-          "value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "75",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:04:05 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"Token is invalid!\",\n\t\"success\": false\n}\n",
-      "time": 37,
-      "size": 51,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783191904173",
-    "timestamp": 1783191904173,
-    "request": {
-      "id": "1783190596706",
-      "name": "ODATA_READ",
-      "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
-      "params": [
-        {
-          "key": "$filter",
-          "value": "app_id eq 3",
-          "enabled": true
-        }
-      ],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 500,
-      "statusText": "Internal Server Error",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "119",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:05:04 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"Server Err: The server encountered a problem and could not process your request\",\n\t\"success\": false\n}\n",
-      "time": 28,
-      "size": 113,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783192023662",
-    "timestamp": 1783192023662,
-    "request": {
-      "id": "1783190596706",
-      "name": "ODATA_READ",
-      "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3",
-      "params": [
-        {
-          "key": "$filter",
-          "value": "app_id eq 3",
-          "enabled": true
-        }
-      ],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "474",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:07:03 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"cols\": [\n\t\t\"app_id\",\n\t\t\"app\",\n\t\t\"app_desc\",\n\t\t\"version\",\n\t\t\"email\",\n\t\t\"db\",\n\t\t\"attach_logo\",\n\t\t\"category\",\n\t\t\"config\",\n\t\t\"user_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"SAAS\\\"\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\",\n\t\t\t\"version\": \"SAAS Model\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {},\n\t\"sql\": \"SELECT  \\\"app\\\".*,\\\"users\\\".\\\"username\\\" AS \\\"username\\\" FROM \\\"app\\\" LEFT OUTER JOIN \\\"users\\\" \\\"users\\\" ON \\\"users\\\".\\\"user_id\\\" = \\\"app\\\".\\\"user_id\\\" WHERE (\\\"app\\\".\\\"excluded\\\" IS FALSE AND \\\"app\\\".\\\"app_id\\\" = ?) LIMIT 10 OFFSET 0\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
-      "time": 64,
-      "size": 936,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783192065177",
-    "timestamp": 1783192065177,
-    "request": {
-      "id": "1783190596706",
-      "name": "ODATA_READ",
-      "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/app?$filter=app_id eq 3&$schema=true",
-      "params": [
-        {
-          "key": "$filter",
-          "value": "app_id eq 3",
-          "enabled": true
-        },
-        {
-          "key": "$schema",
-          "value": "true",
-          "enabled": true
-        }
-      ],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:07:45 GMT",
-        "transfer-encoding": "chunked",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"cols\": [\n\t\t\"app_id\",\n\t\t\"app\",\n\t\t\"app_desc\",\n\t\t\"version\",\n\t\t\"email\",\n\t\t\"db\",\n\t\t\"attach_logo\",\n\t\t\"category\",\n\t\t\"config\",\n\t\t\"user_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_desc\": \"Auto-created app for db \\\"SAAS\\\"\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"attach_logo\": null,\n\t\t\t\"category\": null,\n\t\t\t\"config\": null,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"email\": null,\n\t\t\t\"excluded\": false,\n\t\t\t\"updated_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\",\n\t\t\t\"version\": \"SAAS Model\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {},\n\t\"schema\": {\n\t\t\"_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"requires_rla\": false,\n\t\t\t\"table\": \"app\",\n\t\t\t\"table_desc\": \"Applications\",\n\t\t\t\"table_id\": 5,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"comment\": \"Applications\",\n\t\t\"crud_actions\": null,\n\t\t\"custom_form\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"app\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"App Name\\\",\\\"name\\\":\\\"app\\\",\\\"order\\\":1,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":9,\\\"sizelg\\\":9,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"version\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Version\\\",\\\"name\\\":\\\"version\\\",\\\"order\\\":2,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"app_desc\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"markdown\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"app_desc\\\",\\\"order\\\":3,\\\"pk\\\":false,\\\"rendermd\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"email\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Email\\\",\\\"name\\\":\\\"email\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"regex_val\\\":\\\"^\\\\\\\\w+([\\\\\\\\.-]?\\\\\\\\w+)*@\\\\\\\\w+([\\\\\\\\.-]?\\\\\\\\w+)*(\\\\\\\\.\\\\\\\\w{2,3})+$\\\",\\\"required\\\":false,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"db\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Database\\\",\\\"name\\\":\\\"db\\\",\\\"order\\\":5,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"attach_logo\\\":{\\\"att\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Logo\\\",\\\"name\\\":\\\"attach_logo\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"category\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Category\\\",\\\"name\\\":\\\"category\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"config\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"json\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Config\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"config\\\",\\\"order\\\":8,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"username\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"name_org\\\":\\\"user_id\\\",\\\"order\\\":9,\\\"pk\\\":false,\\\"ref_field\\\":\\\"user_id\\\",\\\"ref_table\\\":\\\"users\\\",\\\"referred_pk\\\":\\\"user_id\\\",\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"created_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":10,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"updated_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":11,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"excluded\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":12,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12}},\\\"layout\\\":{\\\"__order\\\":[\\\"tabs_steps\\\",\\\"form_in_popup\\\",\\\"size\\\",\\\"allow_in_subform\\\",\\\"tabs_steps_conf\\\",\\\"sub_form_size\\\"],\\\"allow_in_subform\\\":{\\\"__order\\\":[\\\"menu\\\",\\\"role_app\\\"],\\\"menu\\\":true,\\\"role_app\\\":true},\\\"form_in_popup\\\":false,\\\"size\\\":9,\\\"sub_form_size\\\":9,\\\"tabs_steps\\\":\\\"tabs\\\",\\\"tabs_steps_conf\\\":[{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"app\\\",\\\"app_desc\\\",\\\"version\\\",\\\"email\\\",\\\"db\\\",\\\"attach_logo\\\",\\\"category\\\"],\\\"label\\\":\\\"App\\\"},{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"config\\\"],\\\"label\\\":\\\"Config\\\"}]},\\\"extra_options\\\":[]}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_form_id\": 5,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"app\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"custom_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"app\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"App Name\\\",\\\"name\\\":\\\"app\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"version\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Version\\\",\\\"name\\\":\\\"version\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"app_desc\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"name\\\":\\\"app_desc\\\",\\\"order\\\":3,\\\"pk\\\":false},\\\"email\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Email\\\",\\\"name\\\":\\\"email\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"db\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Database\\\",\\\"name\\\":\\\"db\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"attach_logo\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Logo\\\",\\\"name\\\":\\\"attach_logo\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"category\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Category\\\",\\\"name\\\":\\\"category\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"config\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Config\\\",\\\"name\\\":\\\"config\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"username\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":11,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":12,\\\"pk\\\":false}},\\\"layout\\\":{\\\"__order\\\":[\\\"allow_in_submenu\\\",\\\"default_order\\\",\\\"allow_import\\\"],\\\"allow_import\\\":false,\\\"allow_in_submenu\\\":{\\\"__order\\\":[\\\"menu\\\"],\\\"menu\\\":true},\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"app_id\\\",\\\"order\\\":\\\"DESC\\\"}]},\\\"extra_options\\\":[{\\\"__order\\\":[\\\"size\\\",\\\"component\\\",\\\"label\\\",\\\"data\\\",\\\"icon\\\",\\\"pop_up\\\",\\\"main\\\"],\\\"component\\\":\\\"AdminApps\\\",\\\"data\\\":\\\"{ \\\\\\\"profile\\\\\\\": false, \\\\\\\"actions\\\\\\\": [ { \\\\\\\"type\\\\\\\": \\\\\\\"btn\\\\\\\", \\\\\\\"icon\\\\\\\": \\\\\\\"refresh\\\\\\\", \\\\\\\"name\\\\\\\": \\\\\\\"REFRESH\\\\\\\", \\\\\\\"class\\\\\\\": \\\\\\\"btn-sm text-info\\\\\\\", \\\\\\\"label\\\\\\\": \\\\\\\"crud.refresh\\\\\\\", \\\\\\\"action\\\\\\\": null }, { \\\\\\\"type\\\\\\\": \\\\\\\"btn\\\\\\\", \\\\\\\"icon\\\\\\\": \\\\\\\"save\\\\\\\", \\\\\\\"name\\\\\\\": \\\\\\\"SAVE\\\\\\\", \\\\\\\"class\\\\\\\": \\\\\\\"btn-sm text-info\\\\\\\", \\\\\\\"label\\\\\\\": \\\\\\\"crud.save\\\\\\\", \\\\\\\"action\\\\\\\": null } ] }\\\",\\\"icon\\\":\\\"cog\\\",\\\"label\\\":\\\"admin_apps\\\",\\\"main\\\":true,\\\"pop_up\\\":false,\\\"size\\\":12}]}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_table_id\": 5,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"app\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"database\": \"ADMIN\",\n\t\t\"fields\": {\n\t\t\t\"app\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"App Name\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app\",\n\t\t\t\t\"field_order\": 2,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 43,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_desc\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Description\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_desc\",\n\t\t\t\t\"field_order\": 3,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app_desc\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 44,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"autoincrement\": true,\n\t\t\t\t\"comment\": \"App ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_order\": 1,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": true,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 42,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"attach_logo\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Logo\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"attach_logo\",\n\t\t\t\t\"field_order\": 7,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"attach_logo\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 48,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"category\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Category\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"category\",\n\t\t\t\t\"field_order\": 8,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"category\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 49,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"config\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Config\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"config\",\n\t\t\t\t\"field_order\": 9,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"config\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 50,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Created at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_order\": 11,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"created_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 52,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"db\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Database\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"db\",\n\t\t\t\t\"field_order\": 6,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"db\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 47,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"email\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Email\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"email\",\n\t\t\t\t\"field_order\": 5,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"email\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 46,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Excluded\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_order\": 13,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"excluded\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 54,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Updated at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_order\": 12,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"updated_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 53,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"User ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_order\": 10,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"user_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"users\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"users\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"user_id\",\n\t\t\t\t\"referred_table\": \"users\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 51,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"version\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Version\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"version\",\n\t\t\t\t\"field_order\": 4,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"version\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"table_schema_id\": 45,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"fields_order\": [\n\t\t\t\"app_id\",\n\t\t\t\"app\",\n\t\t\t\"app_desc\",\n\t\t\t\"version\",\n\t\t\t\"email\",\n\t\t\t\"db\",\n\t\t\t\"attach_logo\",\n\t\t\t\"category\",\n\t\t\t\"config\",\n\t\t\t\"user_id\",\n\t\t\t\"created_at\",\n\t\t\t\"updated_at\",\n\t\t\t\"excluded\"\n\t\t],\n\t\t\"pk\": \"app_id\",\n\t\t\"table\": \"app\",\n\t\t\"table_id\": 5,\n\t\t\"translate_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"lang\": \"en\",\n\t\t\t\"table\": \"app\",\n\t\t\t\"table_org_desc\": \"Applications\",\n\t\t\t\"table_tooltip\": null,\n\t\t\t\"table_transl_desc\": \"Applications\",\n\t\t\t\"transl_tbl_id\": 5,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"translate_table_field\": {\n\t\t\t\"app\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app\",\n\t\t\t\t\"field_org_desc\": \"App Name\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App Name\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 43,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_desc\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_desc\",\n\t\t\t\t\"field_org_desc\": \"Description\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Description\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 44,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_org_desc\": \"App ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 42,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"attach_logo\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"attach_logo\",\n\t\t\t\t\"field_org_desc\": \"Logo\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Logo\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 48,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"category\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"category\",\n\t\t\t\t\"field_org_desc\": \"Category\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Category\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 49,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"config\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"config\",\n\t\t\t\t\"field_org_desc\": \"Config\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Config\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 50,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_org_desc\": \"Created at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Created at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 52,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"db\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"db\",\n\t\t\t\t\"field_org_desc\": \"Database\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Database\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 47,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"email\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"email\",\n\t\t\t\t\"field_org_desc\": \"Email\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Email\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 46,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_org_desc\": \"Excluded\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Excluded\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 54,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_org_desc\": \"Updated at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Updated at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 53,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_org_desc\": \"User ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"User ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 51,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"version\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"version\",\n\t\t\t\t\"field_org_desc\": \"Version\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Version\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"app\",\n\t\t\t\t\"transl_tbl_field_id\": 45,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"validations\": null\n\t},\n\t\"sql\": \"SELECT  \\\"app\\\".*,\\\"users\\\".\\\"username\\\" AS \\\"username\\\" FROM \\\"app\\\" LEFT OUTER JOIN \\\"users\\\" \\\"users\\\" ON \\\"users\\\".\\\"user_id\\\" = \\\"app\\\".\\\"user_id\\\" WHERE (\\\"app\\\".\\\"excluded\\\" IS FALSE AND \\\"app\\\".\\\"app_id\\\" = ?) LIMIT 10 OFFSET 0\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
-      "time": 58,
-      "size": 20721,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783192110709",
-    "timestamp": 1783192110709,
-    "request": {
-      "id": "1783190596706",
-      "name": "ODATA_READ",
-      "method": "GET",
-      "url": "http://localhost:4444/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
-      "params": [
-        {
-          "key": "$filter",
-          "value": "app_id eq 3",
-          "enabled": true
-        },
-        {
-          "key": "$schema",
-          "value": "true",
-          "enabled": true
-        }
-      ],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoyLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMDRUMTg6MDI6MjQuMTgzMDA1OTU1LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzg4Mzc1NzU2Ljc2NzIwNTUsIm5iZiI6MTc4MzE5MTc1Ni43NjcyMDY0LCJpYXQiOjE3ODMxOTE3NTYuNzY3MjA1N30.oTS0eftrtLp_0kIGNDJGJXRajOC7ghXoU1Cf-r3AFZE",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:08:30 GMT",
-        "transfer-encoding": "chunked",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"cols\": [\n\t\t\"menu_id\",\n\t\t\"menu\",\n\t\t\"menu_desc\",\n\t\t\"menu_icon\",\n\t\t\"menu_order\",\n\t\t\"menu_config\",\n\t\t\"app_id\",\n\t\t\"active\",\n\t\t\"user_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"excluded\": false,\n\t\t\t\"menu\": \"Dashboards\",\n\t\t\t\"menu_config\": \"{\\\"label\\\": \\\"dashboard\\\",\\\"tooltip\\\": \\\"dashboard_desc\\\",\\\"load_items\\\": {\\\"table\\\": \\\"dashboard\\\",\\\"tables\\\": [\\\"dashboard\\\"]}}\",\n\t\t\t\"menu_desc\": \"Dashboards\",\n\t\t\t\"menu_icon\": \"document-report\",\n\t\t\t\"menu_id\": 10,\n\t\t\t\"menu_order\": 1,\n\t\t\t\"updated_at\": \"2026-07-03T19:41:20.367422331-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\"\n\t\t},\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"app\": \"SAAS\",\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-01T19:00:54.210376666-01:00\",\n\t\t\t\"excluded\": false,\n\t\t\t\"menu\": \"SASS\",\n\t\t\t\"menu_config\": \"\",\n\t\t\t\"menu_desc\": \"SASS\",\n\t\t\t\"menu_icon\": \"server-stack\",\n\t\t\t\"menu_id\": 11,\n\t\t\t\"menu_order\": 2,\n\t\t\t\"updated_at\": \"2026-07-03T19:41:20.367422331-01:00\",\n\t\t\t\"user_id\": 1,\n\t\t\t\"username\": \"root\"\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {},\n\t\"schema\": {\n\t\t\"_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"requires_rla\": false,\n\t\t\t\"table\": \"menu\",\n\t\t\t\"table_desc\": \"Menus\",\n\t\t\t\"table_id\": 6,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"comment\": \"Menus\",\n\t\t\"crud_actions\": null,\n\t\t\"custom_form\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"menu\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu\\\",\\\"name\\\":\\\"menu\\\",\\\"order\\\":1,\\\"pk\\\":false,\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_desc\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"name\\\":\\\"menu_desc\\\",\\\"order\\\":2,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":7,\\\"sizelg\\\":7,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"app\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app\\\",\\\"name_org\\\":\\\"app_id\\\",\\\"order\\\":3,\\\"pk\\\":false,\\\"ref_field\\\":\\\"app_id\\\",\\\"ref_table\\\":\\\"app\\\",\\\"referred_pk\\\":\\\"app_id\\\",\\\"required\\\":true,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_icon\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Icon\\\",\\\"name\\\":\\\"menu_icon\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_order\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Order\\\",\\\"name\\\":\\\"menu_order\\\",\\\"order\\\":5,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"active\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"menu_config\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"json\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu Config\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"menu_config\\\",\\\"order\\\":7,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12,\\\"use_label\\\":true},\\\"username\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"name_org\\\":\\\"user_id\\\",\\\"order\\\":8,\\\"pk\\\":false,\\\"ref_field\\\":\\\"user_id\\\",\\\"ref_table\\\":\\\"users\\\",\\\"referred_pk\\\":\\\"user_id\\\",\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"created_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":9,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"updated_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":10,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"excluded\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":11,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12}},\\\"layout\\\":{\\\"__order\\\":[\\\"tabs_steps\\\",\\\"form_in_popup\\\",\\\"size\\\",\\\"allow_in_subform\\\",\\\"tabs_steps_conf\\\"],\\\"allow_in_subform\\\":{\\\"__order\\\":[\\\"menu_table\\\"],\\\"menu_table\\\":true},\\\"form_in_popup\\\":false,\\\"size\\\":8,\\\"tabs_steps\\\":\\\"tabs\\\",\\\"tabs_steps_conf\\\":[]}}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_form_id\": 6,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"menu\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"custom_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"menu\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu\\\",\\\"name\\\":\\\"menu\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"menu_desc\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Description\\\",\\\"name\\\":\\\"menu_desc\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"app\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app\\\",\\\"order\\\":3,\\\"pk\\\":false},\\\"menu_icon\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Icon\\\",\\\"name\\\":\\\"menu_icon\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"menu_order\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Order\\\",\\\"name\\\":\\\"menu_order\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"active\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"menu_config\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Menu Config\\\",\\\"name\\\":\\\"menu_config\\\",\\\"order\\\":7,\\\"pk\\\":false},\\\"username\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"username\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":11,\\\"pk\\\":false}},\\\"layout\\\":{\\\"__order\\\":[\\\"allow_in_submenu\\\",\\\"default_order\\\",\\\"allow_import\\\"],\\\"allow_import\\\":false,\\\"allow_in_submenu\\\":{\\\"__order\\\":[\\\"menu_table\\\"],\\\"menu_table\\\":true},\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"app_id\\\",\\\"order\\\":\\\"ASC\\\"},{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"menu_order\\\",\\\"order\\\":\\\"ASC\\\"}]}}\",\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.933941119-01:00\",\n\t\t\t\"custom_table_id\": 6,\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"menu\",\n\t\t\t\"updated_at\": \"2026-07-02T19:27:14.621836608-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"database\": \"ADMIN\",\n\t\t\"fields\": {\n\t\t\t\"active\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Active\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": \"1\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_order\": 8,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"active\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 62,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"App ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_order\": 7,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"app_id\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"app\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"app\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"app_id\",\n\t\t\t\t\"referred_table\": \"app\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 61,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Created at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_order\": 10,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"created_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 64,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Excluded\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_order\": 12,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"excluded\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 66,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Menu\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu\",\n\t\t\t\t\"field_order\": 2,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 56,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_config\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Menu Config\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_config\",\n\t\t\t\t\"field_order\": 6,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_config\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 60,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_desc\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Description\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_desc\",\n\t\t\t\t\"field_order\": 3,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_desc\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 57,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_icon\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Icon\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_icon\",\n\t\t\t\t\"field_order\": 4,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_icon\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 58,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_id\": {\n\t\t\t\t\"autoincrement\": true,\n\t\t\t\t\"comment\": \"Menu ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_id\",\n\t\t\t\t\"field_order\": 1,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": true,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 55,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_order\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Order\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_order\",\n\t\t\t\t\"field_order\": 5,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"menu_order\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 59,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Updated at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_order\": 11,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"updated_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 65,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"User ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_order\": 9,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"user_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"users\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"users\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"user_id\",\n\t\t\t\t\"referred_table\": \"users\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"table_schema_id\": 63,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"fields_order\": [\n\t\t\t\"menu_id\",\n\t\t\t\"menu\",\n\t\t\t\"menu_desc\",\n\t\t\t\"menu_icon\",\n\t\t\t\"menu_order\",\n\t\t\t\"menu_config\",\n\t\t\t\"app_id\",\n\t\t\t\"active\",\n\t\t\t\"user_id\",\n\t\t\t\"created_at\",\n\t\t\t\"updated_at\",\n\t\t\t\"excluded\"\n\t\t],\n\t\t\"pk\": \"menu_id\",\n\t\t\"table\": \"menu\",\n\t\t\"table_id\": 6,\n\t\t\"translate_table\": {\n\t\t\t\"app_id\": 1,\n\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\"db\": \"ADMIN\",\n\t\t\t\"excluded\": false,\n\t\t\t\"lang\": \"en\",\n\t\t\t\"table\": \"menu\",\n\t\t\t\"table_org_desc\": \"Menus\",\n\t\t\t\"table_tooltip\": null,\n\t\t\t\"table_transl_desc\": \"Menus\",\n\t\t\t\"transl_tbl_id\": 6,\n\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"translate_table_field\": {\n\t\t\t\"active\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_org_desc\": \"Active\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Active\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 62,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_org_desc\": \"App ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 61,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_org_desc\": \"Created at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Created at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 64,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_org_desc\": \"Excluded\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Excluded\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 66,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu\",\n\t\t\t\t\"field_org_desc\": \"Menu\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Menu\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 56,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_config\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_config\",\n\t\t\t\t\"field_org_desc\": \"Menu Config\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Menu Config\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 60,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_desc\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_desc\",\n\t\t\t\t\"field_org_desc\": \"Description\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Description\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 57,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_icon\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_icon\",\n\t\t\t\t\"field_org_desc\": \"Icon\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Icon\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 58,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_id\",\n\t\t\t\t\"field_org_desc\": \"Menu ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Menu ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 55,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"menu_order\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"menu_order\",\n\t\t\t\t\"field_org_desc\": \"Order\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Order\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 59,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_org_desc\": \"Updated at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Updated at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 65,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"created_at\": \"2026-06-18T19:17:53.467387478-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_org_desc\": \"User ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"User ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"transl_tbl_field_id\": 63,\n\t\t\t\t\"updated_at\": \"2026-07-02T19:27:13.956244925-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"validations\": [\n\t\t\t{\n\t\t\t\t\"active\": true,\n\t\t\t\t\"app_id\": 1,\n\t\t\t\t\"create\": true,\n\t\t\t\t\"created_at\": \"2026-06-21T13:47:54.305308247-01:00\",\n\t\t\t\t\"db\": \"ADMIN\",\n\t\t\t\t\"delete\": false,\n\t\t\t\t\"err_msg\": \"Menu \\\"{{.menu}}\\\" already exists for app \\\"{{.appdata.app}}\\\" (app_id = {{.app_id}})!\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"read\": false,\n\t\t\t\t\"sql\": \"select * from menu where menu = :menu and app_id = :app_id and excluded = false\",\n\t\t\t\t\"table\": \"menu\",\n\t\t\t\t\"update\": false,\n\t\t\t\t\"updated_at\": \"2026-07-04T17:18:01.87228087-01:00\",\n\t\t\t\t\"user_id\": 1,\n\t\t\t\t\"valid_criticity_id\": 4,\n\t\t\t\t\"valid_reaction_id\": 2,\n\t\t\t\t\"validation\": \"Ensure menu uniqueness for a specific app\",\n\t\t\t\t\"validation_code\": \"APP_MENU_UNIQUENESS\",\n\t\t\t\t\"validation_id\": 2\n\t\t\t}\n\t\t]\n\t},\n\t\"sql\": \"SELECT  \\\"menu\\\".*,\\\"app\\\".\\\"app\\\" AS \\\"app\\\",\\\"users\\\".\\\"username\\\" AS \\\"username\\\" FROM \\\"menu\\\" LEFT OUTER JOIN \\\"app\\\" \\\"app\\\" ON \\\"app\\\".\\\"app_id\\\" = \\\"menu\\\".\\\"app_id\\\"\\nLEFT OUTER JOIN \\\"users\\\" \\\"users\\\" ON \\\"users\\\".\\\"user_id\\\" = \\\"menu\\\".\\\"user_id\\\" WHERE (\\\"menu\\\".\\\"excluded\\\" IS FALSE AND \\\"app\\\".\\\"app_id\\\" = ?) LIMIT 10 OFFSET 0\",\n\t\"success\": true,\n\t\"total\": 2\n}\n",
-      "time": 39,
-      "size": 20114,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783192729076",
-    "timestamp": 1783192729076,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\n  \"lang\": \"pt\",\n  \"data\": {\n    \"username\": \"root\", \n    \"password\": \"1234\"\n  }\n}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "739",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:18:49 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 0,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": null,\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:18:49-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc4ODM3NjcyOS4wNjEwMDU0LCJuYmYiOjE3ODMxOTI3MjkuMDYxMDA2MywiaWF0IjoxNzgzMTkyNzI5LjA2MTAwNTh9.0_uUBDKnEInjI92sPSk4m7HlpDBfk8jb7hderNxQPlE\"\n}\n",
-      "time": 329,
-      "size": 1133,
-      "cookies": []
-    }
-  },
-  {
-    "id": "1783192771662",
-    "timestamp": 1783192771662,
-    "request": {
-      "id": "1783190705616",
-      "name": "LOGIN",
-      "method": "POST",
-      "url": "http://localhost:4444/dyn_api/login/index",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/json",
-          "enabled": true
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "json",
-        "raw": "{\n  \"lang\": \"pt\",\n  \"data\": {\n    \"username\": \"root\", \n    \"password\": \"1234\"\n  }\n}"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "724",
-        "content-type": "application/json",
-        "date": "Sat, 04 Jul 2026 19:19:31 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"data\": {\n\t\t\"active\": true,\n\t\t\"alter_pass_nxt_login\": false,\n\t\t\"code_2f_expires_at\": null,\n\t\t\"enable_2f_auth\": false,\n\t\t\"excluded\": false,\n\t\t\"failed_login_attmpt\": 0,\n\t\t\"first_name\": \"Super\",\n\t\t\"lang_id\": 1,\n\t\t\"last_failed_login\": null,\n\t\t\"last_name\": \"Admin\",\n\t\t\"nxt_code_2f_auth\": null,\n\t\t\"role_id\": 1,\n\t\t\"user_id\": 1,\n\t\t\"username\": \"root\"\n\t},\n\t\"expiry\": \"2026-09-02T18:19:31-01:00\",\n\t\"msg\": \"Loged in successfully!\",\n\t\"success\": true,\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpudWxsLFwibGFzdF9uYW1lXCI6XCJBZG1pblwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6MSxcInVzZXJfaWRcIjoxLFwidXNlcm5hbWVcIjpcInJvb3RcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTc4ODM3Njc3MS42NTE3MjYsIm5iZiI6MTc4MzE5Mjc3MS42NTE3MjcyLCJpYXQiOjE3ODMxOTI3NzEuNjUxNzI2NX0.kEa5B2G9y5dWrmSljYzYVU0PfmlQv-QtIvQrzQRkvao\"\n}\n",
-      "time": 258,
-      "size": 1132,
-      "cookies": []
-    }
-  },
-  {
     "id": "1785069427856",
     "timestamp": 1785069427856,
     "request": {
@@ -2045,6 +950,262 @@
       "body": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n\n<head>\n\t<meta charset=\"UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\t<title>Plans — CRUD mockup</title>\n\t<script src=\"https://cdn.tailwindcss.com\"></script>\n\t<link href=\"https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css\" rel=\"stylesheet\" type=\"text/css\" />\n</head>\n\n<body class=\"bg-base-200 min-h-screen p-6\">\n\n\t<div class=\"card bg-base-100 shadow-md border border-base-300 max-w-6xl mx-auto\">\n\t\t<div class=\"card-body\">[{\"plan\":\"DEMO\",\"plan_id\":2}]\n\t\t\t{\"app_id\":3,\"config\":\"{\\\"fields\\\":{\\\"plan\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Code\\\",\\\"name\\\":\\\"plan\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"sort_order\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Sort Order\\\",\\\"name\\\":\\\"sort_order\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"product\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Product ID\\\",\\\"name\\\":\\\"product\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"is_public\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Public\\\",\\\"name\\\":\\\"is_public\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"plan_desc\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Description\\\",\\\"name\\\":\\\"plan_desc\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"is_self_hosted_allowed\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Self-Hosted Allowed\\\",\\\"name\\\":\\\"is_self_hosted_allowed\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"is_custom_pricing_allowed\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Custom Pricing\\\",\\\"name\\\":\\\"is_custom_pricing_allowed\\\",\\\"order\\\":7,\\\"pk\\\":false},\\\"provider\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Provider ID\\\",\\\"name\\\":\\\"provider\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"monthly_amount\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Monthly Amount\\\",\\\"name\\\":\\\"monthly_amount\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"annual_amount\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Annual Amount\\\",\\\"name\\\":\\\"annual_amount\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"currency\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Currency ID\\\",\\\"name\\\":\\\"currency\\\",\\\"order\\\":11,\\\"pk\\\":false},\\\"recurring_interval\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Recurring Interval\\\",\\\"name\\\":\\\"recurring_interval\\\",\\\"order\\\":12,\\\"pk\\\":false},\\\"recurring_interval_count\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Billing Recurring Interval Count\\\",\\\"name\\\":\\\"recurring_interval_count\\\",\\\"order\\\":13,\\\"pk\\\":false},\\\"billing_scheme\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Scheme ID\\\",\\\"name\\\":\\\"billing_scheme\\\",\\\"order\\\":14,\\\"pk\\\":false},\\\"payment_provider\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Payment Provider ID\\\",\\\"name\\\":\\\"payment_provider\\\",\\\"order\\\":15,\\\"pk\\\":false},\\\"payment_product_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product ID\\\",\\\"name\\\":\\\"payment_product_id\\\",\\\"order\\\":16,\\\"pk\\\":false},\\\"active\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":16,\\\"pk\\\":false},\\\"terraform_template\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Terraform Script\\\",\\\"name\\\":\\\"terraform_template\\\",\\\"order\\\":17,\\\"pk\\\":false},\\\"payment_price_monthly_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Monthly Price ID\\\",\\\"name\\\":\\\"payment_price_monthly_id\\\",\\\"order\\\":17,\\\"pk\\\":false},\\\"payment_price_annual_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Annual Price ID\\\",\\\"name\\\":\\\"payment_price_annual_id\\\",\\\"order\\\":18,\\\"pk\\\":false},\\\"payment_product_metadata\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product Metadata\\\",\\\"name\\\":\\\"payment_product_metadata\\\",\\\"order\\\":19,\\\"pk\\\":false},\\\"payment_product_last_sync_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Provider Last Sync At\\\",\\\"name\\\":\\\"payment_product_last_sync_at\\\",\\\"order\\\":20,\\\"pk\\\":false},\\\"user_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"user_id\\\",\\\"order\\\":23,\\\"pk\\\":false},\\\"app_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app_id\\\",\\\"order\\\":24,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":25,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":26,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":27,\\\"pk\\\":false}},\\\"layout\\\":{\\\"__order\\\":[\\\"default_order\\\",\\\"exec_button\\\"],\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"sort_order\\\",\\\"order\\\":\\\"ASC\\\"}],\\\"exec_button\\\":{\\\"__order\\\":[\\\"callApi\\\",\\\"api\\\",\\\"tooltip\\\",\\\"icon\\\"],\\\"api\\\":\\\"payment/sync_prod\\\",\\\"callApi\\\":true,\\\"icon\\\":\\\"arrow-path\\\",\\\"tooltip\\\":\\\"Sync Product With Payment Provider\\\"}}}\",\"created_at\":\"2026-07-19T08:56:14.569633378-01:00\",\"custom_table_id\":71,\"db\":\"SAAS\",\"excluded\":false,\"table\":\"plan\",\"updated_at\":\"2026-07-26T16:27:10.798024941-01:00\",\"user_id\":1}\n\t\t\t<!-- Header -->\n\t\t\t<div class=\"flex flex-wrap items-center justify-between gap-3 mb-4\">\n\t\t\t\t<div>\n\t\t\t\t\t<h2 class=\"text-xl font-semibold\">Plans</h2>\n\t\t\t\t\t<p class=\"text-sm text-base-content/60\">5 total</p>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"flex items-center gap-2\">\n\t\t\t\t\t<div class=\"join\">\n\t\t\t\t\t\t<button type=\"button\" id=\"btn-view-table\" class=\"btn btn-sm join-item btn-active\"\n\t\t\t\t\t\t\tonclick=\"crudSetView('table')\">\n\t\t\t\t\t\t\tTable\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<button type=\"button\" id=\"btn-view-cards\" class=\"btn btn-sm join-item\"\n\t\t\t\t\t\t\tonclick=\"crudSetView('cards')\">\n\t\t\t\t\t\t\tCards\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t\t<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"crudOpenForm('Add plan')\">\n\t\t\t\t\t\t+ Add\n\t\t\t\t\t</button>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<!-- Search -->\n\t\t\t<div class=\"mb-4\">\n\t\t\t\t<label class=\"input input-bordered flex items-center gap-2 w-full sm:w-80\">\n\t\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4 opacity-50\" viewBox=\"0 0 24 24\" fill=\"none\"\n\t\t\t\t\t\tstroke=\"currentColor\" stroke-width=\"2\">\n\t\t\t\t\t\t<circle cx=\"11\" cy=\"11\" r=\"7\"></circle>\n\t\t\t\t\t\t<line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"></line>\n\t\t\t\t\t</svg>\n\t\t\t\t\t<input type=\"text\" id=\"crud-search\" class=\"grow\" placeholder=\"Search plans…\"\n\t\t\t\t\t\toninput=\"crudSearch(this.value)\" />\n\t\t\t\t</label>\n\t\t\t</div>\n\n\t\t\t<!-- Bulk actions bar (shown when rows are selected) -->\n\t\t\t<div id=\"crud-bulk-bar\" class=\"hidden alert bg-base-200 py-2 px-4 mb-3 flex items-center justify-between\">\n\t\t\t\t<span><span id=\"crud-bulk-count\">0</span> selected</span>\n\t\t\t\t<div class=\"flex gap-2\">\n\t\t\t\t\t<button type=\"button\" class=\"btn btn-ghost btn-xs\" onclick=\"crudClearSelection()\">Clear</button>\n\t\t\t\t\t<button type=\"button\" class=\"btn btn-error btn-xs\" onclick=\"crudBulkDelete()\">Delete\n\t\t\t\t\t\tselected</button>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<!-- Table view (default) -->\n\t\t\t<div id=\"crud-view-table\" class=\"overflow-x-auto\">\n\t\t\t\t<table class=\"table table-zebra\">\n\t\t\t\t\t<thead>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th class=\"w-8\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" class=\"checkbox checkbox-sm\" id=\"crud-select-all\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudSelectAll(this.checked)\" />\n\t\t\t\t\t\t\t</th>\n\t\t\t\t\t\t\t<th>Plan Code</th>\n\t\t\t\t\t\t\t<th>Product</th>\n\t\t\t\t\t\t\t<th>Provider</th>\n\t\t\t\t\t\t\t<th>Monthly Amount</th>\n\t\t\t\t\t\t\t<th>Active</th>\n\t\t\t\t\t\t\t<th class=\"text-right\">Actions</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</thead>\n\t\t\t\t\t<tbody id=\"crud-table-body\">\n\t\t\t\t\t\t<tr class=\"hover crud-row\" data-name=\"FREE Base Product Stripe\">\n\t\t\t\t\t\t\t<td><input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" /></td>\n\t\t\t\t\t\t\t<td>FREE</td>\n\t\t\t\t\t\t\t<td>Base Product</td>\n\t\t\t\t\t\t\t<td>Stripe</td>\n\t\t\t\t\t\t\t<td>$0.00</td>\n\t\t\t\t\t\t\t<td><span class=\"badge badge-success badge-sm\">Yes</span></td>\n\t\t\t\t\t\t\t<td class=\"text-right\">\n\t\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: FREE')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing FREE with payment provider…')\">Sync Product\n\t\t\t\t\t\t\t\t\t\t\t\tWith Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('FREE')\">Delete</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"hover crud-row\" data-name=\"DEMO Base Product Stripe\">\n\t\t\t\t\t\t\t<td><input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" /></td>\n\t\t\t\t\t\t\t<td>DEMO</td>\n\t\t\t\t\t\t\t<td>Base Product</td>\n\t\t\t\t\t\t\t<td>Stripe</td>\n\t\t\t\t\t\t\t<td>$19.90</td>\n\t\t\t\t\t\t\t<td><span class=\"badge badge-success badge-sm\">Yes</span></td>\n\t\t\t\t\t\t\t<td class=\"text-right\">\n\t\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: DEMO')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing DEMO with payment provider…')\">Sync Product\n\t\t\t\t\t\t\t\t\t\t\t\tWith Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('DEMO')\">Delete</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"hover crud-row\" data-name=\"PRO Pro Product Paddle\">\n\t\t\t\t\t\t\t<td><input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" /></td>\n\t\t\t\t\t\t\t<td>PRO</td>\n\t\t\t\t\t\t\t<td>Pro Product</td>\n\t\t\t\t\t\t\t<td>Paddle</td>\n\t\t\t\t\t\t\t<td>$49.00</td>\n\t\t\t\t\t\t\t<td><span class=\"badge badge-ghost badge-sm\">No</span></td>\n\t\t\t\t\t\t\t<td class=\"text-right\">\n\t\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: PRO')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing PRO with payment provider…')\">Sync Product\n\t\t\t\t\t\t\t\t\t\t\t\tWith Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('PRO')\">Delete</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"hover crud-row\" data-name=\"ENTERPRISE Pro Product Paddle\">\n\t\t\t\t\t\t\t<td><input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" /></td>\n\t\t\t\t\t\t\t<td>ENTERPRISE</td>\n\t\t\t\t\t\t\t<td>Pro Product</td>\n\t\t\t\t\t\t\t<td>Paddle</td>\n\t\t\t\t\t\t\t<td>$199.00</td>\n\t\t\t\t\t\t\t<td><span class=\"badge badge-success badge-sm\">Yes</span></td>\n\t\t\t\t\t\t\t<td class=\"text-right\">\n\t\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: ENTERPRISE')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing ENTERPRISE with payment provider…')\">Sync\n\t\t\t\t\t\t\t\t\t\t\t\tProduct With Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('ENTERPRISE')\">Delete</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"hover crud-row\" data-name=\"DEMO_LEGACY Base Product Manual\">\n\t\t\t\t\t\t\t<td><input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" /></td>\n\t\t\t\t\t\t\t<td>DEMO_LEGACY</td>\n\t\t\t\t\t\t\t<td>Base Product</td>\n\t\t\t\t\t\t\t<td>Manual</td>\n\t\t\t\t\t\t\t<td>$9.90</td>\n\t\t\t\t\t\t\t<td><span class=\"badge badge-ghost badge-sm\">No</span></td>\n\t\t\t\t\t\t\t<td class=\"text-right\">\n\t\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: DEMO_LEGACY')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing DEMO_LEGACY with payment provider…')\">Sync\n\t\t\t\t\t\t\t\t\t\t\t\tProduct With Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('DEMO_LEGACY')\">Delete</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</tbody>\n\t\t\t\t</table>\n\t\t\t</div>\n\n\t\t\t<!-- Card view -->\n\t\t\t<div id=\"crud-view-cards\" class=\"hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4\">\n\n\t\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm crud-card\"\n\t\t\t\t\tdata-name=\"FREE Base Product Stripe\">\n\t\t\t\t\t<div class=\"card-body p-4\">\n\t\t\t\t\t\t<div class=\"flex items-start justify-between gap-2\">\n\t\t\t\t\t\t\t<div class=\"flex items-center gap-2\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" />\n\t\t\t\t\t\t\t\t<h3 class=\"card-title text-base\">FREE</h3>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: FREE')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing FREE with payment provider…')\">Sync Product With\n\t\t\t\t\t\t\t\t\t\t\tPayment Provider</a></li>\n\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('FREE')\">Delete</a></li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<dl class=\"text-sm space-y-1 mt-1\">\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Product</dt>\n\t\t\t\t\t\t\t\t<dd>Base Product</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Provider</dt>\n\t\t\t\t\t\t\t\t<dd>Stripe</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Monthly Amount</dt>\n\t\t\t\t\t\t\t\t<dd>$0.00</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Active</dt>\n\t\t\t\t\t\t\t\t<dd><span class=\"badge badge-success badge-sm\">Yes</span></dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</dl>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm crud-card\"\n\t\t\t\t\tdata-name=\"DEMO Base Product Stripe\">\n\t\t\t\t\t<div class=\"card-body p-4\">\n\t\t\t\t\t\t<div class=\"flex items-start justify-between gap-2\">\n\t\t\t\t\t\t\t<div class=\"flex items-center gap-2\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" />\n\t\t\t\t\t\t\t\t<h3 class=\"card-title text-base\">DEMO</h3>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: DEMO')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing DEMO with payment provider…')\">Sync Product With\n\t\t\t\t\t\t\t\t\t\t\tPayment Provider</a></li>\n\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('DEMO')\">Delete</a></li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<dl class=\"text-sm space-y-1 mt-1\">\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Product</dt>\n\t\t\t\t\t\t\t\t<dd>Base Product</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Provider</dt>\n\t\t\t\t\t\t\t\t<dd>Stripe</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Monthly Amount</dt>\n\t\t\t\t\t\t\t\t<dd>$19.90</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Active</dt>\n\t\t\t\t\t\t\t\t<dd><span class=\"badge badge-success badge-sm\">Yes</span></dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</dl>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm crud-card\"\n\t\t\t\t\tdata-name=\"PRO Pro Product Paddle\">\n\t\t\t\t\t<div class=\"card-body p-4\">\n\t\t\t\t\t\t<div class=\"flex items-start justify-between gap-2\">\n\t\t\t\t\t\t\t<div class=\"flex items-center gap-2\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" />\n\t\t\t\t\t\t\t\t<h3 class=\"card-title text-base\">PRO</h3>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: PRO')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing PRO with payment provider…')\">Sync Product With\n\t\t\t\t\t\t\t\t\t\t\tPayment Provider</a></li>\n\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('PRO')\">Delete</a></li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<dl class=\"text-sm space-y-1 mt-1\">\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Product</dt>\n\t\t\t\t\t\t\t\t<dd>Pro Product</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Provider</dt>\n\t\t\t\t\t\t\t\t<dd>Paddle</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Monthly Amount</dt>\n\t\t\t\t\t\t\t\t<dd>$49.00</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Active</dt>\n\t\t\t\t\t\t\t\t<dd><span class=\"badge badge-ghost badge-sm\">No</span></dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</dl>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm crud-card\"\n\t\t\t\t\tdata-name=\"ENTERPRISE Pro Product Paddle\">\n\t\t\t\t\t<div class=\"card-body p-4\">\n\t\t\t\t\t\t<div class=\"flex items-start justify-between gap-2\">\n\t\t\t\t\t\t\t<div class=\"flex items-center gap-2\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" />\n\t\t\t\t\t\t\t\t<h3 class=\"card-title text-base\">ENTERPRISE</h3>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: ENTERPRISE')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing ENTERPRISE with payment provider…')\">Sync Product\n\t\t\t\t\t\t\t\t\t\t\tWith Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('ENTERPRISE')\">Delete</a></li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<dl class=\"text-sm space-y-1 mt-1\">\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Product</dt>\n\t\t\t\t\t\t\t\t<dd>Pro Product</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Provider</dt>\n\t\t\t\t\t\t\t\t<dd>Paddle</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Monthly Amount</dt>\n\t\t\t\t\t\t\t\t<dd>$199.00</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Active</dt>\n\t\t\t\t\t\t\t\t<dd><span class=\"badge badge-success badge-sm\">Yes</span></dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</dl>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm crud-card\"\n\t\t\t\t\tdata-name=\"DEMO_LEGACY Base Product Manual\">\n\t\t\t\t\t<div class=\"card-body p-4\">\n\t\t\t\t\t\t<div class=\"flex items-start justify-between gap-2\">\n\t\t\t\t\t\t\t<div class=\"flex items-center gap-2\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" class=\"checkbox checkbox-sm crud-row-check\"\n\t\t\t\t\t\t\t\t\tonchange=\"crudUpdateSelection()\" />\n\t\t\t\t\t\t\t\t<h3 class=\"card-title text-base\">DEMO_LEGACY</h3>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"dropdown dropdown-end\">\n\t\t\t\t\t\t\t\t<label tabindex=\"0\" class=\"btn btn-ghost btn-xs\">⋮</label>\n\t\t\t\t\t\t\t\t<ul tabindex=\"0\"\n\t\t\t\t\t\t\t\t\tclass=\"dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-44 border border-base-300\">\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudOpenForm('Edit plan: DEMO_LEGACY')\">Edit</a></li>\n\t\t\t\t\t\t\t\t\t<li><a onclick=\"crudToast('Syncing DEMO_LEGACY with payment provider…')\">Sync\n\t\t\t\t\t\t\t\t\t\t\tProduct With Payment Provider</a></li>\n\t\t\t\t\t\t\t\t\t<li><a class=\"text-error\" onclick=\"crudDelete('DEMO_LEGACY')\">Delete</a></li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<dl class=\"text-sm space-y-1 mt-1\">\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Product</dt>\n\t\t\t\t\t\t\t\t<dd>Base Product</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Provider</dt>\n\t\t\t\t\t\t\t\t<dd>Manual</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Monthly Amount</dt>\n\t\t\t\t\t\t\t\t<dd>$9.90</dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"flex justify-between gap-3\">\n\t\t\t\t\t\t\t\t<dt class=\"text-base-content/60\">Active</dt>\n\t\t\t\t\t\t\t\t<dd><span class=\"badge badge-ghost badge-sm\">No</span></dd>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</dl>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\n\t\t</div>\n\t</div>\n\n\t<!-- Add / Edit modal (dummy form so you can see it, not wired to anything) -->\n\t<dialog id=\"crud-modal\" class=\"modal\">\n\t\t<div class=\"modal-box max-w-2xl\">\n\t\t\t<form method=\"dialog\">\n\t\t\t\t<button class=\"btn btn-sm btn-circle btn-ghost absolute right-2 top-2\">✕</button>\n\t\t\t</form>\n\t\t\t<h3 class=\"font-semibold text-lg mb-4\" id=\"crud-modal-title\">Edit plan</h3>\n\n\t\t\t<div class=\"grid grid-cols-12 gap-4\">\n\t\t\t\t<div class=\"form-control col-span-12 md:col-span-4\">\n\t\t\t\t\t<label class=\"label\"><span class=\"label-text\">Plan Code <span\n\t\t\t\t\t\t\t\tclass=\"text-error\">*</span></span></label>\n\t\t\t\t\t<input type=\"text\" class=\"input input-bordered w-full\" value=\"DEMO\" />\n\t\t\t\t</div>\n\t\t\t\t<div class=\"form-control col-span-12 md:col-span-4\">\n\t\t\t\t\t<label class=\"label\"><span class=\"label-text\">Product <span\n\t\t\t\t\t\t\t\tclass=\"text-error\">*</span></span></label>\n\t\t\t\t\t<select class=\"select select-bordered w-full\">\n\t\t\t\t\t\t<option selected>Base Product</option>\n\t\t\t\t\t\t<option>Pro Product</option>\n\t\t\t\t\t</select>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"form-control col-span-12 md:col-span-4\">\n\t\t\t\t\t<label class=\"label\"><span class=\"label-text\">Provider <span\n\t\t\t\t\t\t\t\tclass=\"text-error\">*</span></span></label>\n\t\t\t\t\t<select class=\"select select-bordered w-full\">\n\t\t\t\t\t\t<option selected>Stripe</option>\n\t\t\t\t\t\t<option>Paddle</option>\n\t\t\t\t\t\t<option>Manual</option>\n\t\t\t\t\t</select>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"form-control col-span-12 md:col-span-3\">\n\t\t\t\t\t<label class=\"label\"><span class=\"label-text\">Monthly Amount</span></label>\n\t\t\t\t\t<input type=\"number\" step=\"0.01\" class=\"input input-bordered w-full\" value=\"19.90\" />\n\t\t\t\t</div>\n\t\t\t\t<div class=\"form-control col-span-12 md:col-span-3\">\n\t\t\t\t\t<label class=\"label\"><span class=\"label-text\">Active</span></label>\n\t\t\t\t\t<input type=\"checkbox\" class=\"toggle toggle-primary\" checked />\n\t\t\t\t</div>\n\t\t\t\t<div class=\"form-control col-span-12\">\n\t\t\t\t\t<label class=\"label\"><span class=\"label-text\">Plan Description</span></label>\n\t\t\t\t\t<textarea rows=\"3\"\n\t\t\t\t\t\tclass=\"textarea textarea-bordered w-full\">Demo plan for evaluation purposes.</textarea>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"modal-action\">\n\t\t\t\t<button type=\"button\" class=\"btn btn-ghost\" onclick=\"crud_modal.close()\">Cancel</button>\n\t\t\t\t<button type=\"button\" class=\"btn btn-primary\"\n\t\t\t\t\tonclick=\"crudToast('Saved (dummy)'); crud_modal.close()\">Save changes</button>\n\t\t\t</div>\n\t\t</div>\n\t\t<form method=\"dialog\" class=\"modal-backdrop\"><button>close</button></form>\n\t</dialog>\n\n\t<div class=\"toast toast-end\" id=\"crud-toast-wrap\"></div>\n\n\t<script>\n\t\tfunction crudSetView(mode) {\n\t\t\tdocument.getElementById('crud-view-table').classList.toggle('hidden', mode !== 'table');\n\t\t\tdocument.getElementById('crud-view-cards').classList.toggle('hidden', mode !== 'cards');\n\t\t\tdocument.getElementById('btn-view-table').classList.toggle('btn-active', mode === 'table');\n\t\t\tdocument.getElementById('btn-view-cards').classList.toggle('btn-active', mode === 'cards');\n\t\t}\n\n\t\tfunction crudSearch(query) {\n\t\t\tconst q = query.trim().toLowerCase();\n\t\t\tdocument.querySelectorAll('.crud-row').forEach(row => {\n\t\t\t\trow.classList.toggle('hidden', q !== '' && !row.dataset.name.toLowerCase().includes(q));\n\t\t\t});\n\t\t\tdocument.querySelectorAll('.crud-card').forEach(card => {\n\t\t\t\tcard.classList.toggle('hidden', q !== '' && !card.dataset.name.toLowerCase().includes(q));\n\t\t\t});\n\t\t}\n\n\t\tfunction crudSelectAll(checked) {\n\t\t\tdocument.querySelectorAll('.crud-row-check').forEach(cb => {\n\t\t\t\tconst visible = !cb.closest('.crud-row, .crud-card').classList.contains('hidden');\n\t\t\t\tif (visible) cb.checked = checked;\n\t\t\t});\n\t\t\tcrudUpdateSelection();\n\t\t}\n\n\t\tfunction crudUpdateSelection() {\n\t\t\tconst checked = document.querySelectorAll('.crud-row-check:checked');\n\t\t\tconst bar = document.getElementById('crud-bulk-bar');\n\t\t\tdocument.getElementById('crud-bulk-count').textContent = checked.length;\n\t\t\tbar.classList.toggle('hidden', checked.length === 0);\n\n\t\t\tconst allBoxes = document.querySelectorAll('.crud-row-check');\n\t\t\tdocument.getElementById('crud-select-all').checked =\n\t\t\t\tallBoxes.length > 0 && checked.length === allBoxes.length;\n\t\t}\n\n\t\tfunction crudClearSelection() {\n\t\t\tdocument.querySelectorAll('.crud-row-check').forEach(cb => cb.checked = false);\n\t\t\tcrudUpdateSelection();\n\t\t}\n\n\t\tfunction crudBulkDelete() {\n\t\t\tconst n = document.querySelectorAll('.crud-row-check:checked').length;\n\t\t\tif (confirm('Delete ' + n + ' selected plan(s)? This cannot be undone.')) {\n\t\t\t\tcrudToast('Deleted ' + n + ' plan(s) (dummy)');\n\t\t\t\tcrudClearSelection();\n\t\t\t}\n\t\t}\n\n\t\tfunction crudOpenForm(title) {\n\t\t\tdocument.getElementById('crud-modal-title').textContent = title;\n\t\t\tdocument.getElementById('crud-modal').showModal();\n\t\t}\n\n\t\tfunction crudDelete(name) {\n\t\t\tif (confirm('Delete plan \"' + name + '\"? This cannot be undone.')) {\n\t\t\t\tcrudToast('Deleted ' + name + ' (dummy)');\n\t\t\t}\n\t\t}\n\n\t\tfunction crudToast(msg) {\n\t\t\tconst wrap = document.getElementById('crud-toast-wrap');\n\t\t\tconst el = document.createElement('div');\n\t\t\tel.className = 'alert alert-info shadow-lg';\n\t\t\tel.innerHTML = '<span>' + msg + '</span>';\n\t\t\twrap.appendChild(el);\n\t\t\tsetTimeout(() => el.remove(), 2500);\n\t\t}\n\t</script>\n\n</body>\n\n</html>",
       "time": 77,
       "size": 26017,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1786046273772",
+    "timestamp": 1786046273772,
+    "request": {
+      "id": "1783190596706",
+      "name": "ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/SAAS/plan?$filter=app_id eq 3&$schema=true",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "true",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Thu, 06 Aug 2026 19:57:53 GMT",
+        "transfer-encoding": "chunked",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"plan_id\",\n\t\t\"plan\",\n\t\t\"plan_desc\",\n\t\t\"sort_order\",\n\t\t\"product_id\",\n\t\t\"is_public\",\n\t\t\"is_self_hosted_allowed\",\n\t\t\"is_custom_pricing_allowed\",\n\t\t\"provider_id\",\n\t\t\"monthly_amount\",\n\t\t\"annual_amount\",\n\t\t\"currency_id\",\n\t\t\"recurring_interval_id\",\n\t\t\"recurring_interval_count\",\n\t\t\"billing_scheme_id\",\n\t\t\"payment_provider_id\",\n\t\t\"payment_product_id\",\n\t\t\"payment_price_monthly_id\",\n\t\t\"payment_price_annual_id\",\n\t\t\"payment_product_metadata\",\n\t\t\"payment_product_last_sync_at\",\n\t\t\"active\",\n\t\t\"terraform_template\",\n\t\t\"user_id\",\n\t\t\"app_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"plan\": \"DEMO\",\n\t\t\t\"plan_id\": 2\n\t\t}\n\t],\n\t\"msg\": \"Operação executada com successo!\",\n\t\"permissions\": {\n\t\t\"app_id\": 3,\n\t\t\"create\": false,\n\t\t\"created_at\": \"2026-07-19T08:56:14.612330578-01:00\",\n\t\t\"delete\": false,\n\t\t\"excluded\": false,\n\t\t\"menu_id\": 11,\n\t\t\"read\": true,\n\t\t\"role_app_menu_table_id\": 1,\n\t\t\"role_id\": 4,\n\t\t\"share\": false,\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"update\": false,\n\t\t\"updated_at\": \"2026-08-03T18:53:04.658679591-01:00\",\n\t\t\"user_id\": 1\n\t},\n\t\"schema\": {\n\t\t\"_table\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"requires_rla\": false,\n\t\t\t\"table\": \"plan\",\n\t\t\t\"table_desc\": \"Plans\",\n\t\t\t\"table_id\": 71,\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"comment\": \"Plans\",\n\t\t\"crud_actions\": null,\n\t\t\"custom_form\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"plan\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Code\\\",\\\"name\\\":\\\"plan\\\",\\\"order\\\":1,\\\"pk\\\":false,\\\"regex_val\\\":\\\"^[A-Za-z_][A-Za-z0-9_]*$\\\",\\\"required\\\":true,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12,\\\"val_msg\\\":\\\"Must not beging by number, no space or special character!\\\"},\\\"sort_order\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Sort Order\\\",\\\"name\\\":\\\"sort_order\\\",\\\"order\\\":2,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"product\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Product ID\\\",\\\"name\\\":\\\"product\\\",\\\"name_org\\\":\\\"product_id\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"ref_field\\\":\\\"product_id\\\",\\\"ref_table\\\":\\\"product\\\",\\\"referred_pk\\\":\\\"product_id\\\",\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"is_public\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Public\\\",\\\"name\\\":\\\"is_public\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"plan_desc\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Description\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"plan_desc\\\",\\\"order\\\":5,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"is_self_hosted_allowed\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Self-Hosted Allowed\\\",\\\"name\\\":\\\"is_self_hosted_allowed\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"is_custom_pricing_allowed\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Custom Pricing\\\",\\\"name\\\":\\\"is_custom_pricing_allowed\\\",\\\"order\\\":7,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"provider\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Provider ID\\\",\\\"name\\\":\\\"provider\\\",\\\"name_org\\\":\\\"provider_id\\\",\\\"order\\\":8,\\\"pk\\\":false,\\\"ref_field\\\":\\\"provider_id\\\",\\\"ref_table\\\":\\\"provider\\\",\\\"referred_pk\\\":\\\"provider_id\\\",\\\"required\\\":true,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"monthly_amount\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Monthly Amount\\\",\\\"name\\\":\\\"monthly_amount\\\",\\\"order\\\":9,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"annual_amount\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Annual Amount\\\",\\\"name\\\":\\\"annual_amount\\\",\\\"order\\\":10,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"currency\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Currency ID\\\",\\\"name\\\":\\\"currency\\\",\\\"name_org\\\":\\\"currency_id\\\",\\\"order\\\":11,\\\"pk\\\":false,\\\"ref_field\\\":\\\"currency_id\\\",\\\"ref_table\\\":\\\"currency\\\",\\\"referred_pk\\\":\\\"currency_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"recurring_interval\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Recurring Interval\\\",\\\"name\\\":\\\"recurring_interval\\\",\\\"name_org\\\":\\\"recurring_interval_id\\\",\\\"order\\\":12,\\\"pk\\\":false,\\\"ref_field\\\":\\\"recurring_interval_id\\\",\\\"ref_table\\\":\\\"recurring_interval\\\",\\\"referred_pk\\\":\\\"recurring_interval_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"recurring_interval_count\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Billing Recurring Interval Count\\\",\\\"name\\\":\\\"recurring_interval_count\\\",\\\"order\\\":13,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"billing_scheme\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Scheme ID\\\",\\\"name\\\":\\\"billing_scheme\\\",\\\"name_org\\\":\\\"billing_scheme_id\\\",\\\"order\\\":14,\\\"pk\\\":false,\\\"ref_field\\\":\\\"billing_scheme_id\\\",\\\"ref_table\\\":\\\"billing_scheme\\\",\\\"referred_pk\\\":\\\"billing_scheme_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_provider\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Payment Provider ID\\\",\\\"name\\\":\\\"payment_provider\\\",\\\"name_org\\\":\\\"payment_provider_id\\\",\\\"order\\\":15,\\\"pk\\\":false,\\\"ref_field\\\":\\\"payment_provider_id\\\",\\\"ref_table\\\":\\\"payment_provider\\\",\\\"referred_pk\\\":\\\"payment_provider_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_product_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product ID\\\",\\\"name\\\":\\\"payment_product_id\\\",\\\"order\\\":16,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"active\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":16,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"terraform_template\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"tf\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Terraform Script\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"terraform_template\\\",\\\"order\\\":17,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_price_monthly_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Monthly Price ID\\\",\\\"name\\\":\\\"payment_price_monthly_id\\\",\\\"order\\\":17,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_price_annual_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Annual Price ID\\\",\\\"name\\\":\\\"payment_price_annual_id\\\",\\\"order\\\":18,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_product_metadata\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product Metadata\\\",\\\"name\\\":\\\"payment_product_metadata\\\",\\\"order\\\":19,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_product_last_sync_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Provider Last Sync At\\\",\\\"name\\\":\\\"payment_product_last_sync_at\\\",\\\"order\\\":20,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"user_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"user_id\\\",\\\"order\\\":23,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"app_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app_id\\\",\\\"order\\\":24,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"created_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":25,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"updated_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":26,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"excluded\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":27,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12}},\\\"field_orders\\\":[\\\"plan\\\",\\\"sort_order\\\",\\\"product\\\",\\\"is_public\\\",\\\"plan_desc\\\",\\\"is_self_hosted_allowed\\\",\\\"is_custom_pricing_allowed\\\",\\\"provider\\\",\\\"monthly_amount\\\",\\\"annual_amount\\\",\\\"currency\\\",\\\"recurring_interval\\\",\\\"recurring_interval_count\\\",\\\"billing_scheme\\\",\\\"payment_provider\\\",\\\"payment_product_id\\\",\\\"active\\\",\\\"terraform_template\\\",\\\"payment_price_monthly_id\\\",\\\"payment_price_annual_id\\\",\\\"payment_product_metadata\\\",\\\"payment_product_last_sync_at\\\",\\\"user_id\\\",\\\"app_id\\\",\\\"created_at\\\",\\\"updated_at\\\",\\\"excluded\\\"],\\\"layout\\\":{\\\"__order\\\":[\\\"tabs_steps\\\",\\\"form_in_popup\\\",\\\"size\\\",\\\"allow_in_subform\\\",\\\"tabs_steps_conf\\\"],\\\"allow_in_subform\\\":{\\\"__order\\\":[\\\"plan_file\\\",\\\"plan_service\\\"],\\\"plan_file\\\":true,\\\"plan_service\\\":true},\\\"form_in_popup\\\":false,\\\"size\\\":9,\\\"tabs_steps\\\":\\\"tabs\\\",\\\"tabs_steps_conf\\\":[{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"plan\\\",\\\"sort_order\\\",\\\"product\\\",\\\"is_public\\\",\\\"plan_desc\\\",\\\"is_self_hosted_allowed\\\",\\\"is_custom_pricing_allowed\\\",\\\"provider\\\",\\\"monthly_amount\\\",\\\"annual_amount\\\",\\\"currency\\\",\\\"recurring_interval\\\",\\\"recurring_interval_count\\\",\\\"billing_scheme\\\",\\\"payment_provider\\\",\\\"active\\\"],\\\"label\\\":\\\"Plan\\\"},{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"terraform_template\\\"],\\\"label\\\":\\\"Terraform\\\"}]}}\",\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.569633378-01:00\",\n\t\t\t\"custom_form_id\": 71,\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"plan\",\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.579591719-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"custom_table\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"plan\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Code\\\",\\\"name\\\":\\\"plan\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"sort_order\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Sort Order\\\",\\\"name\\\":\\\"sort_order\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"product\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Product ID\\\",\\\"name\\\":\\\"product\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"is_public\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Public\\\",\\\"name\\\":\\\"is_public\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"plan_desc\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Description\\\",\\\"name\\\":\\\"plan_desc\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"is_self_hosted_allowed\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Self-Hosted Allowed\\\",\\\"name\\\":\\\"is_self_hosted_allowed\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"is_custom_pricing_allowed\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Custom Pricing\\\",\\\"name\\\":\\\"is_custom_pricing_allowed\\\",\\\"order\\\":7,\\\"pk\\\":false},\\\"provider\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Provider ID\\\",\\\"name\\\":\\\"provider\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"monthly_amount\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Monthly Amount\\\",\\\"name\\\":\\\"monthly_amount\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"annual_amount\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Annual Amount\\\",\\\"name\\\":\\\"annual_amount\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"currency\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Currency ID\\\",\\\"name\\\":\\\"currency\\\",\\\"order\\\":11,\\\"pk\\\":false},\\\"recurring_interval\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Recurring Interval\\\",\\\"name\\\":\\\"recurring_interval\\\",\\\"order\\\":12,\\\"pk\\\":false},\\\"recurring_interval_count\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Billing Recurring Interval Count\\\",\\\"name\\\":\\\"recurring_interval_count\\\",\\\"order\\\":13,\\\"pk\\\":false},\\\"billing_scheme\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Scheme ID\\\",\\\"name\\\":\\\"billing_scheme\\\",\\\"order\\\":14,\\\"pk\\\":false},\\\"payment_provider\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Payment Provider ID\\\",\\\"name\\\":\\\"payment_provider\\\",\\\"order\\\":15,\\\"pk\\\":false},\\\"payment_product_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product ID\\\",\\\"name\\\":\\\"payment_product_id\\\",\\\"order\\\":16,\\\"pk\\\":false},\\\"active\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":16,\\\"pk\\\":false},\\\"terraform_template\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Terraform Script\\\",\\\"name\\\":\\\"terraform_template\\\",\\\"order\\\":17,\\\"pk\\\":false},\\\"payment_price_monthly_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Monthly Price ID\\\",\\\"name\\\":\\\"payment_price_monthly_id\\\",\\\"order\\\":17,\\\"pk\\\":false},\\\"payment_price_annual_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Annual Price ID\\\",\\\"name\\\":\\\"payment_price_annual_id\\\",\\\"order\\\":18,\\\"pk\\\":false},\\\"payment_product_metadata\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product Metadata\\\",\\\"name\\\":\\\"payment_product_metadata\\\",\\\"order\\\":19,\\\"pk\\\":false},\\\"payment_product_last_sync_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Provider Last Sync At\\\",\\\"name\\\":\\\"payment_product_last_sync_at\\\",\\\"order\\\":20,\\\"pk\\\":false},\\\"user_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"user_id\\\",\\\"order\\\":23,\\\"pk\\\":false},\\\"app_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app_id\\\",\\\"order\\\":24,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":25,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":26,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":27,\\\"pk\\\":false}},\\\"field_orders\\\":[\\\"plan\\\",\\\"sort_order\\\",\\\"product\\\",\\\"is_public\\\",\\\"plan_desc\\\",\\\"is_self_hosted_allowed\\\",\\\"is_custom_pricing_allowed\\\",\\\"provider\\\",\\\"monthly_amount\\\",\\\"annual_amount\\\",\\\"currency\\\",\\\"recurring_interval\\\",\\\"recurring_interval_count\\\",\\\"billing_scheme\\\",\\\"payment_provider\\\",\\\"payment_product_id\\\",\\\"active\\\",\\\"terraform_template\\\",\\\"payment_price_monthly_id\\\",\\\"payment_price_annual_id\\\",\\\"payment_product_metadata\\\",\\\"payment_product_last_sync_at\\\",\\\"user_id\\\",\\\"app_id\\\",\\\"created_at\\\",\\\"updated_at\\\",\\\"excluded\\\"],\\\"layout\\\":{\\\"__order\\\":[\\\"default_order\\\",\\\"exec_button\\\"],\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"sort_order\\\",\\\"order\\\":\\\"ASC\\\"}],\\\"exec_button\\\":{\\\"__order\\\":[\\\"callApi\\\",\\\"api\\\",\\\"tooltip\\\",\\\"icon\\\"],\\\"api\\\":\\\"payment/sync_prod\\\",\\\"callApi\\\":true,\\\"icon\\\":\\\"arrow-path\\\",\\\"tooltip\\\":\\\"Sync Product With Payment Provider\\\"}}}\",\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.569633378-01:00\",\n\t\t\t\"custom_table_id\": 71,\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"plan\",\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.579591719-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"database\": \"SAAS\",\n\t\t\"fields\": {\n\t\t\t\"active\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Active\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"1\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_order\": 22,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"active\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 826,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"annual_amount\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Annual Amount\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"annual_amount\",\n\t\t\t\t\"field_order\": 11,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"annual_amount\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 815,\n\t\t\t\t\"type\": \"decimal\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"App ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_order\": 25,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 829,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"billing_scheme_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Billing Scheme ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"billing_scheme_id\",\n\t\t\t\t\"field_order\": 15,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"billing_scheme_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"billing_scheme\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"billing_scheme\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"billing_scheme_id\",\n\t\t\t\t\"referred_table\": \"billing_scheme\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 819,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Created at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_order\": 26,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"created_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 830,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"currency_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Currency ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"currency_id\",\n\t\t\t\t\"field_order\": 12,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"currency_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"currency\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"currency\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"currency_id\",\n\t\t\t\t\"referred_table\": \"currency\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 816,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Excluded\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_order\": 28,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"excluded\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 832,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_custom_pricing_allowed\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Custom Pricing\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_custom_pricing_allowed\",\n\t\t\t\t\"field_order\": 8,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"is_custom_pricing_allowed\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 812,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_public\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Public\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_public\",\n\t\t\t\t\"field_order\": 6,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"is_public\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 810,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_self_hosted_allowed\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Self-Hosted Allowed\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_self_hosted_allowed\",\n\t\t\t\t\"field_order\": 7,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"is_self_hosted_allowed\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 811,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"monthly_amount\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Monthly Amount\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"monthly_amount\",\n\t\t\t\t\"field_order\": 10,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"monthly_amount\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 814,\n\t\t\t\t\"type\": \"decimal\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_annual_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Annual Price ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_annual_id\",\n\t\t\t\t\"field_order\": 19,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_price_annual_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 823,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_monthly_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Monthly Price ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_monthly_id\",\n\t\t\t\t\"field_order\": 18,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_price_monthly_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 822,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Product ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_id\",\n\t\t\t\t\"field_order\": 17,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_product_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 821,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_last_sync_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Provider Last Sync At\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_last_sync_at\",\n\t\t\t\t\"field_order\": 21,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_product_last_sync_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 825,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_metadata\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Product Metadata\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_metadata\",\n\t\t\t\t\"field_order\": 20,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_product_metadata\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 824,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_provider_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Provider ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_provider_id\",\n\t\t\t\t\"field_order\": 16,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"payment_provider_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"payment_provider\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"payment_provider\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"payment_provider_id\",\n\t\t\t\t\"referred_table\": \"payment_provider\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 820,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Plan Code\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan\",\n\t\t\t\t\"field_order\": 2,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"plan\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 806,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_desc\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Plan Description\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_desc\",\n\t\t\t\t\"field_order\": 3,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"plan_desc\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 807,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_id\": {\n\t\t\t\t\"autoincrement\": true,\n\t\t\t\t\"comment\": \"Plan ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_id\",\n\t\t\t\t\"field_order\": 1,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"plan_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": true,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 805,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"product_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Product ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"product_id\",\n\t\t\t\t\"field_order\": 5,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"product_id\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"product\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"product\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"product_id\",\n\t\t\t\t\"referred_table\": \"product\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 809,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"provider_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Provider ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"provider_id\",\n\t\t\t\t\"field_order\": 9,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"provider_id\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"provider\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"provider\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"provider_id\",\n\t\t\t\t\"referred_table\": \"provider\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 813,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_count\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Billing Recurring Interval Count\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_count\",\n\t\t\t\t\"field_order\": 14,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"recurring_interval_count\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 818,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Billing Recurring Interval\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_id\",\n\t\t\t\t\"field_order\": 13,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"recurring_interval_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"recurring_interval\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"recurring_interval\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"recurring_interval_id\",\n\t\t\t\t\"referred_table\": \"recurring_interval\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 817,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"sort_order\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Sort Order\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"sort_order\",\n\t\t\t\t\"field_order\": 4,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"sort_order\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 808,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"terraform_template\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Terraform Script\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"terraform_template\",\n\t\t\t\t\"field_order\": 23,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"terraform_template\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 827,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Updated at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_order\": 27,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"updated_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 831,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"User ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_order\": 24,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"user_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 828,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"fields_order\": [\n\t\t\t\"plan_id\",\n\t\t\t\"plan\",\n\t\t\t\"plan_desc\",\n\t\t\t\"sort_order\",\n\t\t\t\"product_id\",\n\t\t\t\"is_public\",\n\t\t\t\"is_self_hosted_allowed\",\n\t\t\t\"is_custom_pricing_allowed\",\n\t\t\t\"provider_id\",\n\t\t\t\"monthly_amount\",\n\t\t\t\"annual_amount\",\n\t\t\t\"currency_id\",\n\t\t\t\"recurring_interval_id\",\n\t\t\t\"recurring_interval_count\",\n\t\t\t\"billing_scheme_id\",\n\t\t\t\"payment_provider_id\",\n\t\t\t\"payment_product_id\",\n\t\t\t\"payment_price_monthly_id\",\n\t\t\t\"payment_price_annual_id\",\n\t\t\t\"payment_product_metadata\",\n\t\t\t\"payment_product_last_sync_at\",\n\t\t\t\"active\",\n\t\t\t\"terraform_template\",\n\t\t\t\"user_id\",\n\t\t\t\"app_id\",\n\t\t\t\"created_at\",\n\t\t\t\"updated_at\",\n\t\t\t\"excluded\"\n\t\t],\n\t\t\"pk\": \"plan_id\",\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"translate_table\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"lang\": \"en\",\n\t\t\t\"table\": \"plan\",\n\t\t\t\"table_org_desc\": \"Plans\",\n\t\t\t\"table_tooltip\": null,\n\t\t\t\"table_transl_desc\": \"Plans\",\n\t\t\t\"transl_tbl_id\": 71,\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"translate_table_field\": {\n\t\t\t\"active\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_org_desc\": \"Active\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Active\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 826,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"annual_amount\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"annual_amount\",\n\t\t\t\t\"field_org_desc\": \"Annual Amount\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Annual Amount\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 815,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_org_desc\": \"App ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 829,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"billing_scheme_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"billing_scheme_id\",\n\t\t\t\t\"field_org_desc\": \"Billing Scheme ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Billing Scheme ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 819,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_org_desc\": \"Created at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Created at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 830,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"currency_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"currency_id\",\n\t\t\t\t\"field_org_desc\": \"Currency ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Currency ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 816,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_org_desc\": \"Excluded\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Excluded\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 832,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_custom_pricing_allowed\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_custom_pricing_allowed\",\n\t\t\t\t\"field_org_desc\": \"Custom Pricing\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Custom Pricing\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 812,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_public\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_public\",\n\t\t\t\t\"field_org_desc\": \"Public\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Public\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 810,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_self_hosted_allowed\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_self_hosted_allowed\",\n\t\t\t\t\"field_org_desc\": \"Self-Hosted Allowed\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Self-Hosted Allowed\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 811,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"monthly_amount\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"monthly_amount\",\n\t\t\t\t\"field_org_desc\": \"Monthly Amount\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Monthly Amount\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 814,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_annual_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_annual_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Annual Price ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Annual Price ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 823,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_monthly_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_monthly_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Monthly Price ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Monthly Price ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 822,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Product ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Product ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 821,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_last_sync_at\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_last_sync_at\",\n\t\t\t\t\"field_org_desc\": \"Payment Provider Last Sync At\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Provider Last Sync At\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 825,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_metadata\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_metadata\",\n\t\t\t\t\"field_org_desc\": \"Payment Product Metadata\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Product Metadata\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 824,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_provider_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_provider_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Provider ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Provider ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 820,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan\",\n\t\t\t\t\"field_org_desc\": \"Plan Code\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Plan Code\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 806,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_desc\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_desc\",\n\t\t\t\t\"field_org_desc\": \"Plan Description\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Plan Description\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 807,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_id\",\n\t\t\t\t\"field_org_desc\": \"Plan ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Plan ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 805,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"product_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"product_id\",\n\t\t\t\t\"field_org_desc\": \"Product ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Product ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 809,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"provider_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"provider_id\",\n\t\t\t\t\"field_org_desc\": \"Provider ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Provider ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 813,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_count\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_count\",\n\t\t\t\t\"field_org_desc\": \"Billing Recurring Interval Count\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Billing Recurring Interval Count\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 818,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_id\",\n\t\t\t\t\"field_org_desc\": \"Billing Recurring Interval\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Billing Recurring Interval\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 817,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"sort_order\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"sort_order\",\n\t\t\t\t\"field_org_desc\": \"Sort Order\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Sort Order\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 808,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"terraform_template\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"terraform_template\",\n\t\t\t\t\"field_org_desc\": \"Terraform Script\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Terraform Script\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 827,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_org_desc\": \"Updated at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Updated at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 831,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_org_desc\": \"User ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"User ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 828,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"validations\": null\n\t},\n\t\"sql\": \"select plan_id, plan, active from (SELECT  \\\"plan\\\".*,\\\"currency\\\".\\\"currency\\\" AS \\\"currency\\\",\\\"product\\\".\\\"product\\\" AS \\\"product\\\",\\\"provider\\\".\\\"provider\\\" AS \\\"provider\\\",\\\"recurring_interval\\\".\\\"recurring_interval\\\" AS \\\"recurring_interval\\\",\\\"billing_scheme\\\".\\\"billing_scheme\\\" AS \\\"billing_scheme\\\",\\\"payment_provider\\\".\\\"payment_provider\\\" AS \\\"payment_provider\\\" FROM \\\"plan\\\" LEFT OUTER JOIN \\\"currency\\\" \\\"currency\\\" ON \\\"currency\\\".\\\"currency_id\\\" = \\\"plan\\\".\\\"currency_id\\\"\\nLEFT OUTER JOIN \\\"product\\\" \\\"product\\\" ON \\\"product\\\".\\\"product_id\\\" = \\\"plan\\\".\\\"product_id\\\"\\nLEFT OUTER JOIN \\\"provider\\\" \\\"provider\\\" ON \\\"provider\\\".\\\"provider_id\\\" = \\\"plan\\\".\\\"provider_id\\\"\\nLEFT OUTER JOIN \\\"recurring_interval\\\" \\\"recurring_interval\\\" ON \\\"recurring_interval\\\".\\\"recurring_interval_id\\\" = \\\"plan\\\".\\\"recurring_interval_id\\\"\\nLEFT OUTER JOIN \\\"billing_scheme\\\" \\\"billing_scheme\\\" ON \\\"billing_scheme\\\".\\\"billing_scheme_id\\\" = \\\"plan\\\".\\\"billing_scheme_id\\\"\\nLEFT OUTER JOIN \\\"payment_provider\\\" \\\"payment_provider\\\" ON \\\"payment_provider\\\".\\\"payment_provider_id\\\" = \\\"plan\\\".\\\"payment_provider_id\\\" WHERE (\\\"plan\\\".\\\"excluded\\\" IS FALSE AND \\\"product\\\".\\\"app_id\\\" = ? AND (\\\"product\\\".\\\"product_id\\\" IN (?) OR \\\"product\\\".\\\"user_id\\\" = ?) AND (\\\"plan\\\".\\\"plan_id\\\" IN (?) OR \\\"plan\\\".\\\"user_id\\\" = ?)) LIMIT 10 OFFSET 0) as t\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+      "time": 55,
+      "size": 47054,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1786046328075",
+    "timestamp": 1786046328075,
+    "request": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id eq 1&$schema=false",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "survey_id eq 1",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "false",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "111",
+        "content-type": "application/json",
+        "date": "Thu, 06 Aug 2026 19:58:48 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+      "time": 29,
+      "size": 94,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1786046357760",
+    "timestamp": 1786046357760,
+    "request": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id2 eq 1&$schema=false",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "survey_id2 eq 1",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "false",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "111",
+        "content-type": "application/json",
+        "date": "Thu, 06 Aug 2026 19:59:17 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+      "time": 50,
+      "size": 94,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1786046368678",
+    "timestamp": 1786046368678,
+    "request": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id eq 1&$schema=false",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "survey_id eq 1",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "false",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "111",
+        "content-type": "application/json",
+        "date": "Thu, 06 Aug 2026 19:59:28 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+      "time": 24,
+      "size": 94,
       "cookies": []
     }
   }

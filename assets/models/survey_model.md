@@ -1,12 +1,16 @@
 <!-- markdownlint-disable MD022 -->
 <!-- markdownlint-disable MD025 -->
 <!-- markdownlint-disable MD031 -->
+<!-- markdownlint-disable MD012 -->
+<!-- markdownlint-disable MD047 -->
+<!-- markdownlint-disable MD024 -->
+
 # SURVEY_MODEL
 ```yaml
 name: SURVEY
 description: Custom Survey Builder Model
 runs_as: MODEL
-databse: SURVEY
+database: SURVEY
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
@@ -224,7 +228,6 @@ table_layout:
   default_order: [{field: source_question_id, order: ASC}]
 ```
 
-
 ## SURVEY_JSON
 ```yaml
 table: survey_json
@@ -281,7 +284,7 @@ table_layout:
 name: DATA
 description: DATA Model Survey Builder - seed default question types
 runs_as: MODEL_DATA
-databse: SURVEY
+database: SURVEY
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
@@ -376,4 +379,26 @@ data:
   status: dreaft
   survey_json: FileContent(assets/survey/survey.json)  
   survey_theme: FileContent(assets/survey/theme.json)
+```
+
+# ROLE_ACCESS
+```yaml
+name: ROLE_ACCESS
+description: SURVEY main roles creation
+database: SURVEY
+runs_as: ROLE
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+active: true
+```
+
+## ANONYMOUS
+```yaml
+name: anonymous
+description: Anonymous Role
+access:
+  - SURVEY:
+    - Survey JSON:
+      - {table: survey, read: true}
+      - {table: survey_json, read: true}
+active: true
 ```

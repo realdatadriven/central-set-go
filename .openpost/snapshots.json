@@ -1687,6 +1687,82 @@
           },
           "cookies": []
         }
+      },
+      {
+        "id": "1786046273780tdmd9ade6ee",
+        "timestamp": 1786046273780,
+        "request": {
+          "id": "1783190596706",
+          "name": "ODATA_READ",
+          "method": "GET",
+          "url": "{{base_url}}/read_odata/SAAS/plan?$filter=app_id eq 3&$schema=true",
+          "params": [
+            {
+              "key": "$filter",
+              "value": "app_id eq 3",
+              "enabled": true
+            },
+            {
+              "key": "$schema",
+              "value": "true",
+              "enabled": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Thu, 06 Aug 2026 19:57:53 GMT",
+            "transfer-encoding": "chunked",
+            "vary": "Authorization"
+          },
+          "body": "{\n\t\"cols\": [\n\t\t\"plan_id\",\n\t\t\"plan\",\n\t\t\"plan_desc\",\n\t\t\"sort_order\",\n\t\t\"product_id\",\n\t\t\"is_public\",\n\t\t\"is_self_hosted_allowed\",\n\t\t\"is_custom_pricing_allowed\",\n\t\t\"provider_id\",\n\t\t\"monthly_amount\",\n\t\t\"annual_amount\",\n\t\t\"currency_id\",\n\t\t\"recurring_interval_id\",\n\t\t\"recurring_interval_count\",\n\t\t\"billing_scheme_id\",\n\t\t\"payment_provider_id\",\n\t\t\"payment_product_id\",\n\t\t\"payment_price_monthly_id\",\n\t\t\"payment_price_annual_id\",\n\t\t\"payment_product_metadata\",\n\t\t\"payment_product_last_sync_at\",\n\t\t\"active\",\n\t\t\"terraform_template\",\n\t\t\"user_id\",\n\t\t\"app_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"plan\": \"DEMO\",\n\t\t\t\"plan_id\": 2\n\t\t}\n\t],\n\t\"msg\": \"Operação executada com successo!\",\n\t\"permissions\": {\n\t\t\"app_id\": 3,\n\t\t\"create\": false,\n\t\t\"created_at\": \"2026-07-19T08:56:14.612330578-01:00\",\n\t\t\"delete\": false,\n\t\t\"excluded\": false,\n\t\t\"menu_id\": 11,\n\t\t\"read\": true,\n\t\t\"role_app_menu_table_id\": 1,\n\t\t\"role_id\": 4,\n\t\t\"share\": false,\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"update\": false,\n\t\t\"updated_at\": \"2026-08-03T18:53:04.658679591-01:00\",\n\t\t\"user_id\": 1\n\t},\n\t\"schema\": {\n\t\t\"_table\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"requires_rla\": false,\n\t\t\t\"table\": \"plan\",\n\t\t\t\"table_desc\": \"Plans\",\n\t\t\t\"table_id\": 71,\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"comment\": \"Plans\",\n\t\t\"crud_actions\": null,\n\t\t\"custom_form\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"plan\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Code\\\",\\\"name\\\":\\\"plan\\\",\\\"order\\\":1,\\\"pk\\\":false,\\\"regex_val\\\":\\\"^[A-Za-z_][A-Za-z0-9_]*$\\\",\\\"required\\\":true,\\\"size\\\":4,\\\"sizelg\\\":4,\\\"sizemd\\\":12,\\\"sizesm\\\":12,\\\"val_msg\\\":\\\"Must not beging by number, no space or special character!\\\"},\\\"sort_order\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Sort Order\\\",\\\"name\\\":\\\"sort_order\\\",\\\"order\\\":2,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"product\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Product ID\\\",\\\"name\\\":\\\"product\\\",\\\"name_org\\\":\\\"product_id\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"ref_field\\\":\\\"product_id\\\",\\\"ref_table\\\":\\\"product\\\",\\\"referred_pk\\\":\\\"product_id\\\",\\\"required\\\":true,\\\"size\\\":3,\\\"sizelg\\\":3,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"is_public\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Public\\\",\\\"name\\\":\\\"is_public\\\",\\\"order\\\":4,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"plan_desc\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Description\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"plan_desc\\\",\\\"order\\\":5,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"is_self_hosted_allowed\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Self-Hosted Allowed\\\",\\\"name\\\":\\\"is_self_hosted_allowed\\\",\\\"order\\\":6,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"is_custom_pricing_allowed\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Custom Pricing\\\",\\\"name\\\":\\\"is_custom_pricing_allowed\\\",\\\"order\\\":7,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"provider\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Provider ID\\\",\\\"name\\\":\\\"provider\\\",\\\"name_org\\\":\\\"provider_id\\\",\\\"order\\\":8,\\\"pk\\\":false,\\\"ref_field\\\":\\\"provider_id\\\",\\\"ref_table\\\":\\\"provider\\\",\\\"referred_pk\\\":\\\"provider_id\\\",\\\"required\\\":true,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"monthly_amount\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Monthly Amount\\\",\\\"name\\\":\\\"monthly_amount\\\",\\\"order\\\":9,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"annual_amount\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Annual Amount\\\",\\\"name\\\":\\\"annual_amount\\\",\\\"order\\\":10,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"currency\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Currency ID\\\",\\\"name\\\":\\\"currency\\\",\\\"name_org\\\":\\\"currency_id\\\",\\\"order\\\":11,\\\"pk\\\":false,\\\"ref_field\\\":\\\"currency_id\\\",\\\"ref_table\\\":\\\"currency\\\",\\\"referred_pk\\\":\\\"currency_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"recurring_interval\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Recurring Interval\\\",\\\"name\\\":\\\"recurring_interval\\\",\\\"name_org\\\":\\\"recurring_interval_id\\\",\\\"order\\\":12,\\\"pk\\\":false,\\\"ref_field\\\":\\\"recurring_interval_id\\\",\\\"ref_table\\\":\\\"recurring_interval\\\",\\\"referred_pk\\\":\\\"recurring_interval_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"recurring_interval_count\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Billing Recurring Interval Count\\\",\\\"name\\\":\\\"recurring_interval_count\\\",\\\"order\\\":13,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"billing_scheme\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Scheme ID\\\",\\\"name\\\":\\\"billing_scheme\\\",\\\"name_org\\\":\\\"billing_scheme_id\\\",\\\"order\\\":14,\\\"pk\\\":false,\\\"ref_field\\\":\\\"billing_scheme_id\\\",\\\"ref_table\\\":\\\"billing_scheme\\\",\\\"referred_pk\\\":\\\"billing_scheme_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_provider\\\":{\\\"autocomplete\\\":true,\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Payment Provider ID\\\",\\\"name\\\":\\\"payment_provider\\\",\\\"name_org\\\":\\\"payment_provider_id\\\",\\\"order\\\":15,\\\"pk\\\":false,\\\"ref_field\\\":\\\"payment_provider_id\\\",\\\"ref_table\\\":\\\"payment_provider\\\",\\\"referred_pk\\\":\\\"payment_provider_id\\\",\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_product_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product ID\\\",\\\"name\\\":\\\"payment_product_id\\\",\\\"order\\\":16,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"active\\\":{\\\"autoincrement\\\":false,\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":16,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":2,\\\"sizelg\\\":2,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"terraform_template\\\":{\\\"autoincrement\\\":false,\\\"code\\\":\\\"tf\\\",\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Terraform Script\\\",\\\"long_text\\\":true,\\\"name\\\":\\\"terraform_template\\\",\\\"order\\\":17,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_price_monthly_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Monthly Price ID\\\",\\\"name\\\":\\\"payment_price_monthly_id\\\",\\\"order\\\":17,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_price_annual_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Annual Price ID\\\",\\\"name\\\":\\\"payment_price_annual_id\\\",\\\"order\\\":18,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_product_metadata\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product Metadata\\\",\\\"name\\\":\\\"payment_product_metadata\\\",\\\"order\\\":19,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"payment_product_last_sync_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Provider Last Sync At\\\",\\\"name\\\":\\\"payment_product_last_sync_at\\\",\\\"order\\\":20,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"user_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"user_id\\\",\\\"order\\\":23,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"app_id\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app_id\\\",\\\"order\\\":24,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"created_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":25,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"updated_at\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":26,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12},\\\"excluded\\\":{\\\"autoincrement\\\":false,\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":27,\\\"pk\\\":false,\\\"required\\\":false,\\\"size\\\":12,\\\"sizelg\\\":12,\\\"sizemd\\\":12,\\\"sizesm\\\":12}},\\\"field_orders\\\":[\\\"plan\\\",\\\"sort_order\\\",\\\"product\\\",\\\"is_public\\\",\\\"plan_desc\\\",\\\"is_self_hosted_allowed\\\",\\\"is_custom_pricing_allowed\\\",\\\"provider\\\",\\\"monthly_amount\\\",\\\"annual_amount\\\",\\\"currency\\\",\\\"recurring_interval\\\",\\\"recurring_interval_count\\\",\\\"billing_scheme\\\",\\\"payment_provider\\\",\\\"payment_product_id\\\",\\\"active\\\",\\\"terraform_template\\\",\\\"payment_price_monthly_id\\\",\\\"payment_price_annual_id\\\",\\\"payment_product_metadata\\\",\\\"payment_product_last_sync_at\\\",\\\"user_id\\\",\\\"app_id\\\",\\\"created_at\\\",\\\"updated_at\\\",\\\"excluded\\\"],\\\"layout\\\":{\\\"__order\\\":[\\\"tabs_steps\\\",\\\"form_in_popup\\\",\\\"size\\\",\\\"allow_in_subform\\\",\\\"tabs_steps_conf\\\"],\\\"allow_in_subform\\\":{\\\"__order\\\":[\\\"plan_file\\\",\\\"plan_service\\\"],\\\"plan_file\\\":true,\\\"plan_service\\\":true},\\\"form_in_popup\\\":false,\\\"size\\\":9,\\\"tabs_steps\\\":\\\"tabs\\\",\\\"tabs_steps_conf\\\":[{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"plan\\\",\\\"sort_order\\\",\\\"product\\\",\\\"is_public\\\",\\\"plan_desc\\\",\\\"is_self_hosted_allowed\\\",\\\"is_custom_pricing_allowed\\\",\\\"provider\\\",\\\"monthly_amount\\\",\\\"annual_amount\\\",\\\"currency\\\",\\\"recurring_interval\\\",\\\"recurring_interval_count\\\",\\\"billing_scheme\\\",\\\"payment_provider\\\",\\\"active\\\"],\\\"label\\\":\\\"Plan\\\"},{\\\"__order\\\":[\\\"label\\\",\\\"fields\\\"],\\\"fields\\\":[\\\"terraform_template\\\"],\\\"label\\\":\\\"Terraform\\\"}]}}\",\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.569633378-01:00\",\n\t\t\t\"custom_form_id\": 71,\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"plan\",\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.579591719-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"custom_table\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"config\": \"{\\\"fields\\\":{\\\"plan\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Code\\\",\\\"name\\\":\\\"plan\\\",\\\"order\\\":1,\\\"pk\\\":false},\\\"sort_order\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Sort Order\\\",\\\"name\\\":\\\"sort_order\\\",\\\"order\\\":2,\\\"pk\\\":false},\\\"product\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Product ID\\\",\\\"name\\\":\\\"product\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"is_public\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Public\\\",\\\"name\\\":\\\"is_public\\\",\\\"order\\\":4,\\\"pk\\\":false},\\\"plan_desc\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Plan Description\\\",\\\"name\\\":\\\"plan_desc\\\",\\\"order\\\":5,\\\"pk\\\":false},\\\"is_self_hosted_allowed\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Self-Hosted Allowed\\\",\\\"name\\\":\\\"is_self_hosted_allowed\\\",\\\"order\\\":6,\\\"pk\\\":false},\\\"is_custom_pricing_allowed\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Custom Pricing\\\",\\\"name\\\":\\\"is_custom_pricing_allowed\\\",\\\"order\\\":7,\\\"pk\\\":false},\\\"provider\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Provider ID\\\",\\\"name\\\":\\\"provider\\\",\\\"order\\\":8,\\\"pk\\\":false},\\\"monthly_amount\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Monthly Amount\\\",\\\"name\\\":\\\"monthly_amount\\\",\\\"order\\\":9,\\\"pk\\\":false},\\\"annual_amount\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Annual Amount\\\",\\\"name\\\":\\\"annual_amount\\\",\\\"order\\\":10,\\\"pk\\\":false},\\\"currency\\\":{\\\"display\\\":true,\\\"fk\\\":true,\\\"label\\\":\\\"Currency ID\\\",\\\"name\\\":\\\"currency\\\",\\\"order\\\":11,\\\"pk\\\":false},\\\"recurring_interval\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Recurring Interval\\\",\\\"name\\\":\\\"recurring_interval\\\",\\\"order\\\":12,\\\"pk\\\":false},\\\"recurring_interval_count\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Billing Recurring Interval Count\\\",\\\"name\\\":\\\"recurring_interval_count\\\",\\\"order\\\":13,\\\"pk\\\":false},\\\"billing_scheme\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Billing Scheme ID\\\",\\\"name\\\":\\\"billing_scheme\\\",\\\"order\\\":14,\\\"pk\\\":false},\\\"payment_provider\\\":{\\\"display\\\":false,\\\"fk\\\":true,\\\"label\\\":\\\"Payment Provider ID\\\",\\\"name\\\":\\\"payment_provider\\\",\\\"order\\\":15,\\\"pk\\\":false},\\\"payment_product_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product ID\\\",\\\"name\\\":\\\"payment_product_id\\\",\\\"order\\\":16,\\\"pk\\\":false},\\\"active\\\":{\\\"display\\\":true,\\\"fk\\\":false,\\\"label\\\":\\\"Active\\\",\\\"name\\\":\\\"active\\\",\\\"order\\\":16,\\\"pk\\\":false},\\\"terraform_template\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Terraform Script\\\",\\\"name\\\":\\\"terraform_template\\\",\\\"order\\\":17,\\\"pk\\\":false},\\\"payment_price_monthly_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Monthly Price ID\\\",\\\"name\\\":\\\"payment_price_monthly_id\\\",\\\"order\\\":17,\\\"pk\\\":false},\\\"payment_price_annual_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Annual Price ID\\\",\\\"name\\\":\\\"payment_price_annual_id\\\",\\\"order\\\":18,\\\"pk\\\":false},\\\"payment_product_metadata\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Product Metadata\\\",\\\"name\\\":\\\"payment_product_metadata\\\",\\\"order\\\":19,\\\"pk\\\":false},\\\"payment_product_last_sync_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Payment Provider Last Sync At\\\",\\\"name\\\":\\\"payment_product_last_sync_at\\\",\\\"order\\\":20,\\\"pk\\\":false},\\\"user_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"User ID\\\",\\\"name\\\":\\\"user_id\\\",\\\"order\\\":23,\\\"pk\\\":false},\\\"app_id\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"App ID\\\",\\\"name\\\":\\\"app_id\\\",\\\"order\\\":24,\\\"pk\\\":false},\\\"created_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Created at\\\",\\\"name\\\":\\\"created_at\\\",\\\"order\\\":25,\\\"pk\\\":false},\\\"updated_at\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Updated at\\\",\\\"name\\\":\\\"updated_at\\\",\\\"order\\\":26,\\\"pk\\\":false},\\\"excluded\\\":{\\\"display\\\":false,\\\"fk\\\":false,\\\"label\\\":\\\"Excluded\\\",\\\"name\\\":\\\"excluded\\\",\\\"order\\\":27,\\\"pk\\\":false}},\\\"field_orders\\\":[\\\"plan\\\",\\\"sort_order\\\",\\\"product\\\",\\\"is_public\\\",\\\"plan_desc\\\",\\\"is_self_hosted_allowed\\\",\\\"is_custom_pricing_allowed\\\",\\\"provider\\\",\\\"monthly_amount\\\",\\\"annual_amount\\\",\\\"currency\\\",\\\"recurring_interval\\\",\\\"recurring_interval_count\\\",\\\"billing_scheme\\\",\\\"payment_provider\\\",\\\"payment_product_id\\\",\\\"active\\\",\\\"terraform_template\\\",\\\"payment_price_monthly_id\\\",\\\"payment_price_annual_id\\\",\\\"payment_product_metadata\\\",\\\"payment_product_last_sync_at\\\",\\\"user_id\\\",\\\"app_id\\\",\\\"created_at\\\",\\\"updated_at\\\",\\\"excluded\\\"],\\\"layout\\\":{\\\"__order\\\":[\\\"default_order\\\",\\\"exec_button\\\"],\\\"default_order\\\":[{\\\"__order\\\":[\\\"field\\\",\\\"order\\\"],\\\"field\\\":\\\"sort_order\\\",\\\"order\\\":\\\"ASC\\\"}],\\\"exec_button\\\":{\\\"__order\\\":[\\\"callApi\\\",\\\"api\\\",\\\"tooltip\\\",\\\"icon\\\"],\\\"api\\\":\\\"payment/sync_prod\\\",\\\"callApi\\\":true,\\\"icon\\\":\\\"arrow-path\\\",\\\"tooltip\\\":\\\"Sync Product With Payment Provider\\\"}}}\",\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.569633378-01:00\",\n\t\t\t\"custom_table_id\": 71,\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"table\": \"plan\",\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.579591719-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"database\": \"SAAS\",\n\t\t\"fields\": {\n\t\t\t\"active\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Active\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"1\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_order\": 22,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"active\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 826,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"annual_amount\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Annual Amount\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"annual_amount\",\n\t\t\t\t\"field_order\": 11,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"annual_amount\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 815,\n\t\t\t\t\"type\": \"decimal\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"App ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_order\": 25,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"app_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 829,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"billing_scheme_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Billing Scheme ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"billing_scheme_id\",\n\t\t\t\t\"field_order\": 15,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"billing_scheme_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"billing_scheme\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"billing_scheme\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"billing_scheme_id\",\n\t\t\t\t\"referred_table\": \"billing_scheme\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 819,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Created at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_order\": 26,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"created_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 830,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"currency_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Currency ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"currency_id\",\n\t\t\t\t\"field_order\": 12,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"currency_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"currency\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"currency\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"currency_id\",\n\t\t\t\t\"referred_table\": \"currency\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 816,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Excluded\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_order\": 28,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"excluded\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 832,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_custom_pricing_allowed\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Custom Pricing\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_custom_pricing_allowed\",\n\t\t\t\t\"field_order\": 8,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"is_custom_pricing_allowed\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 812,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_public\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Public\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_public\",\n\t\t\t\t\"field_order\": 6,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"is_public\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 810,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_self_hosted_allowed\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Self-Hosted Allowed\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": \"0\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_self_hosted_allowed\",\n\t\t\t\t\"field_order\": 7,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"is_self_hosted_allowed\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 811,\n\t\t\t\t\"type\": \"boolean\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"monthly_amount\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Monthly Amount\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"monthly_amount\",\n\t\t\t\t\"field_order\": 10,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"monthly_amount\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 814,\n\t\t\t\t\"type\": \"decimal\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_annual_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Annual Price ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_annual_id\",\n\t\t\t\t\"field_order\": 19,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_price_annual_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 823,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_monthly_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Monthly Price ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_monthly_id\",\n\t\t\t\t\"field_order\": 18,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_price_monthly_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 822,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Product ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_id\",\n\t\t\t\t\"field_order\": 17,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_product_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 821,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_last_sync_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Provider Last Sync At\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_last_sync_at\",\n\t\t\t\t\"field_order\": 21,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_product_last_sync_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 825,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_metadata\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Product Metadata\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_metadata\",\n\t\t\t\t\"field_order\": 20,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"payment_product_metadata\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 824,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_provider_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Payment Provider ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_provider_id\",\n\t\t\t\t\"field_order\": 16,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"payment_provider_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"payment_provider\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"payment_provider\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"payment_provider_id\",\n\t\t\t\t\"referred_table\": \"payment_provider\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 820,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Plan Code\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan\",\n\t\t\t\t\"field_order\": 2,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"plan\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 806,\n\t\t\t\t\"type\": \"varchar\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_desc\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Plan Description\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_desc\",\n\t\t\t\t\"field_order\": 3,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"plan_desc\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 807,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_id\": {\n\t\t\t\t\"autoincrement\": true,\n\t\t\t\t\"comment\": \"Plan ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_id\",\n\t\t\t\t\"field_order\": 1,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"plan_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": true,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 805,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"product_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Product ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"product_id\",\n\t\t\t\t\"field_order\": 5,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"product_id\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"product\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"product\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"product_id\",\n\t\t\t\t\"referred_table\": \"product\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 809,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"provider_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Provider ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"provider_id\",\n\t\t\t\t\"field_order\": 9,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"provider_id\",\n\t\t\t\t\"nullable\": false,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"provider\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"provider\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"provider_id\",\n\t\t\t\t\"referred_table\": \"provider\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 813,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_count\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Billing Recurring Interval Count\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_count\",\n\t\t\t\t\"field_order\": 14,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"recurring_interval_count\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 818,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Billing Recurring Interval\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_id\",\n\t\t\t\t\"field_order\": 13,\n\t\t\t\t\"fk\": true,\n\t\t\t\t\"name\": \"recurring_interval_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"ref\": {\n\t\t\t\t\t\"referred_column\": \"recurring_interval\",\n\t\t\t\t\t\"referred_columns_desc\": \"\",\n\t\t\t\t\t\"referred_columns_desc_org\": \"\",\n\t\t\t\t\t\"referred_table\": \"recurring_interval\"\n\t\t\t\t},\n\t\t\t\t\"referred_column\": \"recurring_interval_id\",\n\t\t\t\t\"referred_table\": \"recurring_interval\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 817,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"sort_order\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Sort Order\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"sort_order\",\n\t\t\t\t\"field_order\": 4,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"sort_order\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 808,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"terraform_template\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Terraform Script\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"terraform_template\",\n\t\t\t\t\"field_order\": 23,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"terraform_template\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 827,\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"Updated at\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_order\": 27,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"updated_at\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 831,\n\t\t\t\t\"type\": \"datetime\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"autoincrement\": false,\n\t\t\t\t\"comment\": \"User ID\",\n\t\t\t\t\"computed\": false,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"default\": null,\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_order\": 24,\n\t\t\t\t\"fk\": false,\n\t\t\t\t\"name\": \"user_id\",\n\t\t\t\t\"nullable\": true,\n\t\t\t\t\"pk\": false,\n\t\t\t\t\"referred_column\": \"\",\n\t\t\t\t\"referred_table\": \"\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"table_schema_id\": 828,\n\t\t\t\t\"type\": \"integer\",\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"fields_order\": [\n\t\t\t\"plan_id\",\n\t\t\t\"plan\",\n\t\t\t\"plan_desc\",\n\t\t\t\"sort_order\",\n\t\t\t\"product_id\",\n\t\t\t\"is_public\",\n\t\t\t\"is_self_hosted_allowed\",\n\t\t\t\"is_custom_pricing_allowed\",\n\t\t\t\"provider_id\",\n\t\t\t\"monthly_amount\",\n\t\t\t\"annual_amount\",\n\t\t\t\"currency_id\",\n\t\t\t\"recurring_interval_id\",\n\t\t\t\"recurring_interval_count\",\n\t\t\t\"billing_scheme_id\",\n\t\t\t\"payment_provider_id\",\n\t\t\t\"payment_product_id\",\n\t\t\t\"payment_price_monthly_id\",\n\t\t\t\"payment_price_annual_id\",\n\t\t\t\"payment_product_metadata\",\n\t\t\t\"payment_product_last_sync_at\",\n\t\t\t\"active\",\n\t\t\t\"terraform_template\",\n\t\t\t\"user_id\",\n\t\t\t\"app_id\",\n\t\t\t\"created_at\",\n\t\t\t\"updated_at\",\n\t\t\t\"excluded\"\n\t\t],\n\t\t\"pk\": \"plan_id\",\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"translate_table\": {\n\t\t\t\"app_id\": 3,\n\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\"db\": \"SAAS\",\n\t\t\t\"excluded\": false,\n\t\t\t\"lang\": \"en\",\n\t\t\t\"table\": \"plan\",\n\t\t\t\"table_org_desc\": \"Plans\",\n\t\t\t\"table_tooltip\": null,\n\t\t\t\"table_transl_desc\": \"Plans\",\n\t\t\t\"transl_tbl_id\": 71,\n\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\"user_id\": 1\n\t\t},\n\t\t\"translate_table_field\": {\n\t\t\t\"active\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"active\",\n\t\t\t\t\"field_org_desc\": \"Active\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Active\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 826,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"annual_amount\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"annual_amount\",\n\t\t\t\t\"field_org_desc\": \"Annual Amount\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Annual Amount\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 815,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"app_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"app_id\",\n\t\t\t\t\"field_org_desc\": \"App ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"App ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 829,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"billing_scheme_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"billing_scheme_id\",\n\t\t\t\t\"field_org_desc\": \"Billing Scheme ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Billing Scheme ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 819,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"created_at\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"created_at\",\n\t\t\t\t\"field_org_desc\": \"Created at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Created at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 830,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"currency_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"currency_id\",\n\t\t\t\t\"field_org_desc\": \"Currency ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Currency ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 816,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"excluded\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"excluded\",\n\t\t\t\t\"field_org_desc\": \"Excluded\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Excluded\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 832,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_custom_pricing_allowed\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_custom_pricing_allowed\",\n\t\t\t\t\"field_org_desc\": \"Custom Pricing\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Custom Pricing\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 812,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_public\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_public\",\n\t\t\t\t\"field_org_desc\": \"Public\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Public\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 810,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"is_self_hosted_allowed\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"is_self_hosted_allowed\",\n\t\t\t\t\"field_org_desc\": \"Self-Hosted Allowed\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Self-Hosted Allowed\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 811,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"monthly_amount\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"monthly_amount\",\n\t\t\t\t\"field_org_desc\": \"Monthly Amount\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Monthly Amount\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 814,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_annual_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_annual_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Annual Price ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Annual Price ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 823,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_price_monthly_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_price_monthly_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Monthly Price ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Monthly Price ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 822,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Product ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Product ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 821,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_last_sync_at\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_last_sync_at\",\n\t\t\t\t\"field_org_desc\": \"Payment Provider Last Sync At\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Provider Last Sync At\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 825,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_product_metadata\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_product_metadata\",\n\t\t\t\t\"field_org_desc\": \"Payment Product Metadata\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Product Metadata\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 824,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"payment_provider_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"payment_provider_id\",\n\t\t\t\t\"field_org_desc\": \"Payment Provider ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Payment Provider ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 820,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan\",\n\t\t\t\t\"field_org_desc\": \"Plan Code\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Plan Code\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 806,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_desc\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_desc\",\n\t\t\t\t\"field_org_desc\": \"Plan Description\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Plan Description\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 807,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"plan_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"plan_id\",\n\t\t\t\t\"field_org_desc\": \"Plan ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Plan ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 805,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"product_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"product_id\",\n\t\t\t\t\"field_org_desc\": \"Product ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Product ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 809,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"provider_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"provider_id\",\n\t\t\t\t\"field_org_desc\": \"Provider ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Provider ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 813,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_count\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_count\",\n\t\t\t\t\"field_org_desc\": \"Billing Recurring Interval Count\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Billing Recurring Interval Count\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 818,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"recurring_interval_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"recurring_interval_id\",\n\t\t\t\t\"field_org_desc\": \"Billing Recurring Interval\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Billing Recurring Interval\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 817,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"sort_order\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"sort_order\",\n\t\t\t\t\"field_org_desc\": \"Sort Order\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Sort Order\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 808,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"terraform_template\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"terraform_template\",\n\t\t\t\t\"field_org_desc\": \"Terraform Script\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Terraform Script\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 827,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"updated_at\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"updated_at\",\n\t\t\t\t\"field_org_desc\": \"Updated at\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"Updated at\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 831,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t},\n\t\t\t\"user_id\": {\n\t\t\t\t\"app_id\": 3,\n\t\t\t\t\"created_at\": \"2026-07-19T08:56:14.357065563-01:00\",\n\t\t\t\t\"db\": \"SAAS\",\n\t\t\t\t\"excluded\": false,\n\t\t\t\t\"field\": \"user_id\",\n\t\t\t\t\"field_org_desc\": \"User ID\",\n\t\t\t\t\"field_tooltip\": null,\n\t\t\t\t\"field_transl_desc\": \"User ID\",\n\t\t\t\t\"lang\": \"en\",\n\t\t\t\t\"table\": \"plan\",\n\t\t\t\t\"transl_tbl_field_id\": 828,\n\t\t\t\t\"updated_at\": \"2026-08-03T18:53:04.320954744-01:00\",\n\t\t\t\t\"user_id\": 1\n\t\t\t}\n\t\t},\n\t\t\"validations\": null\n\t},\n\t\"sql\": \"select plan_id, plan, active from (SELECT  \\\"plan\\\".*,\\\"currency\\\".\\\"currency\\\" AS \\\"currency\\\",\\\"product\\\".\\\"product\\\" AS \\\"product\\\",\\\"provider\\\".\\\"provider\\\" AS \\\"provider\\\",\\\"recurring_interval\\\".\\\"recurring_interval\\\" AS \\\"recurring_interval\\\",\\\"billing_scheme\\\".\\\"billing_scheme\\\" AS \\\"billing_scheme\\\",\\\"payment_provider\\\".\\\"payment_provider\\\" AS \\\"payment_provider\\\" FROM \\\"plan\\\" LEFT OUTER JOIN \\\"currency\\\" \\\"currency\\\" ON \\\"currency\\\".\\\"currency_id\\\" = \\\"plan\\\".\\\"currency_id\\\"\\nLEFT OUTER JOIN \\\"product\\\" \\\"product\\\" ON \\\"product\\\".\\\"product_id\\\" = \\\"plan\\\".\\\"product_id\\\"\\nLEFT OUTER JOIN \\\"provider\\\" \\\"provider\\\" ON \\\"provider\\\".\\\"provider_id\\\" = \\\"plan\\\".\\\"provider_id\\\"\\nLEFT OUTER JOIN \\\"recurring_interval\\\" \\\"recurring_interval\\\" ON \\\"recurring_interval\\\".\\\"recurring_interval_id\\\" = \\\"plan\\\".\\\"recurring_interval_id\\\"\\nLEFT OUTER JOIN \\\"billing_scheme\\\" \\\"billing_scheme\\\" ON \\\"billing_scheme\\\".\\\"billing_scheme_id\\\" = \\\"plan\\\".\\\"billing_scheme_id\\\"\\nLEFT OUTER JOIN \\\"payment_provider\\\" \\\"payment_provider\\\" ON \\\"payment_provider\\\".\\\"payment_provider_id\\\" = \\\"plan\\\".\\\"payment_provider_id\\\" WHERE (\\\"plan\\\".\\\"excluded\\\" IS FALSE AND \\\"product\\\".\\\"app_id\\\" = ? AND (\\\"product\\\".\\\"product_id\\\" IN (?) OR \\\"product\\\".\\\"user_id\\\" = ?) AND (\\\"plan\\\".\\\"plan_id\\\" IN (?) OR \\\"plan\\\".\\\"user_id\\\" = ?)) LIMIT 10 OFFSET 0) as t\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+          "time": 55,
+          "size": 47054,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/read_odata/SAAS/plan?%24filter=app_id+eq+3&%24schema=true",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
       }
     ],
     "responseContracts": [
@@ -2170,5 +2246,314 @@
       }
     ],
     "responseContracts": []
+  },
+  {
+    "id": "1786046298225d7a4cjfd9gf",
+    "name": "SURVEY ODATA_READ 8/6/2026, 6:58:18 PM",
+    "createdAt": 1786046298225,
+    "baseRequest": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id eq 1&$schema=false",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "survey_id eq 1",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "false",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "records": [
+      {
+        "id": "17860463280833yzm54hnodt",
+        "timestamp": 1786046328083,
+        "request": {
+          "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+          "name": "SURVEY ODATA_READ",
+          "method": "GET",
+          "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id eq 1&$schema=false",
+          "params": [
+            {
+              "key": "$filter",
+              "value": "survey_id eq 1",
+              "enabled": true
+            },
+            {
+              "key": "$schema",
+              "value": "false",
+              "enabled": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "111",
+            "content-type": "application/json",
+            "date": "Thu, 06 Aug 2026 19:58:48 GMT",
+            "vary": "Authorization"
+          },
+          "body": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+          "time": 29,
+          "size": 94,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/read_odata/SURVEY/survey_json?%24filter=survey_id+eq+1&%24schema=false",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1786046357768zpe2ar9xup",
+        "timestamp": 1786046357768,
+        "request": {
+          "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+          "name": "SURVEY ODATA_READ",
+          "method": "GET",
+          "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id2 eq 1&$schema=false",
+          "params": [
+            {
+              "key": "$filter",
+              "value": "survey_id2 eq 1",
+              "enabled": true
+            },
+            {
+              "key": "$schema",
+              "value": "false",
+              "enabled": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "111",
+            "content-type": "application/json",
+            "date": "Thu, 06 Aug 2026 19:59:17 GMT",
+            "vary": "Authorization"
+          },
+          "body": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+          "time": 50,
+          "size": 94,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/read_odata/SURVEY/survey_json?%24filter=survey_id2+eq+1&%24schema=false",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1786046368686cq67lt2hic",
+        "timestamp": 1786046368686,
+        "request": {
+          "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+          "name": "SURVEY ODATA_READ",
+          "method": "GET",
+          "url": "{{base_url}}/read_odata/SURVEY/survey_json?$filter=survey_id eq 1&$schema=false",
+          "params": [
+            {
+              "key": "$filter",
+              "value": "survey_id eq 1",
+              "enabled": true
+            },
+            {
+              "key": "$schema",
+              "value": "false",
+              "enabled": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "enabled": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "111",
+            "content-type": "application/json",
+            "date": "Thu, 06 Aug 2026 19:59:28 GMT",
+            "vary": "Authorization"
+          },
+          "body": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+          "time": 24,
+          "size": 94,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/read_odata/SURVEY/survey_json?%24filter=survey_id+eq+1&%24schema=false",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      }
+    ],
+    "responseContracts": [
+      {
+        "status": 200,
+        "latestVariantId": "1786046330294q5ww8c2isk9",
+        "variants": [
+          {
+            "id": "1786046330294q5ww8c2isk9",
+            "signature": "json:{msg:string,success:boolean}",
+            "summary": "{msg:string,success:boolean}",
+            "sampleBody": "{\n\t\"msg\": \"Sem acesso a tabela \\\"survey_json\\\", favor contatar o admin!\",\n\t\"success\": false\n}\n",
+            "contentType": "application/json",
+            "firstSeen": 1786046328083,
+            "lastSeen": 1786046368686,
+            "occurrences": 3,
+            "history": [
+              {
+                "timestamp": 1786046328083,
+                "recordId": "17860463280833yzm54hnodt"
+              },
+              {
+                "timestamp": 1786046357768,
+                "recordId": "1786046357768zpe2ar9xup"
+              },
+              {
+                "timestamp": 1786046368686,
+                "recordId": "1786046368686cq67lt2hic"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]

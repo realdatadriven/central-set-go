@@ -551,7 +551,7 @@ data:
         data:
           ui_page_data: survey_data
           ui_page_data_desc: Survey Data
-          odata_path: SURVEY/survey_json?$filter={{.PathParams.id}}
+          odata_path: SURVEY/survey_json?$filter=survey_id eq {{.PathParams.id}}
           ui_page_id: ui_page_id()
           ui_id: ui_id()
 ```

@@ -97,7 +97,8 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 		JOIN role ON user_role.role_id = role.role_id
 		WHERE user_role.user_id = $1
 			AND user_role.excluded = FALSE
-			AND role.excluded = FALSE`
+			AND role.excluded = FALSE
+		-- UNION SELECT 4 AS role_id`
 		var queryParams []any
 		queryParams = append(queryParams, user_id)
 		result, _, err := app.db.QueryMultiRows(query, queryParams...)
@@ -269,7 +270,8 @@ func (app *application) row_level_access(params map[string]any, tables []any, ro
 		JOIN role ON user_role.role_id = role.role_id
 		WHERE user_role.user_id = $1
 			AND user_role.excluded = FALSE
-			AND role.excluded = FALSE`
+			AND role.excluded = FALSE
+		-- UNION SELECT 4 AS role_id`
 		var queryParams []any
 		queryParams = append(queryParams, user_id)
 		result, _, err := app.db.QueryMultiRows(query, queryParams...)

@@ -810,6 +810,48 @@
           "type": "none"
         },
         "inheritAuth": true
+      },
+      {
+        "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+        "name": "SURVEY ODATA_READ",
+        "method": "GET",
+        "url": "{{base_url}}/read_odata/SURVEY/menu?$filter=app_id eq 3&$schema=true",
+        "params": [
+          {
+            "key": "$filter",
+            "value": "app_id eq 3",
+            "enabled": true
+          },
+          {
+            "key": "$schema",
+            "value": "true",
+            "enabled": true
+          }
+        ],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
       }
     ],
     "variables": [

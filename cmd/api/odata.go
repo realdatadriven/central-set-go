@@ -498,6 +498,7 @@ func isXMLMetadataRequest(r *http.Request) bool {
 func (app *application) ODataRead(params Dict, odata_path string) Dict {
 	db, table, query, err := parsePath(odata_path)
 	if err != nil {
+		fmt.Println("Failed to parse OData path:", odata_path, err)
 		return Dict{
 			"success": false,
 			"msg":     "Failed to parse OData path!",
