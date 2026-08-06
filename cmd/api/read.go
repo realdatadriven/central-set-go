@@ -400,6 +400,12 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 		}
 	}
 	// FILTERS
+	filters_main_table_only := false
+	// fmt.Println("READ DATA PARAMS:", params["data"])
+	if _, ok := params["data"].(map[string]any)["filters_main_table_only"]; ok {
+		// fmt.Println("filters_main_table_only:", params["data"].(map[string]any)["filters_main_table_only"])
+		filters_main_table_only = app.toBool(params["data"].(map[string]any)["filters_main_table_only"])
+	}
 	queryParams := []any{}
 	filters := []any{}
 	if _, ok := _schema["fields"].(map[string]any); !ok {
@@ -480,13 +486,14 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			_table := table
 			// allow fields that in the join tables to be passed as filters
 			is_in_fk_fields := false
-			if len(fk_tables_fields) > 0 {
+			// fmt.Println("filters_main_table_only:", _table, filters_main_table_only)
+			if len(fk_tables_fields) > 0 && !filters_main_table_only {
 				for _tbl, _tbl_fields := range fk_tables_fields {
 					if _, ok := _tbl_fields.(map[string]any)[_field]; ok {
 						// fmt.Println(_tbl, _tbl_fields)
 						is_in_fk_fields = true
 						_table = _tbl
-						// fmt.Println("FILTER FIELD IN FK TABLE:", _table, _field)
+						fmt.Println("FILTER FIELD IN FK TABLE:", _table, _field)
 						break
 					}
 				}

@@ -398,7 +398,6 @@ description: Anonymous Role
 access:
   - SURVEY:
     - Survey JSON:
-      - {table: survey, read: true}
       - {table: survey_json, read: true}
 active: true
 ```
