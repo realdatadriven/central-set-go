@@ -16,7 +16,10 @@
             const surveyTheme = JSON.parse(`{{ printf "%q" .survey_data.survey_theme }}`);
             const survey = new Survey.Model(surveyJson);
             survey.applyTheme(surveyTheme);
-            survey.render("surveyElement");
+            survey.onComplete.add((sender, options) => {
+                console.log(JSON.stringify(sender.data, null, 3));
+            });
+            survey.render(document.getElementById("surveyElement"));
         })();
     </script>
 </body>

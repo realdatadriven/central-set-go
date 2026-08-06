@@ -231,11 +231,12 @@ table: survey_json
 comment: Surveys JSON
 columns:
   survey_id:    { type: integer,      pk: true, autoincrement: true, comment: "ID" }
-  title:        { type: varchar(255), nullable: false, comment: "Title",       form_display: true, table_display: true, form_size: 9, form_order: 1 }
+  title:        { type: varchar(255), nullable: false, comment: "Title",       form_display: true, table_display: true, form_size: 7, form_order: 1 }
   description:  { type: text,         comment: "Description",                 form_display: true, table_display: true, form_long_text: true, form_order: 3 }
-  status:       { type: varchar(50),  default: draft, comment: "Status: draft | published | archived", form_display: true, table_display: true, form_size: 3, form_order: 2 }
+  status:       { type: varchar(50),  default: draft, comment: "Status: draft | published | archived", form_display: true, table_display: true, form_size: 3, form_order: 3 }
   survey_json:  { type: text,         comment: "JSON Spec", form_display: true, table_display: true, form_long_text: true, form_code: json }
   survey_theme: { type: text,         comment: "JSON Theme", form_display: true, table_display: true, form_long_text: true, form_code: json }
+  is_public:    { type: boolean,      default: false, comment: "Is Public", form_display: true, table_display: true, form_size: 2, form_order: 2 }
   user_id:      { type: integer,      comment: "Created by" }
   created_at:   { type: datetime,     comment: "Created at" }
   updated_at:   { type: datetime,     comment: "Updated at" }
