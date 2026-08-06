@@ -686,6 +686,15 @@ func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 	}
+	if r.Method == http.MethodPost {
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+			w.WriteHeader(http.StatusNoContent)
+		} else {
+			http.Redirect(w, r, "/ui/"+uiSlug, http.StatusSeeOther)
+		}
+		return
+	}
 	fmt.Fprintln(w, "Logged out successfully!")
 }
 

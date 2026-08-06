@@ -36,7 +36,7 @@ cs_app:
     menu_icon: clipboard-document-list
     menu_order: 3
     active: true
-    menu_config: '{"label": "survey","tooltip": "description","load_items": {"table": "survey","tables": ["survey"]}}'
+    #menu_config: '{"label": "survey","tooltip": "description","load_items": {"table": "survey_json","tables": ["survey_json"]}}'
     tables:
       - survey_json
   Survey Response:

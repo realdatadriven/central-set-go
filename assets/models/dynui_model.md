@@ -547,7 +547,7 @@ data:
       active: true
       children:
         table: ui_page_data
-        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id AND AND '
+        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id'
         data:
           ui_page_data: survey_data
           ui_page_data_desc: Survey Data
