@@ -3,13 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{.survey_data.title}}</title>
+    <title>{{.survey_data.title}} | {{.Page.page_title}} - {{.UI.ui_name}}</title>
     <link href="https://unpkg.com/survey-core/survey-core.min.css" type="text/css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/survey-core/survey.core.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
 </head>
 <body>
     <div id="surveyElement" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; min-height: 100%; height:100%"></div>
+    {{toJson .survey_data}}
     <script>
         (function () {
             const surveyJson = JSON.parse(`{{ printf "%q" .survey_data.survey_json }}`);
