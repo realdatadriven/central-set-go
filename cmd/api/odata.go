@@ -504,8 +504,8 @@ func (app *application) ODataRead(params Dict, odata_path string) Dict {
 			"msg":     "Failed to parse OData path!",
 		}
 	}
-	sql := `select * from app where (app = ? or db = ?) and excluded = false`
-	_app, err := app.AdminGetRowByFilter(sql, []any{db, db})
+	sql := `select * from app where (lower(app) = ? or lower(db) = ?) and excluded = false`
+	_app, err := app.AdminGetRowByFilter(sql, []any{strings.ToLower(db), strings.ToLower(db)})
 	if err != nil {
 		return Dict{
 			"success": false,
