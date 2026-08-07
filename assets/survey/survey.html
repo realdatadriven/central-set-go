@@ -3,22 +3,50 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{.survey_data.title}} | {{.Page.page_title}} - {{.UI.ui_name}}</title>
-    <link href="https://unpkg.com/survey-core/survey-core.min.css" type="text/css" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/survey-core/survey.core.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
+    <title>{{.survey_data.data.title}} | {{.Page.page_title}} - {{.UI.ui_name}}</title>
+    <link href="https://unpkg.com/survey-core/survey-core.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/survey-core/survey.core.min.js"></script>
+    <script src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
 </head>
 <body>
-    <div id="surveyElement" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; min-height: 100%; height:100%"></div>
-    {{toJson .survey_data}}
+    <div id="surveyElement" style="position:absolute;top:0;left:0;right:0;bottom:0;min-height:100%;height:100%"></div>
+    <!-- Raw JSON -->
+    <script id="survey-json" type="application/json">
+        {{ .survey_data.data.survey_json }}
+    </script>
+    <!-- Raw Theme -->
+    <script id="survey-theme" type="application/json">
+        {{ .survey_data.data.survey_theme }}
+    </script>
     <script>
-        (function () {
-            const surveyJson = JSON.parse(`{{ printf "%q" .survey_data.survey_json }}`);
-            const surveyTheme = JSON.parse(`{{ printf "%q" .survey_data.survey_theme }}`);
+        (() => {
+            let surveyJson = {};
+            let surveyTheme = {};
+            // Parse survey JSON
+            try {
+                const text = document.getElementById("survey-json").textContent.trim();
+                if (text) {
+                    surveyJson = JSON.parse(text);
+                }
+            } catch (e) {
+                console.error("Failed to parse survey JSON:", e);
+                return;
+            }
+            // Parse theme JSON (optional)
+            try {
+                const text = document.getElementById("survey-theme").textContent.trim();
+                if (text) {
+                    surveyTheme = JSON.parse(text);
+                }
+            } catch (e) {
+                console.warn("Failed to parse survey theme:", e);
+            }
             const survey = new Survey.Model(surveyJson);
-            survey.applyTheme(surveyTheme);
-            survey.onComplete.add((sender, options) => {
-                console.log(JSON.stringify(sender.data, null, 3));
+            if (Object.keys(surveyTheme).length) {
+                survey.applyTheme(surveyTheme);
+            }
+            survey.onComplete.add((sender) => {
+                console.log(JSON.stringify(sender.data, null, 2));
             });
             survey.render(document.getElementById("surveyElement"));
         })();
