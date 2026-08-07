@@ -37,14 +37,14 @@ cs_app:
       - {table: condition, active: false}
       - {table: question_type, active: false}
   Survey JSON:
-    menu_icon: clipboard-document-list
+    menu_icon: question-mark-circle
     menu_order: 3
     active: true
     #menu_config: '{"label": "survey","tooltip": "description","load_items": {"table": "survey_json","tables": ["survey_json"]}}'
     tables:
       - survey_json
   Survey Response:
-    menu_icon: clipboard-document-list
+    menu_icon: circle-stack
     menu_order: 4
     active: true
     tables:
@@ -235,7 +235,7 @@ comment: Surveys JSON
 columns:
   survey_id:    { type: integer,      pk: true, autoincrement: true, comment: "ID" }
   title:        { type: varchar(255), nullable: false, comment: "Title",       form_display: true, table_display: true, form_size: 7, form_order: 1 }
-  description:  { type: text,         comment: "Description",                 form_display: true, table_display: true, form_long_text: true, form_order: 3 }
+  description:  { type: text,         comment: "Description",                 form_display: true, table_display: true, form_long_text: true, form_order: 4 }
   status:       { type: varchar(50),  default: draft, comment: "Status: draft | published | archived", form_display: true, table_display: true, form_size: 3, form_order: 3 }
   survey_json:  { type: text,         comment: "JSON Spec", form_display: true, table_display: true, form_long_text: true, form_code: json }
   survey_theme: { type: text,         comment: "JSON Theme", form_display: true, table_display: true, form_long_text: true, form_code: json }
@@ -249,7 +249,7 @@ form_layout:
   form_in_popup: false
   size: 9
   tabs_steps_conf:
-    - {label: Survey, fields: [title, status, description]}
+    - {label: Survey, fields: [title, is_public, status, description]}
     - {label: Survey JSON, fields: [survey_json]}
     - {label: Theme JSON, fields: [survey_theme]}
 table_layout:
