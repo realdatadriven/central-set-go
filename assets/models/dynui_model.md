@@ -547,11 +547,12 @@ data:
       active: true
       children:
         table: ui_page_data
-        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id'
+        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_data = :ui_page_data'
         data:
           ui_page_data: survey_data
           ui_page_data_desc: Survey Data
-          odata_path: SURVEY/survey_json?$filter=survey_id eq {{.PathParams.id}}
+          odata_path: survey/survey_json?$filter=survey_id eq {{.PathParams.id}}
+          single_row_obj: true
           ui_page_id: ui_page_id()
           ui_id: ui_id()
 ```

@@ -815,16 +815,16 @@
         "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
         "name": "SURVEY ODATA_READ",
         "method": "GET",
-        "url": "{{base_url}}/read_odata/SURVEY/menu?$filter=app_id eq 3&$schema=true",
+        "url": "{{base_url}}/read_odata/survey/survey_json?$filter=survey_id eq 1&$schema=false",
         "params": [
           {
             "key": "$filter",
-            "value": "app_id eq 3",
+            "value": "survey_id eq 1",
             "enabled": true
           },
           {
             "key": "$schema",
-            "value": "true",
+            "value": "false",
             "enabled": true
           }
         ],

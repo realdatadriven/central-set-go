@@ -496,6 +496,7 @@ func isXMLMetadataRequest(r *http.Request) bool {
 		strings.Contains(accept, "application/atom+xml")
 }
 func (app *application) ODataRead(params Dict, odata_path string) Dict {
+	// fmt.Println("USER:", params["user"])
 	db, table, query, err := parsePath(odata_path)
 	if err != nil {
 		fmt.Println("Failed to parse OData path:", odata_path, err)
@@ -532,8 +533,9 @@ func (app *application) ODataRead(params Dict, odata_path string) Dict {
 			"msg":     "Failed to convert OData parameters!",
 		}
 	}
+	params["db"] = _app["db"]
 	params["app"] = _app
-	params["data"].(Dict)["db"] = db
+	params["data"].(Dict)["db"] = _app["db"]
 	params["data"].(Dict)["table"] = table
 	for key, val := range csParams {
 		params["data"].(Dict)[key] = val

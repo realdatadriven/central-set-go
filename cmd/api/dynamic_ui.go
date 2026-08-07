@@ -5,11 +5,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"maps"
 	"net/http"
 	"os"
 	"regexp"
-	"slices"
 	"strings"
 	"text/template"
 	texttemplate "text/template"
@@ -410,8 +408,8 @@ func (app *application) resolveUIData(base Dict, rows []Dict, nameCol string, pa
 		default:
 			tmplData[name] = res
 		}
-		fmt.Println("DATA:", tmplData[name].(Dict)["msg"], tmplData[name].(Dict)["data"])
-		fmt.Println("ODataRead result for", name, ":", slices.Collect(maps.Keys(tmplData[name].(Dict))))
+		// fmt.Println("DATA:", tmplData[name].(Dict)["msg"], tmplData[name].(Dict)["data"])
+		// fmt.Println("ODataRead result for", name, ":", slices.Collect(maps.Keys(tmplData[name].(Dict))))
 	}
 	return ""
 }
