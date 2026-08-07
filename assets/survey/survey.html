@@ -19,6 +19,42 @@
         {{ .survey_data.data.survey_theme }}
     </script>
     <script>
+        const save = (async (sender) => {
+            try {
+                const response = await fetch("/crud/survey/survey_response", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                //console.log("Response:", result);
+                if (result.success) {
+                    // Success message
+                    document.getElementById("surveyElement").innerHTML = `
+                        <div class="alert alert-success">
+                            Survey submitted successfully!
+                        </div>
+                    `;
+                } else {
+                    // Error message from backend
+                    document.getElementById("surveyElement").innerHTML = `
+                        <div class="alert alert-error">
+                            ${result.msg}
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error("Request failed:", err);
+                document.getElementById("surveyElement").innerHTML = `
+                    <div class="alert alert-error">
+                        Failed to submit survey.
+                    </div>
+                `;
+            }
+        });
         (() => {
             let surveyJson = {};
             let surveyTheme = {};
@@ -47,6 +83,7 @@
             }
             survey.onComplete.add((sender) => {
                 console.log(JSON.stringify(sender.data, null, 2));
+                save(sender);
             });
             survey.render(document.getElementById("surveyElement"));
         })();
