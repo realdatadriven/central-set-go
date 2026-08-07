@@ -27,7 +27,7 @@
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(sender.data)
                 });
                 const result = await response.json();
                 //console.log("Response:", result);
