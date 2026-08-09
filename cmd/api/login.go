@@ -1634,6 +1634,9 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 			return
 		}
 		role_id := env.GetInt("OAUTH_DEFAULT_ROLE_ID", 2)
+		if env.GetBool("OAUTH_DYN_LOGIN", false) {
+			role_id = env.GetInt("DYN_LOGIN_ROLE_ID", role_id)
+		}
 		username := gu.Email
 		if len(strings.Split(gu.Email, "@")) > 1 {
 			username = strings.Split(gu.Email, "@")[0]
