@@ -129,8 +129,8 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 			user = userFromSess
 		}
 	}
-	sql := `select * from app where (app = ? or db = ?) and excluded = false`
-	_app, err := app.AdminGetRowByFilter(sql, []any{db, db})
+	sql := `select * from app where (lower(app) = ? or lower(db) = ?) and excluded = false`
+	_app, err := app.AdminGetRowByFilter(sql, []any{strings.ToLower(db), strings.ToLower(db)})
 	if err != nil {
 		return Dict{
 			"success": false,
@@ -143,12 +143,13 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 			"msg":     fmt.Sprintf("APP associated with db %s not found!", db),
 		}
 	}
+	db = _app["db"].(string)
 	params := Dict{
 		"lang": "en",
 		"user": user,
 		"app":  _app,
 		"data": Dict{
-			"db":         db,
+			"db":         _app["db"],
 			"table":      table,
 			"pathParams": pathParams,
 		},

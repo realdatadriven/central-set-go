@@ -399,5 +399,7 @@ access:
   - SURVEY:
     - Survey JSON:
       - {table: survey_json, read: true}
+    - Survey Response:
+      - {table: response, create: true, read: false, update: true}
 active: true
 ```
