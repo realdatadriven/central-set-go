@@ -528,6 +528,7 @@ func (app *application) ODataRead(params Dict, odata_path string) Dict {
 	}
 	odata_params, err := ParseODataQuery(query)
 	if err != nil {
+		fmt.Println("ParseODataQuery:", err)
 		return Dict{
 			"success": false,
 			"msg":     "Failed to parse OData query!",
@@ -535,6 +536,7 @@ func (app *application) ODataRead(params Dict, odata_path string) Dict {
 	}
 	csParams, err := ODataToCentralParams(odata_params)
 	if err != nil {
+		fmt.Println("ODataToCentralParams:", err)
 		return Dict{
 			"success": false,
 			"msg":     "Failed to convert OData parameters!",
@@ -688,7 +690,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(_res)
 		return
 	}
-	db = _app["db"]
+	db = _app["db"].(string)
 	//fmt.Println(_app)
 	q := r.URL.Query()
 	odata_params, err := ParseODataQuery(q)
