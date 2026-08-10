@@ -1592,5 +1592,217 @@
       "size": 20778,
       "cookies": []
     }
+  },
+  {
+    "id": "1786387447989",
+    "timestamp": 1786387447989,
+    "request": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/saas/plan?$filter=plan_id gt 1&$top=10&$skip=0",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "plan_id gt 1",
+          "enabled": true
+        },
+        {
+          "key": "$top",
+          "value": "10",
+          "enabled": true
+        },
+        {
+          "key": "$skip",
+          "value": "0",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "827",
+        "content-type": "application/json",
+        "date": "Mon, 10 Aug 2026 18:44:07 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"plan_id\",\n\t\t\"plan\",\n\t\t\"plan_desc\",\n\t\t\"sort_order\",\n\t\t\"product_id\",\n\t\t\"is_public\",\n\t\t\"is_self_hosted_allowed\",\n\t\t\"is_custom_pricing_allowed\",\n\t\t\"provider_id\",\n\t\t\"monthly_amount\",\n\t\t\"annual_amount\",\n\t\t\"currency_id\",\n\t\t\"recurring_interval_id\",\n\t\t\"recurring_interval_count\",\n\t\t\"billing_scheme_id\",\n\t\t\"payment_provider_id\",\n\t\t\"payment_product_id\",\n\t\t\"payment_price_monthly_id\",\n\t\t\"payment_price_annual_id\",\n\t\t\"payment_product_metadata\",\n\t\t\"payment_product_last_sync_at\",\n\t\t\"active\",\n\t\t\"terraform_template\",\n\t\t\"user_id\",\n\t\t\"app_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"plan\": \"DEMO\",\n\t\t\t\"plan_id\": 2\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {\n\t\t\"app_id\": 3,\n\t\t\"create\": false,\n\t\t\"created_at\": \"2026-07-19T08:56:14.612330578-01:00\",\n\t\t\"delete\": false,\n\t\t\"excluded\": false,\n\t\t\"menu_id\": 11,\n\t\t\"read\": true,\n\t\t\"role_app_menu_table_id\": 1,\n\t\t\"role_id\": 4,\n\t\t\"share\": false,\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"update\": false,\n\t\t\"updated_at\": \"2026-08-07T18:45:31.370561309-01:00\",\n\t\t\"user_id\": 1\n\t},\n\t\"sql\": \"select plan_id, plan, active from (SELECT  \\\"plan\\\".*,\\\"billing_scheme\\\".\\\"billing_scheme\\\" AS \\\"billing_scheme\\\",\\\"product\\\".\\\"product\\\" AS \\\"product\\\",\\\"provider\\\".\\\"provider\\\" AS \\\"provider\\\",\\\"currency\\\".\\\"currency\\\" AS \\\"currency\\\",\\\"recurring_interval\\\".\\\"recurring_interval\\\" AS \\\"recurring_interval\\\",\\\"payment_provider\\\".\\\"payment_provider\\\" AS \\\"payment_provider\\\" FROM \\\"plan\\\" LEFT OUTER JOIN \\\"billing_scheme\\\" \\\"billing_scheme\\\" ON \\\"billing_scheme\\\".\\\"billing_scheme_id\\\" = \\\"plan\\\".\\\"billing_scheme_id\\\"\\nLEFT OUTER JOIN \\\"product\\\" \\\"product\\\" ON \\\"product\\\".\\\"product_id\\\" = \\\"plan\\\".\\\"product_id\\\"\\nLEFT OUTER JOIN \\\"provider\\\" \\\"provider\\\" ON \\\"provider\\\".\\\"provider_id\\\" = \\\"plan\\\".\\\"provider_id\\\"\\nLEFT OUTER JOIN \\\"currency\\\" \\\"currency\\\" ON \\\"currency\\\".\\\"currency_id\\\" = \\\"plan\\\".\\\"currency_id\\\"\\nLEFT OUTER JOIN \\\"recurring_interval\\\" \\\"recurring_interval\\\" ON \\\"recurring_interval\\\".\\\"recurring_interval_id\\\" = \\\"plan\\\".\\\"recurring_interval_id\\\"\\nLEFT OUTER JOIN \\\"payment_provider\\\" \\\"payment_provider\\\" ON \\\"payment_provider\\\".\\\"payment_provider_id\\\" = \\\"plan\\\".\\\"payment_provider_id\\\" WHERE (\\\"plan\\\".\\\"excluded\\\" IS FALSE AND \\\"plan\\\".\\\"plan_id\\\" \\u003e ? AND (\\\"product\\\".\\\"product_id\\\" IN (?) OR \\\"product\\\".\\\"user_id\\\" = ?) AND (\\\"plan\\\".\\\"plan_id\\\" IN (?) OR \\\"plan\\\".\\\"user_id\\\" = ?)) LIMIT 10 OFFSET 0) as t\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+      "time": 65,
+      "size": 2476,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1786387468774",
+    "timestamp": 1786387468774,
+    "request": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/saas/plan?$filter=plan_id gt 1&$top=2&$skip=0",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "plan_id gt 1",
+          "enabled": true
+        },
+        {
+          "key": "$top",
+          "value": "2",
+          "enabled": true
+        },
+        {
+          "key": "$skip",
+          "value": "0",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "819",
+        "content-type": "application/json",
+        "date": "Mon, 10 Aug 2026 18:44:28 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"plan_id\",\n\t\t\"plan\",\n\t\t\"plan_desc\",\n\t\t\"sort_order\",\n\t\t\"product_id\",\n\t\t\"is_public\",\n\t\t\"is_self_hosted_allowed\",\n\t\t\"is_custom_pricing_allowed\",\n\t\t\"provider_id\",\n\t\t\"monthly_amount\",\n\t\t\"annual_amount\",\n\t\t\"currency_id\",\n\t\t\"recurring_interval_id\",\n\t\t\"recurring_interval_count\",\n\t\t\"billing_scheme_id\",\n\t\t\"payment_provider_id\",\n\t\t\"payment_product_id\",\n\t\t\"payment_price_monthly_id\",\n\t\t\"payment_price_annual_id\",\n\t\t\"payment_product_metadata\",\n\t\t\"payment_product_last_sync_at\",\n\t\t\"active\",\n\t\t\"terraform_template\",\n\t\t\"user_id\",\n\t\t\"app_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"plan\": \"DEMO\",\n\t\t\t\"plan_id\": 2\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {\n\t\t\"app_id\": 3,\n\t\t\"create\": false,\n\t\t\"created_at\": \"2026-07-19T08:56:14.612330578-01:00\",\n\t\t\"delete\": false,\n\t\t\"excluded\": false,\n\t\t\"menu_id\": 11,\n\t\t\"read\": true,\n\t\t\"role_app_menu_table_id\": 1,\n\t\t\"role_id\": 4,\n\t\t\"share\": false,\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"update\": false,\n\t\t\"updated_at\": \"2026-08-07T18:45:31.370561309-01:00\",\n\t\t\"user_id\": 1\n\t},\n\t\"sql\": \"select plan_id, plan, active from (SELECT  \\\"plan\\\".*,\\\"recurring_interval\\\".\\\"recurring_interval\\\" AS \\\"recurring_interval\\\",\\\"billing_scheme\\\".\\\"billing_scheme\\\" AS \\\"billing_scheme\\\",\\\"payment_provider\\\".\\\"payment_provider\\\" AS \\\"payment_provider\\\",\\\"product\\\".\\\"product\\\" AS \\\"product\\\",\\\"provider\\\".\\\"provider\\\" AS \\\"provider\\\",\\\"currency\\\".\\\"currency\\\" AS \\\"currency\\\" FROM \\\"plan\\\" LEFT OUTER JOIN \\\"recurring_interval\\\" \\\"recurring_interval\\\" ON \\\"recurring_interval\\\".\\\"recurring_interval_id\\\" = \\\"plan\\\".\\\"recurring_interval_id\\\"\\nLEFT OUTER JOIN \\\"billing_scheme\\\" \\\"billing_scheme\\\" ON \\\"billing_scheme\\\".\\\"billing_scheme_id\\\" = \\\"plan\\\".\\\"billing_scheme_id\\\"\\nLEFT OUTER JOIN \\\"payment_provider\\\" \\\"payment_provider\\\" ON \\\"payment_provider\\\".\\\"payment_provider_id\\\" = \\\"plan\\\".\\\"payment_provider_id\\\"\\nLEFT OUTER JOIN \\\"product\\\" \\\"product\\\" ON \\\"product\\\".\\\"product_id\\\" = \\\"plan\\\".\\\"product_id\\\"\\nLEFT OUTER JOIN \\\"provider\\\" \\\"provider\\\" ON \\\"provider\\\".\\\"provider_id\\\" = \\\"plan\\\".\\\"provider_id\\\"\\nLEFT OUTER JOIN \\\"currency\\\" \\\"currency\\\" ON \\\"currency\\\".\\\"currency_id\\\" = \\\"plan\\\".\\\"currency_id\\\" WHERE (\\\"plan\\\".\\\"excluded\\\" IS FALSE AND \\\"plan\\\".\\\"plan_id\\\" \\u003e ? AND (\\\"product\\\".\\\"product_id\\\" IN (?) OR \\\"product\\\".\\\"user_id\\\" = ?) AND (\\\"plan\\\".\\\"plan_id\\\" IN (?) OR \\\"plan\\\".\\\"user_id\\\" = ?)) LIMIT 2 OFFSET 0) as t\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+      "time": 73,
+      "size": 2475,
+      "cookies": []
+    }
+  },
+  {
+    "id": "1786387498992",
+    "timestamp": 1786387498992,
+    "request": {
+      "id": "793419dd-6c7d-45f6-bae3-16af741f1579",
+      "name": "SURVEY ODATA_READ",
+      "method": "GET",
+      "url": "{{base_url}}/read_odata/saas/plan?$filter=plan_id gt 1&$top=2&$skip=0&$search=DEM",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "plan_id gt 1",
+          "enabled": true
+        },
+        {
+          "key": "$top",
+          "value": "2",
+          "enabled": true
+        },
+        {
+          "key": "$skip",
+          "value": "0",
+          "enabled": true
+        },
+        {
+          "key": "$search",
+          "value": "DEM",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "829",
+        "content-type": "application/json",
+        "date": "Mon, 10 Aug 2026 18:44:58 GMT",
+        "vary": "Authorization"
+      },
+      "body": "{\n\t\"cols\": [\n\t\t\"plan_id\",\n\t\t\"plan\",\n\t\t\"plan_desc\",\n\t\t\"sort_order\",\n\t\t\"product_id\",\n\t\t\"is_public\",\n\t\t\"is_self_hosted_allowed\",\n\t\t\"is_custom_pricing_allowed\",\n\t\t\"provider_id\",\n\t\t\"monthly_amount\",\n\t\t\"annual_amount\",\n\t\t\"currency_id\",\n\t\t\"recurring_interval_id\",\n\t\t\"recurring_interval_count\",\n\t\t\"billing_scheme_id\",\n\t\t\"payment_provider_id\",\n\t\t\"payment_product_id\",\n\t\t\"payment_price_monthly_id\",\n\t\t\"payment_price_annual_id\",\n\t\t\"payment_product_metadata\",\n\t\t\"payment_product_last_sync_at\",\n\t\t\"active\",\n\t\t\"terraform_template\",\n\t\t\"user_id\",\n\t\t\"app_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"plan\": \"DEMO\",\n\t\t\t\"plan_id\": 2\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {\n\t\t\"app_id\": 3,\n\t\t\"create\": false,\n\t\t\"created_at\": \"2026-07-19T08:56:14.612330578-01:00\",\n\t\t\"delete\": false,\n\t\t\"excluded\": false,\n\t\t\"menu_id\": 11,\n\t\t\"read\": true,\n\t\t\"role_app_menu_table_id\": 1,\n\t\t\"role_id\": 4,\n\t\t\"share\": false,\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 71,\n\t\t\"update\": false,\n\t\t\"updated_at\": \"2026-08-07T18:45:31.370561309-01:00\",\n\t\t\"user_id\": 1\n\t},\n\t\"sql\": \"select plan_id, plan, active from (SELECT  \\\"plan\\\".*,\\\"provider\\\".\\\"provider\\\" AS \\\"provider\\\",\\\"recurring_interval\\\".\\\"recurring_interval\\\" AS \\\"recurring_interval\\\",\\\"currency\\\".\\\"currency\\\" AS \\\"currency\\\",\\\"billing_scheme\\\".\\\"billing_scheme\\\" AS \\\"billing_scheme\\\",\\\"payment_provider\\\".\\\"payment_provider\\\" AS \\\"payment_provider\\\",\\\"product\\\".\\\"product\\\" AS \\\"product\\\" FROM \\\"plan\\\" LEFT OUTER JOIN \\\"provider\\\" \\\"provider\\\" ON \\\"provider\\\".\\\"provider_id\\\" = \\\"plan\\\".\\\"provider_id\\\"\\nLEFT OUTER JOIN \\\"recurring_interval\\\" \\\"recurring_interval\\\" ON \\\"recurring_interval\\\".\\\"recurring_interval_id\\\" = \\\"plan\\\".\\\"recurring_interval_id\\\"\\nLEFT OUTER JOIN \\\"currency\\\" \\\"currency\\\" ON \\\"currency\\\".\\\"currency_id\\\" = \\\"plan\\\".\\\"currency_id\\\"\\nLEFT OUTER JOIN \\\"billing_scheme\\\" \\\"billing_scheme\\\" ON \\\"billing_scheme\\\".\\\"billing_scheme_id\\\" = \\\"plan\\\".\\\"billing_scheme_id\\\"\\nLEFT OUTER JOIN \\\"payment_provider\\\" \\\"payment_provider\\\" ON \\\"payment_provider\\\".\\\"payment_provider_id\\\" = \\\"plan\\\".\\\"payment_provider_id\\\"\\nLEFT OUTER JOIN \\\"product\\\" \\\"product\\\" ON \\\"product\\\".\\\"product_id\\\" = \\\"plan\\\".\\\"product_id\\\" WHERE (\\\"plan\\\".\\\"excluded\\\" IS FALSE AND \\\"plan\\\".\\\"plan_id\\\" \\u003e ? AND (\\\"product\\\".\\\"product_id\\\" IN (?) OR \\\"product\\\".\\\"user_id\\\" = ?) AND (\\\"plan\\\".\\\"plan_id\\\" IN (?) OR \\\"plan\\\".\\\"user_id\\\" = ?)) LIMIT 2 OFFSET 0) as t\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+      "time": 40,
+      "size": 2475,
+      "cookies": []
+    }
   }
 ]
