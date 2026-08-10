@@ -42,7 +42,6 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/memory"
 	"github.com/duckdb/duckdb-go/v2"
 	"github.com/realdatadriven/etlx"
-	"golang.org/x/crypto/acme/autocert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
