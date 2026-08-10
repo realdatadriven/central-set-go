@@ -431,6 +431,8 @@ data:
           {{if .PathParams.filter}}&$filter={{.PathParams.filter}}{{end}}
           {{if .PathParams.top}}&$top={{.PathParams.top}}{{end}}
           {{if .PathParams.skip}}&$skip={{.PathParams.skip}}{{end}}
+          {{if .PathParams.search}}&$search={{.PathParams.search}}{{end}}
+          {{if .PathParams.orderby}}&$orderby={{.PathParams.orderby}}{{end}}
           {{if .PathParams.schema}}&$schema={{.PathParams.schema}}{{end}}
           {{if .PathParams.format}}&$format={{.PathParams.format}}{{end}}
       ui_partial_id: ui_partial_id()

@@ -452,8 +452,8 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	db := r.PathValue("db")
 	w.Header().Set("OData-Version", "4.0")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	sql := `select * from table_schema where db = ? and excluded = false  order by field_order`
-	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db})
+	sql := `select * from table_schema where lower(db) = ? and excluded = false  order by field_order`
+	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db)})
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_res := Dict{
@@ -590,8 +590,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	//w.Header().Set("Content-Type", "application/json")
 	if table == "$metadata" {
-		sql := `select * from table_schema where db = ? and excluded = false  order by field_order`
-		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db, table})
+		sql := `select * from table_schema where lower(db) = ? and excluded = false  order by field_order`
+		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_res := Dict{
@@ -636,8 +636,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(model)*/
 		return
 	} else if isXMLMetadataRequest(r) {
-		sql := `select * from "table_schema" where "db" = ? and "table" = ? and "excluded" = false`
-		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{db, table})
+		sql := `select * from "table_schema" where lower("db") = ? and "table" = ? and "excluded" = false`
+		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_res := Dict{
@@ -675,8 +675,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(xml))
 		return
 	}
-	sql := `select * from app where (app = ? or db = ?) and excluded = false`
-	_app, err := app.AdminGetRowByFilter(sql, []any{db, table})
+	sql := `select * from app where (lower(app) = ? or lower(db) = ?) and excluded = false`
+	_app, err := app.AdminGetRowByFilter(sql, []any{strings.ToLower(db), strings.ToLower(db)})
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_res := Dict{
@@ -688,6 +688,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(_res)
 		return
 	}
+	db = _app["db"]
 	//fmt.Println(_app)
 	q := r.URL.Query()
 	odata_params, err := ParseODataQuery(q)
