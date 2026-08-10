@@ -35,6 +35,7 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/apache/arrow-go/v18/arrow"
@@ -872,6 +873,57 @@ func loadAutocertCredentials() (credentials.TransportCredentials, error) {
 	}
 	cacheDir := os.Getenv("ARROW_AUTO_CERT_CACHE")
 	if cacheDir == "" {
+		cacheDir = "./data/autocert"
+	}
+	log.Printf("[autocert] domains: %v", domains)
+	log.Printf("[autocert] cache: %s", cacheDir)
+	m := &autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
+		Cache:      autocert.DirCache(cacheDir),
+		HostPolicy: autocert.HostWhitelist(domains...),
+		Email:      os.Getenv("ARROW_AUTO_CERT_EMAIL"),
+	}
+	tlsConfig := m.TLSConfig()
+	// Save autocert's original callback.
+	originalGetCertificate := tlsConfig.GetCertificate
+	// Wrap it so we can see what is happening.
+	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+		if hello.ServerName == "" {
+			fallback := domains[0]
+			log.Printf("[autocert] No SNI, using fallback hostname %q", fallback)
+			clone := *hello
+			clone.ServerName = fallback
+			hello = &clone
+		}
+		log.Printf("[autocert] ClientHello: server_name=%q ALPN=%v", hello.ServerName, hello.SupportedProtos)
+		cert, err := originalGetCertificate(hello)
+		if err != nil {
+			log.Printf("[autocert] GetCertificate ERROR: server_name=%q error=%v", hello.ServerName, err)
+			return nil, err
+		}
+		if cert == nil {
+			log.Printf("[autocert] GetCertificate: NO CERTIFICATE for %q", hello.ServerName)
+		} else {
+			log.Printf("[autocert] GetCertificate: certificate returned for %q", hello.ServerName)
+		}
+		return cert, nil
+	}
+	tlsConfig.MinVersion = tls.VersionTLS12
+	log.Printf("[autocert] TLS configured: MinVersion=TLS1.2 NextProtos=%v", tlsConfig.NextProtos)
+	return credentials.NewTLS(tlsConfig), nil
+}
+
+func loadAutocertCredentials2() (credentials.TransportCredentials, error) {
+	domainsEnv := os.Getenv("ARROW_DOMAIN")
+	if domainsEnv == "" {
+		return nil, fmt.Errorf("ARROW_DOMAIN must be set (comma-separated)")
+	}
+	domains := strings.Split(domainsEnv, ",")
+	for i := range domains {
+		domains[i] = strings.TrimSpace(domains[i])
+	}
+	cacheDir := os.Getenv("ARROW_AUTO_CERT_CACHE")
+	if cacheDir == "" {
 		cacheDir = "/var/cache/autocert"
 	}
 	m := &autocert.Manager{
@@ -882,6 +934,11 @@ func loadAutocertCredentials() (credentials.TransportCredentials, error) {
 	}
 	tlsConfig := m.TLSConfig()
 	tlsConfig.MinVersion = tls.VersionTLS13
+	// Explicitly configure for gRPC / HTTP2.
+	tlsConfig.NextProtos = []string{
+		"h2",
+		acme.ALPNProto,
+	}
 	// If you need mTLS on top of autocert, add ClientAuth/ClientCAs here too.
 	return credentials.NewTLS(tlsConfig), nil
 }
