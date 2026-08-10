@@ -62,6 +62,7 @@ func ODataToCentralParams(odata Dict) (Dict, error) {
 		"offset":   any(0),
 		"limit":    any(10),
 		"order_by": []any{},
+
 	}*/
 	out := Dict{}
 	// $select -> fields
@@ -97,6 +98,12 @@ func ODataToCentralParams(odata Dict) (Dict, error) {
 		// fmt.Println("OData $schema:", v)
 		if b, err := strconv.ParseBool(v.(string)); err == nil {
 			out["include_schema"] = b
+		}
+	}
+	// $search = search pattern
+	if v, ok := odata["$search"].(string); ok {
+		if v != "" {
+			out["pattern"] = v
 		}
 	}
 	return out, nil
