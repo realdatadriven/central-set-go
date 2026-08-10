@@ -106,10 +106,10 @@ func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 			fmt.Println("invalid config: catalog_name must be a string")
 			continue
 		}
-		fmt.Printf("CATALOG: %s # SCHEMA: %d\n", catalog_name, len(schemas))
+		//fmt.Printf("CATALOG: %s # SCHEMA: %d\n", catalog_name, len(schemas))
 		for _, s := range schemas {
 			schemaName := s["flight_schema"].(string)
-			fmt.Printf("SCHEMA: %s/%s\n", catalog_name, schemaName)
+			// fmt.Printf("SCHEMA: %s/%s\n", catalog_name, schemaName)
 			schemaDesc, ok := s["flight_schema_desc"].(string)
 			if !ok {
 				schemaDesc = schemaName

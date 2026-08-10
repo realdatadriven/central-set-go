@@ -374,7 +374,7 @@ func (app *application) serveArrowFlight() error {
 		}
 		//fmt.Println(f["rla_tables"])
 	}
-	fmt.Printf("#C: %d #F: %d\n", len(catalogs), len(flight_schemas))
+	//fmt.Printf("#C: %d #F: %d\n", len(catalogs), len(flight_schemas))
 	for _, c := range catalogs {
 		schemas := []Dict{}
 		for _, f := range flight_schemas {
