@@ -35,6 +35,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/crypto/acme/autocert"
+
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/memory"
@@ -761,13 +763,13 @@ func (a *AirportAdapter) scanFunc(mem memory.Allocator, schemaName, tableName st
 // In production, use proper certificate management.
 func loadTLSCredentials() (credentials.TransportCredentials, error) {
 	// Load server certificate and key
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+	enableTLS := strings.ToLower(os.Getenv("ARROW_ENABLE_TLS")) == "true"
 	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		caFile := os.Getenv("TLS_CA_CERT_FILE")
+		certFile := os.Getenv("ARROW_TLS_CERT_FILE")
+		keyFile := os.Getenv("ARROW_TLS_KEY_FILE")
+		caFile := os.Getenv("ARROW_TLS_CA_CERT_FILE")
 		if certFile == "" || keyFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
+			return nil, fmt.Errorf("ARROW_ENABLE_TLS is true but ARROW_TLS_CERT_FILE or ARROW_TLS_KEY_FILE or ARROW_TLS_CA_CERT_FILE is not set %s", "")
 		}
 		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
@@ -794,14 +796,14 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 	return nil, nil
 }
 
-func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
-	enableTLS := strings.ToLower(os.Getenv("ENABLE_TLS")) == "true"
+/*func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
+	enableTLS := strings.ToLower(os.Getenv("ARROW_ENABLE_TLS")) == "true"
 	if enableTLS {
-		certFile := os.Getenv("TLS_CERT_FILE")
-		keyFile := os.Getenv("TLS_KEY_FILE")
-		caFile := os.Getenv("TLS_CA_CERT_FILE")
+		certFile := os.Getenv("ARROW_TLS_CERT_FILE")
+		keyFile := os.Getenv("ARROW_TLS_KEY_FILE")
+		caFile := os.Getenv("ARROW_TLS_CA_CERT_FILE")
 		if certFile == "" || keyFile == "" || caFile == "" {
-			return nil, fmt.Errorf("ENABLE_TLS is true but TLS_CERT_FILE or TLS_KEY_FILE or TLS_CA_CERT_FILE is not set %s", "")
+			return nil, fmt.Errorf("ARROW_ENABLE_TLS is true but ARROW_TLS_CERT_FILE or ARROW_TLS_KEY_FILE or ARROW_TLS_CA_CERT_FILE is not set %s", "")
 		}
 		serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
@@ -824,7 +826,66 @@ func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 		}), nil
 	}
 	return nil, nil
+}*/
+
+func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
+	enableTLS := strings.ToLower(os.Getenv("ARROW_ENABLE_TLS")) == "true"
+	if !enableTLS {
+		return nil, nil
+	}
+	if strings.ToLower(os.Getenv("ARROW_AUTO_CERT")) == "true" {
+		return loadAutocertCredentials()
+	}
+	certFile := os.Getenv("ARROW_TLS_CERT_FILE")
+	keyFile := os.Getenv("ARROW_TLS_KEY_FILE")
+	caFile := os.Getenv("ARROW_TLS_CA_CERT_FILE")
+	if certFile == "" || keyFile == "" || caFile == "" {
+		return nil, fmt.Errorf("ARROW_ENABLE_TLS is true but ARROW_TLS_CERT_FILE or ARROW_TLS_KEY_FILE or ARROW_TLS_CA_CERT_FILE is not set")
+	}
+	serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return nil, fmt.Errorf("load server cert: %w", err)
+	}
+	caCert, err := os.ReadFile(caFile)
+	if err != nil {
+		return nil, fmt.Errorf("read CA cert: %w", err)
+	}
+	certPool := x509.NewCertPool()
+	if !certPool.AppendCertsFromPEM(caCert) {
+		return nil, fmt.Errorf("append CA cert")
+	}
+	return credentials.NewTLS(&tls.Config{
+		Certificates: []tls.Certificate{serverCert},
+		ClientAuth:   tls.NoClientCert,
+		MinVersion:   tls.VersionTLS13,
+	}), nil
 }
+
+func loadAutocertCredentials() (credentials.TransportCredentials, error) {
+	domainsEnv := os.Getenv("ARROW_DOMAIN")
+	if domainsEnv == "" {
+		return nil, fmt.Errorf("ARROW_DOMAIN must be set (comma-separated)")
+	}
+	domains := strings.Split(domainsEnv, ",")
+	for i := range domains {
+		domains[i] = strings.TrimSpace(domains[i])
+	}
+	cacheDir := os.Getenv("ARROW_AUTO_CERT_CACHE")
+	if cacheDir == "" {
+		cacheDir = "/var/cache/autocert"
+	}
+	m := &autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
+		Cache:      autocert.DirCache(cacheDir),
+		HostPolicy: autocert.HostWhitelist(domains...),
+		Email:      os.Getenv("ARROW_AUTO_CERT_EMAIL"), // optional
+	}
+	tlsConfig := m.TLSConfig()
+	tlsConfig.MinVersion = tls.VersionTLS13
+	// If you need mTLS on top of autocert, add ClientAuth/ClientCAs here too.
+	return credentials.NewTLS(tlsConfig), nil
+}
+
 func IdentityJSONToMap(identity string) (map[string]any, error) {
 	var m map[string]any
 	if err := json.Unmarshal([]byte(identity), &m); err != nil {
