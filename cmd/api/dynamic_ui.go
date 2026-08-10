@@ -429,6 +429,10 @@ func (app *application) renderODataPath(odataPath string, pathParams Dict) (stri
 	_path = strings.ReplaceAll(_path, "\r", "")
 	re := regexp.MustCompile(`\s+`)
 	_path = strings.TrimSpace(re.ReplaceAllString(_path, " "))
+	re = regexp.MustCompile(`\s+&|&\s+`)
+	_path = strings.TrimSpace(re.ReplaceAllString(_path, "&"))
+	re = regexp.MustCompile(`\?&`)
+	_path = strings.TrimSpace(re.ReplaceAllString(_path, "?"))
 	return _path, nil
 }
 
