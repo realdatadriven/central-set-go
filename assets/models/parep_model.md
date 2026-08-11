@@ -58,88 +58,88 @@ cs_app:
 
 ## TABELAS DE OPÇÕES
 
+## ESTADO_PROGRAMA
 ```yaml
 table: estado_programa
 comment: Estado do programa
 tooltip: Lista de estados possíveis para um programa.
 columns:
   estado_programa_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado do programa", tooltip: "Chave primária do estado." }
-  codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição breve do estado." }
+  estado_programa: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_programa_desc: { type: text, comment: "Descrição", tooltip: "Descrição breve do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 ```
 
+## ESTADO_OBJETIVO
 ```yaml
 table: estado_objetivo
 comment: Estado do objetivo
 tooltip: Lista de estados possíveis para um objetivo.
 columns:
   estado_objetivo_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado do objetivo", tooltip: "Chave primária do estado." }
-  codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição breve do estado." }
+  estado_objetivo: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_objetivo_desc: { type: text, comment: "Descrição", tooltip: "Descrição breve do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 ```
 
+## ESTADO_FONTE
 ```yaml
 table: estado_fonte
 comment: Estado de validação da fonte
 tooltip: Estados de validação de um registo face à fonte oficial.
 columns:
   estado_fonte_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado da fonte", tooltip: "Chave primária do estado." }
-  codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição breve do estado." }
+  estado_fonte: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_fonte_desc: { type: text, comment: "Descrição", tooltip: "Descrição breve do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: SOURCE_PENDING, nome: Pendente, descricao: "Ainda não validado"}
-  - {codigo: CONFIRMED, nome: Confirmado, descricao: "Confirmado pela fonte oficial"}
+  - {estado_fonte: Pendente, estado_fonte_desc: "Ainda não validado"}
+  - {estado_fonte: Confirmado, estado_fonte_desc: "Confirmado pela fonte oficial"}
 ```
 
+## TIPOS_INDICADOR
 ```yaml
 table: tipos_indicador
 comment: Tipo de indicador
 tooltip: Tipos de valores usados pelos indicadores.
 columns:
   tipo_indicador_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do tipo de indicador", tooltip: "Chave primária do tipo." }
-  codigo: { type: varchar, len: 50, unique: true, nullable: false, comment: "Código do tipo", tooltip: "Código técnico do tipo." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do tipo", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de indicador." }
+  tipo_indicador: { type: varchar, len: 100, nullable: false, comment: "Nome do tipo", tooltip: "Nome apresentado ao utilizador." }
+  tipo_indicador_desc: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de indicador." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o tipo está excluído." }
 data:
-  - {codigo: PERCENTAGE, nome: Percentagem, descricao: "Valor percentual"}
-  - {codigo: NUMBER, nome: Número, descricao: "Valor quantitativo absoluto"}
-  - {codigo: RATE, nome: Taxa, descricao: "Taxa ou proporção"}
-  - {codigo: RATIO, nome: Rácio, descricao: "Relação entre valores"}
-  - {codigo: CURRENCY, nome: Valor monetário, descricao: "Valor monetário"}
-  - {codigo: INDEX, nome: Índice, descricao: "Valor indexado"}
-  - {codigo: SCORE, nome: Pontuação, descricao: "Valor numa escala"}
-  - {codigo: BOOLEAN, nome: Sim/Não, descricao: "Resultado binário"}
-  - {codigo: TEXT, nome: Texto, descricao: "Resultado qualitativo"}
+  - {tipo_indicador: Percentagem, tipo_indicador_desc: "Valor percentual"}
+  - {tipo_indicador: Número, tipo_indicador_desc: "Valor quantitativo absoluto"}
+  - {tipo_indicador: Taxa, tipo_indicador_desc: "Taxa ou proporção"}
+  - {tipo_indicador: Rácio, tipo_indicador_desc: "Relação entre valores"}
+  - {tipo_indicador: Valor monetário, tipo_indicador_desc: "Valor monetário"}
+  - {tipo_indicador: Índice, tipo_indicador_desc: "Valor indexado"}
+  - {tipo_indicador: Pontuação, tipo_indicador_desc: "Valor numa escala"}
+  - {tipo_indicador: Sim/Não, tipo_indicador_desc: "Resultado binário"}
+  - {tipo_indicador: Texto, tipo_indicador_desc: "Resultado qualitativo"}
 ```
 
+## DIMENSOES
 ```yaml
 table: dimensoes
 comment: Dimensão de desagregação
 tooltip: Dimensões usadas para desagregar as medições.
 columns:
   dimensao_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador da dimensão", tooltip: "Chave primária da dimensão." }
-  codigo: { type: varchar, len: 50, unique: true, nullable: false, comment: "Código da dimensão", tooltip: "Código técnico da dimensão." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome da dimensão", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição da dimensão." }
+  dimensao: { type: varchar, len: 100, nullable: false, comment: "Nome da dimensão", tooltip: "Nome apresentado ao utilizador." }
+  dimensao_desc: { type: text, comment: "Descrição", tooltip: "Descrição da dimensão." }
   ativa: { type: boolean, default: true, comment: "Ativa", tooltip: "Indica se a dimensão pode ser utilizada." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
@@ -147,6 +147,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a dimensão está excluída." }
 ```
 
+## VALORES_DIMENSAO
 ```yaml
 table: valores_dimensao
 comment: Valor de dimensão
@@ -154,9 +155,8 @@ tooltip: Valores possíveis de cada dimensão de desagregação.
 columns:
   valor_dimensao_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do valor da dimensão", tooltip: "Chave primária do valor." }
   dimensao_id: { type: integer, fk: "dimensoes.dimensao_id", nullable: false, comment: "Dimensão", tooltip: "Dimensão a que o valor pertence.", form_display: true, table_display: true }
-  codigo: { type: varchar, len: 50, nullable: false, comment: "Código do valor", tooltip: "Código técnico do valor.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 255, nullable: false, comment: "Nome do valor", tooltip: "Nome apresentado ao utilizador.", form_display: true, table_display: true }
-  ordem: { type: integer, default: 0, comment: "Ordem", tooltip: "Ordem de apresentação." }
+  valor_dimensao: { type: varchar, len: 255, nullable: false, comment: "Nome do valor", tooltip: "Nome apresentado ao utilizador.", form_display: true, table_display: true }
+  valor_dimensao_ordem: { type: integer, default: 0, comment: "Ordem", tooltip: "Ordem de apresentação." }
   ativa: { type: boolean, default: true, comment: "Ativa", tooltip: "Indica se o valor está ativo." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
@@ -164,43 +164,43 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o valor está excluído." }
 ```
 
+## TIPOS_ACAO
 ```yaml
 table: tipos_acao
 comment: Tipo de ação
 tooltip: Tipos de ações executáveis no programa.
 columns:
   tipo_acao_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do tipo de ação", tooltip: "Chave primária do tipo." }
-  codigo: { type: varchar, len: 50, unique: true, nullable: false, comment: "Código do tipo", tooltip: "Código técnico do tipo." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do tipo", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de ação." }
+  tipo_acao: { type: varchar, len: 100, nullable: false, comment: "Nome do tipo", tooltip: "Nome apresentado ao utilizador." }
+  tipo_acao_desc: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de ação." }
   ativa: { type: boolean, default: true, comment: "Ativa", tooltip: "Indica se o tipo está ativo." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o tipo está excluído." }
 data:
-  - {codigo: WORKSHOP, nome: Oficina, descricao: "Oficina ou sessão de trabalho"}
-  - {codigo: TRAINING, nome: Formação, descricao: "Formação ou capacitação"}
-  - {codigo: GRANT, nome: Subvenção, descricao: "Transferência financeira"}
-  - {codigo: EQUIPMENT, nome: Equipamento, descricao: "Fornecimento de equipamento"}
-  - {codigo: REHABILITATION, nome: Reabilitação, descricao: "Melhoria de espaços"}
-  - {codigo: CONSULTANCY, nome: Consultoria, descricao: "Serviço especializado"}
-  - {codigo: STUDY, nome: Estudo, descricao: "Estudo ou avaliação"}
-  - {codigo: PROCUREMENT, nome: Aquisição, descricao: "Aquisição de bens ou serviços"}
-  - {codigo: OTHER, nome: Outro, descricao: "Outro tipo de ação"}
+  - {tipo_acao: Oficina, tipo_acao_desc: "Oficina ou sessão de trabalho"}
+  - {tipo_acao: Formação, tipo_acao_desc: "Formação ou capacitação"}
+  - {tipo_acao: Subvenção, tipo_acao_desc: "Transferência financeira"}
+  - {tipo_acao: Equipamento, tipo_acao_desc: "Fornecimento de equipamento"}
+  - {tipo_acao: Reabilitação, tipo_acao_desc: "Melhoria de espaços"}
+  - {tipo_acao: Consultoria, tipo_acao_desc: "Serviço especializado"}
+  - {tipo_acao: Estudo, tipo_acao_desc: "Estudo ou avaliação"}
+  - {tipo_acao: Aquisição, tipo_acao_desc: "Aquisição de bens ou serviços"}
+  - {tipo_acao: Outro, tipo_acao_desc: "Outro tipo de ação"}
 ```
 
 ## PROGRAMAS E OBJETIVOS
 
+## PROGRAMAS
 ```yaml
 table: programas
 comment: Programa
 tooltip: Programa ou instrumento estratégico gerido pelo sistema.
 columns:
   programa_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do programa", tooltip: "Chave primária do programa.", form_display: true, table_display: true, order: 1 }
-  codigo: { type: varchar, len: 50, unique: true, nullable: false, comment: "Código", tooltip: "Código único do programa.", form_display: true, table_display: true, order: 2 }
-  nome: { type: varchar, len: 255, nullable: false, comment: "Nome", tooltip: "Nome oficial do programa.", form_display: true, table_display: true, order: 3 }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição geral do programa.", form_display: true, table_display: true, form_long_text: true, order: 4 }
+  programa: { type: varchar, len: 255, nullable: false, comment: "Nome", tooltip: "Nome oficial do programa.", form_display: true, table_display: true, order: 3 }
+  programa_desc: { type: text, comment: "Descrição", tooltip: "Descrição geral do programa.", form_display: true, table_display: true, form_long_text: true, order: 4 }
   data_inicio: { type: date, comment: "Data de início", tooltip: "Data de início do programa.", form_display: true, table_display: true }
   data_fim: { type: date, comment: "Data de fim", tooltip: "Data prevista de conclusão.", form_display: true, table_display: true }
   estado_programa_id: { type: integer, fk: "estado_programa.estado_programa_id", comment: "Estado", tooltip: "Estado atual do programa.", form_display: true, table_display: true }
@@ -216,6 +216,7 @@ table_layout:
   default_order: [{field: programa_id, order: DESC}]
 ```
 
+## OBJETIVOS
 ```yaml
 table: objetivos
 comment: Objetivo
@@ -224,10 +225,9 @@ columns:
   objetivo_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do objetivo", tooltip: "Chave primária do objetivo.", form_display: true, table_display: true, order: 1 }
   programa_id: { type: integer, fk: "programas.programa_id", nullable: false, comment: "Programa", tooltip: "Programa a que o objetivo pertence.", form_display: true, table_display: true, order: 2 }
   objetivo_pai_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo pai", tooltip: "Objetivo hierarquicamente superior.", form_display: true, table_display: true }
-  codigo: { type: varchar, len: 50, nullable: false, comment: "Código", tooltip: "Código do objetivo.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do objetivo.", form_display: true, table_display: true }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do objetivo.", form_display: true, table_display: true, form_long_text: true }
-  ordem: { type: integer, default: 0, comment: "Ordem", tooltip: "Ordem de apresentação." }
+  objetivo: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do objetivo.", form_display: true, table_display: true }
+  objetivo_desc: { type: text, comment: "Descrição", tooltip: "Descrição do objetivo.", form_display: true, table_display: true, form_long_text: true }
+  objetivo_ordem: { type: integer, default: 0, comment: "Ordem", tooltip: "Ordem de apresentação." }
   estado_objetivo_id: { type: integer, fk: "estado_objetivo.estado_objetivo_id", comment: "Estado", tooltip: "Estado atual do objetivo.", form_display: true, table_display: true }
   estado_fonte_id: { type: integer, fk: "estado_fonte.estado_fonte_id", comment: "Validação da fonte", tooltip: "Estado de validação face à fonte oficial.", form_display: true, table_display: true }
   referencia_fonte: { type: text, comment: "Referência da fonte", tooltip: "Referência documental do objetivo." }
@@ -245,6 +245,7 @@ table_layout:
 
 ## INDICADORES E MEDIÇÕES
 
+## INDICADORES
 ```yaml
 table: indicadores
 comment: Indicador
@@ -253,9 +254,8 @@ columns:
   indicador_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do indicador", tooltip: "Chave primária do indicador.", form_display: true, table_display: true, order: 1 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo monitorizado.", form_display: true, table_display: true, order: 2 }
   tipo_indicador_id: { type: integer, fk: "tipos_indicador.tipo_indicador_id", comment: "Tipo", tooltip: "Tipo de valor do indicador.", form_display: true, table_display: true, order: 3 }
-  codigo: { type: varchar, len: 50, nullable: false, comment: "Código", tooltip: "Código do indicador.", form_display: true, table_display: true, order: 4 }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do indicador.", form_display: true, table_display: true, order: 5 }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do indicador.", form_display: true, table_display: true, form_long_text: true }
+  indicador: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do indicador.", form_display: true, table_display: true, order: 5 }
+  indicador_desc: { type: text, comment: "Descrição", tooltip: "Descrição do indicador.", form_display: true, table_display: true, form_long_text: true }
   unidade: { type: varchar, len: 100, comment: "Unidade", tooltip: "Unidade de medida.", form_display: true, table_display: true }
   valor_base: { type: decimal, len: 20, scale: 6, comment: "Valor de base", tooltip: "Valor numérico de referência.", form_display: true, table_display: true }
   ano_base: { type: integer, comment: "Ano de base", tooltip: "Ano do valor de referência.", form_display: true, table_display: true }
@@ -276,25 +276,26 @@ form_layout:
   size: 9
 ```
 
+## DIRECAO_INDICADOR
 ```yaml
 table: direcao_indicador
 comment: Direção do indicador
 tooltip: Direção desejável para interpretar a evolução do indicador.
 columns:
   direcao_indicador_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador da direção", tooltip: "Chave primária da direção." }
-  codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código da direção", tooltip: "Código técnico da direção." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome da direção", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição da direção." }
+  direcao_indicador: { type: varchar, len: 100, nullable: false, comment: "Nome da direção", tooltip: "Nome apresentado ao utilizador." }
+  direcao_indicador_desc: { type: text, comment: "Descrição", tooltip: "Descrição da direção." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: INCREASE, nome: Aumentar, descricao: "Valores maiores são desejáveis"}
-  - {codigo: DECREASE, nome: Diminuir, descricao: "Valores menores são desejáveis"}
-  - {codigo: MAINTAIN, nome: Manter, descricao: "Manter o valor de referência"}
+  - {direcao_indicador: Aumentar, direcao_indicador_desc: "Valores maiores são desejáveis"}
+  - {direcao_indicador: Diminuir, direcao_indicador_desc: "Valores menores são desejáveis"}
+  - {direcao_indicador: Manter, direcao_indicador_desc: "Manter o valor de referência"}
 ```
 
+## METAS_INDICADORES
 ```yaml
 table: metas_indicadores
 comment: Meta anual do indicador
@@ -313,6 +314,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a meta está excluída." }
 ```
 
+## MEDICOES_INDICADORES
 ```yaml
 table: medicoes_indicadores
 comment: Medição do indicador
@@ -332,6 +334,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a medição está excluída." }
 ```
 
+## INDICADOR_DIMENSOES
 ```yaml
 table: indicador_dimensoes
 comment: Dimensões do indicador
@@ -347,6 +350,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a associação está excluída." }
 ```
 
+## MEDICAO_DIMENSOES
 ```yaml
 table: medicao_dimensoes
 comment: Desagregação da medição
@@ -364,6 +368,7 @@ columns:
 
 ## EXECUÇÃO, PARTES E CONTRATOS
 
+## ATIVIDADES
 ```yaml
 table: atividades
 comment: Atividade
@@ -372,8 +377,8 @@ columns:
   atividade_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador da atividade", tooltip: "Chave primária da atividade.", form_display: true, table_display: true }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo da atividade.", form_display: true, table_display: true }
   codigo: { type: varchar, len: 50, nullable: false, comment: "Código", tooltip: "Código da atividade.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome da atividade.", form_display: true, table_display: true }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição da atividade.", form_display: true, table_display: true, form_long_text: true }
+  atividade: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome da atividade.", form_display: true, table_display: true }
+  atividade_desc: { type: text, comment: "Descrição", tooltip: "Descrição da atividade.", form_display: true, table_display: true, form_long_text: true }
   data_inicio: { type: date, comment: "Data de início", tooltip: "Data de início da atividade." }
   data_fim: { type: date, comment: "Data de fim", tooltip: "Data de conclusão da atividade." }
   estado_atividade_id: { type: integer, fk: "estado_atividade.estado_atividade_id", comment: "Estado", tooltip: "Estado atual da atividade.", form_display: true, table_display: true }
@@ -384,6 +389,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a atividade está excluída." }
 ```
 
+## ACOES
 ```yaml
 table: acoes
 comment: Ação
@@ -393,8 +399,8 @@ columns:
   atividade_id: { type: integer, fk: "atividades.atividade_id", nullable: false, comment: "Atividade", tooltip: "Atividade a que a ação pertence.", form_display: true, table_display: true }
   tipo_acao_id: { type: integer, fk: "tipos_acao.tipo_acao_id", comment: "Tipo", tooltip: "Tipo da ação.", form_display: true, table_display: true }
   codigo: { type: varchar, len: 50, nullable: false, comment: "Código", tooltip: "Código da ação.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome da ação.", form_display: true, table_display: true }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição da ação.", form_display: true, table_display: true, form_long_text: true }
+  acao: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome da ação.", form_display: true, table_display: true }
+  acao_desc: { type: text, comment: "Descrição", tooltip: "Descrição da ação.", form_display: true, table_display: true, form_long_text: true }
   data_inicio: { type: date, comment: "Data de início", tooltip: "Data de início da ação." }
   data_fim: { type: date, comment: "Data de fim", tooltip: "Data de conclusão da ação." }
   estado_acao_id: { type: integer, fk: "estado_acao.estado_acao_id", comment: "Estado", tooltip: "Estado atual da ação.", form_display: true, table_display: true }
@@ -405,6 +411,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a ação está excluída." }
 ```
 
+## PARTES
 ```yaml
 table: partes
 comment: Parte participante
@@ -418,6 +425,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a parte está excluída." }
 ```
 
+## PESSOAS
 ```yaml
 table: pessoas
 comment: Pessoa participante
@@ -438,6 +446,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a pessoa está excluída." }
 ```
 
+## ORGANIZACOES
 ```yaml
 table: organizacoes
 comment: Organização participante
@@ -445,7 +454,7 @@ tooltip: Organização envolvida no programa.
 columns:
   organizacao_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador da organização", tooltip: "Chave primária da organização.", form_display: true, table_display: true }
   parte_id: { type: integer, fk: "partes.parte_id", nullable: false, unique: true, comment: "Parte", tooltip: "Entidade comum associada." }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome oficial da organização.", form_display: true, table_display: true }
+  organizacao: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome oficial da organização.", form_display: true, table_display: true }
   tipo_organizacao: { type: varchar, len: 50, comment: "Tipo de organização", tooltip: "Tipo de organização." }
   numero_fiscal: { type: varchar, len: 100, comment: "Número fiscal", tooltip: "Número fiscal da organização." }
   endereco: { type: text, comment: "Endereço", tooltip: "Endereço da organização." }
@@ -458,6 +467,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a organização está excluída." }
 ```
 
+## TIPO_PARTE
 ```yaml
 table: tipo_parte
 comment: Tipo de parte
@@ -465,17 +475,18 @@ tooltip: Tipos de entidades participantes.
 columns:
   tipo_parte_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do tipo de parte", tooltip: "Chave primária do tipo." }
   codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do tipo", tooltip: "Código técnico do tipo." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do tipo", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de parte." }
+  tipo_parte: { type: varchar, len: 100, nullable: false, comment: "Nome do tipo", tooltip: "Nome apresentado ao utilizador." }
+  tipo_parte_desc: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de parte." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: PERSON, nome: Pessoa, descricao: "Pessoa singular"}
-  - {codigo: ORGANIZATION, nome: Organização, descricao: "Pessoa coletiva"}
+  - {codigo: PERSON, tipo_parte: Pessoa, tipo_parte_desc: "Pessoa singular"}
+  - {codigo: ORGANIZATION, tipo_parte: Organização, tipo_parte_desc: "Pessoa coletiva"}
 ```
 
+## ORCAMENTOS_ACOES
 ```yaml
 table: orcamentos_acoes
 comment: Orçamento anual da ação
@@ -496,6 +507,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o orçamento está excluído." }
 ```
 
+## BENEFICIARIOS_ACAO
 ```yaml
 table: beneficiarios_acao
 comment: Beneficiário da ação
@@ -516,13 +528,14 @@ columns:
 
 ## DOCUMENTOS E FONTES
 
+## DOCUMENTOS
 ```yaml
 table: documentos
 comment: Documento
 tooltip: Metadados de um documento armazenado.
 columns:
   documento_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do documento", tooltip: "Chave primária do documento.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome descritivo do documento.", form_display: true, table_display: true }
+  documento: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome descritivo do documento.", form_display: true, table_display: true }
   nome_ficheiro: { type: varchar, len: 500, nullable: false, comment: "Nome do ficheiro", tooltip: "Nome original do ficheiro." }
   tipo_mime: { type: varchar, len: 150, comment: "Tipo MIME", tooltip: "Tipo MIME do ficheiro." }
   tamanho: { type: integer, comment: "Tamanho", tooltip: "Tamanho do ficheiro em bytes." }
@@ -536,6 +549,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o documento está excluído." }
 ```
 
+## FONTES
 ```yaml
 table: fontes
 comment: Fonte documental
@@ -543,11 +557,11 @@ tooltip: Fonte documental utilizada pelo sistema.
 columns:
   fonte_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador da fonte", tooltip: "Chave primária da fonte.", form_display: true, table_display: true }
   codigo: { type: varchar, len: 100, unique: true, nullable: false, comment: "Código", tooltip: "Código único da fonte.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do documento fonte.", form_display: true, table_display: true }
+  fonte: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do documento fonte.", form_display: true, table_display: true }
   tipo_documento: { type: varchar, len: 100, comment: "Tipo de documento", tooltip: "Tipo do documento." }
   data_publicacao: { type: date, comment: "Data de publicação", tooltip: "Data de publicação da fonte." }
   url: { type: text, comment: "Endereço eletrónico", tooltip: "Endereço eletrónico da fonte." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição da fonte." }
+  fonte_desc: { type: text, comment: "Descrição", tooltip: "Descrição da fonte." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
@@ -556,6 +570,7 @@ columns:
 
 ## TABELAS DE ESTADOS OPERACIONAIS
 
+## ESTADO_ATIVIDADE
 ```yaml
 # As tabelas seguintes mantêm os estados configuráveis e permitem FKs nos registos operacionais.
 table: estado_atividade
@@ -564,19 +579,20 @@ tooltip: Estados possíveis de uma atividade.
 columns:
   estado_atividade_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado da atividade", tooltip: "Chave primária do estado." }
   codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
+  estado_atividade: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_atividade_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: PLANNED, nome: Planeada, descricao: "Atividade planeada"}
-  - {codigo: ACTIVE, nome: Ativa, descricao: "Atividade em execução"}
-  - {codigo: COMPLETED, nome: Concluída, descricao: "Atividade concluída"}
-  - {codigo: CANCELLED, nome: Cancelada, descricao: "Atividade cancelada"}
+  - {codigo: PLANNED, estado_atividade: Planeada, estado_atividade_desc: "Atividade planeada"}
+  - {codigo: ACTIVE, estado_atividade: Ativa, estado_atividade_desc: "Atividade em execução"}
+  - {codigo: COMPLETED, estado_atividade: Concluída, estado_atividade_desc: "Atividade concluída"}
+  - {codigo: CANCELLED, estado_atividade: Cancelada, estado_atividade_desc: "Atividade cancelada"}
 ```
 
+## ESTADO_ACAO
 ```yaml
 table: estado_acao
 comment: Estado da ação
@@ -584,19 +600,20 @@ tooltip: Estados possíveis de uma ação.
 columns:
   estado_acao_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado da ação", tooltip: "Chave primária do estado." }
   codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
+  estado_acao: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_acao_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: PLANNED, nome: Planeada, descricao: "Ação planeada"}
-  - {codigo: ACTIVE, nome: Ativa, descricao: "Ação em execução"}
-  - {codigo: COMPLETED, nome: Concluída, descricao: "Ação concluída"}
-  - {codigo: CANCELLED, nome: Cancelada, descricao: "Ação cancelada"}
+  - {codigo: PLANNED, estado_acao: Planeada, estado_acao_desc: "Ação planeada"}
+  - {codigo: ACTIVE, estado_acao: Ativa, estado_acao_desc: "Ação em execução"}
+  - {codigo: COMPLETED, estado_acao: Concluída, estado_acao_desc: "Ação concluída"}
+  - {codigo: CANCELLED, estado_acao: Cancelada, estado_acao_desc: "Ação cancelada"}
 ```
 
+## CONTRATOS
 ```yaml
 table: contratos
 comment: Contrato
@@ -607,7 +624,7 @@ columns:
   fornecedor_id: { type: integer, fk: "partes.parte_id", nullable: false, comment: "Fornecedor", tooltip: "Fornecedor ou prestador do contrato.", form_display: true, table_display: true }
   numero: { type: varchar, len: 100, unique: true, nullable: false, comment: "Número do contrato", tooltip: "Número único do contrato.", form_display: true, table_display: true }
   titulo: { type: varchar, len: 500, nullable: false, comment: "Título", tooltip: "Título do contrato.", form_display: true, table_display: true }
-  descricao: { type: text, comment: "Objeto e âmbito", tooltip: "Objeto e âmbito do contrato.", form_display: true, table_display: true, form_long_text: true }
+  contrato_desc: { type: text, comment: "Objeto e âmbito", tooltip: "Objeto e âmbito do contrato.", form_display: true, table_display: true, form_long_text: true }
   valor: { type: decimal, len: 20, scale: 2, nullable: false, comment: "Valor", tooltip: "Valor total do contrato.", form_display: true, table_display: true }
   moeda: { type: varchar, len: 3, default: CVE, nullable: false, comment: "Moeda", tooltip: "Código da moeda." }
   data_assinatura: { type: date, comment: "Data de assinatura", tooltip: "Data de assinatura do contrato." }
@@ -620,6 +637,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o contrato está excluído." }
 ```
 
+## FASES_CONTRATO
 ```yaml
 table: fases_contrato
 comment: Fase do contrato
@@ -627,7 +645,7 @@ tooltip: Fase de execução de um contrato.
 columns:
   fase_contrato_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador da fase", tooltip: "Chave primária da fase.", form_display: true, table_display: true }
   contrato_id: { type: integer, fk: "contratos.contrato_id", nullable: false, comment: "Contrato", tooltip: "Contrato a que a fase pertence.", form_display: true, table_display: true }
-  nome: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome da fase.", form_display: true, table_display: true }
+  fase_contrato: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome da fase.", form_display: true, table_display: true }
   numero_sequencia: { type: integer, nullable: false, comment: "Número de sequência", tooltip: "Ordem da fase." }
   data_inicio: { type: date, comment: "Data de início", tooltip: "Data de início da fase." }
   data_fim: { type: date, comment: "Data de fim", tooltip: "Data de conclusão da fase." }
@@ -641,6 +659,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a fase está excluída." }
 ```
 
+## PAGAMENTOS_CONTRATO
 ```yaml
 table: pagamentos_contrato
 comment: Pagamento do contrato
@@ -661,6 +680,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o pagamento está excluído." }
 ```
 
+## ESTADO_CONTRATO
 ```yaml
 table: estado_contrato
 comment: Estado do contrato
@@ -668,19 +688,20 @@ tooltip: Estados possíveis de um contrato.
 columns:
   estado_contrato_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado do contrato", tooltip: "Chave primária do estado." }
   codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
+  estado_contrato: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_contrato_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: DRAFT, nome: Rascunho, descricao: "Contrato em preparação"}
-  - {codigo: ACTIVE, nome: Ativo, descricao: "Contrato em vigor"}
-  - {codigo: COMPLETED, nome: Concluído, descricao: "Contrato concluído"}
-  - {codigo: CANCELLED, nome: Cancelado, descricao: "Contrato cancelado"}
+  - {codigo: DRAFT, estado_contrato: Rascunho, estado_contrato_desc: "Contrato em preparação"}
+  - {codigo: ACTIVE, estado_contrato: Ativo, estado_contrato_desc: "Contrato em vigor"}
+  - {codigo: COMPLETED, estado_contrato: Concluído, estado_contrato_desc: "Contrato concluído"}
+  - {codigo: CANCELLED, estado_contrato: Cancelado, estado_contrato_desc: "Contrato cancelado"}
 ```
 
+## ESTADO_FASE
 ```yaml
 table: estado_fase
 comment: Estado da fase
@@ -688,18 +709,19 @@ tooltip: Estados possíveis de uma fase contratual.
 columns:
   estado_fase_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado da fase", tooltip: "Chave primária do estado." }
   codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
+  estado_fase: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_fase_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: PLANNED, nome: Planeada, descricao: "Fase planeada"}
-  - {codigo: ACTIVE, nome: Ativa, descricao: "Fase em execução"}
-  - {codigo: COMPLETED, nome: Concluída, descricao: "Fase concluída"}
+  - {codigo: PLANNED, estado_fase: Planeada, estado_fase_desc: "Fase planeada"}
+  - {codigo: ACTIVE, estado_fase: Ativa, estado_fase_desc: "Fase em execução"}
+  - {codigo: COMPLETED, estado_fase: Concluída, estado_fase_desc: "Fase concluída"}
 ```
 
+## ESTADO_PAGAMENTO
 ```yaml
 table: estado_pagamento
 comment: Estado do pagamento
@@ -707,20 +729,21 @@ tooltip: Estados possíveis de um pagamento.
 columns:
   estado_pagamento_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do estado do pagamento", tooltip: "Chave primária do estado." }
   codigo: { type: varchar, len: 30, unique: true, nullable: false, comment: "Código do estado", tooltip: "Código técnico do estado." }
-  nome: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
-  descricao: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
+  estado_pagamento: { type: varchar, len: 100, nullable: false, comment: "Nome do estado", tooltip: "Nome apresentado ao utilizador." }
+  estado_pagamento_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado." }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {codigo: PENDING, nome: Pendente, descricao: "Pagamento pendente"}
-  - {codigo: PAID, nome: Pago, descricao: "Pagamento efetuado"}
-  - {codigo: CANCELLED, nome: Cancelado, descricao: "Pagamento cancelado"}
+  - {codigo: PENDING, estado_pagamento: Pendente, estado_pagamento_desc: "Pagamento pendente"}
+  - {codigo: PAID, estado_pagamento: Pago, estado_pagamento_desc: "Pagamento efetuado"}
+  - {codigo: CANCELLED, estado_pagamento: Cancelado, estado_pagamento_desc: "Pagamento cancelado"}
 ```
 
 ## ASSOCIAÇÕES DE DOCUMENTOS
 
+## ACAO_DOCUMENTOS
 ```yaml
 table: acao_documentos
 comment: Documento da ação
@@ -736,6 +759,7 @@ columns:
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a associação está excluída." }
 ```
 
+## CONTRATO_DOCUMENTOS
 ```yaml
 table: contrato_documentos
 comment: Documento do contrato
