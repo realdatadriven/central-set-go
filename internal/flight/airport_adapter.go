@@ -829,7 +829,7 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 	return nil, nil
 }*/
 
-func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
+func _loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 	enableTLS := strings.ToLower(os.Getenv("ARROW_ENABLE_TLS")) == "true"
 	if !enableTLS {
 		return nil, nil
@@ -859,6 +859,31 @@ func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
 		Certificates: []tls.Certificate{serverCert},
 		ClientAuth:   tls.NoClientCert,
 		MinVersion:   tls.VersionTLS13,
+	}), nil
+}
+
+func loadTLSCredentialsV2() (credentials.TransportCredentials, error) {
+	enableTLS := strings.ToLower(os.Getenv("ARROW_ENABLE_TLS")) == "true"
+	if !enableTLS {
+		return nil, nil
+	}
+	if strings.ToLower(os.Getenv("ARROW_AUTO_CERT")) == "true" {
+		return loadAutocertCredentials()
+	}
+	certFile := os.Getenv("ARROW_TLS_CERT_FILE")
+	keyFile := os.Getenv("ARROW_TLS_KEY_FILE")
+	if certFile == "" || keyFile == "" {
+		return nil, fmt.Errorf("ARROW_ENABLE_TLS is true but ARROW_TLS_CERT_FILE or ARROW_TLS_KEY_FILE or ARROW_TLS_CA_CERT_FILE is not set")
+	}
+	serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return nil, fmt.Errorf("load server cert: %w", err)
+	}
+	return credentials.NewTLS(&tls.Config{
+		Certificates: []tls.Certificate{serverCert},
+		NextProtos:   []string{"h2"}, // Required for gRPC over HTTP/2
+		//ClientAuth:   tls.NoClientCert,
+		//MinVersion:   tls.VersionTLS13,
 	}), nil
 }
 
@@ -910,36 +935,6 @@ func loadAutocertCredentials() (credentials.TransportCredentials, error) {
 	}
 	tlsConfig.MinVersion = tls.VersionTLS12
 	log.Printf("[autocert] TLS configured: MinVersion=TLS1.2 NextProtos=%v", tlsConfig.NextProtos)
-	return credentials.NewTLS(tlsConfig), nil
-}
-
-func loadAutocertCredentials2() (credentials.TransportCredentials, error) {
-	domainsEnv := os.Getenv("ARROW_DOMAIN")
-	if domainsEnv == "" {
-		return nil, fmt.Errorf("ARROW_DOMAIN must be set (comma-separated)")
-	}
-	domains := strings.Split(domainsEnv, ",")
-	for i := range domains {
-		domains[i] = strings.TrimSpace(domains[i])
-	}
-	cacheDir := os.Getenv("ARROW_AUTO_CERT_CACHE")
-	if cacheDir == "" {
-		cacheDir = "/var/cache/autocert"
-	}
-	m := &autocert.Manager{
-		Prompt:     autocert.AcceptTOS,
-		Cache:      autocert.DirCache(cacheDir),
-		HostPolicy: autocert.HostWhitelist(domains...),
-		Email:      os.Getenv("ARROW_AUTO_CERT_EMAIL"), // optional
-	}
-	tlsConfig := m.TLSConfig()
-	tlsConfig.MinVersion = tls.VersionTLS13
-	// Explicitly configure for gRPC / HTTP2.
-	tlsConfig.NextProtos = []string{
-		"h2",
-		acme.ALPNProto,
-	}
-	// If you need mTLS on top of autocert, add ClientAuth/ClientCAs here too.
 	return credentials.NewTLS(tlsConfig), nil
 }
 
