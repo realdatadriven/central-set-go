@@ -35,6 +35,7 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/memory"
 	"github.com/duckdb/duckdb-go/v2"
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 	"google.golang.org/grpc"
 
@@ -246,11 +247,13 @@ func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 	} else if os.Getenv("ARROW_FLIGHT_LOG_LEVEL") == "LevelDebug" {
 		debugLevel = slog.LevelDebug
 	}
+	publicAddr := env.GetString("ARROW_FLIGHT_PUBLIC_ADDR", listenAddr)
+	fmt.Println("Listen Addr:", listenAddr, "Public Addr:", publicAddr)
 	// multi-catalog-support
 	config := airport.MultiCatalogServerConfig{
 		Catalogs: catalogs,
 		Auth:     airport.BearerAuth(a.validateToken),
-		Address:  listenAddr,
+		Address:  publicAddr,
 		LogLevel: &debugLevel,
 	}
 	// https://github.com/hugr-lab/airport-go/blob/main/examples/tls/main.go
