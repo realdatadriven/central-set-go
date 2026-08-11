@@ -263,7 +263,7 @@ func (a *AirportAdapterMultiCatalogs) Start(listenAddr string) error {
 	// Create gRPC server with options (includes interceptors for metadata extraction)
 	opts := airport.MultiCatalogServerOptions(config)
 	if creds != nil {
-		fmt.Println("TLS CREDS:", creds)
+		//fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)

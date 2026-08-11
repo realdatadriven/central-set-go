@@ -35,7 +35,7 @@ import (
 	"strconv"
 	"strings"
 
-	"golang.org/x/crypto/acme"
+	// "golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/apache/arrow-go/v18/arrow"
@@ -275,7 +275,7 @@ func (a *AirportAdapter) Start(listenAddr string) error {
 	//opts := airport.MultiCatalogServerOptions(config)
 	opts := airport.ServerOptions(config)
 	if creds != nil {
-		fmt.Println("TLS CREDS:", creds)
+		// fmt.Println("TLS CREDS:", creds)
 		opts = append(opts, grpc.Creds(creds))
 	}
 	a.grpcSrv = grpc.NewServer(opts...)
