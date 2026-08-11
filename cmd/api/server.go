@@ -378,7 +378,7 @@ func (app *application) serveArrowFlight() error {
 	for _, c := range catalogs {
 		schemas := []Dict{}
 		for _, f := range flight_schemas {
-			fmt.Printf("CID: %d FID: %d\n", c["flight_catalog_id"], f["flight_catalog_id"])
+			// fmt.Printf("CID: %d FID: %d\n", c["flight_catalog_id"], f["flight_catalog_id"])
 			if f["flight_catalog_id"] == c["flight_catalog_id"] {
 				schemas = append(schemas, f)
 			}
