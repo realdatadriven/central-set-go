@@ -56,8 +56,6 @@ cs_app:
       - {table: tipo_parte, active: false}
 ```
 
-## TABELAS DE OPÇÕES
-
 ## ESTADO_PROGRAMA
 ```yaml
 table: estado_programa
@@ -71,6 +69,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_programa_id, order: ASC}]}
 ```
 
 ## ESTADO_OBJETIVO
@@ -86,6 +86,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_objetivo_id, order: ASC}]}
 ```
 
 ## ESTADO_FONTE
@@ -101,6 +103,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_fonte_id, order: ASC}]}
 data:
   - {estado_fonte: Pendente, estado_fonte_desc: "Ainda não validado"}
   - {estado_fonte: Confirmado, estado_fonte_desc: "Confirmado pela fonte oficial"}
@@ -119,16 +123,18 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o tipo está excluído." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: tipo_indicador_id, order: ASC}]}
 data:
-  - {tipo_indicador: Percentagem, tipo_indicador_desc: "Valor percentual"}
-  - {tipo_indicador: Número, tipo_indicador_desc: "Valor quantitativo absoluto"}
-  - {tipo_indicador: Taxa, tipo_indicador_desc: "Taxa ou proporção"}
-  - {tipo_indicador: Rácio, tipo_indicador_desc: "Relação entre valores"}
-  - {tipo_indicador: Valor monetário, tipo_indicador_desc: "Valor monetário"}
-  - {tipo_indicador: Índice, tipo_indicador_desc: "Valor indexado"}
-  - {tipo_indicador: Pontuação, tipo_indicador_desc: "Valor numa escala"}
-  - {tipo_indicador: Sim/Não, tipo_indicador_desc: "Resultado binário"}
-  - {tipo_indicador: Texto, tipo_indicador_desc: "Resultado qualitativo"}
+  - {tipo_indicador_id: 1, tipo_indicador: Percentagem, tipo_indicador_desc: "Valor percentual"}
+  - {tipo_indicador_id: 2, tipo_indicador: Número, tipo_indicador_desc: "Valor quantitativo absoluto"}
+  - {tipo_indicador_id: 3, tipo_indicador: Taxa, tipo_indicador_desc: "Taxa ou proporção"}
+  - {tipo_indicador_id: 4, tipo_indicador: Rácio, tipo_indicador_desc: "Relação entre valores"}
+  - {tipo_indicador_id: 5, tipo_indicador: Valor monetário, tipo_indicador_desc: "Valor monetário"}
+  - {tipo_indicador_id: 6, tipo_indicador: Índice, tipo_indicador_desc: "Valor indexado"}
+  - {tipo_indicador_id: 7, tipo_indicador: Pontuação, tipo_indicador_desc: "Valor numa escala"}
+  - {tipo_indicador_id: 8, tipo_indicador: Sim/Não, tipo_indicador_desc: "Resultado binário"}
+  - {tipo_indicador_id: 9, tipo_indicador: Texto, tipo_indicador_desc: "Resultado qualitativo"}
 ```
 
 ## DIMENSOES
@@ -145,6 +151,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a dimensão está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: dimensao_id, order: ASC}]}
 ```
 
 ## VALORES_DIMENSAO
@@ -162,6 +170,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o valor está excluído." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: valor_dimensao_ordem, order: ASC}]}
 ```
 
 ## TIPOS_ACAO
@@ -178,6 +188,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o tipo está excluído." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: tipo_acao_id, order: ASC}]}
 data:
   - {tipo_acao: Oficina, tipo_acao_desc: "Oficina ou sessão de trabalho"}
   - {tipo_acao: Formação, tipo_acao_desc: "Formação ou capacitação"}
@@ -190,8 +202,6 @@ data:
   - {tipo_acao: Outro, tipo_acao_desc: "Outro tipo de ação"}
 ```
 
-## PROGRAMAS E OBJETIVOS
-
 ## PROGRAMAS
 ```yaml
 table: programas
@@ -199,11 +209,11 @@ comment: Programa
 tooltip: Programa ou instrumento estratégico gerido pelo sistema.
 columns:
   programa_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do programa", tooltip: "Chave primária do programa.", form_display: true, table_display: true, order: 1 }
-  programa: { type: varchar, len: 255, nullable: false, comment: "Nome", tooltip: "Nome oficial do programa.", form_display: true, table_display: true, order: 3 }
-  programa_desc: { type: text, comment: "Descrição", tooltip: "Descrição geral do programa.", form_display: true, table_display: true, form_long_text: true, order: 4 }
-  data_inicio: { type: date, comment: "Data de início", tooltip: "Data de início do programa.", form_display: true, table_display: true }
-  data_fim: { type: date, comment: "Data de fim", tooltip: "Data prevista de conclusão.", form_display: true, table_display: true }
-  estado_programa_id: { type: integer, fk: "estado_programa.estado_programa_id", comment: "Estado", tooltip: "Estado atual do programa.", form_display: true, table_display: true }
+  programa: { type: varchar, len: 255, nullable: false, comment: "Nome", tooltip: "Nome oficial do programa.", form_display: true, table_display: true, form_size: 8, order: 3 }
+  programa_desc: { type: text, comment: "Descrição", tooltip: "Descrição geral do programa.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
+  data_inicio: { type: date, comment: "Data de início", tooltip: "Data de início do programa.", form_display: true, table_display: true, form_size: 4, order: 5 }
+  data_fim: { type: date, comment: "Data de fim", tooltip: "Data prevista de conclusão.", form_display: true, table_display: true, form_size: 4, order: 6 }
+  estado_programa_id: { type: integer, fk: "estado_programa.estado_programa_id", comment: "Estado", tooltip: "Estado atual do programa.", form_display: true, table_display: true, form_size: 4, order: 7 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo." }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
@@ -212,8 +222,13 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
+  sub_form_size: 12
+  allow_in_subform: {objetivos: true}
 table_layout:
   default_order: [{field: programa_id, order: DESC}]
+data:
+  - {programa_id: 1, programa: "Partnership Compact Cabo Verde", programa_desc: "Programa nacional para o reforço do capital humano, da empregabilidade e do crescimento inclusivo.", data_inicio: "2024-01-01", data_fim: "2029-12-31", excluded: false}
+  - {programa_id: 2, programa: "Transformação Digital da Administração Pública", programa_desc: "Programa de modernização dos serviços públicos e melhoria da qualidade dos dados para decisão.", data_inicio: "2025-01-01", data_fim: "2028-12-31", excluded: false}
 ```
 
 ## OBJETIVOS
@@ -225,9 +240,9 @@ columns:
   objetivo_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do objetivo", tooltip: "Chave primária do objetivo.", form_display: true, table_display: true, order: 1 }
   programa_id: { type: integer, fk: "programas.programa_id", nullable: false, comment: "Programa", tooltip: "Programa a que o objetivo pertence.", form_display: true, table_display: true, order: 2 }
   objetivo_pai_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo pai", tooltip: "Objetivo hierarquicamente superior.", form_display: true, table_display: true }
-  objetivo: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do objetivo.", form_display: true, table_display: true }
-  objetivo_desc: { type: text, comment: "Descrição", tooltip: "Descrição do objetivo.", form_display: true, table_display: true, form_long_text: true }
-  objetivo_ordem: { type: integer, default: 0, comment: "Ordem", tooltip: "Ordem de apresentação." }
+  objetivo: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do objetivo.", form_display: true, table_display: true, form_size: 8, order: 3 }
+  objetivo_desc: { type: text, comment: "Descrição", tooltip: "Descrição do objetivo.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
+  objetivo_ordem: { type: integer, default: 0, comment: "Ordem", tooltip: "Ordem de apresentação.", form_display: true, table_display: true, form_size: 3, order: 5 }
   estado_objetivo_id: { type: integer, fk: "estado_objetivo.estado_objetivo_id", comment: "Estado", tooltip: "Estado atual do objetivo.", form_display: true, table_display: true }
   estado_fonte_id: { type: integer, fk: "estado_fonte.estado_fonte_id", comment: "Validação da fonte", tooltip: "Estado de validação face à fonte oficial.", form_display: true, table_display: true }
   referencia_fonte: { type: text, comment: "Referência da fonte", tooltip: "Referência documental do objetivo." }
@@ -239,11 +254,16 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
+  sub_form_size: 12
+  allow_in_subform: {indicadores: true, atividades: true}
 table_layout:
   default_order: [{field: objetivo_id, order: DESC}]
+data:
+  - {objetivo_id: 1, programa_id: 1, objetivo: "Melhorar a qualidade e a relevância da formação profissional", objetivo_desc: "Alinhar a oferta de formação com as necessidades do mercado de trabalho e dos setores prioritários.", objetivo_ordem: 1, excluded: false}
+  - {objetivo_id: 2, programa_id: 1, objetivo: "Aumentar a empregabilidade de jovens e mulheres", objetivo_desc: "Promover competências, transição para o emprego e participação económica inclusiva.", objetivo_ordem: 2, excluded: false}
+  - {objetivo_id: 3, programa_id: 1, objetivo: "Reforçar a produtividade e a sustentabilidade das empresas", objetivo_desc: "Apoiar empresas na adoção de melhores práticas, tecnologia e modelos de crescimento sustentável.", objetivo_ordem: 3, excluded: false}
+  - {objetivo_id: 4, programa_id: 2, objetivo: "Digitalizar serviços públicos prioritários", objetivo_desc: "Disponibilizar serviços públicos mais simples, acessíveis e orientados por dados.", objetivo_ordem: 1, excluded: false}
 ```
-
-## INDICADORES E MEDIÇÕES
 
 ## INDICADORES
 ```yaml
@@ -254,12 +274,12 @@ columns:
   indicador_id: { type: integer, pk: true, autoincrement: true, comment: "Identificador do indicador", tooltip: "Chave primária do indicador.", form_display: true, table_display: true, order: 1 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo monitorizado.", form_display: true, table_display: true, order: 2 }
   tipo_indicador_id: { type: integer, fk: "tipos_indicador.tipo_indicador_id", comment: "Tipo", tooltip: "Tipo de valor do indicador.", form_display: true, table_display: true, order: 3 }
-  indicador: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do indicador.", form_display: true, table_display: true, order: 5 }
-  indicador_desc: { type: text, comment: "Descrição", tooltip: "Descrição do indicador.", form_display: true, table_display: true, form_long_text: true }
-  unidade: { type: varchar, len: 100, comment: "Unidade", tooltip: "Unidade de medida.", form_display: true, table_display: true }
-  valor_base: { type: decimal, len: 20, scale: 6, comment: "Valor de base", tooltip: "Valor numérico de referência.", form_display: true, table_display: true }
-  ano_base: { type: integer, comment: "Ano de base", tooltip: "Ano do valor de referência.", form_display: true, table_display: true }
-  base_texto: { type: text, comment: "Base textual", tooltip: "Valor textual de referência.", form_display: true, table_display: true }
+  indicador: { type: varchar, len: 500, nullable: false, comment: "Nome", tooltip: "Nome do indicador.", form_display: true, table_display: true, form_size: 8, order: 5 }
+  indicador_desc: { type: text, comment: "Descrição", tooltip: "Descrição do indicador.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 6 }
+  unidade: { type: varchar, len: 100, comment: "Unidade", tooltip: "Unidade de medida.", form_display: true, table_display: true, form_size: 4, order: 7 }
+  valor_base: { type: decimal, len: 20, scale: 6, comment: "Valor de base", tooltip: "Valor numérico de referência.", form_display: true, table_display: true, form_size: 4, order: 8 }
+  ano_base: { type: integer, comment: "Ano de base", tooltip: "Ano do valor de referência.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  base_texto: { type: text, comment: "Base textual", tooltip: "Valor textual de referência.", form_display: true, table_display: true, form_size: 12, order: 10 }
   metodo_calculo: { type: text, comment: "Método de cálculo", tooltip: "Metodologia de cálculo." }
   fonte_dados: { type: text, comment: "Fonte dos dados", tooltip: "Origem dos dados." }
   frequencia: { type: varchar, len: 50, comment: "Frequência", tooltip: "Periodicidade de recolha." }
@@ -274,6 +294,21 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
+  sub_form_size: 12
+  allow_in_subform: {metas_indicadores: true, medicoes_indicadores: true, indicador_dimensoes: true}
+  tabs_steps_conf:
+    - {label: Geral, fields: [objetivo_id, tipo_indicador_id, indicador, indicador_desc, unidade, direcao_indicador_id]}
+    - {label: Base, fields: [valor_base, ano_base, base_texto, metodo_calculo, fonte_dados, frequencia]}
+    - {label: Fonte, fields: [estado_fonte_id, referencia_fonte]}
+table_layout:
+  default_order: [{field: indicador_id, order: DESC}]
+data:
+  - {indicador_id: 1, objetivo_id: 1, tipo_indicador_id: 2, indicador: "Participantes que concluem formação profissional", indicador_desc: "Número anual de participantes que concluem com aproveitamento uma formação profissional apoiada.", unidade: "pessoas", valor_base: 1800, ano_base: 2023, direcao_indicador_id: 1, frequencia: "Anual", excluded: false}
+  - {indicador_id: 2, objetivo_id: 1, tipo_indicador_id: 1, indicador: "Taxa de satisfação dos empregadores com diplomados", indicador_desc: "Percentagem de empregadores que avaliam positivamente as competências dos diplomados.", unidade: "%", valor_base: 62, ano_base: 2023, direcao_indicador_id: 1, frequencia: "Anual", excluded: false}
+  - {indicador_id: 3, objetivo_id: 2, tipo_indicador_id: 1, indicador: "Taxa de colocação profissional de jovens formados", indicador_desc: "Percentagem de jovens formados colocados no mercado de trabalho até seis meses após a conclusão.", unidade: "%", valor_base: 38, ano_base: 2023, direcao_indicador_id: 1, frequencia: "Semestral", excluded: false}
+  - {indicador_id: 4, objetivo_id: 2, tipo_indicador_id: 1, indicador: "Participação de mulheres em programas de empregabilidade", indicador_desc: "Percentagem de participantes mulheres nos programas de empregabilidade apoiados.", unidade: "%", valor_base: 46, ano_base: 2023, direcao_indicador_id: 1, frequencia: "Anual", excluded: false}
+  - {indicador_id: 5, objetivo_id: 3, tipo_indicador_id: 2, indicador: "Empresas apoiadas na adoção de soluções digitais", indicador_desc: "Número de empresas que implementam pelo menos uma solução digital com apoio do programa.", unidade: "empresas", valor_base: 75, ano_base: 2023, direcao_indicador_id: 1, frequencia: "Trimestral", excluded: false}
+  - {indicador_id: 6, objetivo_id: 4, tipo_indicador_id: 2, indicador: "Serviços públicos prioritários digitalizados", indicador_desc: "Número de serviços públicos prioritários disponibilizados integralmente em formato digital.", unidade: "serviços", valor_base: 12, ano_base: 2024, direcao_indicador_id: 1, frequencia: "Trimestral", excluded: false}
 ```
 
 ## DIRECAO_INDICADOR
@@ -290,9 +325,11 @@ columns:
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a opção está excluída." }
 data:
-  - {direcao_indicador: Aumentar, direcao_indicador_desc: "Valores maiores são desejáveis"}
-  - {direcao_indicador: Diminuir, direcao_indicador_desc: "Valores menores são desejáveis"}
-  - {direcao_indicador: Manter, direcao_indicador_desc: "Manter o valor de referência"}
+  - {direcao_indicador_id: 1, direcao_indicador: Aumentar, direcao_indicador_desc: "Valores maiores são desejáveis"}
+  - {direcao_indicador_id: 2, direcao_indicador: Diminuir, direcao_indicador_desc: "Valores menores são desejáveis"}
+  - {direcao_indicador_id: 3, direcao_indicador: Manter, direcao_indicador_desc: "Manter o valor de referência"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: direcao_indicador_id, order: ASC}]}
 ```
 
 ## METAS_INDICADORES
@@ -312,6 +349,21 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a meta está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 9
+  sub_form_size: 12
+table_layout:
+  default_order: [{field: ano, order: ASC}]
+data:
+  - {meta_indicador_id: 1, indicador_id: 1, ano: 2025, valor_meta: 2200, notas: "Meta intermédia do programa.", excluded: false}
+  - {meta_indicador_id: 2, indicador_id: 1, ano: 2026, valor_meta: 2600, notas: "Meta de expansão da cobertura.", excluded: false}
+  - {meta_indicador_id: 3, indicador_id: 2, ano: 2025, valor_meta: 68, meta_texto: "Percentagem", excluded: false}
+  - {meta_indicador_id: 4, indicador_id: 3, ano: 2025, valor_meta: 45, meta_texto: "Percentagem", excluded: false}
+  - {meta_indicador_id: 5, indicador_id: 4, ano: 2025, valor_meta: 50, meta_texto: "Percentagem", excluded: false}
+  - {meta_indicador_id: 6, indicador_id: 5, ano: 2025, valor_meta: 120, excluded: false}
+  - {meta_indicador_id: 7, indicador_id: 6, ano: 2025, valor_meta: 20, excluded: false}
 ```
 
 ## MEDICOES_INDICADORES
@@ -332,6 +384,20 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a medição está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 9
+  sub_form_size: 12
+table_layout:
+  default_order: [{field: ano, order: DESC}]
+data:
+  - {medicao_indicador_id: 1, indicador_id: 1, ano: 2025, periodo: "S1", valor: 980, fonte: "Relatório de execução do programa", excluded: false}
+  - {medicao_indicador_id: 2, indicador_id: 2, ano: 2025, periodo: "S1", valor: 65, fonte: "Inquérito a empregadores", excluded: false}
+  - {medicao_indicador_id: 3, indicador_id: 3, ano: 2025, periodo: "S1", valor: 42, fonte: "Sistema de seguimento de diplomados", excluded: false}
+  - {medicao_indicador_id: 4, indicador_id: 4, ano: 2025, periodo: "S1", valor: 49, fonte: "Relatório de participação", excluded: false}
+  - {medicao_indicador_id: 5, indicador_id: 5, ano: 2025, periodo: "T1", valor: 31, fonte: "Relatório de apoio empresarial", excluded: false}
+  - {medicao_indicador_id: 6, indicador_id: 6, ano: 2025, periodo: "T1", valor: 15, fonte: "Catálogo de serviços públicos", excluded: false}
 ```
 
 ## INDICADOR_DIMENSOES
@@ -348,6 +414,12 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a associação está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 9
+table_layout:
+  default_order: [{field: indicador_dimensao_id, order: DESC}]
 ```
 
 ## MEDICAO_DIMENSOES
@@ -364,9 +436,13 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a desagregação está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 9
+table_layout:
+  default_order: [{field: medicao_dimensao_id, order: DESC}]
 ```
-
-## EXECUÇÃO, PARTES E CONTRATOS
 
 ## ATIVIDADES
 ```yaml
@@ -387,6 +463,14 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a atividade está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  sub_form_size: 12
+  allow_in_subform: {acoes: true}
+table_layout:
+  default_order: [{field: atividade_id, order: DESC}]
 ```
 
 ## ACOES
@@ -409,6 +493,14 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a ação está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  sub_form_size: 12
+  allow_in_subform: {orcamentos_acoes: true, beneficiarios_acao: true, acao_documentos: true}
+table_layout:
+  default_order: [{field: acao_id, order: DESC}]
 ```
 
 ## PARTES
@@ -423,6 +515,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a parte está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: false, size: 9, sub_form_size: 12}
+table_layout: {default_order: [{field: parte_id, order: DESC}]}
 ```
 
 ## PESSOAS
@@ -444,6 +538,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a pessoa está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 8}
+table_layout: {default_order: [{field: pessoa_id, order: DESC}]}
 ```
 
 ## ORGANIZACOES
@@ -465,6 +561,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a organização está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 8}
+table_layout: {default_order: [{field: organizacao_id, order: DESC}]}
 ```
 
 ## TIPO_PARTE
@@ -484,6 +582,8 @@ columns:
 data:
   - {codigo: PERSON, tipo_parte: Pessoa, tipo_parte_desc: "Pessoa singular"}
   - {codigo: ORGANIZATION, tipo_parte: Organização, tipo_parte_desc: "Pessoa coletiva"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: tipo_parte_id, order: ASC}]}
 ```
 
 ## ORCAMENTOS_ACOES
@@ -505,6 +605,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o orçamento está excluído." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 9}
+table_layout: {default_order: [{field: ano, order: DESC}]}
 ```
 
 ## BENEFICIARIOS_ACAO
@@ -524,9 +626,9 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o beneficiário está excluído." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 9}
+table_layout: {default_order: [{field: beneficiario_acao_id, order: DESC}]}
 ```
-
-## DOCUMENTOS E FONTES
 
 ## DOCUMENTOS
 ```yaml
@@ -547,6 +649,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o documento está excluído." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 9}
+table_layout: {default_order: [{field: documento_id, order: DESC}]}
 ```
 
 ## FONTES
@@ -566,9 +670,9 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a fonte está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 9}
+table_layout: {default_order: [{field: fonte_id, order: DESC}]}
 ```
-
-## TABELAS DE ESTADOS OPERACIONAIS
 
 ## ESTADO_ATIVIDADE
 ```yaml
@@ -590,6 +694,8 @@ data:
   - {codigo: ACTIVE, estado_atividade: Ativa, estado_atividade_desc: "Atividade em execução"}
   - {codigo: COMPLETED, estado_atividade: Concluída, estado_atividade_desc: "Atividade concluída"}
   - {codigo: CANCELLED, estado_atividade: Cancelada, estado_atividade_desc: "Atividade cancelada"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_atividade_id, order: ASC}]}
 ```
 
 ## ESTADO_ACAO
@@ -611,6 +717,8 @@ data:
   - {codigo: ACTIVE, estado_acao: Ativa, estado_acao_desc: "Ação em execução"}
   - {codigo: COMPLETED, estado_acao: Concluída, estado_acao_desc: "Ação concluída"}
   - {codigo: CANCELLED, estado_acao: Cancelada, estado_acao_desc: "Ação cancelada"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_acao_id, order: ASC}]}
 ```
 
 ## CONTRATOS
@@ -635,6 +743,18 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o contrato está excluído." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  sub_form_size: 12
+  allow_in_subform: {fases_contrato: true, pagamentos_contrato: true, contrato_documentos: true}
+  tabs_steps_conf:
+    - {label: Geral, fields: [acao_id, fornecedor_id, numero, titulo, contrato_desc]}
+    - {label: Valores, fields: [valor, moeda]}
+    - {label: Datas e estado, fields: [data_assinatura, data_inicio, data_fim, estado_contrato_id]}
+table_layout:
+  default_order: [{field: contrato_id, order: DESC}]
 ```
 
 ## FASES_CONTRATO
@@ -657,6 +777,13 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a fase está excluída." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 9
+  sub_form_size: 12
+table_layout:
+  default_order: [{field: numero_sequencia, order: ASC}]
 ```
 
 ## PAGAMENTOS_CONTRATO
@@ -678,6 +805,12 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o pagamento está excluído." }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 9
+table_layout:
+  default_order: [{field: data_pagamento, order: DESC}]
 ```
 
 ## ESTADO_CONTRATO
@@ -699,6 +832,8 @@ data:
   - {codigo: ACTIVE, estado_contrato: Ativo, estado_contrato_desc: "Contrato em vigor"}
   - {codigo: COMPLETED, estado_contrato: Concluído, estado_contrato_desc: "Contrato concluído"}
   - {codigo: CANCELLED, estado_contrato: Cancelado, estado_contrato_desc: "Contrato cancelado"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_contrato_id, order: ASC}]}
 ```
 
 ## ESTADO_FASE
@@ -719,6 +854,8 @@ data:
   - {codigo: PLANNED, estado_fase: Planeada, estado_fase_desc: "Fase planeada"}
   - {codigo: ACTIVE, estado_fase: Ativa, estado_fase_desc: "Fase em execução"}
   - {codigo: COMPLETED, estado_fase: Concluída, estado_fase_desc: "Fase concluída"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_fase_id, order: ASC}]}
 ```
 
 ## ESTADO_PAGAMENTO
@@ -739,9 +876,9 @@ data:
   - {codigo: PENDING, estado_pagamento: Pendente, estado_pagamento_desc: "Pagamento pendente"}
   - {codigo: PAID, estado_pagamento: Pago, estado_pagamento_desc: "Pagamento efetuado"}
   - {codigo: CANCELLED, estado_pagamento: Cancelado, estado_pagamento_desc: "Pagamento cancelado"}
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 6}
+table_layout: {default_order: [{field: estado_pagamento_id, order: ASC}]}
 ```
-
-## ASSOCIAÇÕES DE DOCUMENTOS
 
 ## ACAO_DOCUMENTOS
 ```yaml
@@ -757,6 +894,8 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a associação está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 9}
+table_layout: {default_order: [{field: acao_documento_id, order: DESC}]}
 ```
 
 ## CONTRATO_DOCUMENTOS
@@ -773,4 +912,6 @@ columns:
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação." }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização." }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se a associação está excluída." }
+form_layout: {tabs_steps: tabs, form_in_popup: true, size: 9}
+table_layout: {default_order: [{field: contrato_documento_id, order: DESC}]}
 ```
