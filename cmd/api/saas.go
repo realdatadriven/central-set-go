@@ -33,6 +33,14 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/env"
 )
 
+func GenerateSecret() (string, error) {
+	b := make([]byte, 32) // 256 bits
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
+}
+
 type TerraformRun struct {
 	Config string
 	State  json.RawMessage // store as JSON in DB
@@ -465,7 +473,13 @@ func (app *application) RunDeploy(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
+	secret1, _ := GenerateSecret()
+	secret2, _ := GenerateSecret()
+	secret3, _ := GenerateSecret()
 	_tmpl_data := map[string]any{
+		"secret_key":      secret1,
+		"secret_key2":     secret2,
+		"secret_key3":     secret3,
 		"tenant_id":       tenantID,
 		"subscription_id": subscriptionID,
 		"subdomain":       app.GetSubdomain(plan, tenant, _data),

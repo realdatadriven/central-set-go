@@ -84,7 +84,7 @@ func InitGoth() error {
 	// Session store setup (required!)
 	// Use secure random key in production (32+ bytes)
 	fall_back_secret, _ := generateState()
-	println("InitGoth Called:", fall_back_secret)
+	// println("InitGoth Called:", fall_back_secret)
 	store := sessions.NewCookieStore([]byte(env.GetString("OAUTH_SESSION_SECRET", fall_back_secret)))
 	store.Options.HttpOnly = true
 	store.Options.Secure = os.Getenv("ENV") == "production" // only HTTPS in prod
