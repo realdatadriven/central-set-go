@@ -6,7 +6,7 @@
 # PAREP_MODEL_V2
 ```yaml
 name: PAREPCV
-description: Modelo de gestão do programa PAREP-CV para objetivos, atividades, indicadores, ações, contratos, entidades e parametrização.
+description: Modelo de gestão do programa PAREP-CV para objetivos, resultados esperados, indicadores, ações, contratos, entidades e parametrização.
 runs_as: MODEL
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 depends_on: ADMIN
@@ -20,8 +20,9 @@ cs_app:
     menu_order: 1
     active: true
     tables:
-      - resultados
-      - atividades
+      - ambitos
+      - objetivos
+      - resultado_esperados
       - atividade_anos
       - acoes
       - contratos
@@ -47,6 +48,7 @@ cs_app:
     menu_order: 2
     active: true
     tables:
+      - ambitos
       - anos
       - ilhas
       - concelhos
@@ -59,18 +61,44 @@ cs_app:
       - unidades
 ```
 
-## RESULTADOS
+## AMBITOS
 ```yaml
-table: resultados
-comment: Resultado
-tooltip: Resultado estratégico do programa PAREP-CV e respetiva orientação de aprendizagem.
+table: ambitos
+comment: Âmbito
+tooltip: Classificação de âmbito para categorizar objetivos e resultados (Pré-escolar, 1º Ciclo, etc).
 columns:
-  resultado_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador único do resultado.", form_display: true, table_display: true, order: 1 }
-  resultado: { type: varchar, len: 255, nullable: false, comment: "Resultado", tooltip: "Nome do resultado estratégico.", form_display: true, table_display: true, form_size: 8, order: 2 }
-  desc_resultado: { type: text, comment: "Descrição", tooltip: "Descrição detalhada do resultado.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
-  data_ini: { type: date, comment: "Data início", tooltip: "Data de início do período de execução do resultado.", form_display: true, table_display: true, form_size: 4, order: 4 }
-  data_fim: { type: date, comment: "Data fim", tooltip: "Data de término do período de execução do resultado.", form_display: true, table_display: true, form_size: 4, order: 5 }
-  status_id: { type: integer, comment: "Estado", tooltip: "Estado do resultado.", form_display: true, table_display: true, form_size: 4, order: 6 }
+  ambito_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do âmbito.", form_display: true, table_display: true, order: 1 }
+  ambito: { type: varchar, len: 150, nullable: false, unique: true, comment: "Âmbito", tooltip: "Nome do âmbito.", form_display: true, table_display: true, form_size: 6, order: 2 }
+  ambito_desc: { type: text, comment: "Descrição", tooltip: "Descrição do âmbito.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
+  activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o âmbito está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
+  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: true
+  size: 6
+table_layout:
+  default_order: [{field: ambito_id, order: ASC}]
+data:
+  - {ambito_id: 1, ambito: "Pré-escolar", ambito_desc: "Educação Pré-escolar de qualidade, acessível e inclusiva", activo: true, excluded: false}
+  - {ambito_id: 2, ambito: "1º Ciclo", ambito_desc: "Ensino Básico de qualidade, equitativo, inclusivo e com êxito educativo", activo: true, excluded: false}
+```
+
+## OBJETIVOS
+```yaml
+table: objetivos
+comment: Objetivo
+tooltip: Objetivo estratégico do programa PAREP-CV.
+columns:
+  objetivo_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador único do objetivo.", form_display: true, table_display: true, order: 1 }
+  objetivo: { type: varchar, len: 255, nullable: false, comment: "Objetivo", tooltip: "Nome do objetivo estratégico.", form_display: true, table_display: true, form_size: 8, order: 2 }
+  desc_objetivo: { type: text, comment: "Descrição", tooltip: "Descrição detalhada do objetivo.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
+  ambito_id: { type: integer, fk: "ambitos.ambito_id", nullable: false, comment: "Âmbito", tooltip: "Âmbito do objetivo (Pré-escolar, 1º Ciclo, etc).", form_display: true, table_display: true, form_size: 4, order: 4 }
+  data_ini: { type: date, comment: "Data início", tooltip: "Data de início do período de execução do objetivo.", form_display: true, table_display: true, form_size: 4, order: 5 }
+  data_fim: { type: date, comment: "Data fim", tooltip: "Data de término do período de execução do objetivo.", form_display: true, table_display: true, form_size: 4, order: 6 }
+  status_id: { type: integer, comment: "Estado", tooltip: "Estado do objetivo.", form_display: true, table_display: true, form_size: 4, order: 7 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -80,24 +108,24 @@ form_layout:
   form_in_popup: false
   size: 9
   sub_form_size: 12
-  allow_in_subform: {atividades: true, indicadores: true}
+  allow_in_subform: {resultado_esperados: true, indicadores: true}
 table_layout:
-  default_order: [{field: resultado_id, order: DESC}]
+  default_order: [{field: objetivo_id, order: DESC}]
 ```
 
-## ATIVIDADES
+## RESULTADO_ESPERADOS
 ```yaml
-table: atividades
-comment: Atividade
-tooltip: Atividade associada a um resultado e ao programa de intervenção.
+table: resultado_esperados
+comment: Resultado Esperado
+tooltip: Resultado esperado associado a um objetivo.
 columns:
-  atividade_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador da atividade.", form_display: true, table_display: true, order: 1 }
-  atividade: { type: varchar, len: 255, nullable: false, comment: "Atividade", tooltip: "Nome da atividade.", form_display: true, table_display: true, form_size: 8, order: 2 }
-  desc_atividade: { type: text, comment: "Descrição", tooltip: "Descrição da atividade.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", nullable: false, comment: "Resultado", tooltip: "Resultado ao qual a atividade está relacionada.", form_display: true, table_display: true, form_size: 4, order: 4 }
-  data_ini: { type: date, comment: "Data início", tooltip: "Data de início da atividade.", form_display: true, table_display: true, form_size: 4, order: 5 }
-  data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim da atividade.", form_display: true, table_display: true, form_size: 4, order: 6 }
-  status_id: { type: integer, comment: "Estado", tooltip: "Estado da atividade.", form_display: true, table_display: true, form_size: 4, order: 7 }
+  resultado_esperado_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do resultado esperado.", form_display: true, table_display: true, order: 1 }
+  resultado_esperado: { type: varchar, len: 255, nullable: false, comment: "Resultado Esperado", tooltip: "Nome do resultado esperado.", form_display: true, table_display: true, form_size: 8, order: 2 }
+  desc_resultado_esperado: { type: text, comment: "Descrição", tooltip: "Descrição do resultado esperado.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo ao qual o resultado esperado está relacionado.", form_display: true, table_display: true, form_size: 4, order: 4 }
+  data_ini: { type: date, comment: "Data início", tooltip: "Data de início da execução.", form_display: true, table_display: true, form_size: 4, order: 5 }
+  data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim da execução.", form_display: true, table_display: true, form_size: 4, order: 6 }
+  status_id: { type: integer, comment: "Estado", tooltip: "Estado do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 7 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -109,23 +137,23 @@ form_layout:
   sub_form_size: 12
   allow_in_subform: {atividade_anos: true}
 table_layout:
-  default_order: [{field: atividade_id, order: DESC}]
+  default_order: [{field: resultado_esperado_id, order: DESC}]
 ```
 
 ## ATIVIDADE_ANOS
 ```yaml
 table: atividade_anos
 comment: Atividade Ano
-tooltip: Variação anual de uma atividade associada ao ano e respetiva execução.
+tooltip: Variação anual de um resultado esperado associado ao ano e respetiva execução.
 columns:
-  atividade_ano_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do registo anual da atividade.", form_display: true, table_display: true, order: 1 }
-  atividade_id: { type: integer, fk: "atividades.atividade_id", nullable: false, comment: "Atividade", tooltip: "Atividade principal.", form_display: true, table_display: true, form_size: 4, order: 2 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", nullable: false, comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 3 }
-  ano_id: { type: integer, fk: "anos.ano_id", nullable: false, comment: "Ano", tooltip: "Ano de execução da atividade.", form_display: true, table_display: true, form_size: 4, order: 4 }
+  atividade_ano_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do registo anual do resultado esperado.", form_display: true, table_display: true, order: 1 }
+  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", nullable: false, comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 2 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 3 }
+  ano_id: { type: integer, fk: "anos.ano_id", nullable: false, comment: "Ano", tooltip: "Ano de execução do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 4 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano literal para referência rápida.", form_display: true, table_display: true, form_size: 4, order: 5 }
   data_ini: { type: date, comment: "Data início", tooltip: "Data de início da execução anual.", form_display: true, table_display: true, form_size: 4, order: 6 }
   data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim da execução anual.", form_display: true, table_display: true, form_size: 4, order: 7 }
-  meta_ano: { type: decimal, len: 14, scale: 2, default: 0, comment: "Meta anual", tooltip: "Meta de execução anual da atividade.", form_display: true, table_display: true, form_size: 4, order: 8 }
+  meta_ano: { type: decimal, len: 14, scale: 2, default: 0, comment: "Meta anual", tooltip: "Meta de execução anual do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 8 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -144,7 +172,7 @@ table_layout:
 ```yaml
 table: acoes
 comment: Ação
-tooltip: Ação de implementação associada a uma atividade anual.
+tooltip: Ação de implementação associada a um resultado esperado anual.
 columns:
   acao_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador da ação.", form_display: true, table_display: true, order: 1 }
   acao: { type: varchar, len: 255, nullable: false, comment: "Ação", tooltip: "Nome da ação.", form_display: true, table_display: true, form_size: 8, order: 2 }
@@ -154,10 +182,10 @@ columns:
   orcamento_estimado: { type: decimal, len: 14, scale: 2, default: 0, comment: "Orçamento estimado", tooltip: "Valor estimado da ação.", form_display: true, table_display: true, form_size: 4, order: 6 }
   orcamento_executado: { type: decimal, len: 14, scale: 2, default: 0, comment: "Orçamento executado", tooltip: "Valor executado da ação.", form_display: true, table_display: true, form_size: 4, order: 7 }
   status_id: { type: integer, fk: "status_acao.status_acao_id", comment: "Status", tooltip: "Estado atual da ação.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Relação com a execução anual da atividade.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Relação com a execução anual do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 9 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano da ação for referência.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade associada.", form_display: true, table_display: true, form_size: 4, order: 11 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 12 }
+  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 11 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 12 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -188,11 +216,11 @@ columns:
   acao_id: { type: integer, fk: "acoes.acao_id", nullable: false, comment: "Ação", tooltip: "Ação a que o contrato está associado.", form_display: true, table_display: true, form_size: 4, order: 8 }
   origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato origem / pai", tooltip: "Contrato principal do qual este contrato deriva ou é adenda.", form_display: true, table_display: true, form_size: 4, order: 9 }
   addenda_id: { type: integer, fk: "contratos.contrato_id", comment: "Adenda / contrato destino", tooltip: "Contrato de adenda ou contrato destino relacionado com este contrato principal.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Relação com a atividade anual.", form_display: true, table_display: true, form_size: 4, order: 11 }
-  ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano do contrato.", form_display: true, table_display: true, form_size: 4, order: 13 }
-  atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade associada.", form_display: true, table_display: true, form_size: 4, order: 14 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 15 }
-  status_id: { type: integer, fk: "status_contrato.status_contrato_id", comment: "Status", tooltip: "Estado do contrato.", form_display: true, table_display: true, form_size: 4, order: 16 }
+  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Relação com o resultado esperado anual.", form_display: true, table_display: true, form_size: 4, order: 11 }
+  ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano do contrato.", form_display: true, table_display: true, form_size: 4, order: 12 }
+  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 13 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 14 }
+  status_id: { type: integer, fk: "status_contrato.status_contrato_id", comment: "Status", tooltip: "Estado do contrato.", form_display: true, table_display: true, form_size: 4, order: 15 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -269,10 +297,10 @@ columns:
   orcamento_executado: { type: decimal, len: 14, scale: 2, default: 0, comment: "Orçamento executado", tooltip: "Valor executado da logística.", form_display: true, table_display: true, form_size: 4, order: 4 }
   status_id: { type: integer, fk: "status_acao.status_acao_id", comment: "Status", tooltip: "Estado da logística.", form_display: true, table_display: true, form_size: 4, order: 5 }
   attach_logistica_anexo: { type: varchar, len: 255, comment: "Anexo", tooltip: "Anexo ou documento relacionado com a logística.", form_display: true, table_display: true, form_size: 6, order: 6 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Atividade anual associada.", form_display: true, table_display: true, form_size: 6, order: 7 }
+  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano da logística.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
+  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -297,10 +325,10 @@ columns:
   data_fim_benef: { type: date, comment: "Data fim", tooltip: "Data de fim do apoio ou acompanhamento.", form_display: true, table_display: true, form_size: 4, order: 4 }
   beneficiario_status_id: { type: integer, comment: "Status", tooltip: "Status do beneficiário.", form_display: true, table_display: true, form_size: 4, order: 5 }
   attach_beneficiarios: { type: varchar, len: 255, comment: "Anexo", tooltip: "Anexo ou ficheiro associado ao beneficiário.", form_display: true, table_display: true, form_size: 6, order: 6 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Atividade anual associada.", form_display: true, table_display: true, form_size: 6, order: 7 }
+  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano de referência.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
+  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -327,7 +355,7 @@ columns:
   unidades_id: { type: integer, fk: "unidades.unidade_id", comment: "Unidade", tooltip: "Unidade de medida do indicador.", form_display: true, table_display: true, form_size: 4, order: 6 }
   fonte: { type: varchar, len: 255, comment: "Fonte", tooltip: "Fonte ou origem dos dados do indicador.", form_display: true, table_display: true, form_size: 6, order: 7 }
   formula_calculo: { type: text, comment: "Fórmula", tooltip: "Fórmula de cálculo do indicador.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 8 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", nullable: false, comment: "Resultado", tooltip: "Resultado ao qual o indicador pertence.", form_display: true, table_display: true, form_size: 6, order: 9 }
+  objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo ao qual o indicador pertence.", form_display: true, table_display: true, form_size: 6, order: 9 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -681,539 +709,9 @@ data:
 # PAREPCV_DATA
 ```yaml
 name: PAREPCV_DATA
-description: Dados UI do PAREP Compact - Resultados, Objetivos, Indicadores e Metas 2025-2026
+description: Dados UI do PAREP Compact - Objetivos, Resultados Esperados, Indicadores e Metas 2025-2026 por Âmbito
 database: UPAREPCVI
 runs_as: MODEL_DATA
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
-## PAREP_RESULTADO_1_PRESCOLAR
-```yaml
-table: resultados
-description: Resultado Pré-Escolar do PAREP-CV
-cond: 'WHERE resultado = :resultado AND excluded = false'
-data:
-  resultado_id: 1
-  resultado: "Pré-Escolar"
-  desc_resultado: "Educação Pré-Escolar de qualidade, acessível e inclusiva"
-  children:
-    table: objetivos
-    description: Objetivos do Pré-Escolar
-    cond: 'WHERE resultado_id = :resultado_id AND excluded = false'
-    data:
-      - objetivo_id: 1
-        objetivo: "Assegurar que todas as crianças com idade de 4 e 5 anos frequentem o Pré-escolar"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 1
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND1"
-              desc_indicador: "Taxa líquida de escolarização/cobertura das crianças de 4-5 anos no Pré-escolar"
-              valor_baseline: 84.1
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND1 2025"
-                    meta_valor: 90
-                    ano_id: 1
-                  - meta: "Meta IND1 2026"
-                    meta_valor: 95
-                    ano_id: 2
-
-            - indicador: "IND2"
-              desc_indicador: "Nº de Crianças que frequentam Jardim de Infância"
-              valor_baseline: 15906
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND2 2025"
-                    meta_valor: 16500
-                    ano_id: 1
-                  - meta: "Meta IND2 2026"
-                    meta_valor: 17280
-                    ano_id: 2
-
-            - indicador: "IND3"
-              desc_indicador: "Nº de famílias de classe 1 e 2 que recebem apoio para escolarização na Educação Pré-escolar"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND3 2025"
-                    meta_valor: 2500
-                    ano_id: 1
-                  - meta: "Meta IND3 2026"
-                    meta_valor: 3500
-                    ano_id: 2
-
-            - indicador: "IND4"
-              desc_indicador: "Nº de Jardins que recebem Kits de materiais lúdico-pedagógicos e equipamentos para crianças com NEE"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND4 2025"
-                    meta_valor: 100
-                    ano_id: 1
-                  - meta: "Meta IND4 2026"
-                    meta_valor: 150
-                    ano_id: 2
-
-      - objetivo_id: 2
-        objetivo: "Melhorar o desempenho das aprendizagens das crianças em língua portuguesa e matemática"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 2
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND5"
-              desc_indicador: "Percentagem de crianças de 4-5 que desenvolvem competências básicas em língua portuguesa e números"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND5 2026"
-                    meta_valor: 75
-                    ano_id: 2
-
-            - indicador: "IND6"
-              desc_indicador: "% de Jardins que utiliza e cumpre o programa previsto em articulação com unidades educativas"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND6 2026"
-                    meta_valor: 80
-                    ano_id: 2
-
-            - indicador: "IND7"
-              desc_indicador: "Nº de educadoras com formação inicial formado e integrado no sistema"
-              valor_baseline: 136
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND7 2026"
-                    meta_valor: 424
-                    ano_id: 2
-
-            - indicador: "IND8"
-              desc_indicador: "Nº de monitoras com formação inicial formado e integrado no sistema"
-              valor_baseline: 283
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND8 2026"
-                    meta_valor: 566
-                    ano_id: 2
-
-            - indicador: "IND9"
-              desc_indicador: "% de profissionais de infância com formação adequada"
-              valor_baseline: 9.6
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND9 2026"
-                    meta_valor: 30
-                    ano_id: 2
-
-      - objetivo_id: 3
-        objetivo: "Melhorar a eficiência e eficácia do uso dos recursos disponibilizados ao ensino pré-escolar"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 3
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND10"
-              desc_indicador: "Elaborada a carta escolar do Pré-escolar, incluindo análise sobre capacidade por território educativo"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND10 2026"
-                    meta_valor: 1
-                    ano_id: 2
-
-            - indicador: "IND11"
-              desc_indicador: "Ratio Criança/profissionais de infância"
-              valor_baseline: 20
-              unidades_id: 3
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND11 2026"
-                    meta_valor: 25
-                    ano_id: 2
-
-      - objetivo_id: 4
-        objetivo: "Reforçar a capacidade institucional e organizativa"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 4
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND12"
-              desc_indicador: "% de Jardins que cumprem os requisitos mínimos exigidos para funcionamento"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND12 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND13"
-              desc_indicador: "Nº de Gestores de Jardins de infância capacitado em gestão baseado em resultados"
-              valor_baseline: 582
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND13 2026"
-                    meta_valor: 600
-                    ano_id: 2
-
-            - indicador: "IND14"
-              desc_indicador: "% de gestores dos Jardins habilitados para a função de direção do estabelecimento"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND14 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND15"
-              desc_indicador: "Nº de Jardins que fazem intercâmbio e articulam com as escolas básicas da sua área"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND15 2026"
-                    meta_valor: 360
-                    ano_id: 2
-
-            - indicador: "IND16"
-              desc_indicador: "Estatuto da carreira dos profissionais da infância elaborado, discutido e apropriado"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND16 2026"
-                    meta_valor: 1
-                    ano_id: 2
-
-            - indicador: "IND17"
-              desc_indicador: "Nº de Jardins com prática de gestão baseada em resultados"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND17 2026"
-                    meta_valor: 600
-                    ano_id: 2
-
-            - indicador: "IND18"
-              desc_indicador: "% de Jardins com prática de gestão baseada em resultados"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND18 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND19"
-              desc_indicador: "Nº de Gestores de jardins capacitados para o uso e manuseamento do SIGE"
-              valor_baseline: 582
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND19 2026"
-                    meta_valor: 600
-                    ano_id: 2
-
-            - indicador: "IND20"
-              desc_indicador: "% de Jardins que disponibiliza os seus dados através do SIGE"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND20 2026"
-                    meta_valor: 100
-                    ano_id: 2
-```
-
-## PAREP_RESULTADO_2_1CICLO
-```yaml
-table: resultados
-description: Resultado 1º Ciclo do PAREP-CV
-cond: 'WHERE resultado = :resultado AND excluded = false'
-data:
-  resultado_id: 2
-  resultado: "Ensino Básico Obrigatório – 1º Ciclo"
-  desc_resultado: "Ensino Básico de qualidade, equitativo, inclusivo e com êxito educativo"
-  children:
-    table: objetivos
-    description: Objetivos do 1º Ciclo
-    cond: 'WHERE resultado_id = :resultado_id AND excluded = false'
-    data:
-      - objetivo_id: 5
-        objetivo: "Consolidar o acesso equitativo e inclusivo no EBO"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 5
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND21"
-              desc_indicador: "Nº de campanhas regulares de sensibilização nas comunidades implementadas"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND21 2026"
-                    meta_valor: 20
-                    ano_id: 2
-
-            - indicador: "IND22"
-              desc_indicador: "Estudo de mapeamento de crianças com NEE elaborado"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND22 2026"
-                    meta_valor: 1
-                    ano_id: 2
-
-            - indicador: "IND23"
-              desc_indicador: "Equipas EMAEI reforçadas com mais um técnico em todos os concelhos"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND23 2026"
-                    meta_valor: 22
-                    ano_id: 2
-
-            - indicador: "IND24"
-              desc_indicador: "Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND24 2026"
-                    meta_valor: 22
-                    ano_id: 2
-
-            - indicador: "IND25"
-              desc_indicador: "Taxa líquida de escolarização das crianças de 6-13 anos no EBO"
-              valor_baseline: 99.6
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND25 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND26"
-              desc_indicador: "Índice de Paridade de Género (M/F)"
-              valor_baseline: 0.91
-              unidades_id: 3
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND26 2026"
-                    meta_valor: 0.95
-                    ano_id: 2
-
-      - objetivo_id: 6
-        objetivo: "Reforçar o êxito e a qualidade das aprendizagens em língua portuguesa e matemática"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 6
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND27"
-              desc_indicador: "Nº de docentes do 1º ciclo que recebem ações de capacitação em gestão de currículo"
-              valor_baseline: 4188
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND27 2026"
-                    meta_valor: 4200
-                    ano_id: 2
-
-            - indicador: "IND28"
-              desc_indicador: "Nº de docentes capacitados em gestão pedagógica de crianças com NEE"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND28 2026"
-                    meta_valor: 4200
-                    ano_id: 2
-
-            - indicador: "IND29"
-              desc_indicador: "Nº de equipas pedagógicas capacitadas para reforço da supervisão e avaliação no EBO"
-              valor_baseline: 60
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND29 2026"
-                    meta_valor: 60
-                    ano_id: 2
-
-            - indicador: "IND30"
-              desc_indicador: "Percentagem de aprovação no 1º Ciclo do EBO"
-              valor_baseline: 83.9
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND30 2026"
-                    meta_valor: 92
-                    ano_id: 2
-
-            - indicador: "IND31"
-              desc_indicador: "Percentagem de reprovação no 1º Ciclo do EBO"
-              valor_baseline: 15.2
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND31 2026"
-                    meta_valor: 8
-                    ano_id: 2
-
-            - indicador: "IND32"
-              desc_indicador: "Percentagem de abandono no 1º Ciclo do EBO"
-              valor_baseline: 0.01
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND32 2026"
-                    meta_valor: 0
-                    ano_id: 2
-
-            - indicador: "IND33"
-              desc_indicador: "Percentagem de crianças do EBO que adquirem competências básicas em LP e Matemática"
-              valor_baseline: 32.7
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND33 2026"
-                    meta_valor: 60
-                    ano_id: 2
-
-            - indicador: "IND34"
-              desc_indicador: "% de docentes abrangidos pelo programa de formação contínua de acordo com o perfil"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND34 2026"
-                    meta_valor: 90
-                    ano_id: 2
-
-      - objetivo_id: 7
-        objetivo: "Melhorar a eficiência e eficácia do uso dos recursos disponibilizados no EBO"
-        children:
-          table: indicadores
-          description: Indicadores do Objetivo 7
-          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
-          data:
-            - indicador: "IND35"
-              desc_indicador: "Nº de Unidades Educativas com órgãos de gestão plenamente funcionais"
-              valor_baseline: 71.5
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND35 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND36"
-              desc_indicador: "Nº de dirigentes das Unidades educativas capacitado em técnicas de elaboração de projeto educativo"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND36 2026"
-                    meta_valor: 617
-                    ano_id: 2
-
-            - indicador: "IND37"
-              desc_indicador: "Nº de Unidades Educativas que adota o projeto educativo como instrumento estratégico"
-              valor_baseline: 42
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND37 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND38"
-              desc_indicador: "Nº de Unidades Educativas com atividade de supervisão anual (Central/local)"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND38 2026"
-                    meta_valor: 100
-                    ano_id: 2
-
-            - indicador: "IND39"
-              desc_indicador: "Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas do SIGE"
-              valor_baseline: null
-              unidades_id: 2
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND39 2026"
-                    meta_valor: 917
-                    ano_id: 2
-
-            - indicador: "IND40"
-              desc_indicador: "% de escolas que reportam dados completos e de qualidade através do SIGE"
-              valor_baseline: null
-              unidades_id: 1
-              children:
-                table: metas
-                data:
-                  - meta: "Meta IND40 2026"
-                    meta_valor: 100
-                    ano_id: 2
-```
