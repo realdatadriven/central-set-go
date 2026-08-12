@@ -186,10 +186,9 @@ columns:
   data_fim_contrato: { type: date, comment: "Data fim", tooltip: "Data de fim do contrato.", form_display: true, table_display: true, form_size: 4, order: 6 }
   entidade_id: { type: integer, fk: "entidades.entidade_id", comment: "Entidade", tooltip: "Entidade contratada.", form_display: true, table_display: true, form_size: 4, order: 7 }
   acao_id: { type: integer, fk: "acoes.acao_id", nullable: false, comment: "Ação", tooltip: "Ação a que o contrato está associado.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato pai", tooltip: "Contrato principal do qual este contrato deriva ou é adenda.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato origem / pai", tooltip: "Contrato principal do qual este contrato deriva ou é adenda.", form_display: true, table_display: true, form_size: 4, order: 9 }
   addenda_id: { type: integer, fk: "contratos.contrato_id", comment: "Adenda / contrato destino", tooltip: "Contrato de adenda ou contrato destino relacionado com este contrato principal.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato origem", tooltip: "Contrato de origem ou principal a partir do qual este registo foi gerado.", form_display: true, table_display: true, form_size: 4, order: 11 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Relação com a atividade anual.", form_display: true, table_display: true, form_size: 4, order: 12 }
+  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Relação com a atividade anual.", form_display: true, table_display: true, form_size: 4, order: 11 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano do contrato.", form_display: true, table_display: true, form_size: 4, order: 13 }
   atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade associada.", form_display: true, table_display: true, form_size: 4, order: 14 }
   resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 15 }
@@ -677,4 +676,544 @@ data:
   - {unidade_id: 2, unidade: "Número", unidade_desc: "Quantidade absoluta", simbolo: "#", activo: true, excluded: false}
   - {unidade_id: 3, unidade: "Montante", unidade_desc: "Valor monetário", simbolo: "MVA", activo: true, excluded: false}
   - {unidade_id: 4, unidade: "Dias", unidade_desc: "Duração em dias", simbolo: "dias", activo: true, excluded: false}
+```
+
+# PAREPCV_DATA
+```yaml
+name: PAREPCV_DATA
+description: Dados UI do PAREP Compact - Resultados, Objetivos, Indicadores e Metas 2025-2026
+database: UPAREPCVI
+runs_as: MODEL_DATA
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## PAREP_RESULTADO_1_PRESCOLAR
+```yaml
+table: resultados
+description: Resultado Pré-Escolar do PAREP-CV
+cond: 'WHERE resultado = :resultado AND excluded = false'
+data:
+  resultado_id: 1
+  resultado: "Pré-Escolar"
+  desc_resultado: "Educação Pré-Escolar de qualidade, acessível e inclusiva"
+  children:
+    table: objetivos
+    description: Objetivos do Pré-Escolar
+    cond: 'WHERE resultado_id = :resultado_id AND excluded = false'
+    data:
+      - objetivo_id: 1
+        objetivo: "Assegurar que todas as crianças com idade de 4 e 5 anos frequentem o Pré-escolar"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 1
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND1"
+              desc_indicador: "Taxa líquida de escolarização/cobertura das crianças de 4-5 anos no Pré-escolar"
+              valor_baseline: 84.1
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND1 2025"
+                    meta_valor: 90
+                    ano_id: 1
+                  - meta: "Meta IND1 2026"
+                    meta_valor: 95
+                    ano_id: 2
+
+            - indicador: "IND2"
+              desc_indicador: "Nº de Crianças que frequentam Jardim de Infância"
+              valor_baseline: 15906
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND2 2025"
+                    meta_valor: 16500
+                    ano_id: 1
+                  - meta: "Meta IND2 2026"
+                    meta_valor: 17280
+                    ano_id: 2
+
+            - indicador: "IND3"
+              desc_indicador: "Nº de famílias de classe 1 e 2 que recebem apoio para escolarização na Educação Pré-escolar"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND3 2025"
+                    meta_valor: 2500
+                    ano_id: 1
+                  - meta: "Meta IND3 2026"
+                    meta_valor: 3500
+                    ano_id: 2
+
+            - indicador: "IND4"
+              desc_indicador: "Nº de Jardins que recebem Kits de materiais lúdico-pedagógicos e equipamentos para crianças com NEE"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND4 2025"
+                    meta_valor: 100
+                    ano_id: 1
+                  - meta: "Meta IND4 2026"
+                    meta_valor: 150
+                    ano_id: 2
+
+      - objetivo_id: 2
+        objetivo: "Melhorar o desempenho das aprendizagens das crianças em língua portuguesa e matemática"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 2
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND5"
+              desc_indicador: "Percentagem de crianças de 4-5 que desenvolvem competências básicas em língua portuguesa e números"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND5 2026"
+                    meta_valor: 75
+                    ano_id: 2
+
+            - indicador: "IND6"
+              desc_indicador: "% de Jardins que utiliza e cumpre o programa previsto em articulação com unidades educativas"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND6 2026"
+                    meta_valor: 80
+                    ano_id: 2
+
+            - indicador: "IND7"
+              desc_indicador: "Nº de educadoras com formação inicial formado e integrado no sistema"
+              valor_baseline: 136
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND7 2026"
+                    meta_valor: 424
+                    ano_id: 2
+
+            - indicador: "IND8"
+              desc_indicador: "Nº de monitoras com formação inicial formado e integrado no sistema"
+              valor_baseline: 283
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND8 2026"
+                    meta_valor: 566
+                    ano_id: 2
+
+            - indicador: "IND9"
+              desc_indicador: "% de profissionais de infância com formação adequada"
+              valor_baseline: 9.6
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND9 2026"
+                    meta_valor: 30
+                    ano_id: 2
+
+      - objetivo_id: 3
+        objetivo: "Melhorar a eficiência e eficácia do uso dos recursos disponibilizados ao ensino pré-escolar"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 3
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND10"
+              desc_indicador: "Elaborada a carta escolar do Pré-escolar, incluindo análise sobre capacidade por território educativo"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND10 2026"
+                    meta_valor: 1
+                    ano_id: 2
+
+            - indicador: "IND11"
+              desc_indicador: "Ratio Criança/profissionais de infância"
+              valor_baseline: 20
+              unidades_id: 3
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND11 2026"
+                    meta_valor: 25
+                    ano_id: 2
+
+      - objetivo_id: 4
+        objetivo: "Reforçar a capacidade institucional e organizativa"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 4
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND12"
+              desc_indicador: "% de Jardins que cumprem os requisitos mínimos exigidos para funcionamento"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND12 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND13"
+              desc_indicador: "Nº de Gestores de Jardins de infância capacitado em gestão baseado em resultados"
+              valor_baseline: 582
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND13 2026"
+                    meta_valor: 600
+                    ano_id: 2
+
+            - indicador: "IND14"
+              desc_indicador: "% de gestores dos Jardins habilitados para a função de direção do estabelecimento"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND14 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND15"
+              desc_indicador: "Nº de Jardins que fazem intercâmbio e articulam com as escolas básicas da sua área"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND15 2026"
+                    meta_valor: 360
+                    ano_id: 2
+
+            - indicador: "IND16"
+              desc_indicador: "Estatuto da carreira dos profissionais da infância elaborado, discutido e apropriado"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND16 2026"
+                    meta_valor: 1
+                    ano_id: 2
+
+            - indicador: "IND17"
+              desc_indicador: "Nº de Jardins com prática de gestão baseada em resultados"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND17 2026"
+                    meta_valor: 600
+                    ano_id: 2
+
+            - indicador: "IND18"
+              desc_indicador: "% de Jardins com prática de gestão baseada em resultados"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND18 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND19"
+              desc_indicador: "Nº de Gestores de jardins capacitados para o uso e manuseamento do SIGE"
+              valor_baseline: 582
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND19 2026"
+                    meta_valor: 600
+                    ano_id: 2
+
+            - indicador: "IND20"
+              desc_indicador: "% de Jardins que disponibiliza os seus dados através do SIGE"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND20 2026"
+                    meta_valor: 100
+                    ano_id: 2
+```
+
+## PAREP_RESULTADO_2_1CICLO
+```yaml
+table: resultados
+description: Resultado 1º Ciclo do PAREP-CV
+cond: 'WHERE resultado = :resultado AND excluded = false'
+data:
+  resultado_id: 2
+  resultado: "Ensino Básico Obrigatório – 1º Ciclo"
+  desc_resultado: "Ensino Básico de qualidade, equitativo, inclusivo e com êxito educativo"
+  children:
+    table: objetivos
+    description: Objetivos do 1º Ciclo
+    cond: 'WHERE resultado_id = :resultado_id AND excluded = false'
+    data:
+      - objetivo_id: 5
+        objetivo: "Consolidar o acesso equitativo e inclusivo no EBO"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 5
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND21"
+              desc_indicador: "Nº de campanhas regulares de sensibilização nas comunidades implementadas"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND21 2026"
+                    meta_valor: 20
+                    ano_id: 2
+
+            - indicador: "IND22"
+              desc_indicador: "Estudo de mapeamento de crianças com NEE elaborado"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND22 2026"
+                    meta_valor: 1
+                    ano_id: 2
+
+            - indicador: "IND23"
+              desc_indicador: "Equipas EMAEI reforçadas com mais um técnico em todos os concelhos"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND23 2026"
+                    meta_valor: 22
+                    ano_id: 2
+
+            - indicador: "IND24"
+              desc_indicador: "Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND24 2026"
+                    meta_valor: 22
+                    ano_id: 2
+
+            - indicador: "IND25"
+              desc_indicador: "Taxa líquida de escolarização das crianças de 6-13 anos no EBO"
+              valor_baseline: 99.6
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND25 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND26"
+              desc_indicador: "Índice de Paridade de Género (M/F)"
+              valor_baseline: 0.91
+              unidades_id: 3
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND26 2026"
+                    meta_valor: 0.95
+                    ano_id: 2
+
+      - objetivo_id: 6
+        objetivo: "Reforçar o êxito e a qualidade das aprendizagens em língua portuguesa e matemática"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 6
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND27"
+              desc_indicador: "Nº de docentes do 1º ciclo que recebem ações de capacitação em gestão de currículo"
+              valor_baseline: 4188
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND27 2026"
+                    meta_valor: 4200
+                    ano_id: 2
+
+            - indicador: "IND28"
+              desc_indicador: "Nº de docentes capacitados em gestão pedagógica de crianças com NEE"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND28 2026"
+                    meta_valor: 4200
+                    ano_id: 2
+
+            - indicador: "IND29"
+              desc_indicador: "Nº de equipas pedagógicas capacitadas para reforço da supervisão e avaliação no EBO"
+              valor_baseline: 60
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND29 2026"
+                    meta_valor: 60
+                    ano_id: 2
+
+            - indicador: "IND30"
+              desc_indicador: "Percentagem de aprovação no 1º Ciclo do EBO"
+              valor_baseline: 83.9
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND30 2026"
+                    meta_valor: 92
+                    ano_id: 2
+
+            - indicador: "IND31"
+              desc_indicador: "Percentagem de reprovação no 1º Ciclo do EBO"
+              valor_baseline: 15.2
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND31 2026"
+                    meta_valor: 8
+                    ano_id: 2
+
+            - indicador: "IND32"
+              desc_indicador: "Percentagem de abandono no 1º Ciclo do EBO"
+              valor_baseline: 0.01
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND32 2026"
+                    meta_valor: 0
+                    ano_id: 2
+
+            - indicador: "IND33"
+              desc_indicador: "Percentagem de crianças do EBO que adquirem competências básicas em LP e Matemática"
+              valor_baseline: 32.7
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND33 2026"
+                    meta_valor: 60
+                    ano_id: 2
+
+            - indicador: "IND34"
+              desc_indicador: "% de docentes abrangidos pelo programa de formação contínua de acordo com o perfil"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND34 2026"
+                    meta_valor: 90
+                    ano_id: 2
+
+      - objetivo_id: 7
+        objetivo: "Melhorar a eficiência e eficácia do uso dos recursos disponibilizados no EBO"
+        children:
+          table: indicadores
+          description: Indicadores do Objetivo 7
+          cond: 'WHERE objetivo_id = :objetivo_id AND excluded = false'
+          data:
+            - indicador: "IND35"
+              desc_indicador: "Nº de Unidades Educativas com órgãos de gestão plenamente funcionais"
+              valor_baseline: 71.5
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND35 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND36"
+              desc_indicador: "Nº de dirigentes das Unidades educativas capacitado em técnicas de elaboração de projeto educativo"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND36 2026"
+                    meta_valor: 617
+                    ano_id: 2
+
+            - indicador: "IND37"
+              desc_indicador: "Nº de Unidades Educativas que adota o projeto educativo como instrumento estratégico"
+              valor_baseline: 42
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND37 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND38"
+              desc_indicador: "Nº de Unidades Educativas com atividade de supervisão anual (Central/local)"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND38 2026"
+                    meta_valor: 100
+                    ano_id: 2
+
+            - indicador: "IND39"
+              desc_indicador: "Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas do SIGE"
+              valor_baseline: null
+              unidades_id: 2
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND39 2026"
+                    meta_valor: 917
+                    ano_id: 2
+
+            - indicador: "IND40"
+              desc_indicador: "% de escolas que reportam dados completos e de qualidade através do SIGE"
+              valor_baseline: null
+              unidades_id: 1
+              children:
+                table: metas
+                data:
+                  - meta: "Meta IND40 2026"
+                    meta_valor: 100
+                    ano_id: 2
 ```
