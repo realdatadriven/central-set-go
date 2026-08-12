@@ -3,9 +3,9 @@
 <!-- markdownlint-disable MD031 -->
 <!-- markdownlint-disable MD012 -->
 <!-- markdownlint-disable MD047 -->
-# PAREP_MODEL_V2
+# PAREP_MODEL
 ```yaml
-name: PAREPCV
+name: PAREP
 description: Modelo de gestão do programa PAREP-CV para objetivos, resultados esperados, indicadores, ações, contratos, entidades e parametrização.
 runs_as: MODEL
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
@@ -15,39 +15,66 @@ _drop_all: checkfirst
 update_table_metadata: true
 active: true
 cs_app:
-  PAREPCV:
+  PAREP:
     menu_icon: chart-pie
     menu_order: 1
     active: true
+    menu_config: |
+      {
+        "label": "objetivos",
+        "tooltip": "desc_objetivo",
+        "load_items": {
+          "table": "objetivos",
+          "label": "objetivo",
+          "tooltip": "desc_objetivo",
+          "detail": true,
+          "load_items": [
+            {
+              "table": "resultados",
+              "label": "resultado",
+              "tooltip": "desc_resultado",
+              "detail": true,
+              "load_items": {
+                "table": "resultado_anos",
+                "label": "ano",
+                "tooltip": "ano",
+                "detail": true,
+                "load_items": {
+                  "table": "acoes",
+                  "label": "acao",
+                  "tooltip": "acao_desc",
+                  "detail": false
+                }
+              }
+            },
+            {
+              "table": "indicadores",
+              "label": "indicador",
+              "tooltip": "desc_indicador",
+              "detail": false
+            }
+          ],
+          "tables": ["objetivos", "resultados", "indicadores", "resultado_anos", "acoes"]
+        }
+      }
     tables:
-      - ambitos
       - objetivos
-      - resultado_esperados
-      - atividade_anos
-      - acoes
-      - contratos
-      - contrato_execucoes
-      - contrato_anexos
-      - logistica
-      - beneficiarios
-      - indicadores
-      - metas
-      - entidades
-      - anos
-      - ilhas
-      - concelhos
-      - generos
-      - tipo_contrato
-      - tipo_entidade
-      - status_acao
-      - status_contrato
-      - status_execucao
-      - unidades
+      - {table: resultados, active: false}
+      - {table: resultado_anos, active: false}
+      - {table: acoes, active: false}
+      - {table: contratos, active: false}
+      - {table: contrato_execucoes, active: false}
+      - {table: contrato_anexos, active: false}
+      - {table: logistica, active: false}
+      - {table: beneficiarios, active: false}
+      - {table: indicadores, active: false}
+      - {table: metas, active: false}
   Parametrização:
     menu_icon: adjustments
     menu_order: 2
     active: true
     tables:
+      - entidades
       - ambitos
       - anos
       - ilhas
@@ -108,20 +135,20 @@ form_layout:
   form_in_popup: false
   size: 9
   sub_form_size: 12
-  allow_in_subform: {resultado_esperados: true, indicadores: true}
+  allow_in_subform: {resultados: true, indicadores: true}
 table_layout:
   default_order: [{field: objetivo_id, order: DESC}]
 ```
 
-## RESULTADO_ESPERADOS
+## RESULTADOS
 ```yaml
-table: resultado_esperados
+table: resultados
 comment: Resultado Esperado
 tooltip: Resultado esperado associado a um objetivo.
 columns:
-  resultado_esperado_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do resultado esperado.", form_display: true, table_display: true, order: 1 }
-  resultado_esperado: { type: varchar, len: 255, nullable: false, comment: "Resultado Esperado", tooltip: "Nome do resultado esperado.", form_display: true, table_display: true, form_size: 8, order: 2 }
-  desc_resultado_esperado: { type: text, comment: "Descrição", tooltip: "Descrição do resultado esperado.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
+  resultado_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do resultado esperado.", form_display: true, table_display: true, order: 1 }
+  resultado: { type: varchar, len: 255, nullable: false, comment: "Resultado Esperado", tooltip: "Nome do resultado esperado.", form_display: true, table_display: true, form_size: 8, order: 2 }
+  desc_resultado: { type: text, comment: "Descrição", tooltip: "Descrição do resultado esperado.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo ao qual o resultado esperado está relacionado.", form_display: true, table_display: true, form_size: 4, order: 4 }
   data_ini: { type: date, comment: "Data início", tooltip: "Data de início da execução.", form_display: true, table_display: true, form_size: 4, order: 5 }
   data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim da execução.", form_display: true, table_display: true, form_size: 4, order: 6 }
@@ -135,19 +162,19 @@ form_layout:
   form_in_popup: false
   size: 9
   sub_form_size: 12
-  allow_in_subform: {atividade_anos: true}
+  allow_in_subform: {resultado_anos: true}
 table_layout:
-  default_order: [{field: resultado_esperado_id, order: DESC}]
+  default_order: [{field: resultado_id, order: DESC}]
 ```
 
-## ATIVIDADE_ANOS
+## RESULTADO_ANOS
 ```yaml
-table: atividade_anos
-comment: Atividade Ano
+table: resultado_anos
+comment: resultado Ano
 tooltip: Variação anual de um resultado esperado associado ao ano e respetiva execução.
 columns:
-  atividade_ano_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do registo anual do resultado esperado.", form_display: true, table_display: true, order: 1 }
-  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", nullable: false, comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 2 }
+  resultado_ano_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do registo anual do resultado esperado.", form_display: true, table_display: true, order: 1 }
+  resultado_id: { type: integer, fk: "resultados.resultado_id", nullable: false, comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 2 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 3 }
   ano_id: { type: integer, fk: "anos.ano_id", nullable: false, comment: "Ano", tooltip: "Ano de execução do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 4 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano literal para referência rápida.", form_display: true, table_display: true, form_size: 4, order: 5 }
@@ -165,7 +192,7 @@ form_layout:
   sub_form_size: 12
   allow_in_subform: {acoes: true}
 table_layout:
-  default_order: [{field: atividade_ano_id, order: DESC}]
+  default_order: [{field: resultado_ano_id, order: DESC}]
 ```
 
 ## ACOES
@@ -182,9 +209,9 @@ columns:
   orcamento_estimado: { type: decimal, len: 14, scale: 2, default: 0, comment: "Orçamento estimado", tooltip: "Valor estimado da ação.", form_display: true, table_display: true, form_size: 4, order: 6 }
   orcamento_executado: { type: decimal, len: 14, scale: 2, default: 0, comment: "Orçamento executado", tooltip: "Valor executado da ação.", form_display: true, table_display: true, form_size: 4, order: 7 }
   status_id: { type: integer, fk: "status_acao.status_acao_id", comment: "Status", tooltip: "Estado atual da ação.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Relação com a execução anual do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  resultado_ano_id: { type: integer, fk: "resultado_anos.resultado_ano_id", comment: "Resultado Esperado Ano", tooltip: "Relação com a execução anual do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 9 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano da ação for referência.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 11 }
+  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 11 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 12 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
@@ -216,9 +243,9 @@ columns:
   acao_id: { type: integer, fk: "acoes.acao_id", nullable: false, comment: "Ação", tooltip: "Ação a que o contrato está associado.", form_display: true, table_display: true, form_size: 4, order: 8 }
   origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato origem / pai", tooltip: "Contrato principal do qual este contrato deriva ou é adenda.", form_display: true, table_display: true, form_size: 4, order: 9 }
   addenda_id: { type: integer, fk: "contratos.contrato_id", comment: "Adenda / contrato destino", tooltip: "Contrato de adenda ou contrato destino relacionado com este contrato principal.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Relação com o resultado esperado anual.", form_display: true, table_display: true, form_size: 4, order: 11 }
+  resultado_ano_id: { type: integer, fk: "resultado_anos.resultado_ano_id", comment: "Resultado Esperado Ano", tooltip: "Relação com o resultado esperado anual.", form_display: true, table_display: true, form_size: 4, order: 11 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano do contrato.", form_display: true, table_display: true, form_size: 4, order: 12 }
-  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 13 }
+  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 13 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 14 }
   status_id: { type: integer, fk: "status_contrato.status_contrato_id", comment: "Status", tooltip: "Estado do contrato.", form_display: true, table_display: true, form_size: 4, order: 15 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
@@ -289,7 +316,7 @@ table_layout:
 ```yaml
 table: logistica
 comment: Logística
-tooltip: Gestão logística associada à atividade anual e respetivo acompanhamento de custos.
+tooltip: Gestão logística associada à resultado anual e respetivo acompanhamento de custos.
 columns:
   logistica_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador da logística.", form_display: true, table_display: true, order: 1 }
   logistica: { type: varchar, len: 255, nullable: false, comment: "Logística", tooltip: "Descrição da logística ou operação.", form_display: true, table_display: true, form_size: 8, order: 2 }
@@ -297,9 +324,10 @@ columns:
   orcamento_executado: { type: decimal, len: 14, scale: 2, default: 0, comment: "Orçamento executado", tooltip: "Valor executado da logística.", form_display: true, table_display: true, form_size: 4, order: 4 }
   status_id: { type: integer, fk: "status_acao.status_acao_id", comment: "Status", tooltip: "Estado da logística.", form_display: true, table_display: true, form_size: 4, order: 5 }
   attach_logistica_anexo: { type: varchar, len: 255, comment: "Anexo", tooltip: "Anexo ou documento relacionado com a logística.", form_display: true, table_display: true, form_size: 6, order: 6 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
+  acao_id: { type: integer, fk: "acaos.acao_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
+  resultado_ano_id: { type: integer, fk: "resultado_anos.resultado_ano_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano da logística.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
@@ -317,7 +345,7 @@ table_layout:
 ```yaml
 table: beneficiarios
 comment: Beneficiário
-tooltip: Registo dos beneficiários associados a uma atividade anual.
+tooltip: Registo dos beneficiários associados a uma resultado anual.
 columns:
   beneficiario_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador do beneficiário.", form_display: true, table_display: true, order: 1 }
   beneficiario: { type: varchar, len: 255, nullable: false, comment: "Beneficiário", tooltip: "Nome do beneficiário.", form_display: true, table_display: true, form_size: 8, order: 2 }
@@ -325,9 +353,9 @@ columns:
   data_fim_benef: { type: date, comment: "Data fim", tooltip: "Data de fim do apoio ou acompanhamento.", form_display: true, table_display: true, form_size: 4, order: 4 }
   beneficiario_status_id: { type: integer, comment: "Status", tooltip: "Status do beneficiário.", form_display: true, table_display: true, form_size: 4, order: 5 }
   attach_beneficiarios: { type: varchar, len: 255, comment: "Anexo", tooltip: "Anexo ou ficheiro associado ao beneficiário.", form_display: true, table_display: true, form_size: 6, order: 6 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
+  resultado_ano_id: { type: integer, fk: "resultado_anos.resultado_ano_id", comment: "Resultado Esperado Ano", tooltip: "Resultado esperado anual associado.", form_display: true, table_display: true, form_size: 6, order: 7 }
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano de referência.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  resultado_esperado_id: { type: integer, fk: "resultado_esperados.resultado_esperado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
@@ -478,7 +506,7 @@ data:
   - {ilha_id: 3, ilha: "Santa Luzia", ilha_desc: "Ilha pequena e não habitada", activo: true, excluded: false}
   - {ilha_id: 4, ilha: "São Nicolau", ilha_desc: "Ilha de orientação norte", activo: true, excluded: false}
   - {ilha_id: 5, ilha: "Sal", ilha_desc: "Ilha do arquipélago de Cabo Verde", activo: true, excluded: false}
-  - {ilha_id: 6, ilha: "Boa Vista", ilha_desc: "Ilha com atividade turística", activo: true, excluded: false}
+  - {ilha_id: 6, ilha: "Boa Vista", ilha_desc: "Ilha com resultado turística", activo: true, excluded: false}
   - {ilha_id: 7, ilha: "Maio", ilha_desc: "Ilha do centro", activo: true, excluded: false}
   - {ilha_id: 8, ilha: "Santiago", ilha_desc: "Ilha principal do país", activo: true, excluded: false}
   - {ilha_id: 9, ilha: "Fogo", ilha_desc: "Ilha vulcânica", activo: true, excluded: false}
@@ -711,11 +739,11 @@ data:
 <!-- markdownlint-disable MD031 -->
 <!-- markdownlint-disable MD012 -->
 <!-- markdownlint-disable MD047 -->
-# PAREPCV_DATA
+# PAREP_DATA
 ```yaml
-name: PAREPCV_DATA
+name: PAREP_DATA
 description: Dados UI do PAREP Compact - Objetivos, Resultados Esperados, Indicadores e Metas 2025-2026 por Âmbito
-database: UPAREPCVI
+database: UPAREPI
 runs_as: MODEL_DATA
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
@@ -729,20 +757,20 @@ data:
   objetivo: OBJ1
   desc_objetivo: Assegurar que todas as crianças de 4 e 5 anos frequentem o Pré-escolar
   children:
-    - table: resultado_esperados
-      cond: where resultado_esperado = :resultado_esperado and objetivo_id = :objetivo_id
+    - table: resultados
+      cond: where resultado = :resultado and objetivo_id = :objetivo_id
       data:
-        - resultado_esperado: O1R1
-          desc_resultado_esperado: Acesso universal e inclusivo à Educação Pré-escolar.
+        - resultado: O1R1
+          desc_resultado: Acesso universal e inclusivo à Educação Pré-escolar.
           objetivo_id: objetivo_id()
-        - resultado_esperado: O1R2
-          desc_resultado_esperado: Redução das assimetrias regionais de acesso.
+        - resultado: O1R2
+          desc_resultado: Redução das assimetrias regionais de acesso.
           objetivo_id: objetivo_id()
-        - resultado_esperado: O1R3
-          desc_resultado_esperado: Aumento da frequência das crianças de 4 e 5 anos nos jardins de infância.
+        - resultado: O1R3
+          desc_resultado: Aumento da frequência das crianças de 4 e 5 anos nos jardins de infância.
           objetivo_id: objetivo_id()
-        - resultado_esperado: O1R4
-          desc_resultado_esperado: Maior inclusão de crianças provenientes de famílias vulneráveis.
+        - resultado: O1R4
+          desc_resultado: Maior inclusão de crianças provenientes de famílias vulneráveis.
           objetivo_id: objetivo_id()    
     - table: indicadores
       cond: where indicador = :indicador and objetivo_id = :objetivo_id
@@ -818,20 +846,20 @@ data:
   objetivo: OBJ2
   desc_objetivo: Melhorar o desempenho das aprendizagens das crianças no Pré-escolar
   children:
-    - table: resultado_esperados
-      cond: where resultado_esperado = :resultado_esperado and objetivo_id = :objetivo_id
+    - table: resultados
+      cond: where resultado = :resultado and objetivo_id = :objetivo_id
       data:
-        - resultado_esperado: O2R1
-          desc_resultado_esperado: Melhoria das competências em leitura, escrita e numeracia.
+        - resultado: O2R1
+          desc_resultado: Melhoria das competências em leitura, escrita e numeracia.
           objetivo_id: objetivo_id()
-        - resultado_esperado: O2R2
-          desc_resultado_esperado: Profissionais de infância mais qualificados.
+        - resultado: O2R2
+          desc_resultado: Profissionais de infância mais qualificados.
           objetivo_id: objetivo_id()
-        - resultado_esperado: O2R3
-          desc_resultado_esperado: Contextos pedagógicos de aprendizagem melhorados.
+        - resultado: O2R3
+          desc_resultado: Contextos pedagógicos de aprendizagem melhorados.
           objetivo_id: objetivo_id()
-        - resultado_esperado: O2R4
-          desc_resultado_esperado: Práticas pedagógicas alinhadas com as orientações curriculares.
+        - resultado: O2R4
+          desc_resultado: Práticas pedagógicas alinhadas com as orientações curriculares.
           objetivo_id: objetivo_id()
     - table: indicadores
       cond: where indicador = :indicador and objetivo_id = :objetivo_id
@@ -898,19 +926,19 @@ data:
   objetivo: OBJ3
   desc_objetivo: Melhorar a eficiência e eficácia do uso dos recursos disponibilizados ao Pré-escolar
   children:
-    - table: resultado_esperados
-      cond: where resultado_esperado = :resultado_esperado and objetivo_id = :objetivo_id
+    - table: resultados
+      cond: where resultado = :resultado and objetivo_id = :objetivo_id
       data:
-        - resultado_esperado: O3R1
-          desc_resultado_esperado: Planeamento mais eficiente da rede pré-escolar.
+        - resultado: O3R1
+          desc_resultado: Planeamento mais eficiente da rede pré-escolar.
           objetivo_id: objetivo_id()
 
-        - resultado_esperado: O3R2
-          desc_resultado_esperado: Melhor utilização dos recursos humanos e infraestruturas.
+        - resultado: O3R2
+          desc_resultado: Melhor utilização dos recursos humanos e infraestruturas.
           objetivo_id: objetivo_id()
 
-        - resultado_esperado: O3R3
-          desc_resultado_esperado: Melhor gestão dos recursos disponibilizados ao subsistema.
+        - resultado: O3R3
+          desc_resultado: Melhor gestão dos recursos disponibilizados ao subsistema.
           objetivo_id: objetivo_id()
 
     - table: indicadores
@@ -959,27 +987,27 @@ data:
   objetivo: OBJ4
   desc_objetivo: Reforçar a capacidade institucional e organizativa da Educação Pré-escolar
   children:
-    - table: resultado_esperados
-      cond: where resultado_esperado = :resultado_esperado and objetivo_id = :objetivo_id
+    - table: resultados
+      cond: where resultado = :resultado and objetivo_id = :objetivo_id
       data:
-        - resultado_esperado: O4R1
-          desc_resultado_esperado: Novo regime jurídico da Educação Pré-escolar implementado.
+        - resultado: O4R1
+          desc_resultado: Novo regime jurídico da Educação Pré-escolar implementado.
           objetivo_id: objetivo_id()
 
-        - resultado_esperado: O4R2
-          desc_resultado_esperado: Estatuto de carreira dos profissionais de infância definido e operacionalizado.
+        - resultado: O4R2
+          desc_resultado: Estatuto de carreira dos profissionais de infância definido e operacionalizado.
           objetivo_id: objetivo_id()
 
-        - resultado_esperado: O4R3
-          desc_resultado_esperado: Gestão dos jardins de infância baseada em resultados.
+        - resultado: O4R3
+          desc_resultado: Gestão dos jardins de infância baseada em resultados.
           objetivo_id: objetivo_id()
 
-        - resultado_esperado: O4R4
-          desc_resultado_esperado: Maior articulação entre jardins de infância e escolas básicas.
+        - resultado: O4R4
+          desc_resultado: Maior articulação entre jardins de infância e escolas básicas.
           objetivo_id: objetivo_id()
 
-        - resultado_esperado: O4R5
-          desc_resultado_esperado: Utilização do SIGE para monitoria e gestão do subsistema.
+        - resultado: O4R5
+          desc_resultado: Utilização do SIGE para monitoria e gestão do subsistema.
           objetivo_id: objetivo_id()
 
     - table: indicadores
@@ -1388,7 +1416,7 @@ data:
               objetivo_id: objetivo_id()
 
         - indicador: O7IND38
-          desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma atividade de supervisão anual
+          desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma resultado de supervisão anual
           valor_baseline: null
           unidades_id: 1
           objetivo_id: objetivo_id()
