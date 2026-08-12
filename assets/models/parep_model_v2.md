@@ -186,11 +186,14 @@ columns:
   data_fim_contrato: { type: date, comment: "Data fim", tooltip: "Data de fim do contrato.", form_display: true, table_display: true, form_size: 4, order: 6 }
   entidade_id: { type: integer, fk: "entidades.entidade_id", comment: "Entidade", tooltip: "Entidade contratada.", form_display: true, table_display: true, form_size: 4, order: 7 }
   acao_id: { type: integer, fk: "acoes.acao_id", nullable: false, comment: "Ação", tooltip: "Ação a que o contrato está associado.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Relação com a atividade anual.", form_display: true, table_display: true, form_size: 4, order: 9 }
-  ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano do contrato.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade associada.", form_display: true, table_display: true, form_size: 4, order: 11 }
-  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 12 }
-  status_id: { type: integer, fk: "status_contrato.status_contrato_id", comment: "Status", tooltip: "Estado do contrato.", form_display: true, table_display: true, form_size: 4, order: 13 }
+  origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato pai", tooltip: "Contrato principal do qual este contrato deriva ou é adenda.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  addenda_id: { type: integer, fk: "contratos.contrato_id", comment: "Adenda / contrato destino", tooltip: "Contrato de adenda ou contrato destino relacionado com este contrato principal.", form_display: true, table_display: true, form_size: 4, order: 10 }
+  origem_id: { type: integer, fk: "contratos.contrato_id", comment: "Contrato origem", tooltip: "Contrato de origem ou principal a partir do qual este registo foi gerado.", form_display: true, table_display: true, form_size: 4, order: 11 }
+  atividade_ano_id: { type: integer, fk: "atividade_anos.atividade_ano_id", comment: "Atividade ano", tooltip: "Relação com a atividade anual.", form_display: true, table_display: true, form_size: 4, order: 12 }
+  ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano do contrato.", form_display: true, table_display: true, form_size: 4, order: 13 }
+  atividade_id: { type: integer, fk: "atividades.atividade_id", comment: "Atividade", tooltip: "Atividade associada.", form_display: true, table_display: true, form_size: 4, order: 14 }
+  resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado", tooltip: "Resultado associado.", form_display: true, table_display: true, form_size: 4, order: 15 }
+  status_id: { type: integer, fk: "status_contrato.status_contrato_id", comment: "Status", tooltip: "Estado do contrato.", form_display: true, table_display: true, form_size: 4, order: 16 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -374,14 +377,15 @@ tooltip: Entidade pública, privada ou outra organização envolvida no programa
 columns:
   entidade_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Identificador da entidade.", form_display: true, table_display: true, order: 1 }
   entidade: { type: varchar, len: 255, nullable: false, comment: "Entidade", tooltip: "Nome da entidade.", form_display: true, table_display: true, form_size: 8, order: 2 }
-  tipo_entidade_id: { type: integer, fk: "tipo_entidade.tipo_entidade_id", comment: "Tipo entidade", tooltip: "Tipo de entidade.", form_display: true, table_display: true, form_size: 4, order: 3 }
-  entidade_pai_id: { type: integer, fk: "entidades.entidade_id", comment: "Entidade pai", tooltip: "Entidade de nível superior.", form_display: true, table_display: true, form_size: 4, order: 4 }
-  concelho_id: { type: integer, fk: "concelhos.concelho_id", comment: "Concelho", tooltip: "Concelho da entidade.", form_display: true, table_display: true, form_size: 4, order: 5 }
-  ilha_id: { type: integer, fk: "ilhas.ilha_id", comment: "Ilha", tooltip: "Ilha da entidade.", form_display: true, table_display: true, form_size: 4, order: 6 }
-  genero_id: { type: integer, fk: "generos.genero_id", comment: "Género", tooltip: "Género ou categoria relevante da entidade.", form_display: true, table_display: true, form_size: 4, order: 7 }
-  data_nasc_const: { type: date, comment: "Data nascimento/constituição", tooltip: "Data de nascimento ou constituição.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  email: { type: varchar, len: 255, comment: "Email", tooltip: "Contacto eletrónico.", form_display: true, table_display: true, form_size: 6, order: 9 }
-  telefone: { type: varchar, len: 50, comment: "Telefone", tooltip: "Contacto telefónico.", form_display: true, table_display: true, form_size: 6, order: 10 }
+  desc_entidade: { type: text, comment: "Descrição", tooltip: "Descrição geral da entidade, missão, função ou observações relevantes.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
+  tipo_entidade_id: { type: integer, fk: "tipo_entidade.tipo_entidade_id", comment: "Tipo entidade", tooltip: "Tipo de entidade.", form_display: true, table_display: true, form_size: 4, order: 4 }
+  entidade_pai_id: { type: integer, fk: "entidades.entidade_id", comment: "Entidade pai", tooltip: "Entidade de nível superior.", form_display: true, table_display: true, form_size: 4, order: 5 }
+  concelho_id: { type: integer, fk: "concelhos.concelho_id", comment: "Concelho", tooltip: "Concelho da entidade.", form_display: true, table_display: true, form_size: 4, order: 6 }
+  ilha_id: { type: integer, fk: "ilhas.ilha_id", comment: "Ilha", tooltip: "Ilha da entidade.", form_display: true, table_display: true, form_size: 4, order: 7 }
+  genero_id: { type: integer, fk: "generos.genero_id", comment: "Género", tooltip: "Género ou categoria relevante da entidade.", form_display: true, table_display: true, form_size: 4, order: 8 }
+  data_nasc_const: { type: date, comment: "Data nascimento/constituição", tooltip: "Data de nascimento ou constituição.", form_display: true, table_display: true, form_size: 4, order: 9 }
+  email: { type: varchar, len: 255, comment: "Email", tooltip: "Contacto eletrónico.", form_display: true, table_display: true, form_size: 6, order: 10 }
+  telefone: { type: varchar, len: 50, comment: "Telefone", tooltip: "Contacto telefónico.", form_display: true, table_display: true, form_size: 6, order: 11 }
   user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
@@ -475,6 +479,15 @@ form_layout:
   size: 6
 table_layout:
   default_order: [{field: concelho_id, order: ASC}]
+data:
+  - {concelho_id: 1, ilha_id: 1, concelho: "Ribeira Grande", concelho_desc: "Concelho de Santo Antão", activo: true, excluded: false}
+  - {concelho_id: 2, ilha_id: 1, concelho: "Paul", concelho_desc: "Concelho de Santo Antão", activo: true, excluded: false}
+  - {concelho_id: 3, ilha_id: 1, concelho: "Porto Novo", concelho_desc: "Concelho de Santo Antão", activo: true, excluded: false}
+  - {concelho_id: 4, ilha_id: 2, concelho: "São Vicente", concelho_desc: "Concelho de São Vicente", activo: true, excluded: false}
+  - {concelho_id: 5, ilha_id: 4, concelho: "Ribeira Brava", concelho_desc: "Concelho de São Nicolau", activo: true, excluded: false}
+  - {concelho_id: 6, ilha_id: 4, concelho: "Tarrafal de São Nicolau", concelho_desc: "Concelho de São Nicolau", activo: true, excluded: false}
+  - {concelho_id: 7, ilha_id: 5, concelho: "Sal", concelho_desc: "Concelho do Sal", activo: true, excluded: false}
+  - {concelho_id: 8, ilha_id: 6, concelho: "Boa Vista", concelho_desc: "Concelho da Boa Vista", activo: true, excluded: false}
 ```
 
 ## GENEROS
@@ -545,6 +558,11 @@ form_layout:
   size: 6
 table_layout:
   default_order: [{field: tipo_entidade_id, order: ASC}]
+data:
+  - {tipo_entidade_id: 1, tipo_entidade: "Tipo", tipo_entidade_desc: "Entidade genérica ou de natureza institucional", activo: true, excluded: false}
+  - {tipo_entidade_id: 2, tipo_entidade: "Consultor", tipo_entidade_desc: "Entidade ou profissional prestador de serviços de consultoria", activo: true, excluded: false}
+  - {tipo_entidade_id: 3, tipo_entidade: "Empresa fornecedora", tipo_entidade_desc: "Empresa que fornece bens ou serviços ao programa", activo: true, excluded: false}
+  - {tipo_entidade_id: 4, tipo_entidade: "Empresa construção", tipo_entidade_desc: "Empresa especializada em obras, construção ou instalação", activo: true, excluded: false}
 ```
 
 ## STATUS_ACAO
@@ -594,6 +612,14 @@ form_layout:
   size: 6
 table_layout:
   default_order: [{field: status_contrato_id, order: ASC}]
+data:
+  - {status_contrato_id: 1, status_contrato: "Rascunho", status_contrato_desc: "Contrato em elaboração", activo: true, excluded: false}
+  - {status_contrato_id: 2, status_contrato: "Em negociação", status_contrato_desc: "Contrato em processo de negociação", activo: true, excluded: false}
+  - {status_contrato_id: 3, status_contrato: "Assinado", status_contrato_desc: "Contrato formalizado e assinado", activo: true, excluded: false}
+  - {status_contrato_id: 4, status_contrato: "Em execução", status_contrato_desc: "Contrato em execução", activo: true, excluded: false}
+  - {status_contrato_id: 5, status_contrato: "Concluído", status_contrato_desc: "Contrato concluído com êxito", activo: true, excluded: false}
+  - {status_contrato_id: 6, status_contrato: "Cancelado", status_contrato_desc: "Contrato cancelado ou não executado", activo: true, excluded: false}
+  - {status_contrato_id: 7, status_contrato: "Suspenso", status_contrato_desc: "Contrato suspenso temporariamente", activo: true, excluded: false}
 ```
 
 ## STATUS_EXECUCAO
@@ -616,6 +642,13 @@ form_layout:
   size: 6
 table_layout:
   default_order: [{field: status_execucao_id, order: ASC}]
+data:
+  - {status_execucao_id: 1, status_execucao: "Draft", status_execucao_desc: "Registo em rascunho", activo: true, excluded: false}
+  - {status_execucao_id: 2, status_execucao: "Iniciado", status_execucao_desc: "Execução iniciada", activo: true, excluded: false}
+  - {status_execucao_id: 3, status_execucao: "Em execução", status_execucao_desc: "Execução em progresso", activo: true, excluded: false}
+  - {status_execucao_id: 4, status_execucao: "Cancelado", status_execucao_desc: "Execução cancelada", activo: true, excluded: false}
+  - {status_execucao_id: 5, status_execucao: "Adendado", status_execucao_desc: "Execução alterada por adenda", activo: true, excluded: false}
+  - {status_execucao_id: 6, status_execucao: "Concluído", status_execucao_desc: "Execução concluída", activo: true, excluded: false}
 ```
 
 ## UNIDADES
