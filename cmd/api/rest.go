@@ -154,6 +154,7 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 			"pathParams": pathParams,
 		},
 	}
+	params["ip"] = ClientIP(r)
 	loc := app.getLocationFromRequest(r, params)
 	params["location"] = loc
 	lang := "en"

@@ -385,11 +385,13 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 	}*/
 	_ip := ClientIP(r)
+	params["ip"] = _ip
 	_log := Dict{
 		"action": fmt.Sprintf("%s/%s", ctrl, act),
 		"req_ip": _ip,
 		"req_at": time.Now().In(loc),
 	}
+	params["ip"] = _ip
 	//fmt.Println(token, params)
 	if token["success"].(bool) {
 		//user := *(contextGetAuthenticatedUser(r))

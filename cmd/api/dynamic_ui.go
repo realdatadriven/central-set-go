@@ -87,6 +87,7 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 			"path_params": pathParams,
 		},
 	}
+	params["ip"] = ClientIP(r)
 	res := app.RenderUIPage(params)
 	if success, _ := res["success"].(bool); !success {
 		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
@@ -121,6 +122,7 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 			"raw_query":    r.URL.RawQuery,
 		},
 	}
+	params["ip"] = ClientIP(r)
 	// same token/user pattern as read_odata, if the partial is auth-gated
 	res := app.RenderUIPartial(params)
 	if success, _ := res["success"].(bool); !success {
@@ -508,6 +510,7 @@ func (app *application) serve_ui_asset(w http.ResponseWriter, r *http.Request) {
 			"asset_path": r.PathValue("asset"),
 		},
 	}
+	params["ip"] = ClientIP(r)
 	res := app.RenderUIAsset(params)
 	if success, _ := res["success"].(bool); !success {
 		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
@@ -574,6 +577,7 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 			"asset_path": r.PathValue("asset"),
 		},
 	}
+	params["ip"] = ClientIP(r)
 	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
 	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
 	if err != nil {
