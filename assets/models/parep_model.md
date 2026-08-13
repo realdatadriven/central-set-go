@@ -781,18 +781,32 @@ runs_as: MODEL_DATA
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
-## OBJETIVOS1
+## DASHBOARD1
+```yaml
+table: dashboard
+description: Add default Dashboard
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
+data:
+  dashboard_id:   1
+  dashboard:      Resumo Indicadores
+  dashboard_desc: Exemplo Layout Resumo Indicadores
+  dashboard_conf: FileContent(parep/dashboard1.md)
+  order:          1
+  active:         true
+```
+
+## OBJETIVO1
 ```yaml
 table: objetivos
 description: Add OBJ 1
-cond: where objetivo_id = :objetivo_id
+cond: "where objetivo_id = :objetivo_id"
 data:
   objetivo_id: 1
   objetivo: OBJ1
   desc_objetivo: Assegurar que todas as crianças de 4 e 5 anos frequentem o Pré-escolar
   children:
     - table: resultados
-      cond: where resultado = :resultado and objetivo_id = :objetivo_id
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
         - resultado: O1R1
           desc_resultado: Acesso universal e inclusivo à Educação Pré-escolar.
@@ -807,7 +821,7 @@ data:
           desc_resultado: Maior inclusão de crianças provenientes de famílias vulneráveis.
           objetivo_id: objetivo_id()    
     - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
         - indicador: O1IND1
           desc_indicador: Taxa líquida de escolarização/cobertura das crianças de 4-5 anos no Pré-escolar
@@ -816,7 +830,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
                 meta: O1IND12026
                 ano_id: 1
@@ -831,7 +845,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
                 meta: O1IND22026
                 ano_id: 1
@@ -846,7 +860,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
                 meta: O1IND32026
                 ano_id: 1
@@ -861,7 +875,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
                 meta: O1IND342026
                 ano_id: 1
@@ -871,17 +885,17 @@ data:
                 objetivo_id: objetivo_id()
 ```
 
-## OBJETIVOS2
+## OBJETIVO2
 ```yaml
 table: objetivos
-cond: where objetivo_id = :objetivo_id
+cond: "where objetivo_id = :objetivo_id"
 data:
   objetivo_id: 2
   objetivo: OBJ2
   desc_objetivo: Melhorar o desempenho das aprendizagens das crianças no Pré-escolar
   children:
     - table: resultados
-      cond: where resultado = :resultado and objetivo_id = :objetivo_id
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
         - resultado: O2R1
           desc_resultado: Melhoria das competências em leitura, escrita e numeracia.
@@ -896,7 +910,7 @@ data:
           desc_resultado: Práticas pedagógicas alinhadas com as orientações curriculares.
           objetivo_id: objetivo_id()
     - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
         - indicador: O2IND5
           desc_indicador: Percentagem de crianças de 4-5 anos que desenvolvem competências básicas em língua portuguesa e conhecimento dos números
@@ -915,7 +929,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O2IND72026
               ano_id: 1
@@ -930,7 +944,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O2IND82026
               ano_id: 1
@@ -950,18 +964,17 @@ data:
           objetivo_id: objetivo_id()
 ```
 
-## OBJETIVOS3
-
+## OBJETIVO3
 ```yaml
 table: objetivos
-cond: where objetivo_id = :objetivo_id
+cond: "where objetivo_id = :objetivo_id"
 data:
   objetivo_id: 3
   objetivo: OBJ3
   desc_objetivo: Melhorar a eficiência e eficácia do uso dos recursos disponibilizados ao Pré-escolar
   children:
     - table: resultados
-      cond: where resultado = :resultado and objetivo_id = :objetivo_id
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
         - resultado: O3R1
           desc_resultado: Planeamento mais eficiente da rede pré-escolar.
@@ -976,7 +989,7 @@ data:
           objetivo_id: objetivo_id()
 
     - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
         - indicador: O3IND10
           desc_indicador: Carta Escolar do Pré-escolar elaborada
@@ -985,7 +998,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O3IND102026
               ano_id: 1
@@ -1001,7 +1014,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O3IND112026
               ano_id: 1
@@ -1011,41 +1024,35 @@ data:
               objetivo_id: objetivo_id()
 ```
 
-## OBJETIVOS4
-
+## OBJETIVO4
 ```yaml
 table: objetivos
-cond: where objetivo_id = :objetivo_id
+cond: "where objetivo_id = :objetivo_id"
 data:
   objetivo_id: 4
   objetivo: OBJ4
   desc_objetivo: Reforçar a capacidade institucional e organizativa da Educação Pré-escolar
   children:
     - table: resultados
-      cond: where resultado = :resultado and objetivo_id = :objetivo_id
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
         - resultado: O4R1
           desc_resultado: Novo regime jurídico da Educação Pré-escolar implementado.
           objetivo_id: objetivo_id()
-
         - resultado: O4R2
           desc_resultado: Estatuto de carreira dos profissionais de infância definido e operacionalizado.
           objetivo_id: objetivo_id()
-
         - resultado: O4R3
           desc_resultado: Gestão dos jardins de infância baseada em resultados.
           objetivo_id: objetivo_id()
-
         - resultado: O4R4
           desc_resultado: Maior articulação entre jardins de infância e escolas básicas.
           objetivo_id: objetivo_id()
-
         - resultado: O4R5
           desc_resultado: Utilização do SIGE para monitoria e gestão do subsistema.
           objetivo_id: objetivo_id()
-
     - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
         - indicador: O4IND12
           desc_indicador: Percentagem de JI que cumprem os requisitos mínimos exigidos para funcionamento
@@ -1054,7 +1061,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND122026
               ano_id: 1
@@ -1062,7 +1069,6 @@ data:
               meta_valor: 1.00
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND13
           desc_indicador: Nº de Gestores de Jardins de Infância capacitados em gestão baseada em resultados
           valor_baseline: 582
@@ -1070,7 +1076,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND132026
               ano_id: 1
@@ -1078,7 +1084,6 @@ data:
               meta_valor: 600
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND14
           desc_indicador: Percentagem de gestores dos JI habilitados para a função de direção
           valor_baseline: null
@@ -1086,7 +1091,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND142026
               ano_id: 1
@@ -1094,7 +1099,6 @@ data:
               meta_valor: 1.00
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND15
           desc_indicador: Nº de JI que fazem intercâmbio e articulam com as escolas básicas da sua área de influência
           valor_baseline: null
@@ -1102,7 +1106,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND152026
               ano_id: 1
@@ -1110,13 +1114,11 @@ data:
               meta_valor: 360
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND16
           desc_indicador: Estatuto de carreira dos profissionais de infância elaborado discutido e apropriado
           valor_baseline: null
           unidades_id: 3
           objetivo_id: objetivo_id()
-
         - indicador: O4IND17
           desc_indicador: Nº de Jardins com prática de gestão baseada em resultados
           valor_baseline: null
@@ -1124,7 +1126,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND172026
               ano_id: 1
@@ -1132,7 +1134,6 @@ data:
               meta_valor: 600
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND18
           desc_indicador: Percentagem de Jardins com prática de gestão baseada em resultados
           valor_baseline: null
@@ -1140,7 +1141,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND182026
               ano_id: 1
@@ -1148,7 +1149,6 @@ data:
               meta_valor: 1.00
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND19
           desc_indicador: Nº de Gestores de Jardins capacitados para uso e manuseamento do SIGE
           valor_baseline: 582
@@ -1156,7 +1156,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND192026
               ano_id: 1
@@ -1164,7 +1164,6 @@ data:
               meta_valor: 600
               indicador_id: indicador_id()
               objetivo_id: objetivo_id()
-
         - indicador: O4IND20
           desc_indicador: Percentagem de JI que disponibiliza os seus dados através do SIGE
           valor_baseline: null
@@ -1172,7 +1171,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
             data:
               meta: O4IND202026
               ano_id: 1
@@ -1182,10 +1181,10 @@ data:
               objetivo_id: objetivo_id()
 ```
 
-## OBJETIVOS5
+## OBJETIVO5
 ```yaml
 table: indicadores
-cond: where indicador = :indicador and objetivo_id = :objetivo_id
+cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
 data:
   - indicador: O5IND21
     desc_indicador: Nº de campanhas regulares de sensibilização nas comunidades implementadas visando reforçar o acesso e reduzir o risco de abandono escolar
@@ -1194,7 +1193,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O5IND212026
         ano_id: 1
@@ -1214,7 +1213,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O5IND232026
         ano_id: 1
@@ -1229,7 +1228,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O5IND242026
         ano_id: 1
@@ -1244,7 +1243,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O5IND252026
         ano_id: 1
@@ -1259,7 +1258,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O5IND262026
         ano_id: 1
@@ -1269,10 +1268,10 @@ data:
         objetivo_id: objetivo_id()
 ```
 
-## OBJETIVOS6
+## OBJETIVO6
 ```yaml
 table: indicadores
-cond: where indicador = :indicador and objetivo_id = :objetivo_id
+cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
 data:
   - indicador: O6IND27
     desc_indicador: Nº de docentes do 1.º ciclo que recebem ações de capacitação em gestão curricular, técnicas de avaliação e diferenciação pedagógica
@@ -1281,7 +1280,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND272026
         ano_id: 1
@@ -1296,7 +1295,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND282026
         ano_id: 1
@@ -1311,7 +1310,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND292026
         ano_id: 1
@@ -1326,7 +1325,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND302026
         ano_id: 1
@@ -1341,7 +1340,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND312026
         ano_id: 1
@@ -1356,7 +1355,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND322026
         ano_id: 1
@@ -1371,7 +1370,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND332026
         ano_id: 1
@@ -1386,7 +1385,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O6IND342026
         ano_id: 1
@@ -1396,10 +1395,10 @@ data:
         objetivo_id: objetivo_id()
 ```
 
-## OBJETIVOS7
+## OBJETIVO7
 ```yaml
 table: indicadores
-cond: where indicador = :indicador and objetivo_id = :objetivo_id
+cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
 data:
   - indicador: O7IND35
     desc_indicador: Nº de Unidades Educativas com órgãos de gestão plenamente funcionais
@@ -1408,7 +1407,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O7IND352026
         ano_id: 1
@@ -1423,7 +1422,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O7IND362026
         ano_id: 1
@@ -1438,7 +1437,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O7IND372026
         ano_id: 1
@@ -1453,7 +1452,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O7IND382026
         ano_id: 1
@@ -1468,7 +1467,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O7IND392026
         ano_id: 1
@@ -1483,7 +1482,7 @@ data:
     objetivo_id: objetivo_id()
     children:
       table: metas
-      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
       data:
         meta: O7IND402026
         ano_id: 1
