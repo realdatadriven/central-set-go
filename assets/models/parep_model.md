@@ -804,6 +804,7 @@ data:
   objetivo_id: 1
   objetivo: OBJ1
   desc_objetivo: Assegurar que todas as crianças de 4 e 5 anos frequentem o Pré-escolar
+  ambito_id: 1
   children:
     - table: resultados
       cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
@@ -837,7 +838,6 @@ data:
                 ano: 2026
                 meta_valor: 0.95
                 indicador_id: indicador_id()
-                objetivo_id: objetivo_id()
         - indicador: O1IND2
           desc_indicador: Nº de crianças que frequentam Jardins de Infância
           valor_baseline: 15906
@@ -852,7 +852,6 @@ data:
                 ano: 2026
                 meta_valor: 17280
                 indicador_id: indicador_id()
-                objetivo_id: objetivo_id()
         - indicador: O1IND3
           desc_indicador: Nº de famílias de classe 1 e 2 que recebem apoio para escolarização dos seus filhos na Educação Pré-escolar
           valor_baseline: null
@@ -867,7 +866,6 @@ data:
                 ano: 2026
                 meta_valor: 3500
                 indicador_id: indicador_id()
-                objetivo_id: objetivo_id()
         - indicador: O1IND4
           desc_indicador: Nº de Jardins que recebem kits de materiais lúdico-pedagógicos e equipamentos para crianças com NEE
           valor_baseline: null
@@ -882,7 +880,6 @@ data:
                 ano: 2026
                 meta_valor: 150
                 indicador_id: indicador_id()
-                objetivo_id: objetivo_id()
 ```
 
 ## OBJETIVO2
@@ -893,6 +890,7 @@ data:
   objetivo_id: 2
   objetivo: OBJ2
   desc_objetivo: Melhorar o desempenho das aprendizagens das crianças no Pré-escolar
+  ambito_id: 1
   children:
     - table: resultados
       cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
@@ -936,7 +934,6 @@ data:
               ano: 2026
               meta_valor: 424
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O2IND8
           desc_indicador: Número de monitoras com formação inicial formadas e integradas no sistema
           valor_baseline: 283
@@ -951,7 +948,6 @@ data:
               ano: 2026
               meta_valor: 566
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O2IND9A
           desc_indicador: Percentagem de educadoras com formação adequada
           valor_baseline: 0.096
@@ -972,6 +968,7 @@ data:
   objetivo_id: 3
   objetivo: OBJ3
   desc_objetivo: Melhorar a eficiência e eficácia do uso dos recursos disponibilizados ao Pré-escolar
+  ambito_id: 1
   children:
     - table: resultados
       cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
@@ -979,15 +976,12 @@ data:
         - resultado: O3R1
           desc_resultado: Planeamento mais eficiente da rede pré-escolar.
           objetivo_id: objetivo_id()
-
         - resultado: O3R2
           desc_resultado: Melhor utilização dos recursos humanos e infraestruturas.
           objetivo_id: objetivo_id()
-
         - resultado: O3R3
           desc_resultado: Melhor gestão dos recursos disponibilizados ao subsistema.
           objetivo_id: objetivo_id()
-
     - table: indicadores
       cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
@@ -1005,8 +999,6 @@ data:
               ano: 2026
               meta_valor: 1
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
         - indicador: O3IND11
           desc_indicador: Rácio criança/profissional de infância
           valor_baseline: 20
@@ -1021,7 +1013,6 @@ data:
               ano: 2026
               meta_valor: 25
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
 ```
 
 ## OBJETIVO4
@@ -1032,6 +1023,7 @@ data:
   objetivo_id: 4
   objetivo: OBJ4
   desc_objetivo: Reforçar a capacidade institucional e organizativa da Educação Pré-escolar
+  ambito_id: 1
   children:
     - table: resultados
       cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
@@ -1068,7 +1060,6 @@ data:
               ano: 2026
               meta_valor: 1.00
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND13
           desc_indicador: Nº de Gestores de Jardins de Infância capacitados em gestão baseada em resultados
           valor_baseline: 582
@@ -1083,7 +1074,6 @@ data:
               ano: 2026
               meta_valor: 600
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND14
           desc_indicador: Percentagem de gestores dos JI habilitados para a função de direção
           valor_baseline: null
@@ -1098,7 +1088,6 @@ data:
               ano: 2026
               meta_valor: 1.00
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND15
           desc_indicador: Nº de JI que fazem intercâmbio e articulam com as escolas básicas da sua área de influência
           valor_baseline: null
@@ -1113,7 +1102,6 @@ data:
               ano: 2026
               meta_valor: 360
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND16
           desc_indicador: Estatuto de carreira dos profissionais de infância elaborado discutido e apropriado
           valor_baseline: null
@@ -1133,7 +1121,6 @@ data:
               ano: 2026
               meta_valor: 600
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND18
           desc_indicador: Percentagem de Jardins com prática de gestão baseada em resultados
           valor_baseline: null
@@ -1148,7 +1135,6 @@ data:
               ano: 2026
               meta_valor: 1.00
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND19
           desc_indicador: Nº de Gestores de Jardins capacitados para uso e manuseamento do SIGE
           valor_baseline: 582
@@ -1163,7 +1149,6 @@ data:
               ano: 2026
               meta_valor: 600
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
         - indicador: O4IND20
           desc_indicador: Percentagem de JI que disponibiliza os seus dados através do SIGE
           valor_baseline: null
@@ -1178,317 +1163,372 @@ data:
               ano: 2026
               meta_valor: 1.00
               indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
 ```
 
 ## OBJETIVO5
 ```yaml
-table: indicadores
-cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
+table: objetivos
+cond: where objetivo_id = :objetivo_id
 data:
-  - indicador: O5IND21
-    desc_indicador: Nº de campanhas regulares de sensibilização nas comunidades implementadas visando reforçar o acesso e reduzir o risco de abandono escolar
-    valor_baseline: null
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+  objetivo_id: 5
+  objetivo: OBJ5
+  desc_objetivo: Consolidar o acesso equitativo e inclusivo no 1.º Ciclo do EBO
+  ambito_id: 1
+  children:
+    - table: resultados
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
-        meta: O5IND212026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 20
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O5IND22
-    desc_indicador: Estudo de mapeamento de crianças com NEE elaborado
-    valor_baseline: null
-    unidades_id: 3
-    objetivo_id: objetivo_id()
-  - indicador: O5IND23
-    desc_indicador: Equipas EMAEI reforçadas com mais um técnico em todos os concelhos do país
-    valor_baseline: null
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+        - resultado: O5R1
+          desc_resultado: Acesso universal e inclusivo consolidado no EBO.
+          objetivo_id: objetivo_id()
+        - resultado: O5R2
+          desc_resultado: Melhor integração das crianças com NEE.
+          objetivo_id: objetivo_id()
+        - resultado: O5R3
+          desc_resultado: Redução das desigualdades de género e vulnerabilidade social.
+          objetivo_id: objetivo_id()
+        - resultado: O5R4
+          desc_resultado: Reforço da capacidade de resposta das estruturas de educação inclusiva.
+          objetivo_id: objetivo_id()
+    - table: indicadores
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
-        meta: O5IND232026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 22
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O5IND24
-    desc_indicador: Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE
-    valor_baseline: null
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O5IND242026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 22
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O5IND25
-    desc_indicador: Taxa líquida de escolarização das crianças de 6-13 anos no Ensino Básico Obrigatório
-    valor_baseline: 0.996
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O5IND252026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 1.00
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O5IND26
-    desc_indicador: Índice de Paridade de Género (M/F)
-    valor_baseline: 0.91
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O5IND262026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 0.95
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
+        - indicador: O5IND21
+          desc_indicador: Nº de campanhas regulares de sensibilização nas comunidades implementadas visando reforçar o acesso e reduzir o risco de abandono escolar
+          valor_baseline: null
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O5IND212026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 20
+              indicador_id: indicador_id()
+        - indicador: O5IND22
+          desc_indicador: Estudo de mapeamento de crianças com NEE elaborado
+          valor_baseline: null
+          unidades_id: 3
+          objetivo_id: objetivo_id()
+        - indicador: O5IND23
+          desc_indicador: Equipas EMAEI reforçadas com mais um técnico em todos os concelhos do país
+          valor_baseline: null
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O5IND232026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 22
+              indicador_id: indicador_id()
+        - indicador: O5IND24
+          desc_indicador: Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE
+          valor_baseline: null
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O5IND242026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 22
+              indicador_id: indicador_id()
+        - indicador: O5IND25
+          desc_indicador: Taxa líquida de escolarização das crianças de 6-13 anos no Ensino Básico Obrigatório
+          valor_baseline: 0.996
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O5IND252026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 1.00
+              indicador_id: indicador_id()
+        - indicador: O5IND26
+          desc_indicador: Índice de Paridade de Género (M/F)
+          valor_baseline: 0.91
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O5IND262026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 0.95
+              indicador_id: indicador_id()
 ```
 
 ## OBJETIVO6
 ```yaml
-table: indicadores
-cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
+table: objetivos
+cond: "where objetivo_id = :objetivo_id"
 data:
-  - indicador: O6IND27
-    desc_indicador: Nº de docentes do 1.º ciclo que recebem ações de capacitação em gestão curricular, técnicas de avaliação e diferenciação pedagógica
-    valor_baseline: 4188
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+  objetivo_id: 6
+  objetivo: OBJ6
+  desc_objetivo: Reforçar o êxito escolar e a qualidade das aprendizagens em Português e Matemática
+  ambito_id: 1
+  children:
+    - table: resultados
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
-        meta: O6IND272026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 4200
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND28
-    desc_indicador: Nº de docentes capacitados em matéria de gestão pedagógica de crianças com NEE
-    valor_baseline: null
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+        - resultado: O6R1
+          desc_resultado: Melhoria do desempenho dos alunos em Língua Portuguesa.
+          objetivo_id: objetivo_id()
+        - resultado: O6R2
+          desc_resultado: Melhoria do desempenho dos alunos em Matemática.
+          objetivo_id: objetivo_id()
+        - resultado: O6R3
+          desc_resultado: Professores mais capacitados na gestão curricular e avaliação.
+          objetivo_id: objetivo_id()
+        - resultado: O6R4
+          desc_resultado: Maior inclusão das crianças com NEE no processo de ensino-aprendizagem.
+          objetivo_id: objetivo_id()
+        - resultado: O6R5
+          desc_resultado: Aumento das taxas de sucesso escolar.
+          objetivo_id: objetivo_id()
+    - table: indicadores
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
-        meta: O6IND282026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 4200
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND29
-    desc_indicador: Nº de equipas pedagógicas nacional e concelhias capacitadas para reforço da supervisão, acompanhamento e avaliação no EBO
-    valor_baseline: 60
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O6IND292026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 60
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND30
-    desc_indicador: Percentagem de aprovação no 1.º Ciclo do EBO
-    valor_baseline: 0.839
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O6IND302026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 0.92
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND31
-    desc_indicador: Percentagem de reprovação no 1.º Ciclo do EBO
-    valor_baseline: 0.152
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O6IND312026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 0.08
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND32
-    desc_indicador: Percentagem de abandono no 1.º Ciclo do EBO
-    valor_baseline: 0.0001
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O6IND322026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 0.00
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND33
-    desc_indicador: Percentagem de crianças do EBO que adquirem competências básicas em língua portuguesa (leitura, escrita) e matemática
-    valor_baseline: 0.327
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O6IND332026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 0.60
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O6IND34
-    desc_indicador: Percentagem de docentes abrangidos pelo programa de formação contínua de acordo com o plano de formação de professores
-    valor_baseline: null
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O6IND342026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 0.90
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
+        - indicador: O6IND27
+          desc_indicador: Nº de docentes do 1.º ciclo que recebem ações de capacitação em gestão curricular, técnicas de avaliação e diferenciação pedagógica
+          valor_baseline: 4188
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND272026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 4200
+              indicador_id: indicador_id()
+        - indicador: O6IND28
+          desc_indicador: Nº de docentes capacitados em matéria de gestão pedagógica de crianças com NEE
+          valor_baseline: null
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND282026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 4200
+              indicador_id: indicador_id()
+        - indicador: O6IND29
+          desc_indicador: Nº de equipas pedagógicas nacional e concelhias capacitadas para reforço da supervisão, acompanhamento e avaliação no EBO
+          valor_baseline: 60
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND292026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 60
+              indicador_id: indicador_id()
+        - indicador: O6IND30
+          desc_indicador: Percentagem de aprovação no 1.º Ciclo do EBO
+          valor_baseline: 0.839
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND302026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 0.92
+              indicador_id: indicador_id()
+        - indicador: O6IND31
+          desc_indicador: Percentagem de reprovação no 1.º Ciclo do EBO
+          valor_baseline: 0.152
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND312026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 0.08
+              indicador_id: indicador_id()
+        - indicador: O6IND32
+          desc_indicador: Percentagem de abandono no 1.º Ciclo do EBO
+          valor_baseline: 0.0001
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND322026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 0.00
+              indicador_id: indicador_id()
+        - indicador: O6IND33
+          desc_indicador: Percentagem de crianças do EBO que adquirem competências básicas em língua portuguesa (leitura, escrita) e matemática
+          valor_baseline: 0.327
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND332026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 0.60
+              indicador_id: indicador_id()
+        - indicador: O6IND34
+          desc_indicador: Percentagem de docentes abrangidos pelo programa de formação contínua de acordo com o plano de formação de professores
+          valor_baseline: null
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O6IND342026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 0.90
+              indicador_id: indicador_id()
 ```
 
 ## OBJETIVO7
 ```yaml
-table: indicadores
-cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
+table: objetivos
+cond: where objetivo_id = :objetivo_id
 data:
-  - indicador: O7IND35
-    desc_indicador: Nº de Unidades Educativas com órgãos de gestão plenamente funcionais
-    valor_baseline: 83
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+  objetivo_id: 7
+  objetivo: OBJ7
+  desc_objetivo: Melhorar a eficiência e eficácia do uso dos recursos disponibilizados ao EBO
+  ambito_id: 1
+  children:
+    - table: resultados
+      cond: "where resultado = :resultado and objetivo_id = :objetivo_id"
       data:
-        meta: O7IND352026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 83
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O7IND36
-    desc_indicador: Nº de dirigentes das Unidades Educativas capacitados em técnicas de elaboração e gestão de projeto educativo como instrumento estratégico de intervenção
-    valor_baseline: null
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+        - resultado: O7R1
+          desc_resultado: Unidades educativas com órgãos de gestão plenamente funcionais.
+          objetivo_id: objetivo_id()
+        - resultado: O7R2
+          desc_resultado: Generalização dos Projetos Educativos como instrumento de gestão.
+          objetivo_id: objetivo_id()
+        - resultado: O7R3
+          desc_resultado: Supervisão e acompanhamento pedagógico reforçados.
+          objetivo_id: objetivo_id()
+        - resultado: O7R4
+          desc_resultado: Utilização efetiva do SIGE para apoio à gestão escolar.
+          objetivo_id: objetivo_id()
+        - resultado: O7R5
+          desc_resultado: Melhoria da eficiência e eficácia da gestão escolar.
+          objetivo_id: objetivo_id()
+    - table: indicadores
+      cond: "where indicador = :indicador and objetivo_id = :objetivo_id"
       data:
-        meta: O7IND362026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 617
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O7IND37
-    desc_indicador: Nº de Unidades Educativas que adotam o projeto educativo como instrumento estratégico de gestão
-    valor_baseline: 83
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O7IND372026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 83
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O7IND38
-    desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma resultado de supervisão anual
-    valor_baseline: null
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O7IND382026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 1.00
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O7IND39
-    desc_indicador: Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas de uso e manuseamento do SIGE
-    valor_baseline: null
-    unidades_id: 2
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O7IND392026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 917
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
-  - indicador: O7IND40
-    desc_indicador: Percentagem de escolas com SIGE funcional e que reportam dados completos e de qualidade
-    valor_baseline: null
-    unidades_id: 1
-    objetivo_id: objetivo_id()
-    children:
-      table: metas
-      cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
-      data:
-        meta: O7IND402026
-        ano_id: 1
-        ano: 2026
-        meta_valor: 1.00
-        indicador_id: indicador_id()
-        objetivo_id: objetivo_id()
+        - indicador: O7IND35
+          desc_indicador: Nº de Unidades Educativas com órgãos de gestão plenamente funcionais
+          valor_baseline: 83
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O7IND352026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 83
+              indicador_id: indicador_id()
+        - indicador: O7IND36
+          desc_indicador: Nº de dirigentes das Unidades Educativas capacitados em técnicas de elaboração e gestão de projeto educativo como instrumento estratégico de intervenção
+          valor_baseline: null
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O7IND362026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 617
+              indicador_id: indicador_id()
+        - indicador: O7IND37
+          desc_indicador: Nº de Unidades Educativas que adotam o projeto educativo como instrumento estratégico de gestão
+          valor_baseline: 83
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O7IND372026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 83
+              indicador_id: indicador_id()
+        - indicador: O7IND38
+          desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma resultado de supervisão anual
+          valor_baseline: null
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O7IND382026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 1.00
+              indicador_id: indicador_id()
+        - indicador: O7IND39
+          desc_indicador: Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas de uso e manuseamento do SIGE
+          valor_baseline: null
+          unidades_id: 2
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O7IND392026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 917
+              indicador_id: indicador_id()
+        - indicador: O7IND40
+          desc_indicador: Percentagem de escolas com SIGE funcional e que reportam dados completos e de qualidade
+          valor_baseline: null
+          unidades_id: 1
+          objetivo_id: objetivo_id()
+          children:
+            table: metas
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            data:
+              meta: O7IND402026
+              ano_id: 1
+              ano: 2026
+              meta_valor: 1.00
+              indicador_id: indicador_id()
 ```
 

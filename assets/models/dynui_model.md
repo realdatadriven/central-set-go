@@ -489,7 +489,7 @@ data:
     data:
       ui_partial_data: form_data
       ui_partial_data_desc: Form Data
-      odata_path: {{.PathParams.db}}/{{.PathParams.table}}?$filter={{.PathParams.filter}}&$schema=true
+      odata_path: '{{.PathParams.db}}/{{.PathParams.table}}?$filter={{.PathParams.filter}}&$schema=true'
       ui_partial_id: ui_partial_id()
       ui_id: ui_id()
 ```
