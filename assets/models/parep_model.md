@@ -831,7 +831,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
                 meta: O1IND12026
                 ano_id: 1
@@ -845,7 +845,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
                 meta: O1IND22026
                 ano_id: 1
@@ -859,7 +859,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
                 meta: O1IND32026
                 ano_id: 1
@@ -873,7 +873,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
                 meta: O1IND342026
                 ano_id: 1
@@ -927,7 +927,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O2IND72026
               ano_id: 1
@@ -941,7 +941,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O2IND82026
               ano_id: 1
@@ -992,7 +992,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O3IND102026
               ano_id: 1
@@ -1006,7 +1006,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O3IND112026
               ano_id: 1
@@ -1053,7 +1053,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND122026
               ano_id: 1
@@ -1067,7 +1067,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND132026
               ano_id: 1
@@ -1081,7 +1081,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND142026
               ano_id: 1
@@ -1095,7 +1095,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND152026
               ano_id: 1
@@ -1114,7 +1114,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND172026
               ano_id: 1
@@ -1128,7 +1128,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND182026
               ano_id: 1
@@ -1142,7 +1142,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND192026
               ano_id: 1
@@ -1156,7 +1156,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O4IND202026
               ano_id: 1
@@ -1168,7 +1168,7 @@ data:
 ## OBJETIVO5
 ```yaml
 table: objetivos
-cond: where objetivo_id = :objetivo_id
+cond: "where objetivo_id = :objetivo_id"
 data:
   objetivo_id: 5
   objetivo: OBJ5
@@ -1200,7 +1200,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O5IND212026
               ano_id: 1
@@ -1219,7 +1219,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O5IND232026
               ano_id: 1
@@ -1233,7 +1233,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O5IND242026
               ano_id: 1
@@ -1247,7 +1247,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O5IND252026
               ano_id: 1
@@ -1261,7 +1261,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O5IND262026
               ano_id: 1
@@ -1308,7 +1308,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND272026
               ano_id: 1
@@ -1322,7 +1322,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND282026
               ano_id: 1
@@ -1336,7 +1336,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND292026
               ano_id: 1
@@ -1350,7 +1350,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND302026
               ano_id: 1
@@ -1364,7 +1364,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND312026
               ano_id: 1
@@ -1378,7 +1378,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND322026
               ano_id: 1
@@ -1392,7 +1392,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND332026
               ano_id: 1
@@ -1406,7 +1406,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O6IND342026
               ano_id: 1
@@ -1418,7 +1418,7 @@ data:
 ## OBJETIVO7
 ```yaml
 table: objetivos
-cond: where objetivo_id = :objetivo_id
+cond: "where objetivo_id = :objetivo_id"
 data:
   objetivo_id: 7
   objetivo: OBJ7
@@ -1453,7 +1453,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O7IND352026
               ano_id: 1
@@ -1467,7 +1467,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O7IND362026
               ano_id: 1
@@ -1481,7 +1481,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O7IND372026
               ano_id: 1
@@ -1495,7 +1495,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O7IND382026
               ano_id: 1
@@ -1509,7 +1509,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O7IND392026
               ano_id: 1
@@ -1523,7 +1523,7 @@ data:
           objetivo_id: objetivo_id()
           children:
             table: metas
-            cond: "where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id"
+            cond: "where ano_id = :ano_id and indicador_id = :indicador_id"
             data:
               meta: O7IND402026
               ano_id: 1
