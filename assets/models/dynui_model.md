@@ -15,6 +15,13 @@ create_all: checkfirst
 update_table_metadata: true
 active: true
 cs_app:
+  Dashboards:
+    menu_icon: document-report
+    menu_order: 1
+    active: true
+    menu_config: '{"label": "dashboard","tooltip": "dashboard_desc","load_items": {"table": "dashboard","tables": ["dashboard"]}}'
+    tables:
+      - dashboard
   UI:
     menu_icon: paint-brush
     menu_order: 8
@@ -27,6 +34,32 @@ cs_app:
       - {table: ui_page_data, active: false}
       - {table: ui_page_partial, active: false}
       - {table: ui_asset, active: false}
+```
+
+## DASHBOARD
+```yaml
+table: dashboard
+comment: Dashboards
+columns:
+  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
+  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, form_size: 8, order: 1 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 5 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, order: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 3 }
+  user_id:        { type: integer, comment: "User ID" }
+  app_id:         { type: integer, comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: order, order: ASC}]
+table_extra_options:
+  - { component: EvidenceDash, label: dashboard, intercept_r: true, size: 12 }
 ```
 
 ## UI

@@ -8,13 +8,20 @@
 name: PAREP
 description: Modelo de gestão do programa PAREP-CV para objetivos, resultados esperados, indicadores, ações, contratos, entidades e parametrização.
 runs_as: MODEL
+database: PAREP
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
-depends_on: ADMIN
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
 active: true
 cs_app:
+  Dashboards:
+    menu_icon: document-report
+    menu_order: 1
+    active: true
+    menu_config: '{"label": "dashboard","tooltip": "dashboard_desc","load_items": {"table": "dashboard","tables": ["dashboard"]}}'
+    tables:
+      - dashboard
   PAREP:
     menu_icon: chart-pie
     menu_order: 1
@@ -88,6 +95,32 @@ cs_app:
       - unidades
 ```
 
+## DASHBOARD
+```yaml
+table: dashboard
+comment: Dashboards
+columns:
+  dashboard_id:   { type: integer, pk: true, autoincrement: true, comment: "Dashboard ID" }
+  dashboard:      { type: varchar, len: 200, comment: "Dashboard", form_display: true, table_display: true, form_size: 8, order: 1 }
+  dashboard_desc: { type: text, comment: "Description", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
+  dashboard_conf: { type: text, nullable: false, comment: "Conf / Params", form_display: true, form_long_text: true, form_code: markdown, order: 5 }
+  order:          { type: integer, comment: "Order", form_display: true, table_display: true, form_size: 2, order: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, form_size: 2, order: 3 }
+  user_id:        { type: integer, comment: "User ID" }
+  app_id:         { type: integer, comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+table_layout:
+  default_order: [{field: order, order: ASC}]
+table_extra_options:
+  - { component: EvidenceDash, label: dashboard, intercept_r: true, size: 12 }
+```
+
 ## AMBITOS
 ```yaml
 table: ambitos
@@ -98,7 +131,7 @@ columns:
   ambito: { type: varchar, len: 150, nullable: false, unique: true, comment: "Âmbito", tooltip: "Nome do âmbito.", form_display: true, table_display: true, form_size: 6, order: 2 }
   ambito_desc: { type: text, comment: "Descrição", tooltip: "Descrição do âmbito.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o âmbito está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -126,7 +159,7 @@ columns:
   data_ini: { type: date, comment: "Data início", tooltip: "Data de início do período de execução do objetivo.", form_display: true, table_display: true, form_size: 4, order: 5 }
   data_fim: { type: date, comment: "Data fim", tooltip: "Data de término do período de execução do objetivo.", form_display: true, table_display: true, form_size: 4, order: 6 }
   status_id: { type: integer, comment: "Estado", tooltip: "Estado do objetivo.", form_display: true, table_display: true, form_size: 4, order: 7 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -153,7 +186,7 @@ columns:
   data_ini: { type: date, comment: "Data início", tooltip: "Data de início da execução.", form_display: true, table_display: true, form_size: 4, order: 5 }
   data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim da execução.", form_display: true, table_display: true, form_size: 4, order: 6 }
   status_id: { type: integer, comment: "Estado", tooltip: "Estado do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 7 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -181,7 +214,7 @@ columns:
   data_ini: { type: date, comment: "Data início", tooltip: "Data de início da execução anual.", form_display: true, table_display: true, form_size: 4, order: 6 }
   data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim da execução anual.", form_display: true, table_display: true, form_size: 4, order: 7 }
   meta_ano: { type: decimal, len: 14, scale: 2, default: 0, comment: "Meta anual", tooltip: "Meta de execução anual do resultado esperado.", form_display: true, table_display: true, form_size: 4, order: 8 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -213,7 +246,7 @@ columns:
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano da ação for referência.", form_display: true, table_display: true, form_size: 4, order: 10 }
   resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 11 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 12 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -248,7 +281,7 @@ columns:
   resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado associado.", form_display: true, table_display: true, form_size: 4, order: 13 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 14 }
   status_id: { type: integer, fk: "status_contrato.status_contrato_id", comment: "Status", tooltip: "Estado do contrato.", form_display: true, table_display: true, form_size: 4, order: 15 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -277,7 +310,7 @@ columns:
   status_execucao_id: { type: integer, fk: "status_execucao.status_execucao_id", comment: "Status execução", tooltip: "Estado da fase de execução.", form_display: true, table_display: true, form_size: 4, order: 7 }
   attach_relatorio_contrato: { type: varchar, len: 255, comment: "Relatório", tooltip: "Anexo do relatório de execução do contrato.", form_display: true, table_display: true, form_size: 6, order: 8 }
   contrato_id: { type: integer, fk: "contratos.contrato_id", nullable: false, comment: "Contrato", tooltip: "Contrato associado.", form_display: true, table_display: true, form_size: 6, order: 9 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -300,7 +333,7 @@ columns:
   contrato_anexo: { type: varchar, len: 255, comment: "Anexo", tooltip: "Nome do anexo.", form_display: true, table_display: true, form_size: 6, order: 2 }
   attach_contrato_anexo: { type: varchar, len: 255, comment: "Ficheiro", tooltip: "Nome ou caminho do ficheiro anexado.", form_display: true, table_display: true, form_size: 6, order: 3 }
   contrato_id: { type: integer, fk: "contratos.contrato_id", nullable: false, comment: "Contrato", tooltip: "Contrato ao qual o anexo pertence.", form_display: true, table_display: true, form_size: 6, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -329,7 +362,7 @@ columns:
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano da logística.", form_display: true, table_display: true, form_size: 4, order: 8 }
   resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -357,7 +390,7 @@ columns:
   ano: { type: varchar, len: 20, comment: "Ano", tooltip: "Ano de referência.", form_display: true, table_display: true, form_size: 4, order: 8 }
   resultado_id: { type: integer, fk: "resultados.resultado_id", comment: "Resultado Esperado", tooltip: "Resultado esperado principal.", form_display: true, table_display: true, form_size: 4, order: 9 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", comment: "Objetivo", tooltip: "Objetivo associado.", form_display: true, table_display: true, form_size: 4, order: 10 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -384,7 +417,7 @@ columns:
   fonte: { type: varchar, len: 255, comment: "Fonte", tooltip: "Fonte ou origem dos dados do indicador.", form_display: true, table_display: true, form_size: 6, order: 7 }
   formula_calculo: { type: text, comment: "Fórmula", tooltip: "Fórmula de cálculo do indicador.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 8 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo ao qual o indicador pertence.", form_display: true, table_display: true, form_size: 6, order: 9 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -412,7 +445,7 @@ columns:
   meta_valor: { type: decimal, len: 14, scale: 2, default: 0, comment: "Valor meta", tooltip: "Valor da meta para o ano.", form_display: true, table_display: true, form_size: 4, order: 6 }
   valor_atual: { type: decimal, len: 14, scale: 2, default: 0, comment: "Valor atual", tooltip: "Valor atual alcançado até ao momento.", form_display: true, table_display: true, form_size: 4, order: 7 }
   indicador_id: { type: integer, fk: "indicadores.indicador_id", nullable: false, comment: "Indicador", tooltip: "Indicador associado à meta.", form_display: true, table_display: true, form_size: 6, order: 8 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -441,7 +474,7 @@ columns:
   data_nasc_const: { type: date, comment: "Data nascimento/constituição", tooltip: "Data de nascimento ou constituição.", form_display: true, table_display: true, form_size: 4, order: 9 }
   email: { type: varchar, len: 255, comment: "Email", tooltip: "Contacto eletrónico.", form_display: true, table_display: true, form_size: 6, order: 10 }
   telefone: { type: varchar, len: 50, comment: "Telefone", tooltip: "Contacto telefónico.", form_display: true, table_display: true, form_size: 6, order: 11 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -464,7 +497,7 @@ columns:
   data_ini: { type: date, comment: "Data início", tooltip: "Data de início do ano.", form_display: true, table_display: true, form_size: 4, order: 3 }
   data_fim: { type: date, comment: "Data fim", tooltip: "Data de fim do ano.", form_display: true, table_display: true, form_size: 4, order: 4 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o ano está ativo.", form_display: true, table_display: true, form_size: 3, order: 5 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -490,7 +523,7 @@ columns:
   ilha: { type: varchar, len: 100, nullable: false, unique: true, comment: "Ilha", tooltip: "Nome da ilha.", form_display: true, table_display: true, form_size: 6, order: 2 }
   ilha_desc: { type: text, comment: "Descrição", tooltip: "Descrição ou observação sobre a ilha.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se a ilha está ativa.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -524,7 +557,7 @@ columns:
   concelho: { type: varchar, len: 150, nullable: false, unique: true, comment: "Concelho", tooltip: "Nome do concelho.", form_display: true, table_display: true, form_size: 6, order: 3 }
   concelho_desc: { type: text, comment: "Descrição", tooltip: "Observações ou detalhe do concelho.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 4 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o concelho está ativo.", form_display: true, table_display: true, form_size: 3, order: 5 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -555,7 +588,7 @@ columns:
   genero: { type: varchar, len: 100, nullable: false, unique: true, comment: "Género", tooltip: "Nome do género.", form_display: true, table_display: true, form_size: 6, order: 2 }
   genero_desc: { type: text, comment: "Descrição", tooltip: "Descrição ou observação do género.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o género está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -581,7 +614,7 @@ columns:
   tipo_contrato: { type: varchar, len: 150, nullable: false, unique: true, comment: "Tipo", tooltip: "Nome do tipo de contrato.", form_display: true, table_display: true, form_size: 6, order: 2 }
   tipo_contrato_desc: { type: text, comment: "Descrição", tooltip: "Descrição da tipologia do contrato.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o tipo está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -603,7 +636,7 @@ columns:
   tipo_entidade: { type: varchar, len: 150, nullable: false, unique: true, comment: "Tipo", tooltip: "Nome do tipo de entidade.", form_display: true, table_display: true, form_size: 6, order: 2 }
   tipo_entidade_desc: { type: text, comment: "Descrição", tooltip: "Descrição do tipo de entidade.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o tipo está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -630,7 +663,7 @@ columns:
   status_acao: { type: varchar, len: 100, nullable: false, unique: true, comment: "Status", tooltip: "Nome do estado.", form_display: true, table_display: true, form_size: 6, order: 2 }
   status_acao_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o estado está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -657,7 +690,7 @@ columns:
   status_contrato: { type: varchar, len: 100, nullable: false, unique: true, comment: "Status", tooltip: "Nome do estado do contrato.", form_display: true, table_display: true, form_size: 6, order: 2 }
   status_contrato_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado do contrato.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o status está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -687,7 +720,7 @@ columns:
   status_execucao: { type: varchar, len: 100, nullable: false, unique: true, comment: "Status", tooltip: "Nome do estado de execução.", form_display: true, table_display: true, form_size: 6, order: 2 }
   status_execucao_desc: { type: text, comment: "Descrição", tooltip: "Descrição do estado da execução.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se o estado está ativo.", form_display: true, table_display: true, form_size: 3, order: 4 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -717,7 +750,7 @@ columns:
   unidade_desc: { type: text, comment: "Descrição", tooltip: "Descrição da unidade.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   simbolo: { type: varchar, len: 20, comment: "Símbolo", tooltip: "Símbolo ou abreviatura da unidade.", form_display: true, table_display: true, form_size: 3, order: 4 }
   activo: { type: boolean, default: true, comment: "Ativo", tooltip: "Indica se a unidade está ativa.", form_display: true, table_display: true, form_size: 3, order: 5 }
-  user_id: { type: integer, fk: "users.user_id", comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
+  user_id: { type: integer, comment: "Utilizador", tooltip: "Utilizador responsável pelo registo.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Criado em", tooltip: "Data e hora de criação.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Atualizado em", tooltip: "Data e hora da última atualização.", form_display: false, table_display: true }
   excluded: { type: boolean, default: false, comment: "Excluído", tooltip: "Indica se o registo está excluído.", form_display: false, table_display: false }
@@ -743,7 +776,7 @@ data:
 ```yaml
 name: PAREP_DATA
 description: Dados UI do PAREP Compact - Objetivos, Resultados Esperados, Indicadores e Metas 2025-2026 por Âmbito
-database: UPAREPI
+database: PAREP
 runs_as: MODEL_DATA
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
@@ -751,6 +784,7 @@ admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ## OBJETIVOS1
 ```yaml
 table: objetivos
+description: Add OBJ 1
 cond: where objetivo_id = :objetivo_id
 data:
   objetivo_id: 1
@@ -1149,315 +1183,313 @@ data:
 ```
 
 ## OBJETIVOS5
-
 ```yaml
-    - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+table: indicadores
+cond: where indicador = :indicador and objetivo_id = :objetivo_id
+data:
+  - indicador: O5IND21
+    desc_indicador: Nº de campanhas regulares de sensibilização nas comunidades implementadas visando reforçar o acesso e reduzir o risco de abandono escolar
+    valor_baseline: null
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
       data:
-        - indicador: O5IND21
-          desc_indicador: Nº de campanhas regulares de sensibilização nas comunidades implementadas visando reforçar o acesso e reduzir o risco de abandono escolar
-          valor_baseline: null
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
-            data:
-              meta: O5IND212026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 20
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O5IND22
-          desc_indicador: Estudo de mapeamento de crianças com NEE elaborado
-          valor_baseline: null
-          unidades_id: 3
-          objetivo_id: objetivo_id()
-
-        - indicador: O5IND23
-          desc_indicador: Equipas EMAEI reforçadas com mais um técnico em todos os concelhos do país
-          valor_baseline: null
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O5IND232026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 22
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O5IND24
-          desc_indicador: Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE
-          valor_baseline: null
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O5IND242026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 22
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O5IND25
-          desc_indicador: Taxa líquida de escolarização das crianças de 6-13 anos no Ensino Básico Obrigatório
-          valor_baseline: 0.996
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O5IND252026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 1.00
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O5IND26
-          desc_indicador: Índice de Paridade de Género (M/F)
-          valor_baseline: 0.91
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O5IND262026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 0.95
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
+        meta: O5IND212026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 20
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O5IND22
+    desc_indicador: Estudo de mapeamento de crianças com NEE elaborado
+    valor_baseline: null
+    unidades_id: 3
+    objetivo_id: objetivo_id()
+  - indicador: O5IND23
+    desc_indicador: Equipas EMAEI reforçadas com mais um técnico em todos os concelhos do país
+    valor_baseline: null
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O5IND232026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 22
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O5IND24
+    desc_indicador: Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE
+    valor_baseline: null
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O5IND242026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 22
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O5IND25
+    desc_indicador: Taxa líquida de escolarização das crianças de 6-13 anos no Ensino Básico Obrigatório
+    valor_baseline: 0.996
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O5IND252026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 1.00
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O5IND26
+    desc_indicador: Índice de Paridade de Género (M/F)
+    valor_baseline: 0.91
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O5IND262026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 0.95
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
 ```
 
 ## OBJETIVOS6
-
 ```yaml
-    - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+table: indicadores
+cond: where indicador = :indicador and objetivo_id = :objetivo_id
+data:
+  - indicador: O6IND27
+    desc_indicador: Nº de docentes do 1.º ciclo que recebem ações de capacitação em gestão curricular, técnicas de avaliação e diferenciação pedagógica
+    valor_baseline: 4188
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
       data:
-        - indicador: O6IND27
-          desc_indicador: Nº de docentes do 1.º ciclo que recebem ações de capacitação em gestão curricular, técnicas de avaliação e diferenciação pedagógica
-          valor_baseline: 4188
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND272026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 4200
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND28
-          desc_indicador: Nº de docentes capacitados em matéria de gestão pedagógica de crianças com NEE
-          valor_baseline: null
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND282026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 4200
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND29
-          desc_indicador: Nº de equipas pedagógicas nacional e concelhias capacitadas para reforço da supervisão, acompanhamento e avaliação no EBO
-          valor_baseline: 60
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND292026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 60
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND30
-          desc_indicador: Percentagem de aprovação no 1.º Ciclo do EBO
-          valor_baseline: 0.839
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND302026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 0.92
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND31
-          desc_indicador: Percentagem de reprovação no 1.º Ciclo do EBO
-          valor_baseline: 0.152
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND312026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 0.08
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND32
-          desc_indicador: Percentagem de abandono no 1.º Ciclo do EBO
-          valor_baseline: 0.0001
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND322026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 0.00
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND33
-          desc_indicador: Percentagem de crianças do EBO que adquirem competências básicas em língua portuguesa (leitura, escrita) e matemática
-          valor_baseline: 0.327
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND332026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 0.60
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O6IND34
-          desc_indicador: Percentagem de docentes abrangidos pelo programa de formação contínua de acordo com o plano de formação de professores
-          valor_baseline: null
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O6IND342026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 0.90
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
+        meta: O6IND272026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 4200
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND28
+    desc_indicador: Nº de docentes capacitados em matéria de gestão pedagógica de crianças com NEE
+    valor_baseline: null
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND282026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 4200
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND29
+    desc_indicador: Nº de equipas pedagógicas nacional e concelhias capacitadas para reforço da supervisão, acompanhamento e avaliação no EBO
+    valor_baseline: 60
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND292026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 60
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND30
+    desc_indicador: Percentagem de aprovação no 1.º Ciclo do EBO
+    valor_baseline: 0.839
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND302026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 0.92
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND31
+    desc_indicador: Percentagem de reprovação no 1.º Ciclo do EBO
+    valor_baseline: 0.152
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND312026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 0.08
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND32
+    desc_indicador: Percentagem de abandono no 1.º Ciclo do EBO
+    valor_baseline: 0.0001
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND322026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 0.00
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND33
+    desc_indicador: Percentagem de crianças do EBO que adquirem competências básicas em língua portuguesa (leitura, escrita) e matemática
+    valor_baseline: 0.327
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND332026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 0.60
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O6IND34
+    desc_indicador: Percentagem de docentes abrangidos pelo programa de formação contínua de acordo com o plano de formação de professores
+    valor_baseline: null
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O6IND342026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 0.90
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
 ```
 
 ## OBJETIVOS7
-
 ```yaml
-    - table: indicadores
-      cond: where indicador = :indicador and objetivo_id = :objetivo_id
+table: indicadores
+cond: where indicador = :indicador and objetivo_id = :objetivo_id
+data:
+  - indicador: O7IND35
+    desc_indicador: Nº de Unidades Educativas com órgãos de gestão plenamente funcionais
+    valor_baseline: 83
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
       data:
-        - indicador: O7IND35
-          desc_indicador: Nº de Unidades Educativas com órgãos de gestão plenamente funcionais
-          valor_baseline: 83
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O7IND352026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 83
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O7IND36
-          desc_indicador: Nº de dirigentes das Unidades Educativas capacitados em técnicas de elaboração e gestão de projeto educativo como instrumento estratégico de intervenção
-          valor_baseline: null
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O7IND362026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 617
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O7IND37
-          desc_indicador: Nº de Unidades Educativas que adotam o projeto educativo como instrumento estratégico de gestão
-          valor_baseline: 83
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O7IND372026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 83
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O7IND38
-          desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma resultado de supervisão anual
-          valor_baseline: null
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O7IND382026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 1.00
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O7IND39
-          desc_indicador: Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas de uso e manuseamento do SIGE
-          valor_baseline: null
-          unidades_id: 2
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O7IND392026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 917
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
-
-        - indicador: O7IND40
-          desc_indicador: Percentagem de escolas com SIGE funcional e que reportam dados completos e de qualidade
-          valor_baseline: null
-          unidades_id: 1
-          objetivo_id: objetivo_id()
-          children:
-            table: metas
-            data:
-              meta: O7IND402026
-              ano_id: 1
-              ano: 2026
-              meta_valor: 1.00
-              indicador_id: indicador_id()
-              objetivo_id: objetivo_id()
+        meta: O7IND352026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 83
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O7IND36
+    desc_indicador: Nº de dirigentes das Unidades Educativas capacitados em técnicas de elaboração e gestão de projeto educativo como instrumento estratégico de intervenção
+    valor_baseline: null
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O7IND362026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 617
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O7IND37
+    desc_indicador: Nº de Unidades Educativas que adotam o projeto educativo como instrumento estratégico de gestão
+    valor_baseline: 83
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O7IND372026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 83
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O7IND38
+    desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma resultado de supervisão anual
+    valor_baseline: null
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O7IND382026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 1.00
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O7IND39
+    desc_indicador: Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas de uso e manuseamento do SIGE
+    valor_baseline: null
+    unidades_id: 2
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O7IND392026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 917
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
+  - indicador: O7IND40
+    desc_indicador: Percentagem de escolas com SIGE funcional e que reportam dados completos e de qualidade
+    valor_baseline: null
+    unidades_id: 1
+    objetivo_id: objetivo_id()
+    children:
+      table: metas
+      cond: where ano_id = :ano_id and indicador_id = :indicador_id and objetivo_id = :objetivo_id
+      data:
+        meta: O7IND402026
+        ano_id: 1
+        ano: 2026
+        meta_valor: 1.00
+        indicador_id: indicador_id()
+        objetivo_id: objetivo_id()
 ```
 
