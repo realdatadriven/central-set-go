@@ -439,6 +439,28 @@ data:
       ui_id: ui_id()
 ```
 
+## UI_PARTIAL_CRUD_FORM
+```yaml
+table: ui_partial
+description: Add the RealDataDriven CRUD Form  partial
+cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
+data:
+  ui_partial_id: 4
+  ui_id: 1
+  ui_partial: form
+  ui_partial_desc: Crud Form with open-source links and copyright
+  partial_template: FileContent(ui/parts/general_crud_form.html)
+  active: true
+  children:
+    table: ui_partial_data
+    data:
+      ui_partial_data: form_data
+      ui_partial_data_desc: Form Data
+      odata_path: {{.PathParams.db}}/{{.PathParams.table}}?$filter={{.PathParams.filter}}&$schema=true
+      ui_partial_id: ui_partial_id()
+      ui_id: ui_id()
+```
+
 ## UI_PAGE_HOME
 ```yaml
 table: ui_page
