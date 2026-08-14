@@ -7,6 +7,7 @@ tmp_dir = "tmp"
   bin = "tmp/main.exe"
   cmd = "go build -tags=duckdb_arrow -o ./tmp/main.exe ./cmd/api/ && tmp/main.exe --init --model dynui_model.md"
   #go run -tags=duckdb_arrow ./cmd/api/
+  # export PATH="/usr/local/go/bin:$PATH" && go build -tags=duckdb_arrow -o ./tmp/main.exe ./cmd/api/
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "database", "static", "--ui"]
   exclude_file = []
