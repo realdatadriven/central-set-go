@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"net"
 	"net/http"
@@ -440,6 +441,65 @@ func BuildODataServiceDocument(rows []Dict, burl, db string) (string, error) {
 	}
 	return string(data), nil
 }
+func BuildODataServiceDocumentXML(rows []Dict, burl, db string) (string, error) {
+	type Collection struct {
+		Href  string `xml:"href,attr"`
+		Title string `xml:"atom:title"`
+	}
+	type Workspace struct {
+		Title       string       `xml:"atom:title"`
+		Collections []Collection `xml:"collection"`
+	}
+	type Service struct {
+		XMLName   string    `xml:"service"`
+		Xmlns     string    `xml:"xmlns,attr"`
+		AtomNS    string    `xml:"xmlns:atom,attr"`
+		MNS       string    `xml:"xmlns:m,attr"`
+		Base      string    `xml:"xml:base,attr"`
+		Context   string    `xml:"m:context,attr"`
+		Workspace Workspace `xml:"workspace"`
+	}
+	seen := make(map[string]bool)
+	collections := make([]Collection, 0)
+	for _, r := range rows {
+		if r["excluded"] == true {
+			continue
+		}
+		table, ok := r["table"].(string)
+		if !ok || table == "" {
+			continue
+		}
+		// Each table appears once for every column in table_schema,
+		// so prevent duplicate collections.
+		if seen[table] {
+			continue
+		}
+		seen[table] = true
+		collections = append(collections, Collection{Href: table, Title: table})
+	}
+	base := fmt.Sprintf(
+		"%s/odata/%s/",
+		strings.TrimRight(burl, "/"),
+		db,
+	)
+	context := base + "$metadata"
+	service := Service{
+		Xmlns:   "http://www.w3.org/2007/app",
+		AtomNS:  "http://www.w3.org/2005/Atom",
+		MNS:     "http://docs.oasis-open.org/odata/ns/metadata",
+		Base:    base,
+		Context: context,
+		Workspace: Workspace{
+			Title:       "Default",
+			Collections: collections,
+		},
+	}
+	output, err := xml.MarshalIndent(service, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	return xml.Header + string(output), nil
+}
 func BuildODataMetadataJSON(rows []Dict, burl, db string) (Dict, error) {
 	type Entity struct {
 		Props Dict
@@ -546,6 +606,45 @@ func (app *application) odata_api_service_document(w http.ResponseWriter, r *htt
 		"Content-Type",
 		"application/json;odata.metadata=minimal; charset=utf-8",
 	)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(serviceDocument))
+}
+func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r *http.Request) {
+	if os.Getenv("ENABLE_ODATA") != "true" {
+		http.Error(w, "OData API is disabled", http.StatusNotFound)
+		return
+	}
+	db := r.PathValue("db")
+	sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
+	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db)})
+	if err != nil {
+		w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "ServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	burl := baseURL(r)
+	serviceDocument, err := BuildODataServiceDocumentXML(_table_schema, burl, db)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "BuildServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	w.Header().Set("OData-Version", "4.0")
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(serviceDocument))
 }
