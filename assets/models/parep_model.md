@@ -576,6 +576,22 @@ data:
   - {concelho_id: 6, ilha_id: 4, concelho: "Tarrafal de São Nicolau", concelho_desc: "Concelho de São Nicolau", activo: true, excluded: false}
   - {concelho_id: 7, ilha_id: 5, concelho: "Sal", concelho_desc: "Concelho do Sal", activo: true, excluded: false}
   - {concelho_id: 8, ilha_id: 6, concelho: "Boa Vista", concelho_desc: "Concelho da Boa Vista", activo: true, excluded: false}
+  - {concelho_id: 9, ilha_id: 7, concelho: "Maio", concelho_desc: "Concelho do Maio", activo: true, excluded: false}
+  - {concelho_id: 10, ilha_id: 8, concelho: "Praia", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 11, ilha_id: 8, concelho: "São Domingos", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 12, ilha_id: 8, concelho: "Santa Catarina", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 13, ilha_id: 8, concelho: "São Salvador do Mundo", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 14, ilha_id: 8, concelho: "Santa Cruz", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 15, ilha_id: 8, concelho: "Santiago Maior", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 16, ilha_id: 8, concelho: "São Lourenço dos Órgãos", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 17, ilha_id: 8, concelho: "Ribeira Grande de Santiago", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 18, ilha_id: 8, concelho: "São Miguel", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 19, ilha_id: 8, concelho: "Tarrafal", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 20, ilha_id: 8, concelho: "Santo Amaro Abade", concelho_desc: "Concelho de Santiago", activo: true, excluded: false}
+  - {concelho_id: 21, ilha_id: 9, concelho: "São Filipe", concelho_desc: "Concelho do Fogo", activo: true, excluded: false}
+  - {concelho_id: 22, ilha_id: 9, concelho: "Santa Catarina do Fogo", concelho_desc: "Concelho do Fogo", activo: true, excluded: false}
+  - {concelho_id: 23, ilha_id: 9, concelho: "Mosteiros", concelho_desc: "Concelho do Fogo", activo: true, excluded: false}
+  - {concelho_id: 24, ilha_id: 10, concelho: "Brava", concelho_desc: "Concelho da Brava", activo: true, excluded: false}
 ```
 
 ## GENEROS
