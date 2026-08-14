@@ -116,9 +116,13 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /dyn_api/{ctrl}/{act}", app.dyn_api) //app.oauthMiddleware(app.dyn_api))
 
 	// ODATA HANDDLER
-	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
+	//mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
+	//mux.HandleFunc("GET /odata/{db}/", app.odata_api_metadata)
+	mux.HandleFunc("GET /odata/{db}", app.odata_api_service_document)
+	mux.HandleFunc("GET /odata/{db}/", app.odata_api_service_document)
+	mux.HandleFunc("GET /odata/{db}/$metadata", app.odata_api_metadata)
+	mux.HandleFunc("GET /odata/{db}/$metadata/", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}", app.odata_api)
-	mux.HandleFunc("GET /odata/{db}/", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}/", app.odata_api)
 	mux.HandleFunc("GET /read_odata/{db}/{table}", app.read_odata)
 	mux.HandleFunc("GET /read/{db}/{table}", app.read_odata)

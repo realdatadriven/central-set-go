@@ -399,7 +399,48 @@ func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 </edmx:Edmx>`)
 	return b.String(), nil
 }
-func BuildODataMetadataJSON(rows []Dict) (Dict, error) {
+func BuildODataServiceDocument(rows []Dict, burl, db string) (string, error) {
+	type EntitySet struct {
+		Name string `json:"name"`
+		Kind string `json:"kind"`
+		URL  string `json:"url"`
+	}
+	seen := make(map[string]bool)
+	value := make([]EntitySet, 0)
+	for _, r := range rows {
+		if r["excluded"] == true {
+			continue
+		}
+		table, ok := r["table"].(string)
+		if !ok || table == "" {
+			continue
+		}
+		// A table has many rows because each row represents a column,
+		// so make sure each EntitySet is only added once.
+		if seen[table] {
+			continue
+		}
+		seen[table] = true
+		value = append(value, EntitySet{
+			Name: table,
+			Kind: "EntitySet",
+			URL:  table,
+		})
+	}
+	response := struct {
+		Context string      `json:"@odata.context"`
+		Value   []EntitySet `json:"value"`
+	}{
+		Context: fmt.Sprintf("%s/odata/%s/$metadata", strings.TrimRight(burl, "/"), db),
+		Value:   value,
+	}
+	data, err := json.Marshal(response)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+func BuildODataMetadataJSON(rows []Dict, burl, db string) (Dict, error) {
 	type Entity struct {
 		Props Dict
 		Keys  []string
@@ -465,6 +506,48 @@ func BuildODataMetadataJSON(rows []Dict) (Dict, error) {
 		model[db] = ns
 	}
 	return model, nil
+}
+func (app *application) odata_api_service_document(w http.ResponseWriter, r *http.Request) {
+	if os.Getenv("ENABLE_ODATA") != "true" {
+		http.Error(w, "OData API is disabled", http.StatusNotFound)
+		return
+	}
+	db := r.PathValue("db")
+	sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
+	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db)})
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "ServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	burl := baseURL(r)
+	serviceDocument, err := BuildODataServiceDocument(_table_schema, burl, db)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "BuildServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	w.Header().Set("OData-Version", "4.0")
+	w.Header().Set(
+		"Content-Type",
+		"application/json;odata.metadata=minimal; charset=utf-8",
+	)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(serviceDocument))
 }
 func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println("METADATA ONLY!")
@@ -623,51 +706,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("OData-Version", "4.0")
 	burl := baseURL(r)
 	if table == "$metadata" {
-		sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
-		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			_res := Dict{
-				"error": Dict{
-					"code":    "GeneralError",
-					"message": "MetadataErr: " + err.Error(),
-				},
-			}
-			json.NewEncoder(w).Encode(_res)
-			return
-		}
-		xml, err := BuildODataMetadata(_table_schema, burl, db)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			_res := Dict{
-				"error": Dict{
-					"code":    "GeneralError",
-					"message": "BuildDBMetadataErr: " + err.Error(),
-				},
-			}
-			json.NewEncoder(w).Encode(_res)
-			return
-		}
-		//fmt.Println(xml)
-		//w.Header().Set("Content-Type", "application/xml")
-		w.Header().Set("Content-Type", "application/xml;charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(xml))
-		/*model, err := BuildODataMetadataJSON(_table_schema)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			_res := Dict{
-				"error": Dict{
-					"code":    "GeneralError",
-					"message": "BuildMetadataErr: " + err.Error(),
-				},
-			}
-			json.NewEncoder(w).Encode(_res)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(model)*/
+		app.odata_api_metadata(w, r)
 		return
 	} else if isXMLMetadataRequest(r) {
 		sql := `select * from "table_schema" where lower("db") = ? and "table" = ? and "excluded" = false`
