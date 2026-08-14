@@ -352,24 +352,27 @@ func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 	}
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
+	/*b.WriteString(fmt.Sprintf(`
+	<edmx:Edmx Version="4.0"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		xmlns="http://docs.oasis-open.org/odata/ns/edm"
+	    xmlns:atom="http://www.w3.org/2005/Atom"
+	    xmlns:m="http://docs.oasis-open.org/odata/ns/metadata"
+		xml:base="%s/odata/%s/"
+	    m:context="%s/odata/admin/$metadata"
+	 >
+	 <edmx:DataServices>`, burl, db, burl))*/
 	b.WriteString(fmt.Sprintf(`
-<edmx:Edmx Version="4.0"
-	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-	xmlns="http://docs.oasis-open.org/odata/ns/edm"
-    xmlns:atom="http://www.w3.org/2005/Atom"
-    xmlns:m="http://docs.oasis-open.org/odata/ns/metadata"
-	xml:base="%s/odata/%s/"
-    m:context="%s/odata/admin/$metadata"
- >
- <edmx:DataServices>`, burl, db, burl))
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+ 	<edmx:DataServices>`, burl, db, burl))
 	for db, tables := range schemas {
-		b.WriteString(fmt.Sprintf(`<Schema Namespace="%s">`, db))
+		b.WriteString(fmt.Sprintf(`<Schema Namespace="%s" xmlns="http://docs.oasis-open.org/odata/ns/edm">`, db))
 		for _, e := range tables {
 			b.WriteString(fmt.Sprintf(`<EntityType Name="%s">`, e.Name))
 			if len(e.PKs) > 0 {
 				b.WriteString(`<Key>`)
 				for _, pk := range e.PKs {
-					b.WriteString(fmt.Sprintf(`<PropertyRef Name="%s"/>`, pk))
+					b.WriteString(fmt.Sprintf(`<PropertyRef Name="%s" Type="Edm.Int32" Nullable="false" />`, pk))
 				}
 				b.WriteString(`</Key>`)
 			}
@@ -618,8 +621,6 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	db := r.PathValue("db")
 	table := r.PathValue("table")
 	w.Header().Set("OData-Version", "4.0")
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	//w.Header().Set("Content-Type", "application/json")
 	burl := baseURL(r)
 	if table == "$metadata" {
 		sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
@@ -648,7 +649,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		//fmt.Println(xml)
-		w.Header().Set("Content-Type", "application/xml")
+		//w.Header().Set("Content-Type", "application/xml")
+		w.Header().Set("Content-Type", "application/xml;charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(xml))
 		/*model, err := BuildODataMetadataJSON(_table_schema)
@@ -702,7 +704,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		  <title type="text">%s</title>
 		  <id>%s</id>
 		</feed>`, table, url)*/
-		w.Header().Set("Content-Type", "application/xml")
+		//w.Header().Set("Content-Type", "application/xml")
+		w.Header().Set("Content-Type", "application/xml;charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(xml))
 		return
@@ -877,13 +880,16 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response = Dict{
-		"@odata.context": fmt.Sprintf("%s/odata/%s/$metadata#%s", r.Host, db, table), //"http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery),
-		"@odata.count":   data["total"],                                              // optional: total count (when $count=true or $inlinecount)
+		"@odata.context": fmt.Sprintf("%s/odata/%s/$metadata#%s", burl, db, table), //"http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery),
+		"@odata.count":   data["total"],                                            // optional: total count (when $count=true or $inlinecount)
 		"value":          data["data"],
 		//"params":         params,
 		//"@odata.nextLink": "http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery), // optional: for paging
 	}
+	//w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json;odata.metadata=minimal")
 	w.WriteHeader(http.StatusOK)
+	//application/json;odata.metadata=minimal
 	json.NewEncoder(w).Encode(response)
 }
 
