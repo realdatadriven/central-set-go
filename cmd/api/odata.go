@@ -592,7 +592,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	//w.Header().Set("Content-Type", "application/json")
 	if table == "$metadata" {
-		sql := `select * from table_schema where lower(db) = ? and excluded = false  order by field_order`
+		sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
 		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
