@@ -363,9 +363,8 @@ func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 	    m:context="%s/odata/admin/$metadata"
 	 >
 	 <edmx:DataServices>`, burl, db, burl))*/
-	b.WriteString(fmt.Sprintf(`
-<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
- 	<edmx:DataServices>`, burl))
+	b.WriteString(`<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+ 	<edmx:DataServices>`)
 	for db, tables := range schemas {
 		b.WriteString(fmt.Sprintf(`<Schema Namespace="%s" xmlns="http://docs.oasis-open.org/odata/ns/edm">`, db))
 		for _, e := range tables {
