@@ -118,6 +118,8 @@ func (app *application) routes() http.Handler {
 	// ODATA HANDDLER
 	mux.HandleFunc("GET /odata/{db}", app.odata_api_metadata)
 	mux.HandleFunc("GET /odata/{db}/{table}", app.odata_api)
+	mux.HandleFunc("GET /odata/{db}/", app.odata_api_metadata)
+	mux.HandleFunc("GET /odata/{db}/{table}/", app.odata_api)
 	mux.HandleFunc("GET /read_odata/{db}/{table}", app.read_odata)
 	mux.HandleFunc("GET /read/{db}/{table}", app.read_odata)
 	mux.HandleFunc("GET /rodata/{db}/{table}", app.read_odata)
