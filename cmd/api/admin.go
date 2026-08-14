@@ -733,6 +733,11 @@ func (app *application) tables(params Dict, tables []any) Dict {
 							_ins_query := fmt.Sprintf(`INSERT INTO table_schema ("%s") VALUES (:%s)`, cols, vals)
 							//fmt.Println(_ins_query)
 							for _, row := range results {
+								if table, ok := row["table"].(string); ok {
+									if strings.HasPrefix(table, "sqlite_") {
+										continue
+									}
+								}
 								_, err := app.db.ExecuteNamedQuery(_ins_query, row)
 								if err != nil {
 									fmt.Println("Error inserting table_schema:", err)
