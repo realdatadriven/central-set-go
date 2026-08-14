@@ -372,7 +372,7 @@ func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 			if len(e.PKs) > 0 {
 				b.WriteString(`<Key>`)
 				for _, pk := range e.PKs {
-					b.WriteString(fmt.Sprintf(`<PropertyRef Name="%s" Type="Edm.Int32" Nullable="false" />`, pk))
+					b.WriteString(fmt.Sprintf(`<PropertyRef Name="%s" />`, pk)) // Type="Edm.Int32" Nullable="false"
 				}
 				b.WriteString(`</Key>`)
 			}
