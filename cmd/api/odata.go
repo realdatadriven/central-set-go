@@ -348,6 +348,7 @@ func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 		e := schemas[db][table]
 		e.Columns = append(e.Columns, col)
 		if isPK {
+			col.Nullable = false
 			e.PKs = append(e.PKs, field)
 		}
 	}
@@ -377,6 +378,9 @@ func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 				b.WriteString(`</Key>`)
 			}
 			for _, c := range e.Columns {
+				if c.IsPK {
+					c.Nullable = false
+				}
 				b.WriteString(fmt.Sprintf(
 					`<Property Name="%s" Type="%s" Nullable="%t"/>`,
 					c.Name, c.Type, c.Nullable,
