@@ -2016,10 +2016,132 @@
       "grpcConnected": false,
       "grpcStreaming": false,
       "responseTab": "body"
+    },
+    {
+      "id": "1786732951469ftuu",
+      "tabKind": "request",
+      "name": "ODATA",
+      "method": "GET",
+      "url": "{{base_url}}/odata/admin",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "true",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "f54e16a1-f8df-4166-b035-cd57382aab73",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": null,
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "content-encoding": "gzip",
+          "content-length": "621",
+          "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+          "date": "Fri, 14 Aug 2026 18:43:39 GMT",
+          "odata-version": "4.0",
+          "vary": "Authorization"
+        },
+        "body": "{\"@odata.context\":\"htts://localhost:4444/odata/admin/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"sqlite_sequence\",\"kind\":\"EntitySet\",\"url\":\"sqlite_sequence\"}]}",
+        "time": 42,
+        "size": 3836,
+        "actualRequest": {
+          "method": "GET",
+          "url": "http://127.0.0.1:4444/odata/admin?%24filter=app_id+eq+3&%24schema=true",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0"
+          },
+          "body": null,
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 1
+          },
+          {
+            "name": "Auth",
+            "duration": 0
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 42
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "grpcMessages": [],
+      "grpcConfig": null,
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local"
     }
   ],
   "groups": [],
-  "activeTabId": "1786046203439amxu",
+  "activeTabId": "1786732951469ftuu",
   "currentView": "requests",
   "sidebarTab": "collections",
   "sidebarCollapsed": false,

@@ -652,7 +652,7 @@ func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r 
 	w.Write([]byte(serviceDocument))
 }
 func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println("METADATA ONLY!")
+	fmt.Println("METADATA ONLY!")
 	if os.Getenv("ENABLE_ODATA") != "true" {
 		http.Error(w, "OData API is disabled", http.StatusNotFound)
 		return
