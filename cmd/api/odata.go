@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -298,7 +299,17 @@ func sqlToEdmType(sqlType string) string {
 		return "Edm.String"
 	}
 }
-func BuildODataMetadata(rows []Dict) (string, error) {
+func baseURL(r *http.Request) string {
+	if os.Getenv("ODATA_BASE_URL") != "" {
+		return os.Getenv("ODATA_BASE_URL")
+	}
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	return scheme + "://" + r.Host
+}
+func BuildODataMetadata(rows []Dict, burl, db string) (string, error) {
 	type Column struct {
 		Name     string
 		Type     string
@@ -341,11 +352,16 @@ func BuildODataMetadata(rows []Dict) (string, error) {
 	}
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
-	b.WriteString(`
+	b.WriteString(fmt.Sprintf(`
 <edmx:Edmx Version="4.0"
- xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
- xmlns="http://docs.oasis-open.org/odata/ns/edm">
- <edmx:DataServices>`)
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	xmlns="http://docs.oasis-open.org/odata/ns/edm"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:m="http://docs.oasis-open.org/odata/ns/metadata"
+	xml:base="%s/odata/%s/"
+    m:context="%s/odata/admin/$metadata"
+ >
+ <edmx:DataServices>`, burl, db, burl))
 	for db, tables := range schemas {
 		b.WriteString(fmt.Sprintf(`<Schema Namespace="%s">`, db))
 		for _, e := range tables {
@@ -449,6 +465,10 @@ func BuildODataMetadataJSON(rows []Dict) (Dict, error) {
 }
 func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println("METADATA ONLY!")
+	if os.Getenv("ENABLE_ODATA") != "true" {
+		http.Error(w, "OData API is disabled", http.StatusNotFound)
+		return
+	}
 	db := r.PathValue("db")
 	w.Header().Set("OData-Version", "4.0")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -465,7 +485,8 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 		json.NewEncoder(w).Encode(_res)
 		return
 	}
-	xml, err := BuildODataMetadata(_table_schema)
+	burl := baseURL(r)
+	xml, err := BuildODataMetadata(_table_schema, burl, db)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_res := Dict{
@@ -562,6 +583,10 @@ func (app *application) OData2C7Read(params Dict, odata_path string) ([]Dict, er
 	return data["data"].([]Dict), nil
 }
 func (app *application) read_odata(w http.ResponseWriter, r *http.Request) {
+	if os.Getenv("ENABLE_ODATA") != "true" {
+		http.Error(w, "OData API is disabled", http.StatusNotFound)
+		return
+	}
 	db := r.PathValue("db")
 	table := r.PathValue("table")
 	q := r.URL.Query()
@@ -586,11 +611,16 @@ func (app *application) read_odata(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
+	if os.Getenv("ENABLE_ODATA") != "true" {
+		http.Error(w, "OData API is disabled", http.StatusNotFound)
+		return
+	}
 	db := r.PathValue("db")
 	table := r.PathValue("table")
 	w.Header().Set("OData-Version", "4.0")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	//w.Header().Set("Content-Type", "application/json")
+	burl := baseURL(r)
 	if table == "$metadata" {
 		sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
 		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
@@ -605,7 +635,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(_res)
 			return
 		}
-		xml, err := BuildODataMetadata(_table_schema)
+		xml, err := BuildODataMetadata(_table_schema, burl, db)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_res := Dict{
@@ -651,7 +681,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(_res)
 			return
 		}
-		xml, err := BuildODataMetadata(_table_schema)
+		xml, err := BuildODataMetadata(_table_schema, burl, db)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_res := Dict{
