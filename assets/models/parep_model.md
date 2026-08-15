@@ -192,7 +192,7 @@ form_layout:
 table_layout:
   default_order: [{field: ano, order: DESC}]
 data:
-  - {ano_id: 2, ano: "2025", data_ini: "2025-01-01", data_fim: "2025-12-31", activo: true, excluded: false}
+  - {ano_id: 1, ano: "2025", data_ini: "2025-01-01", data_fim: "2025-12-31", activo: true, excluded: false}
   - {ano_id: 2, ano: "2026", data_ini: "2026-01-01", data_fim: "2026-12-31", activo: true, excluded: false}
   - {ano_id: 3, ano: "2027", data_ini: "2027-01-01", data_fim: "2027-12-31", activo: true, excluded: false}
 ```
@@ -763,7 +763,7 @@ columns:
   desc_indicador: { type: text, comment: "Descrição", tooltip: "Descrição detalhada do indicador.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 3 }
   ano_baseline: { type: integer, comment: "Ano baseline", tooltip: "Ano de referência para a linha de base.", form_display: true, table_display: true, form_size: 4, order: 4 }
   valor_baseline: { type: decimal, len: 14, scale: 2, default: 0, comment: "Valor baseline", tooltip: "Valor inicial de referência.", form_display: true, table_display: true, form_size: 4, order: 5 }
-  unidades_id: { type: integer, fk: "unidades.unidade_id", comment: "Unidade", tooltip: "Unidade de medida do indicador.", form_display: true, table_display: true, form_size: 4, order: 6 }
+  unidade_id: { type: integer, fk: "unidades.unidade_id", comment: "Unidade", tooltip: "Unidade de medida do indicador.", form_display: true, table_display: true, form_size: 4, order: 6 }
   fonte: { type: varchar, len: 255, comment: "Fonte", tooltip: "Fonte ou origem dos dados do indicador.", form_display: true, table_display: true, form_size: 6, order: 7 }
   formula_calculo: { type: text, comment: "Fórmula", tooltip: "Fórmula de cálculo do indicador.", form_display: true, table_display: true, form_long_text: true, form_size: 12, order: 8 }
   objetivo_id: { type: integer, fk: "objetivos.objetivo_id", nullable: false, comment: "Objetivo", tooltip: "Objetivo ao qual o indicador pertence.", form_display: true, table_display: true, form_size: 6, order: 9 }
@@ -826,6 +826,20 @@ data:
   dashboard:      Resumo Indicadores
   dashboard_desc: Exemplo Layout Resumo Indicadores
   dashboard_conf: FileContent(parep/dashboard1.md)
+  order:          1
+  active:         true
+```
+
+## DASHBOARD2
+```yaml
+table: dashboard
+description: Add default Dashboard
+cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
+data:
+  dashboard_id:   2
+  dashboard:      Resumo Indicadores2
+  dashboard_desc: Exemplo Layout Resumo Indicadores
+  dashboard_conf: FileContent(parep/dashboard2.md)
   order:          1
   active:         true
 ```
