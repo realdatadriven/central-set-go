@@ -825,20 +825,6 @@ data:
   dashboard_id:   1
   dashboard:      Resumo Indicadores
   dashboard_desc: Exemplo Layout Resumo Indicadores
-  dashboard_conf: FileContent(parep/dashboard1.md)
-  order:          1
-  active:         true
-```
-
-## DASHBOARD2
-```yaml
-table: dashboard
-description: Add default Dashboard
-cond: 'WHERE dashboard_id = :dashboard_id AND excluded = false'
-data:
-  dashboard_id:   2
-  dashboard:      Resumo Indicadores2
-  dashboard_desc: Exemplo Layout Resumo Indicadores
   dashboard_conf: FileContent(parep/dashboard2.md)
   order:          1
   active:         true
@@ -876,7 +862,7 @@ data:
         - indicador: O1IND1
           desc_indicador: Taxa líquida de escolarização/cobertura das crianças de 4-5 anos no Pré-escolar
           valor_baseline: 0.841
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -889,7 +875,7 @@ data:
         - indicador: O1IND2
           desc_indicador: Nº de crianças que frequentam Jardins de Infância
           valor_baseline: 15906
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -902,7 +888,7 @@ data:
         - indicador: O1IND3
           desc_indicador: Nº de famílias de classe 1 e 2 que recebem apoio para escolarização dos seus filhos na Educação Pré-escolar
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -915,7 +901,7 @@ data:
         - indicador: O1IND4
           desc_indicador: Nº de Jardins que recebem kits de materiais lúdico-pedagógicos e equipamentos para crianças com NEE
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -958,17 +944,17 @@ data:
         - indicador: O2IND5
           desc_indicador: Percentagem de crianças de 4-5 anos que desenvolvem competências básicas em língua portuguesa e conhecimento dos números
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
         - indicador: O2IND6
           desc_indicador: Percentagem de JI que utilizam e cumprem o programa previsto em articulação com as unidades educativas
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
         - indicador: O2IND7
           desc_indicador: Número de educadoras com formação inicial formadas e integradas no sistema
           valor_baseline: 136
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -981,7 +967,7 @@ data:
         - indicador: O2IND8
           desc_indicador: Número de monitoras com formação inicial formadas e integradas no sistema
           valor_baseline: 283
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -994,12 +980,12 @@ data:
         - indicador: O2IND9A
           desc_indicador: Percentagem de educadoras com formação adequada
           valor_baseline: 0.096
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
         - indicador: O2IND9B
           desc_indicador: Percentagem de monitoras com formação adequada
           valor_baseline: 0.20
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
 ```
 
@@ -1031,7 +1017,7 @@ data:
         - indicador: O3IND10
           desc_indicador: Carta Escolar do Pré-escolar elaborada
           valor_baseline: null
-          unidades_id: 3
+          unidade_id: 3
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1044,7 +1030,7 @@ data:
         - indicador: O3IND11
           desc_indicador: Rácio criança/profissional de infância
           valor_baseline: 20
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1090,7 +1076,7 @@ data:
         - indicador: O4IND12
           desc_indicador: Percentagem de JI que cumprem os requisitos mínimos exigidos para funcionamento
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1103,7 +1089,7 @@ data:
         - indicador: O4IND13
           desc_indicador: Nº de Gestores de Jardins de Infância capacitados em gestão baseada em resultados
           valor_baseline: 582
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1116,7 +1102,7 @@ data:
         - indicador: O4IND14
           desc_indicador: Percentagem de gestores dos JI habilitados para a função de direção
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1129,7 +1115,7 @@ data:
         - indicador: O4IND15
           desc_indicador: Nº de JI que fazem intercâmbio e articulam com as escolas básicas da sua área de influência
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1142,12 +1128,12 @@ data:
         - indicador: O4IND16
           desc_indicador: Estatuto de carreira dos profissionais de infância elaborado discutido e apropriado
           valor_baseline: null
-          unidades_id: 3
+          unidade_id: 3
           objetivo_id: objetivo_id()
         - indicador: O4IND17
           desc_indicador: Nº de Jardins com prática de gestão baseada em resultados
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1160,7 +1146,7 @@ data:
         - indicador: O4IND18
           desc_indicador: Percentagem de Jardins com prática de gestão baseada em resultados
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1173,7 +1159,7 @@ data:
         - indicador: O4IND19
           desc_indicador: Nº de Gestores de Jardins capacitados para uso e manuseamento do SIGE
           valor_baseline: 582
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1186,7 +1172,7 @@ data:
         - indicador: O4IND20
           desc_indicador: Percentagem de JI que disponibiliza os seus dados através do SIGE
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1229,7 +1215,7 @@ data:
         - indicador: O5IND21
           desc_indicador: Nº de campanhas regulares de sensibilização nas comunidades implementadas visando reforçar o acesso e reduzir o risco de abandono escolar
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1242,12 +1228,12 @@ data:
         - indicador: O5IND22
           desc_indicador: Estudo de mapeamento de crianças com NEE elaborado
           valor_baseline: null
-          unidades_id: 3
+          unidade_id: 3
           objetivo_id: objetivo_id()
         - indicador: O5IND23
           desc_indicador: Equipas EMAEI reforçadas com mais um técnico em todos os concelhos do país
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1260,7 +1246,7 @@ data:
         - indicador: O5IND24
           desc_indicador: Reforço dos materiais lúdico-pedagógicos destinados às crianças com NEE
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1273,7 +1259,7 @@ data:
         - indicador: O5IND25
           desc_indicador: Taxa líquida de escolarização das crianças de 6-13 anos no Ensino Básico Obrigatório
           valor_baseline: 0.996
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1286,7 +1272,7 @@ data:
         - indicador: O5IND26
           desc_indicador: Índice de Paridade de Género (M/F)
           valor_baseline: 0.91
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1332,7 +1318,7 @@ data:
         - indicador: O6IND27
           desc_indicador: Nº de docentes do 1.º ciclo que recebem ações de capacitação em gestão curricular, técnicas de avaliação e diferenciação pedagógica
           valor_baseline: 4188
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1345,7 +1331,7 @@ data:
         - indicador: O6IND28
           desc_indicador: Nº de docentes capacitados em matéria de gestão pedagógica de crianças com NEE
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1359,7 +1345,7 @@ data:
         - indicador: O6IND29
           desc_indicador: Nº de equipas pedagógicas nacional e concelhias capacitadas para reforço da supervisão, acompanhamento e avaliação no EBO
           valor_baseline: 60
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1372,7 +1358,7 @@ data:
         - indicador: O6IND30
           desc_indicador: Percentagem de aprovação no 1.º Ciclo do EBO
           valor_baseline: 0.839
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1385,7 +1371,7 @@ data:
         - indicador: O6IND31
           desc_indicador: Percentagem de reprovação no 1.º Ciclo do EBO
           valor_baseline: 0.152
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1398,7 +1384,7 @@ data:
         - indicador: O6IND32
           desc_indicador: Percentagem de abandono no 1.º Ciclo do EBO
           valor_baseline: 0.0001
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1411,7 +1397,7 @@ data:
         - indicador: O6IND33
           desc_indicador: Percentagem de crianças do EBO que adquirem competências básicas em língua portuguesa (leitura, escrita) e matemática
           valor_baseline: 0.327
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1424,7 +1410,7 @@ data:
         - indicador: O6IND34
           desc_indicador: Percentagem de docentes abrangidos pelo programa de formação contínua de acordo com o plano de formação de professores
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1471,7 +1457,7 @@ data:
         - indicador: O7IND35
           desc_indicador: Nº de Unidades Educativas com órgãos de gestão plenamente funcionais
           valor_baseline: 83
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1484,7 +1470,7 @@ data:
         - indicador: O7IND36
           desc_indicador: Nº de dirigentes das Unidades Educativas capacitados em técnicas de elaboração e gestão de projeto educativo como instrumento estratégico de intervenção
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1497,7 +1483,7 @@ data:
         - indicador: O7IND37
           desc_indicador: Nº de Unidades Educativas que adotam o projeto educativo como instrumento estratégico de gestão
           valor_baseline: 83
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1510,7 +1496,7 @@ data:
         - indicador: O7IND38
           desc_indicador: Nº de Unidades Educativas abrangidas com pelo menos uma resultado de supervisão anual
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1523,7 +1509,7 @@ data:
         - indicador: O7IND39
           desc_indicador: Nº de dirigentes e pessoal administrativo das Unidades Educativas capacitados em técnicas de uso e manuseamento do SIGE
           valor_baseline: null
-          unidades_id: 2
+          unidade_id: 2
           objetivo_id: objetivo_id()
           children:
             table: metas
@@ -1536,7 +1522,7 @@ data:
         - indicador: O7IND40
           desc_indicador: Percentagem de escolas com SIGE funcional e que reportam dados completos e de qualidade
           valor_baseline: null
-          unidades_id: 1
+          unidade_id: 1
           objetivo_id: objetivo_id()
           children:
             table: metas
