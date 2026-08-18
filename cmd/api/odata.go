@@ -652,7 +652,7 @@ func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r 
 	w.Write([]byte(serviceDocument))
 }
 func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("METADATA ONLY!")
+	// fmt.Println("METADATA ONLY!")
 	if os.Getenv("ENABLE_ODATA") != "true" {
 		http.Error(w, "OData API is disabled", http.StatusNotFound)
 		return
@@ -799,6 +799,25 @@ func (app *application) read_odata(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
+	/*/ 1. Extract the credentials
+	username, password, ok := r.BasicAuth()
+
+	// 2. Check if the Basic Auth header was present
+	if !ok {
+		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+		http.Error(w, "Unauthorized: Missing credentials", http.StatusUnauthorized)
+		return
+	}
+
+	// 3. Process the credentials
+	fmt.Printf("Found credentials - User: %s, Pass: %s\n", username, password)
+
+	// Add your validation logic here (e.g., check database)
+	if username == "admin" && password == "secret" {
+		w.Write([]byte("Welcome to the secure endpoint!"))
+	} else {
+		http.Error(w, "Unauthorized: Invalid credentials", http.StatusUnauthorized)
+	}*/
 	if os.Getenv("ENABLE_ODATA") != "true" {
 		http.Error(w, "OData API is disabled", http.StatusNotFound)
 		return
