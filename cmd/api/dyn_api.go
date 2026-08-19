@@ -1174,7 +1174,7 @@ func (app *application) verifyToken(r *http.Request) Dict {
 					"msg":     "Token has expired!",
 				}
 			}
-			if claims.Issuer != app.config.baseURL {
+			/*if claims.Issuer != app.config.baseURL {
 				return Dict{
 					"success": false,
 					"msg":     "Token is invalid",
@@ -1185,17 +1185,44 @@ func (app *application) verifyToken(r *http.Request) Dict {
 					"success": false,
 					"msg":     "Token is invalid!",
 				}
-			}
+			}*/
 			var user Dict
 			//print(1, " ", claims.Subject, "\n")
 			err2 := json.Unmarshal([]byte(claims.Subject), &user)
 			if err2 == nil {
 				//print(2, " ", user["username"].(string), "\n")
-				contextSetAuthenticatedUser(r, &user)
-			}
-			return Dict{
-				"success": true,
-				"msg":     "Token validated!",
+				sql := `select * from users where user_id = ?`
+				usr, err := app.AdminGetRowByID(sql, app.toInt(user[`user_id`]))
+				if err != nil {
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("Error gueting user from token data: %w", err),
+					}
+				}
+				if len(usr) == 0 {
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("Error gueting user from token data: %s", "no match"),
+					}
+				}
+				if app.toBool(usr["excluded"]) {
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("User no longer active, please contact the admin!"),
+					}
+				}
+				if !app.toBool(usr["active"]) {
+					return Dict{
+						"success": false,
+						"msg":     fmt.Sprintf("User no longer active, please contact the admin!"),
+					}
+				}
+				contextSetAuthenticatedUser(r, &usr)
+			} else {
+				return Dict{
+					"success": true,
+					"msg":     "Token validated!",
+				}
 			}
 		} else {
 			return Dict{
@@ -1231,8 +1258,23 @@ func (app *application) verifyTokenString(authorizationHeader string) (Dict, err
 		if err2 != nil {
 			return nil, fmt.Errorf("Error unmarshaling token subject: %w", err)
 		}
+		// check the user
+		sql := `select * from users where user_id = ?`
+		usr, err := app.AdminGetRowByID(sql, app.toInt(user[`user_id`]))
+		if err != nil {
+			return nil, fmt.Errorf("Error gueting user from token data: %w", err)
+		}
+		if len(usr) == 0 {
+			return nil, fmt.Errorf("Error gueting user from token data: %s", "no match")
+		}
+		if app.toBool(usr["excluded"]) {
+			return nil, fmt.Errorf("User no longer active, please contact the admin!")
+		}
+		if !app.toBool(usr["active"]) {
+			return nil, fmt.Errorf("User no longer active, please contact the admin!")
+		}
 		// fmt.Println("USER:", user)
-		return user, nil
+		return usr, nil
 	}
 	return nil, fmt.Errorf("No token received: %w", "")
 }
