@@ -54,3 +54,4 @@ database/ADMIN.db
 .duckdb
 ui
 parep
+*.test.sql
