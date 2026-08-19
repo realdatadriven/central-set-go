@@ -1190,7 +1190,7 @@ func (app *application) verifyToken(r *http.Request) Dict {
 			//print(1, " ", claims.Subject, "\n")
 			err2 := json.Unmarshal([]byte(claims.Subject), &user)
 			if err2 == nil {
-				//print(2, " ", user["username"].(string), "\n")
+				// print(2, " ", user["username"].(string), "\n")
 				sql := `select * from users where user_id = ?`
 				usr, err := app.AdminGetRowByID(sql, app.toInt(user[`user_id`]))
 				if err != nil {
@@ -1218,13 +1218,18 @@ func (app *application) verifyToken(r *http.Request) Dict {
 					}
 				}
 				contextSetAuthenticatedUser(r, &usr)
-			} else {
 				return Dict{
 					"success": true,
 					"msg":     "Token validated!",
 				}
+			} else {
+				return Dict{
+					"success": false,
+					"msg":     "Token is invalid!",
+				}
 			}
 		} else {
+			// print(3, "Token err", "\n")
 			return Dict{
 				"success": false,
 				"msg":     "Token is invalid!",

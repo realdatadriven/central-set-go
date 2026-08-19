@@ -871,6 +871,7 @@ data:
                 meta: O1IND12026
                 ano_id: 2
                 meta_valor: 0.95
+                valor_atual: 0.89
                 indicador_id: indicador_id()
         - indicador: O1IND2
           desc_indicador: Nº de crianças que frequentam Jardins de Infância
@@ -884,6 +885,7 @@ data:
                 meta: O1IND22026
                 ano_id: 2
                 meta_valor: 17280
+                valor_atual: 15280
                 indicador_id: indicador_id()
         - indicador: O1IND3
           desc_indicador: Nº de famílias de classe 1 e 2 que recebem apoio para escolarização dos seus filhos na Educação Pré-escolar
@@ -896,7 +898,8 @@ data:
             data:
                 meta: O1IND32026
                 ano_id: 2                
-                meta_valor: 3500
+                meta_valor: 3500      
+                valor_atual: 3450
                 indicador_id: indicador_id()
         - indicador: O1IND4
           desc_indicador: Nº de Jardins que recebem kits de materiais lúdico-pedagógicos e equipamentos para crianças com NEE
@@ -909,7 +912,8 @@ data:
             data:
                 meta: O1IND342026
                 ano_id: 2                
-                meta_valor: 150
+                meta_valor: 150   
+                valor_atual: 70
                 indicador_id: indicador_id()
 ```
 
