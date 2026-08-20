@@ -17,6 +17,7 @@ import (
 	"github.com/realdatadriven/central-set-go/internal/auth"
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
+	"github.com/realdatadriven/central-set-go/internal/storage"
 	"github.com/realdatadriven/central-set-go/internal/version"
 	"github.com/robfig/cron/v3"
 
@@ -159,6 +160,7 @@ type application struct {
 	quackInstanciated bool                     // Quack instanciated flag to avoid multiple instantiation of quack manager and pool in case of multiple calls to run function, as it can happen in licensee app where we validate the license on startup and then periodically, and both operations call run function
 	sizeGuard         *SizeGuard
 	SessionStore      *SessionStore
+	StorageAPI        storage.Storage
 }
 
 func run(logger *slog.Logger) error {
@@ -281,6 +283,13 @@ func run(logger *slog.Logger) error {
 		quackEnabled:                   cfg.quackEnabled,
 		//admin:  admin{},
 	}
+	// NEW STORAGE
+	strg, err := storage.NewFromEnv(context.Background())
+	if err != nil {
+		return err
+	}
+	app.StorageAPI = strg
+	// RATE LIMITING
 	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)
 	if app.rateLimitingEnabled {
 		app.rtRequestLimit = env.GetInt("RATE_LIMITING_REQUESTS_PER_MINUTE", 100)

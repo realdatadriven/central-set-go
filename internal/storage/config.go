@@ -16,7 +16,6 @@ func requiredEnv(key string) (string, error) {
 	if value == "" {
 		return "", fmt.Errorf("required environment variable %s is not set", key)
 	}
-
 	return value, nil
 }
 
