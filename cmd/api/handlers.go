@@ -179,7 +179,7 @@ func (app *application) awsConfig(ctx context.Context) (aws.Config, error) {
 	}
 	/*if ep := os.Getenv("AWS_ENDPOINT"); ep != "" {
 		opts = append(opts, config.WithEndpointResolverWithOptions(
-			aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+			aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...any) (aws.Endpoint, error) {
 				return aws.Endpoint{
 					URL:               ep,
 					SigningRegion:     os.Getenv("AWS_REGION"),
@@ -266,14 +266,14 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	// create the fale
 	boolTemp, _ := strconv.ParseBool(tmp)
 	// USE S3
-	var data map[string]interface{}
-	if app.config.useS3 && !boolTemp {
+	var data map[string]any
+	/*if app.config.useS3 && !boolTemp {
 		fmt.Println("IS S3")
 		// Upload to S3
 		fname, err := app.uploadToS3(file, fileNameNoExt+fileExt)
 		if err != nil {
 			fmt.Println(err.Error())
-			data = map[string]interface{}{
+			data = map[string]any{
 				"success": false,
 				"msg":     "Failed to upload to S3: " + err.Error(),
 			}
@@ -284,7 +284,7 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		text, _ := i18n.T("file-success", struct{ File string }{File: fname})
-		data = map[string]interface{}{
+		data = map[string]any{
 			"success": true,
 			"msg":     text,
 			"file":    fname,
@@ -294,7 +294,7 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, r, err)
 		}
 		return
-	}
+	}*/
 	if boolTemp {
 		//print("parsed temp bool:", boolTemp, "\n")
 		dst, err = os.CreateTemp("", fileNameNoExt+"-*"+fileExt)
@@ -303,6 +303,42 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		defer dst.Close()
+	} else if app.StorageAPI != nil {
+		_path := fmt.Sprintf("%s%s", fileNameNoExt, fileExt)
+		pathExists, err := app.StorageAPI.Exists(context.Background(), _path)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if pathExists {
+			for i := 1; i <= 100; i++ {
+				_path := fmt.Sprintf("%s_%d%s", fileNameNoExt, i, fileExt)
+				pathExists, err = app.StorageAPI.Exists(context.Background(), _path)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				if !pathExists {
+					break
+				}
+			}
+		}
+		err = app.StorageAPI.Upload(context.Background(), file, _path)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		text, _ := i18n.T("file-success", struct{ File string }{File: _path})
+		data = map[string]any{
+			"success": true,
+			"msg":     text,
+			"file":    _path,
+		}
+		err = response.JSON(w, http.StatusOK, data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		return
 	} else {
 		//dst, err = os.Create("static/uploads/" + handler.Filename)
 		//_path := "static/uploads/" + fileNameNoExt + "" + fileExt
@@ -333,7 +369,7 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	//user := *(contextGetAuthenticatedUser(r))
 	//print(user["username"].(string), "->", app.toInt(user["user_id"].(float64)), "->", app.toInt(user["role_id"].(float64)), "\n")
 	text, _ := i18n.T("file-success", struct{ File string }{File: filepath.Base(dst.Name())})
-	data = map[string]interface{}{
+	data = map[string]any{
 		"success": true,
 		"msg":     text,
 		"file":    filepath.Base(dst.Name()),

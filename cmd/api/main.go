@@ -286,9 +286,11 @@ func run(logger *slog.Logger) error {
 	// NEW STORAGE
 	strg, err := storage.NewFromEnv(context.Background())
 	if err != nil {
-		return err
+		fmt.Printf("Error setting up Storage: %v\n", err)
+		// return err
+	} else {
+		app.StorageAPI = strg
 	}
-	app.StorageAPI = strg
 	// RATE LIMITING
 	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)
 	if app.rateLimitingEnabled {

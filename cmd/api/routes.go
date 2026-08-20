@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"io"
+	"mime"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -52,6 +55,31 @@ func (app *application) S3Handler(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, result.Body)
 }
 
+func (app *application) StorageAPIHandler(w http.ResponseWriter, r *http.Request) {
+	key := strings.TrimPrefix(r.URL.Path, "/uploads/")
+	if key == "" {
+		http.Error(w, "File not specified", http.StatusBadRequest)
+		return
+	}
+	file, err := app.StorageAPI.Download(r.Context(), key)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+	// Detect content type from the file extension.
+	contentType := mime.TypeByExtension(filepath.Ext(key))
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+	w.Header().Set("Content-Type", contentType)
+	if _, err := io.Copy(w, file); err != nil {
+		// At this point the response may already have started,
+		// so there isn't much we can do with http.Error.
+		return
+	}
+}
+
 func (app *application) routes() http.Handler {
 	//mux := httprouter.New()
 	mux := http.NewServeMux()
@@ -73,7 +101,9 @@ func (app *application) routes() http.Handler {
 	mux.Handle("/static/", http.StripPrefix("/static/", fallbackServer))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fallbackServer))
 
-	if app.config.useS3 {
+	if app.StorageAPI != nil {
+		mux.HandleFunc("/uploads/", app.StorageAPIHandler)
+	} else if app.config.useS3 {
 		mux.HandleFunc("/uploads/", app.S3Handler)
 	} else {
 		mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("static/uploads"))))
