@@ -46,7 +46,7 @@ func (app *application) ScanRowToMap(rows *sql.Rows) (Dict, error) {
 	return rowMap, nil
 }
 
-func (app *application) Buckup(params Dict) Dict {
+func (app *application) _Buckup(params Dict) Dict {
 	dsn, admin_db, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
 	_, adm_dsn, _ := app.ParseConnection(dsn)
 	// fmt.Println(dsn)
@@ -366,6 +366,282 @@ func (app *application) Buckup(params Dict) Dict {
 		"msg":     msg,
 	}
 	return data
+}
+
+func (app *application) Backup(params Dict) Dict {
+	// -------------------------------------------------------------------------
+	// Get the admin database
+	// -------------------------------------------------------------------------
+	dsn, adminDB, _ := app.GetDBNameFromParams(Dict{"db": app.config.db.dsn})
+	_, adminDSN, _ := app.ParseConnection(dsn)
+	db, err := etlx.GetDB(dsn)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("error getting the db connection: %s", err),
+		}
+	}
+	defer db.Close()
+
+	// -------------------------------------------------------------------------
+	// Get applications to backup
+	// -------------------------------------------------------------------------
+	sql := `select * from "app" where excluded = false and "app" like ?`
+	appName := "%"
+	if data, ok := params["data"].(Dict); ok {
+		if name, ok := data["name"].(string); ok && name != "" {
+			appName = name
+		}
+	}
+	apps, _, err := db.QueryMultiRows(sql, []any{appName}...)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     fmt.Sprintf("error getting the apps: %s", err),
+		}
+	}
+	// -------------------------------------------------------------------------
+	// Create an in-memory DuckDB connection.
+	//
+	// This connection is used as the DuckDB coordinator for ATTACH,
+	// EXPORT DATABASE and the S3 httpfs extension.
+	// -------------------------------------------------------------------------
+	memDB, err := etlx.GetDB("duckdb:")
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg": fmt.Sprintf("error connecting to in-memory DuckDB: %s", err),
+		}
+	}
+	defer memDB.Close()
+	// -------------------------------------------------------------------------
+	// Load DuckDB httpfs.
+	//
+	// INSTALL is useful for a fresh environment. Once httpfs is installed,
+	// LOAD makes it available to this connection.
+	// -------------------------------------------------------------------------
+	if _, err := memDB.ExecuteQuery(`INSTALL httpfs`); err != nil {
+		return Dict{
+			"success": false,
+			"msg": fmt.Sprintf("error installing DuckDB httpfs: %s", err),
+		}
+	}
+	if _, err := memDB.ExecuteQuery(`LOAD httpfs`); err != nil {
+		return Dict{
+			"success": false,
+			"msg": fmt.Sprintf("error loading DuckDB httpfs: %s", err),
+		}
+	}
+	// -------------------------------------------------------------------------
+	// S3 configuration
+	// -------------------------------------------------------------------------
+	bucket := strings.TrimSpace(os.Getenv("S3_BACKUP_BUCKET"))
+	region := strings.TrimSpace(os.Getenv("S3_REGION"))
+	endpoint := strings.TrimSpace(os.Getenv("S3_ENDPOINT"))
+	accessKey := os.Getenv("S3_ACCESS_KEY_ID")
+	secretKey := os.Getenv("S3_SECRET_ACCESS_KEY")
+	urlStyle := strings.ToLower(strings.TrimSpace(os.Getenv("S3_URL_STYLE")))
+	if bucket == "" {
+		return Dict{
+			"success": false,
+			"msg":     "S3_BACKUP_BUCKET is not configured",
+		}
+	}
+	if accessKey == "" {
+		return Dict{
+			"success": false,
+			"msg":     "S3_ACCESS_KEY_ID is not configured",
+		}
+	}
+	if secretKey == "" {
+		return Dict{
+			"success": false,
+			"msg":     "S3_SECRET_ACCESS_KEY is not configured",
+		}
+	}
+	if region == "" {
+		region = "us-east-1"
+	}
+	// DuckDB accepts "path" and "vhost".
+	if urlStyle != "" && urlStyle != "path" && urlStyle != "vhost" {
+		return Dict{
+			"success": false,
+			"msg": fmt.Sprintf("invalid S3_URL_STYLE %q, expected path or vhost", urlStyle),
+		}
+	}
+	// -------------------------------------------------------------------------
+	// Create DuckDB S3 secret
+	// -------------------------------------------------------------------------
+	secretSQL := fmt.Sprintf(`
+CREATE OR REPLACE SECRET c7_backup_s3 (
+	TYPE s3,
+	PROVIDER config,
+	KEY_ID %s,
+	SECRET %s,
+	REGION %s
+`, sqlStringLiteral(accessKey), sqlStringLiteral(secretKey), sqlStringLiteral(region))
+	if endpoint != "" {
+		secretSQL += fmt.Sprintf(",\n\tENDPOINT %s\n", sqlStringLiteral(endpoint))
+	}
+	if urlStyle != "" {
+		secretSQL += fmt.Sprintf(",\n\tURL_STYLE %s\n", sqlStringLiteral(urlStyle))
+	}
+	secretSQL += `);`
+	if _, err := memDB.ExecuteQuery(secretSQL); err != nil {
+		return Dict{
+			"success": false,
+			"msg": fmt.Sprintf("error configuring S3 backup credentials: %s", err),
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// One timestamp for the complete backup run.
+	//
+	// Every application backed up during this invocation gets the same
+	// timestamp, making it easy to identify a backup run.
+	// -------------------------------------------------------------------------
+	backupTS := time.Now().UTC().Format("20060102T150405Z")
+	fmt.Printf("Backup started: %s\n", backupTS)
+	// -------------------------------------------------------------------------
+	// Backup every application
+	// -------------------------------------------------------------------------
+	for _, application := range *apps {
+		appName, ok := application["app"].(string)
+		if !ok || appName == "" {
+			fmt.Printf("Skipping application with invalid app name: %v\n", application)
+			continue
+		}
+		fmt.Printf("Backup Start: %s -> %v\n", appName, time.Now())
+		// -------------------------------------------------------------
+		// Get the application's database
+		// -------------------------------------------------------------
+		appDBName, ok := application["db"].(string)
+		if !ok || appDBName == "" {
+			fmt.Printf("Skipping application %s: database name is missing\n", appName)
+			continue
+		}
+		appDSN, dbName, _ := app.GetDBNameFromParams(Dict{"db": appDBName})
+		appDBCon, err := etlx.GetDB(appDSN)
+		if err != nil {
+			return Dict{
+				"success": false,
+				"msg": fmt.Sprintf("error getting the app DB %s: %s", appName, err),
+			}
+		}
+		// Do not defer this inside the loop. Close it after this application
+		// has been backed up.
+		_, appDSN2, _ := app.ParseConnection(appDSN)
+		// -------------------------------------------------------------
+		// Determine source database type.
+		//
+		// This preserves the existing ATTACH behavior.
+		// -------------------------------------------------------------
+		dbType := "(type sqlite)"
+		driver := "sqlite"
+		switch appDBCon.GetDriverName() {
+		case "sqlite3", "sqlite":
+			dbType = "(type sqlite)"
+			driver = "sqlite"
+		case "postgres":
+			dbType = "(type postgres)"
+			driver = "postgres"
+		case "mysql":
+			dbType = "(type mysql)"
+			driver = "mysql"
+		case "odbc":
+			dbType = "(type odbc)"
+			driver = "odbc"
+		case "mssql":
+			dbType = "(type mssql)"
+			driver = "mssql"
+		case "duckdb":
+			dbType = ""
+			driver = "duckdb"
+		}
+		// -------------------------------------------------------------
+		// Attach the application database to DuckDB.
+		// -------------------------------------------------------------
+		attachSQL := fmt.Sprintf(`ATTACH IF NOT EXISTS %s AS %s %s`, sqlStringLiteral(appDSN2), quoteDuckDBIdentifier(dbName), dbType)
+		if _, err := memDB.ExecuteQuery(attachSQL); err != nil {
+			appDBCon.Close()
+			return Dict{
+				"success": false,
+				"msg": fmt.Sprintf("error attaching database %s for application %s: %s", dbName, appName, err),
+			}
+		}
+		// -------------------------------------------------------------
+		// Select the application database.
+		// -------------------------------------------------------------
+		useSQL := fmt.Sprintf(`USE %s`, quoteDuckDBIdentifier(dbName))
+		if _, err := memDB.ExecuteQuery(useSQL); err != nil {
+			memDB.ExecuteQuery(fmt.Sprintf(`DETACH %s`, quoteDuckDBIdentifier(dbName)))
+			appDBCon.Close()
+			return Dict{
+				"success": false,
+				"msg": fmt.Sprintf("error selecting database %s: %s", dbName, err),
+			}
+		}
+		// -------------------------------------------------------------
+		// Build the S3 destination.
+		//
+		// Example:
+		//
+		// s3://c7-backups/my_database/20260821T143500Z/
+		// -------------------------------------------------------------
+		backupPath := fmt.Sprintf("s3://%s/%s/%s/", strings.Trim(bucket, "/"), sanitizeS3PathPart(dbName), backupTS)
+		fmt.Printf("Exporting database %s -> %s\n", dbName, backupPath)
+		// -------------------------------------------------------------
+		// Export the complete DuckDB database as Parquet.
+		//
+		// DuckDB creates its export files under backupPath, including
+		// schema.sql, load.sql and the table parquet files.
+		// -------------------------------------------------------------
+		exportSQL := fmt.Sprintf(`EXPORT DATABASE %s (FORMAT parquet);`, sqlStringLiteral(backupPath))
+		if _, err := memDB.ExecuteQuery(exportSQL); err != nil {
+			// Always detach before returning.
+			memDB.ExecuteQuery(fmt.Sprintf(`DETACH %s`, quoteDuckDBIdentifier(dbName)))
+			appDBCon.Close()
+			return Dict{
+				"success": false,
+				"msg": fmt.Sprintf("error exporting database %s for application %s to S3: %s", dbName, appName, err),
+			}
+		}
+		fmt.Printf("Backup exported: %s -> %s\n", appName, backupPath)
+		// -------------------------------------------------------------
+		// Detach application database.
+		// -------------------------------------------------------------
+		detachSQL := fmt.Sprintf(`DETACH %s`, quoteDuckDBIdentifier(dbName))
+		if _, err := memDB.ExecuteQuery(detachSQL); err != nil {
+			appDBCon.Close()
+			return Dict{
+				"success": false,
+				"msg": fmt.Sprintf("error detaching database %s: %s", dbName, err),
+			}
+		}
+		appDBCon.Close()
+		fmt.Printf("Backup End: %s -> %v\n", appName, time.Now())
+	}
+	// -------------------------------------------------------------------------
+	// Done
+	// -------------------------------------------------------------------------
+	msg, _ := app.i18n.T("success", Dict{})
+	return Dict{
+		"success": true,
+		"msg":     msg,
+	}
+}
+
+func sqlStringLiteral(value string) string {
+	return "'" + strings.ReplaceAll(value, "'", "''") + "'"
+}
+func quoteDuckDBIdentifier(value string) string {
+	return `"` + strings.ReplaceAll(value, `"`, `""`) + `"`
+}
+func sanitizeS3PathPart(value string) string {
+	value = strings.TrimSpace(value)
+	value = strings.ReplaceAll(value, "/", "_")
+	value = strings.ReplaceAll(value, "\\", "_")
+	return value
 }
 
 func (app *application) InsertData(db etlx.DBInterface, table string, data Dict) error {
