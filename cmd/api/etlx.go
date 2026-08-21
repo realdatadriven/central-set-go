@@ -413,21 +413,33 @@ func (app *application) etlxRun(params Dict, ignore bool) Dict {
 			extraConf["file"] = file
 		}
 		if only, ok := _data["clean"].(string); ok {
-			extraConf["only"] = strings.Split(only, ",")
+			elements := strings.Split(only, ",")
+			for i := range elements {
+				elements[i] = strings.TrimSpace(elements[i])
+			}
+			extraConf["only"] = elements
 		} else if only, ok := _data["only"].([]string); ok {
 			extraConf["only"] = only
 		} else if only, ok := _data["only"].([]any); ok {
 			extraConf["only"] = anyToStrings(only)
 		}
 		if skip, ok := _data["skip"].(string); ok {
-			extraConf["skip"] = strings.Split(skip, ",")
+			elements := strings.Split(skip, ",")
+			for i := range elements {
+				elements[i] = strings.TrimSpace(elements[i])
+			}
+			extraConf["skip"] = elements
 		} else if skip, ok := _data["skip"].([]string); ok {
 			extraConf["skip"] = skip
 		} else if skip, ok := _data["skip"].([]any); ok {
 			extraConf["skip"] = anyToStrings(skip)
 		}
 		if steps, ok := _data["steps"].(string); ok {
-			extraConf["steps"] = strings.Split(steps, ",")
+			elements := strings.Split(steps, ",")
+			for i := range elements {
+				elements[i] = strings.TrimSpace(elements[i])
+			}
+			extraConf["steps"] = elements
 		} else if steps, ok := _data["steps"].([]string); ok {
 			extraConf["steps"] = steps
 		} else if steps, ok := _data["steps"].([]any); ok {
