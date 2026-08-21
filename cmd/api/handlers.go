@@ -237,7 +237,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Get the multipart form
 	err := r.ParseMultipartForm(int64(app.config.uploadSize)) // 100MB
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		data := map[string]any{
+			"success": false,
+			"msg":     err.Error(),
+		}
+		err = response.JSON(w, http.StatusOK, data)
 		return
 
 	}
@@ -252,7 +256,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	// get the file
 	file, handler, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		data := map[string]any{
+			"success": false,
+			"msg":     err.Error(),
+		}
+		err = response.JSON(w, http.StatusOK, data)
 		return
 	}
 	defer file.Close()
@@ -299,7 +307,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 		//print("parsed temp bool:", boolTemp, "\n")
 		dst, err = os.CreateTemp("", fileNameNoExt+"-*"+fileExt)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			data = map[string]any{
+				"success": false,
+				"msg":     err.Error(),
+			}
+			err = response.JSON(w, http.StatusOK, data)
 			return
 		}
 		defer dst.Close()
@@ -307,7 +319,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 		_path := fmt.Sprintf("%s%s", fileNameNoExt, fileExt)
 		pathExists, err := app.StorageAPI.Exists(context.Background(), _path)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			data = map[string]any{
+				"success": false,
+				"msg":     err.Error(),
+			}
+			err = response.JSON(w, http.StatusOK, data)
 			return
 		}
 		if pathExists {
@@ -315,7 +331,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 				_path := fmt.Sprintf("%s_%d%s", fileNameNoExt, i, fileExt)
 				pathExists, err = app.StorageAPI.Exists(context.Background(), _path)
 				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
+					data = map[string]any{
+						"success": false,
+						"msg":     err.Error(),
+					}
+					err = response.JSON(w, http.StatusOK, data)
 					return
 				}
 				if !pathExists {
@@ -325,7 +345,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		err = app.StorageAPI.Upload(context.Background(), file, _path)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			data = map[string]any{
+				"success": false,
+				"msg":     err.Error(),
+			}
+			err = response.JSON(w, http.StatusOK, data)
 			return
 		}
 		text, _ := i18n.T("file-success", struct{ File string }{File: _path})
@@ -355,7 +379,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 			dst, err = os.Create(_path)
 		}
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			data = map[string]any{
+				"success": false,
+				"msg":     err.Error(),
+			}
+			err = response.JSON(w, http.StatusOK, data)
 			return
 		}
 		defer dst.Close()
@@ -363,7 +391,11 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	//print(dst.Name(), "\n")
 	// Save the file
 	if _, err := io.Copy(dst, file); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		data = map[string]any{
+			"success": false,
+			"msg":     err.Error(),
+		}
+		err = response.JSON(w, http.StatusOK, data)
 		return
 	}
 	//user := *(contextGetAuthenticatedUser(r))

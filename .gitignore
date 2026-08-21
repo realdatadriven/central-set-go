@@ -55,3 +55,4 @@ database/ADMIN.db
 ui
 parep
 *.test.sql
+keys

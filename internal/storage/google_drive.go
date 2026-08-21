@@ -91,21 +91,26 @@ func (s *GoogleDriveStorage) Upload(ctx context.Context, r io.Reader, name strin
 		_, err = s.service.Files.Create(&drive.File{Name: path.Base(name), Parents: []string{parentID}}).Media(r).SupportsAllDrives(true).Context(ctx).Do()
 	}
 	if err != nil {
+		fmt.Println("GoogleDriveStorage:", name, err)
 		return fmt.Errorf("upload Google Drive file %q: %w", name, err)
 	}
 	return nil
 }
 
 func (s *GoogleDriveStorage) Download(ctx context.Context, name string) (io.ReadCloser, error) {
+	fmt.Println("GoogleDriveStorage:", name)
 	file, err := s.findFile(ctx, name)
 	if err != nil {
+		fmt.Printf("find Google Drive file: %s\n", err)
 		return nil, fmt.Errorf("find Google Drive file: %w", err)
 	}
 	if file == nil {
+		fmt.Printf("Google Drive file %q not found\n", name)
 		return nil, fmt.Errorf("Google Drive file %q not found", name)
 	}
 	result, err := s.service.Files.Get(file.Id).SupportsAllDrives(true).Context(ctx).Download()
 	if err != nil {
+		fmt.Printf("download Google Drive file %q: %s\n", name, err)
 		return nil, fmt.Errorf("download Google Drive file %q: %w", name, err)
 	}
 	return result.Body, nil
