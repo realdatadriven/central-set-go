@@ -56,3 +56,4 @@ ui
 parep
 *.test.sql
 keys
+--static/conf
