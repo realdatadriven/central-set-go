@@ -474,7 +474,7 @@ CREATE OR REPLACE SECRET c7_backup_s3 (
 			"msg":     fmt.Sprintf("error configuring S3 backup credentials: %s", err),
 		}
 	}
-	fmt.Println(secretSQL)
+	// fmt.Println(secretSQL)
 	// -------------------------------------------------------------------------
 	// One timestamp for the complete backup run.
 	//
@@ -543,7 +543,7 @@ CREATE OR REPLACE SECRET c7_backup_s3 (
 		// Attach the application database to DuckDB.
 		// -------------------------------------------------------------
 		attachSQL := fmt.Sprintf(`ATTACH IF NOT EXISTS %s AS %s %s`, sqlStringLiteral(appDSN2), quoteDuckDBIdentifier(dbName), dbType)
-		fmt.Println(attachSQL)
+		// fmt.Println(attachSQL)
 		if _, err := memDB.ExecuteQuery(attachSQL); err != nil {
 			appDBCon.Close()
 			return Dict{
@@ -555,8 +555,9 @@ CREATE OR REPLACE SECRET c7_backup_s3 (
 		// Select the application database.
 		// -------------------------------------------------------------
 		useSQL := fmt.Sprintf(`USE %s`, quoteDuckDBIdentifier(dbName))
-		fmt.Println(useSQL)
+		// fmt.Println(useSQL)
 		if _, err := memDB.ExecuteQuery(useSQL); err != nil {
+			memDB.ExecuteQuery(`USE memory`)
 			memDB.ExecuteQuery(fmt.Sprintf(`DETACH %s`, quoteDuckDBIdentifier(dbName)))
 			appDBCon.Close()
 			return Dict{
@@ -580,7 +581,7 @@ CREATE OR REPLACE SECRET c7_backup_s3 (
 		// schema.sql, load.sql and the table parquet files.
 		// -------------------------------------------------------------
 		exportSQL := fmt.Sprintf(`EXPORT DATABASE %s (FORMAT parquet);`, sqlStringLiteral(backupPath))
-		fmt.Println(exportSQL)
+		// fmt.Println(exportSQL)
 		if _, err := memDB.ExecuteQuery(exportSQL); err != nil {
 			// Always detach before returning.
 			memDB.ExecuteQuery(`USE memory`)
@@ -595,6 +596,7 @@ CREATE OR REPLACE SECRET c7_backup_s3 (
 		// -------------------------------------------------------------
 		// Detach application database.
 		// -------------------------------------------------------------
+		memDB.ExecuteQuery(`USE memory`)
 		detachSQL := fmt.Sprintf(`DETACH %s`, quoteDuckDBIdentifier(dbName))
 		if _, err := memDB.ExecuteQuery(detachSQL); err != nil {
 			appDBCon.Close()
