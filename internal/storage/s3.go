@@ -61,8 +61,10 @@ func (s *S3Storage) key(name string) string {
 }
 
 func (s *S3Storage) Upload(ctx context.Context, r io.Reader, name string) error {
+	// fmt.Println("S3Storage:Upload", name)
 	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{Bucket: aws.String(s.bucket), Key: aws.String(s.key(name)), Body: r})
 	if err != nil {
+		// fmt.Println("S3Storage:Upload", name, err)
 		return fmt.Errorf("s3 upload %q: %w", name, err)
 	}
 	return nil

@@ -44,7 +44,7 @@ func (app *application) run_backup(w http.ResponseWriter, r *http.Request) {
 		data = token
 	} else {
 		params["data"] = Dict{"name": name}
-		data = app.Buckup(params)
+		data = app.Backup(params)
 	}
 	err = response.JSON(w, http.StatusOK, data)
 	if err != nil {
