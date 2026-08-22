@@ -369,6 +369,12 @@ func (app *application) _Buckup(params Dict) Dict {
 }
 
 func (app *application) Backup(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	// -------------------------------------------------------------------------
 	// Get the admin database
 	// -------------------------------------------------------------------------
@@ -481,7 +487,7 @@ CREATE OR REPLACE SECRET c7_backup_s3 (
 	// Every application backed up during this invocation gets the same
 	// timestamp, making it easy to identify a backup run.
 	// -------------------------------------------------------------------------
-	backupTS := time.Now().UTC().Format("20060102T150405Z")
+	backupTS := time.Now().In(loc).UTC().Format("20060102T150405Z")
 	fmt.Printf("Backup started: %s\n", backupTS)
 	// -------------------------------------------------------------------------
 	// Backup every application

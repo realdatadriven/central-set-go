@@ -1,7 +1,7 @@
-# GOVERNANCE_MODEL
+# CATALOG_MODEL
 ```yaml
-name: GOVERNANCE
-description: Metadata and data governance model covering domains, glossary terms, data sources, assets, fields, classifications, and quality rules
+name: CATALOG
+description: Metadata Catalog and data governance model covering domains, glossary terms, data sources, assets, fields, classifications, and quality rules
 runs_as: MODEL
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
@@ -9,7 +9,7 @@ _drop_all: checkfirst
 update_table_metadata: true
 active: true
 cs_app:
-  Governance:
+  Catalog:
     menu_icon: document-check
     menu_order: 1
     active: true
@@ -17,6 +17,7 @@ cs_app:
       - stakeholders
       - business_units
       - domains
+      - subdomains
       - glossary_terms
       - catalog_assets
       - asset_schemas
@@ -107,9 +108,32 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: false
   size: 9
-  allow_in_subform: {glossary_terms: true, catalog_assets: true}
+  allow_in_subform: {subdomains: true, glossary_terms: true, catalog_assets: true, data_assets: true}
 table_layout:
   default_order: [{field: domain_id, order: DESC}]
+```
+
+## SUBDOMAINS
+```yaml
+table: subdomains
+comment: Subdomain
+tooltip: More specific business areas within a domain, such as Customer Identity within the Customer domain.
+columns:
+  subdomain_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the subdomain.", form_display: true, table_display: true, order: 1 }
+  domain_id: { type: integer, fk: "domains.domain_id", nullable: false, comment: "Domain", tooltip: "Foreign key referencing the parent domain.", form_display: true, table_display: true, order: 2 }
+  name: { type: varchar, len: 100, nullable: false, comment: "Name", tooltip: "Name of the subdomain within its parent domain.", form_display: true, table_display: true, order: 3 }
+  description: { type: text, comment: "Description", tooltip: "Detailed description of the subdomain boundary and responsibilities.", form_display: true, table_display: true, order: 4 }
+  user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
+  created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the subdomain was created.", form_display: false, table_display: true }
+  updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the subdomain was last updated.", form_display: false, table_display: true }
+  excluded: { type: boolean, default: false, comment: "Excluded", tooltip: "Flag indicating whether the record is excluded from active use.", form_display: false, table_display: false }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 9
+  allow_in_subform: {catalog_assets: true, data_assets: true}
+table_layout:
+  default_order: [{field: subdomain_id, order: DESC}]
 ```
 
 ## TAG_CATEGORIES
@@ -190,19 +214,20 @@ tooltip: Broad catalog of business and technical assets such as tables, views, s
 columns:
   asset_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the catalog asset.", form_display: true, table_display: true, order: 1 }
   domain_id: { type: integer, fk: "domains.domain_id", comment: "Domain", tooltip: "Foreign key referencing the domain owning this asset.", form_display: true, table_display: true, order: 2 }
-  name: { type: varchar, len: 255, nullable: false, comment: "Name", tooltip: "Display name of the asset.", form_display: true, table_display: true, order: 3 }
-  asset_type: { type: varchar, len: 50, nullable: false, comment: "Type", tooltip: "Asset category such as Table, View, Stream, Pipeline, Dashboard, Topic, or Model.", form_display: true, table_display: true, order: 4 }
-  layer_path: { type: varchar, len: 500, comment: "Layer Path", tooltip: "Logical path of the asset such as snowflake.analytics_prod.finance.fct_revenue or airflow.dags.sync_customer.", form_display: true, table_display: true, order: 5 }
-  description: { type: text, comment: "Description", tooltip: "Business and technical description of the asset.", form_display: true, table_display: true, order: 6 }
-  business_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Business Owner", tooltip: "Foreign key referencing the business owner responsible for the asset.", form_display: true, table_display: true, order: 7 }
-  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the asset.", form_display: true, table_display: true, order: 8 }
-  row_count: { type: integer, comment: "Rows", tooltip: "Latest observed row count for table-like assets.", form_display: true, table_display: true, order: 9 }
-  bytes_size: { type: integer, comment: "Size", tooltip: "Latest observed storage size in bytes for table-like assets.", form_display: true, table_display: true, order: 10 }
-  orchestrator_type: { type: varchar, len: 50, comment: "Orchestrator", tooltip: "Platform used for pipelines such as Airflow, dbt, or Dagster.", form_display: true, table_display: true, order: 11 }
-  schedule_cron: { type: varchar, len: 100, comment: "Schedule", tooltip: "Cron expression for scheduled execution.", form_display: true, table_display: true, order: 12 }
-  code_repo_url: { type: text, comment: "Repo URL", tooltip: "Link to the source code repository for the asset.", form_display: true, table_display: true, order: 13 }
-  bi_tool_type: { type: varchar, len: 50, comment: "BI Tool", tooltip: "Business intelligence tool type such as Tableau, Looker, or PowerBI.", form_display: true, table_display: true, order: 14 }
-  dashboard_url: { type: text, comment: "Dashboard URL", tooltip: "Web link to the dashboard or report.", form_display: true, table_display: true, order: 15 }
+  subdomain_id: { type: integer, fk: "subdomains.subdomain_id", comment: "Subdomain", tooltip: "Foreign key referencing the subdomain owning this asset.", form_display: true, table_display: true, order: 3 }
+  name: { type: varchar, len: 255, nullable: false, comment: "Name", tooltip: "Display name of the asset.", form_display: true, table_display: true, order: 4 }
+  asset_type: { type: varchar, len: 50, nullable: false, comment: "Type", tooltip: "Asset category such as Table, View, Stream, Pipeline, Dashboard, Topic, or Model.", form_display: true, table_display: true, order: 5 }
+  layer_path: { type: varchar, len: 500, comment: "Layer Path", tooltip: "Logical path of the asset such as snowflake.analytics_prod.finance.fct_revenue or airflow.dags.sync_customer.", form_display: true, table_display: true, order: 6 }
+  description: { type: text, comment: "Description", tooltip: "Business and technical description of the asset.", form_display: true, table_display: true, order: 7 }
+  business_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Business Owner", tooltip: "Foreign key referencing the business owner responsible for the asset.", form_display: true, table_display: true, order: 8 }
+  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the asset.", form_display: true, table_display: true, order: 9 }
+  row_count: { type: integer, comment: "Rows", tooltip: "Latest observed row count for table-like assets.", form_display: true, table_display: true, order: 10 }
+  bytes_size: { type: integer, comment: "Size", tooltip: "Latest observed storage size in bytes for table-like assets.", form_display: true, table_display: true, order: 11 }
+  orchestrator_type: { type: varchar, len: 50, comment: "Orchestrator", tooltip: "Platform used for pipelines such as Airflow, dbt, or Dagster.", form_display: true, table_display: true, order: 12 }
+  schedule_cron: { type: varchar, len: 100, comment: "Schedule", tooltip: "Cron expression for scheduled execution.", form_display: true, table_display: true, order: 13 }
+  code_repo_url: { type: text, comment: "Repo URL", tooltip: "Link to the source code repository for the asset.", form_display: true, table_display: true, order: 14 }
+  bi_tool_type: { type: varchar, len: 50, comment: "BI Tool", tooltip: "Business intelligence tool type such as Tableau, Looker, or PowerBI.", form_display: true, table_display: true, order: 15 }
+  dashboard_url: { type: text, comment: "Dashboard URL", tooltip: "Web link to the dashboard or report.", form_display: true, table_display: true, order: 16 }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the catalog asset was registered.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the catalog asset was last updated.", form_display: false, table_display: true }
@@ -247,13 +272,15 @@ tooltip: Tables, views, or streams representing discrete data entities.
 columns:
   asset_id: { type: integer, pk: true, autoincrement: true, comment: "ID", tooltip: "Unique auto-incrementing identifier for the data asset.", form_display: true, table_display: true, order: 1 }
   schema_id: { type: integer, fk: "asset_schemas.schema_id", comment: "Schema", tooltip: "Foreign key referencing the parent schema.", form_display: true, table_display: true, order: 2 }
-  name: { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Name of the table, view, or stream such as dim_customer or fct_monthly_revenue.", form_display: true, table_display: true, order: 3 }
-  asset_type: { type: varchar, len: 50, default: "Table", comment: "Type", tooltip: "Type of asset such as Table, View, Stream, API, or File.", form_display: true, table_display: true, order: 4 }
-  description: { type: text, comment: "Description", tooltip: "Business and technical description of the asset.", form_display: true, table_display: true, order: 5 }
-  business_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Business Owner", tooltip: "Foreign key referencing the business owner responsible for asset data quality and meaning.", form_display: true, table_display: true, order: 6 }
-  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the ETL or pipeline.", form_display: true, table_display: true, order: 7 }
-  row_count: { type: integer, comment: "Rows", tooltip: "Latest observed total row count.", form_display: true, table_display: true, order: 8 }
-  bytes_size: { type: integer, comment: "Size", tooltip: "Latest observed storage size in bytes.", form_display: true, table_display: true, order: 9 }
+  domain_id: { type: integer, fk: "domains.domain_id", comment: "Domain", tooltip: "Foreign key referencing the domain owning this asset.", form_display: true, table_display: true, order: 3 }
+  subdomain_id: { type: integer, fk: "subdomains.subdomain_id", comment: "Subdomain", tooltip: "Foreign key referencing the subdomain owning this asset.", form_display: true, table_display: true, order: 4 }
+  name: { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Name of the table, view, or stream such as dim_customer or fct_monthly_revenue.", form_display: true, table_display: true, order: 5 }
+  asset_type: { type: varchar, len: 50, default: "Table", comment: "Type", tooltip: "Type of asset such as Table, View, Stream, API, or File.", form_display: true, table_display: true, order: 6 }
+  description: { type: text, comment: "Description", tooltip: "Business and technical description of the asset.", form_display: true, table_display: true, order: 7 }
+  business_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Business Owner", tooltip: "Foreign key referencing the business owner responsible for asset data quality and meaning.", form_display: true, table_display: true, order: 8 }
+  technical_owner_id: { type: integer, fk: "stakeholders.stakeholder_id", comment: "Tech Owner", tooltip: "Foreign key referencing the technical owner responsible for the ETL or pipeline.", form_display: true, table_display: true, order: 9 }
+  row_count: { type: integer, comment: "Rows", tooltip: "Latest observed total row count.", form_display: true, table_display: true, order: 10 }
+  bytes_size: { type: integer, comment: "Size", tooltip: "Latest observed storage size in bytes.", form_display: true, table_display: true, order: 11 }
   user_id: { type: integer, comment: "User ID", tooltip: "Identifier of the user who created or updated the record.", form_display: false, table_display: false }
   created_at: { type: datetime, comment: "Created", tooltip: "Timestamp when the asset was registered.", form_display: false, table_display: true }
   updated_at: { type: datetime, comment: "Updated", tooltip: "Timestamp when the asset metadata was last refreshed.", form_display: false, table_display: true }
