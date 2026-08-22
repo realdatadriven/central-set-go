@@ -11,11 +11,11 @@ static/uploads/
 *.db
 *.sqlite
 database/*.db
-ADMIN.db
+--ADMIN.db
 dist
 build
 *.duckdb
-ADMIN.duckdb
+--ADMIN.duckdb
 *.wal
 *.ipynb
 !db.ipynb
@@ -50,7 +50,7 @@ saas_model.md
 !docs/public/install.sh
 c7.service
 saas/
-database/ADMIN.db
+--database/ADMIN.db
 .duckdb
 ui
 parep
