@@ -278,7 +278,7 @@ func (app *application) export_query(params map[string]any) map[string]any {
 	match := regexp.MustCompile(patt).Match([]byte(strings.ReplaceAll(_sql, "\n", " ")))
 	if !match {
 		if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT 'xlsx', HEADER TRUE)`, _sql)
+			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT xlsx, HEADER TRUE)`, _sql)
 		} else {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>'`, _sql)
 		}
@@ -314,7 +314,7 @@ func (app *application) export_query(params map[string]any) map[string]any {
 		}
 	}
 	//fmt.Println(dl)
-	//fmt.Println(_path, _database, _sql)
+	fmt.Println(_path, _database, _sql)
 	db, err := etlx.NewDuckDB("")
 	if err != nil {
 		return map[string]any{
