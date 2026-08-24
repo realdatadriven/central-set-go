@@ -405,8 +405,13 @@ func (app *application) export_query(params map[string]any) map[string]any {
 		// fmt.Println(extensions)
 		if len(extensions) > 0 {
 			for _, ext := range extensions {
-				_sql := fmt.Sprintf(`LOAD %s`, ext.(string))
+				_sql := fmt.Sprintf(`INSTALL %s`, ext.(string))
 				_, err := db.ExecuteQuery(_sql)
+				if err != nil {
+					fmt.Println("EXTENSION", err, _sql)
+				}
+				_sql = fmt.Sprintf(`LOAD %s`, ext.(string))
+				_, err = db.ExecuteQuery(_sql)
 				if err != nil {
 					fmt.Println("EXTENSION", err, _sql)
 				}

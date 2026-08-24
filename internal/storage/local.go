@@ -27,9 +27,11 @@ func NewLocalStorage(root string) (*LocalStorage, error) {
 func NewLocalStorageFromEnv() (*LocalStorage, error) {
 	root := env("STORAGE_LOCAL_PATH")
 	if root == "" {
-		root = "./storage"
+		root = env("UPLOAD")
+		if root == "" {
+			root = "static/uploads"
+		}
 	}
-
 	return NewLocalStorage(root)
 }
 
