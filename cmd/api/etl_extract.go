@@ -99,7 +99,7 @@ func (app *application) duckdb_start(db *etlx.DuckDB, _duck_conf map[string]inte
 		if _db_name_no_ext == "" {
 			_database = fmt.Sprintf(`%s.duckdb`, _database)
 		}
-		_sql := fmt.Sprintf(`ATTACH 'database\%s' AS %s`, _database, _db_name_no_ext)
+		_sql := fmt.Sprintf(`ATTACH IF NOT EXISTS 'database\%s' AS %s`, _database, _db_name_no_ext)
 		_, err := db.ExecuteQuery(_sql)
 		if err != nil {
 			fmt.Println("ATTACH", err, _sql)
@@ -113,7 +113,7 @@ func (app *application) duckdb_start(db *etlx.DuckDB, _duck_conf map[string]inte
 		if _db_name_no_ext == "" {
 			_database = fmt.Sprintf(`%s.db`, _database)
 		}
-		_sql := fmt.Sprintf(`ATTACH 'database\%s' AS %s (TYPE SQLITE)`, _database, _db_name_no_ext)
+		_sql := fmt.Sprintf(`ATTACH IF NOT EXISTS 'database\%s' AS %s (TYPE SQLITE)`, _database, _db_name_no_ext)
 		_, err := db.ExecuteQuery(_sql)
 		if err != nil {
 			fmt.Println("ATTACH", err, _sql)

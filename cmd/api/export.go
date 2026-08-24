@@ -278,7 +278,7 @@ func (app *application) export_query(params map[string]any) map[string]any {
 	match := regexp.MustCompile(patt).Match([]byte(strings.ReplaceAll(_sql, "\n", " ")))
 	if !match {
 		if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT ([]any), "excel"), DRIVER 'xlsx')`, _sql)
+			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>' WITH (FORMAT 'xlsx', HEADER TRUE)`, _sql)
 		} else {
 			_sql = fmt.Sprintf(`COPY (%s) TO '<fname>'`, _sql)
 		}
@@ -304,6 +304,15 @@ func (app *application) export_query(params map[string]any) map[string]any {
 			}
 		}
 	}
+	_duck_conf := map[string]any{}
+	if _, ok := _duck_conf["extensions"]; !ok {
+		_duck_conf["extensions"] = []any{}
+	}
+	if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
+		if !app.contains(_duck_conf["extensions"].([]any), "excel") {
+			_duck_conf["extensions"] = append(_duck_conf["extensions"].([]any), "excel")
+		}
+	}
 	//fmt.Println(dl)
 	//fmt.Println(_path, _database, _sql)
 	db, err := etlx.NewDuckDB("")
@@ -315,7 +324,35 @@ func (app *application) export_query(params map[string]any) map[string]any {
 	}
 	defer db.Close()
 	dl := etlx.NewDuckLakeParser().Parse(_database)
+	c := ParseETLXConn(_database)
 	if dl.IsDuckLake {
+		extensions := []interface{}{}
+		if _, ok := _duck_conf["extensions"]; ok {
+			extensions = _duck_conf["extensions"].([]interface{})
+		}
+		// fmt.Println(extensions)
+		if len(extensions) > 0 {
+			for _, ext := range extensions {
+				_sql := fmt.Sprintf(`LOAD %s`, ext.(string))
+				_, err := db.ExecuteQuery(_sql)
+				if err != nil {
+					fmt.Println("EXTENSION", err, _sql)
+				}
+			}
+		}
+		pragmas_config_sql_start := []interface{}{}
+		if _, ok := _duck_conf["pragmas_config_sql_start"]; ok {
+			pragmas_config_sql_start = _duck_conf["pragmas_config_sql_start"].([]interface{})
+		}
+		if len(pragmas_config_sql_start) > 0 {
+			for _, _sql := range pragmas_config_sql_start {
+				//fmt.Println(_sql)
+				_, err := db.ExecuteQuery(_sql.(string))
+				if err != nil {
+					fmt.Println("START", err, _sql)
+				}
+			}
+		}
 		attach := fmt.Sprintf(`ATTACH %s`, dl.DSN)
 		if dl.HasAttach {
 			attach = _database
@@ -347,17 +384,87 @@ func (app *application) export_query(params map[string]any) map[string]any {
 			db.ExecuteQuery("USE memory")
 			db.ExecuteQuery(fmt.Sprintf(`DETACH %s`, dl.DuckLakeName))
 		}
-	} else {
-		// ATTACH DBS TO THE DUCKDB IN MEM CONN
-		_duck_conf := map[string]any{}
-		if _, ok := _duck_conf["extensions"]; !ok {
-			_duck_conf["extensions"] = []any{}
+		pragmas_config_sql_end := []interface{}{}
+		if _, ok := _duck_conf["pragmas_config_sql_end"]; ok {
+			pragmas_config_sql_end = _duck_conf["pragmas_config_sql_end"].([]interface{})
 		}
-		if app.contains([]any{".xlsx", "xlsx", ".XLSX", "XLSX"}, _format) {
-			if !app.contains(_duck_conf["extensions"].([]any), "excel") {
-				_duck_conf["extensions"] = append(_duck_conf["extensions"].([]any), "excel")
+		if len(pragmas_config_sql_end) > 0 {
+			for _, _sql := range pragmas_config_sql_end {
+				_, err := db.ExecuteQuery(_sql.(string))
+				if err != nil {
+					fmt.Println("END", err, _sql)
+				}
 			}
 		}
+	} else if c.Valid {
+		//fmt.Println(c)
+		extensions := []interface{}{}
+		if _, ok := _duck_conf["extensions"]; ok {
+			extensions = _duck_conf["extensions"].([]interface{})
+		}
+		// fmt.Println(extensions)
+		if len(extensions) > 0 {
+			for _, ext := range extensions {
+				_sql := fmt.Sprintf(`LOAD %s`, ext.(string))
+				_, err := db.ExecuteQuery(_sql)
+				if err != nil {
+					fmt.Println("EXTENSION", err, _sql)
+				}
+			}
+		}
+		pragmas_config_sql_start := []interface{}{}
+		if _, ok := _duck_conf["pragmas_config_sql_start"]; ok {
+			pragmas_config_sql_start = _duck_conf["pragmas_config_sql_start"].([]interface{})
+		}
+		if len(pragmas_config_sql_start) > 0 {
+			for _, _sql := range pragmas_config_sql_start {
+				//fmt.Println(_sql)
+				_, err := db.ExecuteQuery(_sql.(string))
+				if err != nil {
+					fmt.Println("START", err, _sql)
+				}
+			}
+		}
+		_, err = db.ExecuteQuery(c.Attach)
+		if err != nil {
+			return map[string]any{
+				"success": false,
+				"msg":     fmt.Sprintf("Err Exporting: %s", err),
+			}
+		}
+		if c.Name != "" {
+			db.ExecuteQuery(fmt.Sprintf(`USE %s`, c.Name))
+		}
+		//fmt.Println(2, fmt.Sprintf(`USE %s`, c.Name))
+		_, err = db.ExecuteQuery(_sql)
+		if err != nil {
+			if c.Name != "" {
+				db.ExecuteQuery("USE memory")
+				db.ExecuteQuery(fmt.Sprintf(`DETACH %s`, c.Name))
+			}
+			return map[string]any{
+				"success": false,
+				"msg":     fmt.Sprintf("Err Exporting: %s", err),
+			}
+		}
+		if c.Name != "" {
+			db.ExecuteQuery("USE memory")
+			db.ExecuteQuery(fmt.Sprintf(`DETACH %s`, c.Name))
+		}
+		pragmas_config_sql_end := []interface{}{}
+		if _, ok := _duck_conf["pragmas_config_sql_end"]; ok {
+			pragmas_config_sql_end = _duck_conf["pragmas_config_sql_end"].([]interface{})
+		}
+		if len(pragmas_config_sql_end) > 0 {
+			for _, _sql := range pragmas_config_sql_end {
+				_, err := db.ExecuteQuery(_sql.(string))
+				if err != nil {
+					fmt.Println("END", err, _sql)
+				}
+			}
+		}
+	} else {
+		// ATTACH DBS TO THE DUCKDB IN MEM CONN
 		app.duckdb_start(db, _duck_conf, _driver, _database)
 		_, err = db.ExecuteQuery(_sql)
 		if err != nil {
