@@ -161,6 +161,7 @@ type application struct {
 	sizeGuard         *SizeGuard
 	SessionStore      *SessionStore
 	StorageAPI        storage.Storage
+	StorageAPILocal   storage.Storage
 }
 
 func run(logger *slog.Logger) error {
@@ -290,6 +291,13 @@ func run(logger *slog.Logger) error {
 		// return err
 	} else {
 		app.StorageAPI = strg
+	}
+	root := env.GetString("STORAGE_LOCAL_PATH", env.GetString("UPLOAD", "static/uploads"))
+	strgLocal, err := storage.NewLocalStorage(root)
+	if err != nil {
+		fmt.Printf("Error setting up Local Storage: %v\n", err)
+	} else {
+		app.StorageAPILocal = strgLocal
 	}
 	// RATE LIMITING
 	app.rateLimitingEnabled = env.GetBool("RATE_LIMITING", false)

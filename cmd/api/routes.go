@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"mime"
 	"net/http"
@@ -11,8 +10,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/realdatadriven/central-set-go/internal/env"
-	"github.com/realdatadriven/central-set-go/internal/storage"
 	// OPEN TELEMETRY
 	//"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
@@ -66,18 +63,11 @@ func (app *application) StorageAPIHandler(w http.ResponseWriter, r *http.Request
 	}
 	file, err := app.StorageAPI.Download(r.Context(), key)
 	if err != nil {
-		fmt.Println("KEY:", key)
-		root := env.GetString("STORAGE_LOCAL_PATH", env.GetString("UPLOAD", "static/uploads"))
-		strg, err2 := storage.NewLocalStorage(root)
-		if err2 != nil {
+		// fmt.Println("KEY:", key)
+		file, err = app.StorageAPILocal.Download(r.Context(), key)
+		if err != nil {
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
-		} else {
-			file, err2 = strg.Download(r.Context(), key)
-			if err2 != nil {
-				http.Error(w, "File not found", http.StatusNotFound)
-				return
-			}
 		}
 	}
 	defer file.Close()
