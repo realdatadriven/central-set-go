@@ -3,6 +3,7 @@ bin/
 tmp/
 build-errors.log
 static/uploads/
+ADMIN.db
 
 **/uploads
 *.db-wal
@@ -11,15 +12,11 @@ static/uploads/
 *.db
 *.sqlite
 database/*.db
---ADMIN.db
 dist
 build
 *.duckdb
---ADMIN.duckdb
 *.wal
 *.ipynb
-!db.ipynb
-!app.ETLX.ipynb
 *.env
 !static/conf
 *.zip
@@ -50,7 +47,6 @@ saas_model.md
 !docs/public/install.sh
 c7.service
 saas/
---database/ADMIN.db
 .duckdb
 ui
 parep
@@ -59,3 +55,5 @@ keys
 --static/conf
 litestream.yml
 *.ltx
+ADMIN.db
+database/ADMIN.db
