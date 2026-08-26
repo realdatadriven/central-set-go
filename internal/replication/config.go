@@ -3,25 +3,50 @@ package replication
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
-// internal/replication/config.go
 type Config struct {
 	DBs []DBConfig `yaml:"dbs"`
 }
 
 type DBConfig struct {
-	Path    string        `yaml:"path"`
-	Replica ReplicaConfig `yaml:"replica"` // singular now
+	Path      string        `yaml:"path"`      // single-file mode (optional)
+	Dir       string        `yaml:"dir"`        // directory mode
+	Pattern   string        `yaml:"pattern"`
+	Recursive bool          `yaml:"recursive"`
+	Watch     bool          `yaml:"watch"`
+	MetaDir   string        `yaml:"meta-dir"`
+	Replica   ReplicaConfig `yaml:"replica"`
 }
 
 type ReplicaConfig struct {
-	Type   string `yaml:"type"`
-	Bucket string `yaml:"bucket"`
-	Path   string `yaml:"path"`
-	Region string `yaml:"region"`
+	Type           string   `yaml:"type"`
+	Bucket         string   `yaml:"bucket"`
+	Path           string   `yaml:"path"`
+	Region         string   `yaml:"region"`
+	Endpoint       string   `yaml:"endpoint"`
+	ForcePathStyle bool     `yaml:"force-path-style"`
+	SyncInterval   Duration `yaml:"sync-interval"`
+}
+
+// Duration lets us parse YAML strings like "1s" into a time.Duration,
+// since yaml.v3 won't do this for a plain time.Duration field.
+type Duration time.Duration
+
+func (d *Duration) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var s string
+	if err := unmarshal(&s); err != nil {
+		return err
+	}
+	parsed, err := time.ParseDuration(s)
+	if err != nil {
+		return fmt.Errorf("parsing duration %q: %w", s, err)
+	}
+	*d = Duration(parsed)
+	return nil
 }
 
 func LoadConfig(path string) (*Config, error) {

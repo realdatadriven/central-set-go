@@ -58,3 +58,4 @@ parep
 keys
 --static/conf
 litestream.yml
+*.ltx

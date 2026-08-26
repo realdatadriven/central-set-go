@@ -7,18 +7,18 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"os/signal"
+	//"os/signal"
 	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
-	"syscall"
+	//"syscall"
 	"time"
 
 	"github.com/realdatadriven/central-set-go/internal/auth"
 	"github.com/realdatadriven/central-set-go/internal/env"
-	"github.com/realdatadriven/central-set-go/internal/replication"
+	//"github.com/realdatadriven/central-set-go/internal/replication"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
 	"github.com/realdatadriven/central-set-go/internal/storage"
 	"github.com/realdatadriven/central-set-go/internal/version"
@@ -251,6 +251,25 @@ func run(logger *slog.Logger) error {
 			return fmt.Errorf("failed to create embedded db path: %w", err)
 		}
 	}
+	/*/ SQLITE REPLICATION / LITESTREM
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	var ls *replication.Manager
+	if replication.Enabled() {
+		var err error
+		ls, err = replication.Start(ctx)
+		if err != nil {
+			fmt.Printf("litestream: %v", err)
+		}
+		defer func() {
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			if err := ls.Close(shutdownCtx); err != nil {
+				fmt.Printf("litestream: close error: %v", err)
+			}
+		}()
+	}
+	<-ctx.Done()*/
 	//db, err := database.New(cfg.db.driverName, cfg.db.dsn, cfg.db.automigrate)
 	db, err := etlx.New(cfg.db.driverName, cfg.db.dsn)
 	//db, err := etlx.GetDB(cfg.db.driverName)
@@ -495,25 +514,6 @@ func run(logger *slog.Logger) error {
 			}
 		}()
 	}
-	// SQLITE REPLICATION / LITESTREM
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-	var ls *replication.Manager
-	if replication.Enabled() {
-		var err error
-		ls, err = replication.Start(ctx)
-		if err != nil {
-			fmt.Printf("litestream: %v\n", err)
-		}
-		defer func() {
-			shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-			defer cancel()
-			if err := ls.Close(shutdownCtx); err != nil {
-				fmt.Printf("litestream: close error: %v\n", err)
-			}
-		}()
-	}
-	<-ctx.Done()
 	app.SessionStore = &SessionStore{}
 	return app.serveHTTP()
 }
