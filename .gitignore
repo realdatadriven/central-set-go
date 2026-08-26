@@ -57,3 +57,4 @@ parep
 *.test.sql
 keys
 --static/conf
+litestream.yml

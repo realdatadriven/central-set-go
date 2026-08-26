@@ -7,15 +7,18 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/signal"
 	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/realdatadriven/central-set-go/internal/auth"
 	"github.com/realdatadriven/central-set-go/internal/env"
+	"github.com/realdatadriven/central-set-go/internal/replication"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
 	"github.com/realdatadriven/central-set-go/internal/storage"
 	"github.com/realdatadriven/central-set-go/internal/version"
@@ -492,6 +495,25 @@ func run(logger *slog.Logger) error {
 			}
 		}()
 	}
+	// SQLITE REPLICATION / LITESTREM
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	var ls *replication.Manager
+	if replication.Enabled() {
+		var err error
+		ls, err = replication.Start(ctx)
+		if err != nil {
+			fmt.Printf("litestream: %v\n", err)
+		}
+		defer func() {
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			if err := ls.Close(shutdownCtx); err != nil {
+				fmt.Printf("litestream: close error: %v\n", err)
+			}
+		}()
+	}
+	<-ctx.Done()
 	app.SessionStore = &SessionStore{}
 	return app.serveHTTP()
 }
