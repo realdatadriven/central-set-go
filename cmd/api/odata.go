@@ -829,7 +829,7 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	if table == "$metadata" {
 		app.odata_api_metadata(w, r)
 		return
-	} else if isXMLMetadataRequest(r) {
+	} /*else if isXMLMetadataRequest(r) {
 		sql := `select * from "table_schema" where lower("db") = ? and "table" = ? and "excluded" = false`
 		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
 		if err != nil {
@@ -855,21 +855,11 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(_res)
 			return
 		}
-		/*/fmt.Println(xml)
-		url := "http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery)
-		xml = fmt.Sprintf(`<?xml version="1.0" encoding="utf-8"?>
-		<feed xmlns="http://www.w3.org/2005/Atom"
-		      xmlns:d="http://docs.oasis-open.org/odata/ns/data"
-		      xmlns:m="http://docs.oasis-open.org/odata/ns/metadata">
-		  <title type="text">%s</title>
-		  <id>%s</id>
-		</feed>`, table, url)*/
-		//w.Header().Set("Content-Type", "application/xml")
 		w.Header().Set("Content-Type", "application/xml;charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(xml))
 		return
-	}
+	}*/
 	sql := `select * from app where (lower(app) = ? or lower(db) = ?) and excluded = false`
 	_app, err := app.AdminGetRowByFilter(sql, []any{strings.ToLower(db), strings.ToLower(db)})
 	if err != nil {
