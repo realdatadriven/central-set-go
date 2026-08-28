@@ -62,7 +62,7 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 	}
 	port, ok := config["port"]
 	if !ok {
-		port = "9494"
+		port = 9494
 	}
 	token, ok := config["token"]
 	allowOtherHostnames, ok := config["allow_other_hostnames"]
@@ -77,10 +77,12 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 		}
 	}
 	// port , token
-	sql := fmt.Sprintf("CALL quack_serve('quack:%s:%s', token => '%s', allow_other_hostname => %s, disable_ssl => %s);", host, port, token, allowOtherHostnames, disableSSL)
+	sql := fmt.Sprintf("CALL quack_serve('quack:%s:%d', token => '%s', allow_other_hostname => %s, disable_ssl => %s);", host, toInt(port), token, allowOtherHostnames, disableSSL)
+	fmt.Println(sql)
 	if _, err := conn.ExecuteQuery(sql); err != nil {
+		fmt.Println(sql)
 		conn.Close()
-		return fmt.Errorf("Quack start failed: %w", err)
+		return fmt.Errorf("Quack start failed: %s %w", sql, err)
 	}
 	// Execute startup SQL (e.g., "INSTALL SQLITE; LOAD SQLITE;")
 	if config["startup_sql"] != "" {
@@ -138,9 +140,9 @@ func (qm *QuackManager) StopQuackServer(ctx context.Context, quackServerID int) 
 	}
 	port, ok := config["port"]
 	if !ok {
-		port = "9494"
+		port = 9494
 	}
-	sql := fmt.Sprintf("CALL quack_stop('quack:%s:%s');", host, port)
+	sql := fmt.Sprintf("CALL quack_stop('quack:%s:%d');", host, toInt(port))
 	if _, err := conn.ExecuteQuery(sql); err != nil {
 		conn.Close()
 		return fmt.Errorf("Stop quack failed: %w", err)
