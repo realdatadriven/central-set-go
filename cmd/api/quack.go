@@ -52,7 +52,36 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 	if err != nil {
 		return fmt.Errorf("failed to create in-memory duckdb connection: %w", err)
 	}
-
+	_, err = conn.ExecuteQuery("INSTALL quack", []any{}...)
+	if err != nil {
+		return fmt.Errorf("INSTALL quack: %s", err)
+	}
+	host, ok := config["host"]
+	if !ok {
+		host = "localhost"
+	}
+	port, ok := config["port"]
+	if !ok {
+		port = "9494"
+	}
+	token, ok := config["token"]
+	allowOtherHostnames, ok := config["allow_other_hostnames"]
+	if !ok {
+		allowOtherHostnames = "false"
+	}
+	disableSSL, ok := config["disable_ssl"]
+	if !ok {
+		disableSSL, ok = config["DISABLE_SSL"]
+		if !ok {
+			disableSSL = "false"
+		}
+	}
+	// port , token
+	sql := fmt.Sprintf("CALL quack_serve('quack:%s:%s', token => '%s', allow_other_hostname => %s, disable_ssl => %s);", host, port, token, allowOtherHostnames, disableSSL)
+	if _, err := conn.ExecuteQuery(sql); err != nil {
+		conn.Close()
+		return fmt.Errorf("Quack start failed: %w", err)
+	}
 	// Execute startup SQL (e.g., "INSTALL SQLITE; LOAD SQLITE;")
 	if config["startup_sql"] != "" {
 		if err := qm.executeSQL(conn, config["startup_sql"].(string)); err != nil {
@@ -60,7 +89,6 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 			return fmt.Errorf("startup sql failed: %w", err)
 		}
 	}
-
 	// Execute main SQL (e.g., "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;")
 	if config["main_sql"] != "" {
 		if err := qm.executeSQL(conn, config["main_sql"].(string)); err != nil {
@@ -68,24 +96,19 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 			return fmt.Errorf("attach sql failed: %w", err)
 		}
 	}
-
-	// Register the token validation UDF for this server
+	/*/ Register the token validation UDF for this server
 	if err := qm.registerCheckTokenUDF(conn, config); err != nil {
 		conn.Close()
 		return fmt.Errorf("failed to register check token udf: %w", err)
-	}
-
+	}*/
 	// Store in pool
 	qm.pool[quackServerID] = conn
-
 	// Cache config
 	qm.configMu.Lock()
 	qm.quackConfigs[quackServerID] = config
 	qm.configMu.Unlock()
-
 	// Log startup in quack_logs table
 	// qm.logQuackEvent(quackServerID, "startup", "online", int64(config["port"].(float64))), "Server started successfully", true)
-
 	return nil
 }
 
@@ -107,6 +130,20 @@ func (qm *QuackManager) StopQuackServer(ctx context.Context, quackServerID int) 
 			// Log but don't fail shutdown
 			// // qm.logQuackEvent(quackServerID, "shutdown", "error", int64(config["port"].(float64))), fmt.Sprintf("Shutdown error: %v", err), false)
 		}
+	}
+	config = qm.quackConfigs[quackServerID]
+	host, ok := config["host"]
+	if !ok {
+		host = "localhost"
+	}
+	port, ok := config["port"]
+	if !ok {
+		port = "9494"
+	}
+	sql := fmt.Sprintf("CALL quack_stop('quack:%s:%s');", host, port)
+	if _, err := conn.ExecuteQuery(sql); err != nil {
+		conn.Close()
+		return fmt.Errorf("Stop quack failed: %w", err)
 	}
 	// Close connection
 	conn.Close()

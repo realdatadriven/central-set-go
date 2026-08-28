@@ -84,7 +84,7 @@ cs_app:
   Quack:
     menu_icon: bolt
     menu_order: 4
-    active: false
+    active: true
     tables:
       - {table: quack_server, requires_rla: true, active: true}
       - {table: quack_logs, active: false}
