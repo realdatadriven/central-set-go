@@ -155,6 +155,7 @@ columns:
   page_title:       { type: varchar, len: 255, nullable: false, comment: "Title", form_display: true, table_display: true, form_size: 4, order: 3 }
   meta_description: { type: text, comment: "SEO Description", form_display: true, form_long_text: false, order: 6, form_size: 8 }
   page_template:    { type: text, nullable: false, comment: "Page Template", form_display: true, form_long_text: true, form_code: html, order: 10 }
+  response_tmpl     { type: text, nullable: false, comment: "Response Template", form_display: true, form_long_text: true, form_code: html, order: 11 }
   cache_seconds:    { type: integer, default: 0, comment: "Public Cache Seconds", form_display: true, table_display: true, form_size: 2, order: 7 }
   default_page:     { type: boolean, default: true, comment: "Default Page", form_display: true, table_display: true, form_size: 2, order: 8 }
   login_required:   { type: boolean, default: false, comment: "Requires Login", form_display: true, table_display: true, form_size: 2, order: 9 }
@@ -173,6 +174,7 @@ form_layout:
   tabs_steps_conf:
     - {label: Page, fields: [ui, page_key, page_title, meta_description, cache_seconds, default_page, login_required, active]}
     - {label: Template, fields: [page_template]}
+    - {label: Response Template, fields: [response_tmpl]}
 table_layout:
   default_order: [{field: ui_page_id, order: DESC}]
 ```
@@ -514,6 +516,11 @@ data:
   page_title: Sign Up - RealDataDriven
   meta_description: Sign Up to your RealDataDriven account
   page_template: FileContent(ui/auth/design-2-signup.html)
+  response_tmpl: |
+    <div role="alert"
+        class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+        <span>{{ .msg }}</span>
+    </div>
   cache_seconds: 0
   default_page: false
   active: true

@@ -232,8 +232,11 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /crud/{db}/{table}", app.crud_api_handler)
 	mux.HandleFunc("POST /crud/{db}/{table}/", app.crud_api_handler)
 	mux.HandleFunc("PUT /crud/{db}/{table}/{id}", app.crud_api_handler)
+	mux.HandleFunc("PUT /crud/{db}/{table}/{id}/", app.crud_api_handler)
 	mux.HandleFunc("PATCH /crud/{db}/{table}/{id}", app.crud_api_handler)
+	mux.HandleFunc("PATCH /crud/{db}/{table}/{id}/", app.crud_api_handler)
 	mux.HandleFunc("DELETE /crud/{db}/{table}/{id}", app.crud_api_handler)
+	mux.HandleFunc("DELETE /crud/{db}/{table}/{id}/", app.crud_api_handler)
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
 	/*/ OPEN TELEMETRY

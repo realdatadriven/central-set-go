@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/response"
 	"github.com/realdatadriven/etlx"
 )
@@ -88,6 +89,8 @@ func (app *application) getPKFromSchema(db, table string) (string, error) {
 
 func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request) {
 	crud := app.crud_api(w, r)
+	ui := r.URL.Query().Get("ui")
+	page := r.URL.Query().Get("page")
 	contentType := strings.ToLower(r.Header.Get("Content-Type"))
 	if strings.Contains(contentType, "application/json") {
 		if err := response.JSON(w, http.StatusOK, crud); err != nil {
@@ -95,10 +98,39 @@ func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request)
 		}
 	} else {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		var pageData Dict
+		var err error
+		if ui != "" && page != "" {
+			sql := `select p.* 
+			from ui_page p
+			join ui on ui.ui_id = p.ui_id
+			where p.page_key = ? and p.active = true and p.excluded = false
+				and (ui.ui_slug = ? or ui.ui_name = ?) and ui.active = true and ui.excluded = false`
+			params := Dict{
+				"lang": "en",
+				"data": Dict{
+					"db": env.GetString("UIDB", "UI"),
+				},
+			}
+			params["ip"] = ClientIP(r)
+			pageData, err = app.GetRowByFilter(sql, params, []any{page, ui, ui})
+			if err != nil {
+				fmt.Println("Error geting page response template:", err)
+			}
+		}
 		if success, ok := crud["success"].(bool); ok && !success {
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			w.WriteHeader(http.StatusOK)
+		}
+		if response_tmpl, ok := pageData["response_tmpl"].(string); ok && response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, crud)
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				fmt.Fprintf(w, `%s`, template.HTMLEscapeString(res))
+				return
+			}
 		}
 		fmt.Fprintf(w, `%s`, template.HTMLEscapeString(crud["msg"].(string)))
 	}
