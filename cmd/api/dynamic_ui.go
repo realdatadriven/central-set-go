@@ -559,6 +559,10 @@ func (app *application) toTime(v any) (time.Time, bool) {
 
 func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
+	page := r.URL.Query().Get("page")
+	if page == "" {
+		page = "login"
+	}
 	_, err := app.getUser(r)
 	if err == nil {
 		if r.Header.Get("HX-Request") == "true" {
@@ -588,13 +592,39 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusNotFound, fmt.Sprintf("ui %q not found", uiSlug))
 		return
 	}
+	sql = `select p.* 
+	from ui_page p
+	where p.page_key = ? and p.active = true and p.excluded = false and p.ui_id = ?`
+	pageData, err := app.GetRowByFilter(sql, params, []any{page, ui["ui_id"]})
+	if err != nil {
+		fmt.Println("Error geting page response template:", err)
+	}
+	response_tmpl, _ := pageData["response_tmpl"].(string)
 	if err := r.ParseForm(); err != nil {
+		if response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Invalid form submission."})
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				fmt.Fprint(w, res)
+				return
+			}
+		}
 		app.writeHTMLError(w, http.StatusBadRequest, "Invalid form submission.")
 		return
 	}
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
 	if email == "" || password == "" {
+		if response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Email and password are required."})
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				fmt.Fprint(w, res)
+				return
+			}
+		}
 		app.writeHTMLError(w, http.StatusBadRequest, "Email and password are required.")
 		return
 	}
@@ -610,6 +640,15 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println(msg)
 		if msg == "" {
 			msg = "Invalid email or password."
+		}
+		if response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": msg})
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				fmt.Fprint(w, res)
+				return
+			}
 		}
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return

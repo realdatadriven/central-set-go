@@ -585,7 +585,7 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			username_field := os.Getenv("DYN_LOGIN_USERNAME_FIELD")
 			email_field := os.Getenv("DYN_LOGIN_EMAIL_FIELD")
 			//password_field := os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
-			active_field := os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
+			//active_field := os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
 			if login_table == "" {
 				msg, _ := app.i18n.T("login-table-required", Dict{})
 				return Dict{
@@ -651,19 +651,20 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				last_name = _data[username_field].(string)
 			}
 			_data_user := Dict{
-				"username":   username,
-				"first_name": first_name,
-				"last_name":  last_name,
-				"email":      _data[email_field],
-				"role_id":    dyn_login_role_id,
-				"password":   pass,
-				"active":     _data[active_field],
-				"created_at": time.Now().In(loc),
-				"updated_at": time.Now().In(loc),
-				"excluded":   false,
+				"username":             username,
+				"first_name":           first_name,
+				"last_name":            last_name,
+				"email":                _data[email_field],
+				"role_id":              dyn_login_role_id,
+				"password":             pass,
+				"active":               false, //_data[active_field],
+				"alter_pass_nxt_login": true,
+				"created_at":           time.Now().In(loc),
+				"updated_at":           time.Now().In(loc),
+				"excluded":             false,
 			}
-			query_user := fmt.Sprintf(`INSERT INTO "users" ("username", "first_name", "last_name", "email", "role_id", "password", "active", "created_at", "updated_at", "excluded") 
-			VALUES (:username, :first_name, :last_name, :email, :role_id, :password, :active, :created_at, :updated_at, :excluded)`)
+			query_user := fmt.Sprintf(`INSERT INTO "users" ("username", "first_name", "last_name", "email", "role_id", "password", "active", "alter_pass_nxt_login", "created_at", "updated_at", "excluded") 
+			VALUES (:username, :first_name, :last_name, :email, :role_id, :password, :active, :alter_pass_nxt_login, :created_at, :updated_at, :excluded)`)
 			_, err = app.db.ExecuteNamedQuery(query_user, _data_user)
 			if err != nil {
 				fmt.Println("Error creating user for login table mapping:", table, err)

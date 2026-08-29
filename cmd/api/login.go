@@ -1264,7 +1264,11 @@ func (app *application) confirm_emmail(params Dict) Dict {
 			"msg":     err.Error(),
 		}
 	}
-	resetLink := fmt.Sprintf("%s/confirm-email?token=%s", app.config.frontend_url, string(jwtBytes))
+	redirectUrl, _ := params["host"].(string)
+	if redirect_path, ok := _data["redirect_path"].(string); ok && redirectUrl != "" {
+		redirectUrl += redirect_path
+	}
+	resetLink := fmt.Sprintf("%s/confirm-email?token=%s&redirect=%s", app.config.frontend_url, string(jwtBytes), redirectUrl)
 	_etlx := etlx.ETLX{}
 	bodyTemplate := `
 		<p>Hi {{.first_name}},</p>
@@ -1770,6 +1774,16 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 		http.Redirect(w, r, "/", http.StatusFound)
 	}*/
 	redirectRootHandler(w, r)
+}
+
+func getRootUrl(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	} else if forward := r.Header.Get("X-Forwarded-Proto"); forward != "" {
+		scheme = forward
+	}
+	return fmt.Sprintf("%s://%s%s", scheme, r.Host, r.URL.Path)
 }
 
 func redirectRootHandler(w http.ResponseWriter, r *http.Request) {

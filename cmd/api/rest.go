@@ -112,6 +112,8 @@ func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request)
 					"db": env.GetString("UIDB", "UI"),
 				},
 			}
+			params["host"] = r.Host
+			params["path"] = r.URL.Path
 			params["ip"] = ClientIP(r)
 			pageData, err = app.GetRowByFilter(sql, params, []any{page, ui, ui})
 			if err != nil {
@@ -186,6 +188,8 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 			"pathParams": pathParams,
 		},
 	}
+	params["host"] = r.Host
+	params["path"] = r.URL.Path
 	params["ip"] = ClientIP(r)
 	loc := app.getLocationFromRequest(r, params)
 	params["location"] = loc

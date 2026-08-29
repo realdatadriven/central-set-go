@@ -500,6 +500,11 @@ data:
   page_title: Log in - RealDataDriven
   meta_description: Log in to your RealDataDriven account
   page_template: FileContent(ui/auth/design-2-login.html)
+  response_tmpl: |
+    <div role="alert"
+        class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+        <span>{{ .msg }}</span>
+    </div>
   cache_seconds: 0
   default_page: false
   active: true
