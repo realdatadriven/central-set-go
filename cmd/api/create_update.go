@@ -646,14 +646,14 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 			}
 			last_name := ""
 			if last_name == "" && len(strings.Split(_data[username_field].(string), " ")) > 1 {
-				last_name = strings.Split(_data[username_field].(string), " ")[1]
+				last_name = strings.Split(_data[username_field].(string), " ")[len(strings.Split(_data[username_field].(string), " "))-1]
 			} else if last_name == "" {
 				last_name = _data[username_field].(string)
 			}
 			_data_user := Dict{
 				"username":   username,
-				"first_name": _data[username_field],
-				"last_name":  _data[username_field],
+				"first_name": first_name,
+				"last_name":  last_name,
 				"email":      _data[email_field],
 				"role_id":    dyn_login_role_id,
 				"password":   pass,
