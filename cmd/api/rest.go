@@ -128,7 +128,7 @@ func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request)
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
-				fmt.Fprintf(w, `%s`, template.HTMLEscapeString(res))
+				fmt.Fprint(w, res)
 				return
 			}
 		}
