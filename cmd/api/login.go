@@ -348,7 +348,6 @@ func (app *application) dynamic_signup(params Dict) Dict {
 	if _, ok := _data[username_field].(string); ok {
 		username = _data[username_field].(string)
 	} else if _, ok := _data[email_field].(string); ok {
-
 		username = _data[email_field].(string)
 	} else if _, ok := _data["username"].(string); ok {
 		username = _data["username"].(string)

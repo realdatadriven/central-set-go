@@ -393,9 +393,9 @@ WHERE at.crud_action_id = ? AND at.excluded = false AND ca.excluded = false
 				parallel, ok := c_ation_trigger["parallel"].(bool)
 				if parallel && ok {
 					go func() {
-						err := app.RunCrudAction(params, c_ation_trigger, _data) //actionRunner(c_ation_trigger)
-						if err != nil {
-							fmt.Printf("Error runing the action: %s triggered by %s -> %v\n", c_ation_trigger["crud_action_code"], c_ation_trigger["main_action"], err.Error())
+						goerr := app.RunCrudAction(params, c_ation_trigger, _data) //actionRunner(c_ation_trigger)
+						if goerr != nil {
+							fmt.Printf("Error runing the action: %s triggered by %s -> %v\n", c_ation_trigger["crud_action_code"], c_ation_trigger["main_action"], goerr.Error())
 						}
 					}()
 				} else {

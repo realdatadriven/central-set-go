@@ -283,11 +283,6 @@ data:
   ui_desc: Minimal example used to test one page with header/footer partials
   default_locale: en
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PARTIAL_HEADER
@@ -309,11 +304,6 @@ data:
       </nav>
     </header>
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PARTIAL_FOOTER
@@ -331,11 +321,6 @@ data:
       &copy; {{.UI.ui_name}} &middot; built with central-set-go
     </footer>
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PAGE_HOME
@@ -362,11 +347,6 @@ data:
   cache_seconds: 0
   default_page: true
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 -->
 
@@ -391,11 +371,6 @@ data:
   ui_desc: Data engineering consulting - ETL/ELT/Reverse ETL, warehouses, lakehouses, and open-source-backed SaaS
   default_locale: en
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PARTIAL_HEADER
@@ -410,11 +385,6 @@ data:
   ui_partial_desc: Sticky navbar with brand and section links
   partial_template: FileContent(ui/parts/header.html)
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PARTIAL_FOOTER
@@ -429,11 +399,6 @@ data:
   ui_partial_desc: Footer with open-source links and copyright
   partial_template: FileContent(ui/parts/footer.html)
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PARTIAL_CRUD
@@ -448,11 +413,6 @@ data:
   ui_partial_desc: Crud with open-source links and copyright
   partial_template: FileContent(ui/parts/general_crud.html)
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
   children:
     table: ui_partial_data
     data:
@@ -509,11 +469,6 @@ data:
   cache_seconds: 60
   default_page: true
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PAGE_DASH
@@ -530,11 +485,6 @@ data:
   cache_seconds: 60
   default_page: true
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
 ```
 
 ## UI_PAGE_LOGIN
@@ -551,11 +501,22 @@ data:
   cache_seconds: 0
   default_page: false
   active: true
-  user_id: 1
-  app_id: appId()
-  created_at: Now()
-  updated_at: Now()
-  excluded: false
+```
+
+## UI_PAGE_SIGNUP
+```yaml
+table: ui_page
+description: Add the signup page (page_key "signup" -> GET /ui/rdd/signup)
+cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+data:
+  ui_id: 1
+  page_key: signup
+  page_title: Sign Up - RealDataDriven
+  meta_description: Sign Up to your RealDataDriven account
+  page_template: FileContent(ui/auth/design-2-signup.html)
+  cache_seconds: 0
+  default_page: false
+  active: true
 ```
 
 ## UI_ASSET_EX
