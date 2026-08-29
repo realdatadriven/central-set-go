@@ -155,7 +155,7 @@ columns:
   page_title:       { type: varchar, len: 255, nullable: false, comment: "Title", form_display: true, table_display: true, form_size: 4, order: 3 }
   meta_description: { type: text, comment: "SEO Description", form_display: true, form_long_text: false, order: 6, form_size: 8 }
   page_template:    { type: text, nullable: false, comment: "Page Template", form_display: true, form_long_text: true, form_code: html, order: 10 }
-  response_tmpl     { type: text, nullable: false, comment: "Response Template", form_display: true, form_long_text: true, form_code: html, order: 11 }
+  response_tmpl:    { type: text, comment: "Response Template", form_display: true, form_long_text: true, form_code: html, order: 11 }
   cache_seconds:    { type: integer, default: 0, comment: "Public Cache Seconds", form_display: true, table_display: true, form_size: 2, order: 7 }
   default_page:     { type: boolean, default: true, comment: "Default Page", form_display: true, table_display: true, form_size: 2, order: 8 }
   login_required:   { type: boolean, default: false, comment: "Requires Login", form_display: true, table_display: true, form_size: 2, order: 9 }

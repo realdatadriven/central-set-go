@@ -634,8 +634,24 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				msg, _ := app.i18n.T("password-hash-error", Dict{})
 				return Dict{"success": false, "msg": msg}
 			}
+			username, _ := _data[email_field].(string)
+			if len(strings.Split(username, "@")) > 1 {
+				username = strings.Split(username, "@")[0]
+			}
+			first_name := ""
+			if first_name == "" && len(strings.Split(_data[username_field].(string), " ")) > 1 {
+				first_name = strings.Split(_data[username_field].(string), " ")[0]
+			} else if first_name == "" {
+				first_name = _data[username_field].(string)
+			}
+			last_name := ""
+			if last_name == "" && len(strings.Split(_data[username_field].(string), " ")) > 1 {
+				last_name = strings.Split(_data[username_field].(string), " ")[1]
+			} else if last_name == "" {
+				last_name = _data[username_field].(string)
+			}
 			_data_user := Dict{
-				"username":   _data[username_field],
+				"username":   username,
 				"first_name": _data[username_field],
 				"last_name":  _data[username_field],
 				"email":      _data[email_field],
