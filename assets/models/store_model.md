@@ -51,13 +51,6 @@ cs_app:
     active: true
     tables:
       - promo_code
-  Automation:
-    menu_icon: sparkles
-    menu_order: 6
-    active: true
-    tables:
-      - crud_action
-      - action_trigger_action
   Settings:
     menu_icon: cog
     menu_order: 7

@@ -557,7 +557,7 @@ func (app *application) toTime(v any) (time.Time, bool) {
 	return time.Time{}, false
 }
 
-func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
+func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 	uiSlug := r.PathValue("ui_slug")
 	_, err := app.getUser(r)
 	if err == nil {
@@ -614,36 +614,7 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return
 	}
-	token, _ := res["token"].(string)
-	if os.Getenv("COOKIE_MODE") == "TOKEN" {
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session",
-			Value:    token,
-			Path:     "/",
-			Expires:  time.Now().Add(30 * time.Minute),
-			HttpOnly: true, // Prevents XSS attacks
-			Secure:   true, // Forces HTTPS
-			SameSite: http.SameSiteStrictMode,
-		})
-	} else {
-		// 2. Generate a unique session ID
-		sessionID := generateSessionID()
-		// 3. Save user data to the server-side store
-		_data := res["data"].(Dict)
-		_data["token"] = token
-		// fmt.Println("Loggedin SessionID", sessionID)
-		app.SessionStore.data.Store(sessionID, _data)
-		// 4. Issue the session cookie to the client
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_id",
-			Value:    sessionID,
-			Path:     "/",
-			Expires:  time.Now().Add(30 * time.Minute),
-			HttpOnly: true, // Prevents XSS attacks
-			Secure:   true, // Forces HTTPS
-			SameSite: http.SameSiteStrictMode,
-		})
-	}
+	app.startUISession(w, res)
 	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 	// w.WriteHeader(http.StatusOK)
 	if r.Header.Get("HX-Request") == "true" {
@@ -652,6 +623,178 @@ func (app *application) serve_ui_login(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
 	}
+}
+
+// startUISession persists the authenticated result returned by _login or
+// two_factor_code_valid and issues the matching UI session cookie.
+func (app *application) startUISession(w http.ResponseWriter, res Dict) {
+	token, _ := res["token"].(string)
+	if os.Getenv("COOKIE_MODE") == "TOKEN" {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session",
+			Value:    token,
+			Path:     "/",
+			Expires:  time.Now().Add(30 * time.Minute),
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteStrictMode,
+		})
+		return
+	}
+
+	sessionID := generateSessionID()
+	user, _ := res["data"].(Dict)
+	user["token"] = token
+	app.SessionStore.data.Store(sessionID, user)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * time.Minute),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
+}
+
+// uiFormParams turns an HTML form submission into the params shape consumed by
+// the existing authentication actions. r.Form deliberately includes query
+// parameters so reset-password links can keep their token in the URL.
+func (app *application) uiFormParams(w http.ResponseWriter, r *http.Request) (Dict, bool) {
+	if err := r.ParseForm(); err != nil {
+		app.writeHTMLError(w, http.StatusBadRequest, "Invalid form submission.")
+		return nil, false
+	}
+	data := Dict{
+		"db":      env.GetString("UIDB", "UI"),
+		"ui_slug": r.PathValue("ui_slug"),
+	}
+	for key, values := range r.Form {
+		if len(values) > 0 {
+			data[key] = values[0]
+		}
+	}
+	lang, _ := data["lang"].(string)
+	if lang == "" {
+		lang = "en"
+	}
+	params := Dict{"lang": lang, "data": data}
+	params["ip"] = ClientIP(r)
+	return params, true
+}
+
+// ensureUIExists keeps auth form endpoints scoped to an active UI, just as
+// ui_login does before it invokes the login action.
+func (app *application) ensureUIExists(w http.ResponseWriter, uiSlug string, params Dict) bool {
+	sql := `select * from "ui" where (ui_slug = ? or ui_name = ?) and active = true and excluded = false`
+	ui, err := app.GetRowByFilter(sql, params, []any{uiSlug, uiSlug})
+	if err != nil {
+		app.writeHTMLError(w, http.StatusInternalServerError, fmt.Sprintf("failed to fetch ui: %s", err))
+		return false
+	}
+	if len(ui) == 0 {
+		app.writeHTMLError(w, http.StatusNotFound, fmt.Sprintf("ui %q not found", uiSlug))
+		return false
+	}
+	return true
+}
+
+func (app *application) writeHTMLSuccess(w http.ResponseWriter, msg string) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprintf(w, `<div class="alert alert-success"><span>%s</span></div>`, template.HTMLEscapeString(msg))
+}
+
+func (app *application) uiAction(w http.ResponseWriter, r *http.Request, action func(Dict) Dict) {
+	params, ok := app.uiFormParams(w, r)
+	if !ok {
+		return
+	}
+	if !app.ensureUIExists(w, r.PathValue("ui_slug"), params) {
+		return
+	}
+	res := action(params)
+	if success, _ := res["success"].(bool); !success {
+		msg, _ := res["msg"].(string)
+		if msg == "" {
+			msg = "Unable to complete the request."
+		}
+		app.writeHTMLError(w, http.StatusUnprocessableEntity, msg)
+		return
+	}
+	msg, _ := res["msg"].(string)
+	if msg == "" {
+		msg = "Request completed successfully."
+	}
+	app.writeHTMLSuccess(w, msg)
+}
+
+// ui_validate_code completes a two-factor login and creates the regular UI
+// session only after the supplied code has been validated.
+func (app *application) ui_validate_code(w http.ResponseWriter, r *http.Request) {
+	params, ok := app.uiFormParams(w, r)
+	if !ok {
+		return
+	}
+	if !app.ensureUIExists(w, r.PathValue("ui_slug"), params) {
+		return
+	}
+	data := params["data"].(Dict)
+	if data["username"] == "" && data["email"] != "" {
+		data["username"] = data["email"]
+	}
+	res := app.two_factor_code_valid(params)
+	if success, _ := res["success"].(bool); !success {
+		msg, _ := res["msg"].(string)
+		if msg == "" {
+			msg = "Invalid two-factor code."
+		}
+		app.writeHTMLError(w, http.StatusUnauthorized, msg)
+		return
+	}
+	app.startUISession(w, res)
+	uiSlug := r.PathValue("ui_slug")
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	http.Redirect(w, r, "/ui/"+uiSlug, http.StatusSeeOther)
+}
+
+func (app *application) ui_signup(w http.ResponseWriter, r *http.Request) {
+	app.uiAction(w, r, func(params Dict) Dict {
+		params["login_table"] = os.Getenv("DYN_LOGIN_TABLE")
+		params["user_id_field"] = os.Getenv("DYN_LOGIN_USER_ID_FIELD")
+		params["dyn_login_role_id"] = os.Getenv("DYN_LOGIN_ROLE_ID")
+		params["username_field"] = os.Getenv("DYN_LOGIN_USERNAME_FIELD")
+		params["email_field"] = os.Getenv("DYN_LOGIN_EMAIL_FIELD")
+		params["password_field"] = os.Getenv("DYN_LOGIN_PASSWORD_FIELD")
+		params["active_field"] = os.Getenv("DYN_LOGIN_ACTIVE_FIELD")
+		return app.dynamic_signup(params)
+	})
+}
+
+func (app *application) ui_recover_pass(w http.ResponseWriter, r *http.Request) {
+	app.uiAction(w, r, app.recover_pass)
+}
+
+func (app *application) ui_reset_pass(w http.ResponseWriter, r *http.Request) {
+	app.uiAction(w, r, app.reset_pass)
+}
+
+func (app *application) ui_alter_pass(w http.ResponseWriter, r *http.Request) {
+	user, err := app.getUser(r)
+	if err != nil {
+		app.writeHTMLError(w, http.StatusUnauthorized, "Authentication is required.")
+		return
+	}
+	app.uiAction(w, r, func(params Dict) Dict {
+		data := params["data"].(Dict)
+		if username, _ := user["username"].(string); username != "" {
+			data["username"] = username
+		}
+		return app.alter_pass(params)
+	})
 }
 
 func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
