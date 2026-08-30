@@ -531,6 +531,27 @@ data:
   active: true
 ```
 
+## UI_PAGE_RESET_PASSWORD
+```yaml
+table: ui_page
+description: Add the reset-password page (page_key "reset-password" -> GET /ui/rdd/reset-password)
+cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+data:
+  ui_id: 1
+  page_key: reset-password
+  page_title: Reset Password - RealDataDriven
+  meta_description: Reset Password to your RealDataDriven account
+  page_template: FileContent(ui/auth/design-2-password-reset.html)
+  response_tmpl: |
+    <div role="alert"
+        class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+        <span>{{ .msg }}</span>
+    </div>
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
 ## UI_ASSET_EX
 ```yaml
 table: ui_asset
