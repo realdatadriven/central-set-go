@@ -1497,7 +1497,7 @@ func (app *application) reset_pass(params Dict) Dict {
 		msg, _ := app.i18n.T("pass_must_have_special", Dict{})
 		return Dict{"success": false, "msg": msg}
 	}
-	//fmt.Println(tokenStr)
+	fmt.Println("TOKEN:", tokenStr)
 	if tokenStr == "" || newPassword == "" {
 		msg, _ := app.i18n.T("token-and-new-pass-required", Dict{})
 		return Dict{

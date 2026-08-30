@@ -552,6 +552,36 @@ data:
   active: true
 ```
 
+## UI_PAGE_RECOVER_PASSWORD
+```yaml
+table: ui_page
+description: Add the password-recovery page (page_key "password-recovery" -> GET /ui/rdd/password-recovery)
+cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+data:
+  ui_id: 1
+  page_key: password-recovery
+  page_title: Recover Password - RealDataDriven
+  meta_description: Recover Password to your RealDataDriven account
+  page_template: FileContent(ui/auth/design-2-recovery.html)
+  response_tmpl: |
+    {{if .success}}
+      <div class="alert alert-soft alert-success mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="size-4">
+          <polyline points="4 11 8 15 16 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></polyline>
+        </svg>
+        <span>Recovery email sent successfully</span>
+      </div>
+    {{else}}
+      <div role="alert"
+          class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+          <span>{{ .msg }}</span>
+      </div>
+    {{end}}
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
 ## UI_ASSET_EX
 ```yaml
 table: ui_asset
