@@ -1203,6 +1203,12 @@ func (app *application) recover_pass(params Dict) Dict {
 		}
 	}
 	resetLink := fmt.Sprintf("%s/reset-password?token=%s", app.config.frontend_url, string(jwtBytes))
+	redirectUrl, _ := params["host"].(string)
+	if recover_path, ok := _data["recover_path"].(string); ok && redirectUrl != "" {
+		redirectUrl += recover_path
+		fmt.Println(redirectUrl)
+		resetLink = fmt.Sprintf("%s?token=%s", redirectUrl, string(jwtBytes))
+	}
 	_etlx := etlx.ETLX{}
 	bodyTemplate := `
 		<p>Hi {{.first_name}},</p>
@@ -1312,10 +1318,10 @@ func (app *application) send_confirm_email(params Dict) Dict {
 			"msg":     err.Error(),
 		}
 	}
-	//fmt.Println(params["host"], _data["redirect_path"])
+	//fmt.Println(params["host"], _data["recover_path"])
 	redirectUrl, _ := params["host"].(string)
-	if redirect_path, ok := _data["redirect_path"].(string); ok && redirectUrl != "" {
-		redirectUrl += redirect_path
+	if recover_path, ok := _data["recover_path"].(string); ok && redirectUrl != "" {
+		redirectUrl += recover_path
 	}
 	resetLink := fmt.Sprintf("%s/confirm-email?token=%s&redirect=%s", app.config.frontend_url, string(jwtBytes), redirectUrl)
 	_etlx := etlx.ETLX{}

@@ -87,7 +87,10 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 			"path_params": pathParams,
 		},
 	}
+	params["host"] = getHost(r)
+	params["path"] = r.URL.Path
 	params["ip"] = ClientIP(r)
+	params["loc"] = app.getLocationFromRequest(r, Dict{})
 	res := app.RenderUIPage(params)
 	if success, _ := res["success"].(bool); !success {
 		http.Error(w, fmt.Sprintf("%v", res["msg"]), http.StatusNotFound)
@@ -122,7 +125,10 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 			"raw_query":    r.URL.RawQuery,
 		},
 	}
+	params["host"] = getHost(r)
+	params["path"] = r.URL.Path
 	params["ip"] = ClientIP(r)
+	params["loc"] = app.getLocationFromRequest(r, Dict{})
 	// same token/user pattern as read_odata, if the partial is auth-gated
 	res := app.RenderUIPartial(params)
 	if success, _ := res["success"].(bool); !success {
@@ -201,6 +207,8 @@ func (app *application) RenderUIPage(params Dict) Dict {
 	// 4) build template data: resolve ui_page_data first, then every active
 	// partial's ui_partial_data, each keyed by its own data name.
 	tmplData := Dict{
+		"Host":       params["host"],
+		"Path":       params["path"],
 		"UI":         ui,
 		"Page":       page,
 		"PathParams": pathParams,
@@ -309,6 +317,8 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 	// 3) resolve ui_partial_data for every active partial (not just the
 	// requested one), so nested partial calls have their data available too.
 	tmplData := Dict{
+		"Host":       params["host"],
+		"Path":       params["path"],
 		"UI":         ui,
 		"PathParams": pathParams,
 		"query":      data["raw_query"],
@@ -606,6 +616,7 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
 				fmt.Fprint(w, res)
 				return
 			}
@@ -621,6 +632,7 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
 				fmt.Fprint(w, res)
 				return
 			}
@@ -646,6 +658,7 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
 				fmt.Fprint(w, res)
 				return
 			}
@@ -817,7 +830,43 @@ func (app *application) ui_signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) ui_recover_pass(w http.ResponseWriter, r *http.Request) {
-	app.uiAction(w, r, app.recover_pass)
+	// app.uiAction(w, r, app.recover_pass)
+	params, ok := app.uiFormParams(w, r)
+	if !ok {
+		return
+	}
+	if !app.ensureUIExists(w, r.PathValue("ui_slug"), params) {
+		return
+	}
+	ui := r.URL.Query().Get("ui")
+	page := r.URL.Query().Get("page")
+	sql := `select p.* 
+	from ui_page p
+	join ui on ui.ui_id = p.ui_id
+	where p.page_key = ? and p.active = true and p.excluded = false
+		and (ui.ui_slug = ? or ui.ui_name = ?) and ui.active = true and ui.excluded = false`
+	pageData, err := app.GetRowByFilter(sql, params, []any{page, ui, ui})
+	if err != nil {
+		fmt.Println("Error geting page response template:", err)
+	}
+	response_tmpl, _ := pageData["response_tmpl"].(string)
+	res := app.recover_pass(params)
+	if response_tmpl != "" {
+		res, err := app.RenderTemplate(response_tmpl, res)
+		if err != nil {
+			fmt.Println("Error rendering page response template:", err)
+		} else {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			fmt.Fprint(w, res)
+			return
+		}
+	}
+	msg, _ := res["msg"].(string)
+	if msg == "" {
+		msg = "Unexpected Error"
+	}
+	app.writeHTMLError(w, http.StatusUnauthorized, msg)
+	return
 }
 
 func (app *application) ui_reset_pass(w http.ResponseWriter, r *http.Request) {
@@ -852,6 +901,7 @@ func (app *application) ui_reset_pass(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
 				fmt.Fprint(w, res)
 				return
 			}
