@@ -376,7 +376,7 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	params["host"] = r.Host
+	params["host"] = getHost(r)
 	params["path"] = r.URL.Path
 	params["token"] = r.Header.Get("Authorization")
 	token := app.verifyToken(r)

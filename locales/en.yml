@@ -117,3 +117,5 @@ access-key-no-user: No user submited
 access-key-no-expires-dt: No expiration date submited
 access-key-no-description: No description submited
 reset-pass-success: Password reset with success!
+email-confirm-success: Email confirmed with success!
+token-required: Token or Code Required

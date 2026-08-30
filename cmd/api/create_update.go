@@ -437,6 +437,8 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 	}
 	// fmt.Println(crud_aciton)
 	// REMOVE FIELDS THAT IS NOT IN THE TABLE SCHEMA
+	//fmt.Println(_data)
+	redirect_path := _data["redirect_path"]
 	_aux_data := _data
 	for key := range _aux_data {
 		if _, ok := _schema["fields"].(Dict); ok {
@@ -657,14 +659,16 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				"email":                _data[email_field],
 				"role_id":              dyn_login_role_id,
 				"password":             pass,
-				"active":               false, //_data[active_field],
+				"active":               true, //_data[active_field],
 				"alter_pass_nxt_login": true,
+				"email_confirmed":      false,
 				"created_at":           time.Now().In(loc),
 				"updated_at":           time.Now().In(loc),
 				"excluded":             false,
+				"redirect_path":        redirect_path,
 			}
-			query_user := fmt.Sprintf(`INSERT INTO "users" ("username", "first_name", "last_name", "email", "role_id", "password", "active", "alter_pass_nxt_login", "created_at", "updated_at", "excluded") 
-			VALUES (:username, :first_name, :last_name, :email, :role_id, :password, :active, :alter_pass_nxt_login, :created_at, :updated_at, :excluded)`)
+			query_user := fmt.Sprintf(`INSERT INTO "users" ("username", "first_name", "last_name", "email", "role_id", "password", "active", "alter_pass_nxt_login", "email_confirmed", "created_at", "updated_at", "excluded") 
+			VALUES (:username, :first_name, :last_name, :email, :role_id, :password, :active, :alter_pass_nxt_login, :email_confirmed, :created_at, :updated_at, :excluded)`)
 			_, err = app.db.ExecuteNamedQuery(query_user, _data_user)
 			if err != nil {
 				fmt.Println("Error creating user for login table mapping:", table, err)
@@ -674,8 +678,10 @@ func (app *application) CrudCreateUpdte(params Dict, table string, db etlx.DBInt
 				}
 			} else {
 				params["data"] = _data_user
-				_mail := app.confirm_emmail(params)
-				fmt.Println(_mail["msg"])
+				go func(p map[string]any) {
+					mail := app.send_confirm_email(p)
+					fmt.Println(mail["msg"])
+				}(params)
 			}
 		}
 	}

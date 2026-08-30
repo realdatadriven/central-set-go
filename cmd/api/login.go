@@ -99,6 +99,12 @@ func AuthenticateAD(ldapURL, baseDN, serviceUser, servicePass, username, passwor
 
 // dynamic login function where a table cudo be set, the username / email is set and the passwor field to like for exemple, i have a table with name tennant, has field tennant = username and has email = email and has field password = password
 func (app *application) dynamic_login(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	login_table := "users"
 	if _, ok := params["login_table"].(string); ok {
 		login_table = params["login_table"].(string)
@@ -218,7 +224,7 @@ func (app *application) dynamic_login(params Dict) Dict {
 		}
 		if !match {
 			if app.config.LockoutEnabled {
-				_ = app.updateFailedLoginAttempts(username)
+				_ = app.updateFailedLoginAttempts(username, loc)
 			}
 			msg, _ := app.i18n.T("user-pass-incorrect", Dict{})
 			return Dict{
@@ -249,9 +255,9 @@ func (app *application) dynamic_login(params Dict) Dict {
 		}
 	}
 	claims.Subject = string(json_user)
-	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	expiry := time.Now().In(loc).Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.baseURL}
@@ -274,6 +280,12 @@ func (app *application) dynamic_login(params Dict) Dict {
 
 // signup function, gets username/email and password from params, creates a new user
 func (app *application) dynamic_signup(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	login_table := "users"
 	if _, ok := params["login_table"].(string); ok {
 		login_table = params["login_table"].(string)
@@ -381,8 +393,8 @@ func (app *application) dynamic_signup(params Dict) Dict {
 	data[email_field] = email
 	data[password_field] = password_hashed
 	data[active_field] = true
-	data["created_at"] = time.Now()
-	data["updated_at"] = time.Now()
+	data["created_at"] = time.Now().In(loc)
+	data["updated_at"] = time.Now().In(loc)
 	_, err = app.db.ExecuteNamedQuery(query, data)
 	if err != nil {
 		msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
@@ -399,7 +411,7 @@ func (app *application) dynamic_signup(params Dict) Dict {
 }
 
 // update failed_login_attmpt and last_failed_login for table users
-func (app *application) updateFailedLoginAttempts(username string) error {
+func (app *application) updateFailedLoginAttempts(username string, loc *time.Location) error {
 	query := `UPDATE users 
 		SET failed_login_attmpt = coalesce(failed_login_attmpt, 0) + 1, 
 		last_failed_login = :last_failed_login,
@@ -411,7 +423,7 @@ func (app *application) updateFailedLoginAttempts(username string) error {
 	WHERE username = :username`
 	data := Dict{
 		"username":          username,
-		"last_failed_login": time.Now(),
+		"last_failed_login": time.Now().In(loc),
 		"lockout_threshold": app.config.LockoutThreshold,
 	}
 	_, err := app.db.ExecuteNamedQuery(query, data)
@@ -419,7 +431,7 @@ func (app *application) updateFailedLoginAttempts(username string) error {
 }
 
 // reset failed_login_attmpt and last_failed_login for table users
-func (app *application) resetFailedLoginAttempts(username string) error {
+func (app *application) resetFailedLoginAttempts(username string, loc *time.Location) error {
 	query := `UPDATE users
 		SET failed_login_attmpt = 0, 
 		last_failed_login = NULL,
@@ -427,7 +439,7 @@ func (app *application) resetFailedLoginAttempts(username string) error {
 	WHERE username = :username`
 	data := Dict{
 		"username":   username,
-		"updated_at": time.Now(),
+		"updated_at": time.Now().In(loc),
 	}
 	_, err := app.db.ExecuteNamedQuery(query, data)
 	return err
@@ -435,6 +447,12 @@ func (app *application) resetFailedLoginAttempts(username string) error {
 
 // login function, gets username/email and password from params, validates user and returns JWT token
 func (app *application) _login(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	if _, ok := params["data"]; ok {
 		_data = params["data"].(Dict)
@@ -502,8 +520,8 @@ func (app *application) _login(params Dict) Dict {
 				"role_id":    2,
 				"active":     true,
 				"excluded":   false,
-				"created_at": time.Now(),
-				"updated_at": time.Now(),
+				"created_at": time.Now().In(loc),
+				"updated_at": time.Now().In(loc),
 			}
 			err := app.AdminInsertData("users", user)
 			if err != nil {
@@ -568,7 +586,7 @@ func (app *application) _login(params Dict) Dict {
 			if !match {
 				if app.config.LockoutEnabled {
 					// fmt.Println("app.updateFailedLoginAttempts(username):", username, app.config.LockoutThreshold)
-					err = app.updateFailedLoginAttempts(username)
+					err = app.updateFailedLoginAttempts(username, loc)
 					if err != nil {
 						fmt.Println("Error updating failed login attempts:", err)
 					}
@@ -629,8 +647,8 @@ func (app *application) _login(params Dict) Dict {
 		_data = Dict{
 			"user_id":            user["user_id"],
 			"nxt_code_2f_auth":   nxt_code_2f_auth,
-			"code_2f_expires_at": time.Now().Add(time.Duration(min_2_expire) * time.Minute),
-			"updated_at":         time.Now(),
+			"code_2f_expires_at": time.Now().In(loc).Add(time.Duration(min_2_expire) * time.Minute),
+			"updated_at":         time.Now().In(loc),
 		}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
@@ -650,7 +668,7 @@ func (app *application) _login(params Dict) Dict {
 	}
 	// reset failed login attempts
 	if app.config.LockoutEnabled {
-		_ = app.resetFailedLoginAttempts(username)
+		_ = app.resetFailedLoginAttempts(username, loc)
 	}
 	delete(user, "password")
 	delete(user, "created_at")
@@ -668,9 +686,9 @@ func (app *application) _login(params Dict) Dict {
 		}
 	}
 	claims.Subject = string(json_user)
-	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	expiry := time.Now().In(loc).Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.baseURL}
@@ -693,6 +711,12 @@ func (app *application) _login(params Dict) Dict {
 
 // login function, gets username/email and password from params, validates user and returns JWT token
 func (app *application) two_factor_code_valid(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	if _, ok := params["data"]; ok {
 		_data = params["data"].(Dict)
@@ -758,7 +782,7 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 		}
 		if !match {
 			if app.config.LockoutEnabled {
-				_ = app.updateFailedLoginAttempts(username)
+				_ = app.updateFailedLoginAttempts(username, loc)
 			}
 			msg, _ := app.i18n.T("two-factor-code-incorrect", Dict{})
 			return Dict{
@@ -767,7 +791,7 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 			}
 		}
 		code_2f_expires_at, _ := user["code_2f_expires_at"].(time.Time)
-		if code_2f_expires_at.Before(time.Now()) {
+		if code_2f_expires_at.Before(time.Now().In(loc)) {
 			msg, _ := app.i18n.T("two-factor-code-expired", Dict{})
 			return Dict{
 				"success": false,
@@ -783,7 +807,7 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 			"user_id":            user["user_id"],
 			"nxt_code_2f_auth":   nil,
 			"code_2f_expires_at": nil,
-			"updated_at":         time.Now(),
+			"updated_at":         time.Now().In(loc),
 		}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
@@ -810,9 +834,9 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 		}
 	}
 	claims.Subject = string(json_user)
-	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	expiry := time.Now().In(loc).Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.baseURL}
@@ -834,6 +858,12 @@ func (app *application) two_factor_code_valid(params Dict) Dict {
 }
 
 func (app *application) alter_pass(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_check_login := app._login(params)
 	if success, ok := _check_login["success"].(bool); ok && success {
 		_data := Dict{}
@@ -888,7 +918,7 @@ func (app *application) alter_pass(params Dict) Dict {
 		} else if _, ok := _data["u"].(string); ok {
 			username = _data["u"].(string)
 		}
-		_data = Dict{"username": username, "password": pass, "updated_at": time.Now()}
+		_data = Dict{"username": username, "password": pass, "updated_at": time.Now().In(loc)}
 		_, err = app.db.ExecuteNamedQuery(query, _data)
 		if err != nil {
 			msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
@@ -908,6 +938,12 @@ func (app *application) alter_pass(params Dict) Dict {
 }
 
 func (app *application) access_key(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
 		if _, ok := params["data"].(Dict)["data"]; !ok {
@@ -1060,9 +1096,9 @@ func (app *application) access_key(params Dict) Dict {
 		}
 	}
 	claims.Subject = string(json_user)
-	expiry := time.Now().Add(time.Until(expires_at))
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	expiry := time.Now().In(loc).Add(time.Until(expires_at))
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.baseURL}
@@ -1102,6 +1138,12 @@ func (app *application) access_key(params Dict) Dict {
 
 // recover password, gets params with email, checks if is a valid user, creates a token and send email with link to reset password
 func (app *application) recover_pass(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
 		_data = params["data"].(Dict)
@@ -1147,9 +1189,9 @@ func (app *application) recover_pass(params Dict) Dict {
 		}
 	}
 	claims.Subject = string(json_user)
-	expiry := time.Now().Add(1 * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	expiry := time.Now().In(loc).Add(1 * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.frontend_url}
@@ -1205,7 +1247,13 @@ func (app *application) recover_pass(params Dict) Dict {
 	}
 }
 
-func (app *application) confirm_emmail(params Dict) Dict {
+func (app *application) send_confirm_email(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	if _, ok := params["data"].(Dict); ok {
 		_data = params["data"].(Dict)
@@ -1251,9 +1299,9 @@ func (app *application) confirm_emmail(params Dict) Dict {
 		}
 	}
 	claims.Subject = string(json_user)
-	expiry := time.Now().Add(1 * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	expiry := time.Now().In(loc).Add(1 * time.Hour)
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.frontend_url}
@@ -1264,6 +1312,7 @@ func (app *application) confirm_emmail(params Dict) Dict {
 			"msg":     err.Error(),
 		}
 	}
+	//fmt.Println(params["host"], _data["redirect_path"])
 	redirectUrl, _ := params["host"].(string)
 	if redirect_path, ok := _data["redirect_path"].(string); ok && redirectUrl != "" {
 		redirectUrl += redirect_path
@@ -1313,8 +1362,94 @@ func (app *application) confirm_emmail(params Dict) Dict {
 	}
 }
 
+func (app *application) handle_confirm_email(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
+	_data := Dict{}
+	//fmt.Println("reset_pass params:", params)
+	if _, ok := params["data"].(Dict); ok {
+		_data = params["data"].(Dict)
+	}
+	tokenStr := ""
+	if _, ok := _data["token"].(string); ok {
+		tokenStr = _data["token"].(string)
+	}
+	//fmt.Println(tokenStr)
+	if tokenStr == "" {
+		msg, _ := app.i18n.T("token-required", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	token, err := jwt.HMACCheck([]byte(tokenStr), []byte(app.config.jwt.secretKey))
+	if err != nil {
+		msg, _ := app.i18n.T("invalid-token", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	if token.Expires.Time().Before(time.Now().In(loc)) {
+		msg, _ := app.i18n.T("token-expired", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	subject := token.Subject
+	var user Dict
+	err = json.Unmarshal([]byte(subject), &user)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	if _, ok := user["username"]; !ok {
+		msg, _ := app.i18n.T("invalid-token-no-username", Dict{})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	query := `UPDATE users 
+			SET alter_pass_nxt_login = true
+				, email_confirmed = true
+				, updated_at = :updated_at
+				, active = :active
+		WHERE (email = :username OR username = :username)
+			AND email_confirmed = false`
+	data := Dict{"username": user["username"], "updated_at": time.Now().In(loc), "active": true}
+	_, err = app.db.ExecuteNamedQuery(query, data)
+	if err != nil {
+		msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
+		return Dict{
+			"success": false,
+			"msg":     msg,
+		}
+	}
+	msg, _ := app.i18n.T("email-confirm-success", Dict{})
+	return Dict{
+		"success": true,
+		"msg":     msg,
+		"token":   token,
+		"data":    user,
+	}
+}
+
 // reset password, gets params with token and new_password, validates token and updates user password
 func (app *application) reset_pass(params Dict) Dict {
+	var loc *time.Location
+	if _, ok := params["location"].(*time.Location); ok {
+		loc = params["location"].(*time.Location)
+	} else {
+		loc = time.Local
+	}
 	_data := Dict{}
 	//fmt.Println("reset_pass params:", params)
 	if _, ok := params["data"].(Dict); ok {
@@ -1371,7 +1506,7 @@ func (app *application) reset_pass(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
-	if token.Expires.Time().Before(time.Now()) {
+	if token.Expires.Time().Before(time.Now().In(loc)) {
 		msg, _ := app.i18n.T("token-expired", Dict{})
 		return Dict{
 			"success": false,
@@ -1398,6 +1533,7 @@ func (app *application) reset_pass(params Dict) Dict {
 			SET password = :password 
 				, alter_pass_nxt_login = false
 				, updated_at = :updated_at
+				, active = :active
 		WHERE email = :username
 			OR username = :username`
 	pass, err := password.Hash(newPassword)
@@ -1405,7 +1541,7 @@ func (app *application) reset_pass(params Dict) Dict {
 		msg, _ := app.i18n.T("password-hash-error", Dict{})
 		return Dict{"success": false, "msg": msg}
 	}
-	data := Dict{"username": user["username"], "password": pass, "updated_at": time.Now()}
+	data := Dict{"username": user["username"], "password": pass, "updated_at": time.Now().In(loc), "active": true}
 	_, err = app.db.ExecuteNamedQuery(query, data)
 	if err != nil {
 		msg, _ := app.i18n.T("unexpected-error", Dict{"err": err.Error()})
@@ -1459,6 +1595,7 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "provider missing from path", http.StatusBadRequest)
 		return
 	}
+	loc := app.getLocationFromRequest(r, Dict{})
 	// fmt.Println("GothCallbackHandler Cookie:", r.Header.Get("Cookie"))
 	//fmt.Println("CALLBACK PROVIDER:", provider)
 	// Completes the flow: exchanges code, fetches user info
@@ -1470,7 +1607,6 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	//fmt.Println(gu.Name, gu.Email, gu.FirstName, gu.LastName, gu.ExpiresAt)
-
 	user, found, err := app.db.GetUserByNameOrEmail(gu.Email)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -1517,8 +1653,8 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 			"lang_id":              1,
 			"active":               true,
 			"alter_pass_nxt_login": false,
-			"created_at":           time.Now(),
-			"updated_at":           time.Now(),
+			"created_at":           time.Now().In(loc),
+			"updated_at":           time.Now().In(loc),
 			"excluded":             false,
 		}
 		_, err = app.db.ExecuteNamedQuery(query, data)
@@ -1560,13 +1696,13 @@ func (app *application) GothCallbackHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	claims.Subject = string(json_user)
-	//expiry := time.Now().Add(8 * time.Hour)
-	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	//expiry := time.Now().In(loc).Add(8 * time.Hour)
+	expiry := time.Now().In(loc).Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
 	if !gu.ExpiresAt.IsZero() {
 		// expiry = gu.ExpiresAt
 	}
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.frontend_url}
@@ -1666,8 +1802,8 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 			"lang_id":              1,
 			"active":               true,
 			"alter_pass_nxt_login": false,
-			"created_at":           time.Now().In(loc),
-			"updated_at":           time.Now().In(loc),
+			"created_at":           time.Now().In(loc).In(loc),
+			"updated_at":           time.Now().In(loc).In(loc),
 			"excluded":             false,
 		}
 		_, err = app.db.ExecuteNamedQuery(query, data)
@@ -1714,8 +1850,8 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 					"email":      gu.Email,
 					"active":     true,
 					"user_id":    user["id"],
-					"created_at": time.Now().In(loc),
-					"updated_at": time.Now().In(loc),
+					"created_at": time.Now().In(loc).In(loc),
+					"updated_at": time.Now().In(loc).In(loc),
 				}
 				err = app.ExecuteQuery(insert, Dict{"db": dyn_db}, data)
 				if err != nil {
@@ -1740,13 +1876,13 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 		return
 	}
 	claims.Subject = string(json_user)
-	//expiry := time.Now().Add(8 * time.Hour)
-	expiry := time.Now().Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
+	//expiry := time.Now().In(loc).Add(8 * time.Hour)
+	expiry := time.Now().In(loc).Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
 	if !gu.ExpiresAt.IsZero() {
 		// expiry = gu.ExpiresAt
 	}
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Issued = jwt.NewNumericTime(time.Now().In(loc))
+	claims.NotBefore = jwt.NewNumericTime(time.Now().In(loc))
 	claims.Expires = jwt.NewNumericTime(expiry)
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.frontend_url}
@@ -1774,6 +1910,16 @@ func (app *application) HyperMGothCallbackHandler(w http.ResponseWriter, r *http
 		http.Redirect(w, r, "/", http.StatusFound)
 	}*/
 	redirectRootHandler(w, r)
+}
+
+func getHost(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	} else if forward := r.Header.Get("X-Forwarded-Proto"); forward != "" {
+		scheme = forward
+	}
+	return fmt.Sprintf("%s://%s", scheme, r.Host)
 }
 
 func getRootUrl(r *http.Request) string {

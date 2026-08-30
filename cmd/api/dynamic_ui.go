@@ -718,7 +718,10 @@ func (app *application) uiFormParams(w http.ResponseWriter, r *http.Request) (Di
 		lang = "en"
 	}
 	params := Dict{"lang": lang, "data": data}
+	params["host"] = getHost(r)
+	params["path"] = r.URL.Path
 	params["ip"] = ClientIP(r)
+	params["loc"] = app.getLocationFromRequest(r, data)
 	return params, true
 }
 
@@ -891,4 +894,38 @@ func (app *application) writeHTMLError(w http.ResponseWriter, status int, msg st
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
 	fmt.Fprintf(w, `<div class="alert alert-error"><span>%s</span></div>`, template.HTMLEscapeString(msg))
+}
+
+func (app *application) handleConfirmEmail(w http.ResponseWriter, r *http.Request) {
+	code := r.URL.Query().Get("token")
+	if code == "" {
+		code = r.URL.Query().Get("code")
+	}
+	redirect := r.URL.Query().Get("redirect")
+	if redirect == "" {
+		redirect = getHost(r)
+	}
+	params := Dict{"lang": "en", "data": Dict{"token": code}}
+	params["host"] = getHost(r)
+	params["path"] = r.URL.Path
+	params["ip"] = ClientIP(r)
+	params["loc"] = app.getLocationFromRequest(r, Dict{})
+	// params["token"] = code
+	res := app.handle_confirm_email(params)
+	if success, _ := res["success"].(bool); !success {
+		msg, _ := res["msg"].(string)
+		if msg == "" {
+			msg = "Unexpected Error"
+		}
+		app.writeHTMLError(w, http.StatusUnauthorized, msg)
+		return
+	}
+	// fmt.Println(res)
+	app.startUISession(w, res)
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", redirect)
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
