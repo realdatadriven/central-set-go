@@ -1386,7 +1386,14 @@ func (app *application) handle_confirm_email(params Dict) Dict {
 			"msg":     msg,
 		}
 	}
-	token, err := jwt.HMACCheck([]byte(tokenStr), []byte(app.config.jwt.secretKey))
+	user, err := app.verifyTokenString(tokenStr)
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	/*token, err := jwt.HMACCheck([]byte(tokenStr), []byte(app.config.jwt.secretKey))
 	if err != nil {
 		msg, _ := app.i18n.T("invalid-token", Dict{})
 		return Dict{
@@ -1416,7 +1423,7 @@ func (app *application) handle_confirm_email(params Dict) Dict {
 			"success": false,
 			"msg":     msg,
 		}
-	}
+	}*/
 	query := `UPDATE users 
 			SET alter_pass_nxt_login = true
 				, email_confirmed = true
@@ -1437,7 +1444,7 @@ func (app *application) handle_confirm_email(params Dict) Dict {
 	return Dict{
 		"success": true,
 		"msg":     msg,
-		"token":   token,
+		"token":   tokenStr,
 		"data":    user,
 	}
 }

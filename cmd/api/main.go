@@ -7,17 +7,20 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+
 	//"os/signal"
 	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
+
 	//"syscall"
 	"time"
 
 	"github.com/realdatadriven/central-set-go/internal/auth"
 	"github.com/realdatadriven/central-set-go/internal/env"
+
 	//"github.com/realdatadriven/central-set-go/internal/replication"
 	"github.com/realdatadriven/central-set-go/internal/smtp"
 	"github.com/realdatadriven/central-set-go/internal/storage"
@@ -170,15 +173,23 @@ type application struct {
 func run(logger *slog.Logger) error {
 	var cfg app_config
 	// Load environment variables
+	secret1, err := GenerateSecret()
+	if err != nil {
+		secret1 = "f2rkbev2yxhk5viz77ok4rxfip6npjpm"
+	}
+	secret2, err := GenerateSecret()
+	if err != nil {
+		secret2 = "f2rkbev2yxhk5viz77ok4rxfip6npjpm"
+	}
 	cfg.baseURL = env.GetString("BASE_URL", "http://localhost:4444")
 	cfg.httpPort = env.GetInt("HTTP_PORT", 4444)
 	cfg.basicAuth.username = env.GetString("BASIC_AUTH_USERNAME", "admin")
 	cfg.basicAuth.hashedPassword = env.GetString("BASIC_AUTH_HASHED_PASSWORD", "$2a$10$jRb2qniNcoCyQM23T59RfeEQUbgdAXfR6S0scynmKfJa5Gj3arGJa")
-	cfg.cookie.secretKey = env.GetString("COOKIE_SECRET_KEY", "f2rkbev2yxhk5viz77ok4rxfip6npjpm")
+	cfg.cookie.secretKey = env.GetString("COOKIE_SECRET_KEY", secret1)
 	cfg.db.driverName = env.GetString("DB_DRIVER_NAME", "sqlite3")
 	cfg.db.dsn = env.GetString("DB_DSN", "database/ADMIN.db")
 	cfg.db.automigrate = env.GetBool("DB_AUTOMIGRATE", true)
-	cfg.jwt.secretKey = env.GetString("JWT_SECRET_KEY", "mhaitpm4v3mesosefepyupo6qzpbvidc")
+	cfg.jwt.secretKey = env.GetString("JWT_SECRET_KEY", secret2)
 	cfg.jwt.tokenExpireHours = env.GetInt("TOKEN_EXPIRE_HOURS", 24)
 	cfg.notifications.email = env.GetString("NOTIFICATIONS_EMAIL", "")
 	cfg.smtp.host = env.GetString("SMTP_HOST", "example.smtp.host")
