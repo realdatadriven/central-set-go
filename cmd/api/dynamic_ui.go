@@ -586,9 +586,8 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 	params := Dict{
 		"lang": "en",
 		"data": Dict{
-			"db":         env.GetString("UIDB", "UI"),
-			"ui_slug":    r.PathValue("ui_slug"),
-			"asset_path": r.PathValue("asset"),
+			"db":      env.GetString("UIDB", "UI"),
+			"ui_slug": r.PathValue("ui_slug"),
 		},
 	}
 	params["ip"] = ClientIP(r)
@@ -666,14 +665,26 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return
 	}
+	// TWO FACTOR AUTH
+	if two_factor, ok := res["two_factor"]; ok && app.toBool(two_factor) {
+		_link := fmt.Sprintf("/ui/%s/two-factor?username=%s", uiSlug, email)
+		fmt.Println("2FactorRedirect:", _link)
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Redirect", _link)
+			w.WriteHeader(http.StatusNoContent)
+		} else {
+			http.Redirect(w, r, _link, http.StatusSeeOther)
+		}
+	}
 	app.startUISession(w, res)
 	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 	// w.WriteHeader(http.StatusOK)
+	_link := fmt.Sprintf("/ui/%s", uiSlug)
 	if r.Header.Get("HX-Request") == "true" {
-		w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
+		w.Header().Set("HX-Redirect", _link)
 		w.WriteHeader(http.StatusNoContent)
 	} else {
-		http.Redirect(w, r, "/ui/"+r.PathValue("ui_slug"), http.StatusSeeOther)
+		http.Redirect(w, r, _link, http.StatusSeeOther)
 	}
 }
 
@@ -693,7 +704,6 @@ func (app *application) startUISession(w http.ResponseWriter, res Dict) {
 		})
 		return
 	}
-
 	sessionID := generateSessionID()
 	user, _ := res["data"].(Dict)
 	user["token"] = token
@@ -797,8 +807,30 @@ func (app *application) ui_validate_code(w http.ResponseWriter, r *http.Request)
 	if data["username"] == "" && data["email"] != "" {
 		data["username"] = data["email"]
 	}
+	ui := r.URL.Query().Get("ui")
+	page := r.URL.Query().Get("page")
+	sql := `select p.* 
+	from ui_page p
+	join ui on ui.ui_id = p.ui_id
+	where p.page_key = ? and p.active = true and p.excluded = false
+		and (ui.ui_slug = ? or ui.ui_name = ?) and ui.active = true and ui.excluded = false`
+	pageData, err := app.GetRowByFilter(sql, params, []any{page, ui, ui})
+	if err != nil {
+		fmt.Println("Error geting page response template:", err)
+	}
+	response_tmpl, _ := pageData["response_tmpl"].(string)
 	res := app.two_factor_code_valid(params)
 	if success, _ := res["success"].(bool); !success {
+		if response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, res)
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				fmt.Fprint(w, res)
+				return
+			}
+		}
 		msg, _ := res["msg"].(string)
 		if msg == "" {
 			msg = "Invalid two-factor code."

@@ -582,6 +582,27 @@ data:
   active: true
 ```
 
+## UI_PAGE_TWO_FACTOR
+```yaml
+table: ui_page
+description: Add the two-factor page (page_key "two-factor" -> GET /ui/rdd/two-factor)
+cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+data:
+  ui_id: 1
+  page_key: two-factor
+  page_title: Two Factor - RealDataDriven
+  meta_description: Two Factor to your RealDataDriven account
+  page_template: FileContent(ui/auth/design-2-two-factor-code.html)
+  response_tmpl: |
+      <div role="alert"
+          class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+          <span>{{ .msg }}</span>
+      </div>
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
 ## UI_ASSET_EX
 ```yaml
 table: ui_asset

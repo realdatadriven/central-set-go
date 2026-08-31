@@ -201,6 +201,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("POST /ui/{ui_slug}/login/", app.ui_login)
 	mux.HandleFunc("POST /ui/{ui_slug}/validate_code", app.ui_validate_code)
 	mux.HandleFunc("POST /ui/{ui_slug}/validate_code/", app.ui_validate_code)
+	mux.HandleFunc("POST /ui/{ui_slug}/two-factor", app.ui_validate_code)
+	mux.HandleFunc("POST /ui/{ui_slug}/two-factor/", app.ui_validate_code)
 	mux.HandleFunc("POST /ui/{ui_slug}/signup", app.ui_signup)
 	mux.HandleFunc("POST /ui/{ui_slug}/signup/", app.ui_signup)
 	mux.HandleFunc("POST /ui/{ui_slug}/recover_pass", app.ui_recover_pass)

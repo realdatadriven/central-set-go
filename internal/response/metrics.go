@@ -22,7 +22,6 @@ func (mw *MetricsResponseWriter) Header() http.Header {
 
 func (mw *MetricsResponseWriter) WriteHeader(statusCode int) {
 	mw.wrapped.WriteHeader(statusCode)
-
 	if !mw.headerWritten {
 		mw.StatusCode = statusCode
 		mw.headerWritten = true
@@ -31,7 +30,6 @@ func (mw *MetricsResponseWriter) WriteHeader(statusCode int) {
 
 func (mw *MetricsResponseWriter) Write(b []byte) (int, error) {
 	mw.headerWritten = true
-
 	n, err := mw.wrapped.Write(b)
 	mw.BytesCount += n
 	return n, err
