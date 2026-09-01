@@ -956,18 +956,67 @@ func (app *application) ui_reset_pass(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) ui_alter_pass(w http.ResponseWriter, r *http.Request) {
+	params, ok := app.uiFormParams(w, r)
+	if !ok {
+		return
+	}
+	if !app.ensureUIExists(w, r.PathValue("ui_slug"), params) {
+		return
+	}
+	ui := r.URL.Query().Get("ui")
+	page := r.URL.Query().Get("page")
+	sql := `select p.* 
+	from ui_page p
+	join ui on ui.ui_id = p.ui_id
+	where p.page_key = ? and p.active = true and p.excluded = false
+		and (ui.ui_slug = ? or ui.ui_name = ?) and ui.active = true and ui.excluded = false`
+	pageData, err := app.GetRowByFilter(sql, params, []any{page, ui, ui})
+	if err != nil {
+		fmt.Println("Error geting page response template:", err)
+	}
+	response_tmpl, _ := pageData["response_tmpl"].(string)
 	user, err := app.getUser(r)
 	if err != nil {
+		if response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Authentication is required."})
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				fmt.Fprint(w, res)
+				return
+			}
+		}
 		app.writeHTMLError(w, http.StatusUnauthorized, "Authentication is required.")
 		return
 	}
-	app.uiAction(w, r, func(params Dict) Dict {
-		data := params["data"].(Dict)
-		if username, _ := user["username"].(string); username != "" {
-			data["username"] = username
+	if username, _ := user["username"].(string); username != "" {
+		params["data"].(Dict)["username"] = username
+	}
+	if email, _ := user["email"].(string); email != "" {
+		params["data"].(Dict)["email"] = email
+	}
+	res := app.alter_pass(params)
+	if success, _ := res["success"].(bool); !success {
+		if response_tmpl != "" {
+			res, err := app.RenderTemplate(response_tmpl, res)
+			if err != nil {
+				fmt.Println("Error rendering page response template:", err)
+			} else {
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				fmt.Fprint(w, res)
+				return
+			}
 		}
-		return app.alter_pass(params)
-	})
+		msg, _ := res["msg"].(string)
+		if msg == "" {
+			msg = "Unexpected Error"
+		}
+		app.writeHTMLError(w, http.StatusUnauthorized, msg)
+		return
+	}
+	// fmt.Println(res)
+	app.logoutHandler(w, r)
 }
 
 func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {

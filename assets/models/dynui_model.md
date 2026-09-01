@@ -582,6 +582,27 @@ data:
   active: true
 ```
 
+## UI_PAGE_ALTER_PASSWORD
+```yaml
+table: ui_page
+description: Add the alter-password page (page_key "alter-password" -> GET /ui/rdd/alter-password)
+cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+data:
+  ui_id: 1
+  page_key: alter-password
+  page_title: Alter Password - RealDataDriven
+  meta_description: Alter Password to your RealDataDriven account
+  page_template: FileContent(ui/auth/design-2-alter-password.html)
+  response_tmpl: |
+      <div role="alert"
+          class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+          <span>{{ .msg }}</span>
+      </div>
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
 ## UI_PAGE_TWO_FACTOR
 ```yaml
 table: ui_page
