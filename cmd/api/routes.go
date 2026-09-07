@@ -259,6 +259,10 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("PATCH /crud/{db}/{table}/{id}/", app.crud_api_handler)
 	mux.HandleFunc("DELETE /crud/{db}/{table}/{id}", app.crud_api_handler)
 	mux.HandleFunc("DELETE /crud/{db}/{table}/{id}/", app.crud_api_handler)
+
+	// SAAS
+	mux.HandleFunc("GET /saas/{action}/{id}", app.handleSaaS)
+	mux.HandleFunc("GET /saas/{action}/{id}/", app.handleSaaS)
 	//http.HandleFunc("/ws", app.websocketEndpoint(manager))
 	//app.rateLimit() || app.rateLimitMiddleware()
 	/*/ OPEN TELEMETRY

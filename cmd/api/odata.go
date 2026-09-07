@@ -590,6 +590,8 @@ func (app *application) odata_api_service_document(w http.ResponseWriter, r *htt
 		json.NewEncoder(w).Encode(_res)
 		return
 	}
+	//params := Dict{"db": db,}
+	//_tableAccess := app.table_access(params, nil)
 	burl := baseURL(r)
 	serviceDocument, err := BuildODataServiceDocument(_table_schema, burl, db)
 	if err != nil {

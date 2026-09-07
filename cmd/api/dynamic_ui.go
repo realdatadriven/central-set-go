@@ -611,12 +611,12 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 	response_tmpl, _ := pageData["response_tmpl"].(string)
 	if err := r.ParseForm(); err != nil {
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Invalid form submission."})
+			tmpl, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Invalid form submission."})
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -627,12 +627,12 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 	password := r.PostFormValue("password")
 	if email == "" || password == "" {
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Email and password are required."})
+			tmpl, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Email and password are required."})
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -653,12 +653,12 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 			msg = "Invalid email or password."
 		}
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": msg})
+			tmpl, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": msg})
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -822,12 +822,12 @@ func (app *application) ui_validate_code(w http.ResponseWriter, r *http.Request)
 	res := app.two_factor_code_valid(params)
 	if success, _ := res["success"].(bool); !success {
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, res)
+			tmpl, err := app.RenderTemplate(response_tmpl, res)
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -884,12 +884,12 @@ func (app *application) ui_recover_pass(w http.ResponseWriter, r *http.Request) 
 	response_tmpl, _ := pageData["response_tmpl"].(string)
 	res := app.recover_pass(params)
 	if response_tmpl != "" {
-		res, err := app.RenderTemplate(response_tmpl, res)
+		tmpl, err := app.RenderTemplate(response_tmpl, res)
 		if err != nil {
 			fmt.Println("Error rendering page response template:", err)
 		} else {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			fmt.Fprint(w, res)
+			fmt.Fprint(w, tmpl)
 			return
 		}
 	}
@@ -929,12 +929,12 @@ func (app *application) ui_reset_pass(w http.ResponseWriter, r *http.Request) {
 	res := app.reset_pass(params)
 	if success, _ := res["success"].(bool); !success {
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, res)
+			tmpl, err := app.RenderTemplate(response_tmpl, res)
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -978,12 +978,12 @@ func (app *application) ui_alter_pass(w http.ResponseWriter, r *http.Request) {
 	user, err := app.getUser(r)
 	if err != nil {
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Authentication is required."})
+			tmpl, err := app.RenderTemplate(response_tmpl, Dict{"success": false, "msg": "Authentication is required."})
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -999,12 +999,12 @@ func (app *application) ui_alter_pass(w http.ResponseWriter, r *http.Request) {
 	res := app.alter_pass(params)
 	if success, _ := res["success"].(bool); !success {
 		if response_tmpl != "" {
-			res, err := app.RenderTemplate(response_tmpl, res)
+			tmpl, err := app.RenderTemplate(response_tmpl, res)
 			if err != nil {
 				fmt.Println("Error rendering page response template:", err)
 			} else {
 				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, res)
+				fmt.Fprint(w, tmpl)
 				return
 			}
 		}
@@ -1109,4 +1109,74 @@ func (app *application) handleConfirmEmail(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
+}
+
+// SAAS
+func (app *application) handleSaaS(w http.ResponseWriter, r *http.Request) {
+	action := r.PathValue("action")
+	id := r.PathValue("id")
+	ui := r.URL.Query().Get("ui")
+	page := r.URL.Query().Get("page")
+	_, err := app.getUser(r)
+	if err != nil {
+		if ui != "" {
+			if r.Header.Get("HX-Request") == "true" {
+				w.Header().Set("HX-Redirect", "/ui/"+ui+"/login")
+				w.WriteHeader(http.StatusNoContent)
+			} else {
+				http.Redirect(w, r, "/ui/"+ui+"/login", http.StatusSeeOther)
+			}
+		}
+		return
+	}
+	params := Dict{
+		"lang": "en",
+		"data": Dict{
+			"db":              env.GetString("UIDB", "UI"),
+			"ui_slug":         ui,
+			"id":              id,
+			"subscription_id": id,
+			"action":          action,
+		},
+	}
+	params["host"] = getHost(r)
+	params["path"] = r.URL.Path
+	params["ip"] = ClientIP(r)
+	params["loc"] = app.getLocationFromRequest(r, Dict{})
+	res := Dict{}
+	switch action {
+	case "deploy", "upgrade", "downgrade", "cancel":
+		res = app.RunDeploy(params)
+	case "start", "stop", "restart", "status", "logs":
+		res = app.HandleService(params, action)
+	default:
+		res = Dict{"success": false, "msg": fmt.Sprintf("Unknown action %q", action)}
+	}
+	sql := `select p.* 
+	from ui_page p
+	join ui on ui.ui_id = p.ui_id
+	where p.page_key = ? and p.active = true and p.excluded = false
+		and (ui.ui_slug = ? or ui.ui_name = ?) and ui.active = true and ui.excluded = false`
+	pageData, err := app.GetRowByFilter(sql, params, []any{page, ui, ui})
+	if err != nil {
+		fmt.Println("Error geting page response template:", err)
+	}
+	response_tmpl, _ := pageData["response_tmpl"].(string)
+	if response_tmpl != "" {
+		tmpl, err := app.RenderTemplate(response_tmpl, res)
+		if err != nil {
+			fmt.Println("Error rendering page response template:", err)
+		} else {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			fmt.Fprint(w, tmpl)
+			return
+		}
+	}
+	msg, _ := res["msg"].(string)
+	if msg == "" {
+		msg = "Unexpected Error"
+	}
+	app.writeHTMLError(w, http.StatusUnauthorized, msg)
+	return
+
 }

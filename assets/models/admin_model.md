@@ -245,7 +245,6 @@ form_layout:
     - {label: App, fields: [app, app_desc, version, email, db, attach_logo, category]}
     - {label: Config, fields: [config]}
   sub_form_size: 9
-form_extra_options: []
 table_layout:
   allow_in_submenu: {menu: true}
   default_order: [{field: app_id, order: DESC}]

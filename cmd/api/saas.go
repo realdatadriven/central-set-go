@@ -119,6 +119,16 @@ func (app *application) HandleService(params Dict, action string) Dict {
 		return Dict{"success": false, "msg": msg}
 	}
 	_table := params["data"].(Dict)["table"]
+	subs, err := app.ODataGetRow(params, "subscription", "subscription_id", _data["subscription_id"]) //app.GetRowByFilter(sql, params, []any{_data["subscription_id"]})
+	if err != nil {
+		return Dict{
+			"success": false,
+			"msg":     err.Error(),
+		}
+	}
+	if len(subs) > 0 {
+		_data = subs
+	}
 	sql := `select * from "subs_server" where "subscription_id" = ? and "active" = true and "excluded" = false`
 	subsServer, err := app.GetRowsByFilter(sql, params, []any{_data["subscription_id"]})
 	if err != nil {
@@ -693,7 +703,7 @@ func (app *application) RunDeploy(params Dict) Dict {
 
 func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run *TerraformRun, action string) (map[string]string, error) {
 	workDir, _ := os.MkdirTemp("", "tf-*")
-	fmt.Println("Temp TF Dir:", workDir)
+	// fmt.Println("Temp TF Dir:", workDir)
 	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
 	//return nil, fmt.Errorf("template_test: %s", workDir)
 	if len(run.State) > 0 {
@@ -820,7 +830,7 @@ func (app *application) DeployTerraformForTenant(params Dict, tenantID any, run 
 
 func (app *application) DeployOpenTofuForTenant(params Dict, tenantID any, run *TerraformRun, action string) (map[string]string, error) {
 	workDir, _ := os.MkdirTemp("", "tofu-*")
-	fmt.Println("Temp Tofu Dir:", workDir)
+	// fmt.Println("Temp Tofu Dir:", workDir)
 	os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644)
 	//return nil, fmt.Errorf("template_test: %s", workDir)
 	if len(run.State) > 0 {
@@ -980,7 +990,7 @@ func (app *application) RenderTextTemplate(tmplStr string, data map[string]any) 
 func (app *application) DestroyTerraform(params Dict, tenantID any, run *TerraformRun, action string) error {
 	// 1. Create temp dir
 	workDir, _ := os.MkdirTemp("", "tf-*")
-	fmt.Println("Temp TF Dir:", workDir)
+	// fmt.Println("Temp TF Dir:", workDir)
 	// 2. Write config
 	if err := os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644); err != nil {
 		return err
@@ -1080,7 +1090,7 @@ func (app *application) DestroyTerraform(params Dict, tenantID any, run *Terrafo
 func (app *application) DestroyOpenTofu(params Dict, tenantID any, run *TerraformRun, action string) error {
 	// 1. Create temp dir
 	workDir, _ := os.MkdirTemp("", "tofu-*")
-	fmt.Println("Temp Tofu Dir:", workDir)
+	//  fmt.Println("Temp Tofu Dir:", workDir)
 	// 2. Write config
 	if err := os.WriteFile(filepath.Join(workDir, "main.tf"), []byte(run.Config), 0644); err != nil {
 		return err
@@ -1133,7 +1143,6 @@ func (app *application) DestroyOpenTofu(params Dict, tenantID any, run *Terrafor
 		fmt.Println("Init Failed:", err)
 		return err
 	}
-
 	if err := tf.Refresh(context.Background()); err != nil {
 		stateBytes, _err := os.ReadFile(filepath.Join(workDir, "terraform.tfstate"))
 		if _err == nil {
