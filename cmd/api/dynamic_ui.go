@@ -485,14 +485,17 @@ func (app *application) RenderUIAsset(params Dict) Dict {
 	encoding, _ := asset["content_encoding"].(string)
 	var raw []byte
 	if strings.EqualFold(encoding, "base64") {
+		// fmt.Println("ASSET", assetPath, "base64")
 		decoded, derr := base64.StdEncoding.DecodeString(content)
 		if derr != nil {
+			// fmt.Println("ASSET", assetPath, "failed to decode base64")
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to decode asset %q: %s", assetPath, derr)}
 		}
 		raw = decoded
 	} else {
 		raw = []byte(content)
 	}
+	fmt.Println("ASSET", assetPath, asset["mime_type"], len(raw), "bytes")
 	mimeType, _ := asset["mime_type"].(string)
 	if mimeType == "" {
 		mimeType = "application/octet-stream"
@@ -1057,7 +1060,7 @@ func (app *application) logoutHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 	}
-	if r.Method == http.MethodPost {
+	if r.Method == http.MethodPost || r.Method == http.MethodGet {
 		if r.Header.Get("HX-Request") == "true" {
 			w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 			w.WriteHeader(http.StatusNoContent)
