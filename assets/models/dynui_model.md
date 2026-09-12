@@ -257,101 +257,6 @@ table_layout:
   default_order: [{field: asset_path, order: ASC}]
 ```
 
-For the `products` page-data row, `odata_path` can be
-`STORE/product?$filter=active eq true&$orderby=product_name asc`. The handler
-should render this stored Go template only after it has safely interpolated
-route values, such as `{{ .Route.PathParams.product_id }}`, and should never
-accept C7 OData path or template name directly from the browser.
-
-<!--
-# UI_DATA
-```yaml
-name: UI_DATA
-description: Minimal single-page example with header/footer partials
-database: UI
-runs_as: MODEL_DATA
-admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
-```
-
-## UI_DEMO
-```yaml
-table: ui
-description: Add the demo website
-cond: 'WHERE ui_slug = :ui_slug AND excluded = false'
-data:
-  ui_id: 1
-  ui_slug: demo
-  ui_name: Demo Site
-  ui_desc: Minimal example used to test one page with header/footer partials
-  default_locale: en
-  active: true
-```
-
-## UI_PARTIAL_HEADER
-```yaml
-table: ui_partial
-description: Add the demo header partial
-cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
-data:
-  ui_partial_id: 1
-  ui_id: 1
-  ui_partial: header
-  ui_partial_desc: Site header and primary navigation
-  partial_template: |
-    <header style="padding:1rem;background:#222;color:#fff;">
-      <strong>{{.UI.ui_name}}</strong>
-      <nav style="float:right;">
-        <a href="/ui/demo" style="color:#fff;margin-left:1rem;">Home</a>
-        <a href="/ui/demo/about" style="color:#fff;margin-left:1rem;">About</a>
-      </nav>
-    </header>
-  active: true
-```
-
-## UI_PARTIAL_FOOTER
-```yaml
-table: ui_partial
-description: Add the demo footer partial
-cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
-data:
-  ui_partial_id: 2
-  ui_id: 1
-  ui_partial: footer
-  ui_partial_desc: Site footer
-  partial_template: |
-    <footer style="padding:1rem;background:#eee;margin-top:2rem;color:#555;">
-      &copy; {{.UI.ui_name}} &middot; built with central-set-go
-    </footer>
-  active: true
-```
-
-## UI_PAGE_HOME
-```yaml
-table: ui_page
-description: Add the demo home page (default page for the demo ui)
-cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
-data:
-  ui_page_id: 1
-  ui_id: 1
-  page_key: home
-  page_title: Welcome
-  meta_description: Minimal single-page demo
-  page_template: |
-    {{template "header" .}}
-    <main style="padding:1rem;">
-      <h1>{{.Page.page_title}}</h1>
-      <p>{{.Page.meta_description}}</p>
-      <p>This page is served straight out of the database — the header and
-      footer above are separate <code>ui_partial</code> rows parsed together
-      with this <code>ui_page.page_template</code>.</p>
-    </main>
-    {{template "footer" .}}
-  cache_seconds: 0
-  default_page: true
-  active: true
-```
--->
-
 # UI_DATA
 ```yaml
 name: UI_DATA
@@ -642,6 +547,142 @@ data:
     asset_content:    Base64(assets/static/img/icon.png)
     active:           true
     ui_id:            1
+```
+
+<!-- UI STORE -->
+# STORE_UI_DATA
+```yaml
+name: STORE_UI_DATA
+description: Online Store UI Demo (Tailwind + htmx + C7 DynUI)
+database: UI
+runs_as: MODEL_DATA
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## STORE_UI
+```yaml
+table: ui
+description: Online Store website
+cond: 'WHERE ui_slug = :ui_slug AND excluded = false'
+data:
+  ui_id: 2
+  ui_slug: store
+  ui_name: RealDataDriven
+  ui_desc: Data engineering consulting - ETL/ELT/Reverse ETL, warehouses, lakehouses, and open-source-backed SaaS
+  default_locale: en
+  active: true
+```
+
+## STORE_UI_PARTIAL_HEAD
+```yaml
+table: ui_partial
+description: Add Online Store head partial
+cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
+data:
+  ui_partial_id: 21
+  ui_id: 2
+  ui_partial: store_header
+  ui_partial_desc: Add Online Store Head Script And Styles
+  partial_template: FileContent(ui/store/parts/head.html)
+  active: true
+```
+
+## STORE_UI_PARTIAL_HEADER
+```yaml
+table: ui_partial
+description: Add Online Store header/navbar partial
+cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
+data:
+  ui_partial_id: 22
+  ui_id: 2
+  ui_partial: store_header
+  ui_partial_desc: Add Online Store Header partial
+  partial_template: FileContent(ui/store/parts/header.html)
+  active: true
+```
+
+## STORE_UI_PARTIAL_FOOTER
+```yaml
+table: ui_partial
+description: Add Online Store footer partial
+cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
+data:
+  ui_partial_id: 23
+  ui_id: 2
+  ui_partial: store_footer
+  ui_partial_desc: Footer with links and copyright
+  partial_template: FileContent(ui/store/parts/footer.html)
+  active: true
+```
+
+## STORE_UI_PARTIAL_BOTTOM_NAV
+```yaml
+table: ui_partial
+description: Add Online Store footer partial
+cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
+data:
+  ui_partial_id: 24
+  ui_id: 2
+  ui_partial: store_bottom_nav
+  ui_partial_desc: Add Online Store bottom nav partial
+  partial_template: FileContent(ui/store/parts/bottom-nav.html)
+  active: true
+```
+
+## STORE_UI_PAGE_HOME
+```yaml
+table: ui_page
+description: Add Online Store home page (default page)
+cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+data:
+  ui_page_id: 21
+  ui_id: 2
+  page_key: home
+  page_title: Online Store
+  meta_description: Online Store
+  page_template: FileContent(ui/store/home.html)
+  cache_seconds: 60
+  default_page: true
+  active: true
+  children:
+    - table: ui_page_data
+      cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_data = :ui_page_data'
+      data:
+        ui_page_data: store_data
+        ui_page_data_desc: Sore Data
+        odata_path: store/store?$filter=store_id eq {{.PathParams.id}}
+        single_row_obj: true
+        ui_page_id: ui_page_id()
+        ui_id: ui_id()
+    - table: ui_page_partial
+      cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_partial = :ui_page_partial'
+      data:
+        - ui_page_partial: Store Head
+          ui_partial_id: 21
+          ui_page_id: ui_page_id()
+          ui_id: ui_id()
+        - ui_page_partial: Store Header
+          ui_partial_id: 22
+          ui_page_id: ui_page_id()
+          ui_id: ui_id()
+        - ui_page_partial: Store Footer
+          ui_partial_id: 23
+          ui_page_id: ui_page_id()
+          ui_id: ui_id()
+        - ui_page_partial: Store Bottom Nav
+          ui_partial_id: 24
+          ui_page_id: ui_page_id()
+          ui_id: ui_id()
+```
+
+<!-- UI STORE -->
+# SURVEY_UI_DATA
+```yaml
+name: SURVEY_UI_DATA
+description: Survey UI Example using survey-js core
+database: UI
+runs_as: MODEL_DATA
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 ```
 
 ## SURVEY
