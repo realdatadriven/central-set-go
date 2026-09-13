@@ -581,7 +581,7 @@ cond: 'WHERE ui_id = :ui_id AND ui_partial = :ui_partial AND excluded = false'
 data:
   ui_partial_id: 21
   ui_id: 2
-  ui_partial: store_header
+  ui_partial: store_head
   ui_partial_desc: Add Online Store Head Script And Styles
   partial_template: FileContent(ui/store/parts/head.html)
   active: true
@@ -654,6 +654,7 @@ data:
         single_row_obj: true
         ui_page_id: ui_page_id()
         ui_id: ui_id()
+        active: false
     - table: ui_page_partial
       cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_partial = :ui_page_partial'
       data:
