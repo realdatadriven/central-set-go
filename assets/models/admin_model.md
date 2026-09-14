@@ -982,8 +982,8 @@ columns:
   updated_at:          { type: datetime, comment: "Updated at" }
   excluded:            { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {valid_reaction_id: 1, valid_reaction: trow_err_if_empty, valid_reaction_desc: Validation Reaction if Empty, excluded: false}
-  - {valid_reaction_id: 2, valid_reaction: trow_err_if_not_empty, valid_reaction_desc: Validation Reaction if not Empty, excluded: false}
+  - {valid_reaction_id: 1, valid_reaction: throw_err_if_empty, valid_reaction_desc: Validation Reaction if Empty, excluded: false}
+  - {valid_reaction_id: 2, valid_reaction: throw_err_if_not_empty, valid_reaction_desc: Validation Reaction if not Empty, excluded: false}
   - {valid_reaction_id: 3, valid_reaction: log_it_as_alert, valid_reaction_desc: Only Log it as Alert or Non-Critical Error, excluded: false}
 form_layout:
   size: 4
