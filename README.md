@@ -17,7 +17,7 @@ Central Set acts as a **control plane** for data-driven applications:
 - Build and run [ETLX](https://github.com/realdatadriven/etlx) data pipelines
 - Expose data via APIs (REST-ish, OData v4, Arrow Flight)
 - Enforce access control, row-level security, and governance
-- [Create dashboards](https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/) and reports using Markdown + DuckDB-WASM ([evidence.dev](https://docs.evidence.dev) style)
+- [Create dashboards](https://realdatadriven.github.io/central-set-go/docs/tutorials/dashboards/) and reports using Markdown + DuckDB-WASM ([evidence.dev](https://legacy-docs.evidence.dev) style)
 
 All of this is defined using **configuration**, not hard-coded logic.
 
