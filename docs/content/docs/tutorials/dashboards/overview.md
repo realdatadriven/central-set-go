@@ -12,7 +12,7 @@ images: []
 ## Overview
 
 Central Set provides a **first-class analytics and dashboarding layer** by embedding and extending
-[evidence.dev](https://docs.evidence.dev).
+[evidence.dev](https://legacy-docs.evidence.dev).
 
 This allows you to build **interactive analytical dashboards** directly on top of:
 
@@ -55,19 +55,19 @@ UI rendering and transforms database-backed records into analytical dashboards.
 Some Evidence components are not yet integrated or are slightly modified to better fit Central Set,
 but **the core visualization components (what really matters) are fully compatible**, including:
 
-* [If / Else](https://docs.evidence.dev/core-concepts/if-else/)
-* [Loops](https://docs.evidence.dev/core-concepts/loops/)
-* [Formating](https://docs.evidence.dev/core-concepts/formatting/)
-* [Value](https://docs.evidence.dev/components/data/value/)
-* [Big Value](https://docs.evidence.dev/components/data/big-value/)
-* [Data Table](https://docs.evidence.dev/components/data/data-table/)
-* [Delta](https://docs.evidence.dev/components/data/delta/)
-* [Charts](https://docs.evidence.dev/components/charts/area-chart/)
+* [If / Else](https://legacy-docs.evidence.dev/core-concepts/if-else/)
+* [Loops](https://legacy-docs.evidence.dev/core-concepts/loops/)
+* [Formating](https://legacy-docs.evidence.dev/core-concepts/formatting/)
+* [Value](https://legacy-docs.evidence.dev/components/data/value/)
+* [Big Value](https://legacy-docs.evidence.dev/components/data/big-value/)
+* [Data Table](https://legacy-docs.evidence.dev/components/data/data-table/)
+* [Delta](https://legacy-docs.evidence.dev/components/data/delta/)
+* [Charts](https://legacy-docs.evidence.dev/components/charts/area-chart/)
 
 Charts are based on [Apache ECharts](https://echarts.apache.org/en/index.html) and can be fully customized using:
 
-* [ECharts Extra Options](https://docs.evidence.dev/components/charts/echarts-options/)
-* [Custom Charts](https://docs.evidence.dev/components/charts/custom-echarts/)
+* [ECharts Extra Options](https://legacy-docs.evidence.dev/components/charts/echarts-options/)
+* [Custom Charts](https://legacy-docs.evidence.dev/components/charts/custom-echarts/)
 
 This allows the full ECharts configuration object to be passed directly, enabling virtually any
 visualization supported by ECharts.

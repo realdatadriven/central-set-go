@@ -261,7 +261,7 @@ order by "ref" asc
     <GridItem width=4 _class='p-1'>Logs Entry by Main Processs</GridItem>  
     <GridItem width=8 _class='p-1'>Logs History</GridItem>  
     <GridItem width=4 _class='p-1'>
-        <!-- https://docs.evidence.dev/components/charts/custom-echarts/ -->
+        <!-- https://legacy-docs.evidence.dev/components/charts/custom-echarts/ -->
         <ECharts config={{
                 tooltip: { formatter: '{b}: {c} ({d}%)' },
                 //height: 230,
@@ -276,7 +276,7 @@ order by "ref" asc
         />
     </GridItem>  
     <GridItem width=8 _class='p-1'>
-        <!-- https://docs.evidence.dev/components/charts/area-chart/ -->
+        <!-- https://legacy-docs.evidence.dev/components/charts/area-chart/ -->
         <AreaChart 
             data={total_by_ref_query}
             x=dt
