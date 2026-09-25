@@ -79,13 +79,7 @@ func (app *application) serve_ui_page(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// fmt.Println("ERR:", err)
 	}
-	lang := r.URL.Query().Get("lang")
-	if lang == "" {
-		lang = r.Header.Get("Accept-Language")
-	}
-	if lang == "" {
-		lang = "en"
-	}
+	lang := getLang(r)
 	params := Dict{
 		"lang": lang,
 		"user": user,
@@ -123,13 +117,7 @@ func (app *application) serve_ui_partial(w http.ResponseWriter, r *http.Request)
 	if err == nil {
 		user = userFromSess
 	}
-	lang := r.URL.Query().Get("lang")
-	if lang == "" {
-		lang = r.Header.Get("Accept-Language")
-	}
-	if lang == "" {
-		lang = "en"
-	}
+	lang := getLang(r)
 	params := Dict{
 		"lang": lang,
 		"user": user,
@@ -801,13 +789,7 @@ func (app *application) uiFormParams(w http.ResponseWriter, r *http.Request) (Di
 	}
 	lang, _ := data["lang"].(string)
 	if lang == "" {
-		lang = r.URL.Query().Get("lang")
-	}
-	if lang == "" {
-		lang = r.Header.Get("Accept-Language")
-	}
-	if lang == "" {
-		lang = "en"
+		lang = getLang(r)
 	}
 	params := Dict{"lang": lang, "data": data}
 	params["host"] = getHost(r)
@@ -1155,10 +1137,23 @@ func (app *application) writeHTMLError(w http.ResponseWriter, status int, msg st
 	fmt.Fprintf(w, `<div class="alert alert-error"><span>%s</span></div>`, template.HTMLEscapeString(msg))
 }
 
+func getBaseLang(header string) string {
+	if header == "" {
+		return "" // Default fallback
+	}
+	// 1. Split by comma to isolate the first preference: "en-US"
+	firstPart := strings.Split(header, ",")[0]
+	// 2. Split by hyphen to isolate the language code: "en"
+	lang := strings.Split(firstPart, "-")[0]
+	// 3. Clean up any accidental spaces
+	return strings.TrimSpace(lang)
+}
+
 func getLang(r *http.Request) string {
 	lang := r.URL.Query().Get("lang")
 	if lang == "" {
-		lang = r.Header.Get("Accept-Language")
+		lang = getBaseLang(r.Header.Get("Accept-Language"))
+		// fmt.Println(lang, r.Header.Get("Accept-Language"))
 	}
 	if lang == "" {
 		lang = "en"
