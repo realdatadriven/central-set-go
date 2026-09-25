@@ -107,7 +107,7 @@ func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request)
 			where p.page_key = ? and p.active = true and p.excluded = false
 				and (ui.ui_slug = ? or ui.ui_name = ?) and ui.active = true and ui.excluded = false`
 			params := Dict{
-				"lang": "en",
+				"lang": getLang(r),
 				"data": Dict{
 					"db": env.GetString("UIDB", "UI"),
 				},
@@ -180,7 +180,7 @@ func (app *application) crud_api(w http.ResponseWriter, r *http.Request) Dict {
 	}
 	db = _app["db"].(string)
 	params := Dict{
-		"lang": "en",
+		"lang": getLang(r),
 		"user": user,
 		"app":  _app,
 		"data": Dict{
