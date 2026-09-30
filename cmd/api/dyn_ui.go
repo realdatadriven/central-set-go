@@ -35,7 +35,12 @@ func (app *application) getUser(r *http.Request) (Dict, error) {
 		if err != nil {
 			return nil, err
 		}
-		return app.verifyTokenString(cookie.Value)
+		usr, err := app.verifyTokenString(cookie.Value)
+		if err != nil {
+			return nil, err
+		}
+		usr["token"] = cookie.Value
+		return usr, err
 	} else {
 		// 1. Retrieve the session cookie from the request
 		cookie, err := r.Cookie("session_id")
@@ -258,6 +263,23 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		return translated
 	}
 	pageTemplate, _ := page["page_template"].(string)
+	blocks, remaining := ExtractSQLBlocksV2(pageTemplate)
+	if len(blocks) > 0 {
+		_data := Dict{}
+		// conn an inmemory sql
+		for _, block := range blocks {
+			fmt.Printf("NAME: %s\n", block["key"])
+			fmt.Printf("LANG: %s\n", block["lang"])
+			// fmt.Printf("CODE:\n%s\n", block["code"])
+			if block["key"].(string) == "" && block["code"].(string) != "" {
+				// EXEC SQL
+			} else if block["key"].(string) != "" && block["code"].(string) != "" {
+				// RUN SQL AND RETURN VALUE
+				_data[block["key"].(string)] = block["code"].(string)
+			}
+		}
+		pageTemplate = remaining
+	}
 	tset, err := template.New("__page__").Funcs(funcMap).Parse(pageTemplate)
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("failed to parse page_template: %s", err)}

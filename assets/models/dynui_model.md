@@ -721,3 +721,49 @@ data:
           ui_page_id: ui_page_id()
           ui_id: ui_id()
 ```
+
+# DASHBOARD_UI_DATA
+```yaml
+name: DASHBOARD_UI_DATA
+description: Dashborad example, where md sql blocks are 
+database: UI
+runs_as: MODEL_DATA
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
+```
+
+## DASHBOARD2
+```yaml
+table: ui
+description: Add a dashboard page
+cond: 'WHERE ui_slug = :ui_slug AND excluded = false'
+data:
+  ui_slug: dashboard
+  ui_name: Dashboard
+  ui_desc: Dashboard
+  default_locale: en
+  active: true
+  children:
+    table: ui_page
+    description: Add the default page
+    cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+    data:
+      ui_id: ui_id()
+      page_key: dashboard
+      page_title: Dashboard
+      meta_description: Dashboard
+      page_template: FileContent(assets/models/dashboard.md)
+      cache_seconds: 60
+      default_page: true
+      active: true
+      children:
+        table: ui_page_data
+        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_data = :ui_page_data'
+        data:
+          ui_page_data: dashboard_data
+          ui_page_data_desc: Dashboard Data
+          odata_path: dashboard/dashboard_json?$filter=dashboard_id eq {{.PathParams.id}}
+          single_row_obj: true
+          ui_page_id: ui_page_id()
+          ui_id: ui_id()
+          active: false
+```
