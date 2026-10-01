@@ -743,27 +743,41 @@ data:
   default_locale: en
   active: true
   children:
-    table: ui_page
-    description: Add the default page
-    cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
-    data:
-      ui_id: ui_id()
-      page_key: dashboard
-      page_title: Dashboard
-      meta_description: Dashboard
-      page_template: FileContent(assets/models/dashboard.md)
-      cache_seconds: 60
-      default_page: true
-      active: true
-      children:
-        table: ui_page_data
-        cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_data = :ui_page_data'
-        data:
-          ui_page_data: dashboard_data
-          ui_page_data_desc: Dashboard Data
-          odata_path: dashboard/dashboard_json?$filter=dashboard_id eq {{.PathParams.id}}
-          single_row_obj: true
-          ui_page_id: ui_page_id()
-          ui_id: ui_id()
-          active: false
+    - table: ui_page
+      description: Add the default page
+      cond: 'WHERE ui_id = :ui_id AND page_key = :page_key AND excluded = false'
+      data:
+        ui_id: ui_id()
+        page_key: dashboard
+        page_title: Dashboard
+        meta_description: Dashboard
+        page_template: FileContent(assets/models/dashboard.md)
+        cache_seconds: 60
+        default_page: true
+        active: true
+        children:
+          table: ui_page_data
+          cond: 'WHERE ui_id = :ui_id AND ui_page_id = :ui_page_id and ui_page_data = :ui_page_data'
+          data:
+            ui_page_data: dashboard_data
+            ui_page_data_desc: Dashboard Data
+            odata_path: dashboard/dashboard_json?$filter=dashboard_id eq {{.PathParams.id}}
+            single_row_obj: true
+            ui_page_id: ui_page_id()
+            ui_id: ui_id()
+            active: false
+    - table: ui_asset
+      description: Add the ui asset example
+      cond: 'WHERE ui_id = :ui_id AND asset_path = :asset_path AND excluded = false'
+      data:
+        - asset_path:       trendchart-elements.js
+          mime_type:        MimeType(assets/models/trendchart-elements.js)
+          content_encoding: utf-8
+          asset_content:    FileContent(assets/models/trendchart-elements.js)
+          ui_id:            ui_id()
+        - asset_path:       trendchart-elements.css
+          mime_type:        MimeType(assets/models/trendchart-elements.css)
+          content_encoding: utf-8
+          asset_content:    FileContent(assets/models/trendchart-elements.css)
+          ui_id:            ui_id()
 ```

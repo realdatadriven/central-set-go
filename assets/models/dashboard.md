@@ -35,7 +35,7 @@ APP_NAME: {{pluckJson .queries.ids "app"}}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
         <link rel="icon" type="image/x-icon" href="images/favicon.ico">
         <link rel="icon" type="image/png" sizes="96x96" href="images/favicon.png">
-        <link rel="stylesheet" href="css/master.css">
+        <link rel="stylesheet" href="{{.UI.ui_slug}}/static/trendchart-elements.css">
     </head>
     <body>
         <div class="layout">
@@ -990,6 +990,6 @@ APP_NAME: {{pluckJson .queries.ids "app"}}
                 Examples and Tests for <a href="https://github.com/WebLogin/trendchart-elements">TrendChart Element</a>.
             </footer>
         </div>
-        <script type="module"> import weblogintrendchartElements from 'https://cdn.jsdelivr.net/npm/@weblogin/trendchart-elements@2.0.3/+esm' </script>
+        <script type="module" src="{{.UI.ui_slug}}/static/trendchart-elements.js"></script>
     </body>
 </html>
