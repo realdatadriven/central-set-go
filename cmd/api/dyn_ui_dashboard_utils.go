@@ -8,6 +8,7 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+	"github.com/realdatadriven/etlx"
 )
 
 type SQLBlock struct {
@@ -21,6 +22,7 @@ func ExtractSQLBlocks(markdown string) ([]SQLBlock, string) {
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
 		),
+		
 	)
 	doc := md.Parser().Parse(source)
 	var blocks []SQLBlock
@@ -212,6 +214,18 @@ func ExtractSQLBlocksV2(markdown string) ([]Dict, string) {
 	return blocks, string(result)
 }
 
+func ExecuteSQLBlocks(blocks []Dict) (Dict, error) {
+	var data Dict
+	conn, err := etlx.GetDB("duckdb:")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create in-memory duckdb connection: %w", err)
+	}
+	for _, query := blocks {
+		name := query["key"].(string)
+		sql := query["code"].(string)
+	}
+	return data, nil
+}
 // get the
 
 /*func main() {
