@@ -8,13 +8,13 @@ LOAD erpl_web;
 ```sql
 CREATE SECRET api_auth (
   TYPE http_bearer,
-  TOKEN '<JWT_TOKEN>',
-  SCOPE 'http://localhost:4444/'
+  TOKEN '{{.user.token}}',
+  SCOPE '{{.Host}}'
 );
 ```
 
 ```sql
-ATTACH IF NOT EXISTS 'http://localhost:4444/odata/ADMIN' AS admin (TYPE odata);
+ATTACH IF NOT EXISTS '{{.Host}}/odata/ADMIN' AS admin (TYPE odata);
 ```
 
 ```sql apps
@@ -22,6 +22,11 @@ SELECT count(*) AS total, SUM(CASE WHEN excluded = 1 THEN 1 ELSE 0 END) AS exclu
 FROM admin.app;
 ```
 
+```sql ids
+SELECT *
+FROM admin.app;
+```
+{{pluckJson .queries.ids "app_id"}}
 <html lang="en-GB" dir="ltr">
     <head>
         <meta charset="utf-8">
@@ -984,7 +989,6 @@ FROM admin.app;
                 Examples and Tests for <a href="https://github.com/WebLogin/trendchart-elements">TrendChart Element</a>.
             </footer>
         </div>
-        <!--<script type="module" src="js/master.js"></script>-->
-        <script type="module" src="https://cdn.jsdelivr.net/npm/@weblogin/trendchart-elements@2.0.3/dist/index.js"></script>
+        <script type="module"> import weblogintrendchartElements from 'https://cdn.jsdelivr.net/npm/@weblogin/trendchart-elements@2.0.3/+esm' </script>
     </body>
 </html>

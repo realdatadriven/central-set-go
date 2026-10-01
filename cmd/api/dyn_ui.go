@@ -262,23 +262,28 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		}
 		return translated
 	}
+	// Register your new extraction helper
+	funcMap["pluckJson"] = PluckToJSON
 	pageTemplate, _ := page["page_template"].(string)
 	blocks, remaining := ExtractSQLBlocksV2(pageTemplate)
 	if len(blocks) > 0 {
-		_data := Dict{}
+		pageTemplate = remaining
 		// conn an inmemory sql
 		for _, block := range blocks {
-			fmt.Printf("NAME: %s\n", block["key"])
-			fmt.Printf("LANG: %s\n", block["lang"])
-			// fmt.Printf("CODE:\n%s\n", block["code"])
-			if block["key"].(string) == "" && block["code"].(string) != "" {
-				// EXEC SQL
-			} else if block["key"].(string) != "" && block["code"].(string) != "" {
-				// RUN SQL AND RETURN VALUE
-				_data[block["key"].(string)] = block["code"].(string)
+			// fmt.Printf("NAME: %s\n", block["key"])
+			// fmt.Printf("LANG: %s\n", block["lang"])
+			tmpl, err := app.RenderTextTemplate(block["code"].(string), tmplData)
+			if err != nil {
+				return Dict{"success": false, "msg": fmt.Sprintf("failed to render SQL template: %s", err)}
 			}
+			fmt.Println(block["code"], tmpl)
+			block["code"] = tmpl
 		}
-		pageTemplate = remaining
+		queries, err := ExecuteSQLBlocks(blocks)
+		if err != nil {
+			return Dict{"success": false, "msg": fmt.Sprintf("failed to execute SQL blocks: %s", err)}
+		}
+		tmplData["queries"] = queries
 	}
 	tset, err := template.New("__page__").Funcs(funcMap).Parse(pageTemplate)
 	if err != nil {
@@ -290,7 +295,7 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		if name == "" {
 			continue
 		}
-		if _, err := tset.New(name).Funcs(sprig.FuncMap()).Parse(body); err != nil {
+		if _, err := tset.New(name).Funcs(funcMap).Parse(body); err != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to parse partial %q: %s", name, err)}
 		}
 	}

@@ -1,14 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
+	"encoding/json"
+	"html/template"
+
+	"github.com/realdatadriven/etlx"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
-	"github.com/realdatadriven/etlx"
 )
 
 type SQLBlock struct {
@@ -22,7 +26,6 @@ func ExtractSQLBlocks(markdown string) ([]SQLBlock, string) {
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
 		),
-		
 	)
 	doc := md.Parser().Parse(source)
 	var blocks []SQLBlock
@@ -215,17 +218,52 @@ func ExtractSQLBlocksV2(markdown string) ([]Dict, string) {
 }
 
 func ExecuteSQLBlocks(blocks []Dict) (Dict, error) {
-	var data Dict
+	data := Dict{}
 	conn, err := etlx.GetDB("duckdb:")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create in-memory duckdb connection: %w", err)
 	}
-	for _, query := blocks {
+	for _, query := range blocks {
 		name := query["key"].(string)
 		sql := query["code"].(string)
+		if name == "" {
+			// If no name, just execute the SQL without storing the result.
+			_, err := conn.ExecuteQuery(sql, []any{}...)
+			if err != nil {
+				return nil, fmt.Errorf("failed to execute SQL: %w", err)
+			}
+		} else {
+			// Execute the SQL and store the result in the data map.
+			rows, _, err := conn.QueryMultiRows(sql, []any{}...)
+			if err != nil {
+				return nil, fmt.Errorf("failed to execute SQL for key '%s': %w", name, err)
+			}
+			data[name] = (*rows)
+		}
 	}
 	return data, nil
 }
+
+// PluckToJSON extracts a specific key from a list of maps and returns a JSON array string
+func PluckToJSON(list []any, key string) template.JS {
+	var result []any
+	for _, item := range list {
+		// Ensure the item is actually a map
+		if m, ok := item.(map[string]any); ok {
+			if val, exists := m[key]; exists {
+				result = append(result, val)
+			}
+		}
+	}
+	// Marshal the extracted list into JSON bytes
+	bytes, err := json.Marshal(result)
+	if err != nil || len(result) == 0 {
+		return "[]" // Safe fallback
+	}
+	// template.JS ensures double quotes are not escaped to HTML entities inside script tags
+	return template.JS(bytes)
+}
+
 // get the
 
 /*func main() {
