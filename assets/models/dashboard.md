@@ -26,7 +26,8 @@ FROM admin.app;
 SELECT *
 FROM admin.app;
 ```
-{{pluckJson .queries.ids "app_id"}}
+APP_ID: {{pluckJson .queries.ids "app_id"}}
+APP_NAME: {{pluckJson .queries.ids "app"}}
 <html lang="en-GB" dir="ltr">
     <head>
         <meta charset="utf-8">

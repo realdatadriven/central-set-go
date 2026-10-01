@@ -245,12 +245,21 @@ func ExecuteSQLBlocks(blocks []Dict) (Dict, error) {
 }
 
 // PluckToJSON extracts a specific key from a list of maps and returns a JSON array string
-func PluckToJSON(list []any, key string) template.JS {
+func PluckToJSON(list any, key string) template.JS {
 	var result []any
-	for _, item := range list {
-		// Ensure the item is actually a map
-		if m, ok := item.(map[string]any); ok {
-			if val, exists := m[key]; exists {
+	switch v := list.(type) {
+	case []any:
+		for _, item := range v {
+			// Ensure the item is actually a map
+			if m, ok := item.(map[string]any); ok {
+				if val, exists := m[key]; exists {
+					result = append(result, val)
+				}
+			}
+		}
+	case []map[string]any:
+		for _, item := range v {
+			if val, exists := item[key]; exists {
 				result = append(result, val)
 			}
 		}
