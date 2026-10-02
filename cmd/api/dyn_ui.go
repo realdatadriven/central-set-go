@@ -781,7 +781,7 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 	// TWO FACTOR AUTH
 	if two_factor, ok := res["two_factor"]; ok && app.toBool(two_factor) {
 		_link := fmt.Sprintf("/ui/%s/two-factor?username=%s", uiSlug, email)
-		fmt.Println("2FactorRedirect:", _link)
+		// fmt.Println("2FactorRedirect:", _link)
 		if r.Header.Get("HX-Request") == "true" {
 			w.Header().Set("HX-Redirect", _link)
 			w.WriteHeader(http.StatusNoContent)
@@ -789,7 +789,7 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, _link, http.StatusSeeOther)
 		}
 	}
-	app.startUISession(w, res)
+	app.startUISession(w, r, res)
 	// w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
 	// w.WriteHeader(http.StatusOK)
 	_link := fmt.Sprintf("/ui/%s", uiSlug)
@@ -803,14 +803,16 @@ func (app *application) ui_login(w http.ResponseWriter, r *http.Request) {
 
 // startUISession persists the authenticated result returned by _login or
 // two_factor_code_valid and issues the matching UI session cookie.
-func (app *application) startUISession(w http.ResponseWriter, res Dict) {
+func (app *application) startUISession(w http.ResponseWriter, r *http.Request, res Dict) {
 	token, _ := res["token"].(string)
+	loc := app.getLocationFromRequest(r, Dict{})
+	expiry := time.Now().In(loc).Add(time.Duration(app.config.jwt.tokenExpireHours) * time.Hour)
 	if os.Getenv("COOKIE_MODE") == "TOKEN" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session",
 			Value:    token,
 			Path:     "/",
-			Expires:  time.Now().Add(30 * time.Minute),
+			Expires:  expiry, //time.Now().Add(30 * time.Minute),
 			HttpOnly: true,
 			Secure:   true,
 			SameSite: http.SameSiteStrictMode,
@@ -825,7 +827,7 @@ func (app *application) startUISession(w http.ResponseWriter, res Dict) {
 		Name:     "session_id",
 		Value:    sessionID,
 		Path:     "/",
-		Expires:  time.Now().Add(30 * time.Minute),
+		Expires:  expiry, //time.Now().Add(30 * time.Minute),
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
@@ -953,7 +955,7 @@ func (app *application) ui_validate_code(w http.ResponseWriter, r *http.Request)
 		app.writeHTMLError(w, http.StatusUnauthorized, msg)
 		return
 	}
-	app.startUISession(w, res)
+	app.startUISession(w, r, res)
 	uiSlug := r.PathValue("ui_slug")
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/ui/"+uiSlug)
@@ -1250,7 +1252,7 @@ func (app *application) handleConfirmEmail(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	// fmt.Println(res)
-	app.startUISession(w, res)
+	app.startUISession(w, r, res)
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", redirect)
 		w.WriteHeader(http.StatusNoContent)
