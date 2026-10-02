@@ -865,7 +865,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	sql := `select * from app where (lower(app) = ? or lower(db) = ?) and excluded = false`
 	_app, err := app.AdminGetRowByFilter(sql, []any{strings.ToLower(db), strings.ToLower(db)})
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		// w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusOK)
 		_res := Dict{
 			"error": Dict{
 				"code":    "GeneralError",
@@ -897,8 +898,11 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 	}
+	w.Header().Set("Content-Type", "application/json;odata.metadata=minimal")
+	w.WriteHeader(http.StatusOK)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		// w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusOK)
 		response = Dict{
 			"error": Dict{
 				"code":    "GeneralError",
@@ -910,7 +914,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	}
 	csParams, err := ODataToCentralParams(odata_params)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		// w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusOK)
 		response = Dict{
 			"error": Dict{
 				"code":    "GeneralError",
@@ -952,10 +957,14 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	}
 	//fmt.Println(params["user"])
 	if !token["success"].(bool) {
-		w.WriteHeader(http.StatusForbidden)
+		//w.WriteHeader(http.StatusUnauthorized) //StatusForbidden)
+		w.Header().Set("Content-Type", "application/json;odata.metadata=minimal")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("WWW-Authenticate", `Bearer error="invalid_token"`)
+		//w.WriteHeader(http.StatusUnauthorized)
 		response = Dict{
 			"error": Dict{
-				"code":    "GeneralError",
+				"code":    "InvalidToken",
 				"message": token["msg"],
 			},
 		}
@@ -1020,7 +1029,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if !data["success"].(bool) {
-		w.WriteHeader(http.StatusBadRequest)
+		//w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusOK)
 		response = Dict{
 			"error": Dict{
 				"code":    "GeneralError",
@@ -1039,8 +1049,6 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 		//"@odata.nextLink": "http://" + r.Host + strings.TrimSuffix(r.URL.Path, r.URL.RawQuery), // optional: for paging
 	}
 	//w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Content-Type", "application/json;odata.metadata=minimal")
-	w.WriteHeader(http.StatusOK)
 	//application/json;odata.metadata=minimal
 	json.NewEncoder(w).Encode(response)
 }

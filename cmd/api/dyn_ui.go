@@ -295,6 +295,23 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		if name == "" {
 			continue
 		}
+		blocks, remaining := ExtractSQLBlocksV2(body)
+		if len(blocks) > 0 {
+			body = remaining
+			for _, block := range blocks {
+				tmpl, err := app.RenderTextTemplate(block["code"].(string), tmplData)
+				if err != nil {
+					return Dict{"success": false, "msg": fmt.Sprintf("failed to render SQL template: %s", err)}
+				}
+				// fmt.Println(block["code"], tmpl)
+				block["code"] = tmpl
+			}
+			queries, err := ExecuteSQLBlocks(blocks)
+			if err != nil {
+				return Dict{"success": false, "msg": fmt.Sprintf("failed to execute SQL blocks: %s", err)}
+			}
+			tmplData["queries"] = queries
+		}
 		if _, err := tset.New(name).Funcs(funcMap).Parse(body); err != nil {
 			return Dict{"success": false, "msg": fmt.Sprintf("failed to parse partial %q: %s", name, err)}
 		}
@@ -404,6 +421,7 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 		}
 		return translated
 	}
+	funcMap["pluckJson"] = PluckToJSON
 	// 4) parse every active partial as a named template, then execute only
 	// the requested one.
 	tset := template.New(partialName).Funcs(funcMap)
@@ -412,6 +430,23 @@ func (app *application) RenderUIPartial(params Dict) Dict {
 		body, _ := p["partial_template"].(string)
 		if name == "" {
 			continue
+		}
+		blocks, remaining := ExtractSQLBlocksV2(body)
+		if len(blocks) > 0 {
+			body = remaining
+			for _, block := range blocks {
+				tmpl, err := app.RenderTextTemplate(block["code"].(string), tmplData)
+				if err != nil {
+					return Dict{"success": false, "msg": fmt.Sprintf("failed to render SQL template: %s", err)}
+				}
+				// fmt.Println(block["code"], tmpl)
+				block["code"] = tmpl
+			}
+			queries, err := ExecuteSQLBlocks(blocks)
+			if err != nil {
+				return Dict{"success": false, "msg": fmt.Sprintf("failed to execute SQL blocks: %s", err)}
+			}
+			tmplData["queries"] = queries
 		}
 		var perr error
 		if name == partialName {
