@@ -223,6 +223,7 @@ func ExecuteSQLBlocks(blocks []Dict) (Dict, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create in-memory duckdb connection: %w", err)
 	}
+	defer conn.Close()
 	for _, query := range blocks {
 		name := query["key"].(string)
 		sql := query["code"].(string)
