@@ -132,7 +132,7 @@ func (app *application) routes() http.Handler {
 				{"role": "user", "content": "Analyze this dataset"}
 		]
 	}*/
-	//mux.HandleFunc("/etlx-assist", aiAssistHandler)
+	// mux.HandleFunc("/etlx-assist", aiAssistHandler)
 
 	//mux.NotFound = http.HandlerFunc(app.notFound)
 	//mux.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowed)

@@ -38,6 +38,7 @@ require (
 	github.com/wneessen/go-mail v0.8.1
 	github.com/xuri/excelize/v2 v2.11.0
 	github.com/yuangwei/go-i18next v1.0.0
+	github.com/yuin/goldmark v1.8.6
 	golang.org/x/crypto v0.57.0
 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
 	golang.org/x/text v0.42.0
@@ -51,9 +52,12 @@ require (
 	cloud.google.com/go/auth v0.24.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
+	cloud.google.com/go/iam v1.5.2 // indirect
+	cloud.google.com/go/storage v1.52.0 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/Azure/go-ntlmssp v0.1.1 // indirect
 	github.com/BurntSushi/toml v1.6.0 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.52.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
@@ -108,31 +112,25 @@ require (
 	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/hablullah/go-hijri v1.0.2 // indirect
-	github.com/hablullah/go-juliandays v1.0.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-version v1.9.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/terraform-json v0.28.0 // indirect
 	github.com/huandu/xstrings v1.6.2 // indirect
-	github.com/jalaali/go-jalaali v0.1.0 // indirect
 	github.com/jlaffaye/ftp v0.2.4 // indirect
 	github.com/klauspost/compress v1.20.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/lib/pq v1.12.3 // indirect
-	github.com/magefile/mage v1.17.2 // indirect
 	github.com/markusmobius/go-dateparser v1.4.7 // indirect
 	github.com/markusmobius/go-dateutil/v2 v2.9.1 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-sqlite3 v1.14.52 // indirect
-	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
 	github.com/microsoft/go-mssqldb v1.11.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/ncruces/go-strftime v1.1.0 // indirect
-	github.com/nicksnyder/go-i18n/v2 v2.6.1 // indirect
 	github.com/obaydullahmhs/go-db2 v0.0.0-20251112174409-2887cfa0c252 // indirect
 	github.com/paulmach/orb v0.13.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.31 // indirect
@@ -144,19 +142,15 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.9 // indirect
 	github.com/richardlehane/msoleps v1.0.6 // indirect
-	github.com/rogpeppe/go-internal v1.16.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/superfly/ltx v0.5.3 // indirect
-	github.com/tetratelabs/wazero v1.12.0 // indirect
 	github.com/tiendc/go-deepcopy v1.7.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/wasilibs/go-re2 v1.13.0 // indirect
-	github.com/wasilibs/wazero-helpers v0.0.0-20250123031827-cd30c44769bb // indirect
 	github.com/xuri/efp v0.0.2 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
-	github.com/yuin/goldmark v1.8.6 // indirect
 	github.com/zclconf/go-cty v1.19.0 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.abhg.dev/goldmark/frontmatter v0.3.0 // indirect
