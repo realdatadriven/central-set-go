@@ -30,7 +30,7 @@ require (
 	github.com/markbates/goth v1.82.0
 	github.com/pascaldekloe/jwt v1.12.0
 	github.com/pkg/sftp v1.13.11
-	github.com/realdatadriven/etlx v1.156.0
+	github.com/realdatadriven/etlx v1.156.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stripe/stripe-go/v84 v84.4.1
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce

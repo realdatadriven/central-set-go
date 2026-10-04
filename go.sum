@@ -351,8 +351,8 @@ github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0o
 github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
 github.com/psanford/sqlite3vfs v0.0.0-20260519004904-f9180fa2acc9 h1:9bBMbcwroL46feESdJWjRX0GV+k8o/P9gAg9UX6Vz7U=
 github.com/psanford/sqlite3vfs v0.0.0-20260519004904-f9180fa2acc9/go.mod h1:iW4cSew5PAb1sMZiTEkVJAIBNrepaB6jTYjeP47WtI0=
-github.com/realdatadriven/etlx v1.156.0 h1:oAJ1bAEEo7z8xE1HmOLVchCZOQj+hZv1Tad2irvLF9k=
-github.com/realdatadriven/etlx v1.156.0/go.mod h1:n4VRiyNk2ivP7imkQ+FU2SfbfIgNQBvjea9Aeh/UukI=
+github.com/realdatadriven/etlx v1.156.1 h1:Oh6D+z6b/GN+eDEMXGghX8LlywnSlsMit0C7xB157CU=
+github.com/realdatadriven/etlx v1.156.1/go.mod h1:9B6Vawwd9eUTvx+HdTK3HOTMNfTH7U7mHzmqlvtzyb4=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
 github.com/richardlehane/mscfb v1.0.9 h1:8xdd9auUvXbFoCw3L9h1spnQHZgjNsSX+ek46J6A9tE=
