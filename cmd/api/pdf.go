@@ -8,14 +8,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 )
 
 // USING CHROMIUN
 // print a specific pdf page.
-func printToPDF(urlstr string, res *[]byte) chromedp.Tasks {
-	return chromedp.Tasks{
+/*func printToPDF(urlstr string, res *[]byte) chromedp.Tasks {
+	return chromedp{
 		chromedp.Navigate(urlstr),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			buf, _, err := page.PrintToPDF().WithPrintBackground(false).Do(ctx)
@@ -26,7 +25,7 @@ func printToPDF(urlstr string, res *[]byte) chromedp.Tasks {
 			return nil
 		}),
 	}
-}
+}*/
 func (app *application) GenPDFFromHTML(html, output_path string) error {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
@@ -48,7 +47,7 @@ func (app *application) GenPDFFromHTML(html, output_path string) error {
 	temptex.Close()
 	var pdf []byte
 	fmt.Println(html)
-	err = chromedp.Run(ctx,
+	/*err = chromedp.Run(ctx,
 		// chromedp.Navigate("data:text/html,"+html) ,
 		chromedp.Navigate(fmt.Sprintf("file://%s", temptex.Name())),
 		chromedp.ActionFunc(func(ctx context.Context) error {
@@ -64,7 +63,27 @@ func (app *application) GenPDFFromHTML(html, output_path string) error {
 			return err
 		}),
 	)
+	err = os.WriteFile(output_path, pdf, 0644)*/
+	_, err = chromedp.Run(ctx,
+		chromedp.Navigate(fmt.Sprintf("file://%s", temptex.Name())),
+	)
+	if err != nil {
+		return err
+	}
+	pdf, err = chromedp.Run(ctx,
+		chromedp.PrintToPDF(
+			chromedp.PDFPrintBackground(),
+			// chromedp.PDFLandscape(),
+			chromedp.PDFMargins(0.4, 0.4, 0.4, 0.4),
+		),
+	)
+	if err != nil {
+		return err
+	}
 	err = os.WriteFile(output_path, pdf, 0644)
+	if err != nil {
+		return err
+	}
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.0
 	github.com/aws/smithy-go v1.28.2
 	github.com/benbjohnson/litestream v0.5.17
-	github.com/chromedp/cdproto v0.157.6
 	github.com/chromedp/chromedp v0.19.1
 	github.com/duckdb/duckdb-go/v2 v2.10506.0
 	github.com/fsnotify/fsnotify v1.10.1
@@ -78,6 +77,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/chromedp/cdproto v0.157.6 // indirect
 	github.com/duckdb/duckdb-go-bindings v0.10506.0 // indirect
 	github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10506.0 // indirect
 	github.com/duckdb/duckdb-go-bindings/lib/darwin-arm64 v0.10506.0 // indirect
