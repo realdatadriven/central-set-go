@@ -270,13 +270,11 @@ func (app *application) RenderUIPage(params Dict) Dict {
 		pageTemplate = remaining
 		// conn an inmemory sql
 		for _, block := range blocks {
-			// fmt.Printf("NAME: %s\n", block["key"])
-			// fmt.Printf("LANG: %s\n", block["lang"])
 			tmpl, err := app.RenderTextTemplate(block["code"].(string), tmplData)
 			if err != nil {
-				return Dict{"success": false, "msg": fmt.Sprintf("failed to render SQL template: %s", err)}
+				return Dict{"success": false, "msg": fmt.Sprintf("failed to render SQL template: %s: %s", err, block["code"])}
 			}
-			fmt.Println(block["code"], tmpl)
+			//fmt.Println(block["code"], tmpl)
 			block["code"] = tmpl
 		}
 		queries, err := ExecuteSQLBlocks(blocks)
@@ -301,14 +299,14 @@ func (app *application) RenderUIPage(params Dict) Dict {
 			for _, block := range blocks {
 				tmpl, err := app.RenderTextTemplate(block["code"].(string), tmplData)
 				if err != nil {
-					return Dict{"success": false, "msg": fmt.Sprintf("failed to render SQL template: %s", err)}
+					return Dict{"success": false, "msg": fmt.Sprintf("%s", err)}
 				}
 				// fmt.Println(block["code"], tmpl)
 				block["code"] = tmpl
 			}
 			queries, err := ExecuteSQLBlocks(blocks)
 			if err != nil {
-				return Dict{"success": false, "msg": fmt.Sprintf("failed to execute SQL blocks: %s", err)}
+				return Dict{"success": false, "msg": fmt.Sprintf("%s", err)}
 			}
 			tmplData["queries"] = queries
 		}

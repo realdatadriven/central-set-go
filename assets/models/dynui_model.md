@@ -751,7 +751,7 @@ data:
         page_key: dashboard
         page_title: Dashboard
         meta_description: Dashboard
-        page_template: FileContent(assets/models/dashboard.md)
+        page_template: FileContent(assets/models/dashboard.v3.md)
         cache_seconds: 60
         default_page: true
         active: true

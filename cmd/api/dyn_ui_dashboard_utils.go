@@ -231,15 +231,18 @@ func ExecuteSQLBlocks(blocks []Dict) (Dict, error) {
 			// If no name, just execute the SQL without storing the result.
 			_, err := conn.ExecuteQuery(sql, []any{}...)
 			if err != nil {
-				return nil, fmt.Errorf("failed to execute SQL: %w", err)
+				// return nil, fmt.Errorf("failed to execute SQL: %w", err)
+				fmt.Printf("failed to execute SQL: %s %w\n", sql, err)
 			}
 		} else {
 			// Execute the SQL and store the result in the data map.
 			rows, _, err := conn.QueryMultiRows(sql, []any{}...)
 			if err != nil {
-				return nil, fmt.Errorf("failed to execute SQL for key '%s': %w", name, err)
+				// return nil, fmt.Errorf("failed to execute SQL for key '%s': %w", name, err)
+				data[name] = fmt.Sprintf("failed to execute SQL for key '%s': %s", name, err)
+			} else {
+				data[name] = (*rows)
 			}
-			data[name] = (*rows)
 		}
 	}
 	return data, nil

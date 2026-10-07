@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 
 ```sql
 INSTALL erpl_web FROM community;
@@ -26,8 +25,9 @@ FROM admin.app;
 SELECT *
 FROM admin.app;
 ```
-APP_ID: {{pluckJson .queries.ids "app_id"}}
-APP_NAME: {{pluckJson .queries.ids "app"}}
+
+<!--APP_ID: {{pluckJson .queries.ids "app_id"}}
+APP_NAME: {{pluckJson .queries.ids "app"}}-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +74,9 @@ APP_NAME: {{pluckJson .queries.ids "app"}}
   <!-- Users -->
   <div class="stats stats-vertical sm:stats-horizontal shadow w-full bg-base-100">
     <div class="stat">
-      <div class="stat-figure"><tc-line class="spark" static data-chart="signups_30d" data-x="day" data-y="signups"></tc-line></div>
+      <div class="stat-figure">
+        <tc-line class="spark" static data-chart="signups_30d" data-x="day" data-y="signups"></tc-line>
+      </div>
       <div class="stat-title">Users</div>
       <div class="stat-value" data-tpl="{total|int}">-</div>
       <div class="stat-desc" data-tpl="{inactive|int} inactive">&nbsp;</div>
@@ -181,14 +183,14 @@ SELECT count(*)                                              AS total,
        round(100.0 * count(*) FILTER (WHERE email_confirmed) / nullif(count(*), 0), 1)  AS email_confirmed_pct,
        round(100.0 * count(*) FILTER (WHERE enable_2f_auth)  / nullif(count(*), 0), 1)  AS two_fa_pct,
        count(*) FILTER (WHERE coalesce(failed_login_attmpt, 0) > 0)                     AS with_failed_logins
-FROM users
+FROM adim.users
 WHERE coalesce(excluded, false) = false;
 ```
 
 ```sql kpi_logs
 WITH l AS (
   SELECT *, (lower(coalesce(res_type, '')) LIKE '%err%' OR lower(coalesce(res_type, '')) LIKE '%fail%') AS is_error
-  FROM user_log
+  FROM admin.user_log
   WHERE req_at >= now() - INTERVAL 1 DAY AND coalesce(excluded, false) = false
 )
 SELECT count(*)                                                                   AS requests_24h,
@@ -206,7 +208,7 @@ WITH days AS (
 )
 SELECT strftime(days.day, '%Y-%m-%d') AS day, count(u.user_id) AS signups
 FROM days
-LEFT JOIN users u ON CAST(u.created_at AS DATE) = days.day AND coalesce(u.excluded, false) = false
+LEFT JOIN admin.users u ON CAST(u.created_at AS DATE) = days.day AND coalesce(u.excluded, false) = false
 GROUP BY days.day
 ORDER BY days.day;
 ```
@@ -218,7 +220,7 @@ WITH days AS (
 ), l AS (
   SELECT CAST(req_at AS DATE) AS day,
          (lower(coalesce(res_type, '')) LIKE '%err%' OR lower(coalesce(res_type, '')) LIKE '%fail%') AS is_error
-  FROM user_log
+  FROM admin.user_log
   WHERE coalesce(excluded, false) = false
 )
 SELECT strftime(days.day, '%Y-%m-%d') AS day,
@@ -232,8 +234,8 @@ ORDER BY days.day;
 
 ```sql users_by_role
 SELECT coalesce(r.role, 'no-role') AS role, count(*) AS users
-FROM users u
-LEFT JOIN role r ON r.role_id = u.role_id
+FROM admin.users u
+LEFT JOIN admin.role r ON r.role_id = u.role_id
 WHERE coalesce(u.excluded, false) = false
 GROUP BY 1
 ORDER BY users DESC;
@@ -241,7 +243,7 @@ ORDER BY users DESC;
 
 ```sql top_actions
 SELECT action, count(*) AS calls
-FROM user_log
+FROM admin.user_log
 WHERE req_at >= now() - INTERVAL 30 DAY AND coalesce(excluded, false) = false
 GROUP BY action
 ORDER BY calls DESC
@@ -250,12 +252,12 @@ LIMIT 8;
 
 ```sql top_users
 SELECT u.username,
-       count(*)                                                            AS requests,
+       count(*) AS requests,
        count(*) FILTER (WHERE lower(coalesce(l.res_type, '')) LIKE '%err%'
                            OR lower(coalesce(l.res_type, '')) LIKE '%fail%') AS errors,
-       strftime(max(l.req_at), '%Y-%m-%d %H:%M')                           AS last_seen
-FROM user_log l
-JOIN users u ON u.user_id = l.user_id
+       strftime(max(l.req_at), '%Y-%m-%d %H:%M') AS last_seen
+FROM admin.user_log l
+JOIN admin.users u ON u.user_id = l.user_id
 WHERE l.req_at >= now() - INTERVAL 7 DAY AND coalesce(l.excluded, false) = false
 GROUP BY u.username
 ORDER BY requests DESC
@@ -267,7 +269,7 @@ SELECT username,
        email,
        failed_login_attmpt AS attempts,
        strftime(last_failed_login, '%Y-%m-%d %H:%M') AS last_failed
-FROM users
+FROM admin.users
 WHERE coalesce(failed_login_attmpt, 0) > 0 AND coalesce(excluded, false) = false
 ORDER BY failed_login_attmpt DESC
 LIMIT 8;
@@ -281,125 +283,12 @@ SELECT strftime(l.req_at, '%Y-%m-%d %H:%M:%S') AS at,
        l."table",
        l.req_ip AS ip,
        l.res_msg AS message
-FROM user_log l
-LEFT JOIN users u ON u.user_id = l.user_id
+FROM admin.user_log l
+LEFT JOIN admin.users u ON u.user_id = l.user_id
 WHERE coalesce(l.excluded, false) = false
 ORDER BY l.req_at DESC
 LIMIT 15;
 ```
 
-<script type="module">
-// ---- Data source -----------------------------------------------------------
-// Leave endpoint empty to render sample data. Otherwise the page POSTs
-// {name, sql} and expects a JSON array of row objects (or {data: [...]}).
-const CONFIG = { endpoint: '', headers: {} };
-
-// ---- Parse the ```sql <name> blocks from the page body --------------------
-const SQL = {};
-document.getElementById('queries').textContent
-  .replace(/```sql\s+(\w+)\n([\s\S]*?)```/g, (_, n, s) => { SQL[n] = s.trim(); });
-
-// ---- Sample data ------------------------------------------------------------
-const rnd = (a, b) => Math.round(a + Math.random() * (b - a));
-const days = n => Array.from({ length: n }, (_, i) => new Date(Date.now() - (n - 1 - i) * 864e5).toISOString().slice(0, 10));
-const MOCK = {
-  kpi_users: () => [{ total: 128, active: 117, inactive: 11, email_confirmed_pct: 75, two_fa_pct: 32, with_failed_logins: 5 }],
-  kpi_logs: () => [{ requests_24h: 2184, errors_24h: 37, error_rate_pct: 1.7, avg_ms: 142, active_users_24h: 34 }],
-  signups_30d: () => days(30).map(day => ({ day, signups: rnd(0, 9) })),
-  requests_30d: () => days(30).map(day => ({ day, requests: rnd(900, 2600), errors: rnd(5, 70) })),
-  users_by_role: () => [{ role: 'tenant', users: 88 }, { role: 'no-role', users: 24 }, { role: 'root', users: 3 }, { role: 'anonymous', users: 1 }],
-  top_actions: () => ['read', 'update', 'create', 'login', 'delete', 'export', 'odata', 'logout'].map((action, i) => ({ action, calls: 1800 - i * 210 })),
-  top_users: () => ['root', 'ana', 'joao', 'maria', 'sam'].map((username, i) => ({ username, requests: 900 - i * 140, errors: rnd(1, 20), last_seen: '2026-10-06 09:' + (10 + i * 7) })),
-  failed_logins: () => [{ username: 'sam', email: 'sam@domain.com', attempts: 4, last_failed: '2026-10-06 08:12' }, { username: 'ana', email: 'ana@domain.com', attempts: 2, last_failed: '2026-10-05 17:40' }],
-  recent_logs: () => Array.from({ length: 8 }, (_, i) => ({ at: '2026-10-06 09:' + (50 - i * 4), username: ['root', 'ana', 'joao'][i % 3], action: ['read', 'update', 'login'][i % 3], result: i === 3 ? 'error' : 'success', table: ['users', 'role', 'app'][i % 3], ip: '10.0.0.' + (i + 4), message: i === 3 ? 'validation USR01 failed' : 'ok' }))
-};
-async function run(name) {
-  if (!CONFIG.endpoint) return MOCK[name]();
-  const r = await fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', ...CONFIG.headers }, body: JSON.stringify({ name, sql: SQL[name] }) });
-  if (!r.ok) throw new Error(name + ': HTTP ' + r.status);
-  const j = await r.json();
-  return Array.isArray(j) ? j : j.data;
-}
-
-// ---- Render -----------------------------------------------------------------
-const $$ = s => document.querySelectorAll(s);
-const F = { int: v => Number(v ?? 0).toLocaleString(), pct: v => Number(v ?? 0).toFixed(1) + '%' };
-const PAL = ['primary', 'secondary', 'accent', 'info', 'warning', 'neutral'];
-const D = {};
-if (!CONFIG.endpoint) document.getElementById('mock-badge').classList.remove('hidden');
-
-try {
-  await Promise.all(Object.keys(SQL).map(async n => { D[n] = await run(n); }));
-} catch (e) {
-  const a = document.getElementById('alert');
-  a.textContent = 'Could not load data: ' + e.message;
-  a.classList.remove('hidden');
-}
-
-// stats: data-tpl="{field|int}" reads from the query named by the closest stat group
-const STAT_SRC = { total: 'kpi_users', inactive: 'kpi_users', active: 'kpi_users', with_failed_logins: 'kpi_users', email_confirmed_pct: 'kpi_users', two_fa_pct: 'kpi_users' };
-$$('[data-tpl]').forEach(el => {
-  el.textContent = el.dataset.tpl.replace(/\{(\w+)(?:\|(\w+))?\}/g, (_, f, fm) => {
-    const row = (D[STAT_SRC[f] || 'kpi_logs'] || [])[0] || {};
-    return fm ? F[fm](row[f]) : (row[f] ?? '-');
-  });
-});
-
-// charts
-$$('[data-chart]').forEach(el => {
-  const rows = D[el.dataset.chart] || [];
-  el.setAttribute('values', JSON.stringify(rows.map(r => +r[el.dataset.y])));
-  el.setAttribute('labels', JSON.stringify(rows.map(r => String(r[el.dataset.x]))));
-});
-
-// legend + badges
-$$('[data-legend]').forEach(el => {
-  el.innerHTML = '';
-  (D[el.dataset.legend] || []).forEach((r, i) => {
-    const li = document.createElement('li');
-    li.className = 'flex items-center gap-2';
-    li.innerHTML = '<span class="size-2.5 rounded-full" style="background:var(--color-' + PAL[i % 6] + ')"></span><span></span><span class="ml-auto font-medium"></span>';
-    li.children[1].textContent = r[el.dataset.x];
-    li.children[2].textContent = F.int(r[el.dataset.y]);
-    el.appendChild(li);
-  });
-});
-$$('[data-badges]').forEach(el => (D[el.dataset.badges] || []).forEach(r => {
-  const b = document.createElement('span');
-  b.className = 'badge badge-ghost badge-sm';
-  b.textContent = r[el.dataset.x] + ' ' + F.int(r[el.dataset.y]);
-  el.appendChild(b);
-}));
-
-// tables
-$$('[data-table]').forEach(t => {
-  const rows = D[t.dataset.table] || [];
-  if (!rows.length) { t.innerHTML = '<tbody><tr><td class="text-base-content/60">Nothing to show yet.</td></tr></tbody>'; return; }
-  const cols = Object.keys(rows[0]);
-  const thead = t.createTHead().insertRow();
-  cols.forEach(c => { const th = document.createElement('th'); th.textContent = c.replace(/_/g, ' '); thead.appendChild(th); });
-  const tb = t.createTBody();
-  rows.forEach(r => {
-    const tr = tb.insertRow();
-    cols.forEach(c => {
-      const td = tr.insertCell();
-      td.textContent = r[c] ?? '-';
-      if (c === 'result') td.className = /err|fail/i.test(r[c]) ? 'text-error' : 'text-success';
-    });
-  });
-});
-
-// show each widget's SQL under it
-$$('[data-sql-for]').forEach(card => {
-  (card.dataset.sqlFor).split(',').forEach(n => {
-    const d = document.createElement('details');
-    d.className = 'collapse collapse-arrow border border-base-300 mt-2';
-    d.innerHTML = '<summary class="collapse-title text-xs min-h-0 py-2"></summary><div class="collapse-content"><pre class="text-xs overflow-x-auto"></pre></div>';
-    d.querySelector('summary').textContent = 'SQL: ' + n;
-    d.querySelector('pre').textContent = SQL[n] || '';
-    (card.querySelector('.card-body') || card).appendChild(d);
-  });
-});
-</script>
 </body>
 </html>

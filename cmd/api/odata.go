@@ -131,6 +131,7 @@ func convertFilter(expr string) ([]any, error) {
 	clauses := splitOnAnd(expr)
 	out := make([]any, 0, len(clauses))
 	for _, c := range clauses {
+
 		filter, err := parseSimpleFilter(c)
 		if err != nil {
 			return nil, err
@@ -155,6 +156,7 @@ func parseFunctionFilter(expr string) (Dict, error) {
 	fn := strings.ToLower(strings.TrimSpace(expr[:open]))
 	args := expr[open+1 : close]
 	parts := strings.SplitN(args, ",", 2)
+	// println("PARTS:", parts)
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid function args: %s", expr)
 	}
@@ -172,20 +174,22 @@ func parseFunctionFilter(expr string) (Dict, error) {
 	case "contains":
 		value = "%" + value + "%"
 	}
-	return Dict{
+	filter := Dict{
 		"field": field,
 		"cond":  cond,
 		"value": value,
-	}, nil
+	}
+	return filter, nil
 }
 func parseSimpleFilter(expr string) (Dict, error) {
 	expr = strings.TrimSpace(expr)
 	// function-style
+	//fmt.Println("FILTERS:", expr)
 	if strings.Contains(expr, "(") && strings.HasSuffix(expr, ")") {
 		open := strings.Index(expr, "(")
 		fn := strings.TrimSpace(expr[:open])
-		fmt.Println("FUNCTION: ", fn)
-		if strings.Contains(fn, " ") { // HAS ( BUT NOT A FUNCTION
+		// fmt.Println("FUNCTION: ", fn)
+		if strings.Contains(fn, " ") || fn == "" { // HAS ( BUT NOT A FUNCTION
 		} else {
 			return parseFunctionFilter(expr)
 		}
@@ -227,12 +231,34 @@ func parseSimpleFilter(expr string) (Dict, error) {
 			"value": v1 + "," + v2,
 		}, nil
 	default:
-		value := stripSingleQuotes(strings.Join(tokens[2:], " "))
-		return Dict{
-			"field": field,
-			"cond":  cond,
-			"value": value,
-		}, nil
+		//value := stripSingleQuotes(strings.Join(tokens[2:], " "))
+		value := stripSingleQuotes(tokens[2])
+		field = strings.TrimSpace(field)
+		field = strings.Trim(field, "(")
+		//fmt.Printf("Filters: %s, field: %s, cond: %s, value: %s\n", expr, field, cond, value)
+		filters := Dict{"field": field, "cond": cond, "value": value}
+		if len(tokens) > 3 {
+			// If there are more than 3 tokens, it means the value contains spaces.
+			// (user_id eq 1 or user_id eq 16)
+			// split the on "or" operator and "and" operator and and glue_cond
+			ptrs := strings.Split(expr, " or ")
+			if len(ptrs) > 1 {
+				// fmt.Println("PARTS:", ptrs)
+				tokens := strings.Fields(ptrs[1])
+				if len(tokens) >= 3 {
+					_field := tokens[0]
+					_op := strings.ToLower(tokens[1])
+					_cond, _ := odataOpToCond[_op]
+					filters["glue_cond"] = "OR"
+					filters["field2"] = _field
+					filters["cond2"] = _cond
+					filters["value2"] = stripSingleQuotes(tokens[2])
+					filters["value2"] = strings.Trim(filters["value2"].(string), ")")
+					// fmt.Println("FILTERS:", filters)
+				}
+			}
+		}
+		return filters, nil
 	}
 }
 func splitOnAnd(expr string) []string {
