@@ -257,6 +257,22 @@ func parseSimpleFilter(expr string) (Dict, error) {
 					// fmt.Println("FILTERS:", filters)
 				}
 			}
+			ptrs = strings.Split(expr, " and ")
+			if len(ptrs) > 1 {
+				// fmt.Println("PARTS:", ptrs)
+				tokens := strings.Fields(ptrs[1])
+				if len(tokens) >= 3 {
+					_field := tokens[0]
+					_op := strings.ToLower(tokens[1])
+					_cond, _ := odataOpToCond[_op]
+					filters["glue_cond"] = "AND"
+					filters["field2"] = _field
+					filters["cond2"] = _cond
+					filters["value2"] = stripSingleQuotes(tokens[2])
+					filters["value2"] = strings.Trim(filters["value2"].(string), ")")
+					// fmt.Println("FILTERS:", filters)
+				}
+			}
 		}
 		return filters, nil
 	}

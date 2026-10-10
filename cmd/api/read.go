@@ -408,6 +408,7 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 	}
 	queryParams := []any{}
 	filters := []any{}
+	hasGlueCond := false
 	if _, ok := _schema["fields"].(map[string]any); !ok {
 	} else if _, ok := _schema["fields"].(map[string]any)["excluded"]; ok {
 		filters = []any{fmt.Sprintf(`"%s"."excluded" IS FALSE`, table)}
@@ -501,11 +502,20 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			if _, ok := _schema["fields"].(map[string]any)[_field]; !ok && !is_in_fk_fields {
 				// pass fm
 			} else if app.contains([]any{"=", "!=", ">", "<", ">=", "<="}, _cond) {
-				filters = append(filters, fmt.Sprintf(`"%s"."%s" %s ?`, _table, _field, _cond))
+				_aux2 := ""
+				if _glue_cond != "" && _cond2 != "" && _field2 != "" && _value2 != "" {
+					hasGlueCond = true
+					_aux2 = fmt.Sprintf(` %s "%s"."%s" %s ?`, _glue_cond, _table, _field2, _cond2)
+				}
+				filters = append(filters, fmt.Sprintf(`("%s"."%s" %s ? %s)`, _table, _field, _cond, _aux2))
 				queryParams = append(queryParams, _value)
+				if _aux2 != "" && _value2 != "" {
+					queryParams = append(queryParams, _value2)
+				}
 			} else if app.contains([]any{"in", "not in"}, strings.ToLower(_cond)) {
 				_aux2 := ""
 				if _glue_cond != "" && _cond2 != "" && _field2 != "" && _value2 != "" {
+					hasGlueCond = true
 					_aux2 = fmt.Sprintf(` %s "%s"."%s" %s ?`, _glue_cond, _table, _field2, _cond2)
 				}
 				filters = append(filters, fmt.Sprintf(`("%s"."%s" %s (?)%s)`, _table, _field, _cond, _aux2))
@@ -629,6 +639,9 @@ func (app *application) CrudRead(params map[string]any, table string, db etlx.DB
 			_where = " AND"
 		}
 		query = fmt.Sprintf(`%s%s (%s)`, query, _where, app.joinSlice(search_patt, " OR "))
+	}
+	if hasGlueCond {
+		// fmt.Println("Has Glue COND:", query)
 	}
 	query_total := fmt.Sprintf(`SELECT COUNT(*) AS "n_rows" FROM (%s) AS "T"`, query)
 	// ORDER BY
