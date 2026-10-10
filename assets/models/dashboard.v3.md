@@ -296,13 +296,14 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
                         </tc-pie>
                         <ul class="text-sm space-y-1 flex-1">
                             {{- if kindIs "slice" $q.users_by_role}}
-                            {{range $i, $r := $q.users_by_role}}
-                            <li class="flex items-center gap-2">
-                                <span class="size-2.5 rounded-full"
-                                    style="background: var(--color-{{index $pal (mod $i 6)}})"></span>
-                                <span>{{$r.role}}</span><span class="ml-auto font-medium">{{$r.users}}</span>
-                            </li>
-                            {{- end}}
+                                {{range $i, $r := $q.users_by_role}}
+                                <li class="flex items-center gap-2">
+                                    <span class="size-2.5 rounded-full"
+                                        style="background: var(--color-{{index $pal (mod $i 6)}})">
+                                    </span>
+                                    <span>{{$r.role}}</span><span class="ml-auto font-medium">{{$r.users}}</span>
+                                </li>
+                                {{- end}}
                             {{end}}
                         </ul>
                     </div>
@@ -331,9 +332,9 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
                     </tc-bar>
                     <div class="flex flex-wrap gap-1">
                         {{- if kindIs "slice" $q.top_actions}}
-                        {{range $q.top_actions}}
-                        <span class="badge badge-ghost badge-sm">{{.action}} {{.calls}}</span>
-                        {{- end}}
+                            {{range $q.top_actions}}
+                                <span class="badge badge-ghost badge-sm">{{.action}} {{.calls}}</span>
+                            {{- end}}
                         {{end}}
                     </div>
                 </div>
@@ -356,18 +357,18 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
                             </thead>
                             <tbody>
                                 {{- if kindIs "slice" $q.top_users}}
-                                {{range $q.top_users}}
-                                <tr>
-                                    <td>{{.username}}</td>
-                                    <td>{{.requests}}</td>
-                                    <td>{{.errors}}</td>
-                                    <td>{{default "-" .last_seen}}</td>
-                                </tr>
-                                {{- else}}
-                                <tr>
-                                    <td colspan="4" class="text-base-content/60">Nothing to show yet.</td>
-                                </tr>
-                                {{end}}
+                                    {{range $q.top_users}}
+                                        <tr>
+                                            <td>{{.username}}</td>
+                                            <td>{{.requests}}</td>
+                                            <td>{{.errors}}</td>
+                                            <td>{{default "-" .last_seen}}</td>
+                                        </tr>
+                                    {{- else}}
+                                        <tr>
+                                            <td colspan="4" class="text-base-content/60">Nothing to show yet.</td>
+                                        </tr>
+                                    {{end}}
                                 {{end}}
                             </tbody>
                         </table>
@@ -389,16 +390,19 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
                             </thead>
                             <tbody>
                                 {{- if kindIs "slice" $q.failed_logins}}
-                                {{range $q.failed_logins}}
-                                <tr>
-                                    <td>{{.username}}</td>
-                                    <td>{{default "-" .email}}</td>
-                                    <td>{{.attempts}}</td>
-                                    <td>{{default "-" .last_failed}}</td>
-                                </tr>
-                                {{- else}}<tr>
-                                    <td colspan="4" class="text-base-content/60">Nothing to show yet.</td>
-                                </tr>{{end}}{{end}}
+                                    {{range $q.failed_logins}}
+                                        <tr>
+                                            <td>{{.username}}</td>
+                                            <td>{{default "-" .email}}</td>
+                                            <td>{{.attempts}}</td>
+                                            <td>{{default "-" .last_failed}}</td>
+                                        </tr>
+                                    {{- else}}
+                                        <tr>
+                                            <td colspan="4" class="text-base-content/60">Nothing to show yet.</td>
+                                        </tr>
+                                    {{end}}
+                                    {{end}}
                                 {{end}}
                             </tbody>
                         </table>
@@ -424,21 +428,25 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
                             </tr>
                         </thead>
                         <tbody>
-                            {{- if kindIs "slice" $q.recent_logs}}{{range $q.recent_logs}}
-                            <tr>
-                                <td>{{default "-" .at}}</td>
-                                <td>{{default "-" .username}}</td>
-                                <td>{{.action}}</td>
-                                <td class="{{if regexMatch " (?i)err|fail" (toString
-                                    .result)}}text-error{{else}}text-success{{end}}">
-                                    {{default "-" .result}}</td>
-                                <td>{{default "-" .table}}</td>
-                                <td>{{default "-" .ip}}</td>
-                                <td>{{default "-" .message}}</td>
-                            </tr>
-                            {{- else}}<tr>
-                                <td colspan="7" class="text-base-content/60">Nothing to show yet.</td>
-                            </tr>{{end}}{{end}}
+                            {{- if kindIs "slice" $q.recent_logs}}
+                                {{range $q.recent_logs}}
+                                <tr>
+                                    <td>{{default "-" .at}}</td>
+                                    <td>{{default "-" .username}}</td>
+                                    <td>{{.action}}</td>
+                                    <td class="{{if regexMatch " (?i)err|fail" (toString
+                                        .result)}}text-error{{else}}text-success{{end}}">
+                                        {{default "-" .result}}</td>
+                                    <td>{{default "-" .table}}</td>
+                                    <td>{{default "-" .ip}}</td>
+                                    <td>{{default "-" .message}}</td>
+                                </tr>
+                                {{- else}}
+                                <tr>
+                                    <td colspan="7" class="text-base-content/60">Nothing to show yet.</td>
+                                </tr>
+                                {{end}}
+                            {{end}}
                         </tbody>
                     </table>
                 </div>
