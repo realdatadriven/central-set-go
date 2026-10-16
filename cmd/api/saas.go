@@ -339,7 +339,7 @@ func (app *application) HandleService(params Dict, action string) Dict {
 	}
 }
 
-func DomainName(name string) string {
+func _DomainName(name string) string {
 	name = strings.ToLower(name)
 	// Decompose accented characters
 	name = norm.NFD.String(name)
@@ -366,6 +366,33 @@ func DomainName(name string) string {
 		result = strings.ReplaceAll(result, "__", "_")
 	}
 	return strings.Trim(result, "_")
+}
+
+func DomainName(name string) string {
+	name = strings.ToLower(name)
+	name = norm.NFD.String(name)
+	var b strings.Builder
+	for _, r := range name {
+		// Remove accents
+		if unicode.Is(unicode.Mn, r) {
+			continue
+		}
+		switch {
+		case r >= 'a' && r <= 'z':
+			b.WriteRune(r)
+		case r >= '0' && r <= '9':
+			b.WriteRune(r)
+		case unicode.IsSpace(r) || r == '_' || r == '-':
+			b.WriteRune('-')
+			// Remove special characters
+		}
+	}
+	// Collapse consecutive hyphens
+	result := b.String()
+	result = strings.Join(strings.FieldsFunc(result, func(r rune) bool {
+		return r == '-'
+	}), "-")
+	return result
 }
 
 func (app *application) GetSubdomain(plan, tenant, subscription Dict) string {

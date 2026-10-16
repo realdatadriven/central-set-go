@@ -402,7 +402,6 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
                                             <td colspan="4" class="text-base-content/60">Nothing to show yet.</td>
                                         </tr>
                                     {{end}}
-                                    {{end}}
                                 {{end}}
                             </tbody>
                         </table>
