@@ -143,18 +143,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 			app.logger.Error("failed to encode request log metadata", "error", err)
 			resData = []byte("{}")
 		}
-		app.logger.Info("request",
-			"client_ip", ip,
-			"user_id", userID,
-			"username", user["username"],
-			"request_at", startedAt,
-			"response_at", finishedAt,
-			"response_message", message,
-			"path", path,
-			"method", r.Method,
-			"status", mw.statusCode,
-			"duration_ms", duration.Milliseconds(),
-		)
 		logData := Dict{
 			"user_id":    userID,
 			"action":     action,
@@ -181,33 +169,12 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 				}
 			}
 		}
-		//app.db.Exec(`insert into user_log (user_id, action, req_ip, req_at, res_at, res_type, res_msg, res_data, excluded) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		// logs_insert_sql := `insert into user_log (user_id, action, req_ip, req_at, res_at, res_type, res_msg, res_data, excluded) values (:user_id, :action, :req_ip, :req_at, :res_at, :res_type, :res_msg, :res_data, :excluded)`
 		err = app.AdminInsertData("user_log", logData)
 		if err != nil {
-			err = app.AdminInsertData("user_log", logData)
-			fmt.Println("Error persisting request log:", err, logData)
+			//err = app.AdminInsertData("user_log", logData)
+			//fmt.Println("Error persisting request log:", err, logData)
 			app.logger.Error("failed to persist request log", "error", err)
 		}
-		/*logParams := Dict{
-			"data": Dict{
-				"data":  logData,
-				"table": "user_log",
-				"db":    app.config.db.dsn,
-			},
-			"app": Dict{
-				"app_id": any(1.0),
-				"db":     filepath.Base(app.config.db.dsn),
-			},
-			"user": Dict{
-				"user_id": any(1.0),
-				"role_id": any(1.0),
-			},
-		}
-		result := app.create_update(logParams)
-		if resultSuccess, ok := result["success"].(bool); !ok || !resultSuccess {
-			app.logger.Error("failed to persist request log", "result", result)
-		}*/
 	})
 }
 
