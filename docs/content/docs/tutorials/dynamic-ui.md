@@ -307,22 +307,7 @@ Login and account actions are available below `/ui/{ui_slug}`: `POST /login`, `P
 
 ## Capture and log requests centrally
 
-You do not need to add request logging separately to each Dynamic UI, CRUD, or API handler. Central Set already wraps the complete route mux with `app.logAccess` in `cmd/api/routes.go`. That middleware records the client IP, method, URL, protocol, response status, and response size. In contrast, `dyn_api.go` also creates an action-level `user_log` record with fields such as the action, request IP/time, user ID, application, database, table, and result. These are complementary logs:
-
-* **Access log middleware** — one request/response event for every route.
-* **Action audit log** — a domain event for selected `dyn_api` actions, with application/table/row context.
-
-The shared `app.logRequest` middleware now handles these details for all `/ui/` routes and for the REST CRUD handler in `rest.go`. It logs both to the structured application logger and the ADMIN `user_log` table:
-
-* Client IP, authenticated user ID/name (or the anonymous account), method, and URL **path**
-* Request and response timestamps, HTTP status, response message, and duration
-* CRUD database and table names when the request uses `/crud/{db}/{table}`
-
-For bearer-authenticated UI requests, `authenticate` supplies the user through a request-scoped audit value; cookie-based UI sessions are resolved from the existing session. REST CRUD uses the same wrapper directly in `crud_api_handler`. JSON response messages are read from the `msg` field; other responses use the HTTP status text. The request path is recorded without its query string, and request/response bodies are not persisted.
-
-Do not log passwords, authorization headers, cookies, reset tokens, or full request bodies. Keep user IDs and IP addresses subject to your retention and privacy policies.
-
-**Proxy note:** `realip.FromRequest` and `ClientIP` use forwarded-IP headers. Only trust those headers when requests come through a known reverse proxy that strips client-supplied forwarding headers and writes its own; otherwise a caller may spoof the logged IP. Configure trusted proxies at the edge and use the same trusted client-IP policy for logging and rate limiting.
+Requests handled by the Dynamic UI and generic CRUD endpoints are logged in the `user_log` table in the `ADMIN` database (`ADMIN/user_log`).
 
 ## Generic CRUD endpoints
 

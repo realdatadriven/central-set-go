@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -98,7 +97,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 			user = sessionUser
 		}
 		userID := user["user_id"]
-
 		message := http.StatusText(mw.statusCode)
 		success := mw.statusCode < http.StatusBadRequest
 		if strings.Contains(strings.ToLower(mw.Header().Get("Content-Type")), "application/json") {
@@ -140,7 +138,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 			app.logger.Error("failed to encode request log metadata", "error", err)
 			resData = []byte("{}")
 		}
-
 		app.logger.Info("request",
 			"client_ip", ip,
 			"user_id", userID,
@@ -153,7 +150,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 			"status", mw.statusCode,
 			"duration_ms", duration.Milliseconds(),
 		)
-
 		logData := Dict{
 			"user_id":  userID,
 			"action":   action,
@@ -172,7 +168,13 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 				logData["table"] = parts[2]
 			}
 		}
-		logParams := Dict{
+		//app.db.Exec(`insert into user_log (user_id, action, req_ip, req_at, res_at, res_type, res_msg, res_data, excluded) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		// logs_insert_sql := `insert into user_log (user_id, action, req_ip, req_at, res_at, res_type, res_msg, res_data, excluded) values (:user_id, :action, :req_ip, :req_at, :res_at, :res_type, :res_msg, :res_data, :excluded)`
+		err = app.AdminInsertData("user_log", logData)
+		if err != nil {
+			app.logger.Error("failed to persist request log", "error", err)
+		}
+		/*logParams := Dict{
 			"data": Dict{
 				"data":  logData,
 				"table": "user_log",
@@ -190,7 +192,7 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		result := app.create_update(logParams)
 		if resultSuccess, ok := result["success"].(bool); !ok || !resultSuccess {
 			app.logger.Error("failed to persist request log", "result", result)
-		}
+		}*/
 	})
 }
 
