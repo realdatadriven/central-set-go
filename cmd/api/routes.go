@@ -286,7 +286,11 @@ func (app *application) routes() http.Handler {
 				app.logAccess(
 					app.recoverPanic(
 						app.sizeGuardMiddleware(
-							app.authenticate(mux),
+							app.logUIRequests(
+								app.recoverPanic(
+									app.authenticate(mux),
+								),
+							),
 						),
 					),
 				),

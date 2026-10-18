@@ -88,6 +88,10 @@ func (app *application) getPKFromSchema(db, table string) (string, error) {
 }
 
 func (app *application) crud_api_handler(w http.ResponseWriter, r *http.Request) {
+	app.logRequest(app.recoverPanic(http.HandlerFunc(app.handleCRUDAPI))).ServeHTTP(w, r)
+}
+
+func (app *application) handleCRUDAPI(w http.ResponseWriter, r *http.Request) {
 	crud := app.crud_api(w, r)
 	ui := r.URL.Query().Get("ui")
 	page := r.URL.Query().Get("page")

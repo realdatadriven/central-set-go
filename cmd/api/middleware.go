@@ -40,12 +40,12 @@ func (app *application) logAccess(next http.Handler) http.Handler {
 		var (
 			ip     = realip.FromRequest(r)
 			method = r.Method
-			url    = r.URL.String()
+			path   = r.URL.Path
 			proto  = r.Proto
 		)
 
 		userAttrs := slog.Group("user", "ip", ip)
-		requestAttrs := slog.Group("request", "method", method, "url", url, "proto", proto)
+		requestAttrs := slog.Group("request", "method", method, "path", path, "proto", proto)
 		responseAttrs := slog.Group("repsonse", "status", mw.StatusCode, "size", mw.BytesCount)
 
 		app.logger.Info("access", userAttrs, requestAttrs, responseAttrs)
@@ -110,6 +110,9 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 				//print(1, " ", claims.Subject, "\n")
 				err2 := json.Unmarshal([]byte(claims.Subject), &user)
 				if err2 == nil {
+					if audit, ok := r.Context().Value(requestLogContextKey{}).(*requestLogAudit); ok {
+						audit.user = Dict(user)
+					}
 					//print(2, " ", user["username"].(string), "\n")
 					r = contextSetAuthenticatedUser(r, &user)
 				}

@@ -2,11 +2,14 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -18,6 +21,178 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/realdatadriven/central-set-go/internal/env"
 )
+
+const maxRequestLogResponseBytes = 64 * 1024
+
+type requestLogContextKey struct{}
+
+type requestLogAudit struct {
+	user Dict
+}
+
+type requestLogResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+	bytesCount int
+	body       bytes.Buffer
+}
+
+func (w *requestLogResponseWriter) WriteHeader(statusCode int) {
+	if w.statusCode != 0 {
+		return
+	}
+	w.statusCode = statusCode
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+func (w *requestLogResponseWriter) Write(data []byte) (int, error) {
+	if w.statusCode == 0 {
+		w.WriteHeader(http.StatusOK)
+	}
+	n, err := w.ResponseWriter.Write(data)
+	w.bytesCount += n
+	if strings.Contains(strings.ToLower(w.Header().Get("Content-Type")), "application/json") &&
+		w.body.Len() < maxRequestLogResponseBytes {
+		remaining := maxRequestLogResponseBytes - w.body.Len()
+		if len(data) > remaining {
+			data = data[:remaining]
+		}
+		_, _ = w.body.Write(data)
+	}
+	return n, err
+}
+
+func (w *requestLogResponseWriter) Unwrap() http.ResponseWriter {
+	return w.ResponseWriter
+}
+
+func (app *application) logUIRequests(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasPrefix(r.URL.Path, "/ui/") {
+			next.ServeHTTP(w, r)
+			return
+		}
+		audit := &requestLogAudit{}
+		ctx := context.WithValue(r.Context(), requestLogContextKey{}, audit)
+		app.logRequest(next).ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (app *application) logRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		startedAt := time.Now()
+		mw := &requestLogResponseWriter{ResponseWriter: w}
+		next.ServeHTTP(mw, r)
+		if mw.statusCode == 0 {
+			mw.statusCode = http.StatusOK
+		}
+		finishedAt := time.Now()
+		duration := finishedAt.Sub(startedAt)
+		ip := ClientIP(r)
+		user := app.getAnonymous()
+		if audit, ok := r.Context().Value(requestLogContextKey{}).(*requestLogAudit); ok && audit.user != nil {
+			user = audit.user
+		} else if authenticatedUser := contextGetAuthenticatedUser(r); authenticatedUser != nil {
+			user = Dict(*authenticatedUser)
+		} else if sessionUser, err := app.getUser(r); err == nil {
+			user = sessionUser
+		}
+		userID := user["user_id"]
+
+		message := http.StatusText(mw.statusCode)
+		success := mw.statusCode < http.StatusBadRequest
+		if strings.Contains(strings.ToLower(mw.Header().Get("Content-Type")), "application/json") {
+			var responseData struct {
+				Success *bool  `json:"success"`
+				Message string `json:"msg"`
+			}
+			if err := json.Unmarshal(mw.body.Bytes(), &responseData); err == nil {
+				if responseData.Message != "" {
+					message = responseData.Message
+				}
+				if responseData.Success != nil {
+					success = *responseData.Success
+				}
+			}
+		}
+		if message == "" {
+			message = "Unknown response"
+		}
+		if len([]rune(message)) > 500 {
+			message = string([]rune(message)[:500])
+		}
+
+		path := r.URL.Path
+		action := fmt.Sprintf("%s %s", r.Method, path)
+		if len(action) > 200 {
+			action = action[:200]
+		}
+		resType := "success"
+		if !success {
+			resType = "error"
+		}
+		resData, err := json.Marshal(Dict{
+			"status":      mw.statusCode,
+			"duration_ms": duration.Milliseconds(),
+			"bytes":       mw.bytesCount,
+		})
+		if err != nil {
+			app.logger.Error("failed to encode request log metadata", "error", err)
+			resData = []byte("{}")
+		}
+
+		app.logger.Info("request",
+			"client_ip", ip,
+			"user_id", userID,
+			"username", user["username"],
+			"request_at", startedAt,
+			"response_at", finishedAt,
+			"response_message", message,
+			"path", path,
+			"method", r.Method,
+			"status", mw.statusCode,
+			"duration_ms", duration.Milliseconds(),
+		)
+
+		logData := Dict{
+			"user_id":  userID,
+			"action":   action,
+			"req_ip":   ip,
+			"req_at":   startedAt,
+			"res_at":   finishedAt,
+			"res_type": resType,
+			"res_msg":  message,
+			"res_data": string(resData),
+			"excluded": false,
+		}
+		if strings.HasPrefix(path, "/crud/") {
+			parts := strings.Split(strings.Trim(path, "/"), "/")
+			if len(parts) >= 3 {
+				logData["db"] = parts[1]
+				logData["table"] = parts[2]
+			}
+		}
+		logParams := Dict{
+			"data": Dict{
+				"data":  logData,
+				"table": "user_log",
+				"db":    app.config.db.dsn,
+			},
+			"app": Dict{
+				"app_id": any(1.0),
+				"db":     filepath.Base(app.config.db.dsn),
+			},
+			"user": Dict{
+				"user_id": any(1.0),
+				"role_id": any(1.0),
+			},
+		}
+		result := app.create_update(logParams)
+		if resultSuccess, ok := result["success"].(bool); !ok || !resultSuccess {
+			app.logger.Error("failed to persist request log", "result", result)
+		}
+	})
+}
 
 func (app *application) getAnonymous() Dict {
 	return Dict{"user_id": 2, "username": "anonymous", "role_id": 4, "active": true}

@@ -142,7 +142,187 @@ Dynamic UIs can use the configured Central Set session/token identity. Set `logi
 * Email confirmation
 * OAuth provider login and callback
 
-These routes are available below `/ui/{ui_slug}` where applicable. For example, login uses `POST /ui/{ui_slug}/login`, recovery uses `POST /ui/{ui_slug}/recover_pass`, and OAuth uses `/ui/{ui_slug}/oauth/{provider}/login` and `/callback`. The matching page records can provide a `response_tmpl` for rendering form-action responses. Configure the underlying Central Set user/authentication settings and providers as required; adding a page template alone does not configure identity providers or mail delivery.
+The snippets below follow the seeded `UI_PAGE_LOGIN`, `UI_PAGE_SIGNUP`, `UI_PAGE_RECOVER_PASSWORD`, and `UI_PAGE_RESET_PASSWORD` examples in `assets/models/dynui_model.md`. Replace `portal` with your UI's slug and make sure the corresponding page records are active.
+
+### Login
+
+The seeded login page is stored with `page_key: login`, uses a Go HTML page template, and defines a response template for displaying authentication errors:
+
+```yaml
+table: ui_page
+data:
+  page_key: login
+  page_title: Log in
+  page_template: FileContent(ui/auth/login.html)
+  response_tmpl: |
+    <div role="alert"
+        class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+        <span>{{ .msg }}</span>
+    </div>
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
+A minimal login form posts the field names expected by the handler:
+
+```html
+<form method="post" action="/ui/portal/login">
+  <label>
+    Email
+    <input type="email" name="email" autocomplete="username" required>
+  </label>
+  <label>
+    Password
+    <input type="password" name="password" autocomplete="current-password" required>
+  </label>
+  <button type="submit">Log in</button>
+</form>
+<a href="/ui/portal/password-recovery">Forgot your password?</a>
+<a href="/ui/portal/signup">Create an account</a>
+```
+
+Successful login creates the UI session and redirects to `/ui/portal` (or sends an `HX-Redirect` for an HTMX request). If two-factor authentication is enabled, the handler sends the user to the two-factor page instead.
+
+### Signup / registration
+
+The model seeds a `signup` page in the same way and uses the configured dynamic-login table and field names for registration. The example deployment defaults are `users`, `user_id`, `username`, `email`, `password`, and `active`; check the `DYN_LOGIN_*` settings in your environment before using these field names.
+
+```yaml
+table: ui_page
+data:
+  page_key: signup
+  page_title: Sign Up
+  page_template: FileContent(ui/auth/signup.html)
+  response_tmpl: |
+    <div role="alert"
+        class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+        <span>{{ .msg }}</span>
+    </div>
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
+The signup handler accepts the configured username, email, and password form fields:
+
+```html
+<form method="post" action="/ui/portal/signup">
+  <label>
+    Username
+    <input type="text" name="username" autocomplete="username" required>
+  </label>
+  <label>
+    Email
+    <input type="email" name="email" autocomplete="email" required>
+  </label>
+  <label>
+    Password
+    <input type="password" name="password" autocomplete="new-password" required>
+  </label>
+  <button type="submit">Create account</button>
+</form>
+```
+
+**Handler behavior:** the seeded model includes `response_tmpl` on the signup page, but the current signup route uses a generic action response and does not render that page-specific template. Do not rely on this `response_tmpl` for signup feedback unless the handler behavior changes.
+
+### Password recovery and reset
+
+The recovery page in the model is `page_key: password-recovery`. Its response template displays the result returned by the recovery action:
+
+```yaml
+table: ui_page
+data:
+  page_key: password-recovery
+  page_title: Recover Password
+  page_template: FileContent(ui/auth/password-recovery.html)
+  response_tmpl: |
+    {{if .success}}
+      <div class="alert alert-soft alert-success mb-4">
+        <span>Recovery email sent successfully</span>
+      </div>
+    {{else}}
+      <div role="alert"
+          class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+          <span>{{ .msg }}</span>
+      </div>
+    {{end}}
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
+Post the email and include `ui` and `page` in the query string. The handler uses those values to find the page's `response_tmpl`. `recover_path` is optional; it tells the recovery action where the emailed reset link should lead:
+
+```html
+<form method="post"
+      action="/ui/portal/recover_pass?ui=portal&amp;page=password-recovery">
+  <label>
+    Email
+    <input type="email" name="email" autocomplete="email" required>
+  </label>
+  <input type="hidden" name="recover_path" value="/ui/portal/reset-password">
+  <button type="submit">Send recovery email</button>
+</form>
+```
+
+The seeded reset page uses `page_key: reset-password` and a response template for reset errors:
+
+```yaml
+table: ui_page
+data:
+  page_key: reset-password
+  page_title: Reset Password
+  page_template: FileContent(ui/auth/password-reset.html)
+  response_tmpl: |
+    <div role="alert"
+        class="alert {{ if .success }}alert-success{{ else }}alert-error{{ end }}">
+        <span>{{ .msg }}</span>
+    </div>
+  cache_seconds: 0
+  default_page: false
+  active: true
+```
+
+The emailed link includes a short-lived `token` query parameter; preserve it when submitting the new password:
+
+```html
+<form method="post"
+      action="/ui/portal/reset_pass?ui=portal&amp;page=reset-password&amp;token={{.PathParams.token}}">
+  <label>
+    New password
+    <input type="password" name="new_password" autocomplete="new-password" required>
+  </label>
+  <label>
+    Confirm new password
+    <input type="password" name="confirm_password" autocomplete="new-password" required>
+  </label>
+  <button type="submit">Reset password</button>
+</form>
+```
+
+The reset handler requires matching passwords and enforces the password rules in the authentication code. On success it logs out the current session. Recovery email delivery and the reset URL depend on the server's email and frontend URL configuration; verify those settings before publishing the flow.
+
+Login and account actions are available below `/ui/{ui_slug}`: `POST /login`, `POST /signup`, `POST /recover_pass`, and `POST /reset_pass`. The model also seeds alter-password and two-factor pages. OAuth uses `/ui/{ui_slug}/oauth/{provider}/login` and `/callback`. Configure the underlying Central Set user/authentication settings and providers as required; adding page templates alone does not configure identity providers or mail delivery.
+
+## Capture and log requests centrally
+
+You do not need to add request logging separately to each Dynamic UI, CRUD, or API handler. Central Set already wraps the complete route mux with `app.logAccess` in `cmd/api/routes.go`. That middleware records the client IP, method, URL, protocol, response status, and response size. In contrast, `dyn_api.go` also creates an action-level `user_log` record with fields such as the action, request IP/time, user ID, application, database, table, and result. These are complementary logs:
+
+* **Access log middleware** — one request/response event for every route.
+* **Action audit log** — a domain event for selected `dyn_api` actions, with application/table/row context.
+
+The shared `app.logRequest` middleware now handles these details for all `/ui/` routes and for the REST CRUD handler in `rest.go`. It logs both to the structured application logger and the ADMIN `user_log` table:
+
+* Client IP, authenticated user ID/name (or the anonymous account), method, and URL **path**
+* Request and response timestamps, HTTP status, response message, and duration
+* CRUD database and table names when the request uses `/crud/{db}/{table}`
+
+For bearer-authenticated UI requests, `authenticate` supplies the user through a request-scoped audit value; cookie-based UI sessions are resolved from the existing session. REST CRUD uses the same wrapper directly in `crud_api_handler`. JSON response messages are read from the `msg` field; other responses use the HTTP status text. The request path is recorded without its query string, and request/response bodies are not persisted.
+
+Do not log passwords, authorization headers, cookies, reset tokens, or full request bodies. Keep user IDs and IP addresses subject to your retention and privacy policies.
+
+**Proxy note:** `realip.FromRequest` and `ClientIP` use forwarded-IP headers. Only trust those headers when requests come through a known reverse proxy that strips client-supplied forwarding headers and writes its own; otherwise a caller may spoof the logged IP. Configure trusted proxies at the edge and use the same trusted client-IP policy for logging and rate limiting.
 
 ## Generic CRUD endpoints
 

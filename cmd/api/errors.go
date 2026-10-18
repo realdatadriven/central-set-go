@@ -50,11 +50,11 @@ func (app *application) reportServerError(r *http.Request, err error) {
 	var (
 		message = err.Error()
 		method  = r.Method
-		url     = r.URL.String()
+		path    = r.URL.Path
 		trace   = string(debug.Stack())
 	)
 	fmt.Println(trace)
-	requestAttrs := slog.Group("request", "method", method, "url", url)
+	requestAttrs := slog.Group("request", "method", method, "path", path)
 	//app.logger.Error(message, requestAttrs, "trace", fmt.Sprintf("%s", trace))
 	app.logger.Error(message, requestAttrs)
 
@@ -62,7 +62,7 @@ func (app *application) reportServerError(r *http.Request, err error) {
 		data := app.newEmailData()
 		data["Message"] = message
 		data["RequestMethod"] = method
-		data["RequestURL"] = url
+		data["RequestURL"] = path
 		data["Trace"] = trace
 
 		err := app.mailer.Send(app.config.notifications.email, data, "error-notification.tmpl")
