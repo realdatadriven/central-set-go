@@ -89,14 +89,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		finishedAt := time.Now().In(loc)
 		duration := finishedAt.Sub(startedAt)
 		ip := ClientIP(r)
-		/*user := app.getAnonymous()
-		if audit, ok := r.Context().Value(requestLogContextKey{}).(*requestLogAudit); ok && audit.user != nil {
-			user = audit.user
-		} else if authenticatedUser := contextGetAuthenticatedUser(r); authenticatedUser != nil {
-			user = Dict(*authenticatedUser)
-		} else if sessionUser, err := app.getUser(r); err == nil {
-			user = sessionUser
-		}*/
 		user := app.getAnonymous()
 		userFromSess, err := app.getUser(r)
 		if err == nil {
@@ -171,7 +163,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		}
 		err = app.AdminInsertData("user_log", logData)
 		if err != nil {
-			//err = app.AdminInsertData("user_log", logData)
 			//fmt.Println("Error persisting request log:", err, logData)
 			app.logger.Error("failed to persist request log", "error", err)
 		}
