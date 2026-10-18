@@ -79,22 +79,28 @@ func (app *application) logUIRequests(next http.Handler) http.Handler {
 
 func (app *application) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		startedAt := time.Now()
+		loc := app.getLocationFromRequest(r, Dict{})
+		startedAt := time.Now().In(loc)
 		mw := &requestLogResponseWriter{ResponseWriter: w}
 		next.ServeHTTP(mw, r)
 		if mw.statusCode == 0 {
 			mw.statusCode = http.StatusOK
 		}
-		finishedAt := time.Now()
+		finishedAt := time.Now().In(loc)
 		duration := finishedAt.Sub(startedAt)
 		ip := ClientIP(r)
-		user := app.getAnonymous()
+		/*user := app.getAnonymous()
 		if audit, ok := r.Context().Value(requestLogContextKey{}).(*requestLogAudit); ok && audit.user != nil {
 			user = audit.user
 		} else if authenticatedUser := contextGetAuthenticatedUser(r); authenticatedUser != nil {
 			user = Dict(*authenticatedUser)
 		} else if sessionUser, err := app.getUser(r); err == nil {
 			user = sessionUser
+		}*/
+		user := app.getAnonymous()
+		userFromSess, err := app.getUser(r)
+		if err == nil {
+			user = userFromSess
 		}
 		userID := user["user_id"]
 		message := http.StatusText(mw.statusCode)
@@ -119,7 +125,6 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		if len([]rune(message)) > 500 {
 			message = string([]rune(message)[:500])
 		}
-
 		path := r.URL.Path
 		action := fmt.Sprintf("%s %s", r.Method, path)
 		if len(action) > 200 {
@@ -151,15 +156,17 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 			"duration_ms", duration.Milliseconds(),
 		)
 		logData := Dict{
-			"user_id":  userID,
-			"action":   action,
-			"req_ip":   ip,
-			"req_at":   startedAt,
-			"res_at":   finishedAt,
-			"res_type": resType,
-			"res_msg":  message,
-			"res_data": string(resData),
-			"excluded": false,
+			"user_id":    userID,
+			"action":     action,
+			"req_ip":     ip,
+			"req_at":     startedAt,
+			"res_at":     finishedAt,
+			"res_type":   resType,
+			"res_msg":    message,
+			"res_data":   string(resData),
+			"excluded":   false,
+			"created_at": time.Now().In(loc),
+			"updated_at": time.Now().In(loc),
 		}
 		if strings.HasPrefix(path, "/crud/") {
 			parts := strings.Split(strings.Trim(path, "/"), "/")
@@ -167,11 +174,19 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 				logData["db"] = parts[1]
 				logData["table"] = parts[2]
 			}
+			// and its integer
+			if len(parts) >= 4 {
+				if id := app.toInt(parts[3]); id != 0 {
+					logData["row_id"] = id
+				}
+			}
 		}
 		//app.db.Exec(`insert into user_log (user_id, action, req_ip, req_at, res_at, res_type, res_msg, res_data, excluded) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		// logs_insert_sql := `insert into user_log (user_id, action, req_ip, req_at, res_at, res_type, res_msg, res_data, excluded) values (:user_id, :action, :req_ip, :req_at, :res_at, :res_type, :res_msg, :res_data, :excluded)`
 		err = app.AdminInsertData("user_log", logData)
 		if err != nil {
+			err = app.AdminInsertData("user_log", logData)
+			fmt.Println("Error persisting request log:", err, logData)
 			app.logger.Error("failed to persist request log", "error", err)
 		}
 		/*logParams := Dict{
