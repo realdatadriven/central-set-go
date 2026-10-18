@@ -1734,23 +1734,23 @@
           "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
           "access-control-allow-origin": "*",
           "content-encoding": "gzip",
-          "content-length": "108",
+          "content-length": "76",
           "content-type": "application/json",
-          "date": "Sun, 26 Jul 2026 13:12:05 GMT",
+          "date": "Sun, 18 Oct 2026 13:52:41 GMT",
           "vary": "Authorization"
         },
-        "body": "{\n\t\"msg\": \"ETLX ID  does not exists or you don have access to it!\",\n\t\"success\": false\n}\n",
-        "time": 55,
-        "size": 88,
+        "body": "{\n\t\"msg\": \"Token is expired!\",\n\t\"success\": false\n}\n",
+        "time": 27,
+        "size": 51,
         "actualRequest": {
           "method": "POST",
           "url": "http://127.0.0.1:4444/dyn_api/etlx/query_md",
           "headers": {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjoxLFwiZmlyc3RfbmFtZVwiOlwiU3VwZXJcIixcImxhbmdfaWRcIjoxLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDctMjZUMTE6Mzc6MDcuODM4MzE2NzI5LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIkFkbWluXCIsXCJueHRfY29kZV8yZl9hdXRoXCI6bnVsbCxcInJvbGVfaWRcIjoxLFwidXNlcl9pZFwiOjEsXCJ1c2VybmFtZVwiOlwicm9vdFwifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwMjUzNjUxLjkyNjE5ODUsIm5iZiI6MTc4NTA2OTY1MS45MjYxOTksImlhdCI6MTc4NTA2OTY1MS45MjYxOTg3fQ.vgZaGkCqgdNfYbZXy0prB3EU7hsL3WzSZNHji5J6Wr0"
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0"
           },
-          "body": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"etlx_id\": \"\",\n    \"table\": \"etlx\",\n    \"db\": \"ETLX\"\n  },\n  \"params\": {}\n}",
+          "body": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"etlx_id\": \"{{etlx_id}}\",\n    \"table\": \"etlx\",\n    \"db\": \"ETLX\"\n  },\n  \"params\": {}\n}",
           "protocol": "HTTP/1.1",
           "certificateNames": "System Trust Store"
         },
@@ -1758,7 +1758,7 @@
         "timingPhases": [
           {
             "name": "Environment",
-            "duration": 4
+            "duration": 1
           },
           {
             "name": "Auth",
@@ -1766,7 +1766,7 @@
           },
           {
             "name": "HTTP Request",
-            "duration": 55
+            "duration": 27
           },
           {
             "name": "Post-processing",
@@ -2136,10 +2136,474 @@
       "grpcConnected": false,
       "grpcStreaming": false,
       "responseTab": "body"
+    },
+    {
+      "id": "1792331245198eo1o",
+      "tabKind": "request",
+      "name": "UI - Default Page",
+      "method": "GET",
+      "url": "{{base_url}}/ui/{{ui_slug}}",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "text/html",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "sourceRequestId": "c7-dynui-home-get",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-dynamic-ui-crud"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=60",
+          "content-encoding": "gzip",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Sun, 18 Oct 2026 13:52:56 GMT",
+          "transfer-encoding": "chunked",
+          "vary": "Authorization"
+        },
+        "body": "<!doctype html>\n<html lang=\"en\" data-theme=\"rdd\">\n\n<head>\n\t<meta charset=\"UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\t<title>RealDataDriven — Data Engineering Consulting &amp; SaaS</title>\n\t<!--<link rel=\"icon\" href=\"data:;base64,iVBORw0KGgo=\">-->\n    <link rel=\"icon\" href=\"rdd/static/logo.png\" />\n\t<meta name=\"description\"\n\t\tcontent=\"Data engineering consulting: ETL, ELT, Reverse ETL, warehouses, lakes and lakehouses, and spreadsheet-replacing apps. Built on our own open-source stack, etlx and central-set-go.\" \n\t/>\n\n\t<!-- Fonts: Space Grotesk (display), Inter (body), JetBrains Mono (labels/eyebrows) -->\n\t<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n\t<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />\n\t<link\n\t\thref=\"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap\"\n\t\trel=\"stylesheet\" />\n\n\t<!-- Tailwind CSS v4 (browser build, no bundler required) + daisyUI v5 -->\n\t<script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script>\n\t<link href=\"https://cdn.jsdelivr.net/npm/daisyui@5\" rel=\"stylesheet\" type=\"text/css\" />\n\n\t<script src=\"https://cdn.jsdelivr.net/npm/iconify-icon@3.0.0/dist/iconify-icon.min.js\"></script>\n\t<!--<script src=\"https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-beta6\" integrity=\"sha384-6lyVbhrs13b9z7mLOpt/N6R76rtkEBWgCjAXRs/DSWyi2AMnQSs10ijWk+PI8n7W\" crossorigin=\"anonymous\"></script>-->\n\t<script src=\"https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/htmax.min.js\"></script>\n\t<script>\n\t\tconst timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;\n\t\tdocument.addEventListener('DOMContentLoaded', function () {\n\t\t\thtmx.config.logAll = true;\n\t\t\tdocument.body.addEventListener('htmx:config:request', function(evt) {\n\t\t\t\t// evt.detail.ctx.request.headers['X-Auth-Token'] = getAuthToken();\n\t\t\t\tevt.detail.ctx.request.headers['X-Timezone'] = timezone;\n\t\t\t});\n\t\t});\n\t</script>\n\n\t<!--\n\t\tSet data-theme before first paint, from a saved choice or the OS\n\t\tpreference, so there's no light/dark flash on load.\n\t-->\n\t<script>\n\t\t(function () {\n\t\t\tvar saved = localStorage.getItem(\"rdd-theme\");\n\t\t\tvar prefersDark = window.matchMedia(\n\t\t\t\t\"(prefers-color-scheme: dark)\",\n\t\t\t).matches;\n\t\t\tvar theme = saved || (prefersDark ? \"rdd-dark\" : \"rdd\");\n\t\t\tdocument.documentElement.setAttribute(\"data-theme\", theme);\n\t\t})();\n\t</script>\n\n\t<style>\n\t\t/*\n\t\t------------------------------------------------------------------\n\t\tTHEME COLORS - change these two blocks to re-skin the whole site.\n\t\tAny valid CSS color works here (hex, oklch, rgb...); daisyUI reads\n\t\tthese as plain CSS custom properties, no build step required.\n\t\t------------------------------------------------------------------\n\t\t*/\n\t\t[data-theme=\"rdd\"] {\n\t\t\tcolor-scheme: light;\n\t\t\t--color-base-100: #f6f7fa;\n\t\t\t/* page background */\n\t\t\t--color-base-200: #eceef3;\n\t\t\t/* card/section background */\n\t\t\t--color-base-300: #dde1e9;\n\t\t\t/* borders, dividers */\n\t\t\t--color-base-content: #1b2233;\n\t\t\t/* body text */\n\n\t\t\t--color-primary: #3b4fe0;\n\t\t\t/* pipeline indigo */\n\t\t\t--color-primary-content: #f5f7ff;\n\t\t\t--color-secondary: #c97a22;\n\t\t\t/* data-gold accent */\n\t\t\t--color-secondary-content: #fff8ec;\n\t\t\t--color-accent: #1c8c7c;\n\t\t\t/* teal, used sparingly */\n\t\t\t--color-accent-content: #f1fbf9;\n\t\t\t--color-neutral: #1b2233;\n\t\t\t--color-neutral-content: #f6f7fa;\n\n\t\t\t--color-info: #2f80c8;\n\t\t\t--color-info-content: #f2f8ff;\n\t\t\t--color-success: #1e9e6b;\n\t\t\t--color-success-content: #f0fbf6;\n\t\t\t--color-warning: #c98a1e;\n\t\t\t--color-warning-content: #2a1b02;\n\t\t\t--color-error: #c4402f;\n\t\t\t--color-error-content: #fff3f1;\n\t\t}\n\n\t\t[data-theme=\"rdd-dark\"] {\n\t\t\tcolor-scheme: dark;\n\t\t\t--color-base-100: #0b0f1a;\n\t\t\t/* page background */\n\t\t\t--color-base-200: #121826;\n\t\t\t/* card/section background */\n\t\t\t--color-base-300: #1d2536;\n\t\t\t/* borders, dividers */\n\t\t\t--color-base-content: #e4e8f1;\n\t\t\t/* body text */\n\n\t\t\t--color-primary: #6e7bff;\n\t\t\t/* pipeline indigo, brightened for dark */\n\t\t\t--color-primary-content: #0b0f1a;\n\t\t\t--color-secondary: #e0a84b;\n\t\t\t/* data-gold accent */\n\t\t\t--color-secondary-content: #241704;\n\t\t\t--color-accent: #3fbba8;\n\t\t\t/* teal, used sparingly */\n\t\t\t--color-accent-content: #04211c;\n\t\t\t--color-neutral: #e4e8f1;\n\t\t\t--color-neutral-content: #0b0f1a;\n\n\t\t\t--color-info: #5ca8e8;\n\t\t\t--color-info-content: #071a28;\n\t\t\t--color-success: #46c08d;\n\t\t\t--color-success-content: #052015;\n\t\t\t--color-warning: #e0a84b;\n\t\t\t--color-warning-content: #241704;\n\t\t\t--color-error: #e27564;\n\t\t\t--color-error-content: #2a0904;\n\t\t}\n\n\t\t:root {\n\t\t\t--font-display: \"Space Grotesk\", ui-sans-serif, system-ui, sans-serif;\n\t\t\t--font-body: \"Inter\", ui-sans-serif, system-ui, sans-serif;\n\t\t\t--font-mono: \"JetBrains Mono\", ui-monospace, monospace;\n\t\t}\n\n\t\tbody {\n\t\t\tfont-family: var(--font-body);\n\t\t}\n\n\t\t.font-display {\n\t\t\tfont-family: var(--font-display);\n\t\t}\n\n\t\t.font-tag {\n\t\t\tfont-family: var(--font-mono);\n\t\t\tletter-spacing: 0.08em;\n\t\t}\n\n\t\t/* Signature motif: a small horizontal \"pipeline\" of connected nodes,\n     reused (full-size once, faint as a divider elsewhere) to literally\n     depict Source -> Transform -> Warehouse -> App. */\n\t\t.pipeline-node circle {\n\t\t\tfill: var(--color-base-100);\n\t\t\tstroke: var(--color-primary);\n\t\t\tstroke-width: 2;\n\t\t}\n\n\t\t.pipeline-node.is-accent circle {\n\t\t\tstroke: var(--color-secondary);\n\t\t}\n\n\t\t.pipeline-line {\n\t\t\tstroke: var(--color-base-300);\n\t\t\tstroke-width: 2;\n\t\t\tstroke-dasharray: 4 6;\n\t\t}\n\n\t\t.grid-overlay {\n\t\t\tbackground-image:\n\t\t\t\tlinear-gradient(var(--color-base-300) 1px, transparent 1px),\n\t\t\t\tlinear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);\n\t\t\tbackground-size: 36px 36px;\n\t\t}\n\t</style>\n</head>\n\n<body class=\"bg-base-100 text-base-content\">\n\t<!-- =======================================================================\n     NAVBAR  (daisyui.com/components/navbar/) + a megamenu dropdown\n     (daisyui.com/components/megamenu/#megamenu-with-a-menus-and-lots-of-links)\n     ======================================================================= -->\n\t<div class=\"navbar bg-base-100/90 backdrop-blur border-b border-base-300 sticky top-0 z-50 px-4 lg:px-10\">\n\t\t<div class=\"navbar-start\">\n\t\t\t<a href=\"#top\" class=\"font-display text-xl font-bold\">\n\t\t\t\t<span class=\"text-primary\">Real</span>DataDriven\n\t\t\t</a>\n\t\t</div>\n\n\t\t<div class=\"navbar-center hidden lg:flex\">\n\t\t\t<ul class=\"menu menu-horizontal px-1 gap-1\">\n\t\t\t\t<!-- Megamenu dropdown -->\n\t\t\t\t<li>\n\t\t\t\t\t<details class=\"dropdown\">\n\t\t\t\t\t\t<summary>Solutions</summary>\n\t\t\t\t\t\t<div\n\t\t\t\t\t\t\tclass=\"dropdown-content bg-base-100 border border-base-300 rounded-box shadow-xl mt-2 w-[46rem] p-6\">\n\t\t\t\t\t\t\t<div class=\"grid grid-cols-3 gap-8\">\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">Data Engineering</span>\n\t\t\t\t\t\t\t\t\t<ul class=\"menu p-0 mt-2 gap-1\">\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#services\">ETL / ELT / Reverse ETL</a></li>\n\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"#services\">Warehouses &amp; data marts</a>\n\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#services\">Lakes &amp; lakehouses</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#services\">Data apps</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">Open Source</span>\n\t\t\t\t\t\t\t\t\t<ul class=\"menu p-0 mt-2 gap-1\">\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#opensource\">etlx</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#opensource\">central-set-go</a></li>\n\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"https://github.com/realdatadriven\" target=\"_blank\"\n\t\t\t\t\t\t\t\t\t\t\t\trel=\"noopener\">All repositories ↗</a>\n\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">SaaS</span>\n\t\t\t\t\t\t\t\t\t<ul class=\"menu p-0 mt-2 gap-1\">\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#saas\">Free demo</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#saas\">Guided demo</a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href=\"#saas\">Personalised setup</a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t\t<div class=\"mt-4 rounded-box bg-primary text-primary-content p-4\">\n\t\t\t\t\t\t\t\t\t\t<p class=\"font-display text-sm font-semibold\">\n\t\t\t\t\t\t\t\t\t\t\tNew here?\n\t\t\t\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t\t\t\t\t<p class=\"text-xs opacity-90 mt-1\">\n\t\t\t\t\t\t\t\t\t\t\tSpin up a free instance in one click, no sales call\n\t\t\t\t\t\t\t\t\t\t\trequired.\n\t\t\t\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t\t\t\t\t<a href=\"#saas\" class=\"btn btn-sm btn-secondary mt-3 w-full\">Try the free\n\t\t\t\t\t\t\t\t\t\t\tdemo</a>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</details>\n\t\t\t\t</li>\n\t\t\t\t<li><a href=\"#opensource\">Open Source</a></li>\n\t\t\t\t<li><a href=\"#saas\">SaaS</a></li>\n\t\t\t\t<li><a href=\"#contact\">Contact</a></li>\n\t\t\t</ul>\n\t\t</div>\n\n\t\t<div class=\"navbar-end gap-2\">\n\t\t\t<!-- Theme controller (pure CSS swap; script below only persists the choice) -->\n\t\t\t<label class=\"swap swap-rotate btn btn-ghost btn-circle\" aria-label=\"Toggle dark mode\">\n\t\t\t\t<input type=\"checkbox\" id=\"theme-toggle\" class=\"theme-controller\" value=\"rdd-dark\" />\n\t\t\t\t<svg class=\"swap-off h-5 w-5 fill-current\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\">\n\t\t\t\t\t<path d=\"M6.76,4.84L4.96,3.05L3.55,4.46l1.79,1.8L6.76,4.84z M1,13h3v-2H1V13z M11,22.94h2V20h-2 V22.94z M20.24,19.16l1.79,1.79l1.41-1.41l-1.8-1.79L20.24,19.16z M20,11v2h3v-2H20z M18.36,4.46 l-1.41-1.41l-1.79,1.8l1.41,1.41L18.36,4.46z M11,3h2v2.94h-2V3z M12,6c-3.31,0-6,2.69-6,6s2.69,6, 6,6s6-2.69,6-6S15.31,6,12,6z M4.96,20.95l1.79-1.8l-1.41-1.41l-1.8,1.79L4.96,20.95z\" />\n\t\t\t\t</svg>\n\t\t\t\t<svg class=\"swap-on h-5 w-5 fill-current\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\">\n\t\t\t\t\t<path d=\"M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a10,10,0,0,0,2.1-.22A8.13,8.13,0,0,1,12.14,19.73Z\" />\n\t\t\t\t</svg>\n\t\t\t</label>\n\t\t\t<a href=\"#saas\" class=\"btn btn-primary hidden sm:inline-flex\">Get a free demo</a>\n\t\t\t\n\t\t\t<a href=\"/ui/rdd/login\" class=\"btn btn-ghost btn-circle\">\n\t\t\t\t<iconify-icon icon=\"mdi:login\" width=\"20\" height=\"20\"></iconify-icon>\n\t\t\t</a>\n\t\t\t\n\t\t</div>\n\t</div>\n\n\t<!-- =======================================================================\n     HERO - CENTERED  (daisyui.com/components/hero/#centered-hero)\n     ======================================================================= -->\n\t<section id=\"top\" class=\"hero min-h-[80vh] grid-overlay\">\n\t\t<div class=\"hero-content text-center\">\n\t\t\t<div class=\"max-w-2xl\">\n\t\t\t\t<!--<h1>Controller TEST does not exist yet, or it hasn't be mappd!</h1>-->\n\t\t\t\t<span class=\"font-tag text-xs text-secondary uppercase\">Data engineering, done properly</span>\n\t\t\t\t<h1 class=\"font-display text-4xl md:text-6xl font-bold mt-3 leading-tight\">\n\t\t\t\t\tEvery pipeline has a story.<br />We make sure yours has a happy\n\t\t\t\t\tending.\n\t\t\t\t</h1>\n\t\t\t\t<p class=\"py-6 text-base md:text-lg opacity-80 max-w-xl mx-auto\">\n\t\t\t\t\t10+ years building ETL, ELT and Reverse ETL pipelines, warehouses, dashboards,\n\t\t\t\t\tlakes and lakehouses - on-prem and in the cloud. Plus the small\n\t\t\t\t\tdata apps that finally retire the spreadsheet nobody's\n\t\t\t\t\tsupposed to touch.\n\t\t\t\t</p>\n\t\t\t\t<div class=\"flex flex-wrap gap-3 justify-center\">\n\t\t\t\t\t<a href=\"#saas\" class=\"btn btn-primary\">Try the free demo</a>\n\t\t\t\t\t<a href=\"#contact\" class=\"btn btn-outline\">Talk to us</a>\n\t\t\t\t</div>\n\n\t\t\t\t<!-- Signature: the pipeline itself, drawn -->\n\t\t\t\t<svg viewBox=\"0 0 640 90\" class=\"mt-14 w-full max-w-xl mx-auto\" aria-hidden=\"true\">\n\t\t\t\t\t<line x1=\"60\" y1=\"30\" x2=\"580\" y2=\"30\" class=\"pipeline-line\" />\n\t\t\t\t\t<g class=\"pipeline-node\">\n\t\t\t\t\t\t<circle cx=\"60\" cy=\"30\" r=\"10\" />\n\t\t\t\t\t</g>\n\t\t\t\t\t<g class=\"pipeline-node\">\n\t\t\t\t\t\t<circle cx=\"233\" cy=\"30\" r=\"10\" />\n\t\t\t\t\t</g>\n\t\t\t\t\t<g class=\"pipeline-node is-accent\">\n\t\t\t\t\t\t<circle cx=\"406\" cy=\"30\" r=\"10\" />\n\t\t\t\t\t</g>\n\t\t\t\t\t<g class=\"pipeline-node\">\n\t\t\t\t\t\t<circle cx=\"580\" cy=\"30\" r=\"10\" />\n\t\t\t\t\t</g>\n\t\t\t\t\t<text x=\"60\" y=\"62\" text-anchor=\"middle\" class=\"font-tag\" font-size=\"12\" fill=\"currentColor\">\n\t\t\t\t\t\tSOURCE\n\t\t\t\t\t</text>\n\t\t\t\t\t<text x=\"233\" y=\"62\" text-anchor=\"middle\" class=\"font-tag\" font-size=\"12\" fill=\"currentColor\">\n\t\t\t\t\t\tTRANSFORM\n\t\t\t\t\t</text>\n\t\t\t\t\t<text x=\"406\" y=\"62\" text-anchor=\"middle\" class=\"font-tag\" font-size=\"12\" fill=\"currentColor\">\n\t\t\t\t\t\tWAREHOUSE\n\t\t\t\t\t</text>\n\t\t\t\t\t<text x=\"580\" y=\"62\" text-anchor=\"middle\" class=\"font-tag\" font-size=\"12\" fill=\"currentColor\">\n\t\t\t\t\t\tAPP\n\t\t\t\t\t</text>\n\t\t\t\t</svg>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<!-- =======================================================================\n     SERVICES CAROUSEL  (daisyui.com/components/carousel/#carousel-with-nextprev-buttons)\n     ======================================================================= -->\n\t<section id=\"services\" class=\"py-20 px-4 lg:px-10 max-w-5xl mx-auto\">\n\t\t<div class=\"text-center mb-10\">\n\t\t\t<span class=\"font-tag text-xs text-secondary uppercase\">What we do</span>\n\t\t\t<h2 class=\"font-display text-3xl font-bold mt-2\">\n\t\t\t\tFour ways we move your data forward\n\t\t\t</h2>\n\t\t</div>\n\n\t\t<div class=\"relative\">\n\t\t\t<div class=\"carousel w-full rounded-box border border-base-300\">\n\t\t\t\t<div id=\"svc-1\" class=\"carousel-item relative w-full\">\n\t\t\t\t\t<div class=\"w-full grid md:grid-cols-2 gap-8 items-center p-10 md:p-16 bg-base-200\">\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">01 / Movement</span>\n\t\t\t\t\t\t\t<h3 class=\"font-display text-2xl font-bold mt-2\">\n\t\t\t\t\t\t\t\tETL, ELT &amp; Reverse ETL\n\t\t\t\t\t\t\t</h3>\n\t\t\t\t\t\t\t<p class=\"mt-3 opacity-80\">\n\t\t\t\t\t\t\t\tPipelines that move and transform your data reliably, in\n\t\t\t\t\t\t\t\twhichever direction the business actually needs it - into the\n\t\t\t\t\t\t\t\twarehouse, or back out to the tools your team lives in.\n\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<svg viewBox=\"0 0 200 120\" class=\"w-full max-w-xs mx-auto\">\n\t\t\t\t\t\t\t<rect x=\"10\" y=\"50\" width=\"40\" height=\"30\" rx=\"4\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-primary\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<rect x=\"150\" y=\"50\" width=\"40\" height=\"30\" rx=\"4\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-secondary\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<path d=\"M50 65 H150\" stroke=\"currentColor\" class=\"text-base-300\" stroke-width=\"2\"\n\t\t\t\t\t\t\t\tstroke-dasharray=\"4 6\" marker-end=\"url(#arrow)\" />\n\t\t\t\t\t\t\t<defs>\n\t\t\t\t\t\t\t\t<marker id=\"arrow\" markerWidth=\"8\" markerHeight=\"8\" refX=\"4\" refY=\"4\" orient=\"auto\">\n\t\t\t\t\t\t\t\t\t<path d=\"M0,0 L8,4 L0,8 Z\" fill=\"currentColor\" class=\"text-base-300\" />\n\t\t\t\t\t\t\t\t</marker>\n\t\t\t\t\t\t\t</defs>\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2\">\n\t\t\t\t\t\t<a href=\"#svc-4\" class=\"btn btn-circle btn-sm\">❮</a>\n\t\t\t\t\t\t<a href=\"#svc-2\" class=\"btn btn-circle btn-sm\">❯</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div id=\"svc-2\" class=\"carousel-item relative w-full\">\n\t\t\t\t\t<div class=\"w-full grid md:grid-cols-2 gap-8 items-center p-10 md:p-16 bg-base-200\">\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">02 / Storage</span>\n\t\t\t\t\t\t\t<h3 class=\"font-display text-2xl font-bold mt-2\">\n\t\t\t\t\t\t\t\tWarehouses, lakes &amp; lakehouses\n\t\t\t\t\t\t\t</h3>\n\t\t\t\t\t\t\t<p class=\"mt-3 opacity-80\">\n\t\t\t\t\t\t\t\tDatabase, data warehouse, data lake and lakehouse design -\n\t\t\t\t\t\t\t\tsized to what you actually need this year, not whatever's\n\t\t\t\t\t\t\t\ttrending on a conference stage.\n\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<svg viewBox=\"0 0 200 120\" class=\"w-full max-w-xs mx-auto\">\n\t\t\t\t\t\t\t<rect x=\"60\" y=\"20\" width=\"80\" height=\"80\" rx=\"6\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-primary\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<line x1=\"60\" y1=\"46\" x2=\"140\" y2=\"46\" stroke=\"currentColor\" class=\"text-base-300\"\n\t\t\t\t\t\t\t\tstroke-width=\"2\" />\n\t\t\t\t\t\t\t<line x1=\"60\" y1=\"73\" x2=\"140\" y2=\"73\" stroke=\"currentColor\" class=\"text-base-300\"\n\t\t\t\t\t\t\t\tstroke-width=\"2\" />\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2\">\n\t\t\t\t\t\t<a href=\"#svc-1\" class=\"btn btn-circle btn-sm\">❮</a>\n\t\t\t\t\t\t<a href=\"#svc-3\" class=\"btn btn-circle btn-sm\">❯</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div id=\"svc-3\" class=\"carousel-item relative w-full\">\n\t\t\t\t\t<div class=\"w-full grid md:grid-cols-2 gap-8 items-center p-10 md:p-16 bg-base-200\">\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">03 / Interfaces</span>\n\t\t\t\t\t\t\t<h3 class=\"font-display text-2xl font-bold mt-2\">\n\t\t\t\t\t\t\t\tData apps\n\t\t\t\t\t\t\t</h3>\n\t\t\t\t\t\t\t<p class=\"mt-3 opacity-80\">\n\t\t\t\t\t\t\t\tLightweight, database-backed apps that replace the spreadsheet\n\t\t\t\t\t\t\t\tyour team is quietly running the business on - before it\n\t\t\t\t\t\t\t\tbecomes a very expensive typo.\n\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<svg viewBox=\"0 0 200 120\" class=\"w-full max-w-xs mx-auto\">\n\t\t\t\t\t\t\t<rect x=\"40\" y=\"15\" width=\"120\" height=\"90\" rx=\"6\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-primary\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<rect x=\"52\" y=\"30\" width=\"96\" height=\"10\" rx=\"2\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-secondary\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<rect x=\"52\" y=\"50\" width=\"96\" height=\"10\" rx=\"2\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-base-300\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<rect x=\"52\" y=\"70\" width=\"55\" height=\"18\" rx=\"4\" fill=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-primary\" />\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2\">\n\t\t\t\t\t\t<a href=\"#svc-2\" class=\"btn btn-circle btn-sm\">❮</a>\n\t\t\t\t\t\t<a href=\"#svc-4\" class=\"btn btn-circle btn-sm\">❯</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div id=\"svc-4\" class=\"carousel-item relative w-full\">\n\t\t\t\t\t<div class=\"w-full grid md:grid-cols-2 gap-8 items-center p-10 md:p-16 bg-base-200\">\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<span class=\"font-tag text-xs text-primary uppercase\">04 / Where it runs</span>\n\t\t\t\t\t\t\t<h3 class=\"font-display text-2xl font-bold mt-2\">\n\t\t\t\t\t\t\t\t10+ years, local and cloud\n\t\t\t\t\t\t\t</h3>\n\t\t\t\t\t\t\t<p class=\"mt-3 opacity-80\">\n\t\t\t\t\t\t\t\tOn-premises or cloud, we've deployed and operated these\n\t\t\t\t\t\t\t\tsystems on both for over a decade. We know the trade-offs, not\n\t\t\t\t\t\t\t\tjust the marketing slide.\n\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<svg viewBox=\"0 0 200 120\" class=\"w-full max-w-xs mx-auto\">\n\t\t\t\t\t\t\t<circle cx=\"60\" cy=\"60\" r=\"34\" fill=\"none\" stroke=\"currentColor\" class=\"text-primary\"\n\t\t\t\t\t\t\t\tstroke-width=\"2\" />\n\t\t\t\t\t\t\t<rect x=\"120\" y=\"35\" width=\"60\" height=\"50\" rx=\"8\" fill=\"none\" stroke=\"currentColor\"\n\t\t\t\t\t\t\t\tclass=\"text-secondary\" stroke-width=\"2\" />\n\t\t\t\t\t\t\t<path d=\"M94 60 H120\" stroke=\"currentColor\" class=\"text-base-300\" stroke-width=\"2\"\n\t\t\t\t\t\t\t\tstroke-dasharray=\"4 6\" />\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2\">\n\t\t\t\t\t\t<a href=\"#svc-3\" class=\"btn btn-circle btn-sm\">❮</a>\n\t\t\t\t\t\t<a href=\"#svc-1\" class=\"btn btn-circle btn-sm\">❯</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<!-- =======================================================================\n     HERO WITH OVERLAY IMAGE  (daisyui.com/components/hero/#hero-with-overlay-image)\n     Background is a self-drawn grid/pipeline graphic rather than a stock\n     photo, so the file stays fully self-contained with no licensing to\n     track down - swap the .bg-hero-graphic rule for a real photo if you'd\n     rather use one.\n     ======================================================================= -->\n\t<section id=\"opensource\" class=\"hero min-h-[60vh] bg-neutral text-neutral-content relative overflow-hidden\">\n\t\t<div class=\"hero-overlay bg-neutral/70\"></div>\n\t\t<div class=\"absolute inset-0 grid-overlay opacity-20\"></div>\n\t\t<div class=\"hero-content text-center relative\">\n\t\t\t<div class=\"max-w-2xl\">\n\t\t\t\t<span class=\"font-tag text-xs uppercase opacity-80\">Built in the open</span>\n\t\t\t\t<h2 class=\"font-display text-3xl md:text-4xl font-bold mt-2\">\n\t\t\t\t\tEverything we deliver runs on our own open source\n\t\t\t\t</h2>\n\t\t\t\t<p class=\"py-6 opacity-90\">\n\t\t\t\t\t<span class=\"font-display font-semibold\">etlx</span> is our\n\t\t\t\t\tETL/ELT/Reverse ETL engine - the pipeline core behind every project\n\t\t\t\t\twe run.\n\t\t\t\t\t<span class=\"font-display font-semibold\">central-set-go</span> is\n\t\t\t\t\tour database-backed application platform, for data apps,\n\t\t\t\t\tadmin, APIs and dynamic websites. Together, they're where we're\n\t\t\t\t\tstrongest - but our consulting goes well beyond the two of them: any\n\t\t\t\t\tdata-integration challenge is fair game.\n\t\t\t\t</p>\n\t\t\t\t<div class=\"flex flex-wrap gap-3 justify-center\">\n\t\t\t\t\t<a href=\"https://github.com/realdatadriven/etlx\" target=\"_blank\" rel=\"noopener\"\n\t\t\t\t\t\tclass=\"btn btn-secondary\">etlx on GitHub</a>\n\t\t\t\t\t<a href=\"https://github.com/realdatadriven/central-set-go\" target=\"_blank\" rel=\"noopener\"\n\t\t\t\t\t\tclass=\"btn btn-outline btn-neutral-content\">central-set-go on GitHub</a>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<!-- =======================================================================\n     PRICING CARDS  (daisyui.com/components/card/#pricing-card)\n     ======================================================================= -->\n\t<section id=\"saas\" class=\"py-20 px-4 lg:px-10 max-w-6xl mx-auto\">\n\t\t<div class=\"text-center mb-12\">\n\t\t\t<span class=\"font-tag text-xs text-secondary uppercase\">SaaS</span>\n\t\t\t<h2 class=\"font-display text-3xl font-bold mt-2\">\n\t\t\t\tGet a Central-Set instance running\n\t\t\t</h2>\n\t\t\t<p class=\"opacity-70 mt-2\">\n\t\t\t\tFrom an instant free test to a fully managed, negotiated deployment.\n\t\t\t</p>\n\t\t</div>\n\n\t\t<div class=\"grid md:grid-cols-3 gap-6 items-stretch\">\n\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm\">\n\t\t\t\t<div class=\"card-body\">\n\t\t\t\t\t<span class=\"badge badge-outline\">Free</span>\n\t\t\t\t\t<h3 class=\"card-title font-display mt-2\">Free demo</h3>\n\t\t\t\t\t<p class=\"opacity-70 text-sm\">A quick, no-strings test drive.</p>\n\t\t\t\t\t<ul class=\"mt-4 space-y-2 text-sm\">\n\t\t\t\t\t\t<li>✓ One-click deployment</li>\n\t\t\t\t\t\t<li>✓ Our cloud, zero setup</li>\n\t\t\t\t\t\t<li>✓ No sales conversation</li>\n\t\t\t\t\t</ul>\n\t\t\t\t\t<div class=\"card-actions mt-6\">\n\t\t\t\t\t\t<a href=\"#\" class=\"btn btn-outline btn-block\">Deploy free demo</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"card bg-primary text-primary-content shadow-xl md:scale-105\">\n\t\t\t\t<div class=\"card-body\">\n\t\t\t\t\t<span class=\"badge badge-secondary\">Guided</span>\n\t\t\t\t\t<h3 class=\"card-title font-display mt-2\">Guided demo</h3>\n\t\t\t\t\t<p class=\"opacity-80 text-sm\">Real headroom, for a limited time.</p>\n\t\t\t\t\t<ul class=\"mt-4 space-y-2 text-sm\">\n\t\t\t\t\t\t<li>✓ Up to 150 GB NVMe disk</li>\n\t\t\t\t\t\t<li>✓ 10 GB memory</li>\n\t\t\t\t\t\t<li>✓ 30 TB bandwidth</li>\n\t\t\t\t\t\t<li>✓ 3, 5 or 15-day window</li>\n\t\t\t\t\t</ul>\n\t\t\t\t\t<div class=\"card-actions mt-6\">\n\t\t\t\t\t\t<a href=\"#\" class=\"btn btn-secondary btn-block\">Deploy guided demo</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"card bg-base-100 border border-base-300 shadow-sm\">\n\t\t\t\t<div class=\"card-body\">\n\t\t\t\t\t<span class=\"badge badge-outline\">Custom</span>\n\t\t\t\t\t<h3 class=\"card-title font-display mt-2\">Personalised setup</h3>\n\t\t\t\t\t<p class=\"opacity-70 text-sm\">\n\t\t\t\t\t\tYour servers, your cloud, your terms.\n\t\t\t\t\t</p>\n\t\t\t\t\t<ul class=\"mt-4 space-y-2 text-sm\">\n\t\t\t\t\t\t<li>✓ Deployed anywhere you need</li>\n\t\t\t\t\t\t<li>✓ Sized and configured for you</li>\n\t\t\t\t\t\t<li>✓ Backed by our full consulting</li>\n\t\t\t\t\t</ul>\n\t\t\t\t\t<div class=\"card-actions mt-6\">\n\t\t\t\t\t\t<a href=\"#contact\" class=\"btn btn-outline btn-block\">Get in touch</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<!-- =======================================================================\n     HERO WITH FORM  (daisyui.com/components/hero/#hero-with-form)\n     ======================================================================= -->\n\t<section id=\"contact\" class=\"hero bg-base-200 py-20\">\n\t\t<div class=\"hero-content flex-col lg:flex-row-reverse gap-16 max-w-10xl\">\n\t\t\t<div class=\"text-center lg:text-left\">\n\t\t\t\t<span class=\"font-tag text-xs text-secondary uppercase\">Get in touch</span>\n\t\t\t\t<h2 class=\"font-display text-3xl font-bold mt-2\">\n\t\t\t\t\tTell us what you're trying to solve\n\t\t\t\t</h2>\n\t\t\t\t<p class=\"py-4 opacity-70\">\n\t\t\t\t\tWhether it's a personalised Central-Set deployment or a broader\n\t\t\t\t\tdata-integration problem, this is the fastest way to reach us - no\n\t\t\t\t\tforms buried three clicks deep.\n\t\t\t\t</p>\n\t\t\t</div>\n\t\t\t<div class=\"card w-full max-w-lg shadow-xl bg-base-100 border border-base-300\">\n\t\t\t\t<form class=\"card-body\">\n\t\t\t\t\t<label class=\"label\" for=\"name\"><span class=\"label-text\">Name</span></label>\n\t\t\t\t\t<input id=\"name\" name=\"name\" type=\"text\" \n\t\t\t\t\t\tplaceholder=\"Your name\" required\n\t\t\t\t\t\tclass=\"input input-bordered w-full\" \n\t\t\t\t\t/>\n\n\t\t\t\t\t<label class=\"label\" for=\"email\"><span class=\"label-text\">Email</span></label>\n\t\t\t\t\t<input id=\"email\" name=\"email\" type=\"email\" \n\t\t\t\t\t\tplaceholder=\"you@company.com\" required\n\t\t\t\t\t\tclass=\"input input-bordered w-full\" \n\t\t\t\t\t/>\n\n\t\t\t\t\t<label class=\"label\" for=\"message\">\n\t\t\t\t\t\t<span class=\"label-text\">What are you trying to solve?</span>\n\t\t\t\t\t</label>\n\t\t\t\t\t<textarea id=\"message\" name=\"message\" required \n\t\t\t\t\t\tclass=\"textarea textarea-bordered h-24 w-full\"\n\t\t\t\t\t\tplaceholder=\"A sentence or two is plenty\">\n\t\t\t\t\t</textarea>\n\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary mt-4\">Send</button>\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<!-- =======================================================================\n     FOOTER WITH LINKS AND SOCIAL ICONS\n     (daisyui.com/components/footer/#footer-with-links-and-social-icons)\n     ======================================================================= -->\n\t<footer class=\"footer sm:footer-horizontal bg-neutral text-neutral-content p-10 px-4 lg:px-10\">\n\t\t<aside>\n\t\t\t<span class=\"font-display text-xl font-bold\">\n\t\t\t\t<span class=\"text-primary\">Real</span>DataDriven\n\t\t\t</span>\n\t\t\t<p class=\"opacity-70 max-w-xs mt-2\">\n\t\t\t\tData engineering consulting, powered by our own open-source stack.\n\t\t\t</p>\n\t\t</aside>\n\t\t<nav>\n\t\t\t<h6 class=\"footer-title\">Solutions</h6>\n\t\t\t<a href=\"#services\" class=\"link link-hover\">ETL / ELT / Reverse ETL</a>\n\t\t\t<a href=\"#services\" class=\"link link-hover\">Warehouses &amp; lakehouses</a>\n\t\t\t<a href=\"#services\" class=\"link link-hover\">Data apps</a>\n\t\t</nav>\n\t\t<nav>\n\t\t\t<h6 class=\"footer-title\">Open Source</h6>\n\t\t\t<a href=\"https://github.com/realdatadriven/etlx\" target=\"_blank\" rel=\"noopener\"\n\t\t\t\tclass=\"link link-hover\">etlx</a>\n\t\t\t<a href=\"https://github.com/realdatadriven/central-set-go\" target=\"_blank\" rel=\"noopener\"\n\t\t\t\tclass=\"link link-hover\">central-set-go</a>\n\t\t</nav>\n\t\t<nav>\n\t\t\t<h6 class=\"footer-title\">Company</h6>\n\t\t\t<a href=\"#saas\" class=\"link link-hover\">SaaS</a>\n\t\t\t<a href=\"#contact\" class=\"link link-hover\">Contact</a>\n\t\t</nav>\n\t\t<nav>\n\t\t\t<h6 class=\"footer-title\">Follow</h6>\n\t\t\t<div class=\"grid grid-flow-col gap-4\">\n\t\t\t\t<a href=\"https://github.com/realdatadriven\" target=\"_blank\" rel=\"noopener\" aria-label=\"GitHub\">\n\t\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" class=\"w-6 h-6 fill-current\">\n\t\t\t\t\t\t<path\n\t\t\t\t\t\t\td=\"M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.73 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.7.41.36.78 1.06.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z\" />\n\t\t\t\t\t</svg>\n\t\t\t\t</a>\n\t\t\t\t<a href=\"#\" aria-label=\"LinkedIn\">\n\t\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" class=\"w-6 h-6 fill-current\">\n\t\t\t\t\t\t<path\n\t\t\t\t\t\t\td=\"M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z\" />\n\t\t\t\t\t</svg>\n\t\t\t\t</a>\n\t\t\t\t<a href=\"#\" aria-label=\"X (Twitter)\">\n\t\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" class=\"w-6 h-6 fill-current\">\n\t\t\t\t\t\t<path\n\t\t\t\t\t\t\td=\"M18.24 2H21l-6.6 7.54L22.2 22h-6.2l-4.86-6.36L5.5 22H2.72l7.06-8.07L2 2h6.35l4.4 5.82L18.24 2Zm-1.08 18h1.72L7.98 3.9H6.13l11.03 16.1Z\" />\n\t\t\t\t\t</svg>\n\t\t\t\t</a>\n\t\t\t</div>\n\t\t</nav>\n\t</footer>\n\n\t<script>\n\t\t// Theme controller only needs to persist the choice - the light/dark\n\t\t// swap itself is pure CSS via daisyUI's :has() theme-controller selector.\n\t\t(function () {\n\t\t\tvar checkbox = document.getElementById(\"theme-toggle\");\n\t\t\tvar current = document.documentElement.getAttribute(\"data-theme\");\n\t\t\tcheckbox.checked = current === \"rdd-dark\";\n\t\t\tcheckbox.addEventListener(\"change\", function () {\n\t\t\t\tvar theme = checkbox.checked ? \"rdd-dark\" : \"rdd\";\n\t\t\t\tdocument.documentElement.setAttribute(\"data-theme\", theme);\n\t\t\t\tlocalStorage.setItem(\"rdd-theme\", theme);\n\t\t\t});\n\t\t})();\n\t</script>\n</body>\n\n</html>",
+        "time": 31,
+        "size": 28612,
+        "actualRequest": {
+          "method": "GET",
+          "url": "http://127.0.0.1:4444/ui/rdd",
+          "headers": {
+            "Accept": "text/html"
+          },
+          "body": null,
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 1
+          },
+          {
+            "name": "Auth",
+            "duration": 0
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 31
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
+    },
+    {
+      "id": "1792331466159xjom",
+      "tabKind": "request",
+      "name": "ODATA",
+      "method": "GET",
+      "url": "{{base_url}}/odata/admin",
+      "params": [
+        {
+          "key": "$filter",
+          "value": "app_id eq 3",
+          "enabled": true
+        },
+        {
+          "key": "$schema",
+          "value": "true",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "sourceRequestId": null,
+      "sourceCollectionId": null,
+      "sourceFolderPath": null,
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "content-encoding": "gzip",
+          "content-length": "621",
+          "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+          "date": "Fri, 14 Aug 2026 18:43:39 GMT",
+          "odata-version": "4.0",
+          "vary": "Authorization"
+        },
+        "body": "{\"@odata.context\":\"htts://localhost:4444/odata/admin/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"sqlite_sequence\",\"kind\":\"EntitySet\",\"url\":\"sqlite_sequence\"}]}",
+        "time": 42,
+        "size": 3836,
+        "cookies": []
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
+    },
+    {
+      "id": "1792331571662acir",
+      "tabKind": "request",
+      "name": "UI - Page by Key",
+      "method": "GET",
+      "url": "{{base_url}}/ui/{{ui_slug}}/{{ui_page}}",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "text/html",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "sourceRequestId": "c7-dynui-page-get",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-dynamic-ui-crud"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": null,
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
+    },
+    {
+      "id": "1792331595730t56p",
+      "tabKind": "request",
+      "name": "CRUD - List Rows",
+      "method": "GET",
+      "url": "{{base_url}}/crud/{{crud_db}}/{{crud_table}}",
+      "params": [
+        {
+          "key": "$top",
+          "value": "20",
+          "enabled": true
+        }
+      ],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "sourceRequestId": "c7-crud-list-get",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-dynamic-ui-crud"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "content-encoding": "gzip",
+          "content-length": "824",
+          "content-type": "application/json",
+          "date": "Sun, 18 Oct 2026 13:53:26 GMT",
+          "vary": "Authorization"
+        },
+        "body": "{\n\t\"cols\": [\n\t\t\"plan_id\",\n\t\t\"plan\",\n\t\t\"plan_desc\",\n\t\t\"sort_order\",\n\t\t\"product_id\",\n\t\t\"is_public\",\n\t\t\"is_self_hosted_allowed\",\n\t\t\"is_custom_pricing_allowed\",\n\t\t\"provider_id\",\n\t\t\"monthly_amount\",\n\t\t\"annual_amount\",\n\t\t\"currency_id\",\n\t\t\"recurring_interval_id\",\n\t\t\"recurring_interval_count\",\n\t\t\"billing_scheme_id\",\n\t\t\"payment_provider_id\",\n\t\t\"payment_product_id\",\n\t\t\"payment_price_monthly_id\",\n\t\t\"payment_price_annual_id\",\n\t\t\"payment_product_metadata\",\n\t\t\"payment_product_last_sync_at\",\n\t\t\"active\",\n\t\t\"terraform_template\",\n\t\t\"user_id\",\n\t\t\"app_id\",\n\t\t\"created_at\",\n\t\t\"updated_at\",\n\t\t\"excluded\"\n\t],\n\t\"data\": [\n\t\t{\n\t\t\t\"active\": true,\n\t\t\t\"plan\": \"DEMO\",\n\t\t\t\"plan_id\": 2\n\t\t}\n\t],\n\t\"msg\": \"Operation executed successfully!\",\n\t\"permissions\": {\n\t\t\"app_id\": 4,\n\t\t\"create\": false,\n\t\t\"created_at\": \"2026-08-29T18:30:00.469083135-01:00\",\n\t\t\"delete\": false,\n\t\t\"excluded\": false,\n\t\t\"menu_id\": 14,\n\t\t\"read\": true,\n\t\t\"role_app_menu_table_id\": 3,\n\t\t\"role_id\": 4,\n\t\t\"share\": false,\n\t\t\"table\": \"plan\",\n\t\t\"table_id\": 90,\n\t\t\"update\": false,\n\t\t\"updated_at\": \"2026-10-17T09:29:45.547569437-01:00\",\n\t\t\"user_id\": 1\n\t},\n\t\"sql\": \"select plan_id, plan, active from (SELECT  \\\"plan\\\".*,\\\"provider\\\".\\\"provider\\\" AS \\\"provider\\\",\\\"recurring_interval\\\".\\\"recurring_interval\\\" AS \\\"recurring_interval\\\",\\\"currency\\\".\\\"currency\\\" AS \\\"currency\\\",\\\"billing_scheme\\\".\\\"billing_scheme\\\" AS \\\"billing_scheme\\\",\\\"payment_provider\\\".\\\"payment_provider\\\" AS \\\"payment_provider\\\",\\\"product\\\".\\\"product\\\" AS \\\"product\\\" FROM \\\"plan\\\" LEFT OUTER JOIN \\\"provider\\\" \\\"provider\\\" ON \\\"provider\\\".\\\"provider_id\\\" = \\\"plan\\\".\\\"provider_id\\\"\\nLEFT OUTER JOIN \\\"recurring_interval\\\" \\\"recurring_interval\\\" ON \\\"recurring_interval\\\".\\\"recurring_interval_id\\\" = \\\"plan\\\".\\\"recurring_interval_id\\\"\\nLEFT OUTER JOIN \\\"currency\\\" \\\"currency\\\" ON \\\"currency\\\".\\\"currency_id\\\" = \\\"plan\\\".\\\"currency_id\\\"\\nLEFT OUTER JOIN \\\"billing_scheme\\\" \\\"billing_scheme\\\" ON \\\"billing_scheme\\\".\\\"billing_scheme_id\\\" = \\\"plan\\\".\\\"billing_scheme_id\\\"\\nLEFT OUTER JOIN \\\"payment_provider\\\" \\\"payment_provider\\\" ON \\\"payment_provider\\\".\\\"payment_provider_id\\\" = \\\"plan\\\".\\\"payment_provider_id\\\"\\nLEFT OUTER JOIN \\\"product\\\" \\\"product\\\" ON \\\"product\\\".\\\"product_id\\\" = \\\"plan\\\".\\\"product_id\\\" WHERE (\\\"plan\\\".\\\"excluded\\\" IS FALSE AND (\\\"product\\\".\\\"product_id\\\" IN (?) OR \\\"product\\\".\\\"user_id\\\" = ?) AND (\\\"plan\\\".\\\"plan_id\\\" IN (?) OR \\\"plan\\\".\\\"user_id\\\" = ?)) LIMIT 20 OFFSET 0) as t\",\n\t\"success\": true,\n\t\"total\": 1\n}\n",
+        "time": 60,
+        "size": 2442,
+        "actualRequest": {
+          "method": "GET",
+          "url": "http://127.0.0.1:4444/crud/SAAS/plan?%24top=20",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          "body": null,
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 1
+          },
+          {
+            "name": "Auth",
+            "duration": 0
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 60
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
+    },
+    {
+      "id": "1792331661282hdkj",
+      "tabKind": "request",
+      "name": "UI - Static Asset",
+      "method": "GET",
+      "url": "{{base_url}}/ui/{{ui_slug}}/static/{{ui_asset}}",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "sourceRequestId": "c7-dynui-asset-get",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": [
+        "f-c7-dynamic-ui-crud"
+      ],
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-headers": "Content-Type, Authorization, enctype",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=86400",
+          "content-encoding": "gzip",
+          "content-length": "253",
+          "content-type": "image/svg+xml",
+          "date": "Sun, 18 Oct 2026 13:54:23 GMT",
+          "last-modified": "Sun, 18 Oct 2026 13:41:34 GMT",
+          "vary": "Authorization"
+        },
+        "body": "<svg xmlns='http://www.w3.org/2000/svg' width='46' height='46' fill='none'><path stroke='#01FFCD' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m25.38 26.437 7.137 7.138M31.989 12.69l-6.08 6.08M17.448 22.603h-4.23'/><circle cx='22.207' cy='22.207' r='4.759' stroke='#01FFCD' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5'/><circle cx='35.954' cy='37.011' r='4.759' stroke='#01FFCD' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5'/><circle cx='35.954' cy='8.988' r='4.759' stroke='#01FFCD' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5'/><circle cx='8.46' cy='22.207' r='4.759' stroke='#01FFCD' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5'/></svg>\n",
+        "time": 33,
+        "size": 747,
+        "actualRequest": {
+          "method": "GET",
+          "url": "http://127.0.0.1:4444/ui/rdd/static/logo.svg",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          "body": null,
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": [],
+        "timingPhases": [
+          {
+            "name": "Environment",
+            "duration": 1
+          },
+          {
+            "name": "Auth",
+            "duration": 0
+          },
+          {
+            "name": "HTTP Request",
+            "duration": 33
+          },
+          {
+            "name": "Post-processing",
+            "duration": 0
+          }
+        ]
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
     }
   ],
   "groups": [],
-  "activeTabId": "1786732951469ftuu",
+  "activeTabId": "17850700265507n2q",
   "currentView": "requests",
   "sidebarTab": "collections",
   "sidebarCollapsed": false,

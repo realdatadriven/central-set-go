@@ -363,6 +363,192 @@
           }
         ],
         "folders": []
+      },
+      {
+        "id": "f-c7-dynamic-ui-crud",
+        "name": "Dynamic UI & REST CRUD (GET)",
+        "requests": [
+          {
+            "id": "c7-dynui-home-get",
+            "name": "UI - Default Page",
+            "method": "GET",
+            "url": "{{base_url}}/ui/{{ui_slug}}",
+            "params": [],
+            "headers": [
+              {
+                "key": "Accept",
+                "value": "text/html",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "type": "none"
+            },
+            "auth": {
+              "type": "none"
+            },
+            "inheritAuth": true,
+            "testRules": [],
+            "setVariables": []
+          },
+          {
+            "id": "c7-dynui-page-get",
+            "name": "UI - Page by Key",
+            "method": "GET",
+            "url": "{{base_url}}/ui/{{ui_slug}}/{{ui_page}}",
+            "params": [],
+            "headers": [
+              {
+                "key": "Accept",
+                "value": "text/html",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "type": "none"
+            },
+            "auth": {
+              "type": "none"
+            },
+            "inheritAuth": true,
+            "testRules": [],
+            "setVariables": []
+          },
+          {
+            "id": "c7-dynui-partial-get",
+            "name": "UI - CRUD Partial",
+            "method": "GET",
+            "url": "{{base_url}}/ui/{{ui_slug}}/partial/{{ui_partial}}",
+            "params": [
+              {
+                "key": "db",
+                "value": "{{crud_db}}",
+                "enabled": true
+              },
+              {
+                "key": "table",
+                "value": "{{crud_table}}",
+                "enabled": true
+              },
+              {
+                "key": "$filter",
+                "value": "plan_id eq 2",
+                "enabled": true
+              },
+              {
+                "key": "$schema",
+                "value": "true",
+                "enabled": true
+              }
+            ],
+            "headers": [
+              {
+                "key": "Accept",
+                "value": "text/html",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "type": "none"
+            },
+            "auth": {
+              "type": "none"
+            },
+            "inheritAuth": true,
+            "testRules": [],
+            "setVariables": []
+          },
+          {
+            "id": "c7-dynui-asset-get",
+            "name": "UI - Static Asset",
+            "method": "GET",
+            "url": "{{base_url}}/ui/{{ui_slug}}/static/{{ui_asset}}",
+            "params": [],
+            "headers": [],
+            "body": {
+              "type": "none"
+            },
+            "auth": {
+              "type": "none"
+            },
+            "inheritAuth": true,
+            "testRules": [],
+            "setVariables": []
+          },
+          {
+            "id": "c7-crud-list-get",
+            "name": "CRUD - List Rows",
+            "method": "GET",
+            "url": "{{base_url}}/crud/{{crud_db}}/{{crud_table}}",
+            "params": [
+              {
+                "key": "$top",
+                "value": "20",
+                "enabled": true
+              }
+            ],
+            "headers": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "type": "none"
+            },
+            "auth": {
+              "type": "none"
+            },
+            "inheritAuth": true,
+            "testRules": [],
+            "setVariables": []
+          },
+          {
+            "id": "c7-crud-row-get",
+            "name": "CRUD - Get Row by ID",
+            "method": "GET",
+            "url": "{{base_url}}/crud/{{crud_db}}/{{crud_table}}/{{crud_id}}",
+            "params": [],
+            "headers": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "type": "none"
+            },
+            "auth": {
+              "type": "none"
+            },
+            "inheritAuth": true,
+            "testRules": [],
+            "setVariables": []
+          }
+        ],
+        "folders": []
       }
     ],
     "requests": [
@@ -916,6 +1102,41 @@
         "key": "reset_token",
         "value": "",
         "enabled": false
+      },
+      {
+        "key": "ui_slug",
+        "value": "rdd",
+        "enabled": true
+      },
+      {
+        "key": "ui_page",
+        "value": "home",
+        "enabled": true
+      },
+      {
+        "key": "ui_partial",
+        "value": "crud",
+        "enabled": true
+      },
+      {
+        "key": "ui_asset",
+        "value": "logo.svg",
+        "enabled": true
+      },
+      {
+        "key": "crud_db",
+        "value": "SAAS",
+        "enabled": true
+      },
+      {
+        "key": "crud_table",
+        "value": "plan",
+        "enabled": true
+      },
+      {
+        "key": "crud_id",
+        "value": "2",
+        "enabled": true
       },
       {
         "key": "etlx_id",
