@@ -192,6 +192,17 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /quack-server/stop/{name}", app.stopQuack)
 	mux.HandleFunc("GET /quack-server/restart/{name}", app.restartQuack)
 
+	// QUACK API ENDPOINTS
+	mux.HandleFunc("GET /quack_api/start/{name}", app.startQuackAPI)
+	mux.HandleFunc("POST /quack_api/start/{name}", app.startQuackAPI)
+	mux.HandleFunc("POST /quack_api/start", app.startQuackAPI)
+	mux.HandleFunc("GET /quack_api/stop/{name}", app.stopQuackAPI)
+	mux.HandleFunc("POST /quack_api/stop/{name}", app.stopQuackAPI)
+	mux.HandleFunc("POST /quack_api/stop", app.stopQuackAPI)
+	mux.HandleFunc("GET /quack_api/restart/{name}", app.restartQuackAPI)
+	mux.HandleFunc("POST /quack_api/restart/{name}", app.restartQuackAPI)
+	mux.HandleFunc("POST /quack_api/restart", app.restartQuackAPI)
+
 	// OAUTH2
 	mux.HandleFunc("GET /auth/{provider}/login", app.GothLoginHandler)
 	mux.HandleFunc("GET /auth/{provider}/callback", app.GothCallbackHandler)

@@ -87,6 +87,7 @@ cs_app:
     active: true
     tables:
       - {table: quack_server, requires_rla: true, active: true}
+      - {table: quack_api, requires_rla: true, active: true}
       - {table: quack_logs, active: false}
   Jobs Scheduling:
     menu_icon: clock
@@ -897,6 +898,39 @@ table_layout:
     - {callApi: true, method: POST, api: quack/start,   tooltip: Start Quack Server,   icon: play,       active: true}
     - {callApi: true, method: POST, api: quack/stop,    tooltip: Stop Quack Server,    icon: stop,       active: true}
     - {callApi: true, method: POST, api: quack/restart, tooltip: Restart Quack Server, icon: arrow-path, active: true}
+```
+
+## QUACK_API
+```yaml
+table: quack_api
+comment: DuckDB QuackAPI Service
+columns:
+  quack_api_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  quack_api:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 4 }
+  quack_api_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
+  startup_sql:    { type: text, comment: "Startup SQL", form_display: true, order: 3, form_long_text: true, form_code: sql }
+  main_sql:       { type: text, comment: "Main SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
+  shutdown_sql:   { type: text, comment: "Shutdown SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
+  status:         { type: varchar, len: 50, default: offline, comment: "Status", form_display: true, table_display: true, order: 6, form_size: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:     { type: datetime, comment: "Created at" }
+  updated_at:     { type: datetime, comment: "Updated at" }
+  excluded:       { type: boolean, default: false, comment: "Excluded" }
+data:
+  - {quack_api_id: 1, quack_api: "QuackAPI Example", quack_api_desc: "HTTP routes served by DuckDB QuackAPI", startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;", main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);", shutdown_sql: "SELECT * FROM quackapi_stop(9495);", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 10
+table_layout:
+  default_order:
+    - { field: quack_api, order: ASC }
+  exec_button:
+    - {callApi: true, method: POST, api: quack_api/start,   tooltip: Start QuackAPI,   icon: play,       active: true}
+    - {callApi: true, method: POST, api: quack_api/stop,    tooltip: Stop QuackAPI,    icon: stop,       active: true}
+    - {callApi: true, method: POST, api: quack_api/restart, tooltip: Restart QuackAPI, icon: arrow-path, active: true}
 ```
 
 ## QUACK_LOGS

@@ -164,6 +164,8 @@ type application struct {
 	quackPoolMux      sync.RWMutex             // Protect concurrent access to pool
 	quackManager      *QuackManager            // Quack lifecycle manager
 	quackInstanciated bool                     // Quack instanciated flag to avoid multiple instantiation of quack manager and pool in case of multiple calls to run function, as it can happen in licensee app where we validate the license on startup and then periodically, and both operations call run function
+	quackAPIManager   *QuackAPIManager
+	quackAPIOnce      sync.Once
 	sizeGuard         *SizeGuard
 	SessionStore      *SessionStore
 	StorageAPI        storage.Storage

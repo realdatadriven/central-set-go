@@ -45,6 +45,27 @@ From `admin_model.md`:
 6. **Graceful Shutdown**: Runs `shutdown_sql` before closing connections
 7. **No Global State**: Each instance is isolated and can be independently started/stopped
 
+## QuackAPI Services
+
+QuackAPI services are configured separately in the `quack_api` table; the
+existing `quack_server` configuration and Quack lifecycle remain unchanged.
+Starting a service runs its `startup_sql` followed by `main_sql`. Put route
+definitions and the `quackapi_serve(...)` call in `main_sql`. Stopping the
+service explicitly runs `shutdown_sql` before closing its DuckDB connection.
+The controls use `/quack_api/start/{name}`, `/quack_api/stop/{name}`, and
+`/quack_api/restart/{name}`.
+
+For example:
+
+```yaml
+startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;"
+main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);"
+shutdown_sql: "SELECT * FROM quackapi_stop(9495);"
+```
+
+QuackAPI is gated by the existing `QUACK_ENABLED` setting. Use QuackAPI auth
+and route policies to control access to shared data.
+
 ## Next Steps
 
 - Extend `registerSecurityUDF()` with your actual token validation logic
