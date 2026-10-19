@@ -908,6 +908,7 @@ columns:
   quack_api_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   quack_api:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 4 }
   quack_api_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
+  port:            { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 3, form_size: 2 }
   startup_sql:    { type: text, comment: "Startup SQL", form_display: true, order: 3, form_long_text: true, form_code: sql }
   main_sql:       { type: text, comment: "Main SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
   shutdown_sql:   { type: text, comment: "Shutdown SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
@@ -919,7 +920,7 @@ columns:
   updated_at:     { type: datetime, comment: "Updated at" }
   excluded:       { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {quack_api_id: 1, quack_api: "QuackAPI Example", quack_api_desc: "HTTP routes served by DuckDB QuackAPI", startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;", main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);", shutdown_sql: "SELECT * FROM quackapi_stop(9495);", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
+  - {quack_api_id: 1, quack_api: "QuackAPI Example", quack_api_desc: "HTTP routes served by DuckDB QuackAPI", port: 9495, startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;", main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);", shutdown_sql: "SELECT * FROM quackapi_stop(9495);", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false

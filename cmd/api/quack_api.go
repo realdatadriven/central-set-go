@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/request"
 	"github.com/realdatadriven/central-set-go/internal/response"
 	"github.com/realdatadriven/etlx"
@@ -47,6 +48,12 @@ func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dic
 			conn.Close()
 			return fmt.Errorf("main SQL failed: %w", err)
 		}
+	}
+	// get QUACK_API_PATH & QUACK_API_TMPL to puth httpserver route for subdomain
+	path := env.GetString("QUACK_API_PATH", "")
+	tmpl := env.GetString("QUACK_API_TMPL", "")
+	if path != "" && tmpl != "" {
+		fmt.Println(path, tmpl)
 	}
 	qm.pool[quackAPIID] = conn
 	qm.configs[quackAPIID] = config
