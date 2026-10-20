@@ -1,11 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"sync"
+	texttemplate "text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/central-set-go/internal/request"
 	"github.com/realdatadriven/central-set-go/internal/response"
@@ -24,6 +28,19 @@ func NewQuackAPIManager() *QuackAPIManager {
 		pool:    make(map[int]etlx.DBInterface),
 		configs: make(map[int]Dict),
 	}
+}
+
+func RenderTextTemplate(tmplStr string, data map[string]any) (string, error) {
+	funcMap := sprig.FuncMap()
+	tmpl, err := texttemplate.New("tmpl").Funcs(funcMap).Parse(tmplStr)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse template: %v", err)
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", fmt.Errorf("failed to execute template: %v", err)
+	}
+	return buf.String(), nil
 }
 
 // Start runs startup_sql followed by main_sql on a new in-memory DuckDB.
@@ -49,11 +66,20 @@ func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dic
 			return fmt.Errorf("main SQL failed: %w", err)
 		}
 	}
-	// get QUACK_API_PATH & QUACK_API_TMPL to puth httpserver route for subdomain
-	path := env.GetString("QUACK_API_PATH", "")
-	tmpl := env.GetString("QUACK_API_TMPL", "")
+	// get QUACK_API_RPROXY_PATH & QUACK_API_RPROXY_TMPL to put httpserver route for subdomain
+	path := env.GetString("QUACK_API_RPROXY_PATH", "")
+	tmpl := env.GetString("QUACK_API_RPROXY_TMPL", "")
 	if path != "" && tmpl != "" {
 		fmt.Println(path, tmpl)
+		prx_cnf, err := RenderTextTemplate(tmpl, config)
+		if err != nil {
+			fmt.Printf("failed to render proxy config template: %w\n", err)
+		} else {
+			err := os.WriteFile(path, []byte(prx_cnf), 0644)
+			if err != nil {
+				fmt.Printf("Failed to write file: %s", err)
+			}
+		}
 	}
 	qm.pool[quackAPIID] = conn
 	qm.configs[quackAPIID] = config
