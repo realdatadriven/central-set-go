@@ -908,7 +908,7 @@ columns:
   quack_api_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
   quack_api:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 4 }
   quack_api_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
-  port:            { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 3, form_size: 2 }
+  port:           { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 3, form_size: 2 }
   startup_sql:    { type: text, comment: "Startup SQL", form_display: true, order: 3, form_long_text: true, form_code: sql }
   main_sql:       { type: text, comment: "Main SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
   shutdown_sql:   { type: text, comment: "Shutdown SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }

@@ -45,6 +45,9 @@ func RenderTextTemplate(tmplStr string, data map[string]any) (string, error) {
 
 // Start runs startup_sql followed by main_sql on a new in-memory DuckDB.
 func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dict) error {
+	if !env.GetBool("QUACK_API_ENABLED", false) {
+		return fmt.Errorf("quack API is not enabled")
+	}
 	qm.mux.Lock()
 	defer qm.mux.Unlock()
 	if _, exists := qm.pool[quackAPIID]; exists {
@@ -55,13 +58,15 @@ func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dic
 		return fmt.Errorf("failed to create in-memory duckdb connection: %w", err)
 	}
 	if startupSQL := toString(config["startup_sql"]); startupSQL != "" {
-		if err := executeQuackAPISQL(conn, startupSQL); err != nil {
+		_, err := conn.ExecuteQuery(startupSQL, Dict{})
+		if err != nil {
 			conn.Close()
 			return fmt.Errorf("startup SQL failed: %w", err)
 		}
 	}
 	if mainSQL := toString(config["main_sql"]); mainSQL != "" {
-		if err := executeQuackAPISQL(conn, mainSQL); err != nil {
+		_, err := conn.ExecuteQuery(mainSQL, Dict{})
+		if err != nil {
 			conn.Close()
 			return fmt.Errorf("main SQL failed: %w", err)
 		}
@@ -70,12 +75,18 @@ func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dic
 	path := env.GetString("QUACK_API_RPROXY_PATH", "")
 	tmpl := env.GetString("QUACK_API_RPROXY_TMPL", "")
 	if path != "" && tmpl != "" {
-		fmt.Println(path, tmpl)
 		prx_cnf, err := RenderTextTemplate(tmpl, config)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template: %w\n", err)
+		}
+		pth_cnf, err := RenderTextTemplate(path, config)
+		if err != nil {
+			fmt.Printf("failed to render proxy config template path: %w\n", err)
+		}
+		if err != nil {
+			fmt.Printf("failed to render proxy config template: %w\n", err)
 		} else {
-			err := os.WriteFile(path, []byte(prx_cnf), 0644)
+			err := os.WriteFile(pth_cnf, []byte(prx_cnf), 0644)
 			if err != nil {
 				fmt.Printf("Failed to write file: %s", err)
 			}
@@ -88,6 +99,9 @@ func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dic
 
 // Stop runs shutdown_sql only for an explicit stop, then closes its DuckDB.
 func (qm *QuackAPIManager) Stop(ctx context.Context, quackAPIID int) error {
+	if !env.GetBool("QUACK_API_ENABLED", false) {
+		return fmt.Errorf("quack API is not enabled")
+	}
 	qm.mux.Lock()
 	defer qm.mux.Unlock()
 	conn, exists := qm.pool[quackAPIID]
@@ -96,8 +110,22 @@ func (qm *QuackAPIManager) Stop(ctx context.Context, quackAPIID int) error {
 	}
 	var shutdownErr error
 	if shutdownSQL := toString(qm.configs[quackAPIID]["shutdown_sql"]); shutdownSQL != "" {
-		if err := executeQuackAPISQL(conn, shutdownSQL); err != nil {
+		_, err := conn.ExecuteQuery(shutdownSQL, Dict{})
+		if err != nil {
 			shutdownErr = fmt.Errorf("shutdown SQL failed: %w", err)
+		}
+	}
+	path := env.GetString("QUACK_API_RPROXY_PATH", "")
+	tmpl := env.GetString("QUACK_API_RPROXY_TMPL", "")
+	if path != "" && tmpl != "" {
+		pth_cnf, err := RenderTextTemplate(path, qm.configs[quackAPIID])
+		if err != nil {
+			fmt.Printf("failed to render proxy path template: %w\n", err)
+		} else {
+			err := os.Remove(pth_cnf)
+			if err != nil {
+				fmt.Printf("Failed to remove file: %s", err)
+			}
 		}
 	}
 	closeErr := conn.Close()
@@ -113,6 +141,9 @@ func (qm *QuackAPIManager) Stop(ctx context.Context, quackAPIID int) error {
 }
 
 func (qm *QuackAPIManager) Restart(ctx context.Context, quackAPIID int, config Dict) error {
+	if !env.GetBool("QUACK_API_ENABLED", false) {
+		return fmt.Errorf("quack API is not enabled")
+	}
 	if err := qm.Stop(ctx, quackAPIID); err != nil {
 		return fmt.Errorf("failed to stop quack API during restart: %w", err)
 	}
@@ -133,7 +164,7 @@ func (qm *QuackAPIManager) GetConnector(quackAPIID int) (etlx.DBInterface, error
 }
 
 func executeQuackAPISQL(conn etlx.DBInterface, sql string) error {
-	_, _, err := conn.QueryMultiRows(sql, []any{}...)
+	_, err := conn.ExecuteQuery(sql, Dict{})
 	return err
 }
 
