@@ -163,11 +163,6 @@ func (qm *QuackAPIManager) GetConnector(quackAPIID int) (etlx.DBInterface, error
 	return conn, nil
 }
 
-func executeQuackAPISQL(conn etlx.DBInterface, sql string) error {
-	_, err := conn.ExecuteQuery(sql, Dict{})
-	return err
-}
-
 func (app *application) quackAPIManagerInstance() *QuackAPIManager {
 	app.quackAPIOnce.Do(func() {
 		app.quackAPIManager = NewQuackAPIManager()
