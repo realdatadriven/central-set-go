@@ -75,17 +75,14 @@ func (qm *QuackAPIManager) Start(ctx context.Context, quackAPIID int, config Dic
 	path := env.GetString("QUACK_API_RPROXY_PATH", "")
 	tmpl := env.GetString("QUACK_API_RPROXY_TMPL", "")
 	if path != "" && tmpl != "" {
-		prx_cnf, err := RenderTextTemplate(tmpl, config)
-		if err != nil {
-			fmt.Printf("failed to render proxy config template: %w\n", err)
-		}
 		pth_cnf, err := RenderTextTemplate(path, config)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template path: %w\n", err)
 		}
+		prx_cnf, err := RenderTextTemplate(tmpl, config)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template: %w\n", err)
-		} else {
+		} else if !fileExists(pth_cnf) {
 			err := os.WriteFile(pth_cnf, []byte(prx_cnf), 0644)
 			if err != nil {
 				fmt.Printf("Failed to write file: %s", err)
@@ -115,19 +112,19 @@ func (qm *QuackAPIManager) Stop(ctx context.Context, quackAPIID int) error {
 			shutdownErr = fmt.Errorf("shutdown SQL failed: %w", err)
 		}
 	}
-	path := env.GetString("QUACK_API_RPROXY_PATH", "")
+	/*path := env.GetString("QUACK_API_RPROXY_PATH", "")
 	tmpl := env.GetString("QUACK_API_RPROXY_TMPL", "")
 	if path != "" && tmpl != "" {
 		pth_cnf, err := RenderTextTemplate(path, qm.configs[quackAPIID])
 		if err != nil {
 			fmt.Printf("failed to render proxy path template: %w\n", err)
-		} else {
+		} else if !fileExists(pth_cnf) {
 			err := os.Remove(pth_cnf)
 			if err != nil {
 				fmt.Printf("Failed to remove file: %s", err)
 			}
 		}
-	}
+	}*/
 	closeErr := conn.Close()
 	delete(qm.pool, quackAPIID)
 	delete(qm.configs, quackAPIID)

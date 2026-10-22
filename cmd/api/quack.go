@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/duckdb/duckdb-go/v2"
+	"github.com/realdatadriven/central-set-go/internal/env"
 	"github.com/realdatadriven/etlx"
 )
 
@@ -467,6 +469,23 @@ func (app *application) startQuackServer(params Dict) Dict {
 			"msg":     fmt.Sprintf("Failed to start Quack Server: %v", err),
 		}
 	}
+	path := env.GetString("QUACK_RPROXY_PATH", "")
+	tmpl := env.GetString("QUACK_RPROXY_TMPL", "")
+	if path != "" && tmpl != "" {
+		pth_cnf, err := RenderTextTemplate(path, quackInfo)
+		if err != nil {
+			fmt.Printf("failed to render proxy config template path: %w\n", err)
+		}
+		prx_cnf, err := RenderTextTemplate(tmpl, quackInfo)
+		if err != nil {
+			fmt.Printf("failed to render proxy config template: %w\n", err)
+		} else if !app.fileExists(pth_cnf) {
+			err := os.WriteFile(pth_cnf, []byte(prx_cnf), 0644)
+			if err != nil {
+				fmt.Printf("Failed to write file: %s", err)
+			}
+		}
+	}
 	return Dict{
 		"success": true,
 		"msg":     "Quack Server started successfully!",
@@ -548,6 +567,19 @@ func (app *application) stopQuackServer(params Dict) Dict {
 			"msg":     fmt.Sprintf("Failed to stop Quack Server: %v", err),
 		}
 	}
+	/*path := env.GetString("QUACK_RPROXY_PATH", "")
+	tmpl := env.GetString("QUACK_RPROXY_TMPL", "")
+	if path != "" && tmpl != "" {
+		pth_cnf, err := RenderTextTemplate(path, quackInfo)
+		if err != nil {
+			fmt.Printf("failed to render proxy config template: %w\n", err)
+		} else if !fileExists(pth_cnf) {
+			err := os.Remove(pth_cnf)
+			if err != nil {
+				fmt.Printf("Failed to write file: %s", err)
+			}
+		}
+	}*/
 	return Dict{
 		"success": true,
 		"msg":     "Quack Server stopped successfully!",
