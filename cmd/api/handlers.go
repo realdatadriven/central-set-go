@@ -154,6 +154,9 @@ func (app *application) fileExists(filePath string) bool {
 		//fmt.Println(os.IsNotExist(err), err)
 		return !os.IsNotExist(err)
 	}
+	/*if errors.Is(err, os.ErrNotExist) {
+		return false // File explicitly does not exist
+	}*/
 	return true
 }
 
