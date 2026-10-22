@@ -472,11 +472,11 @@ func (app *application) startQuackServer(params Dict) Dict {
 	path := env.GetString("QUACK_RPROXY_PATH", "")
 	tmpl := env.GetString("QUACK_RPROXY_TMPL", "")
 	if path != "" && tmpl != "" {
-		pth_cnf, err := RenderTextTemplate(path, quackInfo)
+		pth_cnf, err := app.RenderTextTemplate(path, quackInfo)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template path: %w\n", err)
 		}
-		prx_cnf, err := RenderTextTemplate(tmpl, quackInfo)
+		prx_cnf, err := app.RenderTextTemplate(tmpl, quackInfo)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template: %w\n", err)
 		} else if !app.fileExists(pth_cnf) {
@@ -570,10 +570,10 @@ func (app *application) stopQuackServer(params Dict) Dict {
 	/*path := env.GetString("QUACK_RPROXY_PATH", "")
 	tmpl := env.GetString("QUACK_RPROXY_TMPL", "")
 	if path != "" && tmpl != "" {
-		pth_cnf, err := RenderTextTemplate(path, quackInfo)
+		pth_cnf, err := app.RenderTextTemplate(path, quackInfo)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template: %w\n", err)
-		} else if !fileExists(pth_cnf) {
+		} else if !app.fileExists(pth_cnf) {
 			err := os.Remove(pth_cnf)
 			if err != nil {
 				fmt.Printf("Failed to write file: %s", err)
