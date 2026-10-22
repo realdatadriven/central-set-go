@@ -885,7 +885,7 @@ columns:
   updated_at:      { type: datetime, comment: "Updated at" }
   excluded:        { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {quack_server_id: 1, quack_name: "Quack Admin DB", quack_desc: "Expose ADMIN DB via DuckDB Quack", port: 9494, token: "replace-me", protocol: quack, startup_sql: "INSTALL SQLITE; LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", shutdown_sql: "USE memory; DETACH adm;", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
+  - {quack_server_id: 1, quack_name: quack_admin, quack_desc: "Expose ADMIN DB via DuckDB Quack", port: 9494, token: "replace-me", protocol: quack, startup_sql: "INSTALL SQLITE; LOAD SQLITE;", main_sql: "ATTACH 'database/ADMIN.db' AS adm (TYPE SQLITE); USE adm;", shutdown_sql: "USE memory; DETACH adm;", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -920,7 +920,7 @@ columns:
   updated_at:     { type: datetime, comment: "Updated at" }
   excluded:       { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {quack_api_id: 1, quack_api: "QuackAPI Example", quack_api_desc: "HTTP routes served by DuckDB QuackAPI", port: 9495, startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;", main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);", shutdown_sql: "SELECT * FROM quackapi_stop(9495);", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
+  - {quack_api_id: 1, quack_api: quackapi, quack_api_desc: "HTTP routes served by DuckDB QuackAPI", port: 9495, startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;", main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);", shutdown_sql: "SELECT * FROM quackapi_stop(9495);", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
 form_layout:
   tabs_steps: tabs
   form_in_popup: false

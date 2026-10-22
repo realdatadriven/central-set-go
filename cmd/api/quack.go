@@ -477,6 +477,7 @@ func (app *application) startQuackServer(params Dict) Dict {
 			fmt.Printf("failed to render proxy config template path: %w\n", err)
 		}
 		prx_cnf, err := app.RenderTextTemplate(tmpl, quackInfo)
+		//fmt.Println(app.fileExists(pth_cnf), pth_cnf, prx_cnf)
 		if err != nil {
 			fmt.Printf("failed to render proxy config template: %w\n", err)
 		} else if !app.fileExists(pth_cnf) {

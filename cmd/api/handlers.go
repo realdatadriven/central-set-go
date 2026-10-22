@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -151,12 +152,13 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 func (app *application) fileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	if err != nil {
-		//fmt.Println(os.IsNotExist(err), err)
+		// fmt.Println(!os.IsNotExist(err), err, filePath)
+		if errors.Is(err, os.ErrNotExist) {
+			return false // File explicitly does not exist
+		}
 		return !os.IsNotExist(err)
 	}
-	/*if errors.Is(err, os.ErrNotExist) {
-		return false // File explicitly does not exist
-	}*/
+	// fmt.Println(stat)
 	return true
 }
 
