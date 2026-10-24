@@ -5,9 +5,9 @@ LOAD erpl_web;
 
 ```sql
 CREATE SECRET api_auth (
-TYPE http_bearer,
-TOKEN '{{.user.token}}',
-SCOPE '{{.Host}}'
+    TYPE http_bearer,
+    TOKEN '{{.user.token}}',
+    SCOPE '{{.Host}}'
 );
 ```
 

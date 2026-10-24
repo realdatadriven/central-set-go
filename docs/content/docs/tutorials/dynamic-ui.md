@@ -122,16 +122,58 @@ The model examples are useful starting points:
 `RenderUIPage` also extracts fenced SQL blocks from the page template, renders their Go template expressions, executes them in an in-memory DuckDB connection, and makes named results available under `.queries`. A named block can look like this:
 
 ````markdown
+```sql
+INSTALL erpl_web FROM community;
+LOAD erpl_web;
+```
+
+```sql
+CREATE SECRET api_auth (
+    TYPE http_bearer,
+    TOKEN '{{.user.token}}',
+    SCOPE '{{.Host}}'
+);
+```
+
+```sql
+ATTACH IF NOT EXISTS '{{.Host}}/odata/SALES' AS sales (TYPE ODATA);
+```
+
 ```sql recent_totals
 SELECT status, count(*) AS order_count
-FROM orders
+FROM sales.orders
 GROUP BY status
 ```
 ````
 
 The result can then be rendered as `{{range .queries.recent_totals}}...{{end}}`. The UI model's `DASHBOARD2` example is a reference for a dashboard-backed page.
 
-**Important security boundary:** SQL blocks do not run through the OData `ODataRead` path just because they appear in a Dynamic UI template. They do not automatically receive the current user's table grants or row-level access filters. Treat the SQL in a page as trusted server-side code; do not use it to fetch protected data unless you have independently designed and verified the authorization boundary. For user-scoped application data, prefer an OData binding and test it using users with different permissions.
+**Important security boundary:** When querying C7-managed data from a Dynamic UI template, attach the database through the C7 OData endpoint rather than connecting directly to the underlying database. A direct database attachment does not enforce the CRUD privileges or row-level access rules configured in C7.
+
+To enforce these permissions, use the `erpl_web` extension, authenticate with the current user's token, and attach the relevant C7 OData application:
+
+```sql
+INSTALL erpl_web FROM community;
+LOAD erpl_web;
+```
+
+```sql
+CREATE SECRET api_auth (
+    TYPE http_bearer,
+    TOKEN '{{.user.token}}',
+    SCOPE '{{.Host}}'
+);
+```
+
+```sql
+ATTACH IF NOT EXISTS '{{.Host}}/odata/SALES' AS sales (TYPE ODATA);
+```
+
+Queries against this OData-attached database are evaluated through C7's authorization layer, enforcing the applicable CRUD privileges and row-level access rules for the authenticated user.
+
+This approach is especially useful for dashboards and analytical queries. For example, a dashboard can aggregate sales, calculate department-level totals, or display filtered metrics while respecting the current user's department scope and other configured access restrictions. Aggregations and derived results must use the authorized OData source so that users cannot infer information from records they are not permitted to access.
+
+**Rule of thumb:** Use direct database connections for data that does not require C7 authorization. For protected C7 application data, use the authenticated OData attachment so that queries, including dashboard filters and aggregations, respect the permissions defined in C7.
 
 ## Authentication and account flows
 
