@@ -45,7 +45,7 @@ The request flow is implemented in `cmd/api/dyn_ui.go`. The UI routes in `cmd/ap
 
 Suppose the registered `SALES` application exposes an `orders` table. Create a UI with slug `sales-portal`, then add a page with key `orders`. Associate a data row with that page:
 
-```text
+```yaml {linenos=table}
 ui_page_data: orders
 odata_path:   SALES/orders?$top=25&$orderby=created_at desc
 active:       true
@@ -53,7 +53,7 @@ active:       true
 
 The path is an OData path in the form `{app-or-db}/{table}` followed by optional OData query options. During rendering, `ui_page_data` is resolved through `ODataRead`, which maps the request to the Central Set read logic. The returned result is available to the Go template under the configured data name:
 
-```html
+```html {linenos=table}
 <h1>Recent orders</h1>
 <ul>
   {{range .orders.data}}
@@ -74,7 +74,7 @@ Open the page at:
 
 Bindings can use URL query parameters through `.PathParams`. For example, the model's store example filters a store record by the page's `id` query parameter:
 
-```text
+```yaml {linenos=table}
 odata_path: store/store?$filter=store_id eq {{.PathParams.id}}
 ```
 
@@ -88,7 +88,7 @@ Page templates use Go's `html/template`, with the Sprig function map and Central
 
 Create a named `ui_partial` such as `header`, then associate it to a page through `ui_page_partial`. The partial is parsed with the page's template set, so the page can invoke it as a named template:
 
-```html
+```html {linenos=table}
 {{template "header" .}}
 
 <main class="container mx-auto p-6">
@@ -103,7 +103,7 @@ Partials can have their own `ui_partial_data` OData bindings. Active page partia
 
 Add stylesheets, scripts, or other files as `ui_asset` rows. Dynamic UI assets are served below `/ui/{ui_slug}/static/{asset...}` (and the compatible `/asset/` route). This makes it practical to load a CDN-hosted Tailwind CSS or daisyUI stylesheet and use HTMX for progressive interactions; keep third-party asset URLs and versions explicit in the page template. For example:
 
-```html
+```html {linenos=table}
 <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/daisyui.css" rel="stylesheet">
 <script src="https://unpkg.com/htmx.org"></script>
 ```
@@ -122,12 +122,12 @@ The model examples are useful starting points:
 `RenderUIPage` also extracts fenced SQL blocks from the page template, renders their Go template expressions, executes them in an in-memory DuckDB connection, and makes named results available under `.queries`. A named block can look like this:
 
 ````markdown
-```sql
+```sql {linenos=table}
 INSTALL erpl_web FROM community;
 LOAD erpl_web;
 ```
 
-```sql
+```sql {linenos=table}
 CREATE SECRET api_auth (
     TYPE http_bearer,
     TOKEN '{{.user.token}}',
@@ -135,11 +135,11 @@ CREATE SECRET api_auth (
 );
 ```
 
-```sql
+```sql {linenos=table}
 ATTACH IF NOT EXISTS '{{.Host}}/odata/SALES' AS sales (TYPE ODATA);
 ```
 
-```sql recent_totals
+```sql {linenos=table} recent_totals
 SELECT status, count(*) AS order_count
 FROM sales.orders
 GROUP BY status
@@ -152,12 +152,12 @@ The result can then be rendered as `{{range .queries.recent_totals}}...{{end}}`.
 
 To enforce these permissions, use the `erpl_web` extension, authenticate with the current user's token, and attach the relevant C7 OData application:
 
-```sql
+```sql {linenos=table}
 INSTALL erpl_web FROM community;
 LOAD erpl_web;
 ```
 
-```sql
+```sql {linenos=table}
 CREATE SECRET api_auth (
     TYPE http_bearer,
     TOKEN '{{.user.token}}',
@@ -165,7 +165,7 @@ CREATE SECRET api_auth (
 );
 ```
 
-```sql
+```sql {linenos=table}
 ATTACH IF NOT EXISTS '{{.Host}}/odata/SALES' AS sales (TYPE ODATA);
 ```
 
@@ -190,7 +190,7 @@ The snippets below follow the seeded `UI_PAGE_LOGIN`, `UI_PAGE_SIGNUP`, `UI_PAGE
 
 The seeded login page is stored with `page_key: login`, uses a Go HTML page template, and defines a response template for displaying authentication errors:
 
-```yaml
+```yaml {linenos=table}
 table: ui_page
 data:
   page_key: login
@@ -208,7 +208,7 @@ data:
 
 A minimal login form posts the field names expected by the handler:
 
-```html
+```html {linenos=table}
 <form method="post" action="/ui/portal/login">
   <label>
     Email
@@ -230,7 +230,7 @@ Successful login creates the UI session and redirects to `/ui/portal` (or sends 
 
 The model seeds a `signup` page in the same way and uses the configured dynamic-login table and field names for registration. The example deployment defaults are `users`, `user_id`, `username`, `email`, `password`, and `active`; check the `DYN_LOGIN_*` settings in your environment before using these field names.
 
-```yaml
+```yaml {linenos=table}
 table: ui_page
 data:
   page_key: signup
@@ -248,7 +248,7 @@ data:
 
 The signup handler accepts the configured username, email, and password form fields:
 
-```html
+```html {linenos=table}
 <form method="post" action="/ui/portal/signup">
   <label>
     Username
@@ -272,7 +272,7 @@ The signup handler accepts the configured username, email, and password form fie
 
 The recovery page in the model is `page_key: password-recovery`. Its response template displays the result returned by the recovery action:
 
-```yaml
+```yaml {linenos=table}
 table: ui_page
 data:
   page_key: password-recovery
@@ -296,7 +296,7 @@ data:
 
 Post the email and include `ui` and `page` in the query string. The handler uses those values to find the page's `response_tmpl`. `recover_path` is optional; it tells the recovery action where the emailed reset link should lead:
 
-```html
+```html {linenos=table}
 <form method="post"
       action="/ui/portal/recover_pass?ui=portal&amp;page=password-recovery">
   <label>
@@ -310,7 +310,7 @@ Post the email and include `ui` and `page` in the query string. The handler uses
 
 The seeded reset page uses `page_key: reset-password` and a response template for reset errors:
 
-```yaml
+```yaml {linenos=table}
 table: ui_page
 data:
   page_key: reset-password
@@ -328,7 +328,7 @@ data:
 
 The emailed link includes a short-lived `token` query parameter; preserve it when submitting the new password:
 
-```html
+```html {linenos=table}
 <form method="post"
       action="/ui/portal/reset_pass?ui=portal&amp;page=reset-password&amp;token={{.PathParams.token}}">
   <label>
@@ -355,7 +355,7 @@ Requests handled by the Dynamic UI and generic CRUD endpoints are logged in the 
 
 Dynamic UI pages are free to use their own HTML and interaction patterns. Separately, Central Set exposes a generic REST-style CRUD API for a registered application's tables:
 
-```text
+```text {linenos=table}
 GET    /crud/{db}/{table}
 GET    /crud/{db}/{table}/{id}
 POST   /crud/{db}/{table}
