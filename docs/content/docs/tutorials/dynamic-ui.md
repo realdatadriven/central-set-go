@@ -121,13 +121,13 @@ The model examples are useful starting points:
 
 `RenderUIPage` also extracts fenced SQL blocks from the page template, renders their Go template expressions, executes them in an in-memory DuckDB connection, and makes named results available under `.queries`. A named block can look like this:
 
-````markdown
-```sql {linenos=table}
+````markdown {linenos=table}
+```sql
 INSTALL erpl_web FROM community;
 LOAD erpl_web;
 ```
 
-```sql {linenos=table}
+```sql
 CREATE SECRET api_auth (
     TYPE http_bearer,
     TOKEN '{{.user.token}}',
@@ -135,11 +135,11 @@ CREATE SECRET api_auth (
 );
 ```
 
-```sql {linenos=table}
+```sql 
 ATTACH IF NOT EXISTS '{{.Host}}/odata/SALES' AS sales (TYPE ODATA);
 ```
 
-```sql {linenos=table} recent_totals
+```sql recent_totals
 SELECT status, count(*) AS order_count
 FROM sales.orders
 GROUP BY status
