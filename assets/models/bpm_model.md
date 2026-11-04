@@ -563,5 +563,5 @@ desc: Supplier onboarding has reached an end state
 
 ## FL001
 ```yaml
-- SP001->BA001->DP001(BA001.tax_registered=TRUE,BA003,BA002)->EP001
+flow: SP001->BA001->DP001(BA001.tax_registered=TRUE,BA003,BA002)->EP001
 ```
