@@ -58,6 +58,8 @@ cs_app:
 - Field-level `form_hide_cond` and `allow_in_subform` conditions are declarative form metadata; the form renderer must apply the condition before displaying fields or loading child tables. Process execution lists only active, published BP nodes.
 - `process_flow` stores source flow expressions. `process_edge` stores the expanded node-to-node edges used to render and execute the graph. Conditional DP edges retain their condition and branch value.
 - The BA data schema below follows `workflow_step_schema` from `workflow_model.md`. Its `workflow_step_id` reference is represented by `activity_node_id`; all other field properties retain the workflow schema's meaning.
+- Process definitions use ETLX Markdown: `# BPM` metadata sets `runs_as: BPM`; `## BP...`, `## BA...`, `## ST...`, `## SP...`, `## DP...`, and `## EP...` sections define nodes; `## FL...` sections define flows. Send the document as `data.conf` to `etlx/sync_bpm`. Each BP section must include a `version` (default `v1.0.0`); re-importing the same BP code/version updates it, while a changed version creates a distinct BP node. Omitted nodes are retained; flows replace their generated edges.
+- For compatibility with the ETLX Markdown parser, flow YAML may be either a sequence of expressions or a mapping with an `expression` sequence. Node sections use mappings. The example process definition is in `examples/bpm-process.md`.
 - `data_type`, `input_type`, `size`, and `dashboard` are shared lookup/dashboard tables from the existing application model, not new BPM-specific definitions.
 - Decision conditions are data, not executable code. Define and validate a restricted condition grammar in the execution layer before evaluating them.
 
@@ -265,6 +267,7 @@ columns:
   activity_node_id:           { type: integer, nullable: false, fk: "process_node.process_node_id", comment: "Activity Node ID", tooltip: "Identifier of the BA activity where the field is collected", form_display: true, table_display: true, form_size: 6 }
   field:                      { type: varchar, len: 200, nullable: false, comment: "Field", tooltip: "Technical identifier of the field", form_display: true, table_display: true, form_size: 4 }
   label:                      { type: varchar, len: 200, nullable: false, comment: "Label", tooltip: "Display name of the field", form_display: true, table_display: true, form_size: 4 }
+  description:                { type: text, comment: "Description", tooltip: "Business description of the field", form_display: true, form_long_text: true, form_size: 12 }
   data_type:                  { type: varchar, fk: "data_type.data_type", nullable: false, comment: "Data Type", tooltip: "Type of data stored in the field", form_display: true, table_display: true, form_size: 4 }
   nullable:                   { type: boolean, default: true, comment: "Nullable", tooltip: "Indicates whether the field can be empty", form_display: true, table_display: true, form_size: 3 }
   default_value:              { type: varchar, len: 200, comment: "Default Value", tooltip: "Default value assigned to the field", form_display: true, table_display: false, form_size: 3 }
@@ -484,4 +487,104 @@ columns:
   updated_at:             { type: datetime, comment: "Updated At", tooltip: "When the notification record was last updated" }
 table_layout:
   default_order: [{field: created_at, order: DESC}]
+```
+
+# BPM
+```yaml
+name: BPM
+runs_as: BPM
+```
+
+## ST001
+```yaml
+name: Department EI
+desc: Department responsible for initial review
+focal_points:
+  - name: Example Contact
+    email: contact@example.com
+    role: Process Owner
+```
+
+## BP001
+```yaml
+name: New Supplier Onboarding
+desc: Review and approve a new supplier
+version: v1.0.0
+process_status: draft
+steps_orientation: horizontal
+```
+
+## SP001
+```yaml
+name: Request received
+desc: The supplier onboarding request enters the process
+```
+
+## BA001
+```yaml
+name: Capture supplier details
+desc: Collect the information required to assess the supplier
+actors:
+  - ST001
+data_schema:
+  - name: supplier_name
+    label: Supplier name
+    type: varchar
+    desc: Registered name of the supplier
+    nullable: false
+    size: 6
+    order_index: 1
+  - name: tax_registered
+    label: Tax registered
+    type: bool
+    desc: Whether the supplier has a valid tax registration
+    nullable: false
+    size: 3
+    order_index: 2
+action_buttons:
+  - name: verify_supplier
+    label: Verify supplier
+    type: api
+    api: /api/suppliers/verify
+```
+
+## DP001
+```yaml
+name: Supplier eligible?
+desc: Route the process based on the submitted tax registration
+```
+
+## BA002
+```yaml
+name: Request additional information
+desc: Ask the requester to correct or complete the supplier details
+actors:
+  - ST001
+data_schema:
+  - name: correction_notes
+    label: Correction notes
+    type: text
+    desc: Information the requester must provide
+    nullable: false
+    size: 12
+    order_index: 1
+```
+
+## BA003
+```yaml
+name: Approve supplier
+desc: Complete the supplier onboarding review
+actors:
+  - ST001
+```
+
+## EP001
+```yaml
+name: Onboarding complete
+desc: Supplier onboarding has reached an end state
+```
+
+## FL001
+```yaml
+- SP001->BA001->DP001(BA001.tax_registered=TRUE,BA003,BA002)->EP001
 ```

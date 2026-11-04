@@ -40,7 +40,7 @@ In an organization there are many **Business Processes (BP)**. A BP can live ins
 Processes are written in Markdown, with one YAML block per element. Heading levels carry the structure (`#` model, `##` stakeholders and processes, `##` activities).
 
 ````markdown
- #BPM
+#BPM
 ```yaml
 name: BPM
 runs_as: BPM
