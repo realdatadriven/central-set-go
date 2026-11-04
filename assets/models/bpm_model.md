@@ -500,9 +500,7 @@ runs_as: BPM
 name: Department EI
 desc: Department responsible for initial review
 focal_points:
-  - name: Example Contact
-    email: contact@example.com
-    role: Process Owner
+  - {name: Example Contact, email: contact@example.com, role: Process Owner}
 ```
 
 ## BP001
@@ -527,25 +525,10 @@ desc: Collect the information required to assess the supplier
 actors:
   - ST001
 data_schema:
-  - name: supplier_name
-    label: Supplier name
-    type: varchar
-    desc: Registered name of the supplier
-    nullable: false
-    size: 6
-    order_index: 1
-  - name: tax_registered
-    label: Tax registered
-    type: bool
-    desc: Whether the supplier has a valid tax registration
-    nullable: false
-    size: 3
-    order_index: 2
+  - {name: supplier_name, label: Supplier name, type: varchar, desc: Registered name of the supplier, nullable: false, size: 6, order_index: 1}
+  - {name: tax_registered, label: Tax registered, type: bool, desc: Whether the supplier has a valid tax registration, nullable: false, size: 3, order_index: 2}
 action_buttons:
-  - name: verify_supplier
-    label: Verify supplier
-    type: api
-    api: /api/suppliers/verify
+  - {name: verify_supplier, label: Verify supplier, type: api, api: /api/suppliers/verify}
 ```
 
 ## DP001
@@ -561,13 +544,7 @@ desc: Ask the requester to correct or complete the supplier details
 actors:
   - ST001
 data_schema:
-  - name: correction_notes
-    label: Correction notes
-    type: text
-    desc: Information the requester must provide
-    nullable: false
-    size: 12
-    order_index: 1
+  - {name: correction_notes, label: Correction notes, type: text, desc: Information the requester must provide, nullable: false, size: 12, order_index: 1}
 ```
 
 ## BA003
