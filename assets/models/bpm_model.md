@@ -25,8 +25,6 @@ cs_app:
     menu_order: 2
     active: true
     tables:
-      - business_process
-      - process_version
       - process_node
       - stakeholder_focal_point
       - process_activity_actor
@@ -42,7 +40,7 @@ cs_app:
     menu_icon: clipboard-document-check
     menu_order: 3
     active: true
-    menu_config: '{"label": "process", "tooltip": "process_desc", "load_items": {"table": "business_process", "tables": ["business_process"]}}'
+    menu_config: '{"label": "process", "tooltip": "process_desc", "load_items": {"table": "process_node", "tables": ["process_node"], "filter": {"element_type": "BP", "process_status": "published", "active": true}}}'
     tables:
       - {table: process_instance, requires_rla: true, active: true}
       - process_instance_step
@@ -53,11 +51,13 @@ cs_app:
 
 ## MODEL NOTES
 
-- `business_process` represents a BP and supports parent/child process hierarchies.
-- A `process_version` is the versioned definition of a BP. Published versions should be immutable; executions reference the exact version they started with.
-- `process_node` stores the diagram's SP, BA, DP, EP, and ST elements. A node's `element_type` is one of those codes; BA-specific configuration is stored in the related activity tables.
+- `process_node` is the root entity for process definitions. BP, BA, ST, SP, EP, and DP are all rows in this table, distinguished by `element_type`; there are no separate business-process or process-version tables.
+- A BP node owns its process definition and child nodes. `parent_node_id` forms the hierarchy: a top-level BP has no parent, a nested BP points to its parent BP, and BA, ST, SP, DP, and EP nodes point to their owning BP.
+- BP identity is the combination of `node_code` and `version`. Publishing a changed version creates a new BP node with the same `node_code` and a new `version`; its child nodes and flows belong to that new BP node, leaving prior versions and their running instances unchanged.
+- Subforms are conditional on the parent node's `element_type`: BP shows its child nodes and flows, BA shows actors, schema fields, and actions, ST shows focal points, and DP shows its outgoing decision edges. The form configuration declares both the condition and relationship used to load each subform.
+- Field-level `form_hide_cond` and `allow_in_subform` conditions are declarative form metadata; the form renderer must apply the condition before displaying fields or loading child tables. Process execution lists only active, published BP nodes.
 - `process_flow` stores source flow expressions. `process_edge` stores the expanded node-to-node edges used to render and execute the graph. Conditional DP edges retain their condition and branch value.
-- The BA data schema below follows `workflow_step_schema` from `workflow_model.md`. Its `workflow_id` and `workflow_step_id` references are represented as `process_version_id` and `activity_node_id`; the other field properties retain the workflow schema's meaning.
+- The BA data schema below follows `workflow_step_schema` from `workflow_model.md`. Its `workflow_step_id` reference is represented by `activity_node_id`; all other field properties retain the workflow schema's meaning.
 - `data_type`, `input_type`, `size`, and `dashboard` are shared lookup/dashboard tables from the existing application model, not new BPM-specific definitions.
 - Decision conditions are data, not executable code. Define and validate a restricted condition grammar in the execution layer before evaluating them.
 
@@ -87,81 +87,26 @@ table_extra_options:
   - { component: EvidenceDash, label: dashboard, intercept_r: true, size: 12 }
 ```
 
-## BUSINESS_PROCESS
-```yaml
-table: business_process
-comment: "Business Process"
-tooltip: "Represents a business process, including macro processes and sub-processes"
-columns:
-  business_process_id: { type: integer, pk: true, autoincrement: true, comment: "Business Process ID", tooltip: "Unique identifier of the business process" }
-  process_code:        { type: varchar, len: 50, nullable: false, unique: true, comment: "Process Code", tooltip: "Stable business identifier, for example BP001", form_display: true, table_display: true, form_size: 3 }
-  name:                { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Name of the business process", form_display: true, table_display: true, form_size: 6 }
-  description:         { type: text, comment: "Description", tooltip: "Purpose and scope of the business process", form_display: true, table_display: true, form_long_text: true, form_size: 12 }
-  parent_process_id:   { type: integer, fk: "business_process.business_process_id", comment: "Parent Process ID", tooltip: "Parent macro process, when this is a sub-process", form_display: true, table_display: true, form_size: 6 }
-  active:              { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the process can be used", form_display: true, table_display: true, form_size: 3 }
-  user_id:             { type: integer, comment: "User ID", tooltip: "User responsible for the process definition" }
-  app_id:              { type: integer, comment: "App ID", tooltip: "Application context" }
-  created_at:          { type: datetime, comment: "Created At", tooltip: "When the process was created" }
-  updated_at:          { type: datetime, comment: "Updated At", tooltip: "When the process was last updated" }
-  excluded:            { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the process is excluded from active use" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 8
-  allow_in_subform: {process_version: true}
-  tabs_steps_conf:
-    - {label: Process, fields: [process_code, name, parent_process_id, active, description]}
-table_layout:
-  default_order: [{field: process_code, order: ASC}]
-```
-
-## PROCESS_VERSION
-```yaml
-table: process_version
-comment: "Process Version"
-tooltip: "Versioned mapping and execution definition for a business process"
-columns:
-  process_version_id: { type: integer, pk: true, autoincrement: true, comment: "Process Version ID", tooltip: "Unique identifier of this process definition version" }
-  business_process_id: { type: integer, nullable: false, fk: "business_process.business_process_id", comment: "Business Process ID", tooltip: "Business process being versioned", form_display: true, table_display: true, form_size: 6 }
-  version:            { type: varchar, len: 50, nullable: false, comment: "Version", tooltip: "Version label for this process definition", form_display: true, table_display: true, form_size: 3 }
-  status:             { type: varchar, len: 30, default: "draft", nullable: false, comment: "Status", tooltip: "Draft, published, or retired", form_display: true, table_display: true, form_size: 3 }
-  definition_source:  { type: text, comment: "Definition Source", tooltip: "Markdown/YAML source used to create the process definition", form_display: true, form_code: markdown, form_long_text: true, form_size: 12 }
-  steps_orientation:  { type: varchar, len: 20, comment: "Steps Orientation", tooltip: "Preferred horizontal or vertical diagram orientation", form_display: true, form_size: 4 }
-  published_at:       { type: datetime, comment: "Published At", tooltip: "When this version was published", form_display: true, table_display: true, form_size: 4 }
-  user_id:            { type: integer, comment: "User ID", tooltip: "User responsible for this version" }
-  app_id:             { type: integer, comment: "App ID", tooltip: "Application context" }
-  created_at:         { type: datetime, comment: "Created At", tooltip: "When this version was created" }
-  updated_at:         { type: datetime, comment: "Updated At", tooltip: "When this version was last updated" }
-  excluded:           { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the version is excluded from active use" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 8
-  allow_in_subform: {process_node: true, stakeholder_focal_point: true}
-  tabs_steps_conf:
-    - {label: Version, fields: [business_process_id, version, status, steps_orientation, published_at]}
-    - {label: Source, fields: [definition_source]}
-table_layout:
-  default_order: [{field: process_version_id, order: DESC}]
-```
-
 ## PROCESS_NODE
 ```yaml
 table: process_node
-comment: "Process Node"
-tooltip: "A starting point, activity, decision, end point, or stakeholder in a process version"
+comment: "Process Nodes"
+tooltip: "A BP, BA, ST, SP, EP, or DP element and root record for BPM definitions"
 columns:
   process_node_id:   { type: integer, pk: true, autoincrement: true, comment: "Process Node ID", tooltip: "Unique identifier of the process element" }
-  process_version_id: { type: integer, nullable: false, fk: "process_version.process_version_id", comment: "Process Version ID", tooltip: "Version containing this element", form_display: true, table_display: true, form_size: 6 }
-  element_code:      { type: varchar, len: 50, nullable: false, comment: "Element Code", tooltip: "Stable SP, BA, DP, EP, or ST code", form_display: true, table_display: true, form_size: 3 }
-  element_type:      { type: varchar, len: 2, nullable: false, comment: "Element Type", tooltip: "Element prefix: SP, BA, DP, EP, or ST", form_display: true, table_display: true, form_size: 3 }
+  parent_node_id:    { type: integer, fk: "process_node.process_node_id", comment: "Parent Node ID", tooltip: "Containing BP node; null for a top-level BP", form_display: true, table_display: true, form_size: 6 }
+  node_code:         { type: varchar, len: 50, nullable: false, comment: "Node Code", tooltip: "Stable element identifier, for example BP001, BA001, or ST001", form_display: true, table_display: true, form_size: 3 }
+  element_type:      { type: varchar, len: 2, nullable: false, comment: "Element Type", tooltip: "Element prefix: BP, BA, ST, SP, EP, or DP", form_display: true, table_display: true, form_size: 3 }
+  version:           { type: varchar, len: 50, nullable: true, comment: "Version", tooltip: "Definition version; required for BP nodes and copied forward when publishing a change", form_display: true, table_display: true, form_size: 3, form_hide_cond: 'data.element_type!=="BP"' }
   name:              { type: varchar, len: 200, nullable: false, comment: "Name", tooltip: "Display name of the process element", form_display: true, table_display: true, form_size: 6 }
   description:       { type: text, comment: "Description", tooltip: "Description of the process element", form_display: true, form_long_text: true, form_size: 12 }
-  order_index:       { type: integer, comment: "Order Index", tooltip: "Display order within the process version", form_display: true, table_display: true, form_size: 3 }
-  execution_mode:    { type: varchar, len: 20, default: "manual", comment: "Execution Mode", tooltip: "Manual, automated, or mixed execution for a BA", form_display: true, table_display: true, form_size: 4 }
-  schedule:          { type: varchar, len: 200, comment: "Schedule", tooltip: "Optional cron schedule for an automated BA", form_display: true, table_display: true, form_size: 4 }
-  subprocess_process_id: { type: integer, fk: "business_process.business_process_id", comment: "Sub-process ID", tooltip: "Child process launched by this activity, when applicable", form_display: true, table_display: true, form_size: 6 }
-  subprocess_process_version_id: { type: integer, fk: "process_version.process_version_id", comment: "Sub-process Version ID", tooltip: "Pinned child process version for this activity, when applicable", form_display: true, table_display: true, form_size: 6 }
+  order_index:       { type: integer, comment: "Order Index", tooltip: "Display order within the parent process", form_display: true, table_display: true, form_size: 3 }
+  process_status:    { type: varchar, len: 30, default: "draft", comment: "Process Status", tooltip: "BP lifecycle status: draft, published, or retired", form_display: true, table_display: true, form_size: 3, form_hide_cond: 'data.element_type!=="BP"' }
+  steps_orientation: { type: varchar, len: 20, comment: "Steps Orientation", tooltip: "Preferred horizontal or vertical diagram orientation for a BP", form_display: true, form_size: 4, form_hide_cond: 'data.element_type!=="BP"' }
+  definition_source: { type: text, comment: "Definition Source", tooltip: "Markdown/YAML source for a BP definition", form_display: true, form_code: markdown, form_long_text: true, form_size: 12, form_hide_cond: 'data.element_type!=="BP"' }
+  execution_mode:    { type: varchar, len: 20, default: "manual", comment: "Execution Mode", tooltip: "Manual, automated, or mixed execution for a BA", form_display: true, table_display: true, form_size: 4, form_hide_cond: 'data.element_type!=="BA"' }
+  schedule:          { type: varchar, len: 200, comment: "Schedule", tooltip: "Optional cron schedule for an automated BA", form_display: true, table_display: true, form_size: 4, form_hide_cond: 'data.element_type!=="BA"' }
+  subprocess_node_id: { type: integer, fk: "process_node.process_node_id", comment: "Sub-process Node ID", tooltip: "BP node launched by this activity, when applicable", form_display: true, table_display: true, form_size: 6, form_hide_cond: 'data.element_type!=="BA"' }
   layout_x:          { type: integer, comment: "Layout X", tooltip: "Optional diagram position on the horizontal axis" }
   layout_y:          { type: integer, comment: "Layout Y", tooltip: "Optional diagram position on the vertical axis" }
   attachment:        { type: text, comment: "Attachments", tooltip: "References to documents related to this element", form_display: true, form_long_text: true, form_size: 12 }
@@ -171,17 +116,24 @@ columns:
   created_at:        { type: datetime, comment: "Created At", tooltip: "When the element was created" }
   updated_at:        { type: datetime, comment: "Updated At", tooltip: "When the element was last updated" }
   excluded:          { type: boolean, default: false, comment: "Excluded", tooltip: "Indicates whether the element is excluded from active use" }
+unique_together:
+  - [node_code, version]
 form_layout:
   tabs_steps: tabs
-  form_in_popup: true
-  size: 8
-  allow_in_subform: {process_activity_schema: true, process_activity_actor: true, process_action: true, stakeholder_focal_point: true}
+  form_in_popup: false
+  size: 10
+  allow_in_subform:
+    process_flow: {show: true, when: 'data.element_type==="BP"'}
+    process_activity_actor: {show: true, when: 'data.element_type==="BA"'}
+    process_activity_schema: {show: true, when: 'data.element_type==="BA"'}
+    process_action: {show: true, when: 'data.element_type==="BA"'}
+    stakeholder_focal_point: {show: true, when: 'data.element_type==="ST"'}
+    process_edge: {show: true, when: 'data.element_type==="DP"'}
   tabs_steps_conf:
-    - {label: Element, fields: [process_version_id, element_code, element_type, name, order_index, execution_mode, schedule, active, description]}
-    - {label: Sub-process, fields: [subprocess_process_id, subprocess_process_version_id]}
+    - {label: Node, fields: [parent_node_id, node_code, element_type, version, name, order_index, active, description]}
     - {label: Diagram, fields: [layout_x, layout_y, attachment]}
 table_layout:
-  default_order: [{field: order_index, order: ASC}]
+  default_order: [{field: node_code, order: ASC}]
 ```
 
 ## STAKEHOLDER_FOCAL_POINT
@@ -310,7 +262,6 @@ comment: "Process Activity Schema"
 tooltip: "Defines the data fields collected for a BA activity; mirrors workflow_step_schema"
 columns:
   process_activity_schema_id: { type: integer, pk: true, autoincrement: true, comment: "Workflow Step Schema ID", tooltip: "Unique identifier of the schema field" }
-  process_version_id:         { type: integer, nullable: false, fk: "process_version.process_version_id", comment: "Process Version ID", tooltip: "Identifier of the process version associated with the field", form_display: true, table_display: true, form_size: 6 }
   activity_node_id:           { type: integer, nullable: false, fk: "process_node.process_node_id", comment: "Activity Node ID", tooltip: "Identifier of the BA activity where the field is collected", form_display: true, table_display: true, form_size: 6 }
   field:                      { type: varchar, len: 200, nullable: false, comment: "Field", tooltip: "Technical identifier of the field", form_display: true, table_display: true, form_size: 4 }
   label:                      { type: varchar, len: 200, nullable: false, comment: "Label", tooltip: "Display name of the field", form_display: true, table_display: true, form_size: 4 }
@@ -334,6 +285,7 @@ form_layout:
   tabs_steps: tabs
   form_in_popup: true
   size: 6
+  allow_in_subform: {process_activity_schema_option: true}
 table_layout:
   default_order: [{field: order_index, order: ASC}]
 ```
@@ -391,7 +343,7 @@ comment: "Process Flow"
 tooltip: "Stores source flow expressions before expansion into executable graph edges"
 columns:
   process_flow_id:  { type: integer, pk: true, autoincrement: true, comment: "Process Flow ID", tooltip: "Unique identifier of the source flow" }
-  process_version_id: { type: integer, nullable: false, fk: "process_version.process_version_id", comment: "Process Version ID", tooltip: "Version containing the flow", form_display: true, table_display: true, form_size: 6 }
+  process_node_id:  { type: integer, nullable: false, fk: "process_node.process_node_id", comment: "Business Process Node ID", tooltip: "BP node that owns this flow", form_display: true, table_display: true, form_size: 6 }
   flow_code:        { type: varchar, len: 50, nullable: false, comment: "Flow Code", tooltip: "Stable flow identifier, for example FL001", form_display: true, table_display: true, form_size: 3 }
   expression:       { type: text, nullable: false, comment: "Expression", tooltip: "Source sequence using -> and decision expressions", form_display: true, form_long_text: true, form_code: yaml, form_size: 12 }
   active:           { type: boolean, default: true, comment: "Active", tooltip: "Indicates whether the flow is active", form_display: true, table_display: true, form_size: 3 }
@@ -431,12 +383,13 @@ table_layout:
 ```yaml
 table: process_instance
 comment: "Process Instance"
-tooltip: "A running or completed execution of a published process version"
+tooltip: "A running or completed execution of a published BP node"
 columns:
   process_instance_id: { type: integer, pk: true, autoincrement: true, comment: "Process Instance ID", tooltip: "Unique identifier of this process execution" }
-  process_version_id:  { type: integer, nullable: false, fk: "process_version.process_version_id", comment: "Process Version ID", tooltip: "Published version used by this execution", form_display: true, table_display: true, form_size: 6 }
-  parent_instance_id: { type: integer, fk: "process_instance.process_instance_id", comment: "Parent Instance ID", tooltip: "Parent execution when this instance is a sub-process", form_display: true, table_display: true, form_size: 6 }
-  parent_instance_step_id: { type: integer, fk: "process_instance_step.process_instance_step_id", comment: "Parent Instance Step ID", tooltip: "Parent activity that launched this sub-process", form_display: true, table_display: true, form_size: 6 }
+  process_node_id:     { type: integer, nullable: false, fk: "process_node.process_node_id", comment: "Business Process Node ID", tooltip: "BP node being executed", form_display: true, table_display: true, form_size: 6 }
+  definition_snapshot: { type: text, comment: "Definition Snapshot", tooltip: "Definition state captured when execution starts, preserving its audit context without a separate version record" }
+  parent_instance_id:  { type: integer, fk: "process_instance.process_instance_id", comment: "Parent Instance ID", tooltip: "Parent execution when this instance is a sub-process", form_display: true, table_display: true, form_size: 6 }
+  parent_instance_step_id: { type: integer, _fk: "process_instance_step.process_instance_step_id", comment: "Parent Instance Step ID", tooltip: "Parent activity that launched this sub-process", form_display: true, table_display: true, form_size: 6 }
   instance_code:       { type: varchar, len: 100, unique: true, comment: "Instance Code", tooltip: "Human-readable execution reference", form_display: true, table_display: true, form_size: 6 }
   status:              { type: varchar, len: 30, default: "pending", nullable: false, comment: "Status", tooltip: "Pending, in progress, completed, cancelled, or failed", form_display: true, table_display: true, form_size: 4 }
   current_node_id:     { type: integer, fk: "process_node.process_node_id", comment: "Current Node ID", tooltip: "Current process element, when execution is active", form_display: true, table_display: true, form_size: 4 }
@@ -463,7 +416,7 @@ tooltip: "Tracks each activity or process element reached during an instance"
 columns:
   process_instance_step_id: { type: integer, pk: true, autoincrement: true, comment: "Instance Step ID", tooltip: "Unique identifier of this execution step" }
   process_instance_id:      { type: integer, nullable: false, fk: "process_instance.process_instance_id", comment: "Process Instance ID", tooltip: "Execution containing this step", form_display: true, table_display: true, form_size: 6 }
-  process_node_id:           { type: integer, nullable: false, fk: "process_node.process_node_id", comment: "Process Node ID", tooltip: "Definition element reached by this step", form_display: true, table_display: true, form_size: 6 }
+  process_node_id:          { type: integer, nullable: false, fk: "process_node.process_node_id", comment: "Process Node ID", tooltip: "Definition element reached by this step", form_display: true, table_display: true, form_size: 6 }
   status:                   { type: varchar, len: 30, default: "pending", nullable: false, comment: "Status", tooltip: "Pending, in progress, completed, sent back, skipped, or failed", form_display: true, table_display: true, form_size: 4 }
   assigned_user_id:         { type: integer, comment: "Assigned User ID", tooltip: "User responsible for this step", form_display: true, table_display: true, form_size: 4 }
   started_at:               { type: datetime, comment: "Started At", tooltip: "When work on the step started", form_display: true, table_display: true, form_size: 4 }
