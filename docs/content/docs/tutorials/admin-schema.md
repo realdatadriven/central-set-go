@@ -1,446 +1,112 @@
 ---
 weight: 7030
 title: "Admin Schema (the DNA)"
-description: "How Central Set defines applications, UI, permissions, and automation using database metadata."
+description: "How the ADMIN database manages Central Set users, applications, access control, validations, CRUD behavior, and APIs."
 icon: schema
 date: 2025-12-16T01:04:15+00:00
-lastmod: 2025-12-16T01:04:15+00:00
+lastmod: 2026-11-06
 draft: false
 images: []
 ---
 
 ## Overview
 
-{{% alert context="warning" text="**Caution** — Central Set is **production-ready and actively used**, but this documentation is still **under active development**. Large parts of the docs are **auto-generated**, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently."  /%}}
+The **ADMIN database is Central Set's main management database**. It holds the definitions and records Central Set uses to manage users, applications, menus, permissions, integrations, and data operations across the platform.
 
+The declarative source for its schema and initial configuration is [`assets/models/admin_model.md`](../../../../assets/models/admin_model.md). The model defines database tables, their relationships and UI metadata, application menus, and initial records in one place.
 
-The **ADMIN schema** is the **DNA of Central Set**.
+Application databases hold their own domain data. ADMIN registers those applications and manages the shared users, roles, access rules, and behavior associated with them.
 
-Everything you see in the UI — applications, menus, tables, forms, permissions, and even automation — is defined as **data stored in the ADMIN database**.
+## What ADMIN manages
 
-There is no hardcoded admin UI.
-There are no per-app APIs.
-There are no generated frontends.
+| Area | What the model provides |
+|---|---|
+| **Users and roles** | User accounts and profiles, role assignments, login-related fields, and user activity logs. |
+| **Applications and menus** | Application registry, menu structure, menu-to-table assignments, ordering, icons, and configuration. |
+| **Credentials and environment** | Access-key/token records and environment-variable records, including activation and expiry/configuration fields. |
+| **Permissions** | Role access to applications and menus, CRUD permissions for tables, column-level permissions, and user- or role-based row-level access. |
+| **Validation** | Rules associated with a database, table, and CRUD operation, with SQL conditions, messages, severity/reaction settings, and validation logs. |
+| **CRUD actions** | Configurable operations associated with create, read, update, and delete events, including SQL, email, API calls, PDF generation, and ETLX workflows. |
+| **CRUD interception** | Rules for handling or rewriting queries before execution, with conditions and optional follow-up SQL. |
+| **APIs and integrations** | API definitions, request methods, endpoints, headers, templates, retries, timeouts, data mappings, and call logs. |
+| **Other platform features** | Dashboards, scheduled jobs, Arrow Flight and Quack configuration, translations, and supporting metadata. |
 
-Instead, Central Set uses a **metadata-driven control plane** that describes *what exists*, *who can access it*, and *how it behaves*.
+These are not just labels in a model: the database includes corresponding tables such as `users`, `role`, `app`, `menu`, `access_key`, `role_app_menu_table`, `row_level_access`, `validation`, `crud_action`, `crud_intercept`, and `api`.
 
-> **If it exists in the ADMIN schema, it can exist in the UI and APIs.**
+## Applications and navigation
 
----
+The model's `cs_app` section declares the applications' menu groups, and the `app`, `menu`, and `menu_table` tables store the application and navigation metadata. A menu groups tables and can define its icon, order, active state, and configuration.
 
-## The ADMIN Database as a Control Plane
+For example, the ADMIN model declares menu groups for Admin, APIs, Jobs Scheduling, and other platform areas. Each menu lists the tables it exposes. This metadata drives the platform's navigation and determines which tables are available through that application context.
 
-The ADMIN database is not just a configuration store.
+Table and column definitions also carry UI metadata: field labels, form and table visibility, ordering, layouts, and specialized components. This lets Central Set build data interfaces from the model and metadata instead of defining a separate interface for every table.
 
-It acts as a **control plane** that defines:
+## Layered access control
 
-* Applications and their databases
-* Navigation structure (menus)
-* Tables and schemas
-* CRUD behavior
-* Permissions and access rules
-* UI layout and forms
-* Automation hooks
-* Integration with ETLX pipelines
+ADMIN represents permissions at several levels:
 
-Central Set reads this metadata at runtime and uses it to **generate UI behavior and API responses dynamically**.
+1. **Application access** — `role_app` associates roles with applications.
+2. **Menu access** — `role_app_menu` controls access to an application's menus.
+3. **Table CRUD access** — `role_app_menu_table` grants create, read, update, delete, and share permissions for a table in a menu.
+4. **Column-level access** — `column_level_access` records operation permissions for a column.
+5. **Row-level access (RLA)** — `row_level_access` and `role_row_level_access` describe per-row permissions for a user or role. Tables and menu-table entries can also be marked `requires_rla`.
 
----
+This makes access decisions part of the central application metadata, rather than a collection of unrelated per-screen settings.
 
-## A Metadata-First Architecture
+## Validation rules
 
-Central Set follows a simple but powerful rule:
+The `validation` table associates a rule with a database, table, and operation such as create, read, update, or delete. A rule can specify an SQL check, an error message, whether it is active, and its severity and reaction. `validation_data` can provide additional rule inputs, while `validation_logs` records validation outcomes.
 
-> **The database is the specification.**
+The model includes a seeded example that checks whether a user's email already exists on user creation. It illustrates how a rule can be declared with its target table and operation instead of being embedded in an individual form.
 
-Instead of encoding logic in code or YAML files, Central Set stores intent as structured metadata.
+## Actions on CRUD operations
 
-This enables:
+The `crud_action` table describes work associated with CRUD events. A rule identifies its table and database, selects which operations trigger it, and can be activated or exposed as a user-triggered action. Depending on its action type, the model provides fields for SQL, email templates, internal or external API calls, PDF generation, and ETLX workflows. Actions can also have related `action_data` and chained `action_trigger_action` records.
 
-* Runtime UI generation
-* Dynamic APIs
-* Multi-tenant setups
-* Safe extensibility
-* Zero frontend rebuilds
+For example, the model includes illustrative rules for sending an email or writing a user log after a user record is created, and an API-call action that uses values from the operation context. Examples marked inactive are configuration examples, not necessarily enabled behavior.
 
----
+## Query interception
 
-## Conceptual Model (No Table Names)
+CRUD actions run in response to configured operations; `crud_intercept` describes a separate concern: processing or rewriting a query before it executes. An intercept is scoped by database, table, and CRUD operation, and can include a condition and SQL template. The declared intercept types include encapsulating a read query when its condition matches and rewriting a DML execution list. `after_sql` can specify follow-up SQL, and interception logs are represented separately.
 
-At a high level, the ADMIN schema models the system in layers:
+## APIs that actions and UI controls can call
 
+The `api` table stores API definitions, including the endpoint, request method, headers and body templates, retry/timeout settings, and optional follow-up SQL. Related tables hold headers, data mappings, and API-call logs.
+
+An API can be used by a CRUD action or exposed as an action/button on a table or menu. The model's examples show an action configured to call an internal API using operation values such as the action name and user ID; another example defines an external API and passes request data into its endpoint template. The API table's `exec_button` configuration is one example of a UI control that invokes an API. Templates can use the relevant operation or record data, so a call can act on the data that triggered it.
+
+## The declarative model
+
+The model file brings together:
+
+- The database and model settings
+- Application menus and table assignments
+- Table columns, relationships, and UI configuration
+- Security, validation, action, interception, and API definitions
+- Initial records declared in `data` blocks
+
+To initialize the configured database from a repository checkout:
+
+```bash
+central-set --init --model assets/models/admin_model.md
 ```
 
-Users & Roles
-↓
-Applications
-↓
-Menus
-↓
-Tables
-↓
-Permissions & UI Behavior
-↓
-Automation & Pipelines
+To apply the model to an existing database:
 
+```bash
+central-set --update --model assets/models/admin_model.md
 ```
 
-Each layer builds on the previous one, and each layer is defined as data.
+The model is the declarative source for the ADMIN database structure and its configured metadata. Active flags and operation-specific settings determine which declared features are enabled.
 
----
+## Extending ADMIN
 
-## Applications, Menus, and Tables
+Update [`assets/models/admin_model.md`](../../../../assets/models/admin_model.md) when changing Central Set's shared management model—for example, adding a shared permission or integration capability. Keep domain-specific business tables in their own application model and database, then register the application in ADMIN. See [Creating a New App / Data Model](new-app-model/).
 
-### Applications
+## Key takeaways
 
-An **Application** represents a logical admin interface.
-
-Each application:
-
-* Is linked to one database
-* Defines a context for menus and tables
-* Can be isolated by permissions
-* Can represent a product, domain, or system
-
-The built-in **ADMIN** app is just one application — not a special case.
-
----
-
-### Menus
-
-Menus define **navigation**, not logic.
-
-They group tables and features into meaningful sections and control how users move through the application.
-
-Menus are:
-
-* Ordered
-* Permission-aware
-* Fully configurable via metadata
-
----
-
-### Tables
-
-Tables are the heart of the system.
-
-A table definition tells Central Set:
-
-* Which database table to expose
-* How CRUD operations behave
-* Which columns are visible
-* How data is labeled
-* How forms are rendered
-* What permissions apply
-
-> Adding a table to the ADMIN schema is enough to make it appear in the UI.
-
----
-
-## Schema Discovery & Introspection
-
-Central Set dynamically inspects connected databases to understand:
-
-* Tables
-* Columns
-* Types
-* Constraints
-* Relationships
-
-This information is cached and enriched with metadata stored in the ADMIN schema.
-
-This allows Central Set to:
-
-* Render forms automatically
-* Validate input
-* Build datatables
-* Enforce permissions
-* Stay in sync with the database
-
----
-
-## Permissions Are Data
-
-Permissions in Central Set are **not hardcoded rules**.
-
-They are metadata-driven and can apply at multiple levels:
-
-* Application access
-* Menu visibility
-* Table access
-* CRUD operations
-* Column visibility
-* Row-level filtering
-
-Because permissions live in the database:
-
-* They can be managed via the UI
-* They apply consistently to UI and APIs
-* They scale naturally in multi-tenant systems
-
----
-
-## UI Customization via Metadata
-
-The ADMIN schema also defines **how things look and behave**.
-
-This includes:
-
-* Column labels
-* Field order
-* Form layouts
-* Widgets and input types
-* Translations
-* Read-only or computed fields
-
-This makes Central Set suitable not just for admins, but for **data-facing internal tools and apps**.
-
----
-
-## Automation & ETLX Integration
-
-The ADMIN schema also acts as the **bridge to automation**.
-
-It defines:
-
-* Which workflows exist
-* How they are triggered
-* What data they operate on
-* How they integrate with ETLX pipelines
-
-Central Set handles:
-
-* Configuration
-* Security
-* Triggers
-* Observability hooks
-
-ETLX handles:
-
-* Execution
-* Data movement
-* Pipeline semantics
-
-Together, they form a complete data platform.
-
-👉 See **ETLX & Data Pipelines** for more details.
-
----
-
-## The Full Schema (Source of Truth)
-
-This documentation explains **concepts**, not every table and column.
-
-The **canonical definition** of the ADMIN schema lives in the repository as a living document:
-
-📓 **ADMIN schema notebook**  
-👉 https://github.com/realdatadriven/central-set-go/blob/main/db.ipynb
-
-This notebook documents:
-
-* Tables
-* Relationships
-* Intended usage
-* Evolution of the schema
-
-If you want to extend Central Set at a deep level, this is the place to start.
-
----
-
-## Key Takeaways
-
-* ADMIN is fully metadata-driven
-* The database is the control plane
-* UI and APIs share the same contract
-* Permissions are data, not logic
-* ETLX executes what ADMIN describes
-
-> **Central Set does not define applications in code.  
-> It defines them in data.**
-
-## Adding a New Application (How ADMIN Grows)
-
-Central Set ships with a **fully configured ADMIN application**, defined entirely in the ADMIN database.
-
-Adding a new application — such as **ETLX** — does **not** require frontend work or custom backend code.
-Instead, you **extend the metadata** that already powers ADMIN.
-
-The ETLX application included in the repository is the **canonical example** of how this works.
-
----
-
-## The High-Level Flow
-
-Adding a new app follows a **deterministic, repeatable process**:
-
-```
-1. Create a database schema for the app
-2. Register the app in ADMIN
-3. Discover tables from the app database
-4. Attach tables to menus
-5. Customize UI behavior (optional)
-```
-
-This entire flow is **data-driven** and can be replayed on any machine.
-
----
-
-## 1. Define the Application Database
-
-Each application points to **one database**.
-
-For ETLX, this database is defined in:
-
-📓 `app.ETLX.ipynb` (repository root)
-
-This notebook:
-
-* Defines ETLX domain tables (pipelines, dashboards, notebooks, etc.)
-* Uses SQLAlchemy only as a **schema authoring tool**
-* Creates the physical database if it does not exist
-* Adds rich **table and column comments**
-
-> These comments later become **UI labels and tooltips**.
-
-At this stage, Central Set does **not yet know** about the app — only the database exists.
-
----
-
-## 2. Register the Application in ADMIN
-
-Once the ETLX database exists, it is registered as an **Application** inside the ADMIN schema.
-
-This is done by inserting a record into the `app` table:
-
-* App name (e.g. `ETLX`)
-* Description
-* Version
-* Database name
-* Ownership metadata
-
-From this moment on:
-
-> **Central Set recognizes the database as an application context.**
-
----
-
-## 3. Automatic Schema Discovery
-
-After the app is registered, Central Set **introspects the database**:
-
-* Tables
-* Columns
-* Types
-* Primary keys
-* Foreign keys
-* Defaults
-* Comments
-
-This discovery process populates ADMIN metadata tables such as:
-
-* Table registry
-* Column registry
-* Translations
-* Relationships
-
-No manual mapping is required.
-
-> If a table exists in the app database, it becomes *eligible* for the UI.
-
----
-
-## 4. Create Menus for the App
-
-Applications do not expose tables directly.
-
-They expose **menus**, which define navigation and grouping.
-
-For ETLX, menus include:
-
-* Dashboards
-* ETLX
-* Notebook
-
-Each menu is:
-
-* Created in the ADMIN database
-* Linked to the application
-* Assigned an icon and order
-* Marked active or inactive
-
-Menus are **pure metadata** — they do not contain logic.
-
----
-
-## 5. Attach Tables to Menus
-
-Once tables are discovered, they can be attached to menus.
-
-This step defines:
-
-* Which tables appear in which menu
-* Whether the table is active
-* Special behaviors (e.g. row-level access)
-
-For example, in ETLX:
-
-* `etlx`, `etlx_conf`, `manage_query` → **ETLX menu**
-* `dashboard` → **Dashboards menu**
-* `notebook` → **Notebook menu**
-
-At this point:
-
-> **The UI becomes fully functional for the new app.**
-
-Tables appear as datatables.
-Forms are auto-generated.
-CRUD APIs are enabled.
-
----
-
-## 6. UI Behavior Comes from Metadata
-
-The ETLX notebook also demonstrates how Central Set uses metadata to control UI behavior:
-
-* Table comments → table titles
-* Column comments → form labels
-* JSON configs → menu behavior
-* Flags → visibility and activation
-
-Because this configuration is stored in ADMIN tables, it can be:
-
-* Modified from the UI itself
-* Exported
-* Reapplied on another installation
-
----
-
-## Portability & Reproducibility
-
-A key design goal is **repeatable installations**.
-
-The ETLX setup shows how Central Set supports:
-
-* Rebuilding apps on new machines
-* Syncing UI customizations
-* Shipping opinionated defaults
-* Treating the database as the source of truth
-
-This allows Central Set to behave like a **data-driven platform**, not a static admin panel.
-
----
-
-## What This Enables
-
-By following this pattern, you can:
-
-* Add new domains without frontend work
-* Build internal tools quickly
-* Expose databases safely
-* Treat data models as products
-* Give ETLX (or any engine) a full UI
-
-> **ADMIN defines the language.
-> Applications define the vocabulary.
-> Databases define the meaning.**
-
+- ADMIN is the main database for managing Central Set and its applications.
+- It manages users, roles, applications, menus, credentials, and layered access control.
+- It also holds declarative validation, CRUD action, query interception, and API configuration.
+- Application databases continue to hold their own domain data.
+- [`admin_model.md`](../../../../assets/models/admin_model.md) is the declarative source for ADMIN's schema and initial configuration.

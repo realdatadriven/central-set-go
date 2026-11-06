@@ -11,7 +11,7 @@ admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 create_all: checkfirst
 _drop_all: checkfirst
 update_table_metadata: true
-active: true
+active: false
 cs_app:
   Dashboard:
     menu_icon: document-report
@@ -492,6 +492,8 @@ table_layout:
 # BPM
 ```yaml
 name: BPM
+description: BPM
+admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
 runs_as: BPM
 ```
 

@@ -1,94 +1,35 @@
 ---
 weight: 3020
 title: "Admin Model"
-description: "Understanding the Central Set Admin Model and how model-driven architecture defines applications, permissions, APIs, metadata, and UI."
+description: "A guide to the declarative model for Central Set's main management database."
 icon: schema
 date: 2025-12-16T01:04:15+00:00
-lastmod: 2025-12-16T01:04:15+00:00
+lastmod: 2026-11-06
 draft: false
 images: []
 ---
 
-{{% alert context="warning" text="**Caution** — Central Set is **production-ready and actively used**, but this documentation is still **under active development**. Large parts of the docs are **auto-generated**, evolving alongside the platform, and some sections may be incomplete, rough around the edges, or change frequently."  /%}}
+The **ADMIN model** defines the schema and management metadata for Central Set's main database. It describes how Central Set manages users, roles, applications, menus, permissions, validations, CRUD behavior, integrations, and UI configuration.
 
-The **Admin Model** defines the core metadata and system structure used by Central Set.
+The source of truth is [`assets/models/admin_model.md`](../../../../assets/models/admin_model.md). It is a declarative Markdown file containing YAML blocks for model settings, application menus, table definitions, and configured records.
 
-It is written as a **Markdown + YAML model**, which allows the platform to:
+For an overview of ADMIN's responsibilities, see [Admin Schema (the DNA)](admin-schema/).
 
-- Initialize databases
-- Generate metadata
-- Configure applications
-- Manage permissions
-- Define dashboards
-- Control APIs and integrations
-- Generate **UI forms and datatables**
+## What the model contains
 
-All of this is done **from a single model file**.
+The model has several related layers:
 
----
+1. **Model settings** identify the model, its database connection, and metadata behavior.
+2. **Application and menu configuration** lists the menus and tables Central Set exposes.
+3. **Table definitions** describe columns, relationships, and database defaults.
+4. **Metadata** describes permissions, UI behavior, validation, actions, query interception, and APIs.
+5. **Configured records** in `data` blocks provide initial or example entries.
 
-# 🧠 Model Philosophy
+The file also contains additional model directives and examples. Check each section's `active` setting and operation flags: a definition in the file is not necessarily enabled.
 
-Central Set uses a **model-driven architecture**.
+## Model settings
 
-Instead of manually creating:
-
-- tables
-- menus
-- permissions
-- APIs
-- dashboards
-- forms
-- datatables
-
-everything is defined inside a **model file**.
-
-This model becomes the **single source of truth** for the application.
-
-Advantages include:
-
-- self-documenting database schema
-- reproducible environments
-- consistent deployments
-- Git-versioned infrastructure
-- LLM-friendly structure
-- automatic UI generation
-
-The model can initialize or update the database with:
-
-```bash
-central-set --init --model admin_model.md
-````
-
----
-
-# 📦 Model Structure
-
-A model is composed of several parts.
-
-High-level structure:
-
-```
-Model Metadata
-Applications (cs_app)
-Tables
-Security
-Metadata Tables
-UI Definitions
-Integrations
-Dashboards
-Jobs / Scheduling
-```
-
-Each section is written in **YAML blocks inside Markdown**, which allows the model to remain both **human readable** and **machine executable**.
-
----
-
-# ⚙️ Model Metadata
-
-The first section defines the **model configuration**.
-
-Example:
+The file begins with the ADMIN model header:
 
 ```yaml {linenos=table}
 name: ADMIN
@@ -101,522 +42,201 @@ update_table_metadata: true
 active: true
 ```
 
-Important fields:
+The connection uses `DB_DRIVER_NAME` and `DB_DSN` from the environment, keeping environment-specific connection details outside the model. Configure these values for your installation before applying the model; the [Quickstart](../quickstart/) describes the setup.
 
-| Field                   | Description              |
-| ----------------------- | ------------------------ |
-| `name`                  | Model name               |
-| `conn`                  | Database connection      |
-| `runs_as`               | Execution mode           |
-| `create_all`            | Controls schema creation |
-| `update_table_metadata` | Updates metadata tables  |
-| `active`                | Enables the model        |
+## Applications and menus
 
-The connection usually references **environment variables**.
+The `cs_app` block declares the application menus and the tables listed in each one. The ADMIN model includes groups such as Admin, APIs, Jobs Scheduling, Dashboards, Arrow Flight, and Quack. Menu definitions can include an icon, order, active flag, configuration, and table list.
 
-Example:
+For example, the model configures the Dashboards menu to include the `dashboard` table. The corresponding `app`, `menu`, and `menu_table` tables hold the application and navigation metadata used by Central Set.
 
-```
-@DB_DRIVER_NAME
-@DB_DSN
-```
+## Table and column definitions
 
-This keeps credentials **outside the model file**.
-
----
-
-# 🧩 Application Definition (`cs_app`)
-
-The `cs_app` section defines the **applications and menus** that appear inside the Central Set UI.
-
-Example:
+Each table block identifies a table and describes its columns. For example, the `lang` table includes a primary key, a unique language code, display hints, and an initial English-language record:
 
 ```yaml {linenos=table}
-cs_app:
-  Dashboards:
-    menu_icon: document-report
-    menu_order: 1
-    tables:
-      - dashboard
-```
-
-Applications can define:
-
-* menus
-* menu icons
-* table mappings
-* metadata configuration
-
-Example structure:
-
-```
-App
- ├── Menu
- │   ├── Tables
- │   └── Configuration
-```
-
-From this, Central Set automatically generates:
-
-* UI navigation
-* CRUD APIs
-* access control layers
-
----
-
-# 🗄️ Table Definitions
-
-Each table is defined using a YAML block.
-
-Example:
-
-```yaml {linenos=table}
-table: users
-comment: Users
+table: lang
+comment: Languages
 columns:
-  user_id:
-    type: integer
-    pk: true
-    autoincrement: true
+  lang_id:   { type: integer, pk: true, autoincrement: true }
+  lang:      { type: varchar, len: 4, unique: true, nullable: false, form_display: true, table_display: true }
+  lang_desc: { type: varchar, len: 200, form_display: true, table_display: true }
+  excluded:  { type: boolean, default: false }
+data:
+  - { lang_id: 1, lang: en, lang_desc: English, excluded: false }
 ```
 
-Columns can define:
+Common column properties include:
 
-| Property   | Description       |
-| ---------- | ----------------- |
-| `type`     | SQL type          |
-| `pk`       | Primary key       |
-| `fk`       | Foreign key       |
-| `nullable` | Allow null values |
-| `default`  | Default value     |
-| `unique`   | Unique constraint |
-| `comment`  | Field description |
+| Property | Purpose |
+|---|---|
+| `type`, `len` | Database type and, where applicable, length |
+| `pk`, `autoincrement` | Primary-key behavior |
+| `fk` | Foreign-key reference, such as `role.role_id` |
+| `nullable`, `default`, `unique` | Database constraints and defaults |
+| `comment` | Human-readable field description |
 
-Example FK definition:
+Table blocks can also include `form_layout`, `table_layout`, and `table_extra_options` to describe presentation and table-specific UI configuration.
 
-```
-fk: "role.role_id"
-```
+## UI metadata
 
-This automatically generates relational constraints.
+Column properties can describe how fields are shown and edited. The model uses hints such as `form_display`, `table_display`, `form_size`, `order`, `form_code`, `form_regex_val`, and `form_val_msg`. For example, `form_code: markdown` selects a Markdown-oriented editor for a text field; `form_code: sql` indicates SQL-oriented editing.
 
----
+`form_layout` can organize fields into tabs, set form sizing, and configure related subforms. `table_layout` can configure ordering and table actions. `table_extra_options` can attach custom UI components to a table.
 
-# 🧾 UI Generation from the Model
+The model uses UI component intercept flags such as `intercept_r` in `table_extra_options`. These describe component/UI behavior; they are distinct from the database query rules declared in `crud_intercept`.
 
-Central Set models now also define **UI behavior**, including:
+## Permissions and security metadata
 
-* form fields
-* datatable columns
-* layout configuration
-* component hooks
-* custom UI extensions
+ADMIN stores access rules at multiple levels:
 
-This allows the platform to automatically generate **admin interfaces directly from the schema**.
+- `role_app` associates roles with applications.
+- `role_app_menu` controls role access to menus.
+- `role_app_menu_table` stores create, read, update, delete, and share permissions for tables in menus.
+- `column_level_access` stores column-level operation permissions.
+- `row_level_access` and `role_row_level_access` describe user- and role-based permissions on individual rows.
 
----
+Tables and menu-table entries can also be marked `requires_rla` when row-level access is required. The model includes roles and users, as well as examples of access configuration. Review the active state and access entries when changing security behavior.
 
-# 🧩 Field UI Configuration
+## Validation rules
 
-Fields can define how they appear in the UI.
+The `validation` table associates a validation with a database, table, and CRUD operation. A rule can specify an SQL check, an error message, severity, reaction, and active state. Related `validation_data` records can provide additional inputs, and `validation_logs` store outcomes.
 
-Example:
+The model includes an example rule that checks whether a user's email already exists when creating a user. This demonstrates how validation configuration is associated with a target table and operation.
+
+## Actions triggered by CRUD
+
+The `crud_action` table describes operations associated with create, read, update, or delete events. A rule identifies its target database and table, the operations that trigger it, its action type, and whether it is active or user-triggered.
+
+The model provides fields and examples for SQL, email, internal or external API calls, PDF generation, and ETLX workflows. Actions may also include `action_data` inputs and `action_trigger_action` entries for chained behavior. The bundled examples illustrate patterns; some are intentionally marked inactive.
+
+## Query interception
+
+`crud_intercept` defines rules for processing a query before execution. Intercepts are scoped to a database, table, and CRUD operation, and can include a condition and SQL or rewrite configuration. The model declares intercept types for encapsulating a read query and rewriting a DML execution list. Related data and log tables hold additional configuration and records.
+
+This is different from both a CRUD action—which is associated with an operation—and a UI component intercept flag such as `intercept_r`.
+
+## API definitions and calls
+
+The `api` table describes API integrations, including request method, endpoint, templates, retries, timeouts, and optional follow-up SQL. Related tables store headers, data configuration, and call logs.
+
+An API can be invoked from a CRUD action, with templates using values from the operation context, or exposed as a UI action/button through table configuration such as `exec_button`. The model includes examples of both configured API records and actions that call APIs.
+
+## Trace a CRUD action through the model
+
+The model's `CRUD_ACTION_API_CALL` example is a compact illustration of how ADMIN metadata connects a database operation to an API:
 
 ```yaml {linenos=table}
-dashboard: { type: varchar(200), comment: "Dashboard", form_display: true, table_display: true }
+table: crud_action
+cond: 'WHERE crud_action_code = :crud_action_code'
+data:
+  crud_action_code: CRUD_ACTION_API_CALL
+  action_type_id: 3
+  table: users
+  db: ADMIN
+  active: true
+  create: true
+  update: true
+  delete: true
+  api: 'run/process_user/{{.action}}/{{.user_id}}'
 ```
 
-Available options include:
+Read this declaration as a rule attached to create, update, and delete operations on `ADMIN.users`. When enabled for an operation, the configured internal API path is rendered with values from that operation's context. The action definition also has an error message and `parallel` setting in the full model.
 
-| Property        | Description                            |
-| --------------- | -------------------------------------- |
-| `form_display`  | Display field in forms                 |
-| `table_display` | Display field in datatable             |
-| `form_code`     | Enables code editor mode               |
-| `form_sizelg`   | Form layout size (large screens)       |
-| `form_sizexl`   | Form layout size (extra large screens) |
+The `LOG_IP_GEODATA` example shows a longer chain:
 
-Example with code editor:
+1. A user-triggered CRUD action on `user_log` refers to the API named `IP_GEODATA`.
+2. The API endpoint template uses the request IP from its input data.
+3. An `action_trigger_action` entry connects successful processing to `HANDLE_IP_GEODATA`, which is configured as an ETLX workflow action.
 
-```yaml {linenos=table}
-dashboard_conf:
-  type: text
-  form_display: true
-  form_code: markdown
+These are model examples, not a recommendation to send user activity data to an external service. Before enabling or adapting such a chain, review what data it sends, which endpoint receives it, and how failures and logs should be handled.
+
+## Schema definitions and data instructions
+
+There are two related kinds of configuration in the file:
+
+- A table definition can include a `data` list beside `columns`. For example, `lang` declares its table structure and the initial `en` language record together.
+- Later `MODEL_DATA` entries use `table`, `cond`, and `data` to describe configuration records for existing tables. The bundled examples update app configuration, add a dashboard, and declare validation and CRUD-action records. A `children` block describes related records, such as a validation's `validation_data`.
+
+The `cond` value identifies a row using a SQL `WHERE` condition and named values from `data`; it is not the validation SQL or an API request. This separation is useful when reading the file: table blocks describe the database and defaults, while data instructions configure records that use those tables.
+
+## Other model modes in the file
+
+After the core ADMIN model and its data examples, the file also contains blocks with other `runs_as` values, including `ROLE`, `ROLE_USERS`, and `MODEL_SQL`. These describe role access, user-to-role assignment, or SQL-oriented model work rather than new tables in the core ADMIN schema.
+
+Treat each block as its own declaration and inspect its `active` setting before relying on it. For example, the included `ROLE_ACCESS` and `ROLE_USERS` headers are inactive. A SQL/procedure example later in the file is a separate concern from applying the ADMIN table definitions.
+
+## Other ADMIN capabilities
+
+The model also defines metadata for:
+
+- **Access keys and environment values** — `access_key` and `env`.
+- **Dashboards** — `dashboard` and `dashboard_comment`; dashboard configuration is stored in `dashboard_conf`.
+- **Scheduled jobs** — `cron` and `cron_log`.
+- **Arrow Flight and Quack** — catalogs, schemas, table scopes, server/API configuration, and logs.
+- **Translations and table metadata** — translation tables, table registry, and schema metadata.
+
+The tables are part of the central management model; application-specific business data belongs in that application's database and model.
+
+## How the management layers fit together
+
+The model describes linked records rather than isolated features:
+
+```text {linenos=table}
+users ── user_role ── role
+                         └── role_app ── app
+                              role_app_menu ── menu
+                                   role_app_menu_table ── table
+                                                         ├── CRUD permissions
+                                                         ├── column_level_access
+                                                         └── row_level_access
+
+table + operation ── validation rules
+                  ├── query intercept rules
+                  └── CRUD actions ── action data / API / chained actions
 ```
 
-This enables a **Markdown editor** for the dashboard configuration.
+The access tables answer different questions: which applications can a role enter, which menus can it see, which CRUD operations can it perform on a table, and whether a particular column or row is accessible. `requires_rla` on a table or menu-table mapping indicates that row-level rules are relevant for that table; it is not itself a row permission.
 
----
+For data operations, validations, query interception, and CRUD actions are separate configuration systems. A validation declares a check and response for an operation; an intercept can transform or wrap a query before execution; an action performs configured work associated with an operation. Their matching table/database and operation fields determine their scope.
 
-# 🧩 Form Layout Configuration
+## Review before deployment
 
-Forms can define layout options using `form_layout`.
+The model is executable configuration, not just reference documentation. Before applying changes to a shared or production database:
 
-Example:
+- Review table changes and any model data instructions, including their `cond` selectors and `children`.
+- Review users, roles, seeded access, and all application/menu/table/column/row permissions.
+- Change or remove bootstrap/demo accounts and confirm password-reset expectations.
+- Keep access tokens, environment values, and external API credentials controlled; do not put real secrets in a model committed to source control.
+- Check `active`, CRUD operation flags, `requires_rla`, and user-trigger settings rather than assuming every declared feature is enabled.
+- Check SQL conditions/templates, external endpoints, data sent to those endpoints, and follow-up SQL.
+- Back up an existing database before applying a model change and verify the resulting access and behavior.
 
-```yaml {linenos=table}
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 10
+## Apply the model
+
+From a repository checkout, initialize the configured database with:
+
+```bash
+central-set --init --model assets/models/admin_model.md
 ```
 
-Options include:
+To apply the model to an existing database, use:
 
-| Property        | Description             |
-| --------------- | ----------------------- |
-| `tabs_steps`    | Enables tab-based forms |
-| `form_in_popup` | Allows popup forms      |
-| `size`          | Form container width    |
-
-This allows the UI to automatically build **structured form layouts**.
-
----
-
-# 📊 Datatable Configuration
-
-Datatable behavior can also be controlled.
-
-Example options:
-
-* visible columns
-* ordering
-* component extensions
-
-These configurations are automatically used by the frontend datatable components.
-
----
-
-# 🧩 Extra UI Options and Component Hooks
-
-Tables can also define **extra UI behavior** through `table_extra_options`.
-
-Example from the **Dashboard table**:
-
-```yaml {linenos=table}
-table_extra_options:
-  - {size: 12, component: EvidenceDash, label: dashboard, intercept_r: true}
+```bash
+central-set --update --model assets/models/admin_model.md
 ```
 
-This allows injecting **custom UI components** into the interface.
+The packaged application can also load its embedded model by file name:
 
-Example capabilities include:
-
-* custom visual components
-* dashboard renderers
-* data visualizations
-* intercepting CRUD operations
-
----
-
-# 🔌 CRUD Interceptors
-
-Components can intercept CRUD actions.
-
-Example:
-
-```
-intercept_r
+```bash
+central-set --init --model admin_model.md
 ```
 
-This means the custom component will intercept **read operations**.
+Review the model and database configuration before applying changes, especially when working with an existing database. To add a separate business application, see [Creating a New App / Data Model](new-app-model/).
 
-Possible interception hooks include:
+## Key points
 
-| Hook          | Purpose                   |
-| ------------- | ------------------------- |
-| `intercept_r` | intercept read operations |
-| `intercept_c` | intercept create          |
-| `intercept_u` | intercept update          |
-| `intercept_d` | intercept delete          |
-
-This enables **advanced UI extensions without modifying backend logic**.
-
----
-
-# 🔐 Security Model
-
-Central Set implements **multi-layer security** directly inside the model.
-
-Security layers include:
-
-### Role Based Access
-
-```
-role
-role_app
-role_app_menu
-role_app_menu_table
-```
-
-Controls:
-
-* application access
-* menu access
-* table access
-* CRUD permissions
-
----
-
-### Row Level Access (RLA)
-
-Tables:
-
-```
-row_level_access
-role_row_level_access
-```
-
-RLA allows restricting records by:
-
-* tenant
-* department
-* region
-* customer
-
-Example concept:
-
-```
-User A → only sees rows belonging to Tenant A
-User B → only sees rows belonging to Tenant B
-```
-
----
-
-### Column Level Access
-
-Table:
-
-```
-column_level_access
-```
-
-Controls which fields a user can:
-
-* read
-* create
-* update
-
----
-
-# 📊 Dashboard System
-
-The model defines the **dashboard engine**.
-
-Tables:
-
-```
-dashboard
-dashboard_comment
-```
-
-Dashboards are defined using **Markdown configuration stored in the database**.
-
-Example field:
-
-```
-dashboard_conf
-```
-
-This configuration can contain:
-
-* SQL queries
-* API calls
-* ETLX pipelines
-* visualization configuration
-
-Dashboards therefore become **fully dynamic and programmable**.
-
----
-
-# 🚀 Arrow Flight Integration
-
-The Admin model also defines the **Arrow Flight server configuration**.
-
-Tables:
-
-```
-flight_schema
-flight_schema_table
-flight_schema_table_field
-flight_schema_table_scope
-```
-
-These allow exposing datasets through the **Arrow Flight protocol**.
-
-Capabilities include:
-
-* schema definition
-* table discovery
-* scoped datasets
-* dynamic SQL execution
-
-Example configuration fields:
-
-| Field                 | Purpose               |
-| --------------------- | --------------------- |
-| `startup_sql`         | initialization SQL    |
-| `main_sql`            | main execution query  |
-| `table_discover_sql`  | dynamic table listing |
-| `table_scan_tmpl_sql` | table scan template   |
-| `shutdown_sql`        | cleanup logic         |
-
-This allows Central Set to act as a **data service layer**.
-
----
-
-# 🔑 Access Keys
-
-Table:
-
-```
-access_key
-```
-
-Access keys allow:
-
-* service integrations
-* external APIs
-* programmatic access
-
-Each key includes:
-
-* token
-* expiration
-* user association
-* activation flag
-
-These keys can be used in the API:
-
-```
-Authorization: Bearer <access_token>
-```
-
----
-
-# ⚙️ Environment Variables
-
-Table:
-
-```
-env
-```
-
-Stores environment variables managed by Central Set.
-
-Example usage:
-
-```
-@ENV_VAR_NAME
-```
-
-These variables can be used in:
-
-* ETLX pipelines
-* database connections
-* integrations
-* API configuration
-
----
-
-# ⏱ Job Scheduling
-
-Tables:
-
-```
-cron
-cron_log
-```
-
-This allows Central Set to run scheduled jobs.
-
-Example jobs:
-
-* ETLX pipelines
-* backups
-* environment sync
-* maintenance tasks
-
-Example cron expression:
-
-```
-0 0 * * *
-```
-
-Jobs execute **Central Set APIs**.
-
-Example:
-
-```
-etlx/name/[pipeline_name]
-```
-
----
-
-# 📜 System Metadata
-
-Several tables store metadata used internally by Central Set:
-
-```
-table
-table_schema
-menu
-menu_table
-custom_table
-custom_form
-translate_table
-translate_table_field
-```
-
-These allow the system to dynamically:
-
-* generate CRUD APIs
-* build UI forms
-* create dashboards
-* manage translations
-* extend metadata
-
----
-
-# 🧠 Why Everything Lives in the Model
-
-By defining everything in a **single Markdown model**, Central Set achieves:
-
-* Infrastructure as Code
-* Self-documenting architecture
-* Automated API generation
-* Built-in security layers
-* Automatic UI generation
-* Dynamic dashboard configuration
-
-The model becomes the **foundation of the entire platform**.
-
----
-
-# 🚀 Summary
-
-The **Admin Model** defines the entire core system of Central Set, including:
-
-* users
-* roles
-* applications
-* menus
-* security layers
-* dashboards
-* UI forms
-* datatables
-* data services
-* integrations
-* job scheduling
-
-All of this is controlled from a **single Markdown model file**.
-
-This approach enables Central Set to function as a **fully metadata-driven backend platform** capable of dynamically generating:
-
-* APIs
-* dashboards
-* data pipelines
-* UI applications
-* integrations
-
+- ADMIN is Central Set's main management database; application databases hold their own domain data.
+- The model declares the ADMIN schema, application/menu metadata, security rules, and platform behavior in one version-controlled file.
+- Table definitions can include both database properties and UI metadata.
+- A declared rule or example is not necessarily active; check its activation and operation flags.
