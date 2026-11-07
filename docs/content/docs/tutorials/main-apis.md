@@ -213,7 +213,7 @@ The response reports whether the upload succeeded and includes the resulting fil
 OData routes use `GET` and query-string options rather than the dynamic JSON envelope:
 
 ```http
-GET /odata/ADMIN/menu?$filter=app_id%20eq%201&$select=menu_id,menu_name&$top=25
+GET /odata/ADMIN/menu?$filter=app_id eq 1&$select=menu_id,menu_name&$top=25
 Authorization: Bearer <JWT>
 ```
 
