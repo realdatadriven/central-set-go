@@ -3583,5 +3583,78 @@
         ]
       }
     ]
+  },
+  {
+    "id": "17940634714320l6wjcg91u9n",
+    "name": "ALTER_PASS 11/7/2026, 1:57:51 PM",
+    "createdAt": 1794063471432,
+    "baseRequest": {
+      "id": "c7-login-alter-pass",
+      "name": "ALTER_PASS",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/alter_pass",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"username\": \"root\",\n    \"password\": \"current-password\",\n    \"new_password\": \"NewPassword1!\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "records": [],
+    "responseContracts": []
+  },
+  {
+    "id": "1794063489784hmdx13x5xsv",
+    "name": "RECOVER_PASS 11/7/2026, 1:58:09 PM",
+    "createdAt": 1794063489784,
+    "baseRequest": {
+      "id": "c7-login-recover-pass",
+      "name": "RECOVER_PASS",
+      "method": "POST",
+      "url": "{{base_url}}/dyn_api/login/recover_pass",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lang\": \"en\",\n  \"data\": {\n    \"email\": \"user@example.com\"\n  }\n}"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "records": [],
+    "responseContracts": []
   }
 ]

@@ -64,9 +64,7 @@
             "auth": {
               "type": "none"
             },
-            "inheritAuth": true,
-            "testRules": [],
-            "setVariables": []
+            "inheritAuth": true
           },
           {
             "id": "c7-login-recover-pass",
@@ -93,9 +91,7 @@
             "auth": {
               "type": "none"
             },
-            "inheritAuth": true,
-            "testRules": [],
-            "setVariables": []
+            "inheritAuth": true
           },
           {
             "id": "c7-login-reset-pass",
