@@ -31,29 +31,24 @@ func NewFallbackFileServer() http.Handler {
 			filename := filepath.Base(path)
 			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
 		}
-
 		// Prevent directory traversal
 		if filepath.IsAbs(path) || path == "" || path == "." {
 			http.NotFound(w, r)
 			return
 		}
-
 		// Try filesystem first (for dynamic/development files)
 		if tryFilesystem(w, r, path) {
 			return
 		}
-
 		/*if strings.HasSuffix(r.URL.Path, ".js") {
 			w.Header().Set("Content-Type", "text/javascript")
 		}*/
-
 		if strings.HasSuffix(path, ".js") ||
 			strings.HasSuffix(path, ".css") ||
 			strings.HasSuffix(path, ".png") ||
 			strings.HasSuffix(path, ".svg") {
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
-
 		// Fall back to embedded files
 		tryEmbedded(w, r, path)
 	})
@@ -74,7 +69,6 @@ func tryFilesystem(w http.ResponseWriter, r *http.Request, path string) bool {
 	if err != nil {
 		return false
 	}
-
 	// Handle directories
 	if info.IsDir() {
 		indexFile, err := os.Open(filepath.Join(fsPath, "index.html"))
@@ -89,7 +83,6 @@ func tryFilesystem(w http.ResponseWriter, r *http.Request, path string) bool {
 		http.ServeContent(w, r, "index.html", indexInfo.ModTime(), indexFile)
 		return true
 	}
-
 	http.ServeContent(w, r, info.Name(), info.ModTime(), file)
 	return true
 }
@@ -102,7 +95,6 @@ func ServeFSFile(fsys fs.FS, name string) http.HandlerFunc {
 			return
 		}
 		defer f.Close()
-
 		http.ServeContent(w, r, name, time.Time{}, f.(io.ReadSeeker))
 	}
 }
@@ -110,26 +102,22 @@ func ServeFSFile(fsys fs.FS, name string) http.HandlerFunc {
 // tryEmbedded attempts to serve from the embedded filesystem
 func tryEmbedded(w http.ResponseWriter, r *http.Request, path string) {
 	// Get the embedded static directory
-
 	staticFS, err := fs.Sub(assets.EmbeddedFiles, "static")
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
-
 	file, err := staticFS.Open(path)
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
 	defer file.Close()
-
 	info, err := file.Stat()
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
-
 	// Handle directories
 	if info.IsDir() {
 		/*indexFile, err := staticFS.Open(filepath.Join(path, "index.html"))
@@ -154,12 +142,10 @@ func tryEmbedded(w http.ResponseWriter, r *http.Request, path string) {
 // ServeStaticFile serves a single file from static directory (filesystem first, then embedded)
 func ServeStaticFile(w http.ResponseWriter, r *http.Request, filePath string) {
 	path := filepath.Clean(filePath)
-
 	// Try filesystem first
 	if tryFilesystem(w, r, path) {
 		return
 	}
-
 	// Fall back to embedded
 	tryEmbedded(w, r, path)
 }
