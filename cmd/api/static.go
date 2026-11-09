@@ -58,13 +58,11 @@ func NewFallbackFileServer() http.Handler {
 // Returns true if file was served successfully
 func tryFilesystem(w http.ResponseWriter, r *http.Request, path string) bool {
 	fsPath := filepath.Join("static", path)
-
 	file, err := os.Open(fsPath)
 	if err != nil {
 		return false
 	}
 	defer file.Close()
-
 	info, err := file.Stat()
 	if err != nil {
 		return false
