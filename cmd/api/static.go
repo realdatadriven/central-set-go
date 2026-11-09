@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"io/fs"
 	"net/http"
@@ -24,6 +25,12 @@ import (
 func NewFallbackFileServer() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Clean(r.URL.Path)
+
+		download := r.URL.Query().Get("download")
+		if download == "true" || download == "1" || download == "yes" || (r.URL.Query().Has("download") && r.URL.Query().Get("download") == "") {
+			filename := filepath.Base(path)
+			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
+		}
 
 		// Prevent directory traversal
 		if filepath.IsAbs(path) || path == "" || path == "." {
