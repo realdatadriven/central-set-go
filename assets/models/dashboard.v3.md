@@ -1,6 +1,6 @@
 ```sql
-INSTALL erpl_web FROM community;
-LOAD erpl_web;
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
 ```
 
 ```sql
@@ -148,10 +148,8 @@ APP_NAME: {{pluckJson .queries.ids "app"}}-->
 
 {{- $q := .queries -}}
 {{- $pal := list "primary" "secondary" "accent" "info" "warning" "neutral" -}}
-{{- $u := dict -}}{{- if kindIs "slice" $q.kpi_users -}}{{- with first $q.kpi_users -}}{{- $u = . -}}{{- end -}}{{- end
--}}
-{{- $l := dict -}}{{- if kindIs "slice" $q.kpi_logs -}}{{- with first $q.kpi_logs -}}{{- $l = . -}}{{- end -}}{{- end
--}}
+{{- $u := dict -}}{{- if kindIs "slice" $q.kpi_users -}}{{- with first $q.kpi_users -}}{{- $u = . -}}{{- end -}}{{- end -}}
+{{- $l := dict -}}{{- if kindIs "slice" $q.kpi_logs -}}{{- with first $q.kpi_logs -}}{{- $l = . -}}{{- end -}}{{- end -}}
 <!DOCTYPE html>
 <html lang="en">
 

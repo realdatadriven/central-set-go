@@ -1823,7 +1823,6 @@
       "testRules": [],
       "setVariables": [],
       "activeTab": "headers",
-      "responseTab": "body",
       "sourceRequestId": "c7-dynui-partial-get",
       "sourceCollectionId": "1782657989686",
       "sourceFolderPath": [
@@ -1839,17 +1838,16 @@
       "wsConnected": false,
       "wsUrl": null,
       "wsMessages": [],
-      "grpcConnected": false,
-      "grpcStreaming": false,
-      "grpcMessages": [],
-      "grpcConfig": null,
       "groupId": null,
       "mcpDescription": "",
       "mcpInputSchema": "",
       "collectionId": null,
       "folderId": null,
       "folderPath": null,
-      "editorScope": "local"
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
     },
     {
       "id": "1794063547482auza",
@@ -1884,7 +1882,6 @@
       "testRules": [],
       "setVariables": [],
       "activeTab": "headers",
-      "responseTab": "body",
       "sourceRequestId": "1783190705616",
       "sourceCollectionId": "1782657989686",
       "sourceFolderPath": [
@@ -1900,6 +1897,93 @@
       "wsConnected": false,
       "wsUrl": null,
       "wsMessages": [],
+      "groupId": null,
+      "mcpDescription": "",
+      "mcpInputSchema": "",
+      "collectionId": null,
+      "folderId": null,
+      "folderPath": null,
+      "editorScope": "local",
+      "grpcConnected": false,
+      "grpcStreaming": false,
+      "responseTab": "body"
+    },
+    {
+      "id": "1794345497746cfy0",
+      "tabKind": "request",
+      "name": "New Request",
+      "method": "GET",
+      "url": "http://localhost:8080/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer secret",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true,
+      "inheritScripts": false,
+      "preRequestScript": "",
+      "testScript": "",
+      "testRules": [],
+      "setVariables": [],
+      "activeTab": "headers",
+      "responseTab": "body",
+      "sourceRequestId": "17943455887424m4k",
+      "sourceCollectionId": "1782657989686",
+      "sourceFolderPath": null,
+      "sourceScope": "local",
+      "proxyId": null,
+      "certificateConfig": null,
+      "inheritCertificate": false,
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": {
+          "connection": "close",
+          "content-length": "105",
+          "content-type": "application/json;odata.metadata=minimal;charset=utf-8",
+          "odata-version": "4.0"
+        },
+        "body": "{\"@odata.context\":\"/odata/$metadata\",\"value\":[{\"name\":\"customers\",\"kind\":\"EntitySet\",\"url\":\"customers\"}]}",
+        "time": 79,
+        "size": 105,
+        "actualRequest": {
+          "method": "GET",
+          "url": "http://localhost:8080/",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer secret"
+          },
+          "body": null,
+          "protocol": "HTTP/1.1",
+          "certificateNames": "System Trust Store"
+        },
+        "cookies": []
+      },
+      "error": null,
+      "loading": false,
+      "wsConnected": false,
+      "wsUrl": null,
+      "wsMessages": [],
       "grpcConnected": false,
       "grpcStreaming": false,
       "grpcMessages": [],
@@ -1910,11 +1994,12 @@
       "collectionId": null,
       "folderId": null,
       "folderPath": null,
-      "editorScope": "local"
+      "editorScope": "local",
+      "fromHistory": false
     }
   ],
   "groups": [],
-  "activeTabId": "1794063547482auza",
+  "activeTabId": "1794345497746cfy0",
   "currentView": "requests",
   "sidebarTab": "collections",
   "sidebarCollapsed": false,

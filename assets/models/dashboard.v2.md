@@ -1,7 +1,7 @@
 
 ```sql
-INSTALL erpl_web FROM community;
-LOAD erpl_web;
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
 ```
 
 ```sql

@@ -1076,6 +1076,37 @@
           "type": "none"
         },
         "inheritAuth": true
+      },
+      {
+        "id": "17943455887424m4k",
+        "name": "New Request",
+        "method": "GET",
+        "url": "http://localhost:8080/$metadata",
+        "params": [],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer secret",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
       }
     ],
     "variables": [

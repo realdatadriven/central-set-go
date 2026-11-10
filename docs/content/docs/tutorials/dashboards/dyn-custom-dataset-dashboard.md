@@ -204,8 +204,8 @@ name: GenerateORDERSData
 description: Exports custom ORDERS data
 connection: "duckdb:"
 before_sql:
-  - INSTALL erpl_web FROM community
-  - LOAD erpl_web
+  - INSTALL erpl_odata FROM community
+  - LOAD erpl_odata
   - create_api_auth_secrete
   - attach_odata_endpoint_with_users_copes
   - attach_ex_ecomerce_datalake

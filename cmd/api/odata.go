@@ -1096,8 +1096,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 }
 
 /**
-INSTALL erpl_web FROM community;
-LOAD erpl_web;
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
 
 -- Usefull for debugging
 SET erpl_trace_enabled = TRUE;

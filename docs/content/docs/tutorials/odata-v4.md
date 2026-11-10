@@ -117,13 +117,13 @@ This makes OData ideal for **secure downstream consumption**.
 
 ## DuckDB Integration (Recommended)
 
-The OData API integrates seamlessly with DuckDB using the `erpl_web` extension.
+The OData API integrates seamlessly with DuckDB using the `erpl_odata` extension.
 
 ### Setup
 
 ```sql {linenos=table}
-INSTALL erpl_web FROM community;
-LOAD erpl_web;
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
 
 -- Enable tracing (optional, useful for debugging)
 SET erpl_trace_enabled = TRUE;

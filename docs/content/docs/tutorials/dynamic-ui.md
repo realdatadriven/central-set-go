@@ -123,8 +123,8 @@ The model examples are useful starting points:
 
 ````markdown {linenos=table}
 ```sql
-INSTALL erpl_web FROM community;
-LOAD erpl_web;
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
 ```
 
 ```sql
@@ -150,11 +150,11 @@ The result can then be rendered as `{{range .queries.recent_totals}}...{{end}}`.
 
 **Important security boundary:** When querying C7-managed data from a Dynamic UI template, attach the database through the C7 OData endpoint rather than connecting directly to the underlying database. A direct database attachment does not enforce the CRUD privileges or row-level access rules configured in C7.
 
-To enforce these permissions, use the `erpl_web` extension, authenticate with the current user's token, and attach the relevant C7 OData application:
+To enforce these permissions, use the `erpl_odata` extension, authenticate with the current user's token, and attach the relevant C7 OData application:
 
 ```sql {linenos=table}
-INSTALL erpl_web FROM community;
-LOAD erpl_web;
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
 ```
 
 ```sql {linenos=table}
