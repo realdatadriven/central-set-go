@@ -249,11 +249,11 @@ jobs:
         with:
           name: windows-binary
           path: dist
-      - name: Download Windows Binary dyn-linked
-        uses: actions/download-artifact@v4
-        with:
-          name: windows-binary-dyn-linked
-          path: dist
+      #- name: Download Windows Binary dyn-linked
+      #  uses: actions/download-artifact@v4
+      #  with:
+      #    name: windows-binary-dyn-linked
+      #    path: dist
       - name: Download MacOS Binary
         uses: actions/download-artifact@v4
         with:
