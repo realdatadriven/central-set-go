@@ -921,6 +921,14 @@ columns:
   excluded:       { type: boolean, default: false, comment: "Excluded" }
 data:
   - {quack_api_id: 1, quack_api: quackapi, quack_api_desc: "HTTP routes served by DuckDB QuackAPI", port: 9495, startup_sql: "INSTALL quackapi FROM community; LOAD quackapi;", main_sql: "CREATE ROUTE hello GET '/hello' AS SELECT 'world' AS msg; SELECT * FROM quackapi_serve(9495);", shutdown_sql: "SELECT * FROM quackapi_stop(9495);", status: offline, active: true, app_id: 1, user_id: 1, excluded: false}
+  - {
+    quack_api_id: 2, quack_api: odata, 
+    quack_api_desc: "Serve any exposed DuckDB table as an OData EntitySet with $select, $filter, $orderby, $top, $skip and $count, plus an auto-generated $metadata (EDMX) from the live DuckDB catalog", 
+    port: 8080, 
+    startup_sql: "INSTALL AND LOAD odata FROM community;", 
+    main_sql: "CREATE TABLE customers (id BIGINT, name VARCHAR, active BOOLEAN);CALL odata_expose('customers');CALL odata_entity('customers', key := 'id');CALL odata_serve('http://0.0.0.0:8080', token := 'secret');", 
+    shutdown_sql: "CALL odata_stop();", status: offline, active: true, app_id: 1, user_id: 1, excluded: false
+  }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -2087,6 +2095,6 @@ active: true
 ```sql
 -- pg_procedure
 CREATE OR REPLACE PROCEDURE X AS $$
-
+....
 $$
 ```

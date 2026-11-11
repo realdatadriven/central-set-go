@@ -1963,7 +1963,7 @@
           "odata-version": "4.0"
         },
         "body": "{\"@odata.context\":\"/odata/$metadata\",\"value\":[{\"name\":\"customers\",\"kind\":\"EntitySet\",\"url\":\"customers\"}]}",
-        "time": 79,
+        "time": 69,
         "size": 105,
         "actualRequest": {
           "method": "GET",

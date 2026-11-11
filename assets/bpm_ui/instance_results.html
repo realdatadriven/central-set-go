@@ -1,0 +1,236 @@
+```sql
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
+```
+
+```sql
+CREATE SECRET api_auth (
+    TYPE http_bearer,
+    TOKEN '{{.user.token}}',
+    SCOPE '{{.Host}}'
+);
+```
+
+```sql
+ATTACH IF NOT EXISTS '{{.Host}}/odata/BPM' AS BPM (TYPE odata);
+```
+
+```sql instances
+SELECT i.process_instance_id,
+       i.instance_code,
+       i.status,
+       i.started_at,
+       p.name AS process_name,
+       p.version AS process_version,
+       current_node.name AS current_activity
+FROM BPM.process_instance i
+JOIN BPM.process_node p ON p.process_node_id = i.process_node_id
+LEFT JOIN BPM.process_node current_node ON current_node.process_node_id = i.current_node_id
+WHERE coalesce(i.excluded, false) = false
+  AND (
+      '{{replace (default "" .PathParams.search) "'" "''"}}' = ''
+      OR coalesce(i.instance_code, '') ILIKE '%' || '{{replace (default "" .PathParams.search) "'" "''"}}' || '%'
+      OR coalesce(p.name, '') ILIKE '%' || '{{replace (default "" .PathParams.search) "'" "''"}}' || '%'
+      OR CAST(i.process_instance_id AS VARCHAR) = '{{replace (default "" .PathParams.search) "'" "''"}}'
+  )
+  AND (
+      '{{replace (default "" .PathParams.status) "'" "''"}}' = ''
+      OR lower(i.status) = lower('{{replace (default "" .PathParams.status) "'" "''"}}')
+  )
+ORDER BY i.started_at DESC
+LIMIT 100;
+```
+
+```sql selected
+SELECT i.process_instance_id,
+       i.parent_instance_id,
+       i.instance_code,
+       i.status,
+       i.started_at,
+       i.completed_at,
+       i.current_user_id,
+       p.process_node_id,
+       p.name AS process_name,
+       p.version AS process_version,
+       current_node.name AS current_activity
+FROM BPM.process_instance i
+JOIN BPM.process_node p ON p.process_node_id = i.process_node_id
+LEFT JOIN BPM.process_node current_node ON current_node.process_node_id = i.current_node_id
+WHERE i.process_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(i.excluded, false) = false;
+```
+
+```sql steps
+SELECT s.process_instance_step_id,
+       s.process_instance_id,
+       s.process_node_id,
+       s.status,
+       s.assigned_user_id,
+       s.started_at,
+       s.completed_at,
+       s.sent_back_to_step_id,
+       n.node_code,
+       n.element_type,
+       n.name AS activity_name
+FROM BPM.process_instance_step s
+JOIN BPM.process_node n ON n.process_node_id = s.process_node_id
+WHERE s.process_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(s.excluded, false) = false
+ORDER BY s.process_instance_step_id;
+```
+
+```sql activity_data
+SELECT d.process_instance_step_id,
+       field_schema.field,
+       field_schema.label,
+       field_schema.data_type,
+       d.value
+FROM BPM.process_instance_data d
+JOIN BPM.process_activity_schema field_schema
+  ON field_schema.process_activity_schema_id = d.process_activity_schema_id
+WHERE d.process_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(d.excluded, false) = false
+ORDER BY d.process_instance_step_id, field_schema.order_index;
+```
+
+```sql subprocesses
+SELECT child.process_instance_id,
+       child.instance_code,
+       child.status,
+       child.started_at,
+       process.name AS process_name,
+       process.version AS process_version,
+       launch_node.name AS launched_by_activity
+FROM BPM.process_instance child
+JOIN BPM.process_node process ON process.process_node_id = child.process_node_id
+LEFT JOIN BPM.process_instance_step launch_step
+  ON launch_step.process_instance_step_id = child.parent_instance_step_id
+LEFT JOIN BPM.process_node launch_node ON launch_node.process_node_id = launch_step.process_node_id
+WHERE child.parent_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(child.excluded, false) = false
+ORDER BY child.started_at DESC;
+```
+
+```sql parent_instance
+SELECT parent.process_instance_id, parent.instance_code, process.name AS process_name
+FROM BPM.process_instance child
+JOIN BPM.process_instance parent ON parent.process_instance_id = child.parent_instance_id
+JOIN BPM.process_node process ON process.process_node_id = parent.process_node_id
+WHERE child.process_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(parent.excluded, false) = false;
+```
+
+```sql process_nodes
+SELECT node.node_code, node.element_type, node.name, node.description, node.order_index
+FROM BPM.process_instance i
+JOIN BPM.process_node node ON node.parent_node_id = i.process_node_id
+WHERE i.process_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(node.active, false) = true
+  AND coalesce(node.excluded, false) = false
+ORDER BY node.order_index, node.node_code;
+```
+
+```sql process_edges
+SELECT source.name AS from_name, target.name AS to_name,
+       edge.edge_order, edge.is_decision, edge.condition, edge.branch_value
+FROM BPM.process_instance i
+JOIN BPM.process_flow flow ON flow.process_node_id = i.process_node_id
+JOIN BPM.process_edge edge ON edge.process_flow_id = flow.process_flow_id
+JOIN BPM.process_node source ON source.process_node_id = edge.from_node_id
+JOIN BPM.process_node target ON target.process_node_id = edge.to_node_id
+WHERE i.process_instance_id =
+  {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}{{.PathParams.instance_id}}{{else}}0{{end}}
+  AND coalesce(flow.active, false) = true
+  AND coalesce(flow.excluded, false) = false
+  AND coalesce(edge.excluded, false) = false
+ORDER BY edge.edge_order;
+```
+
+{{- $q := .queries -}}
+{{- $search := default "" .PathParams.search -}}
+{{- $status := default "" .PathParams.status -}}
+<section class="space-y-4">
+  <div>
+    <h1 class="text-2xl font-bold">Process instances</h1>
+    <p class="text-base-content/70">Search by instance code, process name, or numeric ID; filter by status.</p>
+  </div>
+  <form method="get" action="/ui/bpm/instances"
+        hx-get="/ui/bpm/partial/instance_results"
+        hx-trigger="submit, input delay:400ms from:input[name=search], change from:select[name=status]"
+        hx-target="#instance-results"
+        hx-swap="innerHTML"
+        class="flex flex-wrap items-end gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+    <label class="form-control min-w-64 flex-1">
+      <span class="label-text mb-1">Search</span>
+      <input class="input input-bordered" type="search" name="search" value="{{$search}}" placeholder="Code, process, or ID">
+    </label>
+    <label class="form-control w-48">
+      <span class="label-text mb-1">Status</span>
+      <select class="select select-bordered" name="status">
+        <option value="">All statuses</option>
+        {{range $option := list "pending" "in_progress" "completed" "cancelled" "failed"}}
+          <option value="{{$option}}" {{if eq $status $option}}selected{{end}}>{{$option}}</option>
+        {{end}}
+      </select>
+    </label>
+    <button class="btn btn-primary" type="submit">Search</button>
+    <a class="btn btn-ghost"
+       href="/ui/bpm/instances"
+       hx-get="/ui/bpm/partial/instance_results"
+       hx-target="#instance-results"
+       hx-swap="innerHTML">Clear</a>
+  </form>
+
+  {{range $name, $value := $q}}
+    {{if kindIs "string" $value}}
+      <div role="alert" class="alert alert-error"><span><b>{{$name}}</b>: {{$value}}</span></div>
+    {{end}}
+  {{end}}
+
+  <div class="overflow-x-auto rounded-box bg-base-100 shadow-sm">
+    <table class="table table-zebra">
+      <thead>
+        <tr><th>Instance</th><th>Process</th><th>Status</th><th>Current activity</th><th>Started</th><th></th></tr>
+      </thead>
+      <tbody>
+        {{if and (kindIs "slice" $q.instances) (gt (len $q.instances) 0)}}
+          {{range $instance := $q.instances}}
+            <tr>
+              <td class="font-mono text-xs">{{$instance.instance_code}}</td>
+              <td>{{$instance.process_name}} <span class="text-xs text-base-content/60">{{$instance.process_version}}</span></td>
+              <td><span class="badge badge-outline">{{$instance.status}}</span></td>
+              <td>{{if $instance.current_activity}}{{$instance.current_activity}}{{else}}—{{end}}</td>
+              <td>{{if $instance.started_at}}{{$instance.started_at}}{{else}}—{{end}}</td>
+              <td>
+                <a class="btn btn-primary btn-xs"
+                   href="/ui/bpm/instances?instance_id={{$instance.process_instance_id}}"
+                   hx-get="/ui/bpm/partial/instance_detail?instance_id={{$instance.process_instance_id}}"
+                   hx-target="#instance-detail"
+                   hx-swap="innerHTML"
+                   hx-push-url="/ui/bpm/instances?instance_id={{$instance.process_instance_id}}">Inspect</a>
+              </td>
+            </tr>
+          {{end}}
+        {{else}}
+          <tr><td colspan="6" class="text-base-content/60">No matching process instances.</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  <div id="instance-detail"
+       {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}
+         hx-get="/ui/bpm/partial/instance_detail?instance_id={{.PathParams.instance_id}}"
+         hx-trigger="load"
+         hx-swap="innerHTML"
+       {{end}}>
+    {{if regexMatch "^[0-9]+$" (toString .PathParams.instance_id)}}
+      <div class="alert mt-6">Loading instance details…</div>
+    {{end}}
+  </div>
+</section>

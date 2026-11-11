@@ -1,0 +1,277 @@
+```sql
+INSTALL erpl_odata FROM community;
+LOAD erpl_odata;
+```
+
+```sql
+CREATE SECRET api_auth (
+    TYPE http_bearer,
+    TOKEN '{{.user.token}}',
+    SCOPE '{{.Host}}'
+);
+```
+
+```sql
+ATTACH IF NOT EXISTS '{{.Host}}/odata/BPM' AS BPM (TYPE odata);
+```
+
+```sql BP
+SELECT process_node_id, node_code, version, name, description, steps_orientation
+FROM BPM.process_node
+WHERE element_type = 'BP'
+  AND process_status = 'published'
+  AND active = true
+  AND coalesce(excluded, false) = false
+ORDER BY name, version;
+```
+
+```sql process_nodes
+SELECT process_node_id, parent_node_id, node_code, element_type, name,
+       description, order_index, execution_mode, subprocess_node_id
+FROM BPM.process_node
+WHERE active = true
+  AND coalesce(excluded, false) = false
+ORDER BY parent_node_id, order_index, node_code;
+```
+
+```sql process_edges
+SELECT f.process_node_id,
+       src.node_code AS from_node_code,
+       src.name AS from_node_name,
+       dst.node_code AS to_node_code,
+       dst.name AS to_node_name,
+       e.edge_order,
+       e.is_decision,
+       e.condition,
+       e.branch_value
+FROM BPM.process_edge e
+JOIN BPM.process_flow f ON f.process_flow_id = e.process_flow_id
+JOIN BPM.process_node src ON src.process_node_id = e.from_node_id
+JOIN BPM.process_node dst ON dst.process_node_id = e.to_node_id
+WHERE f.active = true
+  AND coalesce(f.excluded, false) = false
+  AND coalesce(e.excluded, false) = false
+ORDER BY f.process_node_id, e.edge_order;
+```
+
+```sql instances
+SELECT i.process_instance_id,
+       i.process_node_id,
+       i.instance_code,
+       i.status,
+       strftime(i.started_at, '%Y-%m-%d %H:%M') AS started_at,
+       p.name AS process_name,
+       p.version AS process_version
+FROM BPM.process_instance i
+JOIN BPM.process_node p ON p.process_node_id = i.process_node_id
+WHERE coalesce(i.excluded, false) = false
+ORDER BY i.started_at DESC
+LIMIT 50;
+```
+
+```sql instance_steps
+SELECT s.process_instance_id,
+       n.node_code,
+       n.element_type,
+       n.name AS activity_name,
+       s.status,
+       strftime(s.started_at, '%Y-%m-%d %H:%M') AS started_at,
+       strftime(s.completed_at, '%Y-%m-%d %H:%M') AS completed_at
+FROM BPM.process_instance_step s
+JOIN BPM.process_node n ON n.process_node_id = s.process_node_id
+WHERE coalesce(s.excluded, false) = false
+ORDER BY s.process_instance_id, s.process_instance_step_id;
+```
+
+{{- $q := .queries -}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BPM Process Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.1/dist/htmx.min.js"></script>
+</head>
+<body class="min-h-screen bg-base-200">
+  <header class="navbar bg-base-100 px-4 shadow-sm lg:px-8">
+    <div class="flex-1">
+      <a class="text-lg font-semibold" href="/ui/bpm">BPM Process Dashboard</a>
+    </div>
+    <a class="btn btn-ghost btn-sm" href="/ui/bpm/instances">Process instances</a>
+    <span class="text-sm text-base-content/70">{{.user.username}}</span>
+  </header>
+
+  <main class="mx-auto max-w-7xl space-y-8 p-4 lg:p-8">
+    {{range $name, $value := $q}}
+      {{if kindIs "string" $value}}
+        <div role="alert" class="alert alert-error">
+          <span><b>{{$name}}</b>: {{$value}}</span>
+        </div>
+      {{end}}
+    {{end}}
+
+    <section class="space-y-4">
+      <div>
+        <h1 class="text-2xl font-bold">Published processes</h1>
+        <p class="text-base-content/70">Start a process instance or inspect its activities and flow map.</p>
+      </div>
+
+      {{if kindIs "slice" $q.BP}}
+        {{range $process := $q.BP}}
+          <article class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+              <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 class="card-title">{{$process.name}}</h2>
+                  <p class="text-sm text-base-content/70">
+                    {{$process.node_code}} | {{$process.version}}
+                    {{if $process.steps_orientation}}| {{$process.steps_orientation}}{{end}}
+                  </p>
+                  {{if $process.description}}<p class="mt-2">{{$process.description}}</p>{{end}}
+                </div>
+                <form method="post" action="/crud/bpm/process_instance?ui=bpm&amp;page=dashboard"
+                      hx-post="/crud/bpm/process_instance?ui=bpm&amp;page=dashboard"
+                      hx-target="#start-result"
+                      hx-swap="innerHTML"
+                      class="flex flex-wrap items-end gap-2">
+                  <input type="hidden" name="process_node_id" value="{{$process.process_node_id}}">
+                  <input type="hidden" name="instance_code" value='{{printf "%s-%s" $process.node_code (uuidv4)}}'>
+                  <input type="hidden" name="status" value="pending">
+                  <input type="hidden" name="started_at" value='{{now | date "2006-01-02T15:04:05Z07:00"}}'>
+                  <button class="btn btn-primary" type="submit">Start process</button>
+                </form>
+              </div>
+              <div id="start-result" role="status" aria-live="polite"></div>
+
+              {{- $nodes := list -}}
+              {{- if kindIs "slice" $q.process_nodes -}}
+                {{- range $node := $q.process_nodes -}}
+                  {{- if eq $node.parent_node_id $process.process_node_id -}}
+                    {{- $nodes = append $nodes $node -}}
+                  {{- end -}}
+                {{- end -}}
+              {{- end -}}
+              {{- $edges := list -}}
+              {{- if kindIs "slice" $q.process_edges -}}
+                {{- range $edge := $q.process_edges -}}
+                  {{- if eq $edge.process_node_id $process.process_node_id -}}
+                    {{- $edges = append $edges $edge -}}
+                  {{- end -}}
+                {{- end -}}
+              {{- end -}}
+              <div class="grid gap-6 border-t border-base-300 pt-5 lg:grid-cols-2">
+                <section>
+                  <h3 class="mb-3 font-semibold">Activities and child processes</h3>
+                  {{if $nodes}}
+                    <ul class="space-y-3">
+                      {{range $node := $nodes}}
+                        <li class="rounded-box bg-base-200 p-3">
+                          <div class="flex flex-wrap items-center gap-2">
+                            <span class="badge badge-outline">{{$node.element_type}}</span>
+                            <strong>{{$node.name}}</strong>
+                            <span class="text-xs text-base-content/60">{{$node.node_code}}</span>
+                          </div>
+                          {{if $node.description}}<p class="mt-1 text-sm">{{$node.description}}</p>{{end}}
+                          {{if $node.execution_mode}}
+                            <p class="mt-1 text-xs text-base-content/70">Execution: {{$node.execution_mode}}</p>
+                          {{end}}
+                        </li>
+                      {{end}}
+                    </ul>
+                  {{else}}
+                    <p class="text-sm text-base-content/60">No active child nodes are defined.</p>
+                  {{end}}
+                </section>
+
+                <section>
+                  <h3 class="mb-3 font-semibold">Process map edges</h3>
+                  {{if $edges}}
+                    <ol class="space-y-2">
+                      {{range $edge := $edges}}
+                        <li class="rounded-box bg-base-200 p-3 text-sm">
+                          <span class="font-medium">{{$edge.from_node_name}}</span>
+                          <span aria-label="leads to">&rarr;</span>
+                          <span class="font-medium">{{$edge.to_node_name}}</span>
+                          {{if $edge.is_decision}}
+                            <span class="badge badge-warning badge-sm">Decision</span>
+                            {{if $edge.condition}}<p class="mt-1 text-xs">Condition: {{$edge.condition}}</p>{{end}}
+                            <p class="text-xs">Branch: {{if $edge.branch_value}}true{{else}}false{{end}}</p>
+                          {{end}}
+                        </li>
+                      {{end}}
+                    </ol>
+                  {{else}}
+                    <p class="text-sm text-base-content/60">No active flow edges are defined.</p>
+                  {{end}}
+                </section>
+              </div>
+            </div>
+          </article>
+        {{end}}
+      {{else}}
+        <div class="alert alert-info"><span>No published processes are available.</span></div>
+      {{end}}
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-2xl font-bold">Recent process instances</h2>
+        <p class="text-base-content/70">The instance list includes its registered start time and any recorded activity steps.</p>
+      </div>
+      <div class="overflow-x-auto rounded-box bg-base-100 shadow-sm">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Instance</th>
+              <th>Process</th>
+              <th>Status</th>
+              <th>Started at</th>
+              <th>Activity history</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{if kindIs "slice" $q.instances}}
+              {{range $instance := $q.instances}}
+                <tr>
+                  <td class="font-mono text-xs">{{$instance.instance_code}}</td>
+                  <td>{{$instance.process_name}} <span class="text-xs text-base-content/60">({{$instance.process_version}})</span></td>
+                  <td><span class="badge badge-outline">{{$instance.status}}</span></td>
+                  <td>{{$instance.started_at}}</td>
+                  <td>
+                    {{- $steps := list -}}
+                    {{- if kindIs "slice" $q.instance_steps -}}
+                      {{- range $step := $q.instance_steps -}}
+                        {{- if eq $step.process_instance_id $instance.process_instance_id -}}
+                          {{- $steps = append $steps $step -}}
+                        {{- end -}}
+                      {{- end -}}
+                    {{- end -}}
+                    {{if $steps}}
+                      <ul class="space-y-1">
+                        {{range $step := $steps}}
+                          <li>
+                            <span class="font-medium">{{$step.activity_name}}</span>
+                            <span class="badge badge-ghost badge-sm">{{$step.status}}</span>
+                            {{if $step.started_at}}<span class="text-xs text-base-content/60">{{$step.started_at}}</span>{{end}}
+                          </li>
+                        {{end}}
+                      </ul>
+                    {{else}}
+                      <span class="text-xs text-base-content/60">No activity steps recorded.</span>
+                    {{end}}
+                  </td>
+                </tr>
+              {{end}}
+            {{else}}
+              <tr><td colspan="5" class="text-base-content/60">No process instances have been started.</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

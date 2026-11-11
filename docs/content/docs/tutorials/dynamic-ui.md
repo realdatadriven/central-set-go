@@ -101,6 +101,8 @@ Create a named `ui_partial` such as `header`, then associate it to a page throug
 
 Partials can have their own `ui_partial_data` OData bindings. Active page partials and their bindings are loaded for rendering, allowing shared layouts and components to use the same template data context.
 
+Active UI partials are also available as server-rendered fragments at `/ui/{ui_slug}/partial/{partial_name}`. Use HTMX attributes such as `hx-get`, `hx-target`, and `hx-swap` to fetch a fragment and replace part of a page without a full navigation. The BPM instance browser in `assets/models/bpm_ui_model.md` demonstrates this pattern with separate results and detail partials.
+
 Add stylesheets, scripts, or other files as `ui_asset` rows. Dynamic UI assets are served below `/ui/{ui_slug}/static/{asset...}` (and the compatible `/asset/` route). This makes it practical to load a CDN-hosted Tailwind CSS or daisyUI stylesheet and use HTMX for progressive interactions; keep third-party asset URLs and versions explicit in the page template. For example:
 
 ```html {linenos=table}
@@ -115,6 +117,8 @@ The model examples are useful starting points:
 * `UI_PARTIAL_HEADER`, `UI_PARTIAL_FOOTER`, `UI_PARTIAL_CRUD`, and `UI_PARTIAL_CRUD_FORM` show reusable partial definitions and parameterized data bindings.
 * `STORE_UI_PAGE_HOME` shows a page with a path-parameter-driven OData binding and associated partials.
 * `SURVEY` and `DASHBOARD2` show other page and data-binding configurations.
+* `UI_FOR_BPM` in `assets/models/bpm_ui_model.md` demonstrates named SQL queries over the BPM OData endpoint, process-instance search/details, activity data, and subprocess navigation; its page templates are in `assets/bpm_ui/`.
+* `BPM_EMAIL_ACTIONS` at the end of `assets/models/bpm_ui_model.md` demonstrates CRUD-triggered email notifications for BA step starts and completions. Those actions notify but do not advance the process; the BPM execution layer must create or start the next step.
 * The seeded login, signup, recovery, reset, alter-password, and two-factor pages show response templates and auth-oriented pages.
 
 ## Optional SQL blocks

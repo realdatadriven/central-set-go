@@ -1,0 +1,166 @@
+{{- $q := .queries -}}
+{{- $selected := dict -}}
+{{- if kindIs "slice" $q.selected -}}
+  {{- with first $q.selected -}}{{- $selected = . -}}{{- end -}}
+{{- end -}}
+{{if $selected.process_instance_id}}
+  {{- $instanceID := $selected.process_instance_id -}}
+  <section class="mt-6 space-y-5 rounded-box bg-base-100 p-5 shadow-sm">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-bold">Instance {{$selected.instance_code}}</h2>
+        <p class="text-base-content/70">
+          {{$selected.process_name}} ({{$selected.process_version}})
+          | <span class="badge badge-outline">{{$selected.status}}</span>
+        </p>
+        <p class="mt-1 text-sm text-base-content/70">
+          Started: {{if $selected.started_at}}{{$selected.started_at}}{{else}}—{{end}}
+          {{if $selected.completed_at}}| Completed: {{$selected.completed_at}}{{end}}
+          {{if $selected.current_activity}}| Current activity: {{$selected.current_activity}}{{end}}
+        </p>
+      </div>
+      <button class="btn btn-ghost btn-sm"
+              type="button"
+              hx-get="/ui/bpm/partial/instance_results"
+              hx-target="#instance-results"
+              hx-swap="innerHTML"
+              hx-push-url="/ui/bpm/instances">Close details</button>
+    </div>
+
+    {{if and (kindIs "slice" $q.parent_instance) (gt (len $q.parent_instance) 0)}}
+      {{range $parent := $q.parent_instance}}
+        <div class="alert alert-info">
+          <span>Subprocess of {{$parent.process_name}}.</span>
+          <a class="link"
+             href="/ui/bpm/instances?instance_id={{$parent.process_instance_id}}"
+             hx-get="/ui/bpm/partial/instance_detail?instance_id={{$parent.process_instance_id}}"
+             hx-target="#instance-detail"
+             hx-swap="innerHTML"
+             hx-push-url="/ui/bpm/instances?instance_id={{$parent.process_instance_id}}">Open parent {{$parent.instance_code}}</a>
+        </div>
+      {{end}}
+    {{end}}
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <section>
+        <h3 class="mb-3 text-lg font-semibold">Activity steps and submitted data</h3>
+        {{if and (kindIs "slice" $q.steps) (gt (len $q.steps) 0)}}
+          {{range $step := $q.steps}}
+            <article class="mb-3 rounded-box bg-base-200 p-4">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="badge badge-outline">{{$step.element_type}}</span>
+                <strong>{{$step.activity_name}}</strong>
+                <span class="badge badge-ghost">{{$step.status}}</span>
+              </div>
+              <p class="mt-2 text-xs text-base-content/70">
+                {{$step.node_code}}
+                {{if $step.started_at}}| Started {{$step.started_at}}{{end}}
+                {{if $step.completed_at}}| Completed {{$step.completed_at}}{{end}}
+                {{if $step.assigned_user_id}}| Assigned user {{$step.assigned_user_id}}{{end}}
+              </p>
+              {{- $stepData := list -}}
+              {{- if kindIs "slice" $q.activity_data -}}
+                {{- range $value := $q.activity_data -}}
+                  {{- if eq $value.process_instance_step_id $step.process_instance_step_id -}}
+                    {{- $stepData = append $stepData $value -}}
+                  {{- end -}}
+                {{- end -}}
+              {{- end -}}
+              {{if $stepData}}
+                <div class="mt-3 overflow-x-auto">
+                  <table class="table table-xs">
+                    <thead><tr><th>Field</th><th>Value</th><th>Type</th></tr></thead>
+                    <tbody>
+                      {{range $value := $stepData}}
+                        <tr>
+                          <td>{{$value.label}} <span class="text-xs text-base-content/60">({{$value.field}})</span></td>
+                          <td class="whitespace-pre-wrap">{{if $value.value}}{{$value.value}}{{else}}—{{end}}</td>
+                          <td>{{$value.data_type}}</td>
+                        </tr>
+                      {{end}}
+                    </tbody>
+                  </table>
+                </div>
+              {{else}}
+                <p class="mt-2 text-sm text-base-content/60">No activity data has been recorded.</p>
+              {{end}}
+            </article>
+          {{end}}
+        {{else}}
+          <p class="text-sm text-base-content/60">No activity steps have been recorded.</p>
+        {{end}}
+      </section>
+
+      <section>
+        <h3 class="mb-3 text-lg font-semibold">Process map</h3>
+        <h4 class="mb-2 font-medium">Activities and nodes</h4>
+        {{if and (kindIs "slice" $q.process_nodes) (gt (len $q.process_nodes) 0)}}
+          <ul class="space-y-2">
+            {{range $node := $q.process_nodes}}
+              <li class="rounded-box bg-base-200 p-3">
+                <span class="badge badge-outline badge-sm">{{$node.element_type}}</span>
+                <strong>{{$node.name}}</strong>
+                <span class="text-xs text-base-content/60">{{$node.node_code}}</span>
+                {{if $node.description}}<p class="mt-1 text-sm">{{$node.description}}</p>{{end}}
+              </li>
+            {{end}}
+          </ul>
+        {{else}}
+          <p class="text-sm text-base-content/60">No child process nodes found.</p>
+        {{end}}
+
+        <h4 class="mb-2 mt-4 font-medium">Flow edges</h4>
+        {{if and (kindIs "slice" $q.process_edges) (gt (len $q.process_edges) 0)}}
+          <ol class="space-y-2">
+            {{range $edge := $q.process_edges}}
+              <li class="rounded-box bg-base-200 p-3 text-sm">
+                <strong>{{$edge.from_name}}</strong> &rarr; <strong>{{$edge.to_name}}</strong>
+                {{if $edge.is_decision}}
+                  <span class="badge badge-warning badge-sm">Decision</span>
+                  {{if $edge.condition}}<p class="mt-1 text-xs">Condition: {{$edge.condition}}</p>{{end}}
+                  <p class="text-xs">Branch: {{if $edge.branch_value}}true{{else}}false{{end}}</p>
+                {{end}}
+              </li>
+            {{end}}
+          </ol>
+        {{else}}
+          <p class="text-sm text-base-content/60">No process flow edges found.</p>
+        {{end}}
+      </section>
+    </div>
+
+    <section>
+      <h3 class="mb-3 text-lg font-semibold">Subprocess instances</h3>
+      {{if and (kindIs "slice" $q.subprocesses) (gt (len $q.subprocesses) 0)}}
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead><tr><th>Instance</th><th>Process</th><th>Status</th><th>Started</th><th>Launched by</th><th></th></tr></thead>
+            <tbody>
+              {{range $child := $q.subprocesses}}
+                <tr>
+                  <td class="font-mono text-xs">{{$child.instance_code}}</td>
+                  <td>{{$child.process_name}} <span class="text-xs text-base-content/60">{{$child.process_version}}</span></td>
+                  <td><span class="badge badge-outline">{{$child.status}}</span></td>
+                  <td>{{if $child.started_at}}{{$child.started_at}}{{else}}—{{end}}</td>
+                  <td>{{if $child.launched_by_activity}}{{$child.launched_by_activity}}{{else}}—{{end}}</td>
+                  <td>
+                    <a class="btn btn-primary btn-xs"
+                       href="/ui/bpm/instances?instance_id={{$child.process_instance_id}}"
+                       hx-get="/ui/bpm/partial/instance_detail?instance_id={{$child.process_instance_id}}"
+                       hx-target="#instance-detail"
+                       hx-swap="innerHTML"
+                       hx-push-url="/ui/bpm/instances?instance_id={{$child.process_instance_id}}">Open subprocess</a>
+                  </td>
+                </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        <p class="text-sm text-base-content/60">No subprocess instances have been started.</p>
+      {{end}}
+    </section>
+  </section>
+{{else}}
+  <div role="alert" class="alert alert-warning"><span>That process instance could not be found.</span></div>
+{{end}}
