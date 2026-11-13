@@ -403,7 +403,6 @@ func (app *application) startQuackServer(params Dict) Dict {
 	} else if _, ok := params["data"].(Dict)["quack"].(Dict); ok {
 		quack_server_id = params["data"].(Dict)["quack"].(Dict)["quack_server_id"]
 	}
-
 	quack_server := any(nil)
 	if _, ok := params["data"].(Dict)["name"]; ok {
 		quack_server = params["data"].(Dict)["name"]
@@ -486,6 +485,18 @@ func (app *application) startQuackServer(params Dict) Dict {
 				fmt.Printf("Failed to write file: %s", err)
 			}
 		}
+	}
+	sql := fmt.Sprintf("UPDATE quack_server SET status = 'start' WHERE quack_server_id = %d", app.toInt(quack_server_id))
+	_, err = app.db.ExecuteQuery(sql, []any{}...)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Sprintf("Failed to update QuackServer status: %v", err)}
+	} else {
+		bdc := Dict{
+			"type":     "data_change",
+			"database": app.config.db.dsn,
+			"table":    "quack_server",
+		}
+		app.BroadCastChange(bdc)
 	}
 	return Dict{
 		"success": true,
@@ -581,6 +592,18 @@ func (app *application) stopQuackServer(params Dict) Dict {
 			}
 		}
 	}*/
+	sql := fmt.Sprintf("UPDATE quack_server SET status = 'stop' WHERE quack_server_id = %d", app.toInt(quack_server_id))
+	_, err = app.db.ExecuteQuery(sql, []any{}...)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Sprintf("Failed to update QuackServer status: %v", err)}
+	} else {
+		bdc := Dict{
+			"type":     "data_change",
+			"database": app.config.db.dsn,
+			"table":    "quack_server",
+		}
+		app.BroadCastChange(bdc)
+	}
 	return Dict{
 		"success": true,
 		"msg":     "Quack Server stopped successfully!",
@@ -661,6 +684,18 @@ func (app *application) restartQuackServer(params Dict) Dict {
 			"success": false,
 			"msg":     fmt.Sprintf("Failed to restart Quack Server: %v", err),
 		}
+	}
+	sql := fmt.Sprintf("UPDATE quack_server SET status = 'start' WHERE quack_server_id = %d", app.toInt(quack_server_id))
+	_, err = app.db.ExecuteQuery(sql, []any{}...)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Sprintf("Failed to update QuackServer status: %v", err)}
+	} else {
+		bdc := Dict{
+			"type":     "data_change",
+			"database": app.config.db.dsn,
+			"table":    "quack_server",
+		}
+		app.BroadCastChange(bdc)
 	}
 	return Dict{
 		"success": true,

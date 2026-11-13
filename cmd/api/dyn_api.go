@@ -817,6 +817,8 @@ func (app *application) dyn_api(w http.ResponseWriter, r *http.Request) {
 				"msg":     fmt.Sprintf("No route %s/%s exists yet!", ctrl, act),
 			}
 		}
+	case "quack-api", "quack_api", "quackapi":
+		data = app.runQuackAPIAction(params, act)
 	case "cron":
 		if app.contains([]any{"run", "r", "execute", "exec", "e"}, act) {
 			if !token["success"].(bool) {

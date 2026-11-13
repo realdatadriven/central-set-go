@@ -239,6 +239,37 @@ func (app *application) runQuackAPIAction(params Dict, action string) Dict {
 	if err != nil {
 		return Dict{"success": false, "msg": fmt.Sprintf("Failed to %s QuackAPI: %v", action, err)}
 	}
+	/*/ update the quack_api table with the new status
+	updateParams := Dict{
+		"db": "ADMIN",
+		"data": Dict{
+			"table": "quack_api",
+			"db":    "ADMIN",
+			"filters": []any{Dict{
+				"field": "quack_api_id",
+				"cond":  "=",
+				"value": apiID,
+			}},
+			"updates": Dict{
+				"status": action,
+			},
+		},
+	}
+	app.update(updateParams)*/
+	sql := fmt.Sprintf("UPDATE quack_api SET status = '%s' WHERE quack_api_id = %d", action, apiID)
+	_, err = app.db.ExecuteQuery(sql, []any{}...)
+	if err != nil {
+		return Dict{"success": false, "msg": fmt.Sprintf("Failed to update QuackAPI status: %v", err)}
+	} else {
+		// fmt.Printf("QuackAPI %d status updated to %s\n", apiID, action)
+		// broadcast the status change to all connected clients
+		bdc := Dict{
+			"type":     "data_change",
+			"database": app.config.db.dsn,
+			"table":    "quack_api",
+		}
+		app.BroadCastChange(bdc)
+	}
 	return Dict{"success": true, "msg": fmt.Sprintf("QuackAPI %s successful", action)}
 }
 
