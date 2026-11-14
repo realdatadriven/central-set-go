@@ -255,7 +255,7 @@ func (qm *QuackManager) registerCheckTokenUDF(conn etlx.DBInterface, config Dict
 	if qm.validateToken == nil {
 		return fmt.Errorf("no token validation function configured for quack manager")
 	}
-
+	fmt.Println("Registering check token UDF", conn.GetDriverName())
 	ddb, ok := conn.(*etlx.DuckDB)
 	if !ok {
 		return fmt.Errorf("check token udf registration requires a DuckDB connection")
@@ -273,11 +273,13 @@ func (qm *QuackManager) registerCheckTokenUDF(conn etlx.DBInterface, config Dict
 	}
 
 	macroSQL := `CREATE MACRO IF NOT EXISTS check_token(session_id, client_token, server_token) AS (quack_check_token(client_token));`
-	if _, err := conn.ExecuteQuery(macroSQL); err != nil {
+	// The Go UDF is registered on sqlConn. Run the macro and setting on that
+	// same pinned connection so DuckDB sees the registered function.
+	if _, err := sqlConn.ExecContext(context.Background(), macroSQL); err != nil {
 		return fmt.Errorf("failed to create check_token macro: %w", err)
 	}
 	sql := `SET GLOBAL quack_authentication_function = 'check_token';`
-	if _, err := conn.ExecuteQuery(sql); err != nil {
+	if _, err := sqlConn.ExecContext(context.Background(), sql); err != nil {
 		return fmt.Errorf("failed to set quack_authentication_function: %w", err)
 	}
 

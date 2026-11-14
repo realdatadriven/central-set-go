@@ -895,9 +895,39 @@ table_layout:
   default_order:
     - { field: quack_name, order: ASC }  
   exec_button: 
-    - {callApi: true, method: POST, api: quack/start,   tooltip: Start Quack Server,   icon: play,       active: true}
-    - {callApi: true, method: POST, api: quack/stop,    tooltip: Stop Quack Server,    icon: stop,       active: true}
-    - {callApi: true, method: POST, api: quack/restart, tooltip: Restart Quack Server, icon: arrow-path, active: true}
+    - {callApi: true, method: POST, api: quack/start,   tooltip: Start Quack Server,   icon: play,       active: true, class: 'btn-outline btn-success', disable: "d?.status==='start'"}
+    - {callApi: true, method: POST, api: quack/stop,    tooltip: Stop Quack Server,    icon: stop,       active: true, class: 'btn-outline btn-error',   disable: "d?.status==='stop'"}
+    - {callApi: true, method: POST, api: quack/restart, tooltip: Restart Quack Server, icon: arrow-path, active: true, class: 'btn-outline btn-success', disable: "d?.status==='stop'"}
+```
+
+
+## QUACK_LOGS
+```yaml
+table: quack_logs
+comment: Quack Server Activity Logs
+columns:
+  quack_log_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
+  quack_server_id: { type: integer, fk: "quack_server.quack_server_id", nullable: false, comment: "Quack Server", form_display: true, table_display: true, order: 1, form_size: 3 }
+  event:           { type: varchar, len: 100, nullable: false, comment: "Event", form_display: true, table_display: true, order: 2, form_size: 3 }
+  status:          { type: varchar, len: 50, comment: "Status", form_display: true, table_display: true, order: 3, form_size: 2 }
+  port:            { type: integer, comment: "Port", form_display: true, table_display: true, order: 4, form_size: 2 }
+  message:         { type: text, comment: "Message", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: txt }
+  log_time:        { type: datetime, nullable: false, comment: "Log Time", form_display: true, table_display: true, order: 6, form_size: 3 }
+  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
+  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
+  created_at:      { type: datetime, comment: "Created at" }
+  updated_at:      { type: datetime, comment: "Updated at" }
+  excluded:        { type: boolean, default: false, comment: "Excluded" }
+form_layout:
+  tabs_steps: tabs
+  form_in_popup: false
+  size: 8
+table_layout:
+  allow_in_submenu: {}
+  default_order:
+    - { field: log_time, order: DESC }
+  allow_import: false
 ```
 
 ## QUACK_API
@@ -929,6 +959,18 @@ data:
     main_sql: "CREATE TABLE customers (id BIGINT, name VARCHAR, active BOOLEAN);CALL odata_expose('customers');CALL odata_entity('customers', key := 'id');CALL odata_serve('http://0.0.0.0:8080', token := 'secret');", 
     shutdown_sql: "CALL odata_stop();", status: offline, active: true, app_id: 1, user_id: 1, excluded: false
   }
+  - {
+    quack_api_id: 3, quack_api: sqlnb, 
+    quack_api_desc: "SQL notebooks in your browser, backed by your local DuckDB session", 
+    port: 4567, 
+    startup_sql: "INSTALL AND LOAD sqlnb FROM community;", 
+    main_sql: "select sqlnb_start(
+    notebook_root := './',
+    port := 4567,
+    open_browser := false
+);", 
+    shutdown_sql: "CALL sqlnb_stop();", status: offline, active: true, app_id: 1, user_id: 1, excluded: false
+  }
 form_layout:
   tabs_steps: tabs
   form_in_popup: false
@@ -937,39 +979,11 @@ table_layout:
   default_order:
     - { field: quack_api, order: ASC }
   exec_button:
-    - {callApi: true, method: POST, api: quack_api/start,   tooltip: Start QuackAPI,   icon: play,       active: true}
-    - {callApi: true, method: POST, api: quack_api/stop,    tooltip: Stop QuackAPI,    icon: stop,       active: true}
-    - {callApi: true, method: POST, api: quack_api/restart, tooltip: Restart QuackAPI, icon: arrow-path, active: true}
+    - {callApi: true, method: POST, api: quack_api/start,   tooltip: Start QuackAPI,   icon: play,       active: true, class: 'btn-outline btn-success', disable: "d?.status==='start'"}
+    - {callApi: true, method: POST, api: quack_api/stop,    tooltip: Stop QuackAPI,    icon: stop,       active: true, class: 'btn-outline btn-error',   disable: "d?.status==='stop'"}
+    - {callApi: true, method: POST, api: quack_api/restart, tooltip: Restart QuackAPI, icon: arrow-path, active: true, class: 'btn-outline btn-success', disable: "d?.status==='stop'"}
 ```
 
-## QUACK_LOGS
-```yaml
-table: quack_logs
-comment: Quack Server Activity Logs
-columns:
-  quack_log_id:    { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  quack_server_id: { type: integer, fk: "quack_server.quack_server_id", nullable: false, comment: "Quack Server", form_display: true, table_display: true, order: 1, form_size: 3 }
-  event:           { type: varchar, len: 100, nullable: false, comment: "Event", form_display: true, table_display: true, order: 2, form_size: 3 }
-  status:          { type: varchar, len: 50, comment: "Status", form_display: true, table_display: true, order: 3, form_size: 2 }
-  port:            { type: integer, comment: "Port", form_display: true, table_display: true, order: 4, form_size: 2 }
-  message:         { type: text, comment: "Message", form_display: true, table_display: true, order: 5, form_long_text: true, form_code: txt }
-  log_time:        { type: datetime, nullable: false, comment: "Log Time", form_display: true, table_display: true, order: 6, form_size: 3 }
-  active:          { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
-  user_id:         { type: integer, fk: "users.user_id", comment: "User ID" }
-  app_id:          { type: integer, fk: "app.app_id", comment: "App ID" }
-  created_at:      { type: datetime, comment: "Created at" }
-  updated_at:      { type: datetime, comment: "Updated at" }
-  excluded:        { type: boolean, default: false, comment: "Excluded" }
-form_layout:
-  tabs_steps: tabs
-  form_in_popup: false
-  size: 8
-table_layout:
-  allow_in_submenu: {}
-  default_order:
-    - { field: log_time, order: DESC }
-  allow_import: false
-```
 
 ## DASHBOARD
 ```yaml
@@ -1417,7 +1431,7 @@ columns:
   crud_intercept_id:      { type: integer, fk: "crud_intercept.crud_intercept_id", nullable: false, comment: "Crud intercept", form_display: true, table_display: true, form_size: 4, order: 1 }
   intercept_data_sql:     { type: text, comment: "SQL", form_display: true, form_long_text: true, form_code: sql, form_size: 12, order: 6, form_hide_cond: "data?.intercept_data_type_id !== 1" }
   odata_path:             { type: text, comment: "OData URL", form_display: true, form_long_text: true, form_code: text, table_display: true, form_size: 12, order: 9, form_hide_cond: "data?.intercept_data_type_id !== 3" }
-  single_row_obj:          { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
+  single_row_obj:         { type: boolean, default: false, comment: "Single Row Object", form_display: true, form_size: 4, order: 10 }
   active:                 { type: boolean, default: true, comment: "Active", table_display: true, form_display: true, form_size: 2, form_order: 4 }
   user_id:                { type: integer, fk: "users.user_id", comment: "Created by"  }
   app_id:                 { type: integer, fk: "app.app_id", comment: "App ID" }
@@ -1475,10 +1489,10 @@ columns:
   updated_at:    { type: datetime, comment: "Updated at" }
   excluded:      { type: boolean, default: false, comment: "Excluded" }
 data:
-  - {api_type_id: 1, api_type: REST, api_type_desc: RESTful API, excluded: false}
-  - {api_type_id: 2, api_type: SOAP, api_type_desc: SOAP Web Service, excluded: false}
-  - {api_type_id: 3, api_type: gRPC, api_type_desc: gRPC Protocol, excluded: false}
-  - {api_type_id: 4, api_type: GraphQL, api_type_desc: GraphQL API, excluded: false}
+  - {api_type_id: 1, api_type: REST,    api_type_desc: RESTful API,      excluded: false}
+  - {api_type_id: 2, api_type: SOAP,    api_type_desc: SOAP Web Service, excluded: false}
+  - {api_type_id: 3, api_type: gRPC,    api_type_desc: gRPC Protocol,    excluded: false}
+  - {api_type_id: 4, api_type: GraphQL, api_type_desc: GraphQL API,      excluded: false}
 form_layout:
   form_in_popup: true
   size: 4
