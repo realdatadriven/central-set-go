@@ -80,7 +80,7 @@ func (qm *QuackManager) StartQuackServer(ctx context.Context, quackServerID int,
 	}
 	// port , token
 	sql := fmt.Sprintf("CALL quack_serve('quack:%s:%d', token => '%s', allow_other_hostname => %s, disable_ssl => %s);", host, toInt(port), token, allowOtherHostnames, disableSSL)
-	fmt.Println(sql)
+	// fmt.Println(sql)
 	if _, err := conn.ExecuteQuery(sql); err != nil {
 		fmt.Println(sql)
 		conn.Close()
