@@ -81,14 +81,14 @@ cs_app:
       - {table: flight_schema_table, active: false}
       - {table: flight_schema_table_field, active: false}
       - {table: flight_schema_table_scope, active: false}
-  Quack:
+  DuckDB Services:
     menu_icon: bolt
     menu_order: 4
     active: true
     tables:
       - {table: quack_server, requires_rla: true, active: true}
-      - {table: quack_api, requires_rla: true, active: true}
       - {table: quack_logs, active: false}
+      - {table: quack_api, requires_rla: true, active: true}
   Jobs Scheduling:
     menu_icon: clock
     menu_order: 5
@@ -933,17 +933,17 @@ table_layout:
 ## QUACK_API
 ```yaml
 table: quack_api
-comment: DuckDB QuackAPI Service
+comment: DuckDB API Service
 columns:
   quack_api_id:   { type: integer, pk: true, autoincrement: true, comment: "ID" }
-  quack_api:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 4 }
-  quack_api_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 2, form_size: 8 }
-  port:           { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 3, form_size: 2 }
+  quack_api:      { type: varchar, len: 200, unique: true, nullable: false, comment: "Name", form_display: true, table_display: true, order: 1, form_size: 6 }
+  quack_api_desc: { type: text, comment: "Description", form_display: true, table_display: true, order: 5, form_size: 12 }
+  port:           { type: integer, nullable: false, comment: "Port", form_display: true, table_display: true, order: 2, form_size: 2 }
   startup_sql:    { type: text, comment: "Startup SQL", form_display: true, order: 3, form_long_text: true, form_code: sql }
   main_sql:       { type: text, comment: "Main SQL", form_display: true, order: 4, form_long_text: true, form_code: sql }
   shutdown_sql:   { type: text, comment: "Shutdown SQL", form_display: true, order: 5, form_long_text: true, form_code: sql }
-  status:         { type: varchar, len: 50, default: offline, comment: "Status", form_display: true, table_display: true, order: 6, form_size: 2 }
-  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 7, form_size: 2 }
+  status:         { type: varchar, len: 50, default: offline, comment: "Status", form_display: true, table_display: true, order: 3, form_size: 2 }
+  active:         { type: boolean, default: true, comment: "Active", form_display: true, table_display: true, order: 4, form_size: 2 }
   user_id:        { type: integer, fk: "users.user_id", comment: "User ID" }
   app_id:         { type: integer, fk: "app.app_id", comment: "App ID" }
   created_at:     { type: datetime, comment: "Created at" }
