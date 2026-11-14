@@ -24,6 +24,9 @@ jobs:
         with:
           hugo-version: 'latest'
 
+      - name: Install Dart Sass
+        run: sudo snap install dart-sass
+
       - name: Build the site
         run: hugo --source docs --themesDir themes --minify
 

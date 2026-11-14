@@ -6,7 +6,7 @@ Theme is added as a Git submodule under `docs/themes/plume`.
 
 Quickstart:
 
-- Ensure `hugo` is installed (https://gohugo.io/getting-started/quick-start/).
+- Ensure `hugo` and Dart Sass are installed (https://gohugo.io/getting-started/quick-start/ and https://gohugo.io/functions/css/sass/#dart-sass).
 - From repo root, update submodules: `git submodule update --init --recursive`.
 - Start local server from `docs`: `hugo server --source docs --themesDir themes -D --disableFastRender`.
 

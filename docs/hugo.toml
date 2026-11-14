@@ -3,7 +3,7 @@
 #git subtree push --prefix docs/public origin gh-pages
 #baseURL = "./docs" # (or set via env variable HUGO_BASEURL)
 baseURL = 'https://realdatadriven.github.io/central-set-go/'
-languageCode = "en-GB"
+locale = "en-GB"
 title = "Central Set"
 # theme = "lotusdocs"
 contentDir = "content"
