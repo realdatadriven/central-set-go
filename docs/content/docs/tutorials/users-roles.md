@@ -20,7 +20,7 @@ An authenticated user has a user record and a role context. The `users.role_id` 
 Roles are reusable permission profiles. Assigning a role to a person gives that person the access configured for the role; it does not copy permission settings into the user record.
 
 | ADMIN table | What it controls |
-|---|---|
+| --- | --- |
 | `users` | Login identity, profile, active state, language, and primary `role_id`. |
 | `role` | Named roles such as `root`, `tenant`, or roles created for your organization. |
 | `user_role` | Additional user-to-role assignments. |
@@ -68,7 +68,7 @@ For each permitted application, grant access to the menus the role should see. T
 For each table exposed under a menu, set the operations the role needs in `role_app_menu_table`:
 
 | Permission | Allows |
-|---|---|
+| --- | --- |
 | `read` | Read/list records through the configured Central Set data path. |
 | `create` | Create records. |
 | `update` | Change existing records. |

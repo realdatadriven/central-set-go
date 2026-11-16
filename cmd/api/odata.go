@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/realdatadriven/central-set-go/internal/response"
 )
 
@@ -612,14 +613,50 @@ func BuildODataMetadataJSON(rows []Dict, burl, db string) (Dict, error) {
 	}
 	return model, nil
 }
+func (app *application) get_tables(r *http.Request, db string) ([]string, error) {
+	user := app.getAnonymous()
+	userFromSess, err := app.getUser(r)
+	if err == nil {
+		user = userFromSess
+	}
+	lang := getLang(r)
+	params := Dict{
+		"lang": lang,
+		"user": user,
+		"host": getHost(r),
+		"ip":   ClientIP(r),
+		"loc":  app.getLocationFromRequest(r, Dict{}),
+		"db":   db,
+		"data": Dict{
+			"db": db,
+		},
+	}
+	// tables := app.tables(params, []any{})
+	tables := app.table_access(params, []any{})
+	if !tables["success"].(bool) {
+		return nil, fmt.Errorf("failed to get tables for db %s: %s", db, tables["msg"])
+	}
+	tbls := make([]string, 0)
+	if _, ok := tables["data"]; ok {
+		tables = tables["data"].(map[string]any)
+		for key, permissions := range tables {
+			if app.toBool(permissions.(map[string]any)["read"]) {
+				tbls = append(tbls, key)
+			}
+		}
+	}
+	if len(tbls) == 0 {
+		return nil, fmt.Errorf("no tables found for db %s", db)
+	}
+	return tbls, nil
+}
 func (app *application) odata_api_service_document(w http.ResponseWriter, r *http.Request) {
 	if os.Getenv("ENABLE_ODATA") != "true" {
 		http.Error(w, "OData API is disabled", http.StatusNotFound)
 		return
 	}
 	db := r.PathValue("db")
-	sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
-	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db)})
+	tables, err := app.get_tables(r, db)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
@@ -632,8 +669,25 @@ func (app *application) odata_api_service_document(w http.ResponseWriter, r *htt
 		json.NewEncoder(w).Encode(_res)
 		return
 	}
-	//params := Dict{"db": db,}
-	//_tableAccess := app.table_access(params, nil)
+	queryParams := []any{strings.ToLower(db), tables}
+	sql := `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
+	query, args, err := sqlx.In(sql, queryParams...)
+	if err != nil {
+		println("Error geting the table query:", err)
+	}
+	_table_schema, err := app.AdminGetRowsByFilter(query, args)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "ServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
 	burl := baseURL(r)
 	serviceDocument, err := BuildODataServiceDocument(_table_schema, burl, db)
 	if err != nil {
@@ -662,8 +716,26 @@ func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r 
 		return
 	}
 	db := r.PathValue("db")
-	sql := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
-	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db)})
+	tables, err := app.get_tables(r, db)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "ServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	queryParams := []any{strings.ToLower(db), tables}
+	sql := `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
+	query, args, err := sqlx.In(sql, queryParams...)
+	if err != nil {
+		println("Error geting the table query:", err)
+	}
+	_table_schema, err := app.AdminGetRowsByFilter(query, args)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
@@ -704,8 +776,26 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	db := r.PathValue("db")
 	w.Header().Set("OData-Version", "4.0")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	sql := `select * from table_schema where lower(db) = ? and excluded = false  order by field_order`
-	_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db)})
+	tables, err := app.get_tables(r, db)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		_res := Dict{
+			"error": Dict{
+				"code":    "GeneralError",
+				"message": "ServiceDocumentErr: " + err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(_res)
+		return
+	}
+	queryParams := []any{strings.ToLower(db), tables}
+	sql := `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
+	query, args, err := sqlx.In(sql, queryParams...)
+	if err != nil {
+		println("Error geting the table query:", err)
+	}
+	_table_schema, err := app.AdminGetRowsByFilter(query, args)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_res := Dict{
