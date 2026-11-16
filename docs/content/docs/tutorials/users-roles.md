@@ -105,7 +105,7 @@ description: Role Model Example, Create Role anonymous and gives access to ADMIN
 database: ADMIN #RLA may need to access records on other DBs
 runs_as: ROLE
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
-active: false
+active: true
 ```
 
 ## ANONYMOUS
@@ -158,7 +158,7 @@ name: ROLE_USERS
 description: Give user access to a role
 runs_as: ROLE_USERS
 admin_conn: '@DB_DRIVER_NAME:@DB_DSN'
-active: false
+active: true
 ```
 
 ## ANONYMOUS
