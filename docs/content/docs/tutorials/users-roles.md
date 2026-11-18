@@ -174,11 +174,11 @@ The runner creates the role if needed and creates or updates `user_role` assignm
 
 Both headers in [`admin_model.md`](https://github.com/realdatadriven/central-set-go/blob/main/assets/models/admin_model.md#L2051-L2090) currently have `active: false`, so they are examples and are disabled as checked in. Set the relevant header to `active: true` only when you intend the model runner to apply it. Review the target database, user identifiers, table shorthands, and resulting access before enabling the declarations in a deployed environment.
 
-## Column-level permissions
+<!--## Column-level permissions
 
 Use `column_level_access` when a user needs different permissions for particular fields of a table. A record is scoped to a user, application, table, and column, with `create`, `read`, and `update` flags.
 
-Column-level access is more specific than table CRUD access. Configure both levels deliberately: first grant the table operation the user needs, then configure field access where the application requires additional restrictions. Column rules are not a substitute for excluding sensitive fields from responses or for enforcing permissions in custom SQL code.
+Column-level access is more specific than table CRUD access. Configure both levels deliberately: first grant the table operation the user needs, then configure field access where the application requires additional restrictions. Column rules are not a substitute for excluding sensitive fields from responses or for enforcing permissions in custom SQL code.-->
 
 ## Row-level access (RLA)
 
