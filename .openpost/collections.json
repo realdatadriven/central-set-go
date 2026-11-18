@@ -1112,29 +1112,18 @@
         "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
         "name": "ODATA_READ_ROOT",
         "method": "GET",
-        "url": "{{base_url}}/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
-        "params": [
-          {
-            "key": "$filter",
-            "value": "app_id eq 3",
-            "enabled": true
-          },
-          {
-            "key": "$schema",
-            "value": "true",
-            "enabled": true
-          }
-        ],
+        "url": "{{base_url}}/odata/ADMIN/",
+        "params": [],
         "headers": [
           {
             "key": "Accept",
-            "value": "application/json",
-            "enabled": true
+            "value": "application/xml",
+            "enabled": false
           },
           {
             "key": "Content-Type",
-            "value": "application/json",
-            "enabled": true
+            "value": "application/xml",
+            "enabled": false
           },
           {
             "key": "Authorization",

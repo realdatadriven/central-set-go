@@ -590,281 +590,6 @@
     "sourceScope": "local"
   },
   {
-    "id": "1794859641760",
-    "timestamp": 1794859641760,
-    "request": {
-      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
-      "name": "ODATA_READ_ROOT",
-      "method": "GET",
-      "url": "{{base_url}}/odata/ADMIN/",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer {{token}}",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 500,
-      "statusText": "Internal Server Error",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "138",
-        "content-type": "application/json",
-        "date": "Mon, 16 Nov 2026 20:07:21 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\n\t\"msg\": \"Server Err: The server encountered a problem and could not process your request\",\n\t\"success\": false\n}\n",
-      "time": 85,
-      "size": 113,
-      "cookies": []
-    },
-    "sourceCollectionId": "1782657989686",
-    "sourceScope": "local"
-  },
-  {
-    "id": "1794861034506",
-    "timestamp": 1794861034506,
-    "request": {
-      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
-      "name": "ODATA_READ_ROOT",
-      "method": "GET",
-      "url": "{{base_url}}/odata/ADMIN/",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer {{token}}",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 400,
-      "statusText": "Bad Request",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "120",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 16 Nov 2026 20:30:34 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\"error\":{\"code\":\"GeneralError\",\"message\":\"ServiceDocumentErr: no tables found for db ADMIN\"}}\n",
-      "time": 91,
-      "size": 95,
-      "cookies": []
-    },
-    "sourceCollectionId": "1782657989686",
-    "sourceScope": "local"
-  },
-  {
-    "id": "1794861182569",
-    "timestamp": 1794861182569,
-    "request": {
-      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
-      "name": "ODATA_READ_ROOT",
-      "method": "GET",
-      "url": "{{base_url}}/odata/ADMIN/",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer {{token}}",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 400,
-      "statusText": "Bad Request",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "120",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 16 Nov 2026 20:33:02 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\"error\":{\"code\":\"GeneralError\",\"message\":\"ServiceDocumentErr: no tables found for db ADMIN\"}}\n",
-      "time": 99,
-      "size": 95,
-      "cookies": []
-    },
-    "sourceCollectionId": "1782657989686",
-    "sourceScope": "local"
-  },
-  {
-    "id": "1794861840581",
-    "timestamp": 1794861840581,
-    "request": {
-      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
-      "name": "ODATA_READ_ROOT",
-      "method": "GET",
-      "url": "{{base_url}}/odata/ADMIN/",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer {{token}}",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 400,
-      "statusText": "Bad Request",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "120",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 16 Nov 2026 20:44:00 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\"error\":{\"code\":\"GeneralError\",\"message\":\"ServiceDocumentErr: no tables found for db ADMIN\"}}\n",
-      "time": 116,
-      "size": 95,
-      "cookies": []
-    },
-    "sourceCollectionId": "1782657989686",
-    "sourceScope": "local"
-  },
-  {
-    "id": "1794862201877",
-    "timestamp": 1794862201877,
-    "request": {
-      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
-      "name": "ODATA_READ_ROOT",
-      "method": "GET",
-      "url": "{{base_url}}/odata/ADMIN/",
-      "params": [],
-      "headers": [
-        {
-          "key": "Accept",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/xml",
-          "enabled": false
-        },
-        {
-          "key": "Authorization",
-          "value": "Bearer {{token}}",
-          "enabled": true
-        }
-      ],
-      "body": {
-        "type": "none"
-      },
-      "auth": {
-        "type": "none"
-      },
-      "inheritAuth": true
-    },
-    "response": {
-      "status": 400,
-      "statusText": "Bad Request",
-      "headers": {
-        "access-control-allow-headers": "Content-Type, Authorization, enctype",
-        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "access-control-allow-origin": "*",
-        "content-encoding": "gzip",
-        "content-length": "120",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 16 Nov 2026 20:50:01 GMT",
-        "vary": "Authorization"
-      },
-      "body": "{\"error\":{\"code\":\"GeneralError\",\"message\":\"ServiceDocumentErr: no tables found for db ADMIN\"}}\n",
-      "time": 109,
-      "size": 95,
-      "cookies": []
-    },
-    "sourceCollectionId": "1782657989686",
-    "sourceScope": "local"
-  },
-  {
     "id": "1794862436519",
     "timestamp": 1794862436519,
     "request": {
@@ -1304,6 +1029,678 @@
       "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
       "time": 293,
       "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795043940745",
+    "timestamp": 1795043940745,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:19:00 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 129,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795043943616",
+    "timestamp": 1795043943616,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:19:03 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 151,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044063415",
+    "timestamp": 1795044063415,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:21:03 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 135,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044065819",
+    "timestamp": 1795044065819,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:21:05 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 111,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044156767",
+    "timestamp": 1795044156767,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:22:36 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 44,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044169844",
+    "timestamp": 1795044169844,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:22:49 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 127,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044171585",
+    "timestamp": 1795044171585,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "645",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:22:51 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+      "time": 134,
+      "size": 3966,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044291651",
+    "timestamp": 1795044291651,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "100",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:24:51 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+      "time": 90,
+      "size": 75,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044393290",
+    "timestamp": 1795044393290,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "100",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:26:33 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+      "time": 88,
+      "size": 75,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044578197",
+    "timestamp": 1795044578197,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "100",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:29:38 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+      "time": 407,
+      "size": 75,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044587254",
+    "timestamp": 1795044587254,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "100",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:29:47 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+      "time": 126,
+      "size": 75,
+      "cookies": []
+    },
+    "sourceCollectionId": "1782657989686",
+    "sourceScope": "local"
+  },
+  {
+    "id": "1795044590200",
+    "timestamp": 1795044590200,
+    "request": {
+      "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+      "name": "ODATA_READ_ROOT",
+      "method": "GET",
+      "url": "{{base_url}}/odata/ADMIN/",
+      "params": [],
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml",
+          "enabled": false
+        },
+        {
+          "key": "Authorization",
+          "value": "Bearer {{token}}",
+          "enabled": true
+        }
+      ],
+      "body": {
+        "type": "none"
+      },
+      "auth": {
+        "type": "none"
+      },
+      "inheritAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, enctype",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "content-encoding": "gzip",
+        "content-length": "100",
+        "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+        "date": "Wed, 18 Nov 2026 23:29:50 GMT",
+        "odata-version": "4.0",
+        "vary": "Authorization"
+      },
+      "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+      "time": 83,
+      "size": 75,
       "cookies": []
     },
     "sourceCollectionId": "1782657989686",

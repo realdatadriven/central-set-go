@@ -661,6 +661,7 @@ func (app *application) get_tables(r *http.Request, db string) ([]string, []any,
 	}
 	if len(tbls) == 0 {
 		// return nil, nil, fmt.Errorf("no tables found for db %s", db)
+		tbls = []string{"no-access-to-any-table"}
 	}
 	return tbls, roles, nil
 }
@@ -696,11 +697,11 @@ func (app *application) odata_api_service_document(w http.ResponseWriter, r *htt
 	queryParams := []any{strings.ToLower(db), tables}
 	args := []any{strings.ToLower(db)}
 	query := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
-	if app.contains(roles, 1) {
+	if !app.contains(roles, 1) {
 		query = `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
 		query, args, err = sqlx.In(query, queryParams...)
 		if err != nil {
-			println("Error geting the table query:", err)
+			println("Error geting the table query:", err.Error(), query, args, queryParams)
 		}
 	}
 	_table_schema, err := app.AdminGetRowsByFilter(query, args)
@@ -760,12 +761,13 @@ func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r 
 	queryParams := []any{strings.ToLower(db), tables}
 	args := []any{strings.ToLower(db)}
 	query := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
-	if app.contains(roles, 1) {
+	if !app.contains(roles, 1) {
 		query = `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
 		query, args, err = sqlx.In(query, queryParams...)
 		if err != nil {
 			println("Error geting the table query:", err)
 		}
+		fmt.Println(query, args)
 	}
 	_table_schema, err := app.AdminGetRowsByFilter(query, args)
 	if err != nil {
@@ -824,7 +826,7 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	queryParams := []any{strings.ToLower(db), tables}
 	args := []any{strings.ToLower(db)}
 	query := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
-	if app.contains(roles, 1) {
+	if !app.contains(roles, 1) {
 		query = `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
 		query, args, err = sqlx.In(query, queryParams...)
 		if err != nil {

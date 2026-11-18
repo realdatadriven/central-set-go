@@ -5054,6 +5054,774 @@
           },
           "cookies": []
         }
+      },
+      {
+        "id": "17950439407693xjrjtx4cjd",
+        "timestamp": 1795043940770,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:19:00 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 129,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795043943629bcvi7571mg",
+        "timestamp": 1795043943629,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:19:03 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 151,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044063441eh60ke2nk9n",
+        "timestamp": 1795044063441,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:21:03 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 135,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044065852j3sd314ztc",
+        "timestamp": 1795044065852,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:21:05 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 111,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044156774f0xrhcb7p4q",
+        "timestamp": 1795044156774,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:22:36 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 44,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044169871bifp2jjbtf",
+        "timestamp": 1795044169871,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:22:49 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 127,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044171611ilohj42s9sh",
+        "timestamp": 1795044171611,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "645",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:22:51 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",\"kind\":\"EntitySet\",\"url\":\"role_app\"},{\"name\":\"role_app_menu\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu\"},{\"name\":\"role_app_menu_table\",\"kind\":\"EntitySet\",\"url\":\"role_app_menu_table\"},{\"name\":\"user_log\",\"kind\":\"EntitySet\",\"url\":\"user_log\"},{\"name\":\"custom_table\",\"kind\":\"EntitySet\",\"url\":\"custom_table\"},{\"name\":\"custom_form\",\"kind\":\"EntitySet\",\"url\":\"custom_form\"},{\"name\":\"role_row_level_access\",\"kind\":\"EntitySet\",\"url\":\"role_row_level_access\"},{\"name\":\"column_level_access\",\"kind\":\"EntitySet\",\"url\":\"column_level_access\"},{\"name\":\"row_level_access\",\"kind\":\"EntitySet\",\"url\":\"row_level_access\"},{\"name\":\"translate_table\",\"kind\":\"EntitySet\",\"url\":\"translate_table\"},{\"name\":\"translate_table_field\",\"kind\":\"EntitySet\",\"url\":\"translate_table_field\"},{\"name\":\"table_schema\",\"kind\":\"EntitySet\",\"url\":\"table_schema\"},{\"name\":\"cron\",\"kind\":\"EntitySet\",\"url\":\"cron\"},{\"name\":\"cron_log\",\"kind\":\"EntitySet\",\"url\":\"cron_log\"},{\"name\":\"access_key\",\"kind\":\"EntitySet\",\"url\":\"access_key\"},{\"name\":\"env\",\"kind\":\"EntitySet\",\"url\":\"env\"},{\"name\":\"flight_catalog\",\"kind\":\"EntitySet\",\"url\":\"flight_catalog\"},{\"name\":\"flight_schema\",\"kind\":\"EntitySet\",\"url\":\"flight_schema\"},{\"name\":\"flight_schema_table\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table\"},{\"name\":\"flight_schema_table_field\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_field\"},{\"name\":\"flight_schema_table_scope\",\"kind\":\"EntitySet\",\"url\":\"flight_schema_table_scope\"},{\"name\":\"quack_server\",\"kind\":\"EntitySet\",\"url\":\"quack_server\"},{\"name\":\"quack_logs\",\"kind\":\"EntitySet\",\"url\":\"quack_logs\"},{\"name\":\"dashboard\",\"kind\":\"EntitySet\",\"url\":\"dashboard\"},{\"name\":\"dashboard_comment\",\"kind\":\"EntitySet\",\"url\":\"dashboard_comment\"},{\"name\":\"valid_reaction\",\"kind\":\"EntitySet\",\"url\":\"valid_reaction\"},{\"name\":\"valid_criticity\",\"kind\":\"EntitySet\",\"url\":\"valid_criticity\"},{\"name\":\"validation\",\"kind\":\"EntitySet\",\"url\":\"validation\"},{\"name\":\"validation_data\",\"kind\":\"EntitySet\",\"url\":\"validation_data\"},{\"name\":\"validation_logs\",\"kind\":\"EntitySet\",\"url\":\"validation_logs\"},{\"name\":\"action_type\",\"kind\":\"EntitySet\",\"url\":\"action_type\"},{\"name\":\"crud_action\",\"kind\":\"EntitySet\",\"url\":\"crud_action\"},{\"name\":\"action_data_type\",\"kind\":\"EntitySet\",\"url\":\"action_data_type\"},{\"name\":\"action_data\",\"kind\":\"EntitySet\",\"url\":\"action_data\"},{\"name\":\"action_trigger_action\",\"kind\":\"EntitySet\",\"url\":\"action_trigger_action\"},{\"name\":\"crud_action_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_action_logs\"},{\"name\":\"process_type\",\"kind\":\"EntitySet\",\"url\":\"process_type\"},{\"name\":\"intercept_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_type\"},{\"name\":\"crud_intercept\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept\"},{\"name\":\"intercept_data_type\",\"kind\":\"EntitySet\",\"url\":\"intercept_data_type\"},{\"name\":\"intercept_data\",\"kind\":\"EntitySet\",\"url\":\"intercept_data\"},{\"name\":\"crud_intercept_logs\",\"kind\":\"EntitySet\",\"url\":\"crud_intercept_logs\"},{\"name\":\"api_type\",\"kind\":\"EntitySet\",\"url\":\"api_type\"},{\"name\":\"http_request_type\",\"kind\":\"EntitySet\",\"url\":\"http_request_type\"},{\"name\":\"api\",\"kind\":\"EntitySet\",\"url\":\"api\"},{\"name\":\"api_header\",\"kind\":\"EntitySet\",\"url\":\"api_header\"},{\"name\":\"api_data_type\",\"kind\":\"EntitySet\",\"url\":\"api_data_type\"},{\"name\":\"api_data\",\"kind\":\"EntitySet\",\"url\":\"api_data\"},{\"name\":\"api_call_log\",\"kind\":\"EntitySet\",\"url\":\"api_call_log\"},{\"name\":\"_litestream_seq\",\"kind\":\"EntitySet\",\"url\":\"_litestream_seq\"},{\"name\":\"_litestream_lock\",\"kind\":\"EntitySet\",\"url\":\"_litestream_lock\"},{\"name\":\"quack_api\",\"kind\":\"EntitySet\",\"url\":\"quack_api\"}]}",
+          "time": 134,
+          "size": 3966,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044291688lzdjrwx7lv",
+        "timestamp": 1795044291688,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "100",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:24:51 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+          "time": 90,
+          "size": 75,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044393315ilst69nk5x",
+        "timestamp": 1795044393315,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "100",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:26:33 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+          "time": 88,
+          "size": 75,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044578208n7y1b9v71yf",
+        "timestamp": 1795044578208,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "100",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:29:38 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+          "time": 407,
+          "size": 75,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044587280lnde8znjyff",
+        "timestamp": 1795044587280,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "100",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:29:47 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+          "time": 126,
+          "size": 75,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
+      },
+      {
+        "id": "1795044590226nrhwo75wsn",
+        "timestamp": 1795044590226,
+        "request": {
+          "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+          "name": "ODATA_READ_ROOT",
+          "method": "GET",
+          "url": "{{base_url}}/odata/ADMIN/",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/xml",
+              "enabled": false
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "none"
+          },
+          "inheritAuth": true
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Authorization, enctype",
+            "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "access-control-allow-origin": "*",
+            "content-encoding": "gzip",
+            "content-length": "100",
+            "content-type": "application/json;odata.metadata=minimal; charset=utf-8",
+            "date": "Wed, 18 Nov 2026 23:29:50 GMT",
+            "odata-version": "4.0",
+            "vary": "Authorization"
+          },
+          "body": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[]}",
+          "time": 83,
+          "size": 75,
+          "actualRequest": {
+            "method": "GET",
+            "url": "http://127.0.0.1:4444/odata/ADMIN/",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss"
+            },
+            "body": null,
+            "protocol": "HTTP/1.1",
+            "certificateNames": "System Trust Store"
+          },
+          "cookies": []
+        }
       }
     ],
     "responseContracts": [
@@ -5084,8 +5852,8 @@
             "sampleBody": "{\"@odata.context\":\"http://localhost:4444/odata/ADMIN/$metadata\",\"value\":[{\"name\":\"lang\",\"kind\":\"EntitySet\",\"url\":\"lang\"},{\"name\":\"role\",\"kind\":\"EntitySet\",\"url\":\"role\"},{\"name\":\"users\",\"kind\":\"EntitySet\",\"url\":\"users\"},{\"name\":\"user_role\",\"kind\":\"EntitySet\",\"url\":\"user_role\"},{\"name\":\"app\",\"kind\":\"EntitySet\",\"url\":\"app\"},{\"name\":\"menu\",\"kind\":\"EntitySet\",\"url\":\"menu\"},{\"name\":\"table\",\"kind\":\"EntitySet\",\"url\":\"table\"},{\"name\":\"menu_table\",\"kind\":\"EntitySet\",\"url\":\"menu_table\"},{\"name\":\"role_app\",…",
             "contentType": "application/json;odata.metadata=minimal; charset=utf-8",
             "firstSeen": 1794954434368,
-            "lastSeen": 1794954495543,
-            "occurrences": 3,
+            "lastSeen": 1795044171611,
+            "occurrences": 10,
             "history": [
               {
                 "timestamp": 1794954434368,
@@ -5098,6 +5866,34 @@
               {
                 "timestamp": 1794954495543,
                 "recordId": "1794954495543m7fhkp7r2gr"
+              },
+              {
+                "timestamp": 1795043940770,
+                "recordId": "17950439407693xjrjtx4cjd"
+              },
+              {
+                "timestamp": 1795043943629,
+                "recordId": "1795043943629bcvi7571mg"
+              },
+              {
+                "timestamp": 1795044063441,
+                "recordId": "1795044063441eh60ke2nk9n"
+              },
+              {
+                "timestamp": 1795044065852,
+                "recordId": "1795044065852j3sd314ztc"
+              },
+              {
+                "timestamp": 1795044156774,
+                "recordId": "1795044156774f0xrhcb7p4q"
+              },
+              {
+                "timestamp": 1795044169871,
+                "recordId": "1795044169871bifp2jjbtf"
+              },
+              {
+                "timestamp": 1795044171611,
+                "recordId": "1795044171611ilohj42s9sh"
               }
             ]
           }
