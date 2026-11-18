@@ -613,7 +613,14 @@ func BuildODataMetadataJSON(rows []Dict, burl, db string) (Dict, error) {
 	}
 	return model, nil
 }
-func (app *application) get_tables(r *http.Request, db string) ([]string, error) {
+func (app *application) get_tables(r *http.Request, db string) ([]string, []any, error) {
+	_app, err := app.getAppByDB(db)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get app for db: %s, %s", db, err.Error())
+	}
+	if len(_app) == 0 {
+		return nil, nil, fmt.Errorf("no app found for db: %s", db)
+	}
 	user := app.getAnonymous()
 	userFromSess, err := app.getUser(r)
 	if err == nil {
@@ -626,37 +633,54 @@ func (app *application) get_tables(r *http.Request, db string) ([]string, error)
 		"host": getHost(r),
 		"ip":   ClientIP(r),
 		"loc":  app.getLocationFromRequest(r, Dict{}),
-		"db":   db,
+		"db":   _app["db"],
+		"app":  _app,
 		"data": Dict{
-			"db": db,
+			"db": _app["db"],
 		},
 	}
 	// tables := app.tables(params, []any{})
 	tables := app.table_access(params, []any{})
 	if !tables["success"].(bool) {
-		return nil, fmt.Errorf("failed to get tables for db %s: %s", db, tables["msg"])
+		return nil, nil, fmt.Errorf("failed to get tables for db %s: %s", db, tables["msg"])
 	}
+	// fmt.Println(tables)
 	tbls := make([]string, 0)
+	roles := []any{}
 	if _, ok := tables["data"]; ok {
 		tables = tables["data"].(map[string]any)
 		for key, permissions := range tables {
+			// fmt.Println("TABLE:", key, "PERMISSIONS:", permissions)
 			if app.toBool(permissions.(map[string]any)["read"]) {
 				tbls = append(tbls, key)
 			}
 		}
 	}
-	if len(tbls) == 0 {
-		return nil, fmt.Errorf("no tables found for db %s", db)
+	if _roles, ok := tables["roles"].([]any); ok {
+		roles = _roles
 	}
-	return tbls, nil
+	if len(tbls) == 0 {
+		// return nil, nil, fmt.Errorf("no tables found for db %s", db)
+	}
+	return tbls, roles, nil
 }
+
+func (app *application) getAppByDB(db string) (Dict, error) {
+	sql := `select * from app where (lower(app) = ? or lower(db) = ?) and excluded = false`
+	_app, err := app.AdminGetRowByFilter(sql, []any{strings.ToLower(db), strings.ToLower(db)})
+	if err != nil {
+		return nil, err
+	}
+	return _app, nil
+}
+
 func (app *application) odata_api_service_document(w http.ResponseWriter, r *http.Request) {
 	if os.Getenv("ENABLE_ODATA") != "true" {
 		http.Error(w, "OData API is disabled", http.StatusNotFound)
 		return
 	}
 	db := r.PathValue("db")
-	tables, err := app.get_tables(r, db)
+	tables, roles, err := app.get_tables(r, db)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
@@ -670,10 +694,14 @@ func (app *application) odata_api_service_document(w http.ResponseWriter, r *htt
 		return
 	}
 	queryParams := []any{strings.ToLower(db), tables}
-	sql := `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
-	query, args, err := sqlx.In(sql, queryParams...)
-	if err != nil {
-		println("Error geting the table query:", err)
+	args := []any{strings.ToLower(db)}
+	query := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
+	if app.contains(roles, 1) {
+		query = `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
 	}
 	_table_schema, err := app.AdminGetRowsByFilter(query, args)
 	if err != nil {
@@ -716,7 +744,7 @@ func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r 
 		return
 	}
 	db := r.PathValue("db")
-	tables, err := app.get_tables(r, db)
+	tables, roles, err := app.get_tables(r, db)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
@@ -730,10 +758,14 @@ func (app *application) odata_api_service_document_xml(w http.ResponseWriter, r 
 		return
 	}
 	queryParams := []any{strings.ToLower(db), tables}
-	sql := `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
-	query, args, err := sqlx.In(sql, queryParams...)
-	if err != nil {
-		println("Error geting the table query:", err)
+	args := []any{strings.ToLower(db)}
+	query := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
+	if app.contains(roles, 1) {
+		query = `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
 	}
 	_table_schema, err := app.AdminGetRowsByFilter(query, args)
 	if err != nil {
@@ -776,7 +808,7 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 	db := r.PathValue("db")
 	w.Header().Set("OData-Version", "4.0")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	tables, err := app.get_tables(r, db)
+	tables, roles, err := app.get_tables(r, db)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
@@ -790,10 +822,14 @@ func (app *application) odata_api_metadata(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	queryParams := []any{strings.ToLower(db), tables}
-	sql := `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
-	query, args, err := sqlx.In(sql, queryParams...)
-	if err != nil {
-		println("Error geting the table query:", err)
+	args := []any{strings.ToLower(db)}
+	query := `select * from table_schema where lower(db) = ? and excluded = false order by field_order`
+	if app.contains(roles, 1) {
+		query = `select * from table_schema where lower(db) = ? and "tables" in (?) and excluded = false order by field_order`
+		query, args, err = sqlx.In(query, queryParams...)
+		if err != nil {
+			println("Error geting the table query:", err)
+		}
 	}
 	_table_schema, err := app.AdminGetRowsByFilter(query, args)
 	if err != nil {
@@ -963,7 +999,8 @@ func (app *application) odata_api(w http.ResponseWriter, r *http.Request) {
 	if table == "$metadata" {
 		app.odata_api_metadata(w, r)
 		return
-	} /*else if isXMLMetadataRequest(r) {
+	}
+	/*else if isXMLMetadataRequest(r) {
 		sql := `select * from "table_schema" where lower("db") = ? and "table" = ? and "excluded" = false`
 		_table_schema, err := app.AdminGetRowsByFilter(sql, []any{strings.ToLower(db), table})
 		if err != nil {

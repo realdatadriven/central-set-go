@@ -20,6 +20,7 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 	if _, ok := params["app"].(map[string]any)["app_id"]; ok {
 		app_id = app.toInt(params["app"].(map[string]any)["app_id"])
 	}
+	// fmt.Println("APP_ID", app_id)
 	_extra_conf := map[string]any{
 		"driverName": app.config.db.driverName,
 		"dsn":        app.config.db.dsn,
@@ -68,7 +69,7 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 			}
 		}
 		if app.IsEmpty(tables) {
-			// fmt.Println("GET ALL TABLES!")
+			//fmt.Println("GET ALL TABLES!")
 			result, _, err := newDB.AllTables(params, _extra_conf)
 			if err != nil {
 				return map[string]any{
@@ -79,10 +80,13 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 			for _, row := range *result {
 				tables = append(tables, string(row["name"].(string)))
 			}
+			// fmt.Println("GET ALL TABLES:", tables)
 			allTables = true
 		}
 	}
 	data := map[string]any{}
+	roles := []any{}
+	roles = append(roles, role_id)
 	if app.IsEmpty(tables) {
 		msg, _ := app.i18n.T("no-table", map[string]any{})
 		return map[string]any{
@@ -108,8 +112,6 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 				"msg":     fmt.Sprintf("%s", err),
 			}
 		}
-		roles := []any{}
-		roles = append(roles, role_id)
 		for _, row := range *result {
 			// roles = append(roles, app.toInt(row["role_id"]))
 			roles = append(roles, app.toInt(row["role_id"]))
@@ -157,6 +159,7 @@ func (app *application) table_access(params map[string]any, tables []any) map[st
 		"success": true,
 		"msg":     msg,
 		"data":    data,
+		"roles":   roles,
 	}
 }
 

@@ -164,6 +164,8 @@ func (app *application) IsEmpty(value any) bool {
 		return len(v) == 0
 	case []any:
 		return len(v) == 0
+	case []string:
+		return len(v) == 0
 	case map[any]any:
 		return len(v) == 0
 	default:

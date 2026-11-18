@@ -1037,9 +1037,9 @@
       },
       {
         "id": "f54e16a1-f8df-4166-b035-cd57382aab73",
-        "name": "Copy of ODATA_READ",
+        "name": "ODATA ROOT",
         "method": "GET",
-        "url": "{{base_url}}/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
+        "url": "{{base_url}}/odata/admin",
         "params": [
           {
             "key": "$filter",
@@ -1107,6 +1107,48 @@
           "type": "none"
         },
         "inheritAuth": true
+      },
+      {
+        "id": "756433e1-15ab-4ade-9a8d-53e8c51cd401",
+        "name": "ODATA_READ_ROOT",
+        "method": "GET",
+        "url": "{{base_url}}/read_odata/ADMIN/menu?$filter=app_id eq 3&$schema=true",
+        "params": [
+          {
+            "key": "$filter",
+            "value": "app_id eq 3",
+            "enabled": true
+          },
+          {
+            "key": "$schema",
+            "value": "true",
+            "enabled": true
+          }
+        ],
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none"
+        },
+        "auth": {
+          "type": "none"
+        },
+        "inheritAuth": true
       }
     ],
     "variables": [
@@ -1122,7 +1164,7 @@
       },
       {
         "key": "token",
-        "value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjp0cnVlLFwiYWx0ZXJfcGFzc19ueHRfbG9naW5cIjpmYWxzZSxcImNvZGVfMmZfZXhwaXJlc19hdFwiOm51bGwsXCJlbmFibGVfMmZfYXV0aFwiOmZhbHNlLFwiZXhjbHVkZWRcIjpmYWxzZSxcImZhaWxlZF9sb2dpbl9hdHRtcHRcIjowLFwiZmlyc3RfbmFtZVwiOlwiQW5vbnltb3VzXCIsXCJsYW5nX2lkXCI6MSxcImxhc3RfZmFpbGVkX2xvZ2luXCI6bnVsbCxcImxhc3RfbmFtZVwiOlwiVXNlclwiLFwibnh0X2NvZGVfMmZfYXV0aFwiOm51bGwsXCJyb2xlX2lkXCI6NCxcInVzZXJfaWRcIjoyLFwidXNlcm5hbWVcIjpcImFub255bW91c1wifSIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjQ0NDQiXSwiZXhwIjoxNzkwNzE1MjI1LjA3NTI4MTksIm5iZiI6MTc4NTUzMTIyNS4wNzUyODIzLCJpYXQiOjE3ODU1MzEyMjUuMDc1MjgxOX0.41NtObjcsVmqb2033_rF09w8gNMygjoBEgVvp0XnbL0",
+        "value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQ0NDQiLCJzdWIiOiJ7XCJhY3RpdmVcIjpmYWxzZSxcImFsdGVyX3Bhc3Nfbnh0X2xvZ2luXCI6ZmFsc2UsXCJjb2RlXzJmX2V4cGlyZXNfYXRcIjpcIjAwMDEtMDEtMDFUMDA6MDA6MDBaXCIsXCJlbWFpbF9jb25maXJtZWRcIjoxLFwiZW5hYmxlXzJmX2F1dGhcIjpmYWxzZSxcImV4Y2x1ZGVkXCI6ZmFsc2UsXCJmYWlsZWRfbG9naW5fYXR0bXB0XCI6MyxcImZpcnN0X25hbWVcIjpcIkpvYW9cIixcImxhbmdfaWRcIjpudWxsLFwibGFzdF9mYWlsZWRfbG9naW5cIjpcIjIwMjYtMDktMDlUMjA6MTI6MDYuMTM4MTkzMjI2LTAxOjAwXCIsXCJsYXN0X25hbWVcIjpcIlRhdmFyZXNcIixcIm54dF9jb2RlXzJmX2F1dGhcIjpcIlwiLFwicm9sZV9pZFwiOjMsXCJ1c2VyX2lkXCI6MixcInVzZXJuYW1lXCI6XCJqb2FvLmEuZC50YXZhcmVzOTFcIn0iLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo0NDQ0Il0sImV4cCI6MTgxMDU4OTA5OS45OTk5OTk4LCJuYmYiOjE3OTQ5NTQzNjYuNjQ1NDI5NiwiaWF0IjoxNzk0OTU0MzY2LjY0NTQyODR9.t7zsJBYmNATiMpEszvmpM_W8qV449Nmu66zJVeXnEss",
         "enabled": true
       },
       {
